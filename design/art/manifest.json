@@ -1,0 +1,835 @@
+[
+  {
+    "path": "design/art/app-icon.png",
+    "what": "Blue rose dome app icon master",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "prompt": "App icon for Time Capsule: bold simple blue rose inside a bell-shaped clear glass dome on a small brass base. Solid ink-blue #2F5D8A background covers every pixel of square canvas; no transparency. Simplify for strong recognition at 32 pixels. No rounded corners (the OS masks it), no words or symbols besides rose dome. 1024 square. Image 1 is approved style sheet A. Match its gentle hand-inked storybook line, flat colors with one soft shading tone, subtle paper grain, soft top-left light, tender nostalgic feel. Palette #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB. No text, letters, numbers, logos, brands or watermark. ",
+    "model": "gpt-image-2",
+    "web_export": "public/art/app-icon.webp"
+  },
+  {
+    "path": "design/art/cabinet/cabinet-wall.png",
+    "what": "Warm plaster and wood-panel wall",
+    "size_px": [
+      1024,
+      1536
+    ],
+    "transparent": false,
+    "prompt": "Create ONLY a full-bleed warm background wall texture for behind display shelves in Time Capsule. Image 1 is the approved style sheet for palette and gentle hand-inked storybook texture ONLY; DO NOT copy any objects from it. Portrait 1024x1536 opaque. Soft plaster wall in warm paper #F3E2BB with extremely faint vertical wood panel seams, slightly warmer at lower half, diffuse top-left light. NO furniture at all: no cabinet, no shelves, no doors, no framing, no vessels, no floor. No text/logos. This is a quiet background surface for art layered above.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/cabinet/cabinet-wall.webp"
+  },
+  {
+    "path": "design/art/fx/fx-light-burst.png",
+    "what": "Warm radial opening light effect",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Opening moment visual effect ONLY: soft warm radial light rays in cream #F3E2BB and brass #C9A15A, luminous but delicate, feathering to fully transparent alpha at all edges, no visible center object, no outline, no hard circle or ring. Square 1024x1024. Image 1 is approved style sheet A for Time Capsule: tender hand-inked storybook, restrained palette #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB, subtle paper grain. No text, letters, numbers, brand, logos or watermark. ",
+    "model": "gpt-image-2",
+    "postprocess": "Outer gray rim removed and rays feathered by finish-backgrounds.py.",
+    "web_export": "public/art/fx/fx-light-burst.webp"
+  },
+  {
+    "path": "design/art/icon-reference.png",
+    "what": "Thirteen UI icon reference grid",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "prompt": "Edit Image 2, the 4x4 Time Capsule icon reference sheet. Image 1 is the approved style sheet for line style only. Change ONLY the second cell in the THIRD ROW (the cell currently showing a blue rose under a glass dome): replace that one icon with a SIMPLE FRONT-VIEW DISPLAY CABINET line icon: a rectangular cabinet outline with two horizontal shelves and two small doors, plum/navy hand-inked line, almost no fill. Keep the other twelve icons, all cell positions, paper background, square size and no-text design EXACTLY unchanged. Last three grid cells remain empty. Do not add text or more icons.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/icon-reference.webp"
+  },
+  {
+    "path": "design/art/journey/passport-cover.png",
+    "what": "Navy and brass passport cover",
+    "size_px": [
+      1024,
+      1536
+    ],
+    "transparent": false,
+    "prompt": "Straight-on portrait front view of a closed navy #16263F passport cover, filling canvas with a small even margin. Brass-foil #C9A15A fine rectangular border and a small embossed simple blue rose emblem at center. NO TEXT whatsoever. Rich but restrained faux leather paper texture, clean symmetry. Opaque 1024x1536 portrait. Image 1 is approved style sheet A for Time Capsule: tender hand-inked storybook, restrained palette #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB, subtle paper grain. No text, letters, numbers, brand, logos or watermark. ",
+    "model": "gpt-image-2",
+    "web_export": "public/art/journey/passport-cover.webp"
+  },
+  {
+    "path": "design/art/journey/passport-page.png",
+    "what": "Blank cream passport page",
+    "size_px": [
+      1024,
+      1536
+    ],
+    "transparent": false,
+    "prompt": "Straight-on portrait view of a blank cream #F3E2BB passport page, full bleed, with faint elegant guilloché security patterning and a subtle brass inner border. Blank open central area for app content, no icons, stamps, text or letters. Opaque 1024x1536 portrait. Image 1 is approved style sheet A for Time Capsule: tender hand-inked storybook, restrained palette #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB, subtle paper grain. No text, letters, numbers, brand, logos or watermark. ",
+    "model": "gpt-image-2",
+    "web_export": "public/art/journey/passport-page.webp"
+  },
+  {
+    "path": "design/art/map-asia.png",
+    "what": "Simplified East and Southeast Asia journey map",
+    "size_px": [
+      1254,
+      1254
+    ],
+    "transparent": false,
+    "prompt": "A simplified accurate map of East and Southeast Asia for a Time Capsule journey page: coastline and islands of China, Korea, Japan, Taiwan, Philippines, Vietnam, Thailand, Cambodia, Laos, Malaysia, Singapore, Indonesia, and nearby seas. View straight down, north up; recognizable geography but calm and simplified. Pale paper background, cool light blue sea, subtle ink-blue coastlines, tiny decorative compass rose without letters. No place labels or icons. OPAQUE full-bleed square map, intended 2048x2048, use the largest square resolution available. Image 1 is approved style sheet A. Match its gentle hand-inked storybook line, flat colors with one soft shading tone, subtle paper grain, soft top-left light, tender nostalgic feel. Palette #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB. No text, letters, numbers, logos, brands or watermark. ",
+    "model": "gpt-image-2",
+    "web_export": "public/art/map-asia.webp"
+  },
+  {
+    "path": "design/art/portraits/portrait-01.png",
+    "what": "Main profile picture preset 01",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: illustration-story. Asset type: Time Capsule MAIN profile portrait preset 01. Image 1 is the approved style sheet for ink line, paper texture and color restraint only; do not copy a vessel. Create one friendly young adult woman with a clear short dark bob silhouette, warm medium skin tone, simple calm smile, and a blue top. Head and shoulders only. Center her face at the same canonical position for a series of round avatar discs: head occupies about 56% of disc height, shoulders occupy bottom 20%, round disc diameter about 76% of the square canvas and centered at x=50%, y=50%. Disc is pale glass blue #DCE8F2. Outside the disc is genuinely transparent. Use a slightly thicker plum/navy outline than the vessels so hair and face read at 24 px and 40 px. No fine hatching on face; use simple flat shape masses and one gentle shadow. No props, no letters, no text, no logo. 1024x1024 square PNG. App: tender human nostalgic storybook, not glossy 3D. Palette restraint: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB, plus natural muted skin/hair tones. Match Image 1's hand-inked storybook feel, with simplified avatar shapes.",
+    "model": "gpt-image-2",
+    "postprocess": "Perfect circle: center (505,526), radius 430 px; transparent outside, by mask-portraits.py.",
+    "web_export": "public/art/portraits/portrait-01.webp"
+  },
+  {
+    "path": "design/art/portraits/portrait-02.png",
+    "what": "Main profile picture preset 02",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit Image 2, the Time Capsule male profile portrait. Image 1 is the approved style sheet for ink line and palette. Change ONLY his eyeglass frames: make them bolder, clearly thicker, and dark navy #16263F, with both round lenses and bridge remaining legible when the image is reduced to 24 pixels. Keep the same person, expression, face, hair, shirt, creamy round disc, disc framing, head position, scale, line style and genuine transparent outside. No face hatching, no text or logo. 1024 square PNG.",
+    "model": "gpt-image-2",
+    "postprocess": "Perfect circle: center (505,526), radius 430 px; transparent outside, by mask-portraits.py.",
+    "web_export": "public/art/portraits/portrait-02.webp"
+  },
+  {
+    "path": "design/art/portraits/portrait-03.png",
+    "what": "Main profile picture preset 03",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: illustration-story. Asset type: Time Capsule MAIN profile portrait preset 03. Image 1 is the approved style sheet for line and color style. Image 2 is portrait-01 and is a FRAMING REFERENCE ONLY. A friendly grandparent-aged woman with warm brown skin, a distinct silver-gray hair bun and a few loose soft strands, calm smile, and navy #16263F top. Her disc is a light soft plum tint derived from #6E2B3F and #F6F8FB. Age should read through hair and gentle face shape without caricature or fine wrinkle hatching. Do not copy the woman in Image 2. Match Image 2's round disc diameter, center, head size, eye height, shoulder crop, and line thickness exactly; this is one of a uniform avatar series. Head and shoulders only. Outside the disc genuinely transparent alpha 0. Use a slightly thicker plum/navy outline than vessel art so face and hair silhouette read clearly at 24 px and 40 px. No fine hatching on face; simple flat shapes, one gentle shadow. Warm human storybook, not glossy 3D. No text, no logos, no props. 1024x1024 square PNG. Palette restraint: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB, plus natural muted skin/hair tones.",
+    "model": "gpt-image-2",
+    "postprocess": "Perfect circle: center (505,526), radius 430 px; transparent outside, by mask-portraits.py.",
+    "web_export": "public/art/portraits/portrait-03.webp"
+  },
+  {
+    "path": "design/art/portraits/portrait-04.png",
+    "what": "Main profile picture preset 04",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Create Time Capsule MAIN profile portrait preset 04: a friendly adult man with deep brown skin, neatly trimmed dark beard and close-cropped curls, confident gentle smile, blue shirt, soft pale-brass round disc. Image 1 is approved style sheet A and must govern the hand-inked storybook line, one soft shadow, restrained paper grain and palette: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB, with natural skin and hair tones. Gentle and human, no glossy 3D. For portrait, Image 2 is portrait-01 as exact framing guide: same round disc diameter/centre, eye height, head size, shoulder crop and line thickness. Clear silhouette and slightly thicker outline than vessels, readable at 24px and 40px. No face hatching, no text, no logo, transparent outside disc. 1024 square.",
+    "model": "gpt-image-2",
+    "postprocess": "Perfect circle: center (505,526), radius 430 px; transparent outside, by mask-portraits.py.",
+    "web_export": "public/art/portraits/portrait-04.webp"
+  },
+  {
+    "path": "design/art/portraits/portrait-05.png",
+    "what": "Main profile picture preset 05",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Create Time Capsule MAIN profile portrait preset 05: a friendly young adult woman with very short pixie hair, fair skin with warm undertone, calm smile, plum top, pale rose round disc. Distinct short-haired woman silhouette. Image 1 is approved style sheet A and must govern the hand-inked storybook line, one soft shadow, restrained paper grain and palette: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB, with natural skin and hair tones. Gentle and human, no glossy 3D. For portrait, Image 2 is portrait-01 as exact framing guide: same round disc diameter/centre, eye height, head size, shoulder crop and line thickness. Clear silhouette and slightly thicker outline than vessels, readable at 24px and 40px. No face hatching, no text, no logo, transparent outside disc. 1024 square.",
+    "model": "gpt-image-2",
+    "postprocess": "Perfect circle: center (505,526), radius 430 px; transparent outside, by mask-portraits.py.",
+    "web_export": "public/art/portraits/portrait-05.webp"
+  },
+  {
+    "path": "design/art/portraits/portrait-06.png",
+    "what": "Main profile picture preset 06",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule MAIN profile portrait 06: friendly older man with medium-dark olive/brown skin, neat salt-and-pepper hair combed to one side, small gray mustache, laugh lines expressed as simple broad shapes, cream shirt, pale cool-blue round disc. Image 1 is approved style sheet A for hand-inked storybook line, soft shading and restrained paper grain. Image 2 is approved portrait-01 as exact framing guide: same round disc diameter and centre, eye height, head size, shoulder crop and line thickness. Head and shoulders, centered. Clear face and hair silhouette at 24px and 40px, slightly thicker plum/navy line than vessels, no fine face hatching, friendly never caricature. Genuine transparent outside disc. Palette: #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB, natural skin/hair tones. No text, logo, props or glossy 3D. 1024 square.",
+    "model": "gpt-image-2",
+    "postprocess": "Perfect circle: center (505,526), radius 430 px; transparent outside, by mask-portraits.py.",
+    "web_export": "public/art/portraits/portrait-06.webp"
+  },
+  {
+    "path": "design/art/portraits/portrait-07.png",
+    "what": "Main profile picture preset 07",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule MAIN profile portrait 07: friendly adult woman with very dark brown skin, abundant shoulder-length natural curls with clear large silhouette, gentle smile, brass-gold shirt, muted pale-blue round disc. Image 1 is approved style sheet A for hand-inked storybook line, soft shading and restrained paper grain. Image 2 is approved portrait-01 as exact framing guide: same round disc diameter and centre, eye height, head size, shoulder crop and line thickness. Head and shoulders, centered. Clear face and hair silhouette at 24px and 40px, slightly thicker plum/navy line than vessels, no fine face hatching, friendly never caricature. Genuine transparent outside disc. Palette: #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB, natural skin/hair tones. No text, logo, props or glossy 3D. 1024 square.",
+    "model": "gpt-image-2",
+    "postprocess": "Perfect circle: center (505,526), radius 430 px; transparent outside, by mask-portraits.py.",
+    "web_export": "public/art/portraits/portrait-07.webp"
+  },
+  {
+    "path": "design/art/portraits/portrait-08.png",
+    "what": "Main profile picture preset 08",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule MAIN profile portrait 08: friendly young adult man with light skin and long straight dark hair tied back in a low ponytail, gentle smile, navy shirt, soft pale-plum round disc. Keep gender presentation clearly masculine without caricature. Image 1 is approved style sheet A for hand-inked storybook line, soft shading and restrained paper grain. Image 2 is approved portrait-01 as exact framing guide: same round disc diameter and centre, eye height, head size, shoulder crop and line thickness. Head and shoulders, centered. Clear face and hair silhouette at 24px and 40px, slightly thicker plum/navy line than vessels, no fine face hatching, friendly never caricature. Genuine transparent outside disc. Palette: #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB, natural skin/hair tones. No text, logo, props or glossy 3D. 1024 square.",
+    "model": "gpt-image-2",
+    "postprocess": "Perfect circle: center (505,526), radius 430 px; transparent outside, by mask-portraits.py.",
+    "web_export": "public/art/portraits/portrait-08.webp"
+  },
+  {
+    "path": "design/art/portraits/portrait-future.png",
+    "what": "Main profile picture: future self",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule MAIN profile portrait FUTURE: a calm possible future self, middle-aged person with warm medium-brown skin and softly silver-streaked short hair, kind steady expression, ink-blue top, pale cream-blue round disc. Add only one faint tiny brass sparkle beside the shoulder, within the disc; gentle and hopeful, never spooky. Image 1 is approved style sheet A for hand-inked storybook line, soft shading and restrained paper grain. Image 2 is approved portrait-01 as exact framing guide: same round disc diameter and centre, eye height, head size, shoulder crop and line thickness. Head and shoulders, centered. Clear face and hair silhouette at 24px and 40px, slightly thicker plum/navy line than vessels, no fine face hatching, friendly never caricature. Genuine transparent outside disc. Palette: #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB, natural skin/hair tones. No text, logo, props or glossy 3D. 1024 square.",
+    "model": "gpt-image-2",
+    "postprocess": "Perfect circle: center (505,526), radius 430 px; transparent outside, by mask-portraits.py.",
+    "web_export": "public/art/portraits/portrait-future.webp"
+  },
+  {
+    "path": "design/art/scenes/scene-empty-inbox.png",
+    "what": "Empty inbox: open shelf space and waiting bird",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "ONE SCENE: a small warm wooden shelf seen mostly from the front, with an unmistakably EMPTY central place on it, and ONE tiny round bluebird perched at the far edge waiting. The empty space is the focus. Absolutely no vessels, boxes, letters, domes, bottles, lanterns, gifts or extra objects. No row of illustrations. Use Image 1 ONLY for line weight, palette, paper texture and hand-inked storybook style. DO NOT copy the lineup of vessels or its composition. Landscape 1536x1024. Genuine transparent background with soft feathered vignette edges, so only the central illustration remains visible and all four corners have alpha zero. Calm, nostalgic, tender. No text, letters, logos, numbers, watermark or black/gray border. ",
+    "model": "gpt-image-2",
+    "web_export": "public/art/scenes/scene-empty-inbox.webp"
+  },
+  {
+    "path": "design/art/scenes/scene-empty-sent.png",
+    "what": "Empty sent: blank letter, pen and wax",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "ONE SCENE on a writing desk: ONE blank cream letter sheet, ONE simple dark-ink fountain pen, and ONE small unpressed wax seal ready beside it. Quiet potential before sending. No vessels, bottles, domes, lanterns, boxes, hands, or other objects. Use Image 1 ONLY for line weight, palette, paper texture and hand-inked storybook style. DO NOT copy the lineup of vessels or its composition. Landscape 1536x1024. Genuine transparent background with soft feathered vignette edges, so only the central illustration remains visible and all four corners have alpha zero. Calm, nostalgic, tender. No text, letters, logos, numbers, watermark or black/gray border. ",
+    "model": "gpt-image-2",
+    "web_export": "public/art/scenes/scene-empty-sent.webp"
+  },
+  {
+    "path": "design/art/scenes/scene-sealed.png",
+    "what": "Letter being sealed with warm glow",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "ONE SCENE: close view of a warm hand lifting a brass seal stamp from a freshly pressed wax-red seal on ONE folded cream letter, small warm glow around wax. Moment of completion. No vessel, box, bottle, dome, lantern, shelf or row of objects. Use Image 1 ONLY for line weight, palette, paper texture and hand-inked storybook style. DO NOT copy the lineup of vessels or its composition. Landscape 1536x1024. Genuine transparent background with soft feathered vignette edges, so only the central illustration remains visible and all four corners have alpha zero. Calm, nostalgic, tender. No text, letters, logos, numbers, watermark or black/gray border. ",
+    "model": "gpt-image-2",
+    "web_export": "public/art/scenes/scene-sealed.webp"
+  },
+  {
+    "path": "design/art/scenes/scene-welcome.png",
+    "what": "Welcome: hands, sealed letter and dome rose",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "ONE SCENE: two warm hands holding ONE cream envelope with a red wax seal, next to ONE glass dome containing a blue rose on brass base. The scene should feel hopeful, warmly lit, and personal. No bottle, tin, lantern, music box, ring box, shelf, or other vessel. Do not place a row of objects. Use Image 1 ONLY for line weight, palette, paper texture and hand-inked storybook style. DO NOT copy the lineup of vessels or its composition. Landscape 1536x1024. Genuine transparent background with soft feathered vignette edges, so only the central illustration remains visible and all four corners have alpha zero. Calm, nostalgic, tender. No text, letters, logos, numbers, watermark or black/gray border. ",
+    "model": "gpt-image-2",
+    "web_export": "public/art/scenes/scene-welcome.webp"
+  },
+  {
+    "path": "design/art/seal-wax.png",
+    "what": "Large rose-imprinted wax seal",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "One large freshly pressed circular red wax seal for Time Capsule sealed screen, wax red #A3364F, subtle irregular molten edge, embossed SIMPLE blue rose emblem only, no letters. Slight three-quarter relief but visually flat and hand-inked, centered 70% of 1024 square, transparent outside. Image 1 is approved style sheet A. Match its gentle hand-inked storybook line, flat colors with one soft shading tone, subtle paper grain, soft top-left light, tender nostalgic feel. Palette #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB. No text, letters, numbers, logos, brands or watermark. ",
+    "model": "gpt-image-2",
+    "web_export": "public/art/seal-wax.webp"
+  },
+  {
+    "path": "design/art/shelf.png",
+    "what": "Empty three-level wooden display shelf",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "A simple front-view wooden display shelf with exactly three open horizontal shelves, slender warm brown wood uprights and brass joinery, empty so app vessels can sit on it. Centered, generous padding, transparent outside, 1024 square. Image 1 is approved style sheet A. Match its gentle hand-inked storybook line, flat colors with one soft shading tone, subtle paper grain, soft top-left light, tender nostalgic feel. Palette #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB. No text, letters, numbers, logos, brands or watermark. ",
+    "model": "gpt-image-2",
+    "web_export": "public/art/shelf.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-aurele-cotai.png",
+    "what": "One-color passport stamp: Maison Aurèle Cotai boutique demo",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule passport stamp. Image 1 approved style sheet A for hand-inked storybook style. Circular slightly imperfect ONE-COLOR landmark line stamp, no text/numbers/logos, no paper background, transparent outside and between strokes. Centered 70% of 1024 square. Subject: generic elegant boutique doorway with arch and tiny ring motif in Cotai, Macau, no brand. Only ink blue #2F5D8A visible ink.",
+    "model": "gpt-image-2",
+    "postprocess": "Single palette ink color with white fills and stray colors removed by normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-aurele-cotai.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-fushimi.png",
+    "what": "One-color passport stamp: Fushimi Inari",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule passport stamp. Use Image 1 approved style sheet A. Circular slightly imperfect hand-inked ONE-COLOR line stamp, simple recognizable landmark, no lettering/numbers/logos, no paper background, true transparency around and between ink strokes. Avoid white opaque fills and avoid colored speckles. Center at 70% of 1024 square. Subject: Fushimi Inari shrine torii gates receding in Kyoto. Exactly ink blue #2F5D8A ink only.",
+    "model": "gpt-image-2",
+    "postprocess": "Single palette ink color with white fills and stray colors removed by normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-fushimi.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-grandpal.png",
+    "what": "One-color passport stamp: Grand Palace",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule passport stamp. Use Image 1 approved style sheet A. Circular slightly imperfect hand-inked ONE-COLOR line stamp, simple recognizable landmark, no lettering/numbers/logos, no paper background, true transparency around and between ink strokes. Avoid white opaque fills and avoid colored speckles. Center at 70% of 1024 square. Subject: Grand Palace spires and ornate roofline in Bangkok. Exactly ink blue #2F5D8A ink only.",
+    "model": "gpt-image-2",
+    "postprocess": "Single palette ink color with white fills and stray colors removed by normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-grandpal.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-gyeongbok.png",
+    "what": "One-color passport stamp: Gyeongbokgung",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule passport stamp. Use Image 1 approved style sheet A. Circular slightly imperfect hand-inked ONE-COLOR line stamp, simple recognizable landmark, no lettering/numbers/logos, no paper background, true transparency around and between ink strokes. Avoid white opaque fills and avoid colored speckles. Center at 70% of 1024 square. Subject: Gyeongbokgung palace gate with Korean roof in Seoul. Exactly wax red #A3364F ink only.",
+    "model": "gpt-image-2",
+    "postprocess": "Single palette ink color with white fills and stray colors removed by normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-gyeongbok.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-merlion.png",
+    "what": "One-color passport stamp: Merlion",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule passport stamp. Use Image 1 approved style sheet A. Circular slightly imperfect hand-inked ONE-COLOR line stamp, simple recognizable landmark, no lettering/numbers/logos, no paper background, true transparency around and between ink strokes. Avoid white opaque fills and avoid colored speckles. Center at 70% of 1024 square. Subject: Merlion statue and waterfront in Singapore. Exactly plum #6E2B3F ink only.",
+    "model": "gpt-image-2",
+    "postprocess": "Single palette ink color with white fills and stray colors removed by normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-merlion.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-petronas.png",
+    "what": "One-color passport stamp: Petronas Towers",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule passport stamp. Image 1 approved style sheet A for hand-inked storybook style. Circular slightly imperfect ONE-COLOR landmark line stamp, no text/numbers/logos, no paper background, transparent outside and between strokes. Centered 70% of 1024 square. Subject: Petronas Twin Towers with their skybridge in Kuala Lumpur. Only plum #6E2B3F visible ink.",
+    "model": "gpt-image-2",
+    "postprocess": "Single palette ink color with white fills and stray colors removed by normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-petronas.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-senado.png",
+    "what": "One-color passport stamp: Senado Square",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule passport stamp asset. Image 1 is approved style sheet A; match its gentle hand-inked storybook line and restrained texture. Circular single-color ink stamp, slightly imperfect edge, recognizable simple landmark silhouette, no words, no numbers, no letters, no logo, no surrounding paper, transparent outside the printed ink. Object centred and fills about 70% of 1024 square canvas. No glossy or 3D. Subject: Senado Square fountain and pavement in Macau. Use only plum #6E2B3F for all visible ink. No other colors.",
+    "model": "gpt-image-2",
+    "postprocess": "Single palette ink color with white fills and stray colors removed by normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-senado.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-sensoji.png",
+    "what": "One-color passport stamp: Sensō-ji",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule passport stamp asset. Image 1 is approved style sheet A; match its gentle hand-inked storybook line and restrained texture. Circular single-color ink stamp, slightly imperfect edge, recognizable simple landmark silhouette, no words, no numbers, no letters, no logo, no surrounding paper, transparent outside the printed ink. Object centred and fills about 70% of 1024 square canvas. No glossy or 3D. Subject: Sensō-ji temple gate and pagoda in Tokyo. Use only plum #6E2B3F for all visible ink. No other colors.",
+    "model": "gpt-image-2",
+    "postprocess": "Single palette ink color with white fills and stray colors removed by normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-sensoji.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-taipei101.png",
+    "what": "One-color passport stamp: Taipei 101",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule passport stamp asset. Image 1 is approved style sheet A; match its gentle hand-inked storybook line and restrained texture. Circular single-color ink stamp, slightly imperfect edge, recognizable simple landmark silhouette, no words, no numbers, no letters, no logo, no surrounding paper, transparent outside the printed ink. Object centred and fills about 70% of 1024 square canvas. No glossy or 3D. Subject: Taipei 101 tower in Taipei. Use only wax red #A3364F for all visible ink. No other colors.",
+    "model": "gpt-image-2",
+    "postprocess": "Single palette ink color with white fills and stray colors removed by normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-taipei101.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-tst-clock.png",
+    "what": "One-color passport stamp: Tsim Sha Tsui Clock Tower",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule passport stamp asset. Image 1 is approved style sheet A; match its gentle hand-inked storybook line and restrained texture. Circular single-color ink stamp, slightly imperfect edge, recognizable simple landmark silhouette, no words, no numbers, no letters, no logo, no surrounding paper, transparent outside the printed ink. Object centred and fills about 70% of 1024 square canvas. No glossy or 3D. Subject: Tsim Sha Tsui Clock Tower in Hong Kong. Use only ink blue #2F5D8A for all visible ink. No other colors.",
+    "model": "gpt-image-2",
+    "postprocess": "Single palette ink color with white fills and stray colors removed by normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-tst-clock.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-wumen.png",
+    "what": "One-color passport stamp: Forbidden City Meridian Gate",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Time Capsule passport stamp. Image 1 approved style sheet A for hand-inked storybook style. Circular slightly imperfect ONE-COLOR landmark line stamp, no text/numbers/logos, no paper background, transparent outside and between strokes. Centered 70% of 1024 square. Subject: Forbidden City Meridian Gate (Wumen) with broad Chinese imperial roof in Beijing. Only wax red #A3364F visible ink.",
+    "model": "gpt-image-2",
+    "postprocess": "Single palette ink color with white fills and stray colors removed by normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-wumen.webp"
+  },
+  {
+    "path": "design/art/style-sheet-a.png",
+    "what": "Style sheet A candidate",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": false,
+    "prompt": "Use case: illustration-story. Asset type: Time Capsule art style sheet, variant A. Create one landscape 1536x1024 image on a solid cool paper background #F6F8FB. Show exactly seven separate small vessel illustrations, evenly spaced side by side in a single row, all visible with generous margins and no overlap. Left to right: (1) one blue rose under a glass dome on a brass base, (2) a rolled message in a clear bottle resting on two small blue wave lines, (3) a cream envelope closed by a red wax seal, (4) a small pale blue tin box with brass lid, (5) a Mid-Autumn paper lantern, (6) a small wooden music box, (7) a luxury navy ring box with brass trim, fictional and unlettered. Variant A direction: closest to a clean SVG storybook illustration, delicate yet legible plum outlines, balanced restrained fills, restrained flat shapes. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, precious in the AI age. Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Background is opaque paper #F6F8FB; this style sheet is not a transparent cutout. Make each vessel readable at small UI-card size.",
+    "model": "gpt-image-2"
+  },
+  {
+    "path": "design/art/style-sheet-b.png",
+    "what": "Style sheet B candidate",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": false,
+    "prompt": "Use case: illustration-story. Asset type: Time Capsule art style sheet, variant B. Create one landscape 1536x1024 image on a solid cool paper background #F6F8FB. Show exactly seven separate small vessel illustrations, evenly spaced side by side in a single centered row, all visible with generous margins and no overlap. Left to right: (1) one blue rose under a glass dome on a brass base, (2) a rolled message in a clear bottle resting on two small blue wave lines, (3) a cream envelope closed by a red wax seal, (4) a small pale blue tin box with brass lid, (5) a Mid-Autumn paper lantern, (6) a small wooden music box, (7) a luxury navy ring box with brass trim, fictional and unlettered. Variant B direction: lighter and airier than a fully rendered illustration; fine slightly uneven hand-inked outlines, broad paper-colored interior space, very simple flat color patches, minimal shading, no decorative ornament. Evoke the existing app's small SVG vessel drawings, with slightly warmer human linework. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, precious in the AI age. Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Background is opaque paper #F6F8FB; this style sheet is not a transparent cutout. Make each vessel readable at small UI-card size.",
+    "model": "gpt-image-2"
+  },
+  {
+    "path": "design/art/style-sheet-c.png",
+    "what": "Style sheet C candidate",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": false,
+    "prompt": "Use case: illustration-story. Asset type: Time Capsule art style sheet, variant C. Create one landscape 1536x1024 image on a solid cool paper background #F6F8FB. Show exactly seven separate small vessel illustrations, evenly spaced side by side in a single centered row, all visible with generous margins and no overlap. Left to right: (1) one blue rose under a glass dome on a brass base, (2) a rolled message in a clear bottle resting on two small blue wave lines, (3) a cream envelope closed by a red wax seal, (4) a small pale blue tin box with brass lid, (5) a Mid-Autumn paper lantern, (6) a small wooden music box, (7) a luxury navy ring box with brass trim, fictional and unlettered. Variant C direction: poetic watercolor storybook with very restrained translucent color washes inside clean hand-drawn ink contours; more softness than variant B but still recognizable flat UI illustration, not realistic or 3D. Make the seven silhouettes distinct and gentle. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, precious in the AI age. Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Background is opaque paper #F6F8FB; this style sheet is not a transparent cutout. Make each vessel readable at small UI-card size.",
+    "model": "gpt-image-2"
+  },
+  {
+    "path": "design/art/style-sheet.png",
+    "what": "Roy-approved style sheet A",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": false,
+    "prompt": "Use case: illustration-story. Asset type: Time Capsule art style sheet, variant A. Create one landscape 1536x1024 image on a solid cool paper background #F6F8FB. Show exactly seven separate small vessel illustrations, evenly spaced side by side in a single row, all visible with generous margins and no overlap. Left to right: (1) one blue rose under a glass dome on a brass base, (2) a rolled message in a clear bottle resting on two small blue wave lines, (3) a cream envelope closed by a red wax seal, (4) a small pale blue tin box with brass lid, (5) a Mid-Autumn paper lantern, (6) a small wooden music box, (7) a luxury navy ring box with brass trim, fictional and unlettered. Variant A direction: closest to a clean SVG storybook illustration, delicate yet legible plum outlines, balanced restrained fills, restrained flat shapes. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, precious in the AI age. Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Background is opaque paper #F6F8FB; this style sheet is not a transparent cutout. Make each vessel readable at small UI-card size.",
+    "model": "gpt-image-2"
+  },
+  {
+    "path": "design/art/textures/paper-letter.png",
+    "what": "Warm seamless letter-paper texture",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "prompt": "A VERY SUBTLE warm cream letter paper grain texture tile for reading handwritten letters, base toward cream #F3E2BB, tiny fibers and soft flecks only, low contrast so text remains readable. No motifs or vignetting; uniform illumination. Seamless tileable on all four edges, opaque, 1024x1024 square. Image 1 is approved Time Capsule style sheet A. Match restrained hand-inked storybook paper grain and palette. No text, letters, numbers, logos or watermark. ",
+    "model": "gpt-image-2",
+    "postprocess": "Resized to 1024 square and made seamless by finish-backgrounds.py.",
+    "web_export": "public/art/textures/paper-letter.webp"
+  },
+  {
+    "path": "design/art/textures/paper.png",
+    "what": "Cool seamless paper texture",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "prompt": "A VERY SUBTLE paper grain texture tile for app background, base cool paper #F6F8FB, near-white blue-grey fibers and soft flecks only, low contrast so body text remains readable. No motifs or vignetting; uniform illumination. Seamless tileable on all four edges, opaque, 1024x1024 square. Image 1 is approved Time Capsule style sheet A. Match restrained hand-inked storybook paper grain and palette. No text, letters, numbers, logos or watermark. ",
+    "model": "gpt-image-2",
+    "postprocess": "Resized to 1024 square and made seamless by finish-backgrounds.py.",
+    "web_export": "public/art/textures/paper.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-bottle-body.png",
+    "what": "Message In A Bottle — body layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled bottle EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the complete clear glass bottle body and neck, including plum outline, pale blue edge tint and white highlights. Remove the cork, rolled letter and wave lines. The glass interior must be truly translucent; do not leave an opaque pale-blue fill that would hide a separately stacked letter. Keep its position and scale exactly. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move, resize or reinterpret the kept part. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "postprocess": "Alpha below 200 scaled to 37.5% by adjust-glass-alpha.py; opaque outline and highlights preserved.",
+    "web_export": "public/art/vessels/vessel-bottle-body.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-bottle-cork.png",
+    "what": "Message In A Bottle — cork layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled bottle EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the cork stopper at the bottle mouth. Remove all bottle glass, letter and wave lines. Preserve the exact angle, size, location, ink outline, and visible cork details. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move, resize or reinterpret the kept part. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "pivot": {
+      "x": 724,
+      "y": 355
+    },
+    "web_export": "public/art/vessels/vessel-bottle-cork.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-bottle-letter.png",
+    "what": "Message In A Bottle — letter layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled bottle EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the complete rolled cream letter and its wax-red bow inside the bottle. Remove glass, cork and waves. Restore any parts hidden by glass so the scroll is complete. Preserve exact angle, size and location. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move, resize or reinterpret the kept part. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-bottle-letter.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-bottle-waves.png",
+    "what": "Message In A Bottle — waves layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled bottle EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the two simple ink-blue water-wave strokes beneath the bottle. Remove bottle, cork and letter. Preserve exact location, size and line character. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move, resize or reinterpret the kept part. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-bottle-waves.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-bottle.png",
+    "what": "Assembled message in a bottle vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: illustration-story. Asset type: assembled Time Capsule vessel PNG master. Image 1 is the approved STYLE REFERENCE ONLY, not an edit target. Create the assembled message-in-a-bottle vessel: a clear glass bottle resting diagonally on a few small ink-blue wave lines, a cream rolled letter visible inside, and a cork at the neck. The bottle is closed/sealed. Keep the body sufficiently clear that the letter remains legible at 120 px. Make crisp distinct parts so body, cork, letter, and waves can be isolated later. 1024x1024 transparent PNG. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-bottle.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-dome-base.png",
+    "what": "Glass-Dome Blue Rose — base layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: Time Capsule vessel layer PNG. Image 1 is the ASSEMBLED DOME EDIT TARGET. Image 2 is the APPROVED STYLE REFERENCE. Create the BASE layer only from Image 1. Keep only the complete brass pedestal base at the bottom, including its top oval platform and all brass rims, at precisely the same pixel position, size, perspective, colors, ink lines, and hatching as Image 1. Remove the blue rose, stem, leaves, glass dome, glass highlights, glass outline, and top brass finial completely. Everything outside the complete base must be genuinely transparent alpha 0, including all four corners. Preserve exactly the original square canvas and registration. Do not move, resize, repaint, or reinterpret the base. No text or logos. Match Image 2's hand-inked storybook style with the lighter hatching already present in Image 1. The final image must overlay Image 1 pixel-for-pixel where the base is visible.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-dome-base.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-dome-glass.png",
+    "what": "Glass-Dome Blue Rose — glass layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: Time Capsule vessel layer PNG. Image 1 is the ASSEMBLED DOME EDIT TARGET. Image 2 is the APPROVED STYLE REFERENCE. Create the GLASS layer only from Image 1. Keep the complete curved glass cloche and its top brass finial at precisely the same pixel position, size, perspective, ink lines, translucent pale glass tint, and white reflections as Image 1. The glass must remain genuinely semi-transparent where it covers the rose, so a separate rose layer underneath can be seen through it. Remove the blue rose, stem, leaves, and entire bottom brass pedestal base. The area inside the glass should not contain any opaque paper fill or flower; only the translucent glass tint and reflections. Everything outside the glass and finial must be genuinely transparent alpha 0, including all four corners. Preserve exactly the original square canvas and registration. Do not move, resize, repaint, or reinterpret the glass. No text or logos. Match Image 2's hand-inked storybook style with the lighter hatching already present in Image 1. The final image should overlay Image 1 pixel-for-pixel where the glass outline and finial are visible.",
+    "model": "gpt-image-2",
+    "postprocess": "Alpha below 200 scaled to 37.5% by adjust-glass-alpha.py; opaque outline and highlights preserved.",
+    "web_export": "public/art/vessels/vessel-dome-glass.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-dome-rose.png",
+    "what": "Glass-Dome Blue Rose — rose layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: Time Capsule vessel layer PNG. Image 1 is the ASSEMBLED DOME EDIT TARGET. Image 2 is the APPROVED STYLE REFERENCE. Create the ROSE layer only from Image 1. Keep the complete blue rose bloom, stem, and two leaves at precisely the same pixel position, size, perspective, colors, ink lines, and lighter hatching as Image 1. The flower and stem must be complete with no holes where the glass overlapped. Remove all glass dome pixels, glass outline, white highlights, brass finial, and entire brass pedestal base. Everything outside the rose, stem, and leaves must be genuinely transparent alpha 0, including all four corners. Preserve exactly the original square canvas and registration. Do not move, resize, repaint, or reinterpret the rose. No text or logos. Match Image 2's hand-inked storybook style with the lighter hatching already present in Image 1. The final image must overlay Image 1 pixel-for-pixel where the rose is visible.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-dome-rose.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-dome.png",
+    "what": "Assembled glass-dome blue rose vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: illustration-story. Asset type: assembled Time Capsule vessel PNG master. Image 1 is the approved style sheet and is a STYLE REFERENCE ONLY; do not copy its seven-vessel layout. Generate exactly one complete blue rose under a glass dome on a brass base, in the same design as the first vessel in Image 1. 1024x1024 square canvas, transparent background with genuine alpha; object centered and fills about 70% of the canvas, generous even padding. The blue rose, stem and leaves must remain readable at 120 px. The dome glass is visibly translucent with a narrow highlight and plum outline; brass base is complete and closed. Make the vessel as an assembled composition so separate base, rose, and glass layers can be derived from it. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, precious in the AI age. Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. Use noticeably lighter, sparser hatching than Image 1; preserve the inked outlines and flat color masses. No text, no letters, no numbers, no logos, no real brands. Match Image 1's visual style exactly apart from the lighter hatching.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-dome.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-envelope-body.png",
+    "what": "Wax-Sealed Letter — body layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled envelope EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the complete envelope body: cream rectangular back and front lower pocket, plus a plain unlettered inner sheet fully drawn underneath the flap. Remove the triangular closing flap and wax seal. Preserve exactly the envelope's size, angle, location, pale cream color, and plum outlines. The inner sheet must not have a hole where the flap or seal covered it. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move, resize or reinterpret the kept part. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-envelope-body.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-envelope-flap.png",
+    "what": "Wax-Sealed Letter — flap layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled envelope EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the complete triangular upper closing flap, including its cream paper surface and plum V-shaped fold edges. Remove the envelope body, inner sheet and wax seal. Preserve exact size, angle and position. The hidden part of the flap under the seal must be complete so the seal can separate cleanly. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move, resize or reinterpret the kept part. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "pivot": {
+      "x": 496,
+      "y": 260
+    },
+    "web_export": "public/art/vessels/vessel-envelope-flap.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-envelope-seal.png",
+    "what": "Wax-Sealed Letter — seal layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled envelope EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the round wax-red seal at the center of the envelope. Remove all cream paper and flap. Preserve exact shape, shading, size, angle and position. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move, resize or reinterpret the kept part. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-envelope-seal.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-envelope.png",
+    "what": "Assembled wax-sealed letter vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: illustration-story. Asset type: assembled Time Capsule vessel PNG master. Image 1 is the approved STYLE REFERENCE ONLY, not an edit target. Create the assembled wax-sealed letter vessel: a single cream envelope with a plum outline and red round wax seal over the closing flap. Envelope is closed/sealed, with the body and flap visually separable for opening animation. No decorative writing or symbols that resemble text. 1024x1024 transparent PNG. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-envelope.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lantern-body.png",
+    "what": "Mid-Autumn Lantern — body layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled lantern EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the round cream paper lantern body with its simple blue-flower and moon decoration, thin plum ribs and the red tassel suspended below. Remove the brass top loop/cap, lower brass cap, and diffuse outer glow. Preserve body and tassel exact position/scale/colors; complete any small areas hidden by the caps. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move or resize. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-lantern-body.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lantern-cap.png",
+    "what": "Mid-Autumn Lantern — cap layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled lantern EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the brass top loop and top collar/cap AND the small brass bottom collar/cap as one layer. Remove paper lantern body, flower decoration, tassel and glow. Preserve each brass component's exact original position, scale and perspective. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move or resize. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-lantern-cap.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lantern-glow.png",
+    "what": "Mid-Autumn Lantern — glow layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled lantern EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only a soft warm cream-and-brass light halo around the lantern, with NO ink outline, no solid lantern, no cap and no tassel. The halo should fade gently to genuine transparency at its edge; preserve the position and size of the glow in Image 1. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move or resize. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-lantern-glow.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lantern.png",
+    "what": "Assembled Mid-Autumn lantern vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: illustration-story. Asset type: assembled Time Capsule vessel PNG master. Image 1 is the approved STYLE REFERENCE ONLY, not an edit target. Create the assembled Mid-Autumn paper lantern vessel: a softly glowing round paper lantern with brass top and bottom caps, a short loop and tassel. Use only cream, brass, wax red, plum/navy, and blue tones from the style palette; no orange outside the palette. The body, top cap, and glow should be separable layers. 1024x1024 transparent PNG. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-lantern.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-maison-box.png",
+    "what": "Maison Aurèle Ring Box — box layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled CLOSED Maison ring box EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the complete lower navy ring-box base, exactly the same position and scale. Remove the closed lid. Reveal the full velvet interior that was hidden by the lid: a navy cushioned ring seat with a clear central slot. No ring in this box layer. Preserve all visible base walls, brass seam trim and latch details exactly. The lid will stack on top to recreate the closed view. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move or resize. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-maison-box.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-maison-lid.png",
+    "what": "Maison Aurèle Ring Box — lid layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled CLOSED Maison ring box EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the complete CLOSED navy top lid with brass border, at exactly the same position, size and angle as Image 1. Remove the lower box, latch and any interior. The top panel and side edge of the lid must be complete for animation. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move or resize. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "pivot": {
+      "x": 605,
+      "y": 300
+    },
+    "web_export": "public/art/vessels/vessel-maison-lid.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-maison-ring.png",
+    "what": "Maison Aurèle Ring Box — ring layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the OPEN EMPTY Maison ring-box base and is a placement reference. Image 2 is the approved STYLE REFERENCE. Create only one elegant brass ring with a small pale-glass-blue gemstone, seated upright in the exact central slot of Image 1's navy velvet cushion. Output ONLY the ring, with genuine transparency everywhere else. Preserve the exact 1254x1254 square canvas and registration of Image 1, so overlaying this ring on the box layer places it correctly. The ring should be small enough to fit inside the lower box without touching the edges. No box pixels, no lid, no text, no logo. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-maison-ring.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-maison.png",
+    "what": "Assembled Maison Aurèle ring box vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: illustration-story. Asset type: assembled Time Capsule vessel PNG master. Image 1 is the approved STYLE REFERENCE ONLY, not an edit target. Create the assembled luxury navy ring box vessel CLOSED by default: a small elegant navy velvet or leather ring box with brass trim, its hinged lid completely closed and flush with the base. No ring or interior visible in assembled image. Fictional luxury object, no lettering, no logo, no brand name. Distinct lid and box silhouette for later separation and opening. 1024x1024 transparent PNG. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-maison.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-musicbox-box.png",
+    "what": "Warm Wood Music Box — box layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use Image 2, the revised warm brown wood music box, as exact scale and position reference. Isolate ONLY the lower BOX and brass crank on the right. Remove the closed lid entirely and reveal a complete music mechanism inside the box: brass cylinder and fine comb on a dark brown inner floor. Preserve the front and side wood walls, joinery, wood grain, ink outlines and crank at precisely Image 2's location. Everything outside this complete lower-box part is fully transparent; no shadow as separate object, no duplicate lid. Image 1 governs style. Gentle hand-inked storybook, light hatching, no text/logo. 1024 square transparent PNG.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-musicbox-box.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-musicbox-lid.png",
+    "what": "Warm Wood Music Box — lid layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use Image 2, the revised warm brown wood music box, as exact scale and position reference. Isolate ONLY its CLOSED LID as a separate complete part in precisely the same canvas position and size as Image 2. Keep the warm brown natural wood top, floral and moon motif, dark ink border, thickness and visible beveled sides. Finish its underside or back edge so this lid can rotate open in the app. Delete the lower box, crank and shadow entirely; outside the lid fully transparent. Image 1 governs style. No text/logo. 1024 square transparent PNG.",
+    "model": "gpt-image-2",
+    "pivot": {
+      "x": 541,
+      "y": 292
+    },
+    "web_export": "public/art/vessels/vessel-musicbox-lid.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-musicbox.png",
+    "what": "Assembled warm wood music box vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit Image 2, the closed Time Capsule music box. Use Image 1 (approved style sheet A) as the exact reference for its warm medium-brown wood color, visible wood grain, plum/navy ink line and brass hardware. Change ONLY the pale cream-painted wood surfaces of Image 2 to warm brown natural wood like the OPEN music box depicted in Image 1. Keep Image 2 CLOSED, same exact overall position, scale, shape, brass crank on the right, lid seam and shadow. Simplify the decorative lid motif if needed to make natural wood read clearly at 120px. No text, logos or letters. Preserve genuine transparent background and 1024 square framing. Tender hand-inked storybook; lighter hatching; no glossy 3D.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-musicbox.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-tin-box.png",
+    "what": "Tin Box — box layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled closed tin EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep the complete pale-blue lower tin box only, same position and scale. Remove the brass lid completely. Reveal and draw the full open inside of the tin that the lid had hidden: a cream paper-lined shallow cavity, with continuous rim and no holes. The lid will later stack on top to recreate the closed assembled image. Preserve the visible lower box details exactly. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move or resize. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-tin-box.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-tin-lid.png",
+    "what": "Tin Box — lid layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit. Asset type: isolated Time Capsule vessel part PNG. Image 1 is the assembled closed tin EDIT TARGET; Image 2 is the approved STYLE REFERENCE. Keep only the complete brass lid resting closed on the tin. Remove lower tin box and all other objects. Draw the whole lid, including the underside edge hidden by the box, at exactly the same position, angle and size as in Image 1. Keep exactly the same square canvas and registration as Image 1. Everything outside this part must be genuinely transparent alpha 0, with transparent corners. Do not move or resize. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "pivot": {
+      "x": 505,
+      "y": 310
+    },
+    "web_export": "public/art/vessels/vessel-tin-lid.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-tin.png",
+    "what": "Assembled tin box vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: illustration-story. Asset type: assembled Time Capsule vessel PNG master. Image 1 is the approved STYLE REFERENCE ONLY, not an edit target. Create the assembled small tin vessel: a pale ink-blue rectangular tin box with a brass lid fully CLOSED and seated on top, clean plum/navy outlines, simple metal highlights. No lettering or label. Lid must be separately extractable and the box beneath it should later have a complete open interior. 1024x1024 transparent PNG. App: people send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D. Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain. Lines in plum #6E2B3F or navy #16263F. Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Front three-quarter view, soft top-left light. No text, no letters, no numbers, no logos, no real brands. Transparent background, object centred, generous padding (object fills about 70% of the canvas), square. Match Image 1 design/art/style-sheet.png exactly, but with slightly lighter hatching so the art reads at about 120 px.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-tin.webp"
+  }
+]

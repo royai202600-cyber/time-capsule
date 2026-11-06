@@ -3,6 +3,6 @@
   "vessel-bottle-cork.png": { "x": 724, "y": 355, "note": "neck insertion center" },
   "vessel-envelope-flap.png": { "x": 496, "y": 260, "note": "upper fold hinge midpoint" },
   "vessel-tin-lid.png": { "x": 505, "y": 310, "note": "rear lid edge midpoint" },
-  "vessel-musicbox-lid.png": { "x": 605, "y": 305, "note": "rear lid edge midpoint" },
+  "vessel-musicbox-lid.png": { "x": 541, "y": 292, "note": "rear lid hinge midpoint after warm-wood redraw" },
   "vessel-maison-lid.png": { "x": 605, "y": 300, "note": "rear lid edge midpoint" }
 }

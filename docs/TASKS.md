@@ -6,12 +6,12 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| T9 | Generate illustration assets using Codex's built-in `gpt-image-2` (no API key). Roy chose style sheet A and approved the dome test. Clear glass must not obscure contents; assembled music box and ring box are closed; hatching is light enough for 120 px. Make the remaining vessels, then three portraits and a 24/40 px test strip; pause for Roy's approval before the remaining assets. Keep existing SVG art and app code untouched. | Codex | Roy approves the portrait test; requested PNG masters, WebP copies, icons, checks, manifest and README are complete; build passes and PR is reviewed. |
-| T9b | Add matching paper textures, four scenes, opening light burst, passport cover/page, cabinet wall, and a 13-icon reference sheet (icons remain code-drawn). Include these in the art manifest, README and WebP exports. | Codex | Assets and checks complete after portrait approval; PR reviewed before merge. |
 
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
+| T9 | Generate illustration assets with built-in `gpt-image-2`; style sheet A, vessel layers, nine main profile portraits, stamps, map, shelf, wax seal and app icon. Existing SVG/app code untouched. | Codex | Roy approved vessels and first three portraits. All 66 masters, 62 WebP copies, four icon sizes, checks, manifest, README and build are complete. PR awaits Roy's review and merge OK. |
+| T9b | Add two paper textures, four scenes, light burst, passport cover/page, cabinet wall and 13-icon reference sheet. | Codex | Included in T9 art PR with transparent/opaque checks and WebP exports; awaiting Roy's PR review. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 
 ## Next (in order)
