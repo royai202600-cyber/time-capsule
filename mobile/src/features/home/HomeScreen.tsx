@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Animated, FlatList, Pressable, Text, View, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Animated, FlatList, Image, Pressable, Text, View, useWindowDimensions } from "react-native";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar } from "../../components/Avatar";
+import { ArtIcon, type IconName } from "../../components/ArtIcon";
+import { scenes } from "../../art/manifest";
 import { Vessel } from "../../components/Vessel";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
@@ -40,7 +42,7 @@ function CardVessel({ kind, state, reduced }: { kind: VesselKind; state: string;
   }, [glow, reduced, state]);
   return <Animated.View style={{ width: 180, height: 180, alignItems: "center", justifyContent: "center", opacity: state === "opened" ? 0.55 : 1, transform: [{ scale: breath.interpolate({ inputRange: [0, 1], outputRange: [1, motion.breathe.scale] }) }, { translateY: breath.interpolate({ inputRange: [0, 1], outputRange: [0, motion.breathe.translateY] }) }] }}>
     {state === "ready" && <Animated.View style={{ position: "absolute", width: 160, height: 160, borderRadius: 80, backgroundColor: C.lightBlue, opacity: reduced ? 0.16 : glow.interpolate({ inputRange: [0, 1], outputRange: [0.10, 0.28] }), transform: [{ scale: glow.interpolate({ inputRange: [0, 1], outputRange: [1, 1.18] }) }] }} />}
-    <Vessel kind={kind} size={150} />
+    <Vessel kind={kind} size={150} ready={state === "ready"} />
   </Animated.View>;
 }
 
@@ -94,6 +96,12 @@ export default function HomeScreen() {
     const unit = s >= 86400 ? "days" : s >= 3600 ? "hours" : "minutes";
     return t("home.time", Math.ceil(s / (unit === "days" ? 86400 : unit === "hours" ? 3600 : 60)), t(`home.${unit}`));
   };
+  const headlineView = (c: Row, state: string) => {
+    const value = headline(c);
+    if (state !== "time" && state !== "place") return <Text numberOfLines={2} style={{ height: 84, textAlignVertical: "center", fontFamily: serif, color: C.ink, fontSize: 20, textAlign: "center" }}>{value}</Text>;
+    const pieces = value.split(/(\d+(?:\.\d+)?)/);
+    return <Text numberOfLines={2} style={{ height: 84, textAlignVertical: "center", fontFamily: serif, color: C.ink, fontSize: 20, textAlign: "center", lineHeight: 52 }}>{pieces.map((part, n) => /^\d/.test(part) ? <Text key={n} style={{ color: C.blue, fontFamily: serif, fontSize: 46, fontWeight: "700" }}>{part}</Text> : <Text key={n}>{part}</Text>)}</Text>;
+  };
   const open = (c: Row) => {
     void haptics.tap();
     router.push({ pathname: "/capsule/[id]", params: { id: c.id, side } });
@@ -103,7 +111,7 @@ export default function HomeScreen() {
     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 14, paddingTop: 8 }}>
       <Pressable onPress={() => router.push("/me")} accessibilityLabel={t("home.my")} style={{ alignItems: "center" }}><Avatar avatar={profile?.avatar} size={36} /><Text style={{ color: C.ink, fontFamily: sans, fontSize: 11 }}>{t("home.my")}</Text></Pressable>
       <View style={{ flexDirection: "row", backgroundColor: C.glass, borderRadius: 999, padding: 4 }}>{(["inbox", "sent"] as const).map(tab => <Pressable key={tab} onPress={() => { setSide(tab); void haptics.tick(); }} accessibilityRole="tab" accessibilityState={{ selected: side === tab }} style={{ paddingVertical: 8, paddingHorizontal: 14, borderRadius: 999, backgroundColor: side === tab ? C.white : "transparent" }}><Text style={{ color: C.ink, fontFamily: sans }}>{t(`home.${tab}`)}</Text></Pressable>)}</View>
-      <View style={{ flexDirection: "row", alignItems: "center" }}><Pressable onPress={() => setLanguage(language === "zh" ? "en" : "zh")} accessibilityLabel={language === "zh" ? "English" : "繁體中文"}><Text style={{ color: C.plum, padding: 7, fontFamily: serif }}>{language === "zh" ? "EN" : "中"}</Text></Pressable><Pressable onPress={() => router.push("/shop")} accessibilityLabel={t("home.shop")}><Text style={{ color: C.plum, padding: 7, fontSize: 20 }}>▤</Text></Pressable></View>
+      <View style={{ flexDirection: "row", alignItems: "center" }}><Pressable onPress={() => setLanguage(language === "zh" ? "en" : "zh")} accessibilityLabel={language === "zh" ? "English" : "繁體中文"}><Text style={{ color: C.plum, padding: 7, fontFamily: serif }}>{language === "zh" ? "EN" : "中"}</Text></Pressable><Pressable onPress={() => router.push("/shop")} accessibilityLabel={t("home.shop")} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="shop" color={C.plum} /></Pressable></View>
     </View>
     {loading ? <View style={{ flex: 1, justifyContent: "center" }}><ActivityIndicator color={C.blue} /></View> : error ? <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}><Text style={{ color: C.wax }}>{error}</Text><Pressable onPress={() => void refresh()}><Text style={{ color: C.blue, padding: 16 }}>{t("capsule.retry")}</Text></Pressable></View> : rows.length ? <>
       <View style={{ flex: 1, justifyContent: "center", minHeight: 450 }}><Animated.FlatList ref={list as any} data={rows} horizontal keyExtractor={(c: Row) => c.id} showsHorizontalScrollIndicator={false} snapToInterval={STEP} decelerationRate="fast" contentContainerStyle={{ paddingHorizontal: inset, gap: GAP, alignItems: "center" }} onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scroll } } }], { useNativeDriver: true, listener: (e: any) => { scrollOffset.current = e.nativeEvent.contentOffset.x; } })} scrollEventThrottle={16} onMomentumScrollEnd={e => { const i = Math.max(0, Math.min(rows.length - 1, Math.round(e.nativeEvent.contentOffset.x / STEP))); scrollOffset.current = e.nativeEvent.contentOffset.x; if (i !== index) { setIndex(i); void haptics.tick(); } }} renderItem={({ item: c, index: i }: { item: Row; index: number }) => {
@@ -112,17 +120,17 @@ export default function HomeScreen() {
         return <Animated.View style={{ opacity: scroll.interpolate({ inputRange, outputRange: [0.5, 1, 0.5], extrapolate: "clamp" }), transform: [{ perspective: 900 }, { scale: scroll.interpolate({ inputRange, outputRange: [0.9, 1, 0.9], extrapolate: "clamp" }) }, { rotateY: scroll.interpolate({ inputRange, outputRange: ["8deg", "0deg", "-8deg"], extrapolate: "clamp" }) }] }}><Pressable onPress={() => { const centre = Math.max(0, Math.min(rows.length - 1, Math.round(scrollOffset.current / STEP))); if (i === centre) open(c); else { list.current?.scrollToIndex({ index: i, animated: true }); setIndex(i); void haptics.tick(); } }} accessibilityRole="button" accessibilityLabel={`${headline(c)}, ${p.name}`} style={{ width: W, height: 430, backgroundColor: C.white, borderWidth: 1.5, borderColor: "#5B6474", borderRadius: 20, padding: 18, alignItems: "center", justifyContent: "space-between", ...shadows.card }}>
           <View style={{ height: 26, flexDirection: "row", gap: 6, alignItems: "center" }}>{side === "inbox" && !c.seen_at && !c.opened_at && <Text style={{ color: C.wax, fontSize: 11 }}>{t("home.newTag")}</Text>}{c.handwritten && <Text style={{ color: C.wax, fontFamily: handwriting }}>{t("home.handTag")}</Text>}{c.edition_no && v?.brand && <Text style={{ color: C.brass, fontSize: 11 }}>{v.brand} No.{String(c.edition_no).padStart(3, "0")}</Text>}</View>
           <CardVessel kind={c.vessel as VesselKind} state={state} reduced={reduced} />
-          <Text numberOfLines={2} style={{ height: 60, fontFamily: serif, color: C.ink, fontSize: 21, textAlign: "center" }}>{headline(c)}</Text>
-          <Text numberOfLines={1} style={{ color: C.blue, fontFamily: sans }}>⌖ {pl ? pl[language === "zh" ? "name_zh" : "name_en"] : t("home.anywhere")}</Text>
+          {headlineView(c, state)}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "center", gap: 6, maxWidth: "100%", marginBottom: 12 }}><ArtIcon name="pin" size={18} color="#4A5466" /><Text numberOfLines={1} style={{ color: "#4A5466", fontFamily: serif, fontSize: 15, flexShrink: 1 }}>{pl ? pl[language === "zh" ? "name_zh" : "name_en"] : t("home.anywhere")}</Text></View>
           <View style={{ width: "100%", borderTopWidth: 1, borderColor: C.line, paddingTop: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}><View style={{ flexDirection: "row", alignItems: "center", gap: 5, flexShrink: 1 }}><Text style={{ color: C.muted, fontSize: 11 }}>{t(side === "inbox" ? "home.from" : "home.to")}</Text><Avatar avatar={p.avatar as any} size={30} future={side === "sent" && c.recipient === session?.user.id} /><Text numberOfLines={1} style={{ color: C.ink, fontSize: 11, flexShrink: 1 }}>{p.name}</Text></View><Text style={{ color: C.muted, fontSize: 10 }}>{formatDate(c.sealed_at, language)}</Text></View>
         </Pressable></Animated.View>;
       }} /></View>
       <View style={{ alignItems: "center", gap: 8, paddingBottom: 6 }}><View style={{ flexDirection: "row", gap: 6 }}>{rows.map((c, i) => <View key={c.id} style={{ width: i === index ? 14 : 6, height: 6, borderRadius: 6, backgroundColor: i === index ? C.blue : C.line }} />)}</View><Text style={{ color: C.muted, fontFamily: sans, fontSize: 12 }}>{side === "inbox" ? t("home.summaryIn", rows.length, ready) : t("home.summaryOut", rows.length, rows.filter(c => !c.opened_at).length)}</Text></View>
-    </> : <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 10 }}><Vessel kind="bottle" size={130} /><Text style={{ fontFamily: serif, fontSize: 22, color: C.ink }}>{t(side === "inbox" ? "home.emptyIn" : "home.emptyOut")}</Text><Text style={{ color: C.muted }}>{t("home.emptyHint")}</Text></View>}
-    <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 32, paddingBottom: 14 }}><Dock label={t("home.journey")} icon="⌖" onPress={() => router.push("/journey")} /><Pressable onPress={() => router.push("/create")} accessibilityLabel={t("home.new")} style={{ width: 68, height: 68, borderRadius: 34, backgroundColor: C.blue, alignItems: "center", justifyContent: "center", ...shadows.card }}><Text style={{ fontSize: 36, color: C.white }}>＋</Text></Pressable><Dock label={t("home.cabinet")} icon="▥" onPress={() => router.push("/cabinet")} /></View>
+    </> : <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 10 }}><Image source={side === 'inbox' ? scenes.emptyInbox : scenes.emptySent} style={{ width: '100%', height: 240 }} resizeMode="contain" /><Text style={{ fontFamily: serif, fontSize: 22, color: C.ink }}>{t(side === "inbox" ? "home.emptyIn" : "home.emptyOut")}</Text><Text style={{ color: C.muted }}>{t("home.emptyHint")}</Text></View>}
+    <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 32, paddingBottom: 14 }}><Dock label={t("home.journey")} icon="map" onPress={() => router.push("/journey")} /><Pressable onPress={() => router.push("/create")} accessibilityLabel={t("home.new")} style={{ width: 68, height: 68, borderRadius: 34, backgroundColor: C.blue, alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="plus" size={36} color={C.white} /></Pressable><Dock label={t("home.cabinet")} icon="cabinet" onPress={() => router.push("/cabinet")} /></View>
   </View></SafeAreaView>;
 }
 
-function Dock({ label, icon, onPress }: { label: string; icon: string; onPress: () => void }) {
-  return <Pressable onPress={onPress} accessibilityLabel={label} style={{ alignItems: "center", gap: 2 }}><View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, alignItems: "center", justifyContent: "center" }}><Text style={{ color: C.plum, fontSize: 24 }}>{icon}</Text></View><Text style={{ color: C.muted, fontSize: 11 }}>{label}</Text></Pressable>;
+function Dock({ label, icon, onPress }: { label: string; icon: IconName; onPress: () => void }) {
+  return <Pressable onPress={onPress} accessibilityLabel={label} style={{ alignItems: "center", gap: 2 }}><View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, alignItems: "center", justifyContent: "center" }}><ArtIcon name={icon} color={C.plum} /></View><Text style={{ color: C.muted, fontSize: 11 }}>{label}</Text></Pressable>;
 }

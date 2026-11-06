@@ -4,6 +4,7 @@
     "slug": "time-capsule",
     "scheme": "timecapsule",
     "orientation": "portrait",
+    "icon": "../design/art/app-icon.png",
     "userInterfaceStyle": "light",
     "experiments": {
       "typedRoutes": true
@@ -24,7 +25,11 @@
       "bundleIdentifier": "app.timecapsule.mobile"
     },
     "android": {
-      "package": "app.timecapsule.mobile"
+      "package": "app.timecapsule.mobile",
+      "adaptiveIcon": {
+        "foregroundImage": "../design/art/app-icon.png",
+        "backgroundColor": "#F6F8FB"
+      }
     }
   }
 }

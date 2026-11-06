@@ -1,9 +1,8 @@
 import React from "react";
 import { SvgXml } from "react-native-svg";
-import { Image } from "react-native";
+import { Image, View } from "react-native";
 import { portraits } from "../art/manifest";
 import { face, PORTRAITS } from "./portraitSvg";
-// TODO F4: register bundled portrait-01..08 and portrait-future when T9 art lands.
 export { PORTRAITS };
 export function Avatar({
   avatar,
@@ -14,16 +13,12 @@ export function Avatar({
   size?: number;
   future?: boolean;
 }) {
-  if (
-    avatar?.set === "illus" &&
-    typeof avatar.id === "string" &&
-    portraits[avatar.id]
-  )
+  const portrait = future ? portraits.future : avatar?.set === "illus" && typeof avatar.id === "string" ? portraits[avatar.id] : undefined;
+  if (portrait)
     return (
-      <Image
-        source={portraits[avatar.id]}
-        style={{ width: size, height: size }}
-      />
+      <View style={{ width: size, height: size, borderRadius: size / 2, overflow: 'hidden' }}>
+        <Image source={portrait} resizeMode="stretch" style={{ width: size * 1024 / 860, height: size * 1024 / 860, left: -size * 75 / 860, top: -size * 96 / 860 }} />
+      </View>
     );
   const config =
     avatar?.set === "illus"

@@ -2,6 +2,7 @@ import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, Text, View, Pressable } from "react-native";
 import { C, serif, sans } from "../theme";
+import { ArtIcon } from './ArtIcon';
 export function Screen({ children }: { children: React.ReactNode }) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}>
@@ -66,11 +67,18 @@ export function Bar({ children }: { children: React.ReactNode }) {
     <View
       style={{
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
+        gap: 8,
         alignItems: "center",
       }}
     >
       {children}
     </View>
   );
+}
+export function BackButton({ onPress, label }: { onPress: () => void; label: string }) {
+  return <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
+    style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}>
+    <ArtIcon name="back" size={25} />
+  </Pressable>;
 }
