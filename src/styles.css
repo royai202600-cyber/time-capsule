@@ -324,3 +324,7 @@ html[lang=en] .auth-title{letter-spacing:.02em}
 .signout{margin:26px auto 0;color:var(--muted)}
 /* One card can't scroll to the middle, so centre it. */
 .rail:has(> .card:only-child){justify-content:center}
+.btn.google{background:#fff;color:#1f1f1f;border:1px solid #747775;gap:10px;font-weight:500;letter-spacing:.01em;margin-top:4px}
+.btn.google .ic{width:20px;height:20px}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:18px 0 6px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}

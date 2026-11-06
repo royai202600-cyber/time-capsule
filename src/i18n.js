@@ -154,6 +154,7 @@ export const tr = (key, ...args) => { const v = STR[LANG][key] ?? STR.zh[key]; r
 Object.assign(STR.zh, {
   appName: '時光膠囊', me: '我', future: '未來的自己', loading: '載入中…',
   signInH: '登入時光膠囊', signInSub: '輸入你的電郵，我們會寄一封登入電郵給你，不需要密碼。',
+  google: '使用 Google 帳戶登入', orEmail: '或用電郵登入',
   emailLabel: '電郵', sendCode: '寄出登入電郵', sendFail: '寄不出登入碼，請稍後再試。',
   codeH: '查看你的電郵', codeSub: e => `我們寄了一封登入電郵到 ${e}。按信中的登入連結就可以登入；如果信中有登入碼，也可以在下面輸入。`, codeLabel: '登入碼（如有）',
   verify: '登入', badCode: '登入碼不正確或已過期。', changeEmail: '用另一個電郵',
@@ -173,6 +174,7 @@ Object.assign(STR.zh, {
 Object.assign(STR.en, {
   appName: 'Time Capsule', me: 'Me', future: 'Future me', loading: 'Loading…',
   signInH: 'Sign in to Time Capsule', signInSub: 'Enter your email and we’ll send you a sign-in email. No password needed.',
+  google: 'Continue with Google', orEmail: 'or use your email',
   emailLabel: 'Email', sendCode: 'Email me a sign-in link', sendFail: 'Couldn’t send the code. Please try again later.',
   codeH: 'Check your email', codeSub: e => `We sent a sign-in email to ${e}. Tap the link in it to sign in, or enter the code below if the email has one.`, codeLabel: 'Sign-in code (if any)',
   verify: 'Sign in', badCode: 'That code is wrong or has expired.', changeEmail: 'Use a different email',
