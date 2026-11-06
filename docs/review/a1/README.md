@@ -24,7 +24,7 @@ The **Original** column uses `src/main.js` and `src/styles.css` from the root we
 | Sent, waiting | ![Original desktop waiting sender](original-sender-desktop.jpg) | ![Expo desktop waiting sender](expo-sender-waiting-desktop.jpg) |
 | Sent, opened | ![Original desktop opened sender](original-sender-opened-desktop.jpg) | ![Expo desktop opened sender](expo-sender-opened-desktop.jpg) |
 
-The sign-in top illustration uses the new **assembled dome** art. It reads clearly at the original 120 px size. The Home card number, page story emphasis, four live countdown boxes, destination link, sender's dashed sealed placeholder, and plain centered hint use the original CSS measurements and colors. The countdown remains visible until a sent capsule is actually opened, including at zero after its unlock time.
+The sign-in top illustration now uses the **welcome scene**, the app's WebP export of `design/art/scenes/scene-welcome.png`, as Roy requested. The 390 px and desktop Expo sign-in captures above show this update. Empty inbox uses `scene-empty-inbox.webp`, empty sent uses `scene-empty-sent.webp`, and the sealed result uses `scene-sealed.webp`; all three were checked against their screen code and browser captures. The Home card number, page story emphasis, four live countdown boxes, destination link, sender's dashed sealed placeholder, and plain centered hint use the original CSS measurements and colors. The countdown remains visible until a sent capsule is actually opened, including at zero after its unlock time.
 
 ## Vessel motion review
 
