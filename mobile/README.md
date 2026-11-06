@@ -21,3 +21,7 @@ Expo Go cannot support the app-specific OAuth scheme; Google sign-in requires an
 - `src/i18n/webStrings.ts` mirrors the web keys; add translations to both languages and use `useLanguage().t` in UI.
 
 The six scenes from the feel demo remain in the development-only Playground. Illustration assets are not bundled yet, so avatars and vessels use SVG fallbacks.
+
+## Opening the project on a phone
+
+Use Expo Go rather than the phone browser for an `exp://` or `exps://` link. If a LAN QR times out, start a separate tunnel with `npx expo start --go --tunnel --port 8085` and scan its new QR. Expo may install its ngrok helper for the tunnel. Keep the terminal process running. Each Expo Go build supports a matching SDK; this project uses SDK 57. On physical iOS, Expo may also require Expo CLI and Expo Go to be signed into the same Expo account (`npx expo login`, then the account menu on the phone).
