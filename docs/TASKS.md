@@ -12,7 +12,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | ID | Task | Owner | Note |
 |---|---|---|---|
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
-| F2 | Create, seal and Shop | Codex | Four-step Create, handwriting/photo, server send, seal ceremony and vessel acquisition implemented. TypeScript and Expo web checked; Roy's Expo Go end-to-end check remains before merge. |
+| F2 | Create, seal and Shop | Codex | Roy completed a self-send in Expo Go. Claude's animation review and phone checks of Shop acquisition, handwritten/photo send and friend send remain before merge. |
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
