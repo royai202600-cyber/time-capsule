@@ -36,7 +36,7 @@ export default function CreateScreen() {
   const [photo, setPhoto] = useState<string | null>(null), [photoChoices, setPhotoChoices] = useState(false);
   const [vessel, setVessel] = useState<VesselKind | null>(null), [place, setPlace] = useState<string | null>(null);
   const [quick, setQuick] = useState<Quick>('m1'), [dateText, setDateText] = useState(dateValue(quickDate('m1')));
-  const [error, setError] = useState(''), [busy, setBusy] = useState(false), [phase, setPhase] = useState<'steps' | 'seal' | 'sealed'>('steps'), [sealedAt, setSealedAt] = useState<Date | null>(null);
+  const [error, setError] = useState(''), [busy, setBusy] = useState(false), [phase, setPhase] = useState<'steps' | 'seal' | 'sealed'>('steps'), [sealedAt, setSealedAt] = useState<Date | null>(null), [stamped, setStamped] = useState(false);
   const drawing = useRef<DrawingHandle>(null);
   const sentOnce = useRef(false);
   const sendingRef = useRef(false);
@@ -76,7 +76,7 @@ export default function CreateScreen() {
   };
   const finishAnimation = () => {
     if (reduced) { Animated.timing(drift, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }).start(() => { setPhase('sealed'); void haptics.success(); }); return; }
-    Animated.sequence([Animated.spring(letter, { toValue: .65, ...motion.spring.soft, useNativeDriver: true }), Animated.spring(letter, { toValue: .16, ...motion.spring.soft, useNativeDriver: true }), Animated.parallel([Animated.spring(letterDrop, { toValue: 150, ...motion.spring.soft, useNativeDriver: true }), Animated.spring(drift, { toValue: .35, ...motion.spring.soft, useNativeDriver: true })])]).start(() => {
+    Animated.sequence([Animated.spring(letter, { toValue: .65, ...motion.spring.soft, useNativeDriver: true }), Animated.spring(letter, { toValue: .16, ...motion.spring.soft, useNativeDriver: true }), Animated.parallel([Animated.spring(letterDrop, { toValue: 220, ...motion.spring.soft, useNativeDriver: true }), Animated.spring(drift, { toValue: .35, ...motion.spring.soft, useNativeDriver: true })])]).start(() => {
       lidLift.value = withSpring(0, motion.spring.heavy); void haptics.thump();
       Animated.spring(drift, { toValue: 1, ...motion.spring.soft, useNativeDriver: true }).start(() => { setPhase('sealed'); void haptics.success(); });
     });
@@ -86,6 +86,7 @@ export default function CreateScreen() {
     if (sendingRef.current || sentOnce.current || !recipient || !vessel || !openAt) return;
     sendingRef.current = true;
     setBusy(true); setError('');
+    const snap = reduced ? Promise.resolve() : new Promise<void>(resolve => Animated.spring(wax, { toValue: { x: 0, y: -305 }, ...motion.spring.heavy, useNativeDriver: true }).start(() => resolve()));
     try {
       const ink = mode === 'hand' ? drawingData : null;
       if (mode === 'hand' && !ink) throw new Error('empty drawing');
@@ -93,13 +94,14 @@ export default function CreateScreen() {
       if (rpcError) throw rpcError;
       sentOnce.current = true;
       setSealedAt(openAt);
+      await snap;
       void (reduced ? haptics.tap() : haptics.thump());
-      if (reduced) { finishAnimation(); return; }
-      Animated.spring(wax, { toValue: { x: 0, y: -300 }, ...motion.spring.heavy, useNativeDriver: true }).start(() => Animated.sequence([
-        Animated.spring(waxScale, { toValue: 1.25, ...motion.spring.heavy, useNativeDriver: true }),
-        Animated.spring(waxScale, { toValue: .95, ...motion.spring.heavy, useNativeDriver: true }),
-        Animated.spring(waxScale, { toValue: 1, ...motion.spring.soft, useNativeDriver: true }),
-      ]).start(finishAnimation));
+      if (reduced) { setStamped(true); finishAnimation(); return; }
+      Animated.sequence([
+        Animated.timing(waxScale, { toValue: 1.25, duration: motion.fade.quick, useNativeDriver: true }),
+        Animated.timing(waxScale, { toValue: .95, duration: motion.fade.quick, useNativeDriver: true }),
+        Animated.timing(waxScale, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }),
+      ]).start(() => { setStamped(true); finishAnimation(); });
     } catch (e) {
       const msg = String((e as any)?.message ?? e).toLowerCase(), code = String((e as any)?.hint ?? '');
       setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('future') ? t('create.badDate') : t('create.sendError'));
@@ -114,18 +116,20 @@ export default function CreateScreen() {
 
   if (authLoading) return <Screen><Body>{t('create.loading')}</Body></Screen>;
   if (!session) return <Screen><Body>{t('create.signIn')}</Body><Button title={t('create.close')} onPress={() => router.replace('/')} /></Screen>;
-  if (phase !== 'steps') return <Screen><View style={{ minHeight: 610, alignItems: 'center', justifyContent: 'center', gap: 18 }}>
-    {phase === 'seal' ? <>
-      <Text style={{ fontFamily: serif, fontSize: 26, color: C.ink }}>{t('create.sealSend')}</Text>
-      <Animated.View style={[card, { width: '88%', height: 230, alignItems: 'center', justifyContent: 'center', transform: [{ scaleY: letter }, { translateY: letterDrop }], opacity: drift.interpolate({ inputRange: [0, .5, 1], outputRange: [1, 1, 0] }) }]}>
+  if (phase === 'seal') return <Screen>
+    <Heading>{t('create.sealSend')}</Heading>
+    <View style={{ height: 520, width: '100%' }}>
+      <Animated.View style={[card, { position: 'absolute', top: 20, left: '6%', width: '88%', height: 210, alignItems: 'center', justifyContent: 'center', transform: [{ scaleY: letter }, { translateY: letterDrop }], opacity: drift.interpolate({ inputRange: [0, .5, 1], outputRange: [1, 1, 0] }) }]}>
         <Text style={{ color: C.muted, fontFamily: handwriting, fontSize: 19 }}>{recipientName}</Text><View style={{ width: '75%', marginTop: 28, gap: 18 }}><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /></View>
+        {stamped && <View style={{ position: 'absolute', top: 83, left: 0, right: 0, alignItems: 'center' }}><View style={{ width: 70, height: 70, borderRadius: 35, borderWidth: 3, borderColor: C.plum, backgroundColor: C.wax, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: C.cream, fontSize: 29 }}>✦</Text></View></View>}
       </Animated.View>
-      <Animated.View style={{ transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [30, -90] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={150} lidLift={lidLift} /></Animated.View>
-      <Text style={{ fontFamily: sans, color: C.muted }}>{busy ? t('create.sending') : t('create.drag')}</Text>
-      <Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, borderRadius: 38, backgroundColor: C.wax, borderWidth: 3, borderColor: C.plum, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }] }}><Text style={{ color: C.cream, fontSize: 31 }}>✦</Text></Animated.View>
-      <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
-    </> : <><Vessel kind={vessel ?? 'dome'} size={180} /><Heading>{t('create.sealed')}</Heading><Body>{t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></>}
-  </View></Screen>;
+      <Animated.View style={{ position: 'absolute', top: 250, left: 0, right: 0, alignItems: 'center', transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [30, -90] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={150} lidLift={lidLift} /></Animated.View>
+      {!stamped && <View style={{ position: 'absolute', top: 405, left: 0, right: 0, alignItems: 'center' }}><Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, borderRadius: 38, backgroundColor: C.wax, borderWidth: 3, borderColor: C.plum, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }] }}><Text style={{ color: C.cream, fontSize: 31 }}>✦</Text></Animated.View></View>}
+      <Text style={{ position: 'absolute', top: 490, left: 0, right: 0, textAlign: 'center', fontFamily: sans, color: C.muted }}>{busy || sentOnce.current ? t('create.sending') : t('create.drag')}</Text>
+    </View>
+    <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
+  </Screen>;
+  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Vessel kind={vessel ?? 'dome'} size={180} /><Heading>{t('create.sealed')}</Heading><Body>{t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
   return <Screen>
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Pressable onPress={() => router.back()} accessibilityRole='button'><Text style={{ color: C.plum, fontFamily: sans }}>{t('create.close')}</Text></Pressable><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('create.langSwitch')}</Text></Pressable></View>
     <Heading>{t('create.title')}</Heading><Body>{t('create.step', step)}</Body><View style={{ height: 5, backgroundColor: C.line, borderRadius: 5 }}><View style={{ width: `${step * 25}%`, height: 5, backgroundColor: C.wax, borderRadius: 5 }} /></View>
