@@ -6,6 +6,7 @@ Context for any AI agent working in this folder. Read this before doing anything
 - Owner: **Roy**. He prefers to **keep it simple**: fewest moving parts, no speculative features.
 - Propose before building anything big (stack, architecture, new dependencies) and wait for Roy's OK.
 - Always make the app **runnable locally** and tell Roy the exact command and URL. Check it in the browser before saying something works.
+- **Before generating or changing any illustration, read [`design/art/STYLE.md`](design/art/STYLE.md)** and follow it: the model (`gpt-image-2`; Codex uses its built-in image tool, so no API key is needed), the reference style sheet, the style block to paste into every prompt, the rules for each kind of asset, the checks and the approval steps.
 - Before creating or changing a map or country flag, find and inspect an online reference image for the real geography or flag design. Use a reliable source, and record the reference in the art README or task report. Check the final artwork against it; do not trust generated geography or symbols alone.
 
 ## Team and roles (from 2026-11-06)
@@ -72,6 +73,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8081. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-07: Roy asked for one written art style guide so future art stays consistent: `design/art/STYLE.md` (model, reference, style block, rules for each asset, process). AGENTS.md points to it under Owner and working style.
 - 2026-11-07: Roy extended production polish to capsule paging and discovery. Home and capsule pages share larger interpolated dots and pointer-only arrows. A device remembers the capsule nudge and dismissed swipe hint in AsyncStorage; Reduce Motion skips the nudge. Map badges render above the radius and map with a coordinate-anchored tail; all capsule pages share plain serif page numbers.
 - 2026-11-07: Roy approved production polish after Claude's code review: Chinese-only letter spacing, scroll-driven Home pagination, and a seal guide with a matching target, brass chevrons, idle nudge, touch fade and Reduce Motion support. The draggable wax stays above the letter with Android elevation. Release follows green PR CI.
 - 2026-11-07: Roy approved N2 wording and chose `Admin` as operator, `info@docai.net` as support email, and `2026/11/07` as effective date. Legal pages now ship with the Expo web export; sign-in and Me link to them. In-app account deletion is a separate task before App Store release.
