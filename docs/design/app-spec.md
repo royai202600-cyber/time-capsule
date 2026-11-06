@@ -75,7 +75,7 @@ Each screen lists: **Layout**, **States**, **Interaction & motion**, **Art needs
 ### S1 Profile setup [F0]
 - **Layout:** big portrait preview, name, city (optional), portrait picker grid.
 - **Interaction:** tapping a portrait springs it up into the preview (`spring.snappy`) + tick.
-- **Open decision (Roy):** keep the mix-and-match portraits, or switch to the 8 illustrated portraits (+ "future self"). Recommendation: illustrated set as the main choice, keep the current SVG portraits as a fallback set. Store as `avatar: { set: 'illus' | 'svg', id | config }`.
+- **Decided (Roy, 2026-11-06): illustrated portraits.** The picker shows the 8 illustrated portraits (`portrait-01..08`); "未來的自己" uses `portrait-future`. The current mix-and-match SVG portraits stay only as a fallback (for profiles saved before the switch, and until the art is merged). Store as `avatar: { set: 'illus', id: '03' }`; old profiles keep their SVG config and still render. No database change needed (`avatar` is already JSON).
 - **Art needs:** `portrait-01..08`, `portrait-future`.
 
 ### S2 Home [F1]
@@ -191,6 +191,6 @@ The artwork session tells Claude when assets merge (manifest paths + pivots). Sc
 Shared files (theme, strings, components) are owned by F0; F1–F4 may **add** strings and small components in their own folders, and propose changes to shared ones in their PR description.
 
 ## 5. Open decisions for Roy
-1. Illustrated portraits replace the mix-and-match ones? (Recommendation: yes, keep SVG as fallback.)
+1. ~~Illustrated portraits replace the mix-and-match ones?~~ **Decided: yes** (see S1).
 2. Bottom dock (Journey · ＋ · Cabinet) instead of a tab bar? (Recommendation: yes; keeps the prototype's calm home.)
 3. Final app id and store names (needed before any store build).
