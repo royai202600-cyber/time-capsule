@@ -6,6 +6,8 @@ import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { Avatar } from "../../components/Avatar";
+import { PagerDots, PagerArrows } from "../../components/PagerControls";
+import { usePagerDiscovery } from "./usePagerDiscovery";
 import { Countdown } from "../../components/Countdown";
 import { Vessel } from "../../components/Vessel";
 import { haptics } from "../../components/haptics";
@@ -33,8 +35,8 @@ function Label({ children, muted = false }: { children: React.ReactNode; muted?:
 function Action({ title, onPress, disabled = false, ghost = false, icon }: { title: string; onPress: () => void; disabled?: boolean; ghost?: boolean; icon?: "pin" }) {
   return <Pressable disabled={disabled} onPress={onPress} accessibilityRole="button" style={{ backgroundColor: ghost ? C.white : C.blue, borderColor: C.blue, borderWidth: 1, borderRadius: 14, padding: 15, alignItems: "center", opacity: disabled ? 0.5 : 1, flexDirection: "row", justifyContent: "center", gap: 6 }}>{icon && <ArtIcon name={icon} size={18} color={ghost ? C.blue : C.white} />}<Text style={{ color: ghost ? C.blue : C.white, fontFamily: sans, fontSize: 16 }}>{title}</Text></Pressable>;
 }
-function Story({ value }: { value: string }) {
-  return <Text style={{ color: "#4A5466", fontFamily: serif, fontSize: 16, lineHeight: 31, letterSpacing: .3 }}>{value.split(/(<em>.*?<\/em>)/g).map((part, i) => part.startsWith("<em>") ? <Text key={i} style={{ color: C.blue, fontFamily: serif }}>{part.slice(4, -5)}</Text> : <Text key={i}>{part}</Text>)}</Text>;
+function Story({ value, language }: { value: string; language: "zh" | "en" }) {
+  return <Text style={{ color: "#4A5466", fontFamily: serif, fontSize: 16, lineHeight: 31, letterSpacing: language === "zh" ? .3 : 0 }}>{value.split(/(<em>.*?<\/em>)/g).map((part, i) => part.startsWith("<em>") ? <Text key={i} style={{ color: C.blue, fontFamily: serif }}>{part.slice(4, -5)}</Text> : <Text key={i}>{part}</Text>)}</Text>;
 }
 
 export default function CapsuleScreen() {
@@ -57,6 +59,9 @@ export default function CapsuleScreen() {
   const [charge, setCharge] = useState(0);
   const [burst, setBurst] = useState(false);
   const pages = useRef<React.ElementRef<typeof ScrollView>>(null);
+  const pagePosition = useRef(new Animated.Value(0)).current;
+  const pageIndex = useRef(0);
+  const discovery = usePagerDiscovery(pages, !loading && side === "inbox" && !opened && pagerHeight > 0, reduced);
   const lid = useSharedValue(0);
   const letterRise = useRef(new Animated.Value(0)).current;
   const c = bundle.capsules[0];
@@ -97,7 +102,7 @@ export default function CapsuleScreen() {
   useEffect(() => { void refresh(); }, [refresh]);
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   useEffect(() => { if (opened) Animated.spring(letterRise, { toValue: 1, useNativeDriver: true, ...motion.spring.soft }).start(); }, [opened]);
-  const goPage = (n: number) => pages.current?.scrollTo({ x: n * pageWidth, animated: !reduced });
+  const goPage = (n: number) => { discovery.beginDrag(); discovery.dismiss(); pages.current?.scrollTo({ x: n * pageWidth, animated: !reduced }); };
   const openCapsule = async () => {
     if (!c || busy) return;
     setBusy(true);
@@ -137,23 +142,35 @@ export default function CapsuleScreen() {
   return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}><View style={{ flex: 1, width: "100%" }}>
     <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}><Pressable onPress={() => router.canGoBack() ? router.back() : router.replace("/")} accessibilityLabel={t("capsule.back")} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="back" color={C.plum} /></Pressable><Text style={{ fontFamily: serif, fontSize: 18, color: C.ink }}>{side === "sent" ? t("capsule.sentTitle", name) : opened ? (c.sender === session?.user.id ? t("capsule.letterSelf") : t("capsule.letterFrom", name)) : t("capsule.title")}</Text><View style={{ width: 44 }} /></View>
     {side === "sent" ? <SenderView c={c} name={name} placeName={placeName} language={language} t={t} /> : opened ? <ScrollView contentContainerStyle={{ padding: 20, gap: 18, paddingBottom: 50 }}><Animated.View style={{ opacity: letterRise, transform: [{ translateY: letterRise.interpolate({ inputRange: [0, 1], outputRange: [reduced ? 0 : 70, 0] }) }] }}><LetterView c={c} content={opened} name={name} placeName={placeName} self={c.sender === session?.user.id} language={language} t={t} /></Animated.View></ScrollView> : <>
-      <ScrollView ref={pages} horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={e => { const n = Math.round(e.nativeEvent.contentOffset.x / pageWidth); if (n !== page) { setPage(n); void haptics.tick(); } }} onLayout={e => setPagerHeight(e.nativeEvent.layout.height)} style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}><ScrollView ref={pages} horizontal pagingEnabled showsHorizontalScrollIndicator={false} onScrollBeginDrag={discovery.beginDrag} scrollEventThrottle={16} onScroll={e => {
+        const x = e.nativeEvent.contentOffset.x;
+        pagePosition.setValue(x / pageWidth);
+        if (discovery.nudging.current) return;
+        const n = Math.max(0, Math.min(pageCount - 1, Math.round(x / pageWidth)));
+        if (n !== pageIndex.current) { pageIndex.current = n; setPage(n); void haptics.tick(); }
+        if (x > 8) discovery.dismiss();
+      }} onLayout={e => setPagerHeight(e.nativeEvent.layout.height)} style={{ flex: 1 }}>
         <View style={{ width: pageWidth, height: pagerHeight || undefined, paddingHorizontal: 18, paddingTop: 10, paddingBottom: 6 }}><View style={{ flex: 1, width: "100%", maxWidth: 600, alignSelf: "center", paddingHorizontal: 22, paddingTop: 18, paddingBottom: 12, backgroundColor: C.white, borderRadius: 14, borderWidth: 1.5, borderColor: "#5B6474", marginBottom: 8 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}><Text style={{ color: "#4A5466", fontFamily: serif, fontSize: 15 }}>{t("home.from")}</Text><Avatar avatar={sender?.avatar as any} size={24} /><Text style={{ color: "#4A5466", fontFamily: serif, fontSize: 15 }}>{name}</Text></View>
           {!!c.edition_no && v?.brand && <Text style={{ color: C.brass, textAlign: "center", marginTop: 6 }}>{v.brand} No.{String(c.edition_no).padStart(3, "0")}</Text>}
           <View style={{ alignItems: "center", marginTop: 14, marginBottom: 10 }}><Vessel kind={c.vessel as VesselKind} size={160} /></View>
-          <Story value={now < new Date(c.open_at).getTime() ? (STR[language] as any).storyWaiting(formatDate(c.sealed_at, language, true), Math.max(0, Math.floor((now - new Date(c.sealed_at).getTime()) / 86400000)), waitValue, waitLabel, formatDate(c.open_at, language, true)) : (STR[language] as any).storyArrived(formatDate(c.sealed_at, language, true), Math.max(0, Math.floor((new Date(c.open_at).getTime() - new Date(c.sealed_at).getTime()) / 86400000)), formatDate(c.open_at, language, true)) + (pl ? (STR[language] as any)[state === "ready" ? "storyHere" : "storyGo"] : (STR[language] as any).storyNow)} />
+          <Story language={language} value={now < new Date(c.open_at).getTime() ? (STR[language] as any).storyWaiting(formatDate(c.sealed_at, language, true), Math.max(0, Math.floor((now - new Date(c.sealed_at).getTime()) / 86400000)), waitValue, waitLabel, formatDate(c.open_at, language, true)) : (STR[language] as any).storyArrived(formatDate(c.sealed_at, language, true), Math.max(0, Math.floor((new Date(c.open_at).getTime() - new Date(c.sealed_at).getTime()) / 86400000)), formatDate(c.open_at, language, true)) + (pl ? (STR[language] as any)[state === "ready" ? "storyHere" : "storyGo"] : (STR[language] as any).storyNow)} />
           {state === "time" && <Countdown until={c.open_at} />}
-          <View style={{ marginTop: "auto", alignItems: "center", paddingTop: 8, minHeight: 58 }}>{pl ? <><Text style={{ color: "#4A5466", fontFamily: sans, fontSize: 14, letterSpacing: 1, marginBottom: 6 }}>{state === "time" ? (STR[language] as any).goLater : (STR[language] as any).goNow}</Text><Pressable accessibilityRole="button" onPress={() => goPage(1)} style={{ flexDirection: "row", alignItems: "center", gap: 6, borderBottomWidth: 1, borderBottomColor: C.blue, paddingBottom: 2 }}><ArtIcon name="pin" size={18} color={C.blue} /><Text style={{ color: C.blue, fontFamily: serif, fontWeight: "700", fontSize: 17 }}>{placeName}</Text></Pressable></> : state !== "time" ? <Action title={t("capsule.goOpen")} onPress={() => goPage(openPage)} /> : null}</View>
-          <Text style={{ alignSelf: "flex-end", color: C.blue, fontFamily: serif, fontSize: 22, marginTop: 10 }}>1</Text>
-        </View></View>
-        {pl && <View style={{ width: pageWidth, height: pagerHeight || undefined, paddingHorizontal: 20 }}><ScrollView style={{ width: "100%" }} contentContainerStyle={{ flexGrow: 1 }}><CapsuleMapPage place={pl} vessel={c.vessel as VesselKind} onGoOpen={() => goPage(openPage)} /></ScrollView></View>}
-        <View style={{ width: pageWidth, height: pagerHeight || undefined, paddingHorizontal: 20 }}><ScrollView style={{ width: "100%", maxWidth: 600, alignSelf: "center", backgroundColor: C.white, borderRadius: 18, borderWidth: 1, borderColor: C.line, marginBottom: 8 }} contentContainerStyle={{ padding: 18, alignItems: "center", gap: 13 }}><View style={{ width: 220, height: 210, alignItems: "center", justifyContent: "center" }}><LightBurst intensity={charge * 0.65 + (state === "ready" ? 0.12 : 0)} bloom={burst} /><Animated.View style={{ transform: [{ translateX: reduced ? 0 : Math.sin(charge * 70) * charge * 3 }] }}><Vessel kind={c.vessel as VesselKind} size={180} lidLift={lid} ready={state === "ready"} /></Animated.View></View><View style={{ width: "100%", gap: 9 }}><Checklist label={t("capsule.time")} value={formatDate(c.open_at, language, true)} done={now >= new Date(c.open_at).getTime()} />{pl && <Checklist label={t("capsule.place")} value={placeName} done={state === "ready"} />}</View><View style={{ backgroundColor: C.paper, padding: 14, borderRadius: 12, width: "100%" }}><Text style={{ fontFamily: handwriting, fontSize: 19, color: C.plum }}>「{c.hint || t("capsule.defaultHint")}」</Text><Text style={{ color: C.muted, marginTop: 5 }}>{t("capsule.hint", name)}</Text></View>{v?.brand && pl?.brand_vessel === c.vessel && <Label>{t("capsule.brandNote")}</Label>}{state === "ready" && !busy ? <RitualHold title={t("capsule.hold")} onProgress={setCharge} onComplete={() => void openCapsule()} /> : <Action disabled title={busy ? t("capsule.opening") : state === "time" ? t("capsule.wait") : t("capsule.needPlace")} onPress={() => {}} />}{state === "ready" && <Label muted>{t("capsule.holdNote")}</Label>}{!!error && <Text accessibilityRole="alert" style={{ color: C.wax, textAlign: "center" }}>{error}</Text>}<Text style={{ alignSelf: "flex-end", color: C.muted }}>{t("capsule.page", pageCount)}</Text></ScrollView></View>
-      </ScrollView><View style={{ flexDirection: "row", justifyContent: "center", gap: 7, padding: 10 }}>{Array.from({ length: pageCount }, (_, i) => <Pressable key={i} onPress={() => goPage(i)} accessibilityLabel={t("capsule.page", i + 1)} style={{ width: i === page ? 15 : 7, height: 7, borderRadius: 7, backgroundColor: i === page ? C.blue : C.line }} />)}</View>
+          <View style={{ marginTop: "auto", alignItems: "center", paddingTop: 8, minHeight: 58 }}>{pl ? <><Text style={{ color: "#4A5466", fontFamily: sans, fontSize: 14, letterSpacing: language === "zh" ? 1 : 0, marginBottom: 6 }}>{state === "time" ? (STR[language] as any).goLater : (STR[language] as any).goNow}</Text><Pressable accessibilityRole="button" onPress={() => goPage(1)} style={{ flexDirection: "row", alignItems: "center", gap: 6, borderBottomWidth: 1, borderBottomColor: C.blue, paddingBottom: 2 }}><ArtIcon name="pin" size={18} color={C.blue} /><Text style={{ color: C.blue, fontFamily: serif, fontWeight: "700", fontSize: 17 }}>{placeName}</Text></Pressable></> : state !== "time" ? <Action title={t("capsule.goOpen")} onPress={() => goPage(openPage)} /> : null}</View>
+
+        </View><PageNumber n={1} label={t("capsule.page", 1)} /></View>
+        {pl && <View style={{ width: pageWidth, height: pagerHeight || undefined, paddingHorizontal: 20 }}><ScrollView style={{ width: "100%", marginBottom: 50 }} contentContainerStyle={{ flexGrow: 1 }}><CapsuleMapPage place={pl} vessel={c.vessel as VesselKind} onGoOpen={() => goPage(openPage)} /></ScrollView><PageNumber n={2} label={t("capsule.page", 2)} /></View>}
+        <View style={{ width: pageWidth, height: pagerHeight || undefined, paddingHorizontal: 20 }}><ScrollView style={{ width: "100%", maxWidth: 600, alignSelf: "center", backgroundColor: C.white, borderRadius: 18, borderWidth: 1, borderColor: C.line, marginBottom: 8 }} contentContainerStyle={{ padding: 18, paddingBottom: 60, alignItems: "center", gap: 13 }}><View style={{ width: 220, height: 210, alignItems: "center", justifyContent: "center" }}><LightBurst intensity={charge * 0.65 + (state === "ready" ? 0.12 : 0)} bloom={burst} /><Animated.View style={{ transform: [{ translateX: reduced ? 0 : Math.sin(charge * 70) * charge * 3 }] }}><Vessel kind={c.vessel as VesselKind} size={180} lidLift={lid} ready={state === "ready"} /></Animated.View></View><View style={{ width: "100%", gap: 9 }}><Checklist label={t("capsule.time")} value={formatDate(c.open_at, language, true)} done={now >= new Date(c.open_at).getTime()} />{pl && <Checklist label={t("capsule.place")} value={placeName} done={state === "ready"} />}</View><View style={{ backgroundColor: C.paper, padding: 14, borderRadius: 12, width: "100%" }}><Text style={{ fontFamily: handwriting, fontSize: 19, color: C.plum }}>「{c.hint || t("capsule.defaultHint")}」</Text><Text style={{ color: C.muted, marginTop: 5 }}>{t("capsule.hint", name)}</Text></View>{v?.brand && pl?.brand_vessel === c.vessel && <Label>{t("capsule.brandNote")}</Label>}{state === "ready" && !busy ? <RitualHold title={t("capsule.hold")} onProgress={setCharge} onComplete={() => void openCapsule()} /> : <Action disabled title={busy ? t("capsule.opening") : state === "time" ? t("capsule.wait") : t("capsule.needPlace")} onPress={() => {}} />}{state === "ready" && <Label muted>{t("capsule.holdNote")}</Label>}{!!error && <Text accessibilityRole="alert" style={{ color: C.wax, textAlign: "center" }}>{error}</Text>}</ScrollView><PageNumber n={pageCount} label={t("capsule.page", pageCount)} /></View>
+      </ScrollView><PagerArrows count={pageCount} index={page} onSelect={goPage} /></View>
+      <PagerDots count={pageCount} index={page} position={pagePosition} onSelect={goPage} label={n => t("capsule.page", n)} />
+      <Animated.Text style={{ opacity: discovery.hintOpacity, color: C.muted, fontFamily: sans, fontSize: 12, textAlign: "center", paddingBottom: 6 }}>{t("pager.swipe")}</Animated.Text>
     </>}
   </View></SafeAreaView>;
 }
 
+function PageNumber({ n, label }: { n: number; label: string }) {
+  return <View pointerEvents="none" style={{ position: "absolute", zIndex: 2, bottom: 26, left: 18, right: 18, alignItems: "center" }}><View style={{ width: "100%", maxWidth: 600, paddingRight: 22 }}><Text accessibilityLabel={label} style={{ alignSelf: "flex-end", color: C.blue, fontFamily: serif, fontSize: 22 }}>{n}</Text></View></View>;
+}
 function Checklist({ label, value, done }: { label: string; value: string; done: boolean }) {
   return <View style={{ flexDirection: "row", gap: 12, alignItems: "center", borderBottomWidth: 1, borderColor: C.line, paddingBottom: 8 }}><ArtIcon name={done ? "check" : "lock"} size={22} color={done ? C.blue : C.muted} /><View><Text style={{ color: C.ink, fontFamily: sans }}>{label}</Text><Text style={{ color: C.muted, fontSize: 12 }}>{value}</Text></View></View>;
 }

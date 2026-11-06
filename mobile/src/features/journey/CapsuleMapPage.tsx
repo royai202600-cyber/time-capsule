@@ -1,5 +1,5 @@
 import React from "react";
-import { Linking, Platform, Pressable, Text, View } from "react-native";
+import { Linking, Platform, Pressable, Text, View, useWindowDimensions } from "react-native";
 import type { Tables } from "../../services/database.types";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { useLanguage } from "../../i18n";
@@ -17,6 +17,7 @@ export function CapsuleMapPage({ place, vessel, onGoOpen }: {
 }) {
   const { t, language } = useLanguage();
   const location = useForegroundLocation();
+  const { height } = useWindowDimensions();
   const fix = location.fix;
   const meters = fix ? distanceMeters(fix.lat, fix.lng, place.lat, place.lng) : null;
   const fresh = !!fix && (location.fake || Date.now() - fix.at <= 60000);
@@ -32,7 +33,7 @@ export function CapsuleMapPage({ place, vessel, onGoOpen }: {
   return <View style={{ flex: 1, width: "100%", maxWidth: 640, alignSelf: "center", padding: spacing.md, gap: spacing.md }}>
     <Text style={{ fontFamily: serif, fontSize: 24, color: C.ink }}>{language === "zh" ? place.name_zh : place.name_en}</Text>
     <Text style={{ fontFamily: sans, color: C.muted }}>{language === "zh" ? place.city_zh : place.city_en}</Text>
-    <View style={{ height: 340, borderRadius: radii.lg, overflow: "hidden", borderWidth: 1.5, borderColor: C.line, ...shadows.card }}>
+    <View style={{ height: Math.min(340, Math.max(220, height - 580)), borderRadius: radii.lg, overflow: "hidden", borderWidth: 1.5, borderColor: C.line, ...shadows.card }}>
       <PlaceMap place={place} fix={fix} vessel={vessel} />
     </View>
     <Text style={{ fontFamily: sans, color: C.ink }}>{language === "zh" ? place.why_zh : place.why_en}</Text>

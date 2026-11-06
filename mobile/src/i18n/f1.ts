@@ -2,6 +2,7 @@ import { useLanguage } from "./index";
 
 const strings = {
   zh: {
+    "pager.previous": "上一頁", "pager.next": "下一頁", "pager.swipe": "左右滑動查看更多 ›",
     "home.my": "我的",
     "home.inbox": "收件",
     "home.sent": "寄件",
@@ -79,6 +80,7 @@ const strings = {
     "capsule.qr": "領取碼 QR",
   },
   en: {
+    "pager.previous": "Previous page", "pager.next": "Next page", "pager.swipe": "Swipe for more ›",
     "home.my": "My", "home.inbox": "Inbox", "home.sent": "Sent", "home.shop": "Shop",
     "home.journey": "Journey", "home.cabinet": "Cabinet", "home.new": "New capsule",
     "home.emptyIn": "No capsules received yet.", "home.emptyOut": "No capsules sent yet.",

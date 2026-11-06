@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { View } from "react-native";
 import MapView, { Circle, Marker, Polyline } from "react-native-maps";
-import { Vessel, type VesselKind } from "../../components/Vessel";
+import { type VesselKind } from "../../components/Vessel";
+import { VesselPin } from "./VesselPin";
 import { C } from "../../theme";
 import type { Fix } from "./location";
 import { distanceMeters } from "../../services/data";
@@ -27,10 +28,8 @@ export function PlaceMap({ place, fix, vessel }: {
         <View style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: C.lightBlue, borderColor: C.white, borderWidth: 3 }} />
       </Marker>
     </>}
-    <Marker coordinate={{ latitude: place.lat, longitude: place.lng }} anchor={{ x: .5, y: 1 }}>
-      <View style={{ width: 64, height: 64, borderRadius: 32, borderWidth: 2, borderColor: C.brass, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}>
-        <Vessel kind={vessel} size={46} />
-      </View>
+    <Marker coordinate={{ latitude: place.lat, longitude: place.lng }} anchor={{ x: .5, y: 1 }} centerOffset={{ x: 0, y: -38 }} zIndex={1000} tracksViewChanges>
+      <VesselPin vessel={vessel} />
     </Marker>
   </MapView>;
 }

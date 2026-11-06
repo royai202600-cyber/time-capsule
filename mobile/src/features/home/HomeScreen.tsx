@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, FlatList, Image, Pressable, Text, View, useWindowDimensions } from "react-native";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { PagerDots, PagerArrows } from "../../components/PagerControls";
 import { Avatar } from "../../components/Avatar";
 import { ArtIcon, type IconName } from "../../components/ArtIcon";
 import { scenes } from "../../art/manifest";
@@ -61,6 +62,8 @@ export default function HomeScreen() {
   const [now, setNow] = useState(Date.now());
   const scroll = useRef(new Animated.Value(0)).current;
   const scrollOffset = useRef(0);
+  const indexRef = useRef(0);
+  const dotPosition = useRef(new Animated.Value(0)).current;
   const list = useRef<FlatList<Row>>(null);
   const rows = bundle.capsules.filter(c => side === "inbox" ? c.recipient === session?.user.id : c.sender === session?.user.id);
   const active = rows[index] ?? rows[0];
@@ -80,7 +83,7 @@ export default function HomeScreen() {
   useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
   useEffect(() => { setSide(tab === "sent" ? "sent" : "inbox"); }, [tab]);
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(id); }, []);
-  useEffect(() => { scrollOffset.current = 0; setIndex(0); list.current?.scrollToOffset({ offset: 0, animated: false }); }, [side]);
+  useEffect(() => { scrollOffset.current = 0; indexRef.current = 0; dotPosition.setValue(0); setIndex(0); list.current?.scrollToOffset({ offset: 0, animated: false }); }, [side]);
   const person = (c: Row) => {
     const id = side === "inbox" ? c.sender : c.recipient;
     if (side === "sent" && id === session?.user.id) return { name: t("home.future"), avatar: { set: "illus", id: "future" } };
@@ -114,7 +117,7 @@ export default function HomeScreen() {
       <View style={{ flexDirection: "row", alignItems: "center" }}><Pressable onPress={() => setLanguage(language === "zh" ? "en" : "zh")} accessibilityLabel={language === "zh" ? "English" : "繁體中文"}><Text style={{ color: C.plum, padding: 7, fontFamily: serif }}>{language === "zh" ? "EN" : "中"}</Text></Pressable><Pressable onPress={() => router.push("/shop")} accessibilityLabel={t("home.shop")} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="shop" color={C.plum} /></Pressable></View>
     </View>
     {loading ? <View style={{ flex: 1, justifyContent: "center" }}><ActivityIndicator color={C.blue} /></View> : error ? <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}><Text style={{ color: C.wax }}>{error}</Text><Pressable onPress={() => void refresh()}><Text style={{ color: C.blue, padding: 16 }}>{t("capsule.retry")}</Text></Pressable></View> : rows.length ? <>
-      <View style={{ flex: 1, justifyContent: "center", minHeight: 450 }}><Animated.FlatList ref={list as any} data={rows} horizontal keyExtractor={(c: Row) => c.id} showsHorizontalScrollIndicator={false} snapToInterval={STEP} decelerationRate="fast" contentContainerStyle={{ paddingHorizontal: inset, gap: GAP, alignItems: "center" }} onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scroll } } }], { useNativeDriver: true, listener: (e: any) => { scrollOffset.current = e.nativeEvent.contentOffset.x; } })} scrollEventThrottle={16} onMomentumScrollEnd={e => { const i = Math.max(0, Math.min(rows.length - 1, Math.round(e.nativeEvent.contentOffset.x / STEP))); scrollOffset.current = e.nativeEvent.contentOffset.x; if (i !== index) { setIndex(i); void haptics.tick(); } }} renderItem={({ item: c, index: i }: { item: Row; index: number }) => {
+      <View style={{ flex: 1, justifyContent: "center", minHeight: 450 }}><Animated.FlatList ref={list as any} data={rows} getItemLayout={(_, i) => ({ length: STEP, offset: STEP * i, index: i })} horizontal keyExtractor={(c: Row) => c.id} showsHorizontalScrollIndicator={false} snapToInterval={STEP} decelerationRate="fast" contentContainerStyle={{ paddingHorizontal: inset, gap: GAP, alignItems: "center" }} onScroll={e => { const x = e.nativeEvent.contentOffset.x; scrollOffset.current = x; scroll.setValue(x); dotPosition.setValue(x / STEP); const next = Math.max(0, Math.min(rows.length - 1, Math.round(x / STEP))); if (next !== indexRef.current) { indexRef.current = next; setIndex(next); void haptics.tick(); } }} scrollEventThrottle={16} renderItem={({ item: c, index: i }: { item: Row; index: number }) => {
         const state = status(c, side, fix, bundle.places[c.place ?? ""], now), p = person(c), pl = bundle.places[c.place ?? ""], v = bundle.vessels[c.vessel];
         const inputRange = [(i - 1) * STEP, i * STEP, (i + 1) * STEP];
         return <Animated.View style={{ opacity: scroll.interpolate({ inputRange, outputRange: [0.5, 1, 0.5], extrapolate: "clamp" }), transform: [{ perspective: 900 }, { scale: scroll.interpolate({ inputRange, outputRange: [0.9, 1, 0.9], extrapolate: "clamp" }) }, { rotateY: scroll.interpolate({ inputRange, outputRange: ["8deg", "0deg", "-8deg"], extrapolate: "clamp" }) }] }}><Pressable onPress={() => { const centre = Math.max(0, Math.min(rows.length - 1, Math.round(scrollOffset.current / STEP))); if (i === centre) open(c); else { list.current?.scrollToIndex({ index: i, animated: true }); setIndex(i); void haptics.tick(); } }} accessibilityRole="button" accessibilityLabel={`${headline(c)}, ${p.name}`} style={{ width: W, height: 430, backgroundColor: C.white, borderWidth: 1.5, borderColor: "#5B6474", borderRadius: 20, padding: 18, alignItems: "center", justifyContent: "space-between", ...shadows.card }}>
@@ -124,8 +127,8 @@ export default function HomeScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "center", gap: 6, maxWidth: "100%", marginBottom: 12 }}><ArtIcon name="pin" size={18} color="#4A5466" /><Text numberOfLines={1} style={{ color: "#4A5466", fontFamily: serif, fontSize: 15, flexShrink: 1 }}>{pl ? pl[language === "zh" ? "name_zh" : "name_en"] : t("home.anywhere")}</Text></View>
           <View style={{ width: "100%", borderTopWidth: 1, borderColor: C.line, paddingTop: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}><View style={{ flexDirection: "row", alignItems: "center", gap: 5, flexShrink: 1 }}><Text style={{ color: C.muted, fontSize: 11 }}>{t(side === "inbox" ? "home.from" : "home.to")}</Text><Avatar avatar={p.avatar as any} size={30} future={side === "sent" && c.recipient === session?.user.id} /><Text numberOfLines={1} style={{ color: C.ink, fontSize: 11, flexShrink: 1 }}>{p.name}</Text></View><Text style={{ color: C.muted, fontSize: 10 }}>{formatDate(c.sealed_at, language)}</Text></View>
         </Pressable></Animated.View>;
-      }} /></View>
-      <View style={{ alignItems: "center", gap: 8, paddingBottom: 6 }}><View style={{ flexDirection: "row", gap: 6 }}>{rows.map((c, i) => <View key={c.id} style={{ width: i === index ? 14 : 6, height: 6, borderRadius: 6, backgroundColor: i === index ? C.blue : C.line }} />)}</View><Text style={{ color: C.muted, fontFamily: sans, fontSize: 12 }}>{side === "inbox" ? t("home.summaryIn", rows.length, ready) : t("home.summaryOut", rows.length, rows.filter(c => !c.opened_at).length)}</Text></View>
+      }} /><PagerArrows count={rows.length} index={index} onSelect={i => list.current?.scrollToIndex({ index: i, animated: !reduced })} /></View>
+      <View style={{ alignItems: "center", gap: 8, paddingBottom: 6 }}><PagerDots count={rows.length} index={index} position={dotPosition} onSelect={i => list.current?.scrollToIndex({ index: i, animated: !reduced })} label={n => t("capsule.page", n)} /><Text style={{ color: C.muted, fontFamily: sans, fontSize: 12 }}>{side === "inbox" ? t("home.summaryIn", rows.length, ready) : t("home.summaryOut", rows.length, rows.filter(c => !c.opened_at).length)}</Text></View>
     </> : <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 10 }}><Image source={side === 'inbox' ? scenes.emptyInbox : scenes.emptySent} style={{ width: '100%', height: 240 }} resizeMode="contain" /><Text style={{ fontFamily: serif, fontSize: 22, color: C.ink }}>{t(side === "inbox" ? "home.emptyIn" : "home.emptyOut")}</Text><Text style={{ color: C.muted }}>{t("home.emptyHint")}</Text></View>}
     <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 32, paddingBottom: 14 }}><Dock label={t("home.journey")} icon="map" onPress={() => router.push("/journey")} /><Pressable onPress={() => router.push("/create")} accessibilityLabel={t("home.new")} style={{ width: 68, height: 68, borderRadius: 34, backgroundColor: C.blue, alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="plus" size={36} color={C.white} /></Pressable><Dock label={t("home.cabinet")} icon="cabinet" onPress={() => router.push("/cabinet")} /></View>
   </View></SafeAreaView>;
