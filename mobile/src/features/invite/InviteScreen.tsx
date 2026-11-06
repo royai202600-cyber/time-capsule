@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Platform, Share, Text, TextInput } from "react-native";
 import { router, useFocusEffect } from "expo-router";
+import { goBack } from "../../navigation";
 import * as Clipboard from "expo-clipboard";
 import * as Linking from "expo-linking";
 import { Screen, Heading, Body, Button, Bar, BackButton } from "../../components/Screen";
@@ -35,7 +36,7 @@ export default function InviteScreen() {
   const copy = async () => { await Clipboard.setStringAsync(link); haptics.success(); setMessage(t("invite.copied")); };
   const share = async () => { try { await Share.share({ title: t("invite.shareTitle"), message: t("invite.shareText", profile?.name ?? "") + "\n" + link + "\n" + t("invite.appLink") + ": " + appLink }); } catch (e) { setMessage(e instanceof Error ? e.message : String(e)); } };
   return <Screen>
-    <Bar><BackButton label={t("back")} onPress={() => router.back()} /><Heading>{t("invite.title")}</Heading></Bar>
+    <Bar><BackButton label={t("back")} onPress={goBack} /><Heading>{t("invite.title")}</Heading></Bar>
     <Body>{t("invite.heading")}</Body>
     <Body>{t("invite.shareText", profile?.name ?? "")}</Body>
     <TextInput accessibilityLabel={t("invite.link")} value={link} editable={false} selectTextOnFocus style={{ borderWidth: 1, borderColor: C.line, borderRadius: 12, backgroundColor: C.white, color: C.ink, padding: 14 }} />

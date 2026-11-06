@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, TextInput, Pressable, Text } from "react-native";
 import { router } from "expo-router";
+import { goBack } from "../../navigation";
 import { Screen, Heading, Body, Button, BackButton, Bar } from "../../components/Screen";
 import { Avatar, PORTRAITS } from "../../components/Avatar";
 import { portraits } from "../../art/manifest";
@@ -36,11 +37,11 @@ export default function ProfileScreen() {
       ? await supabase.from("profiles").update(changes).eq("id", session.user.id)
       : await supabase.from("profiles").insert({ id: session.user.id, ...changes });
     if (result.error) { setErr(result.error.message); haptics.warn(); }
-    else { await refresh(); haptics.success(); if (profile) router.back(); }
+    else { await refresh(); haptics.success(); if (profile) goBack(); }
     setSaving(false);
   };
   return <Screen>
-    <Bar>{!!profile && <BackButton label={t("back")} onPress={() => router.back()} />}<Heading>{t(profile ? "profile.editTitle" : "profile.title")}</Heading></Bar>
+    <Bar>{!!profile && <BackButton label={t("back")} onPress={goBack} />}<Heading>{t(profile ? "profile.editTitle" : "profile.title")}</Heading></Bar>
     <View style={{ alignItems: "center", marginVertical: 12 }}><Avatar avatar={selected} size={110} /></View>
     <Body>{t("nameLabel")}</Body>
     <TextInput accessibilityLabel={t("nameLabel")} value={name} onChangeText={setName} maxLength={40} style={{ borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 12, color: C.ink, backgroundColor: C.white }} />

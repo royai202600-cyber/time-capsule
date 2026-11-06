@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Modal, Pressable, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import { goBack } from "../../navigation";
 import { Vessel, type VesselKind } from '../../components/Vessel';
 import { Screen, Button, Heading, Body, BackButton } from '../../components/Screen';
 import { Toast } from '../../components/Toast';
@@ -37,7 +38,7 @@ export default function ShopScreen() {
     if (rpcError) { const code = String((rpcError as any).hint ?? ''); setError(code === 'sold_out' || rpcError.message.includes('sold out') ? t('shop.soldOut') : t('shop.error')); setBusy(false); void haptics.warn(); return; }
     await Promise.all([owned.refresh(), stock.refresh()]);
     void haptics.success(); setNotice(t('shop.acquired', name(selected.id)));
-    Animated.timing(flight, { toValue: 1, duration: reduced ? motion.fade.quick : 650, useNativeDriver: true }).start(() => { setSheet(null); setBusy(false); flight.setValue(0); if (params.returnTo === 'create') router.back(); });
+    Animated.timing(flight, { toValue: 1, duration: reduced ? motion.fade.quick : 650, useNativeDriver: true }).start(() => { setSheet(null); setBusy(false); flight.setValue(0); if (params.returnTo === 'create') goBack(); });
   };
   const vesselCard = (v: NonNullable<typeof catalog.data>[number]) => {
     const mine = own(v.id), sold = v.edition_total !== null && v.id === 'maison' && remainder === 0;
@@ -48,7 +49,7 @@ export default function ShopScreen() {
     </Pressable>;
   };
   return <Screen>
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><BackButton label={t('shop.back')} onPress={() => router.back()} /><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('shop.langSwitch')}</Text></Pressable></View><Heading>{t('shop.title')}</Heading>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><BackButton label={t('shop.back')} onPress={goBack} /><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('shop.langSwitch')}</Text></Pressable></View><Heading>{t('shop.title')}</Heading>
     {featured && <View style={{ backgroundColor: C.ink, borderRadius: 20, padding: 20, alignItems: 'center', gap: 8 }}>
       <Vessel kind='maison' size={176} /><Text style={{ color: C.brass, fontFamily: serif, fontSize: 20, textAlign: 'center' }}>{t('shop.brandTitle')}</Text><Text style={{ color: C.white, textAlign: 'center', fontFamily: sans }}>{t('shop.brandBody')}</Text>
       <Text style={{ color: C.brass }}>{own('maison')?.edition_no ? t('shop.yourNo', own('maison')!.edition_no, featured.edition_total ?? 300) : remainder !== undefined ? t('shop.stock', remainder, featured.edition_total ?? 300) : ''}</Text>
