@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { STR } from "./webStrings";
+import { f2Strings } from "./f2Strings";
 type Language = "zh" | "en";
 const extra = {
   zh: {
@@ -66,6 +67,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   };
   const t = (k: string, ...args: any[]) => {
     const v =
+      (f2Strings[language] as any)[k] ??
       (extra[language] as any)[k] ??
       (STR as any)[language][k] ??
       (STR as any).zh[k] ??
