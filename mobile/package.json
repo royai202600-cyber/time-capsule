@@ -4,8 +4,8 @@
   "private": true,
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start --go",
-    "web": "expo start --web",
+    "start": "expo start --go --port 8087",
+    "web": "expo start --web --port 8088",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },

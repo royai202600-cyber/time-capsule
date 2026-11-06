@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, FlatList, Image, Pressable, Text, View, useWindowDimensions } from "react-native";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { PagerDots, PagerArrows } from "../../components/PagerControls";
+import { PagerDots } from "../../components/PagerControls";
 import { Avatar } from "../../components/Avatar";
 import { ArtIcon, type IconName } from "../../components/ArtIcon";
 import { scenes } from "../../art/manifest";
@@ -127,8 +127,8 @@ export default function HomeScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "center", gap: 6, maxWidth: "100%", marginBottom: 12 }}><ArtIcon name="pin" size={18} color="#4A5466" /><Text numberOfLines={1} style={{ color: "#4A5466", fontFamily: serif, fontSize: 15, flexShrink: 1 }}>{pl ? pl[language === "zh" ? "name_zh" : "name_en"] : t("home.anywhere")}</Text></View>
           <View style={{ width: "100%", borderTopWidth: 1, borderColor: C.line, paddingTop: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}><View style={{ flexDirection: "row", alignItems: "center", gap: 5, flexShrink: 1 }}><Text style={{ color: C.muted, fontSize: 11 }}>{t(side === "inbox" ? "home.from" : "home.to")}</Text><Avatar avatar={p.avatar as any} size={30} future={side === "sent" && c.recipient === session?.user.id} /><Text numberOfLines={1} style={{ color: C.ink, fontSize: 11, flexShrink: 1 }}>{p.name}</Text></View><Text style={{ color: C.muted, fontSize: 10 }}>{formatDate(c.sealed_at, language)}</Text></View>
         </Pressable></Animated.View>;
-      }} /><PagerArrows count={rows.length} index={index} onSelect={i => list.current?.scrollToIndex({ index: i, animated: !reduced })} /></View>
-      <View style={{ alignItems: "center", gap: 8, paddingBottom: 6 }}><PagerDots count={rows.length} index={index} position={dotPosition} onSelect={i => list.current?.scrollToIndex({ index: i, animated: !reduced })} label={n => t("capsule.page", n)} /><Text style={{ color: C.muted, fontFamily: sans, fontSize: 12 }}>{side === "inbox" ? t("home.summaryIn", rows.length, ready) : t("home.summaryOut", rows.length, rows.filter(c => !c.opened_at).length)}</Text></View>
+      }} /></View>
+      <View style={{ alignItems: "center", gap: 2, paddingBottom: 6 }}><PagerDots count={rows.length} index={index} position={dotPosition} onSelect={i => list.current?.scrollToIndex({ index: i, animated: !reduced })} label={n => t("capsule.page", n)} /><Text style={{ color: C.muted, fontFamily: sans, fontSize: 12 }}>{side === "inbox" ? t("home.summaryIn", rows.length, ready) : t("home.summaryOut", rows.length, rows.filter(c => !c.opened_at).length)}</Text></View>
     </> : <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 10 }}><Image source={side === 'inbox' ? scenes.emptyInbox : scenes.emptySent} style={{ width: '100%', height: 240 }} resizeMode="contain" /><Text style={{ fontFamily: serif, fontSize: 22, color: C.ink }}>{t(side === "inbox" ? "home.emptyIn" : "home.emptyOut")}</Text><Text style={{ color: C.muted }}>{t("home.emptyHint")}</Text></View>}
     <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 32, paddingBottom: 14 }}><Dock label={t("home.journey")} icon="map" onPress={() => router.push("/journey")} /><Pressable onPress={() => router.push("/create")} accessibilityLabel={t("home.new")} style={{ width: 68, height: 68, borderRadius: 34, backgroundColor: C.blue, alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="plus" size={36} color={C.white} /></Pressable><Dock label={t("home.cabinet")} icon="cabinet" onPress={() => router.push("/cabinet")} /></View>
   </View></SafeAreaView>;

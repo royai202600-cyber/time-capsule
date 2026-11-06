@@ -56,6 +56,12 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 3. **Milestone 1:** sign in, send a time-locked capsule to a friend, receive it, and open it with hold-to-open when the time comes. Runs locally.
 4. Then: place-locking with server-side check, handwriting, photos, notifications, shop, brand capsules.
 
+## Fixed local ports (Roy, 2026-11-07: never use any other port)
+- **App in a browser: http://localhost:8088.** Run `cd mobile && npm run web` (the script pins `--port 8088`).
+- **App in Expo Go on a phone: port 8087.** Run `cd mobile && npm start` (pins `--port 8087`; add `--tunnel` if the LAN QR times out, same port).
+- Old Vite web app (reference only): http://localhost:5173 (`npm run dev` at the repo root).
+- Supabase's redirect allow-list includes `http://localhost:8088/**`, so Google sign-in works locally only on 8088. Don't start servers on other ports; if 8088 is busy, stop the old server instead.
+
 ## How the code is laid out
 - `index.html`, `src/main.js` (screens and logic), `src/styles.css` (ported from the prototype + additions at the bottom), `src/art.js` (icons, vessels, portraits), `src/i18n.js` (all zh/en strings).
 - `supabase/migrations/`: database schema. Capsule content lives in `capsule_contents`, which clients can't read; only `open_capsule()` returns it, to the recipient, after `open_at` by the database clock. Writes go through `send_capsule()`, `accept_invite()`, `mark_seen()`.
