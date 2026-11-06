@@ -6,11 +6,12 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
+| T9 | Create art assets | Codex | Art assets are reviewed and integrated. |
 
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
-| T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
+| T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
 | ID | Task | Owner | Done when |
@@ -24,4 +25,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | T8 | Real payments for the shop (only when Roy decides) | Codex | Roy has chosen a provider |
 
 ## Done
+- T1: Onboarding, deployment setup, and backend security review — reviewed and approved by Claude.
+- T10: Feel demo built in a separate folder outside the repository.
 - Milestone 1 (sign in, friends, send, time lock, hold-to-open), place lock with server GPS check, handwriting, photos, vessel shop (free during testing), brand demo capsule with gift code + QR, responsive layout, Google + email/password sign-in, Vercel deploy. See the Decisions log in `AGENTS.md`.
