@@ -12,7 +12,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | ID | Task | Owner | Note |
 |---|---|---|---|
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
-| F4 | Cabinet, Me, Friends, Invite and portrait picker | Codex | Implemented on `codex/f4-cabinet-me`; web layout and typecheck pass. Awaiting Roy's phone test and T9 portrait manifest integration. |
+| F4 | Cabinet, Me, Friends, Invite and portrait picker | Codex | Roy confirmed the Expo Go build works; web layout and typecheck pass. T9 portrait manifest integration remains pending. |
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
