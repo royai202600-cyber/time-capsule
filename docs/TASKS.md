@@ -10,7 +10,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
-| T9c | Add positions for eleven places on the illustrated 1254 × 1254 map, with a review overlay. | Codex | Compare with Roy's map and an online geographic image. PR awaits Roy's approval before merge. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | F1 | Home and capsule opening | Codex | Claude verified Home → opening ritual → letter and opening record in browser. F3 native location and map, full-width pages, Sent routing and package QR are integrated; typecheck and web/iOS exports pass. |
@@ -32,6 +31,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+- T9c: Eleven illustrated map pin positions and overlay, checked against Roy's map and online references; Roy approved and PR #12 merged as `b47ab15`.
 - F2: Create, seal and Shop — Roy completed a self-send and acquired Maison Aurèle No.002 in Expo Go; Claude verified a handwritten letter with a photo self-send in the browser and approved the drop/contact motion. Final visual tweaks are in PR #8.
 - T9 and T9b: 66 illustration masters, WebP exports, manifest, README and checks; Roy approved and PR #11 merged as `16f741e`.
 - F3: Journey, Passport, foreground location and capsule map, with overlapping landmark clusters — Claude approved after the cluster fix; Roy will test the combined app on his phone at the end. F1 integration points are documented in `mobile/src/features/journey/README.md`.
