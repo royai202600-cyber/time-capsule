@@ -49,6 +49,9 @@ const extra = {
     assetMode: "切換容器圖片",
     capsulePreview: "膠囊頁面（預覽）",
     signOut: "登出",
+    "legal.privacy": "私隱",
+    "legal.terms": "條款",
+    "legal.support": "支援",
   },
   en: {
     appTitle: "Time Capsule",
@@ -96,6 +99,9 @@ const extra = {
     assetMode: "Switch vessel artwork",
     capsulePreview: "Capsule screen (preview)",
     signOut: "Sign out",
+    "legal.privacy": "Privacy",
+    "legal.terms": "Terms",
+    "legal.support": "Support",
   },
 };
 type Value = {

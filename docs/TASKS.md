@@ -26,12 +26,14 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | T6 | Installable app (PWA): manifest, icons, offline shell | Claude | "Add to Home Screen" gives a proper icon and full-screen app |
 | T7 | Brand capsules for real: staff check-in QR at the boutique, gift escrow/expiry rules, partner console (README §2, §7) | Claude plans → Codex builds | To be specified |
 | T8 | Real payments for the shop (only when Roy decides) | Codex | Roy has chosen a provider |
+| N3 | TODO: in-app account deletion | Codex | A signed-in user can initiate deletion inside the app before App Store release. Current support-email request remains the interim process. |
 
 ## End-of-project phone checklist
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
 - A1: Illustrated Expo app replaced the Vite production app in PR #16; PR #17 fixed Shop session loading. Roy's production follow-up adds Chinese-only letter spacing, scroll-driven pagination and the animated seal guide, with 390 px comparison captures under `docs/review/production-polish/`. Roy tests on his phone at the end.
+- N2: Claude-approved bilingual privacy, terms and support pages moved into the Expo web export with final contact details, app links, and Vercel routes. Account deletion remains N3.
 - N1: Pull-request CI checks mobile tests, TypeScript, Expo dependency versions and web export, plus the root web build. Older runs for the same PR are cancelled; iOS export is a local check.
 - T9c: Eleven illustrated map pin positions and overlay, checked against Roy's map and online references; Roy approved and PR #12 merged as `b47ab15`.
 - F2: Create, seal and Shop — Roy completed a self-send and acquired Maison Aurèle No.002 in Expo Go; Claude verified a handwritten letter with a photo self-send in the browser and approved the drop/contact motion. Final visual tweaks are in PR #8.

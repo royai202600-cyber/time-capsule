@@ -1,6 +1,6 @@
 # Time Capsule mobile foundation
 
-Expo SDK 58 / React Native / TypeScript. The root Vite app remains the production web app.
+Expo SDK 58 / React Native / TypeScript. The Expo web export is the production web app; the root Vite app remains in the repository.
 
 ## Run
 
@@ -8,6 +8,8 @@ Expo SDK 58 / React Native / TypeScript. The root Vite app remains the productio
 2. Copy `.env.example` to `.env` and fill in the Supabase **publishable** URL and key. Never put a service key here.
 3. Run `npm start` (which selects Expo Go) and scan the QR code with Expo Go on a phone on the same network. Use `npx expo start --go --tunnel` when LAN is unavailable. Press `w` for web or run `npm run web`.
 4. Use `npm run typecheck` for TypeScript. The root web app still builds with `npm run build` from the repository root.
+
+The bilingual privacy, terms and support pages live in `public/` and are copied into the web export. On Vercel they are served at `/privacy`, `/terms` and `/support` before the Expo app fallback route.
 
 Expo Go cannot support the app-specific OAuth scheme; Google sign-in requires an Expo development build. Before testing link-based email flows, add the exact Expo Go URL shown by the running server and its `/--/auth/callback` path to Supabase Authentication → URL Configuration; keep existing entries. Web testing also requires the exact localhost callback URL. Production `timecapsule://auth/callback` is separately allowlisted. The native application IDs are placeholders.
 
@@ -36,7 +38,7 @@ Use Expo Go rather than the phone browser for an `exp://` or `exps://` link. If 
 - Google sign-in returned to Home in the phone browser. Native Google requires a development build because Expo Go cannot own the `timecapsule` scheme. This is a build type, not a paid Time Capsule account.
 - To test native Google later: choose the final app identifiers, configure an EAS project with `eas build:configure`, create an iOS development build with `eas build --profile development --platform ios`, install it, then run `npx expo start --dev-client`. EAS will walk Roy through Apple signing and device registration; Apple membership requirements depend on the distribution method. The existing native callback is `timecapsule://auth/callback`.
 - End-to-end signup verification and password-reset email delivery have not been verified. The hosted project's existing built-in email restrictions remain; T2 supplies custom SMTP. Temporary LAN/Expo callbacks must match the currently running server before testing email links, or Supabase can fall back to the production Site URL. The reserved-domain test account cannot receive email.
-- Native bundle identifiers (`app.timecapsule.mobile`) remain placeholders. No database schema changes were needed. The root website remains the production deployment.
+- Native bundle identifiers (`app.timecapsule.mobile`) remain placeholders. No database schema changes were needed. The Expo web export serves production.
 
 ## F3 Journey and place map
 

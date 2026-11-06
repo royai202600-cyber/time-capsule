@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { Pressable, Switch, Text, View } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { Avatar } from "../../components/Avatar";
+import { LegalLinks } from "../../components/LegalLinks";
 import { Screen, Heading, Button, Bar, BackButton } from "../../components/Screen";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
@@ -68,5 +69,6 @@ export default function MeScreen() {
     </View>
     {!!error && <Text style={{ color: C.wax }}>{error}</Text>}
     <Button title={t("me.signOut")} onPress={() => void signOut()} />
+    <View style={{ paddingTop: 8, paddingBottom: 12 }}><LegalLinks /></View>
   </Screen>;
 }

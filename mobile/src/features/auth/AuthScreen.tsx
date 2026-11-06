@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 import { scenes } from "../../art/manifest";
 import { Avatar } from "../../components/Avatar";
+import { LegalLinks } from "../../components/LegalLinks";
 import { useLanguage } from "../../i18n";
 import { useAuth, redirectUri, signInGoogle } from "../../services/auth";
 import { supabase, isConfigured } from "../../services/supabase";
@@ -95,5 +96,6 @@ export default function AuthScreen() {
       {((mode === "signin" && !auth.recovery) || mode === "forgot") && <Pressable onPress={() => setMode(mode === "forgot" ? "signin" : "forgot")} style={{ alignSelf: "center", marginTop: 14 }}><Text style={{ color: C.blue, fontFamily: sans, fontSize: 14, textDecorationLine: "underline" }}>{t(mode === "forgot" ? "backToSignIn" : "forgot")}</Text></Pressable>}
     </>}
     {!!message && <Text accessibilityRole="alert" style={{ color: C.wax, fontSize: 13, textAlign: "center", marginTop: 10 }}>{message}</Text>}
+    <View style={{ marginTop: "auto", paddingTop: 28 }}><LegalLinks /></View>
   </ScrollView></SafeAreaView>;
 }
