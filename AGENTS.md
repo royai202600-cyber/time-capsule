@@ -79,3 +79,4 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - 2026-11-06: Vercel project `time-capsule` is connected to `royai202600-cyber/time-capsule` with `main` as the production branch. Supabase migration `20261106222240_guard_capsule_open` was applied to production: serialize opening, reject invalid GPS values, and restrict invite preview grants to API roles.
 
 - 2026-11-06: Vercel Hobby blocked Git deployments authored by GitHub user `ispkbinary` because that contributor lacks access to the Vercel project. Use the repository owner's GitHub account for release commits, or revisit team access and plan before enabling other authors.
+- 2026-11-06: Roy approved Codex's built-in image generation for T9 art assets. OpenAI Docs identifies its built-in model as `gpt-image-2`; an API key is not required. Make three style-sheet variants and wait for Roy's choice before generating the remaining assets.
