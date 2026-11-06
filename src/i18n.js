@@ -184,6 +184,10 @@ Object.assign(STR.zh, {
   inaccurate: '位置不夠準確，請到室外或稍等一下再試。',
   betaFree: '付款功能還未開放：測試期間所有容器都可以免費取得。', getFree: '免費取得', soldOut: '已售罄',
   yourEdition: (n, t) => `你的編號 No.${n} / ${t}`, limitedN: n => `限量 ${n} 個，附編號`,
+  cityLabel: '所在城市（可留空）', cityPh: '例如：澳門', photoAlt: '附上的照片', photoErr: '這個檔案不能作為照片。',
+  memoryH: '回憶建議', memorySoon: '即將推出：根據你們的合照和去過的地方，建議有意義的地點。',
+  needMaisonShort: '這個地點需要 Maison Aurèle 容器。', giftItemDemo: 'Aurèle 單鑽戒指（示範禮物）',
+  remindSoon: '提醒功能即將推出，你的選擇會先保存。',
   devQuick: '2 分鐘後（測試用）', minuteNote: '開啟時間以伺服器時間為準。',
 });
 Object.assign(STR.en, {
@@ -219,6 +223,10 @@ Object.assign(STR.en, {
   inaccurate: 'Your location isn’t accurate enough. Try outdoors or wait a moment.',
   betaFree: 'Payments aren’t open yet: every vessel is free while we’re testing.', getFree: 'Get it free', soldOut: 'Sold out',
   yourEdition: (n, t) => `Your number: No.${n} / ${t}`, limitedN: n => `Limited to ${n}, numbered`,
+  cityLabel: 'City (optional)', cityPh: 'e.g. Macau', photoAlt: 'Attached photo', photoErr: 'That file can’t be used as a photo.',
+  memoryH: 'Memory suggestions', memorySoon: 'Coming soon: meaningful places suggested from your shared photos and where you’ve been.',
+  needMaisonShort: 'This place needs a Maison Aurèle vessel.', giftItemDemo: 'Aurèle solitaire ring (demo gift)',
+  remindSoon: 'Reminders are coming soon. Your choices are saved now.',
   devQuick: 'In 2 minutes (testing)', minuteNote: 'Opening times follow the server clock.',
 });
 

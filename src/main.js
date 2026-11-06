@@ -4,6 +4,7 @@
 import './styles.css';
 import 'leaflet/dist/leaflet.css';
 import Leaflet from 'leaflet';
+import qrcode from 'qrcode-generator';
 import { createClient } from '@supabase/supabase-js';
 import { IC, vessel, face, PORTRAITS } from './art.js';
 import { LANG, L, setLangValue, STR, tr, vname, VESSELS } from './i18n.js';
@@ -65,6 +66,7 @@ const toCapsule = r => ({
 
 /* ---------- Places and the phone's location ---------- */
 const plname = id => { const p = S.places.get(id); return p ? (LANG === 'zh' ? p.name_zh : p.name_en) : ''; };
+const plwhy = id => { const p = S.places.get(id); return p ? (LANG === 'zh' ? p.why_zh : p.why_en) : ''; };
 const plcity = id => { const p = S.places.get(id); return p ? (LANG === 'zh' ? p.city_zh : p.city_en) : ''; };
 function meters(lat1, lng1, lat2, lng2) {
   const r = Math.PI / 180, a = Math.sin((lat2 - lat1) * r / 2) ** 2 +
@@ -164,7 +166,7 @@ async function loadAll() {
   const rows = caps.data.map(toCapsule);
   // Keep content we already fetched for opened capsules.
   const old = new Map([...S.inbox, ...S.sent].map(c => [c.id, c]));
-  rows.forEach(c => { const o = old.get(c.id); if (o?.opened && o.message !== undefined) { c.message = o.message; c.drawing = o.drawing; } });
+  rows.forEach(c => { const o = old.get(c.id); if (o?.opened && o.message !== undefined) { c.message = o.message; c.drawing = o.drawing; c.photo = o.photo; c.gift = o.gift; } });
   S.friends = fr.data.map(f => f.friend_id);
   const ids = new Set(S.friends);
   rows.forEach(c => { ids.add(c.sender); ids.add(c.recipient); });
@@ -391,6 +393,7 @@ function showNewPassword() {
 function profileForm(s, { first, onDone }) {
   const d = {
     name: S.profile?.name || S.user?.user_metadata?.full_name || S.user?.user_metadata?.name || '',
+    city: S.profile?.city || '',
     pick: Math.max(0, PORTRAITS.findIndex(p => JSON.stringify(p) === JSON.stringify(S.profile?.avatar))),
     busy: false,
   };
@@ -400,6 +403,7 @@ function profileForm(s, { first, onDone }) {
       <h2>${tr('profileH')}</h2><p class="sub">${tr('profileSub')}</p>
       <div class="profile-preview"><span class="av xl">${face(PORTRAITS[d.pick])}</span></div>
       <label class="field"><span>${tr('nameLabel')}</span><input id="pname" maxlength="40" autocomplete="nickname" value="${esc(d.name)}" placeholder="${tr('namePh')}"></label>
+      <label class="field"><span>${tr('cityLabel')}</span><input id="pcity" maxlength="40" autocomplete="address-level2" value="${esc(d.city)}" placeholder="${tr('cityPh')}"></label>
       <h3>${tr('pickFace')}</h3>
       <div class="faces" role="radiogroup" aria-label="${tr('pickFace')}">${PORTRAITS.map((p, i) =>
         `<button type="button" role="radio" aria-checked="${i === d.pick}" class="face-opt ${i === d.pick ? 'sel' : ''}" data-face="${i}"><span class="av">${face(p)}</span></button>`).join('')}</div>
@@ -408,6 +412,7 @@ function profileForm(s, { first, onDone }) {
   };
   s._render = render;
   s.addEventListener('input', e => {
+    if (e.target.id === 'pcity') { d.city = e.target.value; return; }
     if (e.target.id !== 'pname') return;
     d.name = e.target.value;
     $('.save-btn', s).disabled = !d.name.trim();
@@ -424,7 +429,7 @@ function profileForm(s, { first, onDone }) {
     const name = d.name.trim();
     if (!name || d.busy) return;
     d.busy = true; render();
-    const row = { id: uid(), name, avatar: PORTRAITS[d.pick] };
+    const row = { id: uid(), name, avatar: PORTRAITS[d.pick], city: d.city.trim() || null };
     const { data, error } = await sb.from('profiles').upsert(row).select().single();
     d.busy = false;
     if (error) { console.error(error); toast(tr('errGeneric')); render(); return; }
@@ -512,7 +517,7 @@ function initHome() {
         rail.scrollTo({ left: card.offsetLeft - (rail.clientWidth - card.offsetWidth) / 2, behavior: REDUCED ? 'auto' : 'smooth' });
         return;
       }
-      openCapsule(card.dataset.id);
+      openCapsule(card.dataset.id, S.tab);
     }
   });
   renderHome();
@@ -568,6 +573,10 @@ function distLine(c) {
   return `<p class="dist">${atPlace(c) ? tr('here') : tr('distFar', kmText(d))}</p>`;
 }
 
+const editionPill = c => {
+  const V = S.vessels.get(c.vessel);
+  return V?.brand && c.edition ? `<p class="edition">${tr('edition', esc(V.brand), pad3(c.edition), V.edition_total)}</p>` : '';
+};
 function pagerView(c, st) {
   const timeOk = c.openAt <= Date.now();
   const from = `<p class="from">${tr('from')} ${avatar(c.sender)} ${esc(pname(c.sender))}</p>`;
@@ -578,7 +587,7 @@ function pagerView(c, st) {
   const hint = c.hint || tr('defaultHint');
   const openPage = c.place ? 2 : 1;
   const pages = [
-    `${from}${c.handwritten ? `<span class="seal-mark page-mark">${tr('handMark')}</span>` : ''}<div class="p-vessel">${vessel(c.vessel)}</div><p class="story">${story}</p>
+    `${from}${c.handwritten ? `<span class="seal-mark page-mark">${tr('handMark')}</span>` : ''}${editionPill(c)}<div class="p-vessel">${vessel(c.vessel)}</div><p class="story">${story}</p>
       ${timeOk ? '' : countdownHTML(c)}
       ${c.place
         ? `<div class="go"><span>${tr(timeOk ? 'goNow' : 'goLater')}</span><button class="place-link" data-goto="1">${IC.pin}${place}</button></div>`
@@ -596,6 +605,7 @@ function pagerView(c, st) {
         ${c.place ? `<li class="${atPlace(c) ? 'ok' : ''}">${atPlace(c) ? IC.check : IC.lock}<div><b>${tr('condPlace')}</b><span>${place}${!atPlace(c) && distTo(c.place) != null ? tr('stillKm', kmText(distTo(c.place))) : ''}</span></div></li>` : ''}
       </ul>
       <blockquote class="hint">${quote(esc(hint))}<cite>${esc(tr('hintBy', pname(c.sender)))}</cite></blockquote>
+      ${S.vessels.get(c.vessel)?.brand && S.places.get(c.place)?.brand_vessel === c.vessel ? `<p class="note">${tr('brandNote')}</p>` : ''}
       ${actionHTML(c, st)}`);
   return `${bar(tr('openTitle'))}
     <div class="pager">${pages.map((p, i) => `<section class="page" aria-label="${tr('page', i + 1)}"><div class="paper">${p}<span class="pno">${i + 1}</span></div></section>`).join('')}</div>
@@ -638,13 +648,22 @@ function letterView(c) {
       ${c.message === undefined ? `<p class="sub">${tr('loading')}</p>` : ''}
       ${c.drawing ? `<img class="drawing" src="${esc(c.drawing)}" alt="${tr('handAlt')}">` : ''}
       ${c.message ? paras(c.message) : ''}
+      ${c.photo ? `<figure class="photo"><img src="${esc(c.photo)}" alt="${tr('photoAlt')}"></figure>` : ''}
       <p class="sign">${esc(self ? tr('pastMe') : pname(c.sender))}<br><time>${tr('sealedOn', fmt(c.sealedAt))}</time></p>
     </article>
+    ${c.gift ? `<section class="gift" aria-label="${tr('giftAria')}">
+      <div><p class="brand">${tr('giftHead', esc(S.vessels.get(c.vessel)?.brand || ''))}</p><h3>${tr('giftItemDemo')}</h3><p class="code">${esc(c.gift)}</p>
+      <p>${tr('giftNote')}</p></div>${qrSVG(c.gift)}</section>` : ''}
     <p class="opened-at">${tr('openedRecord', fmt(c.openedAt), c.place ? esc(plname(c.place)) : '')}</p>
     <button class="btn ghost" data-act="reply">${self ? tr('replySelf') : tr('replyTo', esc(pname(c.sender)))}</button>
   </div>`;
 }
 
+// A real, scannable QR code for the gift pickup code.
+function qrSVG(text) {
+  const q = qrcode(0, 'M'); q.addData(text); q.make();
+  return `<span class="qr" role="img" aria-label="${tr('qrAria')}">${q.createSvgTag({ cellSize: 3, margin: 0, scalable: true })}</span>`;
+}
 function sentView(c, st) {
   const now = Date.now();
   const to = esc(pname(c.recipient === uid() ? 'future' : c.recipient));
@@ -718,7 +737,7 @@ function renderCapsule(s, c, side, page = 0) {
 async function fetchContent(s, c) {
   const { data, error } = await sb.rpc('open_capsule', { p_id: c.id });
   if (error || !data?.[0]) { console.error(error); toast(tr('errGeneric')); return; }
-  c.message = data[0].message; c.drawing = data[0].drawing;
+  c.message = data[0].message; c.drawing = data[0].drawing; c.photo = data[0].photo; c.gift = data[0].gift_code;
   if (s.isConnected) renderCapsule(s, c, 'in');
 }
 function bindHold(hb, done) {
@@ -749,17 +768,35 @@ async function openIt(s, c) {
   const [{ data, error }] = await Promise.all([req, new Promise(r => setTimeout(r, REDUCED ? 0 : 1100))]);
   if (error || !data?.[0]) {
     console.error(error);
-    const msg = { locked: tr('notYet'), far: tr('tooFar'), no_location: tr('needLocation'), inaccurate: tr('inaccurate') }[error?.hint];
+    const msg = { brand_place: tr('needMaisonShort'), locked: tr('notYet'), far: tr('tooFar'), no_location: tr('needLocation'), inaccurate: tr('inaccurate') }[error?.hint];
     toast(msg || tr('errGeneric'));
     renderCapsule(s, c, 'in', c.place ? 2 : 1);
     return;
   }
-  Object.assign(c, { opened: true, openedAt: Date.parse(data[0].opened_at), message: data[0].message, drawing: data[0].drawing, isNew: false });
+  Object.assign(c, { opened: true, openedAt: Date.parse(data[0].opened_at), message: data[0].message, drawing: data[0].drawing, photo: data[0].photo, gift: data[0].gift_code, isNew: false });
   renderHome();
   renderCapsule(s, c, 'in');
 }
 
 /* ---------- Create ---------- */
+// Photos are shrunk to at most 1280 px and saved as JPEG, sealed with the letter.
+function shrinkPhoto(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => {
+      const k = Math.min(1, 1280 / Math.max(im.width, im.height));
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(im.width * k); cv.height = Math.round(im.height * k);
+      cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(url);
+      let q = 0.82, out = cv.toDataURL('image/jpeg', q);
+      while (out.length > 1400000 && q > 0.4) { q -= 0.12; out = cv.toDataURL('image/jpeg', q); }
+      resolve(out);
+    };
+    im.onerror = () => { URL.revokeObjectURL(url); reject(new Error('not an image')); };
+    im.src = url;
+  });
+}
 const QUICK = [{ k: 'm1', days: 30 }, { k: 'm6', days: 182 }, { k: 'y1', days: 365 }, { k: 'y5', days: 1826 }];
 function validStep(d) {
   if (d.step === 1) return !!d.to;
@@ -776,6 +813,10 @@ const STEPS = {
     ${d.mode === 'type'
       ? `<textarea id="msg" maxlength="500" placeholder="${tr('msgPh')}" aria-label="${tr('msgAria')}">${esc(d.msg)}</textarea><p class="count"><span id="cnt">${d.msg.length}</span> / 500</p>`
       : `<div class="pad"><canvas id="pad" width="600" height="520" aria-label="${tr('padAria')}"></canvas><button class="link" data-act="clear">${tr('clear')}</button></div><p class="sub">${tr('padNote')}</p>`}
+    ${d.photo
+      ? `<div class="photo-pick"><img src="${d.photo}" alt="${tr('photoAlt')}"><button class="toggle on" data-act="photo">${tr('photoOn')}</button></div>`
+      : `<button class="toggle" data-act="photo">${tr('photoAdd')}</button>`}
+    <input type="file" id="photo-file" accept="image/*" hidden>
     <label class="field"><span>${tr('hintLabel')}</span><input id="hint" maxlength="40" value="${esc(d.hint)}" placeholder="${tr('hintPh')}"></label>`,
   3: d => `<h2>${tr('s3h')}</h2><p class="sub">${tr('s3sub')}</p>
     <div class="vgrid">${[...S.vessels.keys()].map(k => {
@@ -792,12 +833,17 @@ const STEPS = {
       <label class="chip date-chip ${d.quick === 'custom' ? 'sel' : ''}">${custom || tr('customDate')}<input type="date" id="date" min="${tomorrow}" value="${custom.replaceAll('/', '-')}" aria-label="${tr('dateAria')}"></label></div>
     ${d.openAt ? `<p class="sub" style="margin-top:10px">${tr('arrives', fmt(d.openAt))}</p>` : ''}
     <h3>${tr('whereH')}</h3>
-    <div class="places">${[null, ...S.places.keys()].map(id => `<button class="place-opt ${d.place === id ? 'sel' : ''}" data-place="${id ?? ''}">${IC.pin}<span><b>${id ? esc(plname(id)) : tr('anywhere')}</b><small>${id ? esc(plcity(id)) : tr('anywhereSub')}</small></span></button>`).join('')}</div>
+    <div class="memory-card"><b>${tr('memoryH')}</b><span>${tr('memorySoon')}</span></div>
+    <div class="places">${[null, ...[...S.places.values()].filter(p => !p.brand_vessel).map(p => p.id), ...[...S.places.values()].filter(p => p.brand_vessel).map(p => p.id)].map(id => {
+      const p = id && S.places.get(id), dis = p?.brand_vessel && d.vessel !== p.brand_vessel;
+      const sub = p ? `${esc(plcity(id))} · ${esc(plwhy(id))}${dis ? tr('needMaison') : ''}` : tr('anywhereSub');
+      return `<button class="place-opt ${d.place === id ? 'sel' : ''}" data-place="${id ?? ''}" ${dis ? 'disabled' : ''}>${IC.pin}<span><b>${id ? esc(plname(id)) : tr('anywhere')}</b><small>${sub}</small></span></button>`;
+    }).join('')}</div>
     <p class="sub" style="margin-top:10px">${tr('radiusNote')}</p>`;
   },
 };
 function openCreate(preTo) {
-  const d = { to: preTo || null, mode: 'type', msg: '', drawing: null, hint: '', vessel: null, openAt: null, quick: null, place: null, step: 1, sealed: false, busy: false };
+  const d = { to: preTo || null, mode: 'type', msg: '', drawing: null, photo: null, hint: '', vessel: null, openAt: null, quick: null, place: null, step: 1, sealed: false, busy: false };
   const s = push('sheet');
   const render = () => {
     s.innerHTML = `${bar(tr('createTitle'), 'close')}
@@ -841,6 +887,7 @@ function openCreate(preTo) {
       p_hint: d.hint.trim() || tr('defaultHint'),
       p_open_at: new Date(d.openAt).toISOString(),
       p_place: d.place,
+      p_photo: d.photo,
     });
     d.busy = false;
     if (error) { console.error(error); toast(tr('errGeneric')); render(); return; }
@@ -852,7 +899,11 @@ function openCreate(preTo) {
     if (e.target.id === 'msg') { d.msg = e.target.value; $('#cnt', s).textContent = d.msg.length; upd(); }
     if (e.target.id === 'hint') d.hint = e.target.value;
   });
-  s.addEventListener('change', e => {
+  s.addEventListener('change', async e => {
+    if (e.target.id === 'photo-file' && e.target.files[0]) {
+      try { d.photo = await shrinkPhoto(e.target.files[0]); render(); } catch (err) { console.error(err); toast(tr('photoErr')); }
+      return;
+    }
     if (e.target.id === 'date' && e.target.value) { d.openAt = new Date(e.target.value + 'T09:00').getTime(); d.quick = 'custom'; render(); }
   });
   s.addEventListener('click', e => {
@@ -864,7 +915,10 @@ function openCreate(preTo) {
     else if (ds.place !== undefined) { d.place = ds.place || null; render(); }
     else if (ds.vessel) {
       if (!owns(ds.vessel)) { openShop(ds.vessel, () => { if (owns(ds.vessel)) { d.vessel = ds.vessel; render(); } }); return; }
-      d.vessel = ds.vessel; render();
+      d.vessel = ds.vessel;
+      const bp = S.places.get(d.place)?.brand_vessel;
+      if (bp && bp !== d.vessel) d.place = null;
+      render();
     }
     else if (ds.quick) {
       d.quick = ds.quick;
@@ -875,6 +929,7 @@ function openCreate(preTo) {
     else if (ds.act === 'invite') openInvite();
     else if (ds.act === 'prev') { d.step--; render(); }
     else if (ds.act === 'clear') { d.drawing = null; render(); }
+    else if (ds.act === 'photo') { if (d.photo) { d.photo = null; render(); } else $('#photo-file', s).click(); }
     else if (ds.act === 'next' && validStep(d)) { if (d.step < 4) { d.step++; render(); } else seal(); }
     else if (ds.act === 'done') finish();
   });
@@ -999,11 +1054,14 @@ function openMe() {
     const opened = S.inbox.filter(c => c.opened).length;
     s.innerHTML = `${bar(tr('meTitle'))}
     <div class="scroll">
-      <div class="profile">${avatar(uid(), 'xl')}<h2>${esc(S.profile.name)}</h2><p>${esc(S.user.email || '')}</p>
+      <div class="profile">${avatar(uid(), 'xl')}<h2>${esc(S.profile.name)}</h2><p>${esc(S.profile.city || S.user.email || '')}</p>
         <button class="link" data-act="edit">${tr('editProfile')}</button></div>
       <dl class="stats"><div><dt>${tr('statIn')}</dt><dd>${S.inbox.length}</dd></div><div><dt>${tr('statOut')}</dt><dd>${S.sent.length}</dd></div><div><dt>${tr('statOpened')}</dt><dd>${opened}</dd></div></dl>
       <ul class="menu">
         <li><span>${tr('language')}</span><div class="seg small" role="radiogroup" aria-label="${tr('language')}"><button role="radio" aria-selected="${LANG === 'zh'}" aria-checked="${LANG === 'zh'}" data-lang="zh">繁中</button><button role="radio" aria-selected="${LANG === 'en'}" aria-checked="${LANG === 'en'}" data-lang="en">English</button></div></li>
+        <li><label for="remind">${tr('remind')}</label><input id="remind" type="checkbox" class="switch" ${S.profile.remind_open ? 'checked' : ''}></li>
+        <li><label for="nearby">${tr('nearby')}</label><input id="nearby" type="checkbox" class="switch" ${S.profile.remind_nearby ? 'checked' : ''}></li>
+        <li class="soon-row"><small>${tr('remindSoon')}</small></li>
         <li><span>${tr('ownedV')}</span><button class="link" data-act="shop">${tr('ownedN', [...S.vessels.keys()].filter(owns).length)}</button></li>
       </ul>
       <h3 class="sec">${tr('friendsH')} <small>${tr('friendsN', S.friends.length)}</small></h3>
@@ -1015,6 +1073,14 @@ function openMe() {
     </div>`;
   };
   s._render = render;
+  // Reminder preferences are saved now; the reminders themselves come with notifications.
+  s.onchange = async e => {
+    const col = { remind: 'remind_open', nearby: 'remind_nearby' }[e.target.id];
+    if (!col) return;
+    const { data, error } = await sb.from('profiles').update({ [col]: e.target.checked }).eq('id', uid()).select().single();
+    if (error) { console.error(error); toast(tr('errGeneric')); e.target.checked = !e.target.checked; return; }
+    S.profile = data;
+  };
   s.onclick = async e => {
     const a = e.target.closest('[data-act]')?.dataset.act;
     if (a === 'back') return pop(s);
