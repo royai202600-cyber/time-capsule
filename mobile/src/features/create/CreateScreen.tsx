@@ -3,7 +3,7 @@ import { Animated, Easing, Image, PanResponder, Platform, Pressable, Text, TextI
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { runOnJS, useSharedValue, withSpring } from 'react-native-reanimated';
+import { useSharedValue, withSpring } from 'react-native-reanimated';
 import { Avatar } from '../../components/Avatar';
 import { Vessel, type VesselKind } from '../../components/Vessel';
 import { Screen, Button, Heading, Body } from '../../components/Screen';
@@ -23,8 +23,8 @@ const dateValue = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).pa
 const customDate = (s: string) => { if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null; const d = new Date(`${s}T12:00:00`); return dateValue(d) === s && d.getTime() > Date.now() ? d : null; };
 const card = { borderWidth: 1.5, borderColor: C.line, backgroundColor: C.white, borderRadius: 16, padding: 14 } as const;
 const label = { fontFamily: sans, color: C.ink } as const;
-// The letter's centre is at stage y=125; vessel openings sit near stage y=300–360.
-const LETTER_DROP: Record<VesselKind, number> = { dome: 235, bottle: 175, envelope: 205, tin: 200, lantern: 185, musicbox: 195, maison: 190 };
+// The letter's centre is at stage y=125; these drops meet each vessel's opening at stage y=270–325.
+const LETTER_DROP: Record<VesselKind, number> = { dome: 205, bottle: 155, envelope: 185, tin: 190, lantern: 165, musicbox: 180, maison: 175 };
 
 export default function CreateScreen() {
   const { t, language, setLanguage } = useLanguage();
@@ -42,13 +42,14 @@ export default function CreateScreen() {
   const drawing = useRef<DrawingHandle>(null);
   const sentOnce = useRef(false);
   const sendingRef = useRef(false);
-  const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, letterEntry = useRef(new Animated.Value(44)).current, letterOpacity = useRef(new Animated.Value(0)).current, drift = useRef(new Animated.Value(0)).current;
+  const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterNarrow = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, letterEntry = useRef(new Animated.Value(44)).current, letterOpacity = useRef(new Animated.Value(0)).current, letterFade = useRef(new Animated.Value(1)).current, drift = useRef(new Animated.Value(0)).current;
   const lidLift = useSharedValue(1);
   useEffect(() => { if (!recipient && id) setRecipient(id); }, [id, recipient]);
   useEffect(() => {
     if (phase !== 'seal') return;
     letterEntry.setValue(reduced ? 0 : 44);
     letterOpacity.setValue(0);
+    letterFade.setValue(1);
     Animated.parallel([
       reduced ? Animated.timing(letterEntry, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }) : Animated.spring(letterEntry, { toValue: 0, ...motion.spring.soft, restDisplacementThreshold: 1, restSpeedThreshold: 2, useNativeDriver: true }),
       Animated.timing(letterOpacity, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }),
@@ -91,9 +92,17 @@ export default function CreateScreen() {
     const driftAway = () => Animated.timing(drift, { toValue: 1, duration: 550, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start(complete);
     const closeLid = () => {
       void haptics.thump();
-      lidLift.value = withSpring(0, motion.spring.heavy, finished => { if (finished) runOnJS(driftAway)(); });
+      lidLift.value = withSpring(0, motion.spring.heavy);
+      setTimeout(driftAway, 250);
     };
-    const dropLetter = () => Animated.timing(letterDrop, { toValue: LETTER_DROP[vessel ?? 'dome'], duration: 380, easing: Easing.in(Easing.cubic), useNativeDriver: true }).start(closeLid);
+    const dropLetter = () => Animated.parallel([
+      Animated.timing(letterDrop, { toValue: LETTER_DROP[vessel ?? 'dome'], duration: 380, easing: Easing.linear, useNativeDriver: true }),
+      Animated.timing(letterNarrow, { toValue: .24, duration: 200, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.sequence([
+        Animated.delay(228),
+        Animated.timing(letterFade, { toValue: 0, duration: 152, useNativeDriver: true }),
+      ]),
+    ]).start(closeLid);
     Animated.sequence([
       Animated.spring(letter, { toValue: .65, ...motion.spring.soft, restDisplacementThreshold: .05, restSpeedThreshold: 2, useNativeDriver: true }),
       Animated.spring(letter, { toValue: .16, ...motion.spring.soft, restDisplacementThreshold: .05, restSpeedThreshold: 2, useNativeDriver: true }),
@@ -106,7 +115,7 @@ export default function CreateScreen() {
     setBusy(true); setError('');
     void (reduced ? haptics.tap() : haptics.thump());
     const contact = reduced ? Promise.resolve() : new Promise<void>(resolve => Animated.parallel([
-      Animated.spring(wax, { toValue: { x: 0, y: -305 }, ...motion.spring.snappy, restDisplacementThreshold: 1, restSpeedThreshold: 3, useNativeDriver: true }),
+      Animated.spring(wax, { toValue: { x: 0, y: -338 }, ...motion.spring.snappy, restDisplacementThreshold: 1, restSpeedThreshold: 3, useNativeDriver: true }),
       Animated.sequence([
         Animated.timing(waxScale, { toValue: 1.25, duration: motion.fade.quick, useNativeDriver: true }),
         Animated.timing(waxScale, { toValue: .95, duration: motion.fade.quick, useNativeDriver: true }),
@@ -144,14 +153,14 @@ export default function CreateScreen() {
   if (!session) return <Screen><Body>{t('create.signIn')}</Body><Button title={t('create.close')} onPress={() => router.replace('/')} /></Screen>;
   if (phase === 'seal') return <Screen>
     <Heading>{t('create.sealSend')}</Heading>
-    <View style={{ height: 520, width: '100%' }}>
-      <Animated.View style={[card, { position: 'absolute', top: 20, left: '6%', width: '88%', height: 210, alignItems: 'center', justifyContent: 'center', transform: [{ translateY: letterDrop }, { translateY: letterEntry }, { scaleY: letter }], opacity: Animated.multiply(letterOpacity, drift.interpolate({ inputRange: [0, .6, 1], outputRange: [1, 1, 0] })) }]}>
+    <View style={{ height: 560, width: '100%' }}>
+      <Animated.View style={[card, { position: 'absolute', top: 20, left: '6%', width: '88%', height: 210, alignItems: 'center', justifyContent: 'center', transform: [{ translateY: letterDrop }, { translateY: letterEntry }, { scaleY: letter }, { scaleX: letterNarrow }], opacity: Animated.multiply(Animated.multiply(letterOpacity, letterFade), drift.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })) }]}>
         <Text style={{ color: C.muted, fontFamily: handwriting, fontSize: 19 }}>{recipientName}</Text><View style={{ width: '75%', marginTop: 28, gap: 18 }}><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /></View>
         {stamped && <View style={{ position: 'absolute', top: 83, left: 0, right: 0, alignItems: 'center' }}><View style={{ width: 70, height: 70, borderRadius: 35, borderWidth: 3, borderColor: C.plum, backgroundColor: C.wax, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: C.cream, fontSize: 29 }}>✦</Text></View></View>}
       </Animated.View>
-      <Animated.View style={{ position: 'absolute', top: 280, left: 0, right: 0, alignItems: 'center', transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [0, -120] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={150} lidLift={lidLift} /></Animated.View>
-      {!stamped && <View style={{ position: 'absolute', top: 405, left: 0, right: 0, alignItems: 'center' }}><Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, borderRadius: 38, backgroundColor: C.wax, borderWidth: 3, borderColor: C.plum, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }] }}><Text style={{ color: C.cream, fontSize: 31 }}>✦</Text></Animated.View></View>}
-      <Text style={{ position: 'absolute', top: 490, left: 0, right: 0, textAlign: 'center', fontFamily: sans, color: C.muted }}>{busy || sentOnce.current ? t('create.sending') : t('create.drag')}</Text>
+      <Animated.View style={{ position: 'absolute', top: 270, left: 0, right: 0, alignItems: 'center', transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [0, -120] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={120} lidLift={lidLift} /></Animated.View>
+      {!stamped && <View style={{ position: 'absolute', top: 425, left: 0, right: 0, alignItems: 'center' }}><Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, borderRadius: 38, backgroundColor: C.wax, borderWidth: 3, borderColor: C.plum, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }] }}><Text style={{ color: C.cream, fontSize: 31 }}>✦</Text></Animated.View></View>}
+      <Text style={{ position: 'absolute', top: 515, left: 0, right: 0, textAlign: 'center', fontFamily: sans, color: C.muted }}>{busy || sentOnce.current ? t('create.sending') : t('create.drag')}</Text>
     </View>
     <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
   </Screen>;
