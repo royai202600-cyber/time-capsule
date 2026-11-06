@@ -6,12 +6,12 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| F0 | Expo native app foundation | Codex | Auth, profile, shared components and services ready for F1–F4 review. |
 | T9 | Create art assets | Codex | Art assets are reviewed and integrated. |
 
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
+| F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
