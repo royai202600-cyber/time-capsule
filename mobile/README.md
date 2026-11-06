@@ -33,3 +33,9 @@ Use Expo Go rather than the phone browser for an `exp://` or `exps://` link. If 
 - To test native Google later: choose the final app identifiers, configure an EAS project with `eas build:configure`, create an iOS development build with `eas build --profile development --platform ios`, install it, then run `npx expo start --dev-client`. EAS will walk Roy through Apple signing and device registration; Apple membership requirements depend on the distribution method. The existing native callback is `timecapsule://auth/callback`.
 - End-to-end signup verification and password-reset email delivery have not been verified. The hosted project's existing built-in email restrictions remain; T2 supplies custom SMTP. Temporary LAN/Expo callbacks must match the currently running server before testing email links, or Supabase can fall back to the production Site URL. The reserved-domain test account cannot receive email.
 - Native bundle identifiers (`app.timecapsule.mobile`) remain placeholders. No database schema changes were needed. The root website remains the production deployment.
+
+## F3 Journey and place map
+
+`src/features/journey/` contains the Journey map, Passport, capsule map page, and foreground location hook. F1's capsule screen can import `CapsuleMapPage`, `usePlaceDistance`, and `openingCoordinates`; see that folder's README. `react-native-maps` provides the real map in Expo Go on iOS and Android; the web version embeds OpenStreetMap. The location prompt follows an in-app explainer. The development map page has a fake-arrival toggle.
+
+Background proximity reminders are not part of this foreground implementation. They would need `expo-task-manager` background updates, a development/store build (Expo Go does not provide the full background behavior), iOS/Android background location permissions and store review. Keep foreground GPS for opening itself.
