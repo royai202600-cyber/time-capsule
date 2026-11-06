@@ -16,7 +16,7 @@ export default function CreateScreen() {
       )}
       <Button
         title={t("prev")}
-        onPress={() => (step > 1 ? setStep(step - 1) : router.back())}
+        onPress={() => (step > 1 ? setStep(step - 1) : router.canGoBack() ? router.back() : router.replace("/"))}
       />
     </Screen>
   );

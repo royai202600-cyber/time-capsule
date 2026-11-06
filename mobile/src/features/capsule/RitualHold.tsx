@@ -45,7 +45,7 @@ export function RitualHold({ title, disabled, onProgress, onComplete }: {
   };
   return <Pressable onPressIn={begin} onPressOut={stop} disabled={disabled} accessibilityRole="button" accessibilityLabel={title} style={{ opacity: disabled ? 0.5 : 1 }}>
     <View style={{ width: 150, height: 150, alignItems: "center", justifyContent: "center" }}>
-      <Svg width={150} height={150} style={{ position: "absolute" }}><Circle cx={75} cy={75} r={68} fill="none" stroke={C.line} strokeWidth={4} /><Circle cx={75} cy={75} r={68} fill="none" stroke={C.brass} strokeWidth={4} strokeDasharray={`${progress * 427} 427`} rotation={-90} origin="75,75" /></Svg>
+      <Svg width={150} height={150} style={{ position: "absolute" }}><Circle cx={75} cy={75} r={68} fill="none" stroke={C.line} strokeWidth={4} /><Circle cx={75} cy={75} r={68} fill="none" stroke={C.brass} strokeWidth={4} strokeDasharray={`${progress * 427} 427`} /></Svg>
       <Text style={{ color: C.ink, fontFamily: sans, fontSize: 16, textAlign: "center", paddingHorizontal: 20 }}>{title}</Text>
     </View>
   </Pressable>;
