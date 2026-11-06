@@ -7,6 +7,14 @@ Context for any AI agent working in this folder. Read this before doing anything
 - Propose before building anything big (stack, architecture, new dependencies) and wait for Roy's OK.
 - Always make the app **runnable locally** and tell Roy the exact command and URL. Check it in the browser before saying something works.
 
+## Team and roles (from 2026-11-06)
+Two AI agents work on this project, and **Roy relays between them**.
+- **Claude** (Claude Code): product planning, UI/UX design, front-end screens (`index.html`, `src/styles.css`, `src/art.js`, `src/i18n.js`, and the screen/markup parts of `src/main.js`). Writes each piece of work as a task in `docs/TASKS.md` and a ready-to-paste prompt for Codex. Reviews Codex's reports. Works on `claude/<topic>` branches and opens pull requests; does **not** push to `main`, run migrations, or deploy.
+- **Codex**: everything else. Backend (Supabase migrations, row-level security, database functions, auth settings), wiring screens to data, code review, **merging to `main`**, deploying to Vercel, and setup work (email provider, domain, Google publishing, CI). Works on `codex/<topic>` branches.
+- **Hand-off loop:** Claude writes a prompt → Roy pastes it into Codex → Codex does the work and ends with a report in the format below → Roy pastes the report back to Claude → Claude reviews and writes the next prompt.
+- **Codex report format** (end every task with this): 1) what changed (files, migrations, settings), 2) how it was tested (commands and what was checked in a browser), 3) what is live (deployed URL and version, migrations applied), 4) anything not done, risky, or needing Roy's decision, 5) the merged PR / commit hashes.
+- Both agents keep `AGENTS.md` and `docs/TASKS.md` current. Decisions Roy makes go in the Decisions log.
+
 ## Reference material (read-only)
 - Clickable prototype: `/Users/roy/Desktop/Roy_Personal/02_Area/Demo/TimeCapsule_Demo_20261106/`
   - `README.md`: full product concept, capsule states, screens, strategy, and the "what a real version needs" list.
