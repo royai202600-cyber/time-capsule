@@ -64,7 +64,7 @@ export function face(cfg, future = false) {
     beard: !!c.beard,
     glasses: !!c.glasses,
   };
-  return `<svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" fill="${f.bg}"/>
+  return `<svg viewBox="0 0 40 40"><rect width="40" height="40" fill="${f.bg}"/>
   ${f.style === "long" ? `<path d="M12 19 C10.5 8 29.5 8 28 19 L29.5 30 C27 28.5 26.5 24 26.5 19 C25 13.5 15 13.5 13.5 19 C13.5 24 13 28.5 10.5 30Z" fill="${f.hair}"/>` : ""}
   <path d="M5 41 C6 31 12.5 28 20 28 C27.5 28 34 31 35 41Z" fill="${f.shirt}"/>
   <rect x="17.5" y="22" width="5" height="7" rx="2" fill="#eac4a5"/>
