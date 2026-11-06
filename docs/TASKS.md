@@ -12,15 +12,14 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | ID | Task | Owner | Note |
 |---|---|---|---|
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
-| F1 | Home and capsule opening | Codex | Home, story/open pages, opening RPC ritual, letter and sender view implemented. Typecheck and web/iOS bundles pass. Awaiting Roy's iPhone flow review; F3 supplies native GPS and map page. |
+| F1 | Home and capsule opening | Codex | Claude verified Home → opening ritual → letter and opening record in browser. Integrating F3 location and map, then final verification. |
+| F4 | Cabinet, Me, Friends, Invite and portrait picker | Codex | Roy confirmed the Expo Go build works; web layout and typecheck pass. T9 portrait manifest integration remains pending. |
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
 | ID | Task | Owner | Done when |
 |---|---|---|---|
 | F2 | Create and seal | Codex | Build the four-step creation and sealing flow. |
-| F3 | Journey and maps | Codex | Build journey, passport and map flows. |
-| F4 | Profile, shop and cabinet | Codex | Build Me, friends, shop and cabinet flows. |
 | T2 | Email for everyone: buy/choose a domain (Roy), set up Resend SMTP in Supabase, bilingual verify + reset-password templates, raise email rate limit | Codex (+ Roy for the domain and Resend account) | A non-team email address can sign up, verify and reset its password; emails are in 繁中 + English |
 | T3 | Publish the Google sign-in app (privacy policy + home page links on the Branding page) and add the production URL as an origin | Codex (+ Roy to approve in Google) | A Google account that isn't a test user can sign in on the live site |
 | T4 | Notifications: email "you received a capsule" and "it can be opened now", honouring `profiles.remind_open`; later Web Push | Codex (Claude designs the email look) | Emails arrive at the right moments; switches on My turn them off |
@@ -30,6 +29,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | T8 | Real payments for the shop (only when Roy decides) | Codex | Roy has chosen a provider |
 
 ## Done
+- F3: Journey, Passport, foreground location and capsule map, with overlapping landmark clusters — Claude approved after the cluster fix; Roy will test the combined app on his phone at the end. F1 integration points are documented in `mobile/src/features/journey/README.md`.
 - T1: Onboarding, deployment setup, and backend security review — reviewed and approved by Claude.
 - T10: Feel demo built in a separate folder outside the repository.
 - Milestone 1 (sign in, friends, send, time lock, hold-to-open), place lock with server GPS check, handwriting, photos, vessel shop (free during testing), brand demo capsule with gift code + QR, responsive layout, Google + email/password sign-in, Vercel deploy. See the Decisions log in `AGENTS.md`.
