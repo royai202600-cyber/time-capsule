@@ -12,3 +12,5 @@ const result = await capsules.open(capsule.id, coordinates?.lat, coordinates?.ln
 `place` is a row from `places`. Use the distance and accuracy to explain UI state; `open_capsule` remains the authority. The permission prompt only appears after `CapsuleMapPage` shows its explainer and the user taps Allow location. `setFakeLocation({lat, lng})` is development only; the map page has a toggle that simulates arrival at its place.
 
 F0's art manifest does not yet register `map-asia`, `stamp-<placeId>`, or passport images. F3 renders a drawn map, code stamps, navy cover and cream pages until those assets are registered there from `design/art/manifest.json`.
+
+Journey groups pins whose 50 px badges would overlap on screen. Tapping a numbered cluster springs toward the next separation; nearby Macau landmarks may take two taps to become individual pins. Badges stay 50 px wide as the map zooms, and a cluster pulses when any member has a waiting capsule.

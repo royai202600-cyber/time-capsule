@@ -7,10 +7,12 @@ import { Vessel, type VesselKind } from "../../components/Vessel";
 import { C, motion, sans, shadows } from "../../theme";
 import type { Fix } from "./location";
 import { useReducedMotion } from "../../useReducedMotion";
+import { useLanguage } from "../../i18n";
+import { haptics } from "../../components/haptics";
+import { clusterPins, mapPoint, nextClusterScale, MAP_HEIGHT, MAP_WIDTH, MAX_MAP_SCALE } from "./pinClusters";
 
-export type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string };
-const W = 900, H = 670;
-const point = (lat: number, lng: number) => ({ x: (lng - 92) / 55 * W, y: (47 - lat) / 55 * H });
+export type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string; waiting?: boolean };
+const W = MAP_WIDTH, H = MAP_HEIGHT;
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 const art = manifest as typeof manifest & { mapAsia?: ImageSourcePropType };
 
@@ -21,20 +23,56 @@ export function JourneyMap({ pins, fix, onSelect }: {
 }) {
   const [viewport, setViewport] = useState({ width: 360, height: 490 });
   const [transform, setTransform] = useState({ x: -200, y: -100, scale: .8 });
+  const reduced = useReducedMotion();
+  const { t } = useLanguage();
   const live = useRef(transform);
   const gesture = useRef({ x: 0, y: 0, scale: 1, span: 0 });
   const centered = useRef(false);
+  const fade = useRef(new Animated.Value(1)).current;
+  const stopZoom = useRef<(() => void) | null>(null);
   const set = (value: typeof transform) => { live.current = value; setTransform(value); };
+  const groups = useMemo(() => clusterPins(pins, transform.scale), [pins, transform.scale]);
   useEffect(() => {
     if (centered.current || viewport.width < 1) return;
-    const target = fix ? point(fix.lat, fix.lng) : point(24, 121);
+    const target = fix ? mapPoint(fix.lat, fix.lng) : mapPoint(24, 121);
     const scale = .8;
     set({ x: viewport.width / 2 - clamp(target.x, 0, W) * scale, y: viewport.height / 2 - clamp(target.y, 0, H) * scale, scale });
     if (fix) centered.current = true;
   }, [fix?.lat, fix?.lng, viewport.width, viewport.height]);
+  useEffect(() => () => stopZoom.current?.(), []);
+  const zoomTo = (x: number, y: number, scale: number) => {
+    stopZoom.current?.();
+    const next = {
+      x: clamp(viewport.width / 2 - x * scale, viewport.width - W * scale - 40, 40),
+      y: clamp(viewport.height / 2 - y * scale, viewport.height - H * scale - 40, 40),
+      scale,
+    };
+    if (reduced) {
+      fade.setValue(0);
+      set(next);
+      Animated.timing(fade, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }).start();
+      return;
+    }
+    const from = live.current;
+    const progress = new Animated.Value(0);
+    const listener = progress.addListener(({ value }) => set({
+      x: from.x + (next.x - from.x) * value,
+      y: from.y + (next.y - from.y) * value,
+      scale: from.scale + (next.scale - from.scale) * value,
+    }));
+    const animation = Animated.spring(progress, { toValue: 1, ...motion.spring.soft, useNativeDriver: false });
+    const stop = () => { animation.stop(); progress.removeListener(listener); };
+    stopZoom.current = stop;
+    animation.start(({ finished }) => {
+      progress.removeListener(listener);
+      if (finished) set(next);
+      if (stopZoom.current === stop) stopZoom.current = null;
+    });
+  };
   const pan = useMemo(() => PanResponder.create({
     onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 4 || Math.abs(g.dy) > 4 || g.numberActiveTouches > 1,
     onPanResponderGrant: (e) => {
+      stopZoom.current?.();
       const a = live.current;
       const touches = e.nativeEvent.touches;
       const span = touches.length > 1 ? Math.hypot(touches[0].pageX - touches[1].pageX, touches[0].pageY - touches[1].pageY) : 0;
@@ -46,7 +84,7 @@ export function JourneyMap({ pins, fix, onSelect }: {
       let scale = start.scale;
       if (touches.length > 1 && start.span > 0) {
         const span = Math.hypot(touches[0].pageX - touches[1].pageX, touches[0].pageY - touches[1].pageY);
-        scale = clamp(start.scale * span / start.span, .55, 2.4);
+        scale = clamp(start.scale * span / start.span, .55, MAX_MAP_SCALE);
       }
       set({
         x: clamp(start.x + g.dx - (scale - start.scale) * W / 2, viewport.width - W * scale - 40, 40),
@@ -57,17 +95,46 @@ export function JourneyMap({ pins, fix, onSelect }: {
   }), [viewport.width, viewport.height]);
   const layout = (e: LayoutChangeEvent) => setViewport(e.nativeEvent.layout);
   return <View onLayout={layout} style={{ flex: 1, overflow: "hidden", backgroundColor: C.glass, borderRadius: 20, borderWidth: 1, borderColor: C.line }} {...pan.panHandlers}>
-    <View style={{ width: W, height: H, transformOrigin: "top left", transform: [{ translateX: transform.x }, { translateY: transform.y }, { scale: transform.scale }] }}>
+    <Animated.View pointerEvents="none" style={{ width: W, height: H, opacity: fade, transformOrigin: "top left", transform: [{ translateX: transform.x }, { translateY: transform.y }, { scale: transform.scale }] }}>
       {art.mapAsia ? <Image source={art.mapAsia} style={{ width: W, height: H }} resizeMode="stretch" /> : <MapPlaceholder />}
-      {pins.map((pin) => {
-        const { x, y } = point(pin.place.lat, pin.place.lng);
-        return <Pressable key={pin.place.id} accessibilityRole="button" onPress={() => onSelect(pin)} style={{ position: "absolute", left: x - 25, top: y - 25, width: 50, height: 50, borderRadius: 25, borderWidth: pin.kind === "other" ? 2 : 1, borderColor: pin.kind === "visited" ? C.brass : C.blue, backgroundColor: pin.kind === "other" ? C.white : C.cream, alignItems: "center", justifyContent: "center", ...shadows.card }}>
-          <PinGlyph pin={pin} />
+    </Animated.View>
+    <Animated.View pointerEvents="box-none" style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, opacity: fade }}>
+      {groups.map((group) => {
+        const clustered = group.pins.length > 1;
+        const waiting = group.pins.some((pin) => pin.waiting || pin.kind === "waiting");
+        const pin = group.pins[0];
+        const size = 50;
+        return <Pressable key={group.id} accessibilityRole="button"
+          accessibilityLabel={clustered ? t("journey.clusterCount", group.pins.length) : (t("journey.pinAt", pin.place.name_zh, pin.place.name_en))}
+          onPress={() => {
+            if (clustered) {
+              void haptics.tick();
+              zoomTo(group.x, group.y, nextClusterScale(group, live.current.scale));
+            } else onSelect(pin);
+          }}
+          style={{ position: "absolute", left: transform.x + group.x * transform.scale - size / 2, top: transform.y + group.y * transform.scale - size / 2, width: size, height: size, borderRadius: size / 2, borderWidth: clustered || pin.kind === "other" ? 2 : 1, borderColor: clustered ? C.plum : pin.kind === "visited" ? C.brass : C.blue, backgroundColor: clustered ? C.cream : pin.kind === "other" ? C.white : C.cream, alignItems: "center", justifyContent: "center", ...shadows.card }}>
+          {clustered ? <ClusterGlyph count={group.pins.length} waiting={waiting} /> : <PinGlyph pin={pin} />}
         </Pressable>;
       })}
-      {fix && <View style={{ position: "absolute", left: point(fix.lat, fix.lng).x - 7, top: point(fix.lat, fix.lng).y - 7, width: 14, height: 14, backgroundColor: C.lightBlue, borderWidth: 2, borderColor: C.white, borderRadius: 7 }} />}
-    </View>
+      {fix && <View style={{ position: "absolute", left: transform.x + mapPoint(fix.lat, fix.lng).x * transform.scale - 7, top: transform.y + mapPoint(fix.lat, fix.lng).y * transform.scale - 7, width: 14, height: 14, backgroundColor: C.lightBlue, borderWidth: 2, borderColor: C.white, borderRadius: 7 }} />}
+    </Animated.View>
   </View>;
+}
+function ClusterGlyph({ count, waiting }: { count: number; waiting: boolean }) {
+  const reduced = useReducedMotion();
+  const pulse = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (!waiting || reduced) return;
+    const animation = Animated.loop(Animated.sequence([
+      Animated.timing(pulse, { toValue: motion.breathe.scale, duration: motion.breathe.duration / 2, useNativeDriver: true }),
+      Animated.timing(pulse, { toValue: 1, duration: motion.breathe.duration / 2, useNativeDriver: true }),
+    ]));
+    animation.start();
+    return () => animation.stop();
+  }, [waiting, reduced, pulse]);
+  return <Animated.View style={{ transform: [{ scale: pulse }], alignItems: "center", justifyContent: "center" }}>
+    <Text style={{ fontFamily: sans, fontWeight: "700", color: C.plum, fontSize: 20 }}>{count}</Text>
+  </Animated.View>;
 }
 function PinGlyph({ pin }: { pin: JourneyPin }) {
   const reduced = useReducedMotion();

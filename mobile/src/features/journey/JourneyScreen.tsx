@@ -32,7 +32,7 @@ export default function JourneyScreen() {
     const here = capsules.filter((capsule) => capsule.place === place.id);
     const visited = here.some((capsule) => !!capsule.opened_at);
     const waiting = here.find((capsule) => !capsule.opened_at);
-    return { place, kind: visited ? "visited" : waiting ? "waiting" : "other", vessel: waiting?.vessel };
+    return { place, kind: visited ? "visited" : waiting ? "waiting" : "other", vessel: waiting?.vessel, waiting: !!waiting };
   }), [places, capsules]);
   const stampRows = useMemo(() => places.map((place) => {
     const openedAt = capsules.filter((capsule) => capsule.place === place.id && capsule.opened_at)

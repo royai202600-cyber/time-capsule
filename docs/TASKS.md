@@ -12,7 +12,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | ID | Task | Owner | Note |
 |---|---|---|---|
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
-| F3 | Journey and maps | Codex | Journey, passport, foreground location and capsule map page built on `codex/f3-journey-location`; web/iOS bundles checked. Awaiting signed-in phone GPS/opening verification and F1 page integration. |
 | F4 | Cabinet, Me, Friends, Invite and portrait picker | Codex | Roy confirmed the Expo Go build works; web layout and typecheck pass. T9 portrait manifest integration remains pending. |
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
@@ -30,6 +29,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | T8 | Real payments for the shop (only when Roy decides) | Codex | Roy has chosen a provider |
 
 ## Done
+- F3: Journey, Passport, foreground location and capsule map, with overlapping landmark clusters — Claude approved after the cluster fix; Roy will test the combined app on his phone at the end. F1 integration points are documented in `mobile/src/features/journey/README.md`.
 - T1: Onboarding, deployment setup, and backend security review — reviewed and approved by Claude.
 - T10: Feel demo built in a separate folder outside the repository.
 - Milestone 1 (sign in, friends, send, time lock, hold-to-open), place lock with server GPS check, handwriting, photos, vessel shop (free during testing), brand demo capsule with gift code + QR, responsive layout, Google + email/password sign-in, Vercel deploy. See the Decisions log in `AGENTS.md`.
