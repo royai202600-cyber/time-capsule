@@ -11,6 +11,10 @@ Expo SDK 58 / React Native / TypeScript. The root Vite app remains the productio
 
 Expo Go cannot support the app-specific OAuth scheme; Google sign-in requires an Expo development build. Before testing link-based email flows, add the exact Expo Go URL shown by the running server and its `/--/auth/callback` path to Supabase Authentication → URL Configuration; keep existing entries. Web testing also requires the exact localhost callback URL. Production `timecapsule://auth/callback` is separately allowlisted. The native application IDs are placeholders.
 
+## Checks
+
+From `mobile/`, run `npm ci`, `npm test`, `npm run typecheck`, `npx expo install --check`, and `npx expo export --platform web`. From the repository root, run `npm ci` and `npm run build`. CI runs these on pull requests and cancels superseded runs for the same PR.
+
 ## Layout and conventions
 
 - `app/`: Expo Router entry points, auth callback, and modal create route.
