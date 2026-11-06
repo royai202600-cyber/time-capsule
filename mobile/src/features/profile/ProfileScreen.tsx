@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, TextInput, Pressable, Text } from "react-native";
 import { router } from "expo-router";
-import { Screen, Heading, Body, Button } from "../../components/Screen";
+import { Screen, Heading, Body, Button, BackButton, Bar } from "../../components/Screen";
 import { Avatar, PORTRAITS } from "../../components/Avatar";
 import { portraits } from "../../art/manifest";
 import { haptics } from "../../components/haptics";
@@ -40,7 +40,7 @@ export default function ProfileScreen() {
     setSaving(false);
   };
   return <Screen>
-    <Heading>{t(profile ? "profile.editTitle" : "profile.title")}</Heading>
+    <Bar>{!!profile && <BackButton label={t("back")} onPress={() => router.back()} />}<Heading>{t(profile ? "profile.editTitle" : "profile.title")}</Heading></Bar>
     <View style={{ alignItems: "center", marginVertical: 12 }}><Avatar avatar={selected} size={110} /></View>
     <Body>{t("nameLabel")}</Body>
     <TextInput accessibilityLabel={t("nameLabel")} value={name} onChangeText={setName} maxLength={40} style={{ borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 12, color: C.ink, backgroundColor: C.white }} />
@@ -54,6 +54,5 @@ export default function ProfileScreen() {
     </View>
     <Button title={saving ? t("loading") : t("save")} onPress={() => void save()} disabled={saving || !name.trim()} />
     {!!err && <Text style={{ color: C.wax }}>{err}</Text>}
-    {!!profile && <Button title={t("back")} onPress={() => router.back()} />}
   </Screen>;
 }

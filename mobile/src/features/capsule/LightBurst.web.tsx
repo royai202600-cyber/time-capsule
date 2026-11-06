@@ -1,7 +1,7 @@
 import React from "react";
-import { View } from "react-native";
-import { C } from "../../theme";
+import { Image } from "react-native";
+import { lightBurst } from "../../art/manifest";
 
 export function LightBurst({ intensity }: { intensity: number }) {
-  return <View pointerEvents="none" style={{ position: "absolute", width: 180, height: 180, borderRadius: 90, backgroundColor: C.cream, opacity: intensity * 0.35 }} />;
+  return <Image pointerEvents="none" source={lightBurst} resizeMode="contain" style={{ position: "absolute", width: 220, height: 220, opacity: Math.min(1, intensity) }} />;
 }

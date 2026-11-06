@@ -4,12 +4,13 @@ import Svg, { Path } from "react-native-svg";
 import * as manifest from "../../art/manifest";
 import type { Tables } from "../../services/database.types";
 import { Vessel, type VesselKind } from "../../components/Vessel";
+import { ArtIcon } from '../../components/ArtIcon';
 import { C, motion, sans, shadows } from "../../theme";
 import type { Fix } from "./location";
 import { useReducedMotion } from "../../useReducedMotion";
 import { useLanguage } from "../../i18n";
 import { haptics } from "../../components/haptics";
-import { clusterPins, mapPoint, nextClusterScale, MAP_HEIGHT, MAP_WIDTH, MAX_MAP_SCALE } from "./pinClusters";
+import { clusterPins, nextClusterScale, MAP_HEIGHT, MAP_WIDTH, MAX_MAP_SCALE } from "./pinClusters";
 
 export type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string; waiting?: boolean };
 const W = MAP_WIDTH, H = MAP_HEIGHT;
@@ -21,8 +22,8 @@ export function JourneyMap({ pins, fix, onSelect }: {
   fix: Fix | null;
   onSelect: (pin: JourneyPin) => void;
 }) {
-  const [viewport, setViewport] = useState({ width: 360, height: 490 });
-  const [transform, setTransform] = useState({ x: -200, y: -100, scale: .8 });
+  const [viewport, setViewport] = useState({ width: 0, height: 0 });
+  const [transform, setTransform] = useState({ x: 0, y: 0, scale: .3 });
   const reduced = useReducedMotion();
   const { t } = useLanguage();
   const live = useRef(transform);
@@ -34,10 +35,9 @@ export function JourneyMap({ pins, fix, onSelect }: {
   const groups = useMemo(() => clusterPins(pins, transform.scale), [pins, transform.scale]);
   useEffect(() => {
     if (centered.current || viewport.width < 1) return;
-    const target = fix ? mapPoint(fix.lat, fix.lng) : mapPoint(24, 121);
-    const scale = .8;
-    set({ x: viewport.width / 2 - clamp(target.x, 0, W) * scale, y: viewport.height / 2 - clamp(target.y, 0, H) * scale, scale });
-    if (fix) centered.current = true;
+    const scale = Math.min(viewport.width / W, viewport.height / H);
+    set({ x: (viewport.width - W * scale) / 2, y: (viewport.height - H * scale) / 2, scale });
+    centered.current = true;
   }, [fix?.lat, fix?.lng, viewport.width, viewport.height]);
   useEffect(() => () => stopZoom.current?.(), []);
   const zoomTo = (x: number, y: number, scale: number) => {
@@ -84,7 +84,7 @@ export function JourneyMap({ pins, fix, onSelect }: {
       let scale = start.scale;
       if (touches.length > 1 && start.span > 0) {
         const span = Math.hypot(touches[0].pageX - touches[1].pageX, touches[0].pageY - touches[1].pageY);
-        scale = clamp(start.scale * span / start.span, .55, MAX_MAP_SCALE);
+        scale = clamp(start.scale * span / start.span, .25, MAX_MAP_SCALE);
       }
       set({
         x: clamp(start.x + g.dx - (scale - start.scale) * W / 2, viewport.width - W * scale - 40, 40),
@@ -116,7 +116,6 @@ export function JourneyMap({ pins, fix, onSelect }: {
           {clustered ? <ClusterGlyph count={group.pins.length} waiting={waiting} /> : <PinGlyph pin={pin} />}
         </Pressable>;
       })}
-      {fix && <View style={{ position: "absolute", left: transform.x + mapPoint(fix.lat, fix.lng).x * transform.scale - 7, top: transform.y + mapPoint(fix.lat, fix.lng).y * transform.scale - 7, width: 14, height: 14, backgroundColor: C.lightBlue, borderWidth: 2, borderColor: C.white, borderRadius: 7 }} />}
     </Animated.View>
   </View>;
 }
@@ -148,8 +147,8 @@ function PinGlyph({ pin }: { pin: JourneyPin }) {
     pulse.start();
     return () => pulse.stop();
   }, [pin.kind, reduced, scale]);
-  if (pin.kind === "visited") return <Text style={{ fontFamily: sans, color: C.plum, fontSize: 25 }}>✦</Text>;
-  if (pin.kind === "other") return <Text style={{ color: C.blue, fontSize: 25 }}>⌖</Text>;
+  if (pin.kind === "visited") return <ArtIcon name="check" color={C.plum} size={25} />;
+  if (pin.kind === "other") return <ArtIcon name="pin" color={C.blue} size={25} />;
   return <Animated.View style={{ transform: [{ scale }] }}><Vessel kind={(pin.vessel ?? "dome") as VesselKind} size={35} /></Animated.View>;
 }
 function MapPlaceholder() {

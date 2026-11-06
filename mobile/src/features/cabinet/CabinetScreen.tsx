@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Modal, PanResponder, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { Animated, Image, ImageBackground, Modal, PanResponder, Platform, Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
+import { cabinetWall, shelf } from '../../art/manifest';
 import { router, useFocusEffect } from "expo-router";
 import { DeviceMotion } from "expo-sensors";
 import { Vessel, type VesselKind } from "../../components/Vessel";
-import { Screen, Heading, Button, Bar } from "../../components/Screen";
+import { Screen, Heading, Button, Bar, BackButton } from "../../components/Screen";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
 import { useAuth } from "../../services/auth";
@@ -24,6 +25,8 @@ export default function CabinetScreen() {
   const [selected, setSelected] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const { width: viewportWidth } = useWindowDimensions();
+  const shelfWidth = Math.min(viewportWidth - 48, 592);
   const lift = useRef(new Animated.Value(0)).current;
   const spin = useRef(new Animated.Value(0)).current;
   const spinOffset = useRef(0);
@@ -94,26 +97,24 @@ export default function CabinetScreen() {
   const selOwn = owned.find(o => o.vessel === selected);
   const label = (id: string) => key(id) ? VESSELS[id] : null;
   return <Screen>
-    <Bar><Heading>{t("cabinet.title")}</Heading><Button title={t("back")} onPress={() => router.back()} /></Bar>
+    <Bar><BackButton label={t("back")} onPress={() => router.back()} /><Heading>{t("cabinet.title")}</Heading></Bar>
     <Text style={{ fontFamily: sans, color: C.muted }}>{t("cabinet.hint")}</Text>
     {!session && <Text style={{ fontFamily: sans, color: C.muted }}>{t(__DEV__ ? "cabinet.preview" : "cabinet.signIn")}</Text>}
-    <View style={{ backgroundColor: "#DDD8D0", borderRadius: 20, borderWidth: 2, borderColor: C.wood, paddingTop: 20, paddingHorizontal: 12, overflow: "hidden", transform: reduced ? [] : [{ translateX: tilt.y * 6 }, { translateY: tilt.x * 4 }] }}>
-      {Array.from({ length: Math.ceil(list.length / 3) }, (_, row) => <View key={row} style={{ marginBottom: 16 }}>
-        <View style={{ flexDirection: "row", minHeight: 150, alignItems: "flex-end", justifyContent: "space-around" }}>
-          {list.slice(row * 3, row * 3 + 3).map(v => {
+    <ImageBackground source={cabinetWall} resizeMode="stretch" style={{ borderRadius: 20, borderWidth: 2, borderColor: C.wood, paddingHorizontal: 12, overflow: "hidden", transform: reduced ? [] : [{ translateX: tilt.y * 6 }, { translateY: tilt.x * 4 }] }}>
+      {Array.from({ length: Math.ceil(list.length / 9) }, (_, group) => <View key={group} style={{ height: shelfWidth + 36 }}>
+        <Image source={shelf} resizeMode="stretch" style={{ position: 'absolute', top: 60, width: '100%', height: shelfWidth - 24 }} />
+        {[225, 488, 743].map((boardY, row) => <View key={row} style={{ position: 'absolute', top: 60 + (shelfWidth - 24) * boardY / 1024 - 110, left: '15%', right: '15%', height: 105, flexDirection: "row", alignItems: "flex-end", justifyContent: "space-around" }}>
+          {list.slice(group * 9 + row * 3, group * 9 + row * 3 + 3).map(v => {
             const isOwned = v.price_mop === 0 || owned.some(o => o.vessel === v.id);
-            return <Pressable key={v.id} accessibilityRole="button" accessibilityLabel={label(v.id)?.name[language] ?? v.id} onPress={() => choose(v.id)} style={{ width: "32%", alignItems: "center", opacity: isOwned ? 1 : 0.23, transform: reduced ? [] : [{ translateX: tilt.y * (isOwned ? 10 : 3) }] }}>
-              {key(v.id) && <Vessel kind={v.id} size={105} />}
-              {(v.id === "dome" || v.id === "bottle") && <View pointerEvents="none" style={{ position: "absolute", top: 14, height: 88, width: 10, borderRadius: 8, backgroundColor: C.white, opacity: reduced ? 0 : Math.max(0.04, 0.14 + tilt.y * 0.08), transform: [{ translateX: tilt.y * 22 }, { rotate: "12deg" }] }} />}
-              <Text numberOfLines={1} style={{ color: C.ink, fontFamily: sans, fontSize: 11, textAlign: "center" }}>{label(v.id)?.name[language] ?? v.id}</Text>
+            return <Pressable key={v.id} accessibilityRole="button" accessibilityLabel={label(v.id)?.name[language] ?? v.id} onPress={() => choose(v.id)} style={{ width: "33%", alignItems: "center", opacity: isOwned ? 1 : 0.23, transform: reduced ? [] : [{ translateX: tilt.y * (isOwned ? 10 : 3) }] }}>
+              {key(v.id) && <Vessel kind={v.id} size={Math.min(82, (shelfWidth - 24) * .24)} />}
+              <Text numberOfLines={2} style={{ color: C.ink, fontFamily: sans, fontSize: v.id === 'maison' ? 9 : 10, lineHeight: 11, textAlign: "center" }}>{label(v.id)?.name[language] ?? v.id}</Text>
               {!isOwned && <Text style={{ color: C.plum, fontSize: 11 }}>{t("cabinet.shop")}</Text>}
             </Pressable>;
           })}
-        </View>
-        <View style={{ height: 17, backgroundColor: C.wood, borderTopWidth: 3, borderTopColor: C.cream, borderBottomWidth: 4, borderBottomColor: "#765439", borderRadius: 3 }} />
+        </View>)}
       </View>)}
-      <View pointerEvents="none" style={{ position: "absolute", top: 0, right: 0, width: 35, height: "100%", backgroundColor: C.white, opacity: reduced ? 0 : Math.max(0.03, Math.min(0.22, 0.1 + tilt.y * 0.1)) }} />
-    </View>
+    </ImageBackground>
     {!!error && <Text style={{ color: C.wax }}>{error}</Text>}
     <Modal visible={!!sel && !!selected} transparent animationType="fade" onRequestClose={close}>
       <View style={{ flex: 1, backgroundColor: "rgba(22,38,63,0.60)", justifyContent: "center", alignItems: "center", padding: 20 }}>

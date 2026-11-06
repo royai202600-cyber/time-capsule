@@ -1,8 +1,9 @@
 export type LocatedPin = { place: { id: string; lat: number; lng: number } };
 export type PinGroup<T extends LocatedPin> = { id: string; pins: T[]; x: number; y: number };
 
-export const MAP_WIDTH = 900;
-export const MAP_HEIGHT = 670;
+import { mapPins } from '../../art/manifest';
+export const MAP_WIDTH = 1254;
+export const MAP_HEIGHT = 1254;
 export const PIN_SPACING = 56; // Screen pixels: 50 px badge plus a small gap.
 export const MAX_MAP_SCALE = 160;
 
@@ -10,10 +11,11 @@ export const mapPoint = (lat: number, lng: number) => ({
   x: (lng - 92) / 55 * MAP_WIDTH,
   y: (47 - lat) / 55 * MAP_HEIGHT,
 });
+export const placePoint = (place: LocatedPin['place']) => mapPins[place.id] ?? mapPoint(place.lat, place.lng);
 
 /** Connected components of badges that overlap at the current screen scale. */
 export function clusterPins<T extends LocatedPin>(pins: T[], scale: number): PinGroup<T>[] {
-  const points = pins.map((pin) => mapPoint(pin.place.lat, pin.place.lng));
+  const points = pins.map((pin) => placePoint(pin.place));
   const parent = pins.map((_, index) => index);
   const root = (index: number): number => {
     while (parent[index] !== index) index = parent[index];
@@ -48,8 +50,8 @@ export function nextClusterScale<T extends LocatedPin>(group: PinGroup<T>, curre
   let farthest = 0;
   for (let i = 0; i < group.pins.length; i++) {
     for (let j = i + 1; j < group.pins.length; j++) {
-      const a = mapPoint(group.pins[i].place.lat, group.pins[i].place.lng);
-      const b = mapPoint(group.pins[j].place.lat, group.pins[j].place.lng);
+      const a = placePoint(group.pins[i].place);
+      const b = placePoint(group.pins[j].place);
       const distance = Math.hypot(a.x - b.x, a.y - b.y);
       if (distance * current < PIN_SPACING) farthest = Math.max(farthest, distance);
     }

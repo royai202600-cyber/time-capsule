@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { TextInput, Text, View, Pressable } from "react-native";
+import { TextInput, Text, View, Pressable, Image } from "react-native";
+import { scenes } from "../../art/manifest";
 import { Screen, Heading, Body, Button, Bar } from "../../components/Screen";
 import { Avatar } from "../../components/Avatar";
 import { useLanguage } from "../../i18n";
@@ -78,10 +79,12 @@ export default function AuthScreen() {
           accessibilityRole="button"
           accessibilityLabel={t("langAria")}
           onPress={() => setLanguage(language === "zh" ? "en" : "zh")}
+          style={{ marginLeft: 'auto' }}
         >
           <Body>{language === "zh" ? "EN" : "繁中"}</Body>
         </Pressable>
       </Bar>
+      <Image source={scenes.welcome} style={{ width: '100%', height: 210 }} resizeMode="contain" />
       <Body>{t("tagline")}</Body>
       {auth.inviter && (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
