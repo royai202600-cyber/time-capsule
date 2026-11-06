@@ -28,7 +28,7 @@ export default function ShopScreen() {
   const remainder = stock.data?.find(s => s.vessel === 'maison')?.remaining;
   const name = (id: string) => t(`shop.vessel.${id}`);
   const didFocus = useRef(false);
-  useEffect(() => { if (!didFocus.current && focused && !owned.loading && focused.price_mop > 0 && !owned.data?.some(o => o.vessel === focused.id)) { didFocus.current = true; setSheet(focused.id); } }, [focused?.id, owned.loading, owned.data]);
+  useEffect(() => { if (!didFocus.current && focused && !owned.loading && focused.price_mop > 0 && !(focused.id === 'maison' && remainder === 0) && !owned.data?.some(o => o.vessel === focused.id)) { didFocus.current = true; setSheet(focused.id); } }, [focused?.id, owned.loading, owned.data, remainder]);
   const openSheet = (id: string) => { setError(''); setSheet(id); flight.setValue(0); void haptics.tap(); };
   const acquire = async () => {
     if (!selected || busy) return;
@@ -41,7 +41,7 @@ export default function ShopScreen() {
   };
   const vesselCard = (v: NonNullable<typeof catalog.data>[number]) => {
     const mine = own(v.id), sold = v.edition_total !== null && v.id === 'maison' && remainder === 0;
-    return <Pressable key={v.id} onPress={() => !mine && v.price_mop > 0 ? openSheet(v.id) : void haptics.tick()} style={[card, { width: '46%', alignItems: 'center', borderColor: params.focus === v.id ? C.brass : C.line, opacity: sold && !mine ? .55 : 1 }]}>
+    return <Pressable key={v.id} accessibilityRole='button' accessibilityState={{ disabled: sold && !mine }} onPress={() => { if (sold && !mine) return; if (!mine && v.price_mop > 0) openSheet(v.id); else void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: params.focus === v.id ? C.brass : C.line, opacity: sold && !mine ? .55 : 1 }]}>
       <Vessel kind={v.id as VesselKind} size={110} /><Text style={{ fontFamily: serif, fontSize: 16, color: C.ink, textAlign: 'center' }}>{name(v.id)}</Text>
       <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12, textAlign: 'center' }}>{t(`shop.desc.${v.id}`)}</Text>
       <Text style={{ fontFamily: sans, color: mine ? C.blue : C.plum, marginTop: 7 }}>{mine ? t('shop.owned') : sold ? t('shop.soldOut') : v.price_mop ? t('shop.price', v.price_mop) : t('shop.free')}</Text>
@@ -54,7 +54,7 @@ export default function ShopScreen() {
       <Text style={{ color: C.brass }}>{own('maison')?.edition_no ? t('shop.yourNo', own('maison')!.edition_no, featured.edition_total ?? 300) : remainder !== undefined ? t('shop.stock', remainder, featured.edition_total ?? 300) : ''}</Text>
       {!own('maison') && <Button title={remainder === 0 ? t('shop.soldOut') : t('shop.get')} disabled={remainder === 0} onPress={() => openSheet('maison')} />}
     </View>}
-    {focused && <View style={[card, { borderColor: C.brass }]}><Text style={{ color: C.plum, fontFamily: serif }}>{name(focused.id)}</Text><Body>{t(`shop.desc.${focused.id}`)}</Body>{!own(focused.id) && focused.price_mop > 0 && <Button title={t('shop.get')} onPress={() => openSheet(focused.id)} />}</View>}
+    {focused && <View style={[card, { borderColor: C.brass }]}><Text style={{ color: C.plum, fontFamily: serif }}>{name(focused.id)}</Text><Body>{t(`shop.desc.${focused.id}`)}</Body>{!own(focused.id) && focused.price_mop > 0 && <Button title={focused.id === 'maison' && remainder === 0 ? t('shop.soldOut') : t('shop.get')} disabled={focused.id === 'maison' && remainder === 0} onPress={() => openSheet(focused.id)} />}</View>}
     <Heading>{t('shop.all')}</Heading>{catalog.loading && <Body>{t('shop.loading')}</Body>}<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>{(catalog.data ?? []).map(vesselCard)}</View><Body>{t('shop.testing')}</Body>
     {(catalog.error || owned.error || stock.error) && <Button title={t('shop.retry')} onPress={() => { void catalog.refresh(); void owned.refresh(); void stock.refresh(); }} />}
     <Toast message={notice || (catalog.error || owned.error || stock.error ? t('shop.error') : '')} />
