@@ -10,6 +10,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
+| N2 | Bilingual privacy, terms and support pages | Codex | Static drafts for Roy and Claude to review. Replace owner, support email and effective date placeholders before publication; TODO: in-app account deletion before App Store release. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | F1 | Home and capsule opening | Codex | Claude verified Home → opening ritual → letter and opening record in browser. F3 native location and map, full-width pages, Sent routing and package QR are integrated; typecheck and web/iOS exports pass. |
