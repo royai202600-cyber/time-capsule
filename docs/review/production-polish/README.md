@@ -39,3 +39,9 @@ Local run: `cd mobile && npm run web -- --port 8083` → http://localhost:8083.
 Both pagers update from scroll offsets. The shared dots have 8 px inactive circles, a 20 px active pill, and 32 px tap targets. Pointer media queries control the arrows. The capsule's discovery nudge and dismissed hint are stored in AsyncStorage per device; the nudge is skipped under Reduce Motion. Page changes keep the selection haptic, and page numbers share one component and position.
 
 The web map iframe is explicitly below the radius SVG and vessel badge. Native markers use a fixed 64 × 76 view, z-index 1000, bottom anchor for Google Maps, and centre offset for MapKit. The white badge has a brass ring and a tail whose bottom centre is the coordinate. Native marker behavior was checked against the [react-native-maps Marker API](https://github.com/react-native-maps/react-native-maps/blob/master/docs/marker.md); iOS export checks the native code, while physical-device rendering remains Roy's phone check. The embedded [OpenStreetMap reference](https://www.openstreetmap.org/) was inspected in the browser at the stored place coordinates. Geography, coordinates, and radius are unchanged. The local map capture includes the existing development-only simulated-arrival control, which is excluded from production.
+
+## Discovery nudge follow-up
+
+Mandatory page snapping on web initially clamped the 40 px peek to zero. Snapping is now disabled only during that animation. Browser samples measured offsets 0 → 11.5 → 36 → 23.5 → 5 → 0 px; reload stayed at 0. The first-use marker is versioned for this correction, and devices that already swiped remain dismissed.
+
+![Actual capsule peek](capsule-peek.jpg)
