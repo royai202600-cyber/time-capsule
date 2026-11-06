@@ -10,8 +10,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
-| T9 | Generate illustration assets with built-in `gpt-image-2`; style sheet A, vessel layers, nine main profile portraits, stamps, map, shelf, wax seal and app icon. Existing SVG/app code untouched. | Codex | Roy approved vessels and first three portraits. All 66 masters, 62 WebP copies, four icon sizes, checks, manifest, README and build are complete. PR awaits Roy's review and merge OK. |
-| T9b | Add two paper textures, four scenes, light burst, passport cover/page, cabinet wall and 13-icon reference sheet. | Codex | Included in T9 art PR with transparent/opaque checks and WebP exports; awaiting Roy's PR review. |
+| T9c | Add positions for eleven places on the illustrated 1254 × 1254 map, with a review overlay. | Codex | Compare with Roy's map and an online geographic image. PR awaits Roy's approval before merge. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | F1 | Home and capsule opening | Codex | Claude verified Home → opening ritual → letter and opening record in browser. F3 native location and map, full-width pages, Sent routing and package QR are integrated; typecheck and web/iOS exports pass. |
@@ -34,6 +33,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 
 ## Done
 - F2: Create, seal and Shop — Roy completed a self-send and acquired Maison Aurèle No.002 in Expo Go; Claude verified a handwritten letter with a photo self-send in the browser and approved the drop/contact motion. Final visual tweaks are in PR #8.
+- T9 and T9b: 66 illustration masters, WebP exports, manifest, README and checks; Roy approved and PR #11 merged as `16f741e`.
 - F3: Journey, Passport, foreground location and capsule map, with overlapping landmark clusters — Claude approved after the cluster fix; Roy will test the combined app on his phone at the end. F1 integration points are documented in `mobile/src/features/journey/README.md`.
 - T1: Onboarding, deployment setup, and backend security review — reviewed and approved by Claude.
 - T10: Feel demo built in a separate folder outside the repository.
