@@ -3,6 +3,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { BackButton } from '../../components/Screen';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useFocusEffect } from "expo-router";
+import { goBack } from "../../navigation";
 import { useAuth } from "../../services/auth";
 import { useCapsules, usePlaces } from "../../services/hooks";
 import { useLanguage } from "../../i18n";
@@ -56,7 +57,7 @@ export default function JourneyScreen() {
   return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}>
     <View style={{ width: "100%", maxWidth: 640, alignSelf: "center", flex: 1, padding: spacing.md, gap: spacing.md }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
-        <BackButton label={t("back")} onPress={() => router.back()} />
+        <BackButton label={t("back")} onPress={goBack} />
         <Text style={{ fontFamily: serif, fontSize: 28, color: C.ink }}>{t("journey.title")}</Text>
       </View>
       {(placeData.error || capsuleData.error) && <Text style={{ fontFamily: sans, color: C.plum }}>{t("journey.loadError")}</Text>}

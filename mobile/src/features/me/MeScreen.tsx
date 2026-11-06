@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Pressable, Switch, Text, View } from "react-native";
 import { router, useFocusEffect } from "expo-router";
+import { goBack } from "../../navigation";
 import { Avatar } from "../../components/Avatar";
 import { LegalLinks } from "../../components/LegalLinks";
 import { Screen, Heading, Button, Bar, BackButton } from "../../components/Screen";
@@ -47,7 +48,7 @@ export default function MeScreen() {
   };
   const signOut = async () => { const { error: e } = await supabase.auth.signOut(); if (e) setError(e.message); else router.replace("/"); };
   return <Screen>
-    <Bar><BackButton label={t("back")} onPress={() => router.back()} /><Heading>{t("me.title")}</Heading></Bar>
+    <Bar><BackButton label={t("back")} onPress={goBack} /><Heading>{t("me.title")}</Heading></Bar>
     <View style={{ alignItems: "center", gap: 8, paddingVertical: 18 }}>
       <Avatar avatar={profile?.avatar} size={112} />
       <Text style={{ fontFamily: serif, color: C.ink, fontSize: 25 }}>{profile?.name}</Text>

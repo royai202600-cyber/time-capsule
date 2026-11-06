@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Animated, Modal, PanResponder, Platform, Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
 import { cabinetWall, shelf, vesselParts } from "../../art/manifest";
 import { router, useFocusEffect } from "expo-router";
+import { goBack } from "../../navigation";
 import { DeviceMotion } from "expo-sensors";
 import { Vessel, type VesselKind } from "../../components/Vessel";
 import { Screen, Heading, Bar, BackButton } from "../../components/Screen";
@@ -213,7 +214,7 @@ export default function CabinetScreen() {
   };
 
   return <Screen>
-    <Bar><BackButton label={t("back")} onPress={() => router.back()} /><Heading>{t("cabinet.title")}</Heading></Bar>
+    <Bar><BackButton label={t("back")} onPress={goBack} /><Heading>{t("cabinet.title")}</Heading></Bar>
     <Text style={{ fontFamily: sans, color: C.muted }}>{t("cabinet.hint")}</Text>
     {!session && <Text style={{ fontFamily: sans, color: C.muted }}>{t(__DEV__ ? "cabinet.preview" : "cabinet.signIn")}</Text>}
     <View style={{ width: cabinetWidth, alignSelf: "center", borderRadius: 20, borderWidth: 2, borderColor: C.wood, overflow: "hidden" }}

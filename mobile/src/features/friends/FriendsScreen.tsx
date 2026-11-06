@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { router, useFocusEffect } from "expo-router";
+import { goBack } from "../../navigation";
 import { Avatar } from "../../components/Avatar";
 import { Screen, Heading, Button, Bar, BackButton } from "../../components/Screen";
 import { haptics } from "../../components/haptics";
@@ -25,7 +26,7 @@ export default function FriendsScreen() {
     return () => { alive = false; };
   }, [session?.user.id]));
   return <Screen>
-    <Bar><BackButton label={t("back")} onPress={() => router.back()} /><Heading>{t("friends.title")}</Heading></Bar>
+    <Bar><BackButton label={t("back")} onPress={goBack} /><Heading>{t("friends.title")}</Heading></Bar>
     <Button title={t("friends.invite")} onPress={() => router.push("/invite")} />
     {!friends.length && !error && <Text style={{ color: C.muted, fontFamily: sans }}>{t("friends.empty")}</Text>}
     {friends.map(f => <View key={f.friend_id} style={{ backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 16, padding: 14, flexDirection: "row", alignItems: "center", gap: 12 }}>
