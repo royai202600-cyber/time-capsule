@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Image, PanResponder, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { Animated, Easing, Image, PanResponder, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { useSharedValue, withSpring } from 'react-native-reanimated';
+import { runOnJS, useSharedValue, withSpring } from 'react-native-reanimated';
 import { Avatar } from '../../components/Avatar';
 import { Vessel, type VesselKind } from '../../components/Vessel';
 import { Screen, Button, Heading, Body } from '../../components/Screen';
@@ -23,6 +23,8 @@ const dateValue = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).pa
 const customDate = (s: string) => { if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null; const d = new Date(`${s}T12:00:00`); return dateValue(d) === s && d.getTime() > Date.now() ? d : null; };
 const card = { borderWidth: 1.5, borderColor: C.line, backgroundColor: C.white, borderRadius: 16, padding: 14 } as const;
 const label = { fontFamily: sans, color: C.ink } as const;
+// The letter's centre is at stage y=125; vessel openings sit near stage y=300–360.
+const LETTER_DROP: Record<VesselKind, number> = { dome: 235, bottle: 175, envelope: 205, tin: 200, lantern: 185, musicbox: 195, maison: 190 };
 
 export default function CreateScreen() {
   const { t, language, setLanguage } = useLanguage();
@@ -40,9 +42,18 @@ export default function CreateScreen() {
   const drawing = useRef<DrawingHandle>(null);
   const sentOnce = useRef(false);
   const sendingRef = useRef(false);
-  const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, drift = useRef(new Animated.Value(0)).current;
+  const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, letterEntry = useRef(new Animated.Value(44)).current, letterOpacity = useRef(new Animated.Value(0)).current, drift = useRef(new Animated.Value(0)).current;
   const lidLift = useSharedValue(1);
   useEffect(() => { if (!recipient && id) setRecipient(id); }, [id, recipient]);
+  useEffect(() => {
+    if (phase !== 'seal') return;
+    letterEntry.setValue(reduced ? 0 : 44);
+    letterOpacity.setValue(0);
+    Animated.parallel([
+      reduced ? Animated.timing(letterEntry, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }) : Animated.spring(letterEntry, { toValue: 0, ...motion.spring.soft, restDisplacementThreshold: 1, restSpeedThreshold: 2, useNativeDriver: true }),
+      Animated.timing(letterOpacity, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }),
+    ]).start();
+  }, [phase, reduced]);
   useFocusEffect(useCallback(() => { void owned.refresh(); void catalog.refresh(); }, [id]));
   const chosenVessel = catalog.data?.find(v => v.id === vessel);
   const canUseVessel = (v: { id: string; price_mop: number }) => v.price_mop === 0 || !!owned.data?.some(o => o.vessel === v.id);
@@ -75,18 +86,33 @@ export default function CreateScreen() {
     } catch { setError(t('create.photoError')); void haptics.warn(); }
   };
   const finishAnimation = () => {
-    if (reduced) { Animated.timing(drift, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }).start(() => { setPhase('sealed'); void haptics.success(); }); return; }
-    Animated.sequence([Animated.spring(letter, { toValue: .65, ...motion.spring.soft, useNativeDriver: true }), Animated.spring(letter, { toValue: .16, ...motion.spring.soft, useNativeDriver: true }), Animated.parallel([Animated.spring(letterDrop, { toValue: 220, ...motion.spring.soft, useNativeDriver: true }), Animated.spring(drift, { toValue: .35, ...motion.spring.soft, useNativeDriver: true })])]).start(() => {
-      lidLift.value = withSpring(0, motion.spring.heavy); void haptics.thump();
-      Animated.spring(drift, { toValue: 1, ...motion.spring.soft, useNativeDriver: true }).start(() => { setPhase('sealed'); void haptics.success(); });
-    });
+    const complete = () => { setPhase('sealed'); void haptics.success(); };
+    if (reduced) { Animated.timing(drift, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }).start(complete); return; }
+    const driftAway = () => Animated.timing(drift, { toValue: 1, duration: 550, easing: Easing.out(Easing.cubic), useNativeDriver: true }).start(complete);
+    const closeLid = () => {
+      void haptics.thump();
+      lidLift.value = withSpring(0, motion.spring.heavy, finished => { if (finished) runOnJS(driftAway)(); });
+    };
+    const dropLetter = () => Animated.timing(letterDrop, { toValue: LETTER_DROP[vessel ?? 'dome'], duration: 380, easing: Easing.in(Easing.cubic), useNativeDriver: true }).start(closeLid);
+    Animated.sequence([
+      Animated.spring(letter, { toValue: .65, ...motion.spring.soft, restDisplacementThreshold: .05, restSpeedThreshold: 2, useNativeDriver: true }),
+      Animated.spring(letter, { toValue: .16, ...motion.spring.soft, restDisplacementThreshold: .05, restSpeedThreshold: 2, useNativeDriver: true }),
+    ]).start(dropLetter);
   };
   const sendRef = useRef<() => void>(() => {});
   const send = async () => {
     if (sendingRef.current || sentOnce.current || !recipient || !vessel || !openAt) return;
     sendingRef.current = true;
     setBusy(true); setError('');
-    const snap = reduced ? Promise.resolve() : new Promise<void>(resolve => Animated.spring(wax, { toValue: { x: 0, y: -305 }, ...motion.spring.heavy, useNativeDriver: true }).start(() => resolve()));
+    void (reduced ? haptics.tap() : haptics.thump());
+    const contact = reduced ? Promise.resolve() : new Promise<void>(resolve => Animated.parallel([
+      Animated.spring(wax, { toValue: { x: 0, y: -305 }, ...motion.spring.snappy, restDisplacementThreshold: 1, restSpeedThreshold: 3, useNativeDriver: true }),
+      Animated.sequence([
+        Animated.timing(waxScale, { toValue: 1.25, duration: motion.fade.quick, useNativeDriver: true }),
+        Animated.timing(waxScale, { toValue: .95, duration: motion.fade.quick, useNativeDriver: true }),
+        Animated.timing(waxScale, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }),
+      ]),
+    ]).start(() => resolve()));
     try {
       const ink = mode === 'hand' ? drawingData : null;
       if (mode === 'hand' && !ink) throw new Error('empty drawing');
@@ -94,24 +120,24 @@ export default function CreateScreen() {
       if (rpcError) throw rpcError;
       sentOnce.current = true;
       setSealedAt(openAt);
-      await snap;
-      void (reduced ? haptics.tap() : haptics.thump());
-      if (reduced) { setStamped(true); finishAnimation(); return; }
-      Animated.sequence([
-        Animated.timing(waxScale, { toValue: 1.25, duration: motion.fade.quick, useNativeDriver: true }),
-        Animated.timing(waxScale, { toValue: .95, duration: motion.fade.quick, useNativeDriver: true }),
-        Animated.timing(waxScale, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }),
-      ]).start(() => { setStamped(true); finishAnimation(); });
+      await contact;
+      setStamped(true);
+      finishAnimation();
     } catch (e) {
       const msg = String((e as any)?.message ?? e).toLowerCase(), code = String((e as any)?.hint ?? '');
       setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('future') ? t('create.badDate') : t('create.sendError'));
-      Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); void haptics.warn();
+      if (reduced) wax.setValue({ x: 0, y: 0 });
+      else Animated.parallel([
+        Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }),
+        Animated.spring(waxScale, { toValue: 1, ...motion.spring.soft, useNativeDriver: true }),
+      ]).start();
+      void haptics.warn();
     } finally { sendingRef.current = false; setBusy(false); }
   };
   sendRef.current = () => { void send(); };
   const pan = useRef(PanResponder.create({ onStartShouldSetPanResponder: () => true, onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: (_, g) => { if (!sentOnce.current) wax.setValue({ x: g.dx, y: g.dy }); },
-    onPanResponderRelease: (_, g) => { if (sentOnce.current) return; if (g.dy < -160 && Math.abs(g.dx) < 130) sendRef.current(); else Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); },
+    onPanResponderMove: (_, g) => { if (!sentOnce.current && !sendingRef.current) wax.setValue({ x: g.dx, y: g.dy }); },
+    onPanResponderRelease: (_, g) => { if (sentOnce.current || sendingRef.current) return; if (g.dy < -160 && Math.abs(g.dx) < 130) sendRef.current(); else Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); },
   })).current;
 
   if (authLoading) return <Screen><Body>{t('create.loading')}</Body></Screen>;
@@ -119,11 +145,11 @@ export default function CreateScreen() {
   if (phase === 'seal') return <Screen>
     <Heading>{t('create.sealSend')}</Heading>
     <View style={{ height: 520, width: '100%' }}>
-      <Animated.View style={[card, { position: 'absolute', top: 20, left: '6%', width: '88%', height: 210, alignItems: 'center', justifyContent: 'center', transform: [{ scaleY: letter }, { translateY: letterDrop }], opacity: drift.interpolate({ inputRange: [0, .5, 1], outputRange: [1, 1, 0] }) }]}>
+      <Animated.View style={[card, { position: 'absolute', top: 20, left: '6%', width: '88%', height: 210, alignItems: 'center', justifyContent: 'center', transform: [{ translateY: letterDrop }, { translateY: letterEntry }, { scaleY: letter }], opacity: Animated.multiply(letterOpacity, drift.interpolate({ inputRange: [0, .6, 1], outputRange: [1, 1, 0] })) }]}>
         <Text style={{ color: C.muted, fontFamily: handwriting, fontSize: 19 }}>{recipientName}</Text><View style={{ width: '75%', marginTop: 28, gap: 18 }}><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /></View>
         {stamped && <View style={{ position: 'absolute', top: 83, left: 0, right: 0, alignItems: 'center' }}><View style={{ width: 70, height: 70, borderRadius: 35, borderWidth: 3, borderColor: C.plum, backgroundColor: C.wax, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: C.cream, fontSize: 29 }}>✦</Text></View></View>}
       </Animated.View>
-      <Animated.View style={{ position: 'absolute', top: 250, left: 0, right: 0, alignItems: 'center', transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [30, -90] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={150} lidLift={lidLift} /></Animated.View>
+      <Animated.View style={{ position: 'absolute', top: 280, left: 0, right: 0, alignItems: 'center', transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [0, -120] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={150} lidLift={lidLift} /></Animated.View>
       {!stamped && <View style={{ position: 'absolute', top: 405, left: 0, right: 0, alignItems: 'center' }}><Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, borderRadius: 38, backgroundColor: C.wax, borderWidth: 3, borderColor: C.plum, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }] }}><Text style={{ color: C.cream, fontSize: 31 }}>✦</Text></Animated.View></View>}
       <Text style={{ position: 'absolute', top: 490, left: 0, right: 0, textAlign: 'center', fontFamily: sans, color: C.muted }}>{busy || sentOnce.current ? t('create.sending') : t('create.drag')}</Text>
     </View>

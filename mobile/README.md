@@ -14,7 +14,7 @@ Expo Go cannot support the app-specific OAuth scheme; Google sign-in requires an
 ## Layout and conventions
 
 - `app/`: Expo Router entry points, auth callback, modal create route, and developer playground.
-- `src/features/`: one folder per screen; F1 owns home/capsule, F2 create, F3 journey, and F4 shop/me/friends/invite/cabinet. F0 owns auth/profile and shared foundation.
+- `src/features/`: one folder per screen; F1 owns home/capsule, F2 create/shop, F3 journey, and F4 me/friends/invite/cabinet. F0 owns auth/profile and shared foundation.
 - `src/components/`: shared UI; `src/art/manifest.ts` registers bundled illustrated assets as they become available. Legacy SVG artwork remains available and can be selected in the dev setting.
 - `src/services/`: Supabase client, auth state, and existing table/RPC access. Do not read `capsule_contents` directly.
 - `src/theme.ts`: colours, font names, spacing, shadows, motion; `src/components/haptics.ts` is the haptic vocabulary.
