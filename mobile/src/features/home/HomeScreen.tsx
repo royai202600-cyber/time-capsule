@@ -57,8 +57,8 @@ export default function HomeScreen() {
   const [index, setIndex] = useState(0);
   const [now, setNow] = useState(Date.now());
   const scroll = useRef(new Animated.Value(0)).current;
+  const scrollOffset = useRef(0);
   const list = useRef<FlatList<Row>>(null);
-  const fly = useRef(new Animated.Value(1)).current;
   const rows = bundle.capsules.filter(c => side === "inbox" ? c.recipient === session?.user.id : c.sender === session?.user.id);
   const inset = Math.max(0, (Math.min(width, 640) - W) / 2);
   const refresh = useCallback(async () => {
@@ -74,7 +74,7 @@ export default function HomeScreen() {
   }, [session?.user.id]);
   useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(id); }, []);
-  useEffect(() => { setIndex(0); list.current?.scrollToOffset({ offset: 0, animated: false }); }, [side]);
+  useEffect(() => { scrollOffset.current = 0; setIndex(0); list.current?.scrollToOffset({ offset: 0, animated: false }); }, [side]);
   const person = (c: Row) => {
     const id = side === "inbox" ? c.sender : c.recipient;
     if (side === "sent" && id === session?.user.id) return { name: t("home.future"), avatar: { set: "illus", id: "future" } };
@@ -92,12 +92,7 @@ export default function HomeScreen() {
   };
   const open = (c: Row) => {
     void haptics.tap();
-    const go = () => router.push({ pathname: "/capsule/[id]", params: { id: c.id, side } });
-    if (reduced) { go(); return; }
-    Animated.sequence([
-      Animated.spring(fly, { toValue: 1.08, useNativeDriver: true, ...motion.spring.soft }),
-      Animated.timing(fly, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }),
-    ]).start(go);
+    router.push({ pathname: "/capsule/[id]", params: { id: c.id, side } });
   };
   const ready = rows.filter(c => status(c, side, fix, bundle.places[c.place ?? ""], now) === "ready").length;
   return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}><View style={{ flex: 1, width: "100%", maxWidth: 640, alignSelf: "center" }}>
@@ -107,10 +102,10 @@ export default function HomeScreen() {
       <View style={{ flexDirection: "row", alignItems: "center" }}><Pressable onPress={() => setLanguage(language === "zh" ? "en" : "zh")} accessibilityLabel={language === "zh" ? "English" : "繁體中文"}><Text style={{ color: C.plum, padding: 7, fontFamily: serif }}>{language === "zh" ? "EN" : "中"}</Text></Pressable><Pressable onPress={() => router.push("/shop")} accessibilityLabel={t("home.shop")}><Text style={{ color: C.plum, padding: 7, fontSize: 20 }}>▤</Text></Pressable></View>
     </View>
     {loading ? <View style={{ flex: 1, justifyContent: "center" }}><ActivityIndicator color={C.blue} /></View> : error ? <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}><Text style={{ color: C.wax }}>{error}</Text><Pressable onPress={() => void refresh()}><Text style={{ color: C.blue, padding: 16 }}>{t("capsule.retry")}</Text></Pressable></View> : rows.length ? <>
-      <View style={{ flex: 1, justifyContent: "center", minHeight: 450 }}><Animated.FlatList ref={list as any} data={rows} horizontal keyExtractor={(c: Row) => c.id} showsHorizontalScrollIndicator={false} snapToInterval={STEP} decelerationRate="fast" contentContainerStyle={{ paddingHorizontal: inset, gap: GAP, alignItems: "center" }} onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scroll } } }], { useNativeDriver: true })} scrollEventThrottle={16} onMomentumScrollEnd={e => { const i = Math.max(0, Math.min(rows.length - 1, Math.round(e.nativeEvent.contentOffset.x / STEP))); if (i !== index) { setIndex(i); void haptics.tick(); } }} renderItem={({ item: c, index: i }: { item: Row; index: number }) => {
+      <View style={{ flex: 1, justifyContent: "center", minHeight: 450 }}><Animated.FlatList ref={list as any} data={rows} horizontal keyExtractor={(c: Row) => c.id} showsHorizontalScrollIndicator={false} snapToInterval={STEP} decelerationRate="fast" contentContainerStyle={{ paddingHorizontal: inset, gap: GAP, alignItems: "center" }} onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scroll } } }], { useNativeDriver: true, listener: (e: any) => { scrollOffset.current = e.nativeEvent.contentOffset.x; } })} scrollEventThrottle={16} onMomentumScrollEnd={e => { const i = Math.max(0, Math.min(rows.length - 1, Math.round(e.nativeEvent.contentOffset.x / STEP))); scrollOffset.current = e.nativeEvent.contentOffset.x; if (i !== index) { setIndex(i); void haptics.tick(); } }} renderItem={({ item: c, index: i }: { item: Row; index: number }) => {
         const state = status(c, side, fix, bundle.places[c.place ?? ""], now), p = person(c), pl = bundle.places[c.place ?? ""], v = bundle.vessels[c.vessel];
         const inputRange = [(i - 1) * STEP, i * STEP, (i + 1) * STEP];
-        return <Animated.View style={{ opacity: scroll.interpolate({ inputRange, outputRange: [0.5, 1, 0.5], extrapolate: "clamp" }), transform: [{ perspective: 900 }, { scale: scroll.interpolate({ inputRange, outputRange: [0.9, 1, 0.9], extrapolate: "clamp" }) }, { rotateY: scroll.interpolate({ inputRange, outputRange: ["8deg", "0deg", "-8deg"], extrapolate: "clamp" }) }, { scale: i === index ? fly : 1 }] }}><Pressable onPress={() => i === index ? open(c) : list.current?.scrollToIndex({ index: i, animated: true })} accessibilityRole="button" accessibilityLabel={`${headline(c)}, ${p.name}`} style={{ width: W, height: 430, backgroundColor: C.white, borderWidth: 1.5, borderColor: "#5B6474", borderRadius: 20, padding: 18, alignItems: "center", justifyContent: "space-between", ...shadows.card }}>
+        return <Animated.View style={{ opacity: scroll.interpolate({ inputRange, outputRange: [0.5, 1, 0.5], extrapolate: "clamp" }), transform: [{ perspective: 900 }, { scale: scroll.interpolate({ inputRange, outputRange: [0.9, 1, 0.9], extrapolate: "clamp" }) }, { rotateY: scroll.interpolate({ inputRange, outputRange: ["8deg", "0deg", "-8deg"], extrapolate: "clamp" }) }] }}><Pressable onPress={() => { const centre = Math.max(0, Math.min(rows.length - 1, Math.round(scrollOffset.current / STEP))); if (i === centre) open(c); else { list.current?.scrollToIndex({ index: i, animated: true }); setIndex(i); void haptics.tick(); } }} accessibilityRole="button" accessibilityLabel={`${headline(c)}, ${p.name}`} style={{ width: W, height: 430, backgroundColor: C.white, borderWidth: 1.5, borderColor: "#5B6474", borderRadius: 20, padding: 18, alignItems: "center", justifyContent: "space-between", ...shadows.card }}>
           <View style={{ height: 26, flexDirection: "row", gap: 6, alignItems: "center" }}>{side === "inbox" && !c.seen_at && !c.opened_at && <Text style={{ color: C.wax, fontSize: 11 }}>{t("home.newTag")}</Text>}{c.handwritten && <Text style={{ color: C.wax, fontFamily: handwriting }}>{t("home.handTag")}</Text>}{c.edition_no && v?.brand && <Text style={{ color: C.brass, fontSize: 11 }}>{v.brand} No.{String(c.edition_no).padStart(3, "0")}</Text>}</View>
           <CardVessel kind={c.vessel as VesselKind} state={state} reduced={reduced} />
           <Text numberOfLines={2} style={{ height: 60, fontFamily: serif, color: C.ink, fontSize: 21, textAlign: "center" }}>{headline(c)}</Text>
