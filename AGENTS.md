@@ -59,6 +59,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - `index.html`, `src/main.js` (screens and logic), `src/styles.css` (ported from the prototype + additions at the bottom), `src/art.js` (icons, vessels, portraits), `src/i18n.js` (all zh/en strings).
 - `supabase/migrations/`: database schema. Capsule content lives in `capsule_contents`, which clients can't read; only `open_capsule()` returns it, to the recipient, after `open_at` by the database clock. Writes go through `send_capsule()`, `accept_invite()`, `mark_seen()`.
 - `supabase/templates/code.html`: the sign-in code email (bilingual).
+- The Expo app's F3 Journey, Passport, place map, and foreground GPS are under `mobile/src/features/journey/`; its README describes the hooks F1 uses for Home distances and server-checked opening. Expo Go uses `react-native-maps` on iOS/Android, and web embeds OpenStreetMap. Background proximity reminders remain later work.
 - Run: `npm install`, put the project URL and publishable key in `.env.local` (see `.env.example`), then `npm run dev` → http://localhost:5173.
 
 ## Decisions log
@@ -88,4 +89,5 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 
 - 2026-11-07: Roy approved updating `mobile/` from the feel demo’s SDK 57 to SDK 58 to match the current iPhone Expo Go release. The original feel demo remains unchanged.
 - 2026-11-07: Roy verified the SDK 58 app in iPhone Expo Go: email/password sign-in, portrait/name setup, profile save and Home. Home and feature routes remain F0 placeholders for F1–F4. Google works in the phone browser; native Google requires a development build (not a paid Time Capsule account). End-to-end email verification/reset delivery remains unverified under the existing built-in Supabase email restrictions (T2). A separate confirmed test account was created; its credentials are stored outside the repository.
+- 2026-11-07: Roy confirmed Claude's review is the F3 merge gate; Roy will test the combined F1–F4 app on his phone at the end. Journey clusters overlapping landmark badges and zooms them apart on tap.
 - 2026-11-07: F4 implemented Cabinet, Me, Friends, Invite and the illustrated portrait picker in its branch. Cabinet uses Expo DeviceMotion with SVG shelf and vessel placeholders until T9 art is bundled. The picker saves `{set:'illus', id}` only when all illustrated portraits are registered in `mobile/src/art/manifest.ts`; existing SVG profiles remain valid. Invite supports both the current web URL and app links (Expo Go in development, `timecapsule://` in builds). Roy confirmed the Expo Go build works; he waived the phone screenshot.
