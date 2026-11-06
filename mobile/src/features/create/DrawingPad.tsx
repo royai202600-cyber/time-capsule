@@ -48,7 +48,7 @@ export const DrawingPad = forwardRef<DrawingHandle, { label: string }>(function 
       {strokes.map((stroke, i) => <Path key={i} d={stroke.map((p, j) => `${j ? "L" : "M"}${p.x} ${p.y}`).join(" ") + (stroke.length === 1 ? ` L${stroke[0].x + .1} ${stroke[0].y + .1}` : "")} stroke={C.blue} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />)}
     </Svg>
     {!strokes.length && <Text pointerEvents="none" style={{ position: "absolute", top: 20, left: 18, color: C.muted, fontFamily: handwriting }}>{label}</Text>}
-    <View style={{ position: "absolute", inset: 0 } as any}
+    <View style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
       onStartShouldSetResponder={() => true} onMoveShouldSetResponder={() => true}
       onResponderGrant={e => update([...strokesRef.current, [point(e)]])}
       onResponderMove={e => { const next = strokesRef.current.slice(); const last = next[next.length - 1]; if (last) { next[next.length - 1] = [...last, point(e)]; update(next); } }} />
