@@ -165,7 +165,7 @@ function showSignIn(inviter) {
              <label class="field"><span>${tr('emailLabel')}</span><input id="email" type="email" autocomplete="email" inputmode="email" required value="${esc(st.email)}" placeholder="you@example.com"></label>
              <button class="btn" ${st.busy ? 'disabled' : ''}>${tr('sendCode')}</button>`
           : `<h2>${tr('codeH')}</h2><p class="sub">${esc(tr('codeSub', st.email))}</p>
-             <label class="field"><span>${tr('codeLabel')}</span><input id="code" class="code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" required></label>
+             <label class="field"><span>${tr('codeLabel')}</span><input id="code" class="code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="8" pattern="[0-9]*" required></label>
              <button class="btn" ${st.busy ? 'disabled' : ''}>${tr('verify')}</button>
              <button type="button" class="link" data-act="change">${tr('changeEmail')}</button>`}
         <p class="err" role="alert">${esc(st.err)}</p>
@@ -187,13 +187,13 @@ function showSignIn(inviter) {
       const email = $('#email', s).value.trim();
       if (!/^\S+@\S+\.\S+$/.test(email)) { $('#email', s).focus(); return; }
       st.email = email; st.busy = true; render();
-      const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+      const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo: `${location.origin}/` } });
       st.busy = false;
       if (error) { console.error(error); st.err = tr('sendFail'); } else st.step = 'code';
       render();
     } else {
       const token = $('#code', s).value.replace(/\D/g, '');
-      if (token.length !== 6) { $('#code', s).focus(); return; }
+      if (token.length < 6) { $('#code', s).focus(); return; }
       st.busy = true; render();
       const { error } = await sb.auth.verifyOtp({ email: st.email, token, type: 'email' });
       st.busy = false;
@@ -691,14 +691,25 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && S.
 
 /* ---------- Start ---------- */
 // An invite link (?invite=CODE) is kept until you've signed in and accepted it.
+// localStorage, not sessionStorage: the sign-in link from the email opens a new tab.
 const urlInvite = new URLSearchParams(location.search).get('invite');
 if (urlInvite) {
-  try { sessionStorage.setItem('tc-invite', urlInvite); } catch { /* private mode */ }
+  try { localStorage.setItem('tc-invite', urlInvite); } catch { /* private mode */ }
   history.replaceState(null, '', location.pathname);
 }
-const pendingInvite = () => { try { return sessionStorage.getItem('tc-invite'); } catch { return null; } };
+const pendingInvite = () => { try { return localStorage.getItem('tc-invite'); } catch { return null; } };
 
+let starting = false;
 async function start() {
+  if (starting) return;
+  starting = true;
+  try { await boot(); } finally { starting = false; }
+}
+// Signing in by the email link in another tab also signs this tab in.
+sb.auth.onAuthStateChange(event => {
+  if (event === 'SIGNED_IN' && !S.user) setTimeout(start, 0);
+});
+async function boot() {
   const { data: { session } } = await sb.auth.getSession();
   const code = pendingInvite();
   if (!session) {
@@ -706,7 +717,7 @@ async function start() {
     if (code) {
       const { data } = await sb.rpc('invite_info', { p_code: code });
       inviter = data?.[0] || null;
-      if (!inviter) { try { sessionStorage.removeItem('tc-invite'); } catch { /* */ } toast(tr('inviteBad')); }
+      if (!inviter) { try { localStorage.removeItem('tc-invite'); } catch { /* */ } toast(tr('inviteBad')); }
     }
     return showSignIn(inviter);
   }
@@ -719,7 +730,7 @@ async function start() {
   }
   S.profile = profile;
   if (code) {
-    try { sessionStorage.removeItem('tc-invite'); } catch { /* */ }
+    try { localStorage.removeItem('tc-invite'); } catch { /* */ }
     var { data: inviterId, error: ie } = await sb.rpc('accept_invite', { p_code: code });
     if (ie) { console.error(ie); toast(tr('inviteBad')); }
   }

@@ -153,9 +153,9 @@ export const tr = (key, ...args) => { const v = STR[LANG][key] ?? STR.zh[key]; r
 /* ---------- Added for the real app ---------- */
 Object.assign(STR.zh, {
   appName: '時光膠囊', me: '我', future: '未來的自己', loading: '載入中…',
-  signInH: '登入時光膠囊', signInSub: '輸入你的電郵，我們會寄一個 6 位數登入碼給你。',
-  emailLabel: '電郵', sendCode: '寄出登入碼', sendFail: '寄不出登入碼，請稍後再試。',
-  codeH: '輸入登入碼', codeSub: e => `登入碼已寄到 ${e}，一小時內有效。`, codeLabel: '6 位數登入碼',
+  signInH: '登入時光膠囊', signInSub: '輸入你的電郵，我們會寄一封登入電郵給你，不需要密碼。',
+  emailLabel: '電郵', sendCode: '寄出登入電郵', sendFail: '寄不出登入碼，請稍後再試。',
+  codeH: '查看你的電郵', codeSub: e => `我們寄了一封登入電郵到 ${e}。按信中的登入連結就可以登入；如果信中有登入碼，也可以在下面輸入。`, codeLabel: '登入碼（如有）',
   verify: '登入', badCode: '登入碼不正確或已過期。', changeEmail: '用另一個電郵',
   tagline: '有些話，要等時間到了才說。',
   profileH: '設定個人資料', profileSub: '朋友會看到你的名字和頭像。', nameLabel: '名字', namePh: '例如：Roy',
@@ -172,9 +172,9 @@ Object.assign(STR.zh, {
 });
 Object.assign(STR.en, {
   appName: 'Time Capsule', me: 'Me', future: 'Future me', loading: 'Loading…',
-  signInH: 'Sign in to Time Capsule', signInSub: 'Enter your email and we’ll send you a 6-digit sign-in code.',
-  emailLabel: 'Email', sendCode: 'Send code', sendFail: 'Couldn’t send the code. Please try again later.',
-  codeH: 'Enter your code', codeSub: e => `We sent a code to ${e}. It’s valid for one hour.`, codeLabel: '6-digit code',
+  signInH: 'Sign in to Time Capsule', signInSub: 'Enter your email and we’ll send you a sign-in email. No password needed.',
+  emailLabel: 'Email', sendCode: 'Email me a sign-in link', sendFail: 'Couldn’t send the code. Please try again later.',
+  codeH: 'Check your email', codeSub: e => `We sent a sign-in email to ${e}. Tap the link in it to sign in, or enter the code below if the email has one.`, codeLabel: 'Sign-in code (if any)',
   verify: 'Sign in', badCode: 'That code is wrong or has expired.', changeEmail: 'Use a different email',
   tagline: 'Some things are meant to be said when the time comes.',
   profileH: 'Set up your profile', profileSub: 'Friends will see your name and profile picture.', nameLabel: 'Name', namePh: 'e.g. Roy',
