@@ -45,7 +45,15 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 3. **Milestone 1:** sign in, send a time-locked capsule to a friend, receive it, and open it with hold-to-open when the time comes. Runs locally.
 4. Then: place-locking with server-side check, handwriting, photos, notifications, shop, brand capsules.
 
+## How the code is laid out
+- `index.html`, `src/main.js` (screens and logic), `src/styles.css` (ported from the prototype + additions at the bottom), `src/art.js` (icons, vessels, portraits), `src/i18n.js` (all zh/en strings).
+- `supabase/migrations/`: database schema. Capsule content lives in `capsule_contents`, which clients can't read; only `open_capsule()` returns it, to the recipient, after `open_at` by the database clock. Writes go through `send_capsule()`, `accept_invite()`, `mark_seen()`.
+- `supabase/templates/code.html`: the sign-in code email (bilingual).
+- Run: `npm install`, put the project URL and publishable key in `.env.local` (see `.env.example`), then `npm run dev` → http://localhost:5173.
+
 ## Decisions log
 - 2026-11-06: Project moved from prototype to development. Roy asked to keep it simple and to always be able to run it locally.
-- 2026-11-06: **Tech stack agreed (Option A).** Frontend: plain HTML/CSS/JS ported from the prototype, Vite as dev server/bundler only (no framework), installable PWA later. Backend: Supabase (Postgres + row-level security, Auth with email one-time code, Storage for photos, server functions). The time lock is enforced on the server: capsule content is only returned by a database function that checks the open time against server time. Notifications: email first, Web Push later. Hosting: Vercel (Roy's account) + hosted Supabase. Local development uses the Supabase CLI (`supabase start`, needs Docker Desktop).
+- 2026-11-06: **Tech stack agreed (Option A).** Frontend: plain HTML/CSS/JS ported from the prototype, Vite as dev server/bundler only (no framework), installable PWA later. Backend: Supabase (Postgres + row-level security, Auth with email one-time code, Storage for photos, server functions). The time lock is enforced on the server: capsule content is only returned by a database function that checks the open time against server time. Notifications: email first, Web Push later. Hosting: Vercel (Roy's account) + hosted Supabase. 
 - 2026-11-06: Code lives in a **private** GitHub repo `coding4human123/time-capsule`.
+- 2026-11-06: **Develop against the hosted Supabase project directly** (Roy: "use production to develop"). No local Docker/Supabase stack. The frontend runs locally with `npm run dev` and talks to the hosted project. Schema changes go in `supabase/migrations/` and are applied with `supabase db push`.
+- 2026-11-06: Milestone 1 scope kept tight: email-code sign-in, profile with an illustrated portrait (chosen from presets; never initials), friends via invite link, typed letter + hint, the four free vessels, time lock only. Place lock, handwriting, photos, shop, brand capsules and notifications come next. A dev-only "in 2 minutes" open time exists for testing (hidden in production builds).
