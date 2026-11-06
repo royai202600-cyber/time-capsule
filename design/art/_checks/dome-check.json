@@ -1,0 +1,114 @@
+{
+  "style_reference": "design/art/style-sheet.png",
+  "layer_order": [
+    "base",
+    "glass",
+    "rose"
+  ],
+  "assembled_vs_stack_mae_rgb_on_paper_0_to_255": 3.716,
+  "layer_checks": {
+    "assembled": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha_gt_20": [
+        247,
+        102,
+        777,
+        921
+      ],
+      "center_alpha": 253
+    },
+    "base": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha_gt_20": [
+        246,
+        698,
+        778,
+        921
+      ],
+      "center_alpha": 0
+    },
+    "glass": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha_gt_20": [
+        293,
+        100,
+        728,
+        818
+      ],
+      "center_alpha": 149
+    },
+    "rose": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "visible_bbox_alpha_gt_20": [
+        340,
+        290,
+        676,
+        784
+      ],
+      "center_alpha": 253
+    }
+  },
+  "stack_pass_visual": true,
+  "exact_pixel_match": false,
+  "notes": [
+    "Built-in image generation returned 1254px files; all four dome PNG masters were downscaled together to 1024px.",
+    "Glass generated as translucent alpha (center shown in layer_checks); layering rose above glass keeps the flower legible and closely matches the assembled rendering.",
+    "Generative isolation is not pixel-identical to assembled; comparison image is provided for review."
+  ]
+}

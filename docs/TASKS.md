@@ -6,7 +6,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| T9 | Generate illustration assets: first make three style-sheet variants for Roy to review, then vessels and extras after approval. Use Codex's built-in image generation (`gpt-image-2`); no API key is needed. Keep existing SVG art and app code untouched. | Codex | Roy approves a style sheet; requested PNG masters, WebP copies, icons, checks, manifest and README are complete; build passes and PR is reviewed. |
+| T9 | Generate illustration assets using Codex's built-in `gpt-image-2` (no API key). Roy chose style sheet A. Await Roy's review of the dome test and its transparency/stack checks before making other assets. Music box and ring box assembled art must be closed; hatching lighter for 120 px. Keep existing SVG art and app code untouched. | Codex | Roy approves the dome test; requested PNG masters, WebP copies, icons, checks, manifest and README are complete; build passes and PR is reviewed. |
 
 ## Review
 | ID | Task | Owner | Note |
