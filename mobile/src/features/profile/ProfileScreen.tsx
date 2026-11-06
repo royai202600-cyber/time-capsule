@@ -1,64 +1,59 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, TextInput, Pressable, Text } from "react-native";
+import { router } from "expo-router";
 import { Screen, Heading, Body, Button } from "../../components/Screen";
 import { Avatar, PORTRAITS } from "../../components/Avatar";
+import { portraits } from "../../art/manifest";
+import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
 import { useAuth } from "../../services/auth";
-import { profiles } from "../../services/data";
+import { supabase } from "../../services/supabase";
 import { C } from "../../theme";
+const ids = ["01", "02", "03", "04", "05", "06", "07", "08"];
 export default function ProfileScreen() {
-  const { t } = useLanguage(),
-    { session, refresh } = useAuth();
-  const [name, setName] = useState(""),
-    [city, setCity] = useState(""),
-    [pick, setPick] = useState(0),
-    [err, setErr] = useState("");
+  const { t } = useLanguage();
+  const { session, profile, refresh } = useAuth();
+  const illustrated = ids.every(id => !!portraits[id]) && !!portraits.future;
+  const options: Record<string, unknown>[] = illustrated ? ids.map(id => ({ set: "illus", id })) : PORTRAITS.map(config => ({ set: "svg", config }));
+  const [name, setName] = useState("");
+  const [city, setCity] = useState("");
+  const [pick, setPick] = useState<Record<string, unknown> | null>(null);
+  const [err, setErr] = useState("");
+  const [saving, setSaving] = useState(false);
+  useEffect(() => {
+    if (!profile) return;
+    setName(profile.name);
+    setCity(profile.city ?? "");
+    setPick(profile.avatar);
+  }, [profile?.id]);
+  const selected = pick ?? options[0];
   const save = async () => {
-    if (!session || !name.trim()) return;
-    const { error } = await profiles.save({
-      id: session.user.id,
-      name: name.trim(),
-      city: city.trim() || null,
-      avatar: PORTRAITS[pick],
-    });
-    if (error) setErr(error.message);
-    else await refresh();
+    if (!session || !name.trim() || saving) return;
+    setSaving(true);
+    setErr("");
+    const changes = { name: name.trim(), city: city.trim() || null, avatar: selected as any };
+    const result = profile
+      ? await supabase.from("profiles").update(changes).eq("id", session.user.id)
+      : await supabase.from("profiles").insert({ id: session.user.id, ...changes });
+    if (result.error) { setErr(result.error.message); haptics.warn(); }
+    else { await refresh(); haptics.success(); if (profile) router.back(); }
+    setSaving(false);
   };
-  return (
-    <Screen>
-      <Heading>{t("profileH")}</Heading>
-      <Avatar avatar={PORTRAITS[pick]} size={110} />
-      <Body>{t("nameLabel")}</Body>
-      <TextInput
-        accessibilityLabel={t("nameLabel")}
-        value={name}
-        onChangeText={setName}
-        maxLength={40}
-        style={{ borderWidth: 1, borderColor: C.line, padding: 12 }}
-      />
-      <Body>{t("cityLabel")}</Body>
-      <TextInput
-        accessibilityLabel={t("cityLabel")}
-        value={city}
-        onChangeText={setCity}
-        maxLength={40}
-        style={{ borderWidth: 1, borderColor: C.line, padding: 12 }}
-      />
-      <Body>{t("pickFace")}</Body>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
-        {PORTRAITS.map((p: any, i: number) => (
-          <Pressable
-            key={i}
-            accessibilityRole="radio"
-            accessibilityState={{ checked: i === pick }}
-            onPress={() => setPick(i)}
-          >
-            <Avatar avatar={p} />
-          </Pressable>
-        ))}
-      </View>
-      <Button title={t("save")} onPress={() => void save()} />
-      {!!err && <Text>{err}</Text>}
-    </Screen>
-  );
+  return <Screen>
+    <Heading>{t(profile ? "profile.editTitle" : "profile.title")}</Heading>
+    <View style={{ alignItems: "center", marginVertical: 12 }}><Avatar avatar={selected} size={110} /></View>
+    <Body>{t("nameLabel")}</Body>
+    <TextInput accessibilityLabel={t("nameLabel")} value={name} onChangeText={setName} maxLength={40} style={{ borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 12, color: C.ink, backgroundColor: C.white }} />
+    <Body>{t("cityLabel")}</Body>
+    <TextInput accessibilityLabel={t("cityLabel")} value={city} onChangeText={setCity} maxLength={40} style={{ borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 12, color: C.ink, backgroundColor: C.white }} />
+    <Body>{t("pickFace")}</Body>
+    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
+      {options.map((avatar, i) => <Pressable key={i} accessibilityRole="radio" accessibilityLabel={t("profile.portrait", i + 1)} accessibilityState={{ checked: JSON.stringify(selected) === JSON.stringify(avatar) }} onPress={() => { setPick(avatar); haptics.tick(); }}>
+        <Avatar avatar={avatar} size={70} />
+      </Pressable>)}
+    </View>
+    <Button title={saving ? t("loading") : t("save")} onPress={() => void save()} disabled={saving || !name.trim()} />
+    {!!err && <Text style={{ color: C.wax }}>{err}</Text>}
+    {!!profile && <Button title={t("back")} onPress={() => router.back()} />}
+  </Screen>;
 }
