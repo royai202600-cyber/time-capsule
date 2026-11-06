@@ -12,12 +12,12 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | ID | Task | Owner | Note |
 |---|---|---|---|
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
+| F1 | Home and capsule opening | Codex | Home, story/open pages, opening RPC ritual, letter and sender view implemented. Typecheck and web/iOS bundles pass. Awaiting Roy's iPhone flow review; F3 supplies native GPS and map page. |
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| F1 | Home and capsule opening | Codex | Build the home and opening flows on F0. |
 | F2 | Create and seal | Codex | Build the four-step creation and sealing flow. |
 | F3 | Journey and maps | Codex | Build journey, passport and map flows. |
 | F4 | Profile, shop and cabinet | Codex | Build Me, friends, shop and cabinet flows. |
