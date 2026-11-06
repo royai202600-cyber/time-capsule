@@ -6,6 +6,8 @@ import { createClient } from '@supabase/supabase-js';
 import { IC, vessel, face, PORTRAITS } from './art.js';
 import { LANG, setLangValue, STR, tr, vname, FREE_VESSELS } from './i18n.js';
 
+// A password-reset link lands here with type=recovery in the URL; read it before the client clears it.
+let recovering = /type=recovery/.test(location.hash + location.search);
 const sb = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY);
 
 const DAY = 864e5, HOUR = 36e5, MIN = 6e4;
@@ -148,66 +150,161 @@ function setLang(l) {
 }
 const langBtn = () => `<button class="lang-btn" data-act="lang" aria-label="${tr('langAria')}">${tr('langBtn')}</button>`;
 
-/* ---------- Sign in (Google, or an email link / code) ---------- */
+/* ---------- Sign in: email + password (verified by email), or Google ---------- */
 // Google's standard "G" mark, as their sign-in branding guidelines ask.
 const GOOGLE_G = '<svg class="ic" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
-function showSignIn(inviter) {
+// Errors from Supabase Auth, shown in the user's language.
+function authError(error) {
+  const c = error?.code || '';
+  if (c === 'invalid_credentials') return tr('badLogin');
+  if (c === 'weak_password') return tr('weakPw');
+  if (c.includes('rate_limit')) return tr('rateLimit');
+  if (c === 'user_already_exists' || c === 'email_exists') return tr('alreadyExists');
+  if (c === 'email_address_invalid') return tr('emailInvalid');
+  if (c === 'email_address_not_authorized') return tr('emailNotAllowed');
+  return tr('errGeneric');
+}
+const PW_MIN = 8;
+const validEmail = e => /^\S+@\S+\.\S+$/.test(e);
+
+/* mode: signin | signup | forgot | check (kind: verify | reset) */
+function showSignIn(inviter, mode = 'signin') {
   const s = root('auth');
-  const st = { step: 'email', email: '', busy: false, err: '' };
+  const st = { mode, kind: '', email: '', busy: false, err: '', note: '', showPw: false };
+  const pwField = (label, auto) => `<label class="field"><span>${label}</span>
+      <span class="pw-wrap"><input id="pw" type="${st.showPw ? 'text' : 'password'}" autocomplete="${auto}" minlength="${PW_MIN}" required>
+      <button type="button" class="pw-toggle" data-act="showpw">${tr(st.showPw ? 'hidePw' : 'showPw')}</button></span></label>`;
+  const emailField = () => `<label class="field"><span>${tr('emailLabel')}</span><input id="email" type="email" autocomplete="email" inputmode="email" required value="${esc(st.email)}" placeholder="you@example.com"></label>`;
+  const body = () => {
+    if (st.mode === 'check') return `<div class="auth-form check">
+        <h2>${tr('checkH')}</h2>
+        <p class="sub">${esc(tr(st.kind === 'verify' ? 'checkVerify' : 'checkReset', st.email))}</p>
+        ${st.kind === 'verify' ? `<button type="button" class="btn ghost" data-act="resend" ${st.busy ? 'disabled' : ''}>${tr('resend')}</button>` : ''}
+        <button type="button" class="link" data-act="signin">${tr('backToSignIn')}</button>
+        <p class="err" role="alert">${esc(st.err)}</p><p class="ok-note" role="status">${esc(st.note)}</p></div>`;
+    if (st.mode === 'forgot') return `<form class="auth-form" novalidate>
+        <h2>${tr('forgotH')}</h2><p class="sub">${tr('forgotSub')}</p>
+        ${emailField()}
+        <button class="btn" ${st.busy ? 'disabled' : ''}>${tr('sendReset')}</button>
+        <button type="button" class="link" data-act="signin">${tr('backToSignIn')}</button>
+        <p class="err" role="alert">${esc(st.err)}</p></form>`;
+    const up = st.mode === 'signup';
+    return `<button type="button" class="btn google" data-act="google">${GOOGLE_G}<span>${tr('google')}</span></button>
+      <p class="or"><span>${tr('orEmail')}</span></p>
+      <div class="seg small auth-seg" role="tablist">
+        <button type="button" role="tab" aria-selected="${!up}" data-act="signin">${tr('signInTab')}</button>
+        <button type="button" role="tab" aria-selected="${up}" data-act="signup">${tr('signUpTab')}</button>
+      </div>
+      <form class="auth-form" novalidate>
+        ${emailField()}
+        ${pwField(up ? tr('pwNewLabel', PW_MIN) : tr('pwLabel'), up ? 'new-password' : 'current-password')}
+        <button class="btn" ${st.busy ? 'disabled' : ''}>${tr(up ? 'signUpBtn' : 'signInBtn')}</button>
+        ${up ? '' : `<button type="button" class="link" data-act="forgot">${tr('forgot')}</button>`}
+        <p class="err" role="alert">${esc(st.err)}</p>
+      </form>`;
+  };
   const render = () => {
+    // Keep what was typed when the screen redraws (language switch, show password).
+    const typed = { email: $('#email', s)?.value, pw: $('#pw', s)?.value };
+    if (typed.email != null) st.email = typed.email.trim();
     s.innerHTML = `<div class="auth-top">${langBtn()}</div>
     <div class="scroll auth-body">
       <div class="auth-vessel">${vessel('dome')}</div>
       <h1 class="auth-title">${tr('appName')}</h1>
       <p class="tagline">${tr('tagline')}</p>
       ${inviter ? `<p class="invite-banner"><span class="av">${face(inviter.avatar)}</span>${esc(tr('inviteBanner', inviter.name))}</p>` : ''}
-      ${st.step === 'email' ? `<button type="button" class="btn google" data-act="google">${GOOGLE_G}<span>${tr('google')}</span></button>
-      <p class="or"><span>${tr('orEmail')}</span></p>` : ''}
-      <form class="auth-form" novalidate>
-        ${st.step === 'email'
-          ? `<p class="sub">${tr('signInSub')}</p>
-             <label class="field"><span>${tr('emailLabel')}</span><input id="email" type="email" autocomplete="email" inputmode="email" required value="${esc(st.email)}" placeholder="you@example.com"></label>
-             <button class="btn ghost" ${st.busy ? 'disabled' : ''}>${tr('sendCode')}</button>`
-          : `<h2>${tr('codeH')}</h2><p class="sub">${esc(tr('codeSub', st.email))}</p>
-             <label class="field"><span>${tr('codeLabel')}</span><input id="code" class="code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="8" pattern="[0-9]*" required></label>
-             <button class="btn" ${st.busy ? 'disabled' : ''}>${tr('verify')}</button>
-             <button type="button" class="link" data-act="change">${tr('changeEmail')}</button>`}
-        <p class="err" role="alert">${esc(st.err)}</p>
-      </form>
+      ${body()}
     </div>`;
-    if (st.step === 'code') $('input', s)?.focus();
+    if (typed.pw && $('#pw', s)) $('#pw', s).value = typed.pw;
   };
+  const go = m => { st.mode = m; st.err = ''; st.note = ''; render(); };
   s._render = render;
-  s.addEventListener('click', e => {
+  s.addEventListener('click', async e => {
     const a = e.target.closest('[data-act]')?.dataset.act;
     if (a === 'lang') setLang(LANG === 'zh' ? 'en' : 'zh');
-    if (a === 'change') { st.step = 'email'; st.err = ''; render(); }
-    if (a === 'google') {
-      sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${location.origin}/` } })
-        .then(({ error }) => { if (error) { console.error(error); st.err = tr('errGeneric'); render(); } });
+    else if (a === 'signin' || a === 'signup' || a === 'forgot') go(a);
+    else if (a === 'showpw') { st.showPw = !st.showPw; render(); $('#pw', s)?.focus(); }
+    else if (a === 'google') {
+      const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${location.origin}/` } });
+      if (error) { console.error(error); st.err = tr('errGeneric'); render(); }
+    } else if (a === 'resend') {
+      st.busy = true; st.err = ''; st.note = ''; render();
+      const { error } = await sb.auth.resend({ type: 'signup', email: st.email, options: { emailRedirectTo: `${location.origin}/` } });
+      st.busy = false;
+      if (error) { console.error(error); st.err = authError(error); } else st.note = tr('resent');
+      render();
     }
   });
   s.addEventListener('submit', async e => {
     e.preventDefault();
     if (st.busy) return;
-    st.err = '';
-    if (st.step === 'email') {
-      const email = $('#email', s).value.trim();
-      if (!/^\S+@\S+\.\S+$/.test(email)) { $('#email', s).focus(); return; }
-      st.email = email; st.busy = true; render();
-      const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo: `${location.origin}/` } });
+    const email = $('#email', s).value.trim(), pw = $('#pw', s)?.value || '';
+    st.email = email; st.err = '';
+    if (!validEmail(email)) { st.err = tr('emailInvalid'); render(); return; }
+    if (st.mode !== 'forgot' && st.mode === 'signup' && pw.length < PW_MIN) { st.err = tr('weakPw', PW_MIN); render(); $('#pw', s).value = pw; return; }
+    if (st.mode === 'signin' && !pw) { $('#pw', s).focus(); return; }
+    st.busy = true; render();
+    if (st.mode === 'signup') {
+      const { data, error } = await sb.auth.signUp({ email, password: pw, options: { emailRedirectTo: `${location.origin}/` } });
       st.busy = false;
-      if (error) { console.error(error); st.err = tr('sendFail'); } else st.step = 'code';
-      render();
-    } else {
-      const token = $('#code', s).value.replace(/\D/g, '');
-      if (token.length < 6) { $('#code', s).focus(); return; }
-      st.busy = true; render();
-      const { error } = await sb.auth.verifyOtp({ email: st.email, token, type: 'email' });
+      if (error) { console.error(error); st.err = authError(error); render(); return; }
+      // Supabase hides whether an address exists: an existing account comes back with no identities.
+      if (data.user && !data.user.identities?.length) { st.mode = 'signin'; st.err = tr('alreadyExists'); render(); return; }
+      if (data.session) return start(); // email verification turned off
+      st.mode = 'check'; st.kind = 'verify'; render();
+    } else if (st.mode === 'signin') {
+      const { error } = await sb.auth.signInWithPassword({ email, password: pw });
       st.busy = false;
-      if (error) { console.error(error); st.err = tr('badCode'); render(); return; }
+      if (error?.code === 'email_not_confirmed') { st.mode = 'check'; st.kind = 'verify'; st.err = tr('notConfirmed'); render(); return; }
+      if (error) { console.error(error); st.err = authError(error); render(); return; }
       start();
+    } else {
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: `${location.origin}/` });
+      st.busy = false;
+      if (error) { console.error(error); st.err = authError(error); render(); return; }
+      st.mode = 'check'; st.kind = 'reset'; render();
     }
+  });
+  render();
+}
+
+/* After tapping the reset link in the email: choose a new password. */
+function showNewPassword() {
+  const s = root('auth');
+  const st = { busy: false, err: '', showPw: false };
+  const render = () => {
+    const pw = $('#pw', s)?.value;
+    s.innerHTML = `<div class="auth-top">${langBtn()}</div>
+    <div class="scroll auth-body">
+      <div class="auth-vessel">${vessel('envelope')}</div>
+      <form class="auth-form" novalidate>
+        <h2>${tr('newPwH')}</h2>
+        <label class="field"><span>${tr('pwNewLabel', PW_MIN)}</span>
+          <span class="pw-wrap"><input id="pw" type="${st.showPw ? 'text' : 'password'}" autocomplete="new-password" minlength="${PW_MIN}" required>
+          <button type="button" class="pw-toggle" data-act="showpw">${tr(st.showPw ? 'hidePw' : 'showPw')}</button></span></label>
+        <button class="btn" ${st.busy ? 'disabled' : ''}>${tr('newPwBtn')}</button>
+        <p class="err" role="alert">${esc(st.err)}</p>
+      </form>
+    </div>`;
+    if (pw) $('#pw', s).value = pw;
+  };
+  s._render = render;
+  s.addEventListener('click', e => {
+    const a = e.target.closest('[data-act]')?.dataset.act;
+    if (a === 'lang') setLang(LANG === 'zh' ? 'en' : 'zh');
+    if (a === 'showpw') { st.showPw = !st.showPw; render(); }
+  });
+  s.addEventListener('submit', async e => {
+    e.preventDefault();
+    const pw = $('#pw', s).value;
+    if (pw.length < PW_MIN) { st.err = tr('weakPw', PW_MIN); render(); return; }
+    st.busy = true; st.err = ''; render();
+    const { error } = await sb.auth.updateUser({ password: pw });
+    st.busy = false;
+    if (error) { console.error(error); st.err = authError(error); render(); return; }
+    recovering = false;
+    toast(tr('pwUpdated'));
+    start();
   });
   render();
 }
@@ -715,7 +812,8 @@ async function start() {
 }
 // Signing in by the email link in another tab also signs this tab in.
 sb.auth.onAuthStateChange(event => {
-  if (event === 'SIGNED_IN' && !S.user) setTimeout(start, 0);
+  if (event === 'PASSWORD_RECOVERY') { recovering = true; setTimeout(showNewPassword, 0); return; }
+  if (event === 'SIGNED_IN' && !S.user && !recovering) setTimeout(start, 0);
 });
 async function boot() {
   const { data: { session } } = await sb.auth.getSession();
@@ -730,6 +828,7 @@ async function boot() {
     return showSignIn(inviter);
   }
   S.user = session.user;
+  if (recovering) return showNewPassword();
   const { data: profile, error } = await sb.from('profiles').select('*').eq('id', uid()).maybeSingle();
   if (error) { console.error(error); toast(tr('errGeneric')); return; }
   if (!profile) {
