@@ -38,6 +38,8 @@ export default function CreateScreen() {
   const [quick, setQuick] = useState<Quick>('m1'), [dateText, setDateText] = useState(dateValue(quickDate('m1')));
   const [error, setError] = useState(''), [busy, setBusy] = useState(false), [phase, setPhase] = useState<'steps' | 'seal' | 'sealed'>('steps'), [sealedAt, setSealedAt] = useState<Date | null>(null);
   const drawing = useRef<DrawingHandle>(null);
+  const sentOnce = useRef(false);
+  const sendingRef = useRef(false);
   const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, drift = useRef(new Animated.Value(0)).current;
   const lidLift = useSharedValue(1);
   useFocusEffect(useCallback(() => { void owned.refresh(); void catalog.refresh(); }, [id]));
@@ -80,13 +82,15 @@ export default function CreateScreen() {
   };
   const sendRef = useRef<() => void>(() => {});
   const send = async () => {
-    if (busy || !recipient || !vessel || !openAt) return;
+    if (sendingRef.current || sentOnce.current || !recipient || !vessel || !openAt) return;
+    sendingRef.current = true;
     setBusy(true); setError('');
     try {
       const ink = mode === 'hand' ? drawingData : null;
       if (mode === 'hand' && !ink) throw new Error('empty drawing');
       const { error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: mode === 'type' ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), p_place: place ?? undefined });
       if (rpcError) throw rpcError;
+      sentOnce.current = true;
       setSealedAt(openAt);
       void (reduced ? haptics.tap() : haptics.thump());
       if (reduced) { finishAnimation(); return; }
@@ -99,12 +103,12 @@ export default function CreateScreen() {
       const msg = String((e as any)?.message ?? e).toLowerCase(), code = String((e as any)?.hint ?? '');
       setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('future') ? t('create.badDate') : t('create.sendError'));
       Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); void haptics.warn();
-    } finally { setBusy(false); }
+    } finally { sendingRef.current = false; setBusy(false); }
   };
   sendRef.current = () => { void send(); };
   const pan = useRef(PanResponder.create({ onStartShouldSetPanResponder: () => true, onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: (_, g) => wax.setValue({ x: g.dx, y: g.dy }),
-    onPanResponderRelease: (_, g) => { if (g.dy < -160 && Math.abs(g.dx) < 130) sendRef.current(); else Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); },
+    onPanResponderMove: (_, g) => { if (!sentOnce.current) wax.setValue({ x: g.dx, y: g.dy }); },
+    onPanResponderRelease: (_, g) => { if (sentOnce.current) return; if (g.dy < -160 && Math.abs(g.dx) < 130) sendRef.current(); else Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); },
   })).current;
 
   if (phase !== 'steps') return <Screen><View style={{ minHeight: 610, alignItems: 'center', justifyContent: 'center', gap: 18 }}>
@@ -116,7 +120,7 @@ export default function CreateScreen() {
       <Animated.View style={{ transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [30, -90] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={150} lidLift={lidLift} /></Animated.View>
       <Text style={{ fontFamily: sans, color: C.muted }}>{busy ? t('create.sending') : t('create.drag')}</Text>
       <Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, borderRadius: 38, backgroundColor: C.wax, borderWidth: 3, borderColor: C.plum, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }] }}><Text style={{ color: C.cream, fontSize: 31 }}>✦</Text></Animated.View>
-      <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy} />
+      <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
     </> : <><Vessel kind={vessel ?? 'dome'} size={180} /><Heading>{t('create.sealed')}</Heading><Body>{t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></>}
   </View></Screen>;
   return <Screen>
