@@ -6,7 +6,7 @@ Expo SDK 57 / React Native / TypeScript. The root Vite app remains the productio
 
 1. Install Node LTS and run `npm install` in `mobile/`.
 2. Copy `.env.example` to `.env` and fill in the Supabase **publishable** URL and key. Never put a service key here.
-3. Run `npx expo start` and scan the QR code with Expo Go on a phone on the same network. Use `npx expo start --tunnel` when LAN is unavailable. Press `w` for web or run `npm run web`.
+3. Run `npm start` (which selects Expo Go) and scan the QR code with Expo Go on a phone on the same network. Use `npx expo start --go --tunnel` when LAN is unavailable. Press `w` for web or run `npm run web`.
 4. Use `npm run typecheck` for TypeScript. The root web app still builds with `npm run build` from the repository root.
 
 Expo Go cannot support the app-specific OAuth scheme; Google sign-in requires an Expo development build. Before testing link-based email flows, add the exact Expo Go URL shown by the running server and its `/--/auth/callback` path to Supabase Authentication → URL Configuration; keep existing entries. Web testing also requires the exact localhost callback URL. Production `timecapsule://auth/callback` is separately allowlisted. The native application IDs are placeholders.

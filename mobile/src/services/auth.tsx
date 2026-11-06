@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { AppState, Platform } from "react-native";
 import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
@@ -15,6 +21,7 @@ type AuthState = {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
+  error: string | null;
   recovery: boolean;
   inviter: { name: string; avatar: any } | null;
   refresh: () => Promise<void>;
@@ -24,12 +31,22 @@ const Context = createContext<AuthState>({
   session: null,
   profile: null,
   loading: true,
+  error: null,
   recovery: false,
   inviter: null,
   refresh: async () => {},
   finishRecovery: () => {},
 });
-export async function handleAuthUrl(url: string) {
+const exchanges = new Map<string, Promise<boolean>>();
+export function handleAuthUrl(url: string): Promise<boolean> {
+  const existing = exchanges.get(url);
+  if (existing) return existing;
+  const pending = processAuthUrl(url);
+  exchanges.set(url, pending);
+  pending.catch(() => exchanges.delete(url));
+  return pending;
+}
+async function processAuthUrl(url: string) {
   const parsed = new URL(url);
   const invite = parsed.searchParams.get("invite");
   if (invite) await AsyncStorage.setItem("tc-invite", invite);
@@ -53,7 +70,8 @@ export async function handleAuthUrl(url: string) {
   );
 }
 export async function signInGoogle() {
-  if (Constants.executionEnvironment === ExecutionEnvironment.StoreClient) throw new Error("EXPO_GO_OAUTH_UNSUPPORTED");
+  if (Constants.executionEnvironment === ExecutionEnvironment.StoreClient)
+    throw new Error("EXPO_GO_OAUTH_UNSUPPORTED");
   const redirect = redirectUri();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
@@ -69,30 +87,42 @@ export async function signInGoogle() {
   if (result.type === "success") await handleAuthUrl(result.url);
 }
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const refreshVersion = useRef(0);
   const [session, setSession] = useState<Session | null>(null),
     [profile, setProfile] = useState<Profile | null>(null),
     [loading, setLoading] = useState(true),
+    [error, setError] = useState<string | null>(null),
     [recovery, setRecovery] = useState(false),
     [inviter, setInviter] = useState<{ name: string; avatar: any } | null>(
       null,
     );
   const refresh = async () => {
-    const {
-      data: { session: s },
-    } = await supabase.auth.getSession();
-    setSession(s);
-    if (s) {
-      const { data } = await profiles.get(s.user.id);
-      setProfile(data as Profile | null);
-      if (data) {
+    const version = ++refreshVersion.current;
+    try {
+      const {
+        data: { session: s },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+      const result = s ? await profiles.get(s.user.id) : null;
+      if (result?.error) throw result.error;
+      if (version !== refreshVersion.current) return;
+      setSession(s);
+      setProfile((result?.data as Profile | null) ?? null);
+      setError(null);
+      if (s && result?.data) {
         const code = await AsyncStorage.getItem("tc-invite");
         if (code) {
-          const { error } = await invites.accept(code);
-          if (!error) await AsyncStorage.removeItem("tc-invite");
+          const { error: inviteError } = await invites.accept(code);
+          if (!inviteError) await AsyncStorage.removeItem("tc-invite");
         }
       }
-    } else setProfile(null);
-    setLoading(false);
+    } catch (err) {
+      if (version === refreshVersion.current)
+        setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      if (version === refreshVersion.current) setLoading(false);
+    }
   };
   useEffect(() => {
     let alive = true;
@@ -134,6 +164,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         session,
         profile,
         loading,
+        error,
         recovery,
         inviter,
         refresh,

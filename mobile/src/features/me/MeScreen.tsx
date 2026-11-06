@@ -16,7 +16,9 @@ export default function MeScreen() {
       />
       <Button
         title={t("signOut")}
-        onPress={() => void supabase.auth.signOut()}
+        onPress={() => {
+          void supabase.auth.signOut().then(() => router.replace("/"));
+        }}
       />
       <Button title={t("back")} onPress={() => router.back()} />
     </Screen>

@@ -5,6 +5,7 @@ type Language = "zh" | "en";
 const extra = {
   zh: {
     appTitle: "時光膠囊",
+    retry: "重試",
     coming: (n: string) => `即將在 ${n} 完成`,
     journey: "旅程",
     cabinet: "收藏櫃",
@@ -23,6 +24,7 @@ const extra = {
   },
   en: {
     appTitle: "Time Capsule",
+    retry: "Retry",
     coming: (n: string) => `Coming in ${n}`,
     journey: "Journey",
     cabinet: "Cabinet",
@@ -34,7 +36,8 @@ const extra = {
     loading: "Loading…",
     configMissing: "Configure the Supabase connection",
     google: "Continue with Google",
-    oauthNeedsBuild: "Google sign-in requires a development build. Use email to test in Expo Go.",
+    oauthNeedsBuild:
+      "Google sign-in requires a development build. Use email to test in Expo Go.",
     assetMode: "Switch vessel artwork",
     capsulePreview: "Capsule screen (preview)",
     signOut: "Sign out",

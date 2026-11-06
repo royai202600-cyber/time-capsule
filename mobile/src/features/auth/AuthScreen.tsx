@@ -107,7 +107,13 @@ export default function AuthScreen() {
                 onPress={() => {
                   setBusy(true);
                   signInGoogle()
-                    .catch((e) => setMessage(e.message === "EXPO_GO_OAUTH_UNSUPPORTED" ? t("oauthNeedsBuild") : e.message))
+                    .catch((e) =>
+                      setMessage(
+                        e.message === "EXPO_GO_OAUTH_UNSUPPORTED"
+                          ? t("oauthNeedsBuild")
+                          : e.message,
+                      ),
+                    )
                     .finally(() => setBusy(false));
                 }}
                 disabled={busy || !isConfigured}
