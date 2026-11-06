@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Animated, FlatList, Pressable, Text, View, useWindowDimensions } from "react-native";
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar } from "../../components/Avatar";
 import { Vessel } from "../../components/Vessel";
@@ -11,7 +11,8 @@ import { useAuth } from "../../services/auth";
 import { C, handwriting, motion, sans, serif, shadows } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
 import type { VesselKind } from "../../vesselArt";
-import { distance, formatDate, getWebFix, loadBundle, status, type Bundle, type Fix, type Row } from "../capsule/model";
+import { usePlaceDistance } from "../journey/location";
+import { distance, formatDate, loadBundle, status, type Bundle, type Row } from "../capsule/model";
 
 const W = 300, GAP = 16, STEP = W + GAP;
 const empty: Bundle = { capsules: [], people: {}, places: {}, vessels: {} };
@@ -44,14 +45,14 @@ function CardVessel({ kind, state, reduced }: { kind: VesselKind; state: string;
 }
 
 export default function HomeScreen() {
+  const { tab } = useLocalSearchParams<{ tab?: string }>();
   const { profile, session } = useAuth();
   const { language, setLanguage } = useLanguage();
   const t = useF1Text();
   const reduced = useReducedMotion();
   const { width } = useWindowDimensions();
-  const [side, setSide] = useState<"inbox" | "sent">("inbox");
+  const [side, setSide] = useState<"inbox" | "sent">(tab === "sent" ? "sent" : "inbox");
   const [bundle, setBundle] = useState<Bundle>(empty);
-  const [fix, setFix] = useState<Fix | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [index, setIndex] = useState(0);
@@ -60,6 +61,9 @@ export default function HomeScreen() {
   const scrollOffset = useRef(0);
   const list = useRef<FlatList<Row>>(null);
   const rows = bundle.capsules.filter(c => side === "inbox" ? c.recipient === session?.user.id : c.sender === session?.user.id);
+  const active = rows[index] ?? rows[0];
+  const activePlace = active?.place ? bundle.places[active.place] : null;
+  const { fix, meters: activeMeters } = usePlaceDistance(activePlace);
   const inset = Math.max(0, (Math.min(width, 640) - W) / 2);
   const refresh = useCallback(async () => {
     if (!session?.user.id) return;
@@ -68,11 +72,11 @@ export default function HomeScreen() {
       const b = await loadBundle(session.user.id);
       setBundle(b);
       setError("");
-      if (b.capsules.some(c => c.place && !c.opened_at)) void getWebFix().then(setFix);
     } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
     finally { setLoading(false); }
   }, [session?.user.id]);
   useFocusEffect(useCallback(() => { void refresh(); }, [refresh]));
+  useEffect(() => { setSide(tab === "sent" ? "sent" : "inbox"); }, [tab]);
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(id); }, []);
   useEffect(() => { scrollOffset.current = 0; setIndex(0); list.current?.scrollToOffset({ offset: 0, animated: false }); }, [side]);
   const person = (c: Row) => {
@@ -85,7 +89,7 @@ export default function HomeScreen() {
     if (state === "opened") return t(side === "inbox" ? "home.openedIn" : "home.openedOut", formatDate(c.opened_at, language));
     if (state === "waiting") return t("home.waiting");
     if (state === "ready") return t("home.ready");
-    if (state === "place") { const d = distance(c, fix, bundle.places[c.place ?? ""]); return d === null ? t("home.placeUnknown") : t("home.place", (d / 1000).toFixed(1)); }
+    if (state === "place") { const d = c.id === active?.id ? activeMeters : distance(c, fix, bundle.places[c.place ?? ""]); return d === null ? t("home.placeUnknown") : t("home.place", (d / 1000).toFixed(1)); }
     const s = Math.max(0, Math.ceil((new Date(c.open_at).getTime() - now) / 1000));
     const unit = s >= 86400 ? "days" : s >= 3600 ? "hours" : "minutes";
     return t("home.time", Math.ceil(s / (unit === "days" ? 86400 : unit === "hours" ? 3600 : 60)), t(`home.${unit}`));

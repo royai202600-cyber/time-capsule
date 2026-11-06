@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import Svg, { Rect } from "react-native-svg";
-import qrcode from "./qrcode";
+import qrcode from "qrcode-generator";
 
 export function GiftQr({ value, label }: { value: string; label: string }) {
   const { count, cells } = useMemo(() => {

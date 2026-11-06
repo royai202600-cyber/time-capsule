@@ -69,12 +69,3 @@ export function distance(c: Row, fix: Fix | null, place?: Place) {
 export async function openForRecipient(id: string, fix: Fix | null) {
   return capsules.open(id, fix?.lat, fix?.lng, fix?.accuracy);
 }
-
-// F3's native location service can replace this adapter. Browsers can supply a fix now.
-export function getWebFix(): Promise<Fix | null> {
-  if (typeof navigator === "undefined" || !navigator.geolocation) return Promise.resolve(null);
-  return new Promise((resolve) => navigator.geolocation.getCurrentPosition(
-    ({ coords }) => resolve({ lat: coords.latitude, lng: coords.longitude, accuracy: coords.accuracy }),
-    () => resolve(null), { enableHighAccuracy: true, maximumAge: 10000, timeout: 8000 },
-  ));
-}

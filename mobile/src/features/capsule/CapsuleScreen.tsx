@@ -15,10 +15,12 @@ import { capsules } from "../../services/data";
 import { C, handwriting, motion, sans, serif, shadows } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
 import type { VesselKind } from "../../vesselArt";
+import { CapsuleMapPage } from "../journey/CapsuleMapPage";
+import { openingCoordinates, usePlaceDistance } from "../journey/location";
 import { GiftQr } from "./GiftQr";
 import { LightBurst } from "./LightBurst";
 import { RitualHold } from "./RitualHold";
-import { distance, formatDate, getWebFix, loadOne, openForRecipient, status, type Bundle, type Fix, type Opened, type Row } from "./model";
+import { formatDate, loadOne, openForRecipient, status, type Bundle, type Opened, type Row } from "./model";
 
 const blank: Bundle = { capsules: [], people: {}, places: {}, vessels: {} };
 
@@ -37,9 +39,8 @@ export default function CapsuleScreen() {
   const t = useF1Text();
   const reduced = useReducedMotion();
   const { width } = useWindowDimensions();
-  const pageWidth = Math.min(width, 640) - 40;
+  const pageWidth = width;
   const [bundle, setBundle] = useState<Bundle>(blank);
-  const [fix, setFix] = useState<Fix | null>(null);
   const [opened, setOpened] = useState<Opened | null>(null);
   const [page, setPage] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -53,12 +54,13 @@ export default function CapsuleScreen() {
   const letterRise = useRef(new Animated.Value(0)).current;
   const c = bundle.capsules[0];
   const pl = c?.place ? bundle.places[c.place] : undefined;
+  const { fix } = usePlaceDistance(pl);
   const v = c ? bundle.vessels[c.vessel] : undefined;
   const sender = c ? bundle.people[c.sender] : undefined;
   const receiver = c ? bundle.people[c.recipient] : undefined;
   const name = side === "sent" && c?.recipient === session?.user.id ? t("home.future") : (side === "sent" ? receiver?.name : sender?.name) ?? t("home.future");
   const placeName = pl ? pl[language === "zh" ? "name_zh" : "name_en"] : "";
-  const state = c ? status(c, side, fix, pl, now) : "time";
+  const state = c ? status(c, side, pl && fix ? openingCoordinates() : null, pl, now) : "time";
   const pageCount = pl ? 3 : 2;
   const openPage = pageCount - 1;
 
@@ -73,7 +75,6 @@ export default function CapsuleScreen() {
       if (side === "inbox" && b.capsules[0].recipient === session.user.id && !b.capsules[0].seen_at) {
         void capsules.markSeen(id);
       }
-      if (side === "inbox" && b.capsules[0].place && !b.capsules[0].opened_at) void getWebFix().then(setFix);
       if (side === "inbox" && b.capsules[0].opened_at) {
         const result = await openForRecipient(id, null);
         if (result.error) throw result.error;
@@ -90,9 +91,15 @@ export default function CapsuleScreen() {
     if (!c || busy) return;
     setBusy(true);
     setError("");
+    const latestFix = c.place ? openingCoordinates() : null;
+    if (c.place && !latestFix) {
+      setBusy(false);
+      setCharge(0);
+      goPage(1);
+      return;
+    }
     setBurst(true);
     lid.value = reduced ? 1 : withSpring(1, motion.spring.heavy);
-    const latestFix = c.place ? (fix ?? await getWebFix()) : null;
     const [result] = await Promise.all([
       openForRecipient(c.id, latestFix),
       new Promise(resolve => setTimeout(resolve, reduced ? 0 : 850)),
@@ -115,13 +122,13 @@ export default function CapsuleScreen() {
   };
   if (loading) return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper, justifyContent: "center" }}><ActivityIndicator color={C.blue} /></SafeAreaView>;
   if (!c) return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper, padding: 24 }}><Label>{error || t("capsule.error")}</Label><Action title={t("capsule.retry")} onPress={() => void refresh()} /></SafeAreaView>;
-  return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}><View style={{ flex: 1, maxWidth: 640, width: "100%", alignSelf: "center" }}>
+  return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}><View style={{ flex: 1, width: "100%" }}>
     <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}><Pressable onPress={() => router.canGoBack() ? router.back() : router.replace("/")} accessibilityLabel={t("capsule.back")}><Text style={{ color: C.plum, fontSize: 24 }}>‹</Text></Pressable><Text style={{ fontFamily: serif, fontSize: 18, color: C.ink }}>{side === "sent" ? t("capsule.sentTitle", name) : opened ? (c.sender === session?.user.id ? t("capsule.letterSelf") : t("capsule.letterFrom", name)) : t("capsule.title")}</Text><View style={{ width: 24 }} /></View>
     {side === "sent" ? <SenderView c={c} name={name} placeName={placeName} language={language} t={t} /> : opened ? <ScrollView contentContainerStyle={{ padding: 20, gap: 18, paddingBottom: 50 }}><Animated.View style={{ opacity: letterRise, transform: [{ translateY: letterRise.interpolate({ inputRange: [0, 1], outputRange: [reduced ? 0 : 70, 0] }) }] }}><LetterView c={c} content={opened} name={name} placeName={placeName} self={c.sender === session?.user.id} language={language} t={t} /></Animated.View></ScrollView> : <>
-      <ScrollView ref={pages} horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={e => { const n = Math.round(e.nativeEvent.contentOffset.x / pageWidth); if (n !== page) { setPage(n); void haptics.tick(); } }} style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 20 }}>
-        <View style={{ width: pageWidth, padding: 14, backgroundColor: C.white, borderRadius: 18, borderWidth: 1, borderColor: C.line, marginBottom: 8, ...shadows.card }}><View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}><Avatar avatar={sender?.avatar as any} size={34} /><Label>{name}</Label></View>{!!c.edition_no && v?.brand && <Text style={{ color: C.brass, textAlign: "center", marginTop: 6 }}>{v.brand} No.{String(c.edition_no).padStart(3, "0")}</Text>}<View style={{ alignItems: "center", marginVertical: 15 }}><Vessel kind={c.vessel as VesselKind} size={170} /></View><Text style={{ color: C.ink, fontFamily: serif, fontSize: 20, lineHeight: 34, textAlign: "center" }}>{t(now < new Date(c.open_at).getTime() ? "capsule.storyWaiting" : "capsule.storyArrived", formatDate(c.sealed_at, language, true), Math.max(0, Math.floor(((now < new Date(c.open_at).getTime() ? now : new Date(c.open_at).getTime()) - new Date(c.sealed_at).getTime()) / 86400000)), formatDate(c.open_at, language, true))}</Text>{state === "time" && <View style={{ alignItems: "center", marginTop: 10 }}><Countdown until={c.open_at} /></View>}<View style={{ marginTop: "auto", gap: 8 }}>{pl ? <Action ghost title={`${t("capsule.storyPlace")} ⌖ ${placeName}`} onPress={() => goPage(1)} /> : state !== "time" ? <Action title={t("capsule.goOpen")} onPress={() => goPage(openPage)} /> : null}</View><Text style={{ alignSelf: "flex-end", color: C.muted, marginTop: 10 }}>{t("capsule.page", 1)}</Text></View>
-        {pl && <View style={{ width: pageWidth, padding: 20, backgroundColor: C.white, borderRadius: 18, borderWidth: 1, borderColor: C.line, marginBottom: 8, alignItems: "center", justifyContent: "center", gap: 18 }}><Text style={{ fontFamily: serif, fontSize: 24, color: C.ink }}>{placeName}</Text><Text style={{ color: C.muted, fontFamily: sans }}>{pl[language === "zh" ? "city_zh" : "city_en"]}</Text><View style={{ height: 220, width: "100%", backgroundColor: C.glass, borderRadius: 16, alignItems: "center", justifyContent: "center" }}><Vessel kind={c.vessel as VesselKind} size={80} /><Label>{t("capsule.mapPending")}</Label><Label muted>{t("capsule.mapPendingNote")}</Label></View><Label>{pl[language === "zh" ? "why_zh" : "why_en"]}</Label>{distance(c, fix, pl) !== null && <Label>{(distance(c, fix, pl)! / 1000).toFixed(1)} km</Label>}<Action title={t("capsule.goOpen")} onPress={() => goPage(openPage)} /><Text style={{ alignSelf: "flex-end", color: C.muted }}>{t("capsule.page", 2)}</Text></View>}
-        <ScrollView style={{ width: pageWidth, backgroundColor: C.white, borderRadius: 18, borderWidth: 1, borderColor: C.line, marginBottom: 8 }} contentContainerStyle={{ padding: 18, alignItems: "center", gap: 13 }}><View style={{ width: 220, height: 210, alignItems: "center", justifyContent: "center" }}><LightBurst intensity={burst ? 1 : charge * 0.65 + (state === "ready" ? 0.12 : 0)} /><Animated.View style={{ transform: [{ translateX: reduced ? 0 : Math.sin(charge * 70) * charge * 3 }] }}><Vessel kind={c.vessel as VesselKind} size={180} lidLift={lid} /></Animated.View></View><View style={{ width: "100%", gap: 9 }}><Checklist label={t("capsule.time")} value={formatDate(c.open_at, language, true)} done={now >= new Date(c.open_at).getTime()} />{pl && <Checklist label={t("capsule.place")} value={placeName} done={state === "ready"} />}</View><View style={{ backgroundColor: C.paper, padding: 14, borderRadius: 12, width: "100%" }}><Text style={{ fontFamily: handwriting, fontSize: 19, color: C.plum }}>「{c.hint || t("capsule.defaultHint")}」</Text><Text style={{ color: C.muted, marginTop: 5 }}>{t("capsule.hint", name)}</Text></View>{v?.brand && pl?.brand_vessel === c.vessel && <Label>{t("capsule.brandNote")}</Label>}{state === "ready" && !busy ? <RitualHold title={t("capsule.hold")} onProgress={setCharge} onComplete={() => void openCapsule()} /> : <Action disabled title={busy ? t("capsule.opening") : state === "time" ? t("capsule.wait") : t("capsule.needPlace")} onPress={() => {}} />}{state === "ready" && <Label muted>{t("capsule.holdNote")}</Label>}{!!error && <Text accessibilityRole="alert" style={{ color: C.wax, textAlign: "center" }}>{error}</Text>}<Text style={{ alignSelf: "flex-end", color: C.muted }}>{t("capsule.page", pageCount)}</Text></ScrollView>
+      <ScrollView ref={pages} horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={e => { const n = Math.round(e.nativeEvent.contentOffset.x / pageWidth); if (n !== page) { setPage(n); void haptics.tick(); } }} style={{ flex: 1 }}>
+        <View style={{ width: pageWidth, paddingHorizontal: 20 }}><View style={{ flex: 1, width: "100%", maxWidth: 600, alignSelf: "center", padding: 14, backgroundColor: C.white, borderRadius: 18, borderWidth: 1, borderColor: C.line, marginBottom: 8, ...shadows.card }}><View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}><Avatar avatar={sender?.avatar as any} size={34} /><Label>{name}</Label></View>{!!c.edition_no && v?.brand && <Text style={{ color: C.brass, textAlign: "center", marginTop: 6 }}>{v.brand} No.{String(c.edition_no).padStart(3, "0")}</Text>}<View style={{ alignItems: "center", marginVertical: 15 }}><Vessel kind={c.vessel as VesselKind} size={170} /></View><Text style={{ color: C.ink, fontFamily: serif, fontSize: 20, lineHeight: 34, textAlign: "center" }}>{t(now < new Date(c.open_at).getTime() ? "capsule.storyWaiting" : "capsule.storyArrived", formatDate(c.sealed_at, language, true), Math.max(0, Math.floor(((now < new Date(c.open_at).getTime() ? now : new Date(c.open_at).getTime()) - new Date(c.sealed_at).getTime()) / 86400000)), formatDate(c.open_at, language, true))}</Text>{state === "time" && <View style={{ alignItems: "center", marginTop: 10 }}><Countdown until={c.open_at} /></View>}<View style={{ marginTop: "auto", gap: 8 }}>{pl ? <Action ghost title={`${t("capsule.storyPlace")} ⌖ ${placeName}`} onPress={() => goPage(1)} /> : state !== "time" ? <Action title={t("capsule.goOpen")} onPress={() => goPage(openPage)} /> : null}</View><Text style={{ alignSelf: "flex-end", color: C.muted, marginTop: 10 }}>{t("capsule.page", 1)}</Text></View></View>
+        {pl && <View style={{ width: pageWidth, paddingHorizontal: 20 }}><ScrollView style={{ width: "100%" }} contentContainerStyle={{ flexGrow: 1 }}><CapsuleMapPage place={pl} vessel={c.vessel as VesselKind} onGoOpen={() => goPage(openPage)} /></ScrollView></View>}
+        <View style={{ width: pageWidth, paddingHorizontal: 20 }}><ScrollView style={{ width: "100%", maxWidth: 600, alignSelf: "center", backgroundColor: C.white, borderRadius: 18, borderWidth: 1, borderColor: C.line, marginBottom: 8 }} contentContainerStyle={{ padding: 18, alignItems: "center", gap: 13 }}><View style={{ width: 220, height: 210, alignItems: "center", justifyContent: "center" }}><LightBurst intensity={burst ? 1 : charge * 0.65 + (state === "ready" ? 0.12 : 0)} /><Animated.View style={{ transform: [{ translateX: reduced ? 0 : Math.sin(charge * 70) * charge * 3 }] }}><Vessel kind={c.vessel as VesselKind} size={180} lidLift={lid} /></Animated.View></View><View style={{ width: "100%", gap: 9 }}><Checklist label={t("capsule.time")} value={formatDate(c.open_at, language, true)} done={now >= new Date(c.open_at).getTime()} />{pl && <Checklist label={t("capsule.place")} value={placeName} done={state === "ready"} />}</View><View style={{ backgroundColor: C.paper, padding: 14, borderRadius: 12, width: "100%" }}><Text style={{ fontFamily: handwriting, fontSize: 19, color: C.plum }}>「{c.hint || t("capsule.defaultHint")}」</Text><Text style={{ color: C.muted, marginTop: 5 }}>{t("capsule.hint", name)}</Text></View>{v?.brand && pl?.brand_vessel === c.vessel && <Label>{t("capsule.brandNote")}</Label>}{state === "ready" && !busy ? <RitualHold title={t("capsule.hold")} onProgress={setCharge} onComplete={() => void openCapsule()} /> : <Action disabled title={busy ? t("capsule.opening") : state === "time" ? t("capsule.wait") : t("capsule.needPlace")} onPress={() => {}} />}{state === "ready" && <Label muted>{t("capsule.holdNote")}</Label>}{!!error && <Text accessibilityRole="alert" style={{ color: C.wax, textAlign: "center" }}>{error}</Text>}<Text style={{ alignSelf: "flex-end", color: C.muted }}>{t("capsule.page", pageCount)}</Text></ScrollView></View>
       </ScrollView><View style={{ flexDirection: "row", justifyContent: "center", gap: 7, padding: 10 }}>{Array.from({ length: pageCount }, (_, i) => <Pressable key={i} onPress={() => goPage(i)} accessibilityLabel={t("capsule.page", i + 1)} style={{ width: i === page ? 15 : 7, height: 7, borderRadius: 7, backgroundColor: i === page ? C.blue : C.line }} />)}</View>
     </>}
   </View></SafeAreaView>;
