@@ -6,11 +6,13 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| T9 | Create art assets | Codex | Art assets are reviewed and integrated. |
 
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
+| T9 | Generate illustration assets with built-in `gpt-image-2`; style sheet A, vessel layers, nine main profile portraits, stamps, map, shelf, wax seal and app icon. Existing SVG/app code untouched. | Codex | Roy approved vessels and first three portraits. All 66 masters, 62 WebP copies, four icon sizes, checks, manifest, README and build are complete. PR awaits Roy's review and merge OK. |
+| T9b | Add two paper textures, four scenes, light burst, passport cover/page, cabinet wall and 13-icon reference sheet. | Codex | Included in T9 art PR with transparent/opaque checks and WebP exports; awaiting Roy's PR review. |
+| T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | F4 | Cabinet, Me, Friends, Invite and portrait picker | Codex | Roy confirmed the Expo Go build works; web layout and typecheck pass. T9 portrait manifest integration remains pending. |
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
