@@ -10,7 +10,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
-| T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security patch prepared; production migration and Git deploy await project access. |
+| T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 
 ## Next (in order)
 | ID | Task | Owner | Done when |
