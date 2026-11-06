@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import Leaflet from 'leaflet';
 import { createClient } from '@supabase/supabase-js';
 import { IC, vessel, face, PORTRAITS } from './art.js';
-import { LANG, setLangValue, STR, tr, vname, FREE_VESSELS } from './i18n.js';
+import { LANG, L, setLangValue, STR, tr, vname, VESSELS } from './i18n.js';
 
 // A password-reset link lands here with type=recovery in the URL; read it before the client clears it.
 let recovering = /type=recovery/.test(location.hash + location.search);
@@ -37,14 +37,30 @@ const S = {
   places: new Map(),   // id -> place row (name, lat, lng, radius_m)
   here: null,          // latest GPS fix { lat, lng, acc, at }
   geo: 'idle',         // idle | asking | ok | denied | none
+  vessels: new Map(),  // id -> { price_mop, edition_total, brand }
+  owned: new Map(),    // vessel id -> edition number (null if not numbered)
+  stock: new Map(),    // limited vessel id -> how many are left
 };
+const pad3 = n => String(n).padStart(3, '0');
+const owns = k => (S.vessels.get(k)?.price_mop ?? 0) === 0 || S.owned.has(k);
+async function loadShop() {
+  const [v, o, st] = await Promise.all([
+    sb.from('vessels').select('*').order('sort'),
+    sb.from('owned_vessels').select('vessel, edition_no'),
+    sb.rpc('vessel_stock'),
+  ]);
+  if (v.error || o.error || st.error) { console.error(v.error || o.error || st.error); return; }
+  S.vessels = new Map(v.data.map(r => [r.id, r]));
+  S.owned = new Map(o.data.map(r => [r.vessel, r.edition_no]));
+  S.stock = new Map(st.data.map(r => [r.vessel, r.remaining]));
+}
 const uid = () => S.user?.id;
 
 const toCapsule = r => ({
   id: r.id, sender: r.sender, recipient: r.recipient, vessel: r.vessel, hint: r.hint,
   sealedAt: Date.parse(r.sealed_at), openAt: Date.parse(r.open_at),
   openedAt: r.opened_at ? Date.parse(r.opened_at) : null, opened: !!r.opened_at, isNew: !r.seen_at,
-  place: r.place, handwritten: r.handwritten,
+  place: r.place, handwritten: r.handwritten, edition: r.edition_no,
 });
 
 /* ---------- Places and the phone's location ---------- */
@@ -431,6 +447,7 @@ function cardHTML(c, side) {
   return `<button class="card st-${st}" data-id="${c.id}" aria-label="${esc(tr('cardAria', side, pname(who)))}">
     ${side === 'in' && c.isNew && !c.opened ? '<span class="tag">NEW</span>' : ''}
     ${c.handwritten ? `<span class="seal-mark" title="${tr('handMarkTitle')}">${tr('handMark')}</span>` : ''}
+    ${c.edition ? `<span class="ed">${esc(S.vessels.get(c.vessel)?.brand || '')} No.${pad3(c.edition)}</span>` : ''}
     ${vessel(c.vessel)}
     <p class="head">${head}</p>
     <p class="place">${IC.pin}${c.place ? esc(plname(c.place)) : tr('anywhere')}</p>
@@ -452,7 +469,7 @@ function renderHome() {
         <button role="tab" aria-selected="${side === 'in'}" data-tab="in">${tr('inbox')}</button>
         <button role="tab" aria-selected="${side === 'out'}" data-tab="out">${tr('sent')}</button>
       </div>
-      <div class="top-r">${langBtn()}</div>
+      <div class="top-r">${langBtn()}<button class="icon-btn" data-act="shop" aria-label="${tr('shop')}">${IC.shop}</button></div>
     </header>
     <div class="rail" id="rail">${list.length ? list.map(c => cardHTML(c, side)).join('')
       : `<div class="card empty">${vessel(side === 'in' ? 'bottle' : 'envelope')}<p class="head">${tr(side === 'in' ? 'emptyIn' : 'emptyOut')}</p></div>`}</div>
@@ -486,6 +503,7 @@ function initHome() {
     const act = e.target.closest('[data-act]')?.dataset.act;
     if (act === 'me') return openMe();
     if (act === 'create') return openCreate();
+    if (act === 'shop') return openShop();
     if (act === 'lang') return setLang(LANG === 'zh' ? 'en' : 'zh');
     const card = e.target.closest('.card[data-id]');
     if (card) {
@@ -760,8 +778,10 @@ const STEPS = {
       : `<div class="pad"><canvas id="pad" width="600" height="520" aria-label="${tr('padAria')}"></canvas><button class="link" data-act="clear">${tr('clear')}</button></div><p class="sub">${tr('padNote')}</p>`}
     <label class="field"><span>${tr('hintLabel')}</span><input id="hint" maxlength="40" value="${esc(d.hint)}" placeholder="${tr('hintPh')}"></label>`,
   3: d => `<h2>${tr('s3h')}</h2><p class="sub">${tr('s3sub')}</p>
-    <div class="vgrid">${FREE_VESSELS.map(k =>
-      `<button class="vopt ${d.vessel === k ? 'sel' : ''}" data-vessel="${k}" aria-pressed="${d.vessel === k}">${vessel(k)}<b>${esc(vname(k))}</b></button>`).join('')}</div>`,
+    <div class="vgrid">${[...S.vessels.keys()].map(k => {
+      const own = owns(k);
+      return `<button class="vopt ${d.vessel === k ? 'sel' : ''} ${own ? '' : 'locked'}" data-vessel="${k}" aria-pressed="${d.vessel === k}">${vessel(k)}<b>${esc(vname(k))}</b><span>${tr(own ? 'owned' : 'getInShop')}</span></button>`;
+    }).join('')}</div>`,
   4: d => {
     const tomorrow = fmtDate(Date.now() + DAY).replaceAll('/', '-');
     const custom = d.quick === 'custom' && d.openAt ? fmtDate(d.openAt) : '';
@@ -842,7 +862,10 @@ function openCreate(preTo) {
     if (ds.to !== undefined) { d.to = ds.to; render(); }
     else if (ds.mode) { d.mode = ds.mode; render(); }
     else if (ds.place !== undefined) { d.place = ds.place || null; render(); }
-    else if (ds.vessel) { d.vessel = ds.vessel; render(); }
+    else if (ds.vessel) {
+      if (!owns(ds.vessel)) { openShop(ds.vessel, () => { if (owns(ds.vessel)) { d.vessel = ds.vessel; render(); } }); return; }
+      d.vessel = ds.vessel; render();
+    }
     else if (ds.quick) {
       d.quick = ds.quick;
       d.openAt = ds.quick === 'dev' ? Date.now() + 2 * MIN : Date.now() + QUICK.find(q => q.k === ds.quick).days * DAY;
@@ -864,6 +887,68 @@ function openCreate(preTo) {
     toast(tr('sentTo', d.to === 'future' ? tr('future') : pname(d.to)));
   };
   render();
+}
+
+/* ---------- Shop (容器商店) ----------
+   No payment yet: "buying" is free while testing, and limited editions are numbered by the server. */
+function openShop(focus, onClose) {
+  const s = push();
+  const price = k => S.vessels.get(k)?.price_mop ?? 0;
+  const render = () => {
+    const M = S.vessels.get('maison'), ownM = S.owned.has('maison'), leftM = S.stock.get('maison');
+    s.innerHTML = `${bar(tr('shop'))}
+    <div class="scroll shop">
+      ${M ? `<section class="brand-hero">
+        ${vessel('maison')}
+        <p class="brand-name">${esc(M.brand)} × ${tr('appName')}</p>
+        <h2>${tr('brandH')}</h2>
+        <p>${tr('brandP')}</p>
+        <p class="left">${ownM ? tr('yourEdition', pad3(S.owned.get('maison')), M.edition_total) : tr('left', leftM ?? M.edition_total, M.edition_total)}</p>
+        <button class="btn gold" data-buy="maison" ${ownM || leftM === 0 ? 'disabled' : ''}>${ownM ? tr('owned') : leftM === 0 ? tr('soldOut') : tr('buyFor', M.price_mop.toLocaleString())}</button>
+      </section>` : ''}
+      <h3 class="sec">${tr('allV')}</h3>
+      <div class="vgrid">${[...S.vessels.keys()].filter(k => k !== 'maison').map(k => {
+        const own = owns(k);
+        return `<button class="vopt ${focus === k ? 'sel' : ''}" data-buy="${k}" ${own ? 'aria-disabled="true"' : ''}>${vessel(k)}<b>${esc(vname(k))}</b><span>${esc(L(VESSELS[k]?.desc))}</span><span class="price">${own ? tr('owned') : `MOP ${price(k)}`}</span></button>`;
+      }).join('')}</div>
+      <p class="fine">${tr('betaFree')}<br>${tr('fictional')}</p>
+    </div>`;
+    if (s.dataset.buying) showBuy(s.dataset.buying);
+  };
+  const showBuy = k => {
+    const V = S.vessels.get(k);
+    const m = document.createElement('div');
+    m.className = 'modal';
+    m.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="${tr('buyAria')}">${vessel(k)}<h2>${esc(tr('buyQ', vname(k)))}</h2>
+      <p>MOP ${V.price_mop.toLocaleString()}${V.edition_total ? ` · ${tr('limitedN', V.edition_total)}` : ''}<br>${tr('demoPay')}</p>
+      <div class="row"><button class="btn ghost" data-act="cancel">${tr('cancel')}</button><button class="btn" data-act="confirm">${tr('getFree')}</button></div></div>`;
+    s.appendChild(m);
+  };
+  s._render = render;
+  s.onclick = async e => {
+    const a = e.target.closest('[data-act]')?.dataset.act;
+    if (a === 'back') { pop(s); onClose?.(); return; }
+    if (a === 'cancel') { delete s.dataset.buying; $('.modal', s)?.remove(); return; }
+    if (a === 'confirm') {
+      const k = s.dataset.buying;
+      const btn = e.target.closest('button'); btn.disabled = true;
+      const { error } = await sb.rpc('acquire_vessel', { p_vessel: k });
+      delete s.dataset.buying;
+      if (error) { console.error(error); toast(error.hint === 'sold_out' ? tr('soldOut') : error.hint === 'owned' ? tr('alreadyOwn', vname(k)) : tr('errGeneric')); }
+      else toast(tr('bought', vname(k)));
+      await loadShop();
+      render();
+      return;
+    }
+    const b = e.target.closest('[data-buy]');
+    if (!b) return;
+    const k = b.dataset.buy;
+    if (owns(k)) { toast(tr('alreadyOwn', vname(k))); return; }
+    s.dataset.buying = k;
+    showBuy(k);
+  };
+  render();
+  if (focus && !owns(focus)) { s.dataset.buying = focus; showBuy(focus); }
 }
 
 /* ---------- Invite a friend ---------- */
@@ -919,6 +1004,7 @@ function openMe() {
       <dl class="stats"><div><dt>${tr('statIn')}</dt><dd>${S.inbox.length}</dd></div><div><dt>${tr('statOut')}</dt><dd>${S.sent.length}</dd></div><div><dt>${tr('statOpened')}</dt><dd>${opened}</dd></div></dl>
       <ul class="menu">
         <li><span>${tr('language')}</span><div class="seg small" role="radiogroup" aria-label="${tr('language')}"><button role="radio" aria-selected="${LANG === 'zh'}" aria-checked="${LANG === 'zh'}" data-lang="zh">繁中</button><button role="radio" aria-selected="${LANG === 'en'}" aria-checked="${LANG === 'en'}" data-lang="en">English</button></div></li>
+        <li><span>${tr('ownedV')}</span><button class="link" data-act="shop">${tr('ownedN', [...S.vessels.keys()].filter(owns).length)}</button></li>
       </ul>
       <h3 class="sec">${tr('friendsH')} <small>${tr('friendsN', S.friends.length)}</small></h3>
       ${S.friends.length
@@ -933,6 +1019,7 @@ function openMe() {
     const a = e.target.closest('[data-act]')?.dataset.act;
     if (a === 'back') return pop(s);
     if (a === 'invite') return openInvite();
+    if (a === 'shop') return openShop(null, render);
     if (a === 'edit') {
       const p = push();
       profileForm(p, { first: false, onDone: () => { pop(p); render(); renderHome(); toast(tr('saved')); } });
@@ -994,6 +1081,7 @@ async function boot() {
     return profileForm(s, { first: true, onDone: start });
   }
   S.profile = profile;
+  await loadShop();
   if (!S.places.size) {
     const { data: places, error: pe } = await sb.from('places').select('*').order('sort');
     if (pe) console.error(pe); else places.forEach(p => S.places.set(p.id, p));

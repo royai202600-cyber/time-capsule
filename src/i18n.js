@@ -70,11 +70,11 @@ export const STR = {
     sealMsg: (t, w, p) => `將於 ${t} 送到${w}手上${p ? `，要到${p}才能打開` : ''}。<br>從現在起，連你也不能再看或修改。`,
     done: '完成', sentTo: n => `已寄出給 ${n}`, defaultHint: '到時候見。',
     brandH: '把禮物留在精品店，等對方親自來打開',
-    brandP: '限量 300 個，每個都有編號。對方在精品店打開膠囊後，店員會親手交付裡面的實體禮物。',
+    brandP: '限量 300 個，每個都有編號。之後會加入：膠囊鎖定在精品店，對方到店打開後，店員親手交付實體禮物。',
     left: (l, t) => `尚餘 ${l} / ${t} 個`, buyFor: p => `MOP ${p} 購買`, allV: '所有容器',
     fictional: 'Maison Aurèle 是示範用的虛構品牌。',
-    buyQ: n => `購買「${n}」？`, buyIncl: '，已包含實體禮物和精品店交付', demoPay: '這是示範版本，不會真的付款。',
-    cancel: '取消', buy: '購買', bought: n => `已購買「${n}」`, alreadyOwn: n => `你已經擁有「${n}」`, buyAria: '購買確認',
+    buyQ: n => `購買「${n}」？`, buyIncl: '，已包含實體禮物和精品店交付', demoPay: '測試期間免費取得，不會收費。',
+    cancel: '取消', buy: '購買', bought: n => `已取得「${n}」`, alreadyOwn: n => `你已經擁有「${n}」`, buyAria: '購買確認',
     meTitle: '我的', city: '澳門', statIn: '收到', statOut: '寄出', statOpened: '已打開',
     friends: '好友', friendsN: n => `${n} 位`, ownedV: '已擁有的容器', ownedN: n => `${n} 個`,
     remind: '膠囊快到開啟時間時提醒我', nearby: '經過膠囊地點附近時提醒我', language: '語言',
@@ -136,11 +136,11 @@ export const STR = {
     sealMsg: (t, w, p) => `It will reach ${w} on ${t}${p ? `, and can only be opened at ${p}` : ''}.<br>From now on, not even you can read or change it.`,
     done: 'Done', sentTo: n => `Sent to ${n}`, defaultHint: 'See you then.',
     brandH: 'Leave a gift at the boutique, opened in person',
-    brandP: 'Limited to 300 numbered pieces. When they open the capsule in the boutique, staff hand over the physical gift inside.',
+    brandP: 'Limited to 300 numbered pieces. Coming later: lock the capsule to the boutique, and staff hand over a physical gift when it’s opened there.',
     left: (l, t) => `${l} of ${t} left`, buyFor: p => `Buy for MOP ${p}`, allV: 'All vessels',
     fictional: 'Maison Aurèle is a fictional brand made for this demo.',
-    buyQ: n => `Buy “${n}”?`, buyIncl: ', including the physical gift and boutique handover', demoPay: 'This is a demo. No payment is made.',
-    cancel: 'Cancel', buy: 'Buy', bought: n => `Bought “${n}”`, alreadyOwn: n => `You already own “${n}”`, buyAria: 'Confirm purchase',
+    buyQ: n => `Buy “${n}”?`, buyIncl: ', including the physical gift and boutique handover', demoPay: 'Free while we’re testing. You won’t be charged.',
+    cancel: 'Cancel', buy: 'Buy', bought: n => `Added “${n}” to your vessels`, alreadyOwn: n => `You already own “${n}”`, buyAria: 'Confirm purchase',
     meTitle: 'Me', city: 'Macau', statIn: 'Received', statOut: 'Sent', statOpened: 'Opened',
     friends: 'Friends', friendsN: n => `${n}`, ownedV: 'Vessels owned', ownedN: n => `${n}`,
     remind: 'Remind me when a capsule is about to open', nearby: 'Remind me when I pass near a capsule place', language: 'Language',
@@ -182,6 +182,8 @@ Object.assign(STR.zh, {
   geoDenied: '要允許使用位置，才能量度你和地點的距離。', geoNone: '這部裝置暫時取得不到位置。',
   tooFar: '你還未到達地點，要在 100 米內才能打開。', needLocation: '需要你的位置才能打開這個膠囊。',
   inaccurate: '位置不夠準確，請到室外或稍等一下再試。',
+  betaFree: '付款功能還未開放：測試期間所有容器都可以免費取得。', getFree: '免費取得', soldOut: '已售罄',
+  yourEdition: (n, t) => `你的編號 No.${n} / ${t}`, limitedN: n => `限量 ${n} 個，附編號`,
   devQuick: '2 分鐘後（測試用）', minuteNote: '開啟時間以伺服器時間為準。',
 });
 Object.assign(STR.en, {
@@ -215,6 +217,8 @@ Object.assign(STR.en, {
   geoDenied: 'Allow location access so we can measure how far you are from the place.', geoNone: 'This device can’t get a location right now.',
   tooFar: 'You’re not there yet. You need to be within 100 m to open it.', needLocation: 'Your location is needed to open this capsule.',
   inaccurate: 'Your location isn’t accurate enough. Try outdoors or wait a moment.',
+  betaFree: 'Payments aren’t open yet: every vessel is free while we’re testing.', getFree: 'Get it free', soldOut: 'Sold out',
+  yourEdition: (n, t) => `Your number: No.${n} / ${t}`, limitedN: n => `Limited to ${n}, numbered`,
   devQuick: 'In 2 minutes (testing)', minuteNote: 'Opening times follow the server clock.',
 });
 
@@ -231,5 +235,3 @@ export const VESSELS = {
 };
 export const vname = k => L(VESSELS[k].name);
 
-/* Vessels anyone can use for now. The shop comes after milestone 1. */
-export const FREE_VESSELS = ['dome', 'bottle', 'envelope', 'tin'];

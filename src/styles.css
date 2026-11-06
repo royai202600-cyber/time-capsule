@@ -10,19 +10,14 @@
   --top:44px;
 }
 html,body{margin:0;height:100%}
-body{background:#dfe5ec;font-family:var(--sans);color:var(--ink);display:grid;place-items:center;min-height:100vh;-webkit-font-smoothing:antialiased}
+body{background:var(--paper);font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 button:focus-visible,input:focus-visible,textarea:focus-visible,.switch:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
-/* Phone frame (desktop) / full screen (mobile) */
-.phone{position:relative;width:390px;height:844px;background:var(--paper);border-radius:46px;overflow:hidden;box-shadow:0 0 0 11px #1c2230,0 40px 90px rgba(22,38,63,.35)}
-.statusbar{position:absolute;top:0;left:0;right:0;height:var(--top);display:flex;justify-content:space-between;align-items:center;padding:4px 28px 0 36px;font-weight:600;font-size:15px;z-index:50;pointer-events:none}
-@media (max-width:520px){
-  body{display:block}
-  .phone{width:100%;height:100dvh;border-radius:0;box-shadow:none}
-  .statusbar{display:none}
-  :root{--top:env(safe-area-inset-top,0px)}
-}
+/* The app fills the window on every device. On wide screens each screen's content
+   sits in a centred column (see "Wide screens" at the end), with no phone frame. */
+.phone{position:relative;width:100%;height:100vh;height:100dvh;background:var(--paper);overflow:hidden}
+:root{--top:env(safe-area-inset-top,0px)}
 #app{position:absolute;inset:0}
 .screen{position:absolute;inset:0;padding-top:var(--top);display:flex;flex-direction:column;background:var(--paper)}
 .push-in{animation:pushIn .34s cubic-bezier(.2,.8,.2,1)}
@@ -280,9 +275,6 @@ html[lang=en] .letter.hand{font-family:var(--serif);font-style:italic}
 .menu .seg.small{margin:0}
 
 /* ======================= Added for the real app ======================= */
-/* No fake status bar: on desktop the phone frame just gets a little top room. */
-:root{--top:14px}
-@media (max-width:520px){:root{--top:env(safe-area-inset-top,0px)}}
 
 /* Sign in */
 .auth-top{display:flex;justify-content:flex-end;padding:10px 16px 0}
@@ -350,3 +342,30 @@ html[lang=en] .auth-title{letter-spacing:.02em}
 .leaflet-container{font-family:var(--sans)}
 /* The prototype's ".map svg{width:100%}" was for its drawn map; let Leaflet size its own SVGs. */
 .map.real svg{width:initial;height:initial;display:inline}
+
+/* ---------- Wide screens (tablet / desktop website) ---------- */
+@media (min-width:700px){
+  :root{--col:640px}
+  /* Centre each screen's content in a readable column; full-bleed pieces stay full width. */
+  .screen>.bar,.screen>.scroll,.screen>.progress,.screen>.actions,.screen>.auth-top,.home-top,.summary,.pdots,.dots{width:100%;max-width:var(--col);margin-left:auto;margin-right:auto}
+  .screen>.progress{width:calc(100% - 44px);max-width:calc(var(--col) - 44px)}
+  .actions{border-top:0}
+  .home-top{padding-top:22px}
+  /* Card stack: fixed-size cards, several visible at once */
+  .rail{padding:24px calc(50% - 170px) 12px}
+  .card{flex:0 0 340px}
+  .card .vessel{width:170px}
+  /* Opening pages: one readable page at a time */
+  .pager{width:100%;max-width:var(--col);margin:0 auto}
+  .map.real{height:380px}
+  .faces{grid-template-columns:repeat(5,1fr)}
+  .people{grid-template-columns:repeat(4,1fr)}
+  .vgrid{grid-template-columns:repeat(3,1fr)}
+  .modal{align-items:center;justify-content:center}
+  .modal .sheet{max-width:440px;border-radius:20px}
+  .fab{margin-bottom:40px}
+}
+@media (min-width:1100px){
+  .card{flex-basis:360px}
+  .rail{padding-left:calc(50% - 180px);padding-right:calc(50% - 180px)}
+}
