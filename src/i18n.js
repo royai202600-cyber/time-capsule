@@ -178,6 +178,10 @@ Object.assign(STR.zh, {
   noFriends: '還沒有好友。把邀請連結傳給對方，對方接受後就會出現在這裡。',
   signOut: '登出', emptyIn: '還沒有收到膠囊。', emptyOut: '還沒有寄出膠囊。',
   notYet: '還未到開啟時間。', errGeneric: '出了點問題，請再試一次。', sealing: '封存中…',
+  headNeedPlace: '要到指定地點才能打開', locating: '正在取得你的位置…',
+  geoDenied: '要允許使用位置，才能量度你和地點的距離。', geoNone: '這部裝置暫時取得不到位置。',
+  tooFar: '你還未到達地點，要在 100 米內才能打開。', needLocation: '需要你的位置才能打開這個膠囊。',
+  inaccurate: '位置不夠準確，請到室外或稍等一下再試。',
   devQuick: '2 分鐘後（測試用）', minuteNote: '開啟時間以伺服器時間為準。',
 });
 Object.assign(STR.en, {
@@ -207,6 +211,10 @@ Object.assign(STR.en, {
   noFriends: 'No friends yet. Send someone your invite link, and they’ll show up here once they accept.',
   signOut: 'Sign out', emptyIn: 'No capsules received yet.', emptyOut: 'No capsules sent yet.',
   notYet: 'It isn’t time to open it yet.', errGeneric: 'Something went wrong. Please try again.', sealing: 'Sealing…',
+  headNeedPlace: 'Open it at the place', locating: 'Finding your location…',
+  geoDenied: 'Allow location access so we can measure how far you are from the place.', geoNone: 'This device can’t get a location right now.',
+  tooFar: 'You’re not there yet. You need to be within 100 m to open it.', needLocation: 'Your location is needed to open this capsule.',
+  inaccurate: 'Your location isn’t accurate enough. Try outdoors or wait a moment.',
   devQuick: 'In 2 minutes (testing)', minuteNote: 'Opening times follow the server clock.',
 });
 

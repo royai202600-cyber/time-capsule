@@ -1,7 +1,9 @@
 /* 時光膠囊 / Time Capsule: the app. Screens and look are ported from the prototype;
    data comes from Supabase. Capsule content is only ever returned by the server's
-   open_capsule() function, once the open time has passed. */
+   open_capsule() function, once the open time (and, if set, the place) is reached. */
 import './styles.css';
+import 'leaflet/dist/leaflet.css';
+import Leaflet from 'leaflet';
 import { createClient } from '@supabase/supabase-js';
 import { IC, vessel, face, PORTRAITS } from './art.js';
 import { LANG, setLangValue, STR, tr, vname, FREE_VESSELS } from './i18n.js';
@@ -32,6 +34,9 @@ const S = {
   friends: [],         // friend ids
   inbox: [],
   sent: [],
+  places: new Map(),   // id -> place row (name, lat, lng, radius_m)
+  here: null,          // latest GPS fix { lat, lng, acc, at }
+  geo: 'idle',         // idle | asking | ok | denied | none
 };
 const uid = () => S.user?.id;
 
@@ -39,7 +44,63 @@ const toCapsule = r => ({
   id: r.id, sender: r.sender, recipient: r.recipient, vessel: r.vessel, hint: r.hint,
   sealedAt: Date.parse(r.sealed_at), openAt: Date.parse(r.open_at),
   openedAt: r.opened_at ? Date.parse(r.opened_at) : null, opened: !!r.opened_at, isNew: !r.seen_at,
+  place: r.place, handwritten: r.handwritten,
 });
+
+/* ---------- Places and the phone's location ---------- */
+const plname = id => { const p = S.places.get(id); return p ? (LANG === 'zh' ? p.name_zh : p.name_en) : ''; };
+const plcity = id => { const p = S.places.get(id); return p ? (LANG === 'zh' ? p.city_zh : p.city_en) : ''; };
+function meters(lat1, lng1, lat2, lng2) {
+  const r = Math.PI / 180, a = Math.sin((lat2 - lat1) * r / 2) ** 2 +
+    Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin((lng2 - lng1) * r / 2) ** 2;
+  return 2 * 6371000 * Math.asin(Math.sqrt(a));
+}
+// Metres from me to a place, or null while we don't know where I am.
+function distTo(id) {
+  const p = S.places.get(id);
+  return p && S.here ? meters(S.here.lat, S.here.lng, p.lat, p.lng) : null;
+}
+const kmText = m => (m >= 100000 ? Math.round(m / 1000).toLocaleString() : (m / 1000).toFixed(1));
+const atPlace = c => { const d = distTo(c.place); return d != null && d <= (S.places.get(c.place)?.radius_m ?? 100); };
+
+let watchId = null, lastGeoRender = 0;
+// Start watching GPS (asks permission the first time). Only called when a capsule needs a place.
+function wantLocation() {
+  if (watchId != null || S.geo === 'denied' || S.geo === 'none') return;
+  // Development only: pretend to be somewhere. In the console: tcFakeGps(22.19383, 113.53999)
+  if (import.meta.env.DEV) {
+    const fake = (() => { try { return localStorage.getItem('tc-fake-gps'); } catch { return null; } })();
+    window.tcFakeGps = (lat, lng) => {
+      try { localStorage.setItem('tc-fake-gps', `${lat},${lng}`); } catch { /* */ }
+      const before = S.here; S.here = { lat, lng, acc: 10, at: Date.now() }; S.geo = 'ok'; watchId = -1; onHere(before);
+    };
+    if (fake) { const [lat, lng] = fake.split(',').map(Number); return window.tcFakeGps(lat, lng); }
+  }
+  if (!navigator.geolocation) { S.geo = 'none'; return; }
+  S.geo = 'asking';
+  watchId = navigator.geolocation.watchPosition(pos => {
+    const before = S.here;
+    S.here = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: pos.coords.accuracy, at: pos.timestamp };
+    S.geo = 'ok';
+    onHere(before);
+  }, err => {
+    console.warn('geolocation', err);
+    S.geo = err.code === 1 ? 'denied' : 'none';
+    navigator.geolocation.clearWatch(watchId); watchId = null;
+    $$('.screen', app).forEach(x => x._render?.());
+  }, { enableHighAccuracy: true, maximumAge: 10000, timeout: 30000 });
+}
+// New GPS fix: update maps and distances; fully redraw only when something changed state, or every 15 s.
+function onHere(before) {
+  const changed = !before || [...S.inbox].some(c => c.place && !c.opened &&
+    (meters(before.lat, before.lng, S.places.get(c.place).lat, S.places.get(c.place).lng) <= S.places.get(c.place).radius_m) !== atPlace(c));
+  $$('.screen', app).forEach(x => x._onHere?.());
+  if (changed || Date.now() - lastGeoRender > 15000) {
+    lastGeoRender = Date.now();
+    if (home?.isConnected) renderHome();
+    $$('.screen', app).filter(x => x !== home && x._geoRender).forEach(x => x._render?.());
+  }
+}
 
 /* 'future' is the recipient choice for a capsule to yourself. */
 function pname(id) {
@@ -56,6 +117,7 @@ function status(c, side) {
   if (c.opened) return 'opened';
   if (c.openAt > Date.now()) return 'time';
   if (side === 'out') return 'waiting';
+  if (c.place && !atPlace(c)) return 'place';
   return 'ready';
 }
 function remain(ms) {
@@ -86,7 +148,7 @@ async function loadAll() {
   const rows = caps.data.map(toCapsule);
   // Keep content we already fetched for opened capsules.
   const old = new Map([...S.inbox, ...S.sent].map(c => [c.id, c]));
-  rows.forEach(c => { if (old.get(c.id)?.message) c.message = old.get(c.id).message; });
+  rows.forEach(c => { const o = old.get(c.id); if (o?.opened && o.message !== undefined) { c.message = o.message; c.drawing = o.drawing; } });
   S.friends = fr.data.map(f => f.friend_id);
   const ids = new Set(S.friends);
   rows.forEach(c => { ids.add(c.sender); ids.add(c.recipient); });
@@ -96,9 +158,9 @@ async function loadAll() {
     if (error) throw error;
     data.forEach(p => S.people.set(p.id, p));
   }
-  const rank = c => ({ ready: 0, time: 1, opened: 2 }[status(c, 'in')]);
+  const rank = c => ({ ready: 0, place: 1, time: 2, opened: 3 }[status(c, 'in')]);
   S.inbox = rows.filter(c => c.recipient === me)
-    .sort((a, b) => rank(a) - rank(b) || (rank(a) === 2 ? b.openedAt - a.openedAt : a.openAt - b.openAt));
+    .sort((a, b) => rank(a) - rank(b) || (rank(a) === 3 ? b.openedAt - a.openedAt : a.openAt - b.openAt));
   S.sent = rows.filter(c => c.sender === me).sort((a, b) => b.sealedAt - a.sealedAt);
 }
 async function refresh() {
@@ -362,19 +424,22 @@ function cardHTML(c, side) {
   const who = side === 'in' ? c.sender : (c.recipient === uid() ? 'future' : c.recipient);
   let head;
   if (st === 'time') { const r = remain(c.openAt - Date.now()); head = tr('headTime', r.n, r.u); }
+  else if (st === 'place') { const d = distTo(c.place); head = d == null ? tr('headNeedPlace') : tr('headPlace', kmText(d)); }
   else if (st === 'ready') head = tr('ready');
   else if (st === 'waiting') head = tr('waiting');
   else head = tr(side === 'in' ? 'openedIn' : 'openedOut', md(c.openedAt));
   return `<button class="card st-${st}" data-id="${c.id}" aria-label="${esc(tr('cardAria', side, pname(who)))}">
     ${side === 'in' && c.isNew && !c.opened ? '<span class="tag">NEW</span>' : ''}
+    ${c.handwritten ? `<span class="seal-mark" title="${tr('handMarkTitle')}">${tr('handMark')}</span>` : ''}
     ${vessel(c.vessel)}
     <p class="head">${head}</p>
-    <p class="place">${IC.pin}${tr('anywhere')}</p>
+    <p class="place">${IC.pin}${c.place ? esc(plname(c.place)) : tr('anywhere')}</p>
     <div class="meta"><span class="who">${tr(side === 'in' ? 'from' : 'to')} ${avatar(who)} ${esc(pname(who))}</span><time>${fmt(c.sealedAt)}</time></div>
   </button>`;
 }
 function renderHome() {
   const side = S.tab, list = side === 'in' ? S.inbox : S.sent;
+  if (S.inbox.some(c => c.place && !c.opened)) wantLocation();
   const ready = list.filter(c => status(c, side) === 'ready').length;
   const summary = list.length
     ? (side === 'in' ? tr('summaryIn', list.length, ready) : tr('summaryOut', list.length, list.filter(c => !c.opened).length))
@@ -468,31 +533,81 @@ function actionHTML(c, st) {
     const r = remain(c.openAt - Date.now());
     return `<button class="btn" disabled>${tr('waitBtn', r.n, r.u)}</button>`;
   }
+  if (st === 'place') return `<button class="btn" disabled>${tr('needPlace')}</button>${geoNote()}`;
   return `<button class="btn hold" data-act="hold"><span>${tr('hold')}</span></button><p class="tiny">${tr('holdNote')}</p>`;
+}
+
+// What we know about the phone's location, for the place pages.
+function geoNote() {
+  if (S.geo === 'denied') return `<p class="tiny warn">${tr('geoDenied')}</p>`;
+  if (S.geo === 'none') return `<p class="tiny warn">${tr('geoNone')}</p>`;
+  if (!S.here) return `<p class="tiny">${tr('locating')}</p>`;
+  return '';
+}
+function distLine(c) {
+  const d = distTo(c.place);
+  if (d == null) return geoNote();
+  return `<p class="dist">${atPlace(c) ? tr('here') : tr('distFar', kmText(d))}</p>`;
 }
 
 function pagerView(c, st) {
   const timeOk = c.openAt <= Date.now();
   const from = `<p class="from">${tr('from')} ${avatar(c.sender)} ${esc(pname(c.sender))}</p>`;
+  const place = c.place ? esc(plname(c.place)) : '';
   const story = timeOk
-    ? tr('storyArrived', fmt(c.sealedAt), Math.round((c.openAt - c.sealedAt) / DAY), fmt(c.openAt)) + tr('storyNow')
+    ? tr('storyArrived', fmt(c.sealedAt), Math.round((c.openAt - c.sealedAt) / DAY), fmt(c.openAt)) + (c.place ? tr(st === 'ready' ? 'storyHere' : 'storyGo') : tr('storyNow'))
     : (() => { const r = remain(c.openAt - Date.now()); return tr('storyWaiting', fmt(c.sealedAt), Math.floor((Date.now() - c.sealedAt) / DAY), r.n, r.u, fmt(c.openAt)); })();
   const hint = c.hint || tr('defaultHint');
+  const openPage = c.place ? 2 : 1;
   const pages = [
-    `${from}<div class="p-vessel">${vessel(c.vessel)}</div><p class="story">${story}</p>
+    `${from}${c.handwritten ? `<span class="seal-mark page-mark">${tr('handMark')}</span>` : ''}<div class="p-vessel">${vessel(c.vessel)}</div><p class="story">${story}</p>
       ${timeOk ? '' : countdownHTML(c)}
-      ${timeOk ? `<div class="go"><button class="btn" data-goto="1">${tr('goOpen')}</button></div>` : ''}`,
-    `${from}
+      ${c.place
+        ? `<div class="go"><span>${tr(timeOk ? 'goNow' : 'goLater')}</span><button class="place-link" data-goto="1">${IC.pin}${place}</button></div>`
+        : (timeOk ? `<div class="go"><button class="btn" data-goto="1">${tr('goOpen')}</button></div>` : '')}`,
+  ];
+  if (c.place) pages.push(`${from}<div class="map real" aria-label="${esc(tr('mapAria', plname(c.place)))}"></div>
+      <p class="map-name">${IC.pin}${place}</p>
+      <p class="city">${esc(plcity(c.place))}</p>
+      <div class="dist-wrap">${distLine(c)}</div>
+      <div class="row"><button class="btn ghost" data-act="nav">${tr('nav')}</button>${st === 'ready' ? `<button class="btn" data-goto="${openPage}">${tr('goOpen')}</button>` : ''}</div>`);
+  pages.push(`${from}
       <div class="stage st-${st}"><div class="halo"></div>${vessel(c.vessel)}</div>
       <ul class="conds">
         <li class="${timeOk ? 'ok' : ''}">${timeOk ? IC.check : IC.lock}<div><b>${tr('condTime')}</b><span>${fmt(c.openAt)}</span></div></li>
+        ${c.place ? `<li class="${atPlace(c) ? 'ok' : ''}">${atPlace(c) ? IC.check : IC.lock}<div><b>${tr('condPlace')}</b><span>${place}${!atPlace(c) && distTo(c.place) != null ? tr('stillKm', kmText(distTo(c.place))) : ''}</span></div></li>` : ''}
       </ul>
       <blockquote class="hint">${quote(esc(hint))}<cite>${esc(tr('hintBy', pname(c.sender)))}</cite></blockquote>
-      ${actionHTML(c, st)}`,
-  ];
+      ${actionHTML(c, st)}`);
   return `${bar(tr('openTitle'))}
     <div class="pager">${pages.map((p, i) => `<section class="page" aria-label="${tr('page', i + 1)}"><div class="paper">${p}<span class="pno">${i + 1}</span></div></section>`).join('')}</div>
     <div class="pdots" aria-hidden="true">${pages.map((_, i) => `<i class="${i ? '' : 'on'}"></i>`).join('')}</div>`;
+}
+
+/* Real map (OpenStreetMap) with the vessel as the pin, the 100 m circle, and you. */
+function initMap(s, c) {
+  const el = $('.map.real', s), p = S.places.get(c.place);
+  if (!el || !p) return;
+  const m = Leaflet.map(el, { zoomControl: false, attributionControl: true }).setView([p.lat, p.lng], 16);
+  m.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+  Leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(m);
+  Leaflet.circle([p.lat, p.lng], { radius: p.radius_m, color: '#2f5d8a', weight: 1.5, fillColor: '#5a8fd0', fillOpacity: 0.12 }).addTo(m);
+  const icon = Leaflet.divIcon({ className: 'vessel-pin', html: `<div class="pin-body">${vessel(c.vessel)}</div>`, iconSize: [58, 66], iconAnchor: [29, 66] });
+  Leaflet.marker([p.lat, p.lng], { icon, keyboard: false }).addTo(m);
+  s._map = { m, me: null, line: null, fitted: false };
+  setTimeout(() => m.invalidateSize(), 350);
+  updateMapHere(s, c);
+}
+function updateMapHere(s, c) {
+  const mm = s._map, p = S.places.get(c.place);
+  if (!mm || !S.here || !p) return;
+  const me = [S.here.lat, S.here.lng], dest = [p.lat, p.lng];
+  if (!mm.me) {
+    mm.line = Leaflet.polyline([me, dest], { color: '#2f5d8a', weight: 3, dashArray: '2 8' }).addTo(mm.m);
+    mm.me = Leaflet.circleMarker(me, { radius: 7, color: '#fff', weight: 3, fillColor: '#5a8fd0', fillOpacity: 1 }).addTo(mm.m);
+  } else { mm.me.setLatLng(me); mm.line.setLatLngs([me, dest]); }
+  // Zoom out to show both only when you're within a city's reach; otherwise keep the place in view.
+  if (!mm.fitted && distTo(c.place) < 50000) { mm.fitted = true; mm.m.fitBounds(Leaflet.latLngBounds([me, dest]).pad(0.3)); }
 }
 
 function letterView(c) {
@@ -500,11 +615,14 @@ function letterView(c) {
   return `${bar(self ? tr('letterSelf') : tr('letterFrom', esc(pname(c.sender))))}
   <div class="scroll">
     <div class="opened-stage">${vessel(c.vessel)}</div>
-    <article class="letter">
-      ${c.message != null ? paras(c.message) : `<p class="sub">${tr('loading')}</p>`}
+    <article class="letter ${c.handwritten ? 'hand' : ''}">
+      ${c.handwritten ? `<span class="seal-mark">${tr('handMark')}</span>` : ''}
+      ${c.message === undefined ? `<p class="sub">${tr('loading')}</p>` : ''}
+      ${c.drawing ? `<img class="drawing" src="${esc(c.drawing)}" alt="${tr('handAlt')}">` : ''}
+      ${c.message ? paras(c.message) : ''}
       <p class="sign">${esc(self ? tr('pastMe') : pname(c.sender))}<br><time>${tr('sealedOn', fmt(c.sealedAt))}</time></p>
     </article>
-    <p class="opened-at">${tr('openedRecord', fmt(c.openedAt), '')}</p>
+    <p class="opened-at">${tr('openedRecord', fmt(c.openedAt), c.place ? esc(plname(c.place)) : '')}</p>
     <button class="btn ghost" data-act="reply">${self ? tr('replySelf') : tr('replyTo', esc(pname(c.sender)))}</button>
   </div>`;
 }
@@ -520,7 +638,7 @@ function sentView(c, st) {
     <ol class="timeline">
       <li class="done"><b>${tr('tlSealed')}</b><span>${fmt(c.sealedAt)}</span></li>
       <li class="${c.openAt <= now ? 'done' : ''}"><b>${tr('tlDeliver', to)}</b><span>${fmt(c.openAt)}</span></li>
-      <li class="${c.opened ? 'done' : ''}"><b>${tr('tlOpen', to)}</b><span>${c.opened ? fmt(c.openedAt) : tr('tlAnytime')}</span></li>
+      <li class="${c.opened ? 'done' : ''}"><b>${tr('tlOpen', to)}</b><span>${c.opened ? fmt(c.openedAt) + (c.place ? tr('tlAt', esc(plname(c.place))) : '') : (c.place ? tr('tlNeedPlace', esc(plname(c.place))) : tr('tlAnytime'))}</span></li>
     </ol>
     <div class="sealed-box"><div class="blur-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div>${tr('sealedBox')}</div>
     <blockquote class="hint">${quote(esc(c.hint || tr('defaultHint')))}<cite>${tr('yourHint')}</cite></blockquote>
@@ -544,8 +662,17 @@ function openCapsule(id, side) {
 }
 function renderCapsule(s, c, side, page = 0) {
   const st = status(c, side);
+  s._map?.m.remove(); s._map = null;
   s.innerHTML = side === 'out' ? sentView(c, st) : st === 'opened' ? letterView(c) : pagerView(c, st);
-  if (side === 'in' && st === 'opened' && c.message == null) fetchContent(s, c);
+  if (side === 'in' && st === 'opened' && c.message === undefined) fetchContent(s, c);
+  // Place capsules: watch GPS, keep the map and distance live, redraw when you arrive or leave.
+  s._geoRender = side === 'in' && !!c.place && st !== 'opened';
+  s._onHere = null;
+  if (s._geoRender) {
+    wantLocation();
+    initMap(s, c);
+    s._onHere = () => { updateMapHere(s, c); const w = $('.dist-wrap', s); if (w) w.innerHTML = distLine(c); };
+  }
   const pg = $('.pager', s);
   if (pg) {
     page = Math.min(page, $$('.page', s).length - 1);
@@ -562,6 +689,10 @@ function renderCapsule(s, c, side, page = 0) {
     const a = e.target.closest('[data-act]')?.dataset.act;
     if (a === 'back') pop(s);
     else if (a === 'reply') openCreate(c.sender === uid() ? 'future' : c.sender);
+    else if (a === 'nav') {
+      const p = S.places.get(c.place);
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`, '_blank', 'noopener');
+    }
   };
   const hb = $('.hold', s);
   if (hb) bindHold(hb, () => openIt(s, c));
@@ -569,7 +700,7 @@ function renderCapsule(s, c, side, page = 0) {
 async function fetchContent(s, c) {
   const { data, error } = await sb.rpc('open_capsule', { p_id: c.id });
   if (error || !data?.[0]) { console.error(error); toast(tr('errGeneric')); return; }
-  c.message = data[0].message;
+  c.message = data[0].message; c.drawing = data[0].drawing;
   if (s.isConnected) renderCapsule(s, c, 'in');
 }
 function bindHold(hb, done) {
@@ -592,18 +723,20 @@ function bindHold(hb, done) {
   hb.addEventListener('contextmenu', e => e.preventDefault());
 }
 async function openIt(s, c) {
-  // Ask the server first: it decides whether the time has come.
-  const req = sb.rpc('open_capsule', { p_id: c.id });
+  // Ask the server first: it decides whether the time has come, and whether you're at the place.
+  const here = S.here ? { p_lat: S.here.lat, p_lng: S.here.lng, p_accuracy: S.here.acc } : {};
+  const req = sb.rpc('open_capsule', { p_id: c.id, ...here });
   $('.stage', s)?.classList.add('opening');
   navigator.vibrate?.(40);
   const [{ data, error }] = await Promise.all([req, new Promise(r => setTimeout(r, REDUCED ? 0 : 1100))]);
   if (error || !data?.[0]) {
     console.error(error);
-    toast(error?.hint === 'locked' ? tr('notYet') : tr('errGeneric'));
-    renderCapsule(s, c, 'in', 1);
+    const msg = { locked: tr('notYet'), far: tr('tooFar'), no_location: tr('needLocation'), inaccurate: tr('inaccurate') }[error?.hint];
+    toast(msg || tr('errGeneric'));
+    renderCapsule(s, c, 'in', c.place ? 2 : 1);
     return;
   }
-  Object.assign(c, { opened: true, openedAt: Date.parse(data[0].opened_at), message: data[0].message, isNew: false });
+  Object.assign(c, { opened: true, openedAt: Date.parse(data[0].opened_at), message: data[0].message, drawing: data[0].drawing, isNew: false });
   renderHome();
   renderCapsule(s, c, 'in');
 }
@@ -612,7 +745,7 @@ async function openIt(s, c) {
 const QUICK = [{ k: 'm1', days: 30 }, { k: 'm6', days: 182 }, { k: 'y1', days: 365 }, { k: 'y5', days: 1826 }];
 function validStep(d) {
   if (d.step === 1) return !!d.to;
-  if (d.step === 2) return d.msg.trim().length > 0;
+  if (d.step === 2) return d.mode === 'type' ? d.msg.trim().length > 0 : !!d.drawing;
   if (d.step === 3) return !!d.vessel;
   return !!d.openAt && !d.busy;
 }
@@ -621,7 +754,10 @@ const STEPS = {
     <div class="people">${['future', ...S.friends].map(id => `<button class="person ${d.to === id ? 'sel' : ''}" data-to="${id}">${avatar(id)}<span>${esc(pname(id))}</span></button>`).join('')}
       <button class="person invite-person" data-act="invite"><span class="av plus">${IC.plus}</span><span>${tr('inviteFriend')}</span></button></div>`,
   2: d => `<h2>${tr('s2h')}</h2>
-    <textarea id="msg" maxlength="500" placeholder="${tr('msgPh')}" aria-label="${tr('msgAria')}">${esc(d.msg)}</textarea><p class="count"><span id="cnt">${d.msg.length}</span> / 500</p>
+    <div class="seg small" role="tablist"><button role="tab" aria-selected="${d.mode === 'type'}" data-mode="type">${tr('type')}</button><button role="tab" aria-selected="${d.mode === 'hand'}" data-mode="hand">${tr('hand')}</button></div>
+    ${d.mode === 'type'
+      ? `<textarea id="msg" maxlength="500" placeholder="${tr('msgPh')}" aria-label="${tr('msgAria')}">${esc(d.msg)}</textarea><p class="count"><span id="cnt">${d.msg.length}</span> / 500</p>`
+      : `<div class="pad"><canvas id="pad" width="600" height="520" aria-label="${tr('padAria')}"></canvas><button class="link" data-act="clear">${tr('clear')}</button></div><p class="sub">${tr('padNote')}</p>`}
     <label class="field"><span>${tr('hintLabel')}</span><input id="hint" maxlength="40" value="${esc(d.hint)}" placeholder="${tr('hintPh')}"></label>`,
   3: d => `<h2>${tr('s3h')}</h2><p class="sub">${tr('s3sub')}</p>
     <div class="vgrid">${FREE_VESSELS.map(k =>
@@ -634,27 +770,44 @@ const STEPS = {
     <h3>${tr('whenH')}</h3>
     <div class="chips">${quick.map(q => `<button class="chip ${d.quick === q.k ? 'sel' : ''}" data-quick="${q.k}">${q.k === 'dev' ? tr('devQuick') : STR[LANG].quick[q.k]}</button>`).join('')}
       <label class="chip date-chip ${d.quick === 'custom' ? 'sel' : ''}">${custom || tr('customDate')}<input type="date" id="date" min="${tomorrow}" value="${custom.replaceAll('/', '-')}" aria-label="${tr('dateAria')}"></label></div>
-    ${d.openAt ? `<p class="sub" style="margin-top:10px">${tr('arrives', fmt(d.openAt))}</p>` : ''}`;
+    ${d.openAt ? `<p class="sub" style="margin-top:10px">${tr('arrives', fmt(d.openAt))}</p>` : ''}
+    <h3>${tr('whereH')}</h3>
+    <div class="places">${[null, ...S.places.keys()].map(id => `<button class="place-opt ${d.place === id ? 'sel' : ''}" data-place="${id ?? ''}">${IC.pin}<span><b>${id ? esc(plname(id)) : tr('anywhere')}</b><small>${id ? esc(plcity(id)) : tr('anywhereSub')}</small></span></button>`).join('')}</div>
+    <p class="sub" style="margin-top:10px">${tr('radiusNote')}</p>`;
   },
 };
 function openCreate(preTo) {
-  const d = { to: preTo || null, msg: '', hint: '', vessel: null, openAt: null, quick: null, step: 1, sealed: false, busy: false };
+  const d = { to: preTo || null, mode: 'type', msg: '', drawing: null, hint: '', vessel: null, openAt: null, quick: null, place: null, step: 1, sealed: false, busy: false };
   const s = push('sheet');
   const render = () => {
     s.innerHTML = `${bar(tr('createTitle'), 'close')}
       <div class="progress" aria-hidden="true"><i style="width:${d.step * 25}%"></i></div>
       <div class="scroll create-body"><p class="step-count" style="text-align:left;margin:12px 0 0">${tr('step', d.step)}</p>${STEPS[d.step](d)}</div>
       <footer class="actions">${d.step > 1 ? `<button class="btn ghost" data-act="prev">${tr('prev')}</button>` : ''}<button class="btn" data-act="next" ${validStep(d) ? '' : 'disabled'}>${d.busy ? tr('sealing') : tr(d.step < 4 ? 'next' : 'sealSend')}</button></footer>`;
+    setupPad();
     if (d.sealed) showSeal();
   };
   s._render = render;
+  // Handwriting pad (from the prototype): draw with a finger; saved as a PNG.
+  const setupPad = () => {
+    const cv = $('#pad', s); if (!cv) return;
+    const ctx = cv.getContext('2d');
+    Object.assign(ctx, { lineWidth: 6, lineCap: 'round', lineJoin: 'round', strokeStyle: '#1f2633' });
+    if (d.drawing) { const im = new Image(); im.onload = () => ctx.drawImage(im, 0, 0); im.src = d.drawing; }
+    let drawing = false;
+    const pos = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * cv.width / r.width, (e.clientY - r.top) * cv.height / r.height]; };
+    cv.addEventListener('pointerdown', e => { drawing = true; cv.setPointerCapture(e.pointerId); const [x, y] = pos(e); ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + .1, y); ctx.stroke(); });
+    cv.addEventListener('pointermove', e => { if (!drawing) return; const [x, y] = pos(e); ctx.lineTo(x, y); ctx.stroke(); });
+    const stop = () => { if (!drawing) return; drawing = false; d.drawing = cv.toDataURL('image/png'); upd(); };
+    cv.addEventListener('pointerup', stop); cv.addEventListener('pointercancel', stop);
+  };
   const upd = () => { const n = $('[data-act=next]', s); if (n) n.disabled = !validStep(d); };
   const who = () => (d.to === 'future' ? tr('you') : pname(d.to));
   const showSeal = () => {
     const ov = document.createElement('div');
     ov.className = 'seal-ov';
     ov.innerHTML = `<div class="seal-stage">${vessel(d.vessel)}<div class="wax" aria-hidden="true">封</div></div>
-      <h2>${tr('sealed')}</h2><p>${tr('sealMsg', fmt(d.openAt), esc(who()), '')}</p>
+      <h2>${tr('sealed')}</h2><p>${tr('sealMsg', fmt(d.openAt), esc(who()), d.place ? esc(plname(d.place)) : '')}</p>
       <button class="btn" data-act="done">${tr('done')}</button>`;
     s.appendChild(ov);
   };
@@ -663,9 +816,11 @@ function openCreate(preTo) {
     const { error } = await sb.rpc('send_capsule', {
       p_recipient: d.to === 'future' ? uid() : d.to,
       p_vessel: d.vessel,
-      p_message: d.msg.trim(),
+      p_message: d.mode === 'type' ? d.msg.trim() : null,
+      p_drawing: d.mode === 'hand' ? d.drawing : null,
       p_hint: d.hint.trim() || tr('defaultHint'),
       p_open_at: new Date(d.openAt).toISOString(),
+      p_place: d.place,
     });
     d.busy = false;
     if (error) { console.error(error); toast(tr('errGeneric')); render(); return; }
@@ -681,10 +836,12 @@ function openCreate(preTo) {
     if (e.target.id === 'date' && e.target.value) { d.openAt = new Date(e.target.value + 'T09:00').getTime(); d.quick = 'custom'; render(); }
   });
   s.addEventListener('click', e => {
-    const el = e.target.closest('[data-to],[data-vessel],[data-quick],[data-act]');
+    const el = e.target.closest('[data-to],[data-mode],[data-vessel],[data-quick],[data-place],[data-act]');
     if (!el) return;
     const ds = el.dataset;
     if (ds.to !== undefined) { d.to = ds.to; render(); }
+    else if (ds.mode) { d.mode = ds.mode; render(); }
+    else if (ds.place !== undefined) { d.place = ds.place || null; render(); }
     else if (ds.vessel) { d.vessel = ds.vessel; render(); }
     else if (ds.quick) {
       d.quick = ds.quick;
@@ -694,6 +851,7 @@ function openCreate(preTo) {
     else if (ds.act === 'close') pop(s);
     else if (ds.act === 'invite') openInvite();
     else if (ds.act === 'prev') { d.step--; render(); }
+    else if (ds.act === 'clear') { d.drawing = null; render(); }
     else if (ds.act === 'next' && validStep(d)) { if (d.step < 4) { d.step++; render(); } else seal(); }
     else if (ds.act === 'done') finish();
   });
@@ -836,6 +994,10 @@ async function boot() {
     return profileForm(s, { first: true, onDone: start });
   }
   S.profile = profile;
+  if (!S.places.size) {
+    const { data: places, error: pe } = await sb.from('places').select('*').order('sort');
+    if (pe) console.error(pe); else places.forEach(p => S.places.set(p.id, p));
+  }
   if (code) {
     try { localStorage.removeItem('tc-invite'); } catch { /* */ }
     var { data: inviterId, error: ie } = await sb.rpc('accept_invite', { p_code: code });

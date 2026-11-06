@@ -337,3 +337,16 @@ html[lang=en] .auth-title{letter-spacing:.02em}
 .auth-form .link{margin-top:14px}
 .ok-note{color:#3c7a52;font-size:13px;text-align:center;margin:6px 0 0;min-height:1.2em}
 .check .btn{margin-top:4px}
+
+/* Place lock: real map with the vessel as the pin */
+.map.real{height:300px;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;margin:8px 0 12px;z-index:0;background:#eef1f4}
+.vessel-pin{background:none;border:0}
+.vessel-pin .pin-body{width:58px;height:58px;border-radius:50%;background:#fff;border:3px solid var(--blue);box-shadow:0 4px 10px rgba(22,38,63,.3);display:grid;place-items:center;position:relative}
+.vessel-pin .pin-body::after{content:"";position:absolute;bottom:-9px;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top:8px solid var(--blue)}
+.vessel-pin .vessel{width:40px}
+.city{text-align:center;color:var(--muted);font-size:13px;margin:2px 0 0;font-family:var(--sans)}
+.tiny.warn{color:var(--wax)}
+.page-mark{left:auto;right:18px;top:16px}
+.leaflet-container{font-family:var(--sans)}
+/* The prototype's ".map svg{width:100%}" was for its drawn map; let Leaflet size its own SVGs. */
+.map.real svg{width:initial;height:initial;display:inline}
