@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Animated, Image, Modal, Pressable, ScrollView, Text, View, type ImageSourcePropType } from "react-native";
+import { ArtIcon } from '../../components/ArtIcon';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as manifest from "../../art/manifest";
 import type { Tables } from "../../services/database.types";
@@ -42,11 +43,13 @@ export function Passport({ visible, onClose, userId, stamps }: {
     <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "#16263F77" }}>
       <Pressable style={{ flex: 1 }} onPress={onClose} accessibilityLabel={t("journey.closePassport")} />
       <View style={{ maxHeight: "82%", width: "100%", maxWidth: 640, alignSelf: "center", backgroundColor: C.cream, borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg, borderWidth: 2, borderColor: C.brass, overflow: "hidden" }}>
-        <View style={{ padding: spacing.lg, backgroundColor: C.ink, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+        <View style={{ padding: spacing.lg, minHeight: 150, backgroundColor: C.ink, flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", overflow: 'hidden' }}>
+          <Image source={art.passportCover} pointerEvents="none" resizeMode="stretch" style={{ position: 'absolute', width: '110%', aspectRatio: 2 / 3, left: '-5%', top: -170 }} />
           <View><Text style={{ fontFamily: serif, fontSize: 25, color: C.brass }}>{t("journey.passport")}</Text><Text style={{ fontFamily: sans, color: C.cream }}>{t("journey.stampCount", earned, total)}</Text></View>
-          <Pressable accessibilityRole="button" onPress={onClose}><Text style={{ color: C.white, fontSize: 22 }}>×</Text></Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel={t("journey.closePassport")} onPress={onClose} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="close" color={C.white} /></Pressable>
         </View>
-        <ScrollView contentContainerStyle={{ padding: spacing.md, flexDirection: "row", flexWrap: "wrap", gap: spacing.md }}>
+        <ScrollView contentContainerStyle={{ padding: spacing.md, flexDirection: "row", flexWrap: "wrap", gap: spacing.md, backgroundColor: C.cream }}>
+          <Image source={art.passportPage} resizeMode="stretch" pointerEvents="none" style={{ position: 'absolute', width: '100%', height: '100%' }} />
           {shown !== null && stamps.map((stamp) => <StampSlot key={stamp.place.id} stamp={stamp} language={language} animate={!!stamp.openedAt && !shown.includes(stamp.place.id)} reduced={reduced} onStamped={() => remember(stamp.place.id)} />)}
         </ScrollView>
       </View>
@@ -85,9 +88,9 @@ function StampSlot({ stamp, language, animate, reduced, onStamped }: {
     {stamp.openedAt ? <View style={{ width: 86, height: 86 }}>
       {animate && !reduced && <Animated.View style={{ position: "absolute", width: 86, height: 86, borderRadius: 43, borderWidth: 5, borderColor: C.plum, opacity: ink.interpolate({ inputRange: [0, 1], outputRange: [.45, 0] }), transform: [{ scale: ink.interpolate({ inputRange: [0, 1], outputRange: [.7, 1.6] }) }] }} />}
       <Animated.View style={{ opacity, transform: [{ scale }, { rotate: stamp.place.sort % 2 ? "-5deg" : "5deg" }], width: 86, height: 86, borderRadius: 43, borderWidth: 3, borderColor: C.plum, justifyContent: "center", alignItems: "center" }}>
-        {source ? <Image source={source} style={{ width: 76, height: 76 }} resizeMode="contain" /> : <Text style={{ color: C.plum, fontFamily: serif, fontSize: 32 }}>✦</Text>}
+        {source ? <Image source={source} style={{ width: 76, height: 76 }} resizeMode="contain" /> : <ArtIcon name="check" color={C.plum} size={32} />}
       </Animated.View>
-    </View> : <View style={{ width: 86, height: 86, borderRadius: 43, borderWidth: 2, borderColor: C.line, borderStyle: "dashed", alignItems: "center", justifyContent: "center" }}><Text style={{ color: C.muted, fontSize: 24 }}>⌖</Text></View>}
+    </View> : <View style={{ width: 86, height: 86, borderRadius: 43, borderWidth: 2, borderColor: C.line, borderStyle: "dashed", alignItems: "center", justifyContent: "center" }}><ArtIcon name="pin" color={C.muted} /></View>}
     <Text numberOfLines={2} style={{ fontFamily: serif, color: C.ink, textAlign: "center", marginTop: spacing.sm }}>{name}</Text>
     {stamp.openedAt && <Text style={{ fontFamily: sans, color: C.muted, fontSize: 11 }}>{new Date(stamp.openedAt).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US")}</Text>}
     {stamp.place.brand_vessel && <Text style={{ fontFamily: sans, color: C.brass, fontSize: 10 }}>{t("journey.brandStamp")}</Text>}

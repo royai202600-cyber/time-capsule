@@ -16,6 +16,8 @@ import { capsules } from '../../services/data';
 import { useFriends, useOwnedVessels, usePlaces, useVessels } from '../../services/hooks';
 import { C, handwriting, motion, serif, sans } from '../../theme';
 import { DrawingPad, type DrawingHandle } from './DrawingPad';
+import { scenes, sealWax } from '../../art/manifest';
+import { ArtIcon } from '../../components/ArtIcon';
 
 type Quick = 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
 const quickDate = (q: Quick) => { const d = new Date(); if (q === 'm1') d.setMonth(d.getMonth() + 1); if (q === 'm6') d.setMonth(d.getMonth() + 6); if (q === 'y1') d.setFullYear(d.getFullYear() + 1); if (q === 'y5') d.setFullYear(d.getFullYear() + 5); if (q === 'dev') d.setMinutes(d.getMinutes() + 2); return d; };
@@ -24,7 +26,40 @@ const customDate = (s: string) => { if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return n
 const card = { borderWidth: 1.5, borderColor: C.line, backgroundColor: C.white, borderRadius: 16, padding: 14 } as const;
 const label = { fontFamily: sans, color: C.ink } as const;
 // The letter's centre is at stage y=125; these drops meet each vessel's opening at stage y=270–325.
-const LETTER_DROP: Record<VesselKind, number> = { dome: 205, bottle: 155, envelope: 185, tin: 190, lantern: 165, musicbox: 180, maison: 175 };
+const LETTER_DROP: Record<VesselKind, number> = { dome: 205, bottle: 190, envelope: 205, tin: 215, lantern: 210, musicbox: 220, maison: 215 };
+
+// Expo SDK 58 currently prefixes its web file accept filter with a comma, which
+// leaves Chrome's macOS picker unable to select images. Use a plain image input.
+function pickWebPhoto(source: 'camera' | 'library'): Promise<string | null> {
+  return new Promise((resolve, reject) => {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = 'image/*';
+    if (source === 'camera') input.capture = 'environment';
+    input.style.display = 'none';
+    input.oncancel = () => { input.remove(); resolve(null); };
+    input.onchange = () => {
+      const file = input.files?.[0]; input.remove();
+      if (!file) { resolve(null); return; }
+      const url = URL.createObjectURL(file);
+      const image = document.createElement('img');
+      image.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image load failed')); };
+      image.onload = () => {
+        const scale = Math.min(1, 1280 / Math.max(image.naturalWidth, image.naturalHeight));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(image.naturalWidth * scale);
+        canvas.height = Math.round(image.naturalHeight * scale);
+        const context = canvas.getContext('2d');
+        if (!context) { URL.revokeObjectURL(url); reject(new Error('canvas unavailable')); return; }
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL('image/jpeg', .78));
+      };
+      image.src = url;
+    };
+    document.body.appendChild(input);
+    input.click();
+  });
+}
 
 export default function CreateScreen() {
   const { t, language, setLanguage } = useLanguage();
@@ -33,7 +68,7 @@ export default function CreateScreen() {
   const id = session?.user.id ?? '';
   const friends = useFriends(id), catalog = useVessels(), owned = useOwnedVessels(id), places = usePlaces();
   const reduced = useReducedMotion();
-  const [step, setStep] = useState(1), [recipient, setRecipient] = useState<string | null>((params.to === 'future' ? session?.user.id : params.to) ?? params.recipient ?? session?.user.id ?? null);
+  const [step, setStep] = useState(1), [recipient, setRecipient] = useState<string | null>(((params.to ?? params.recipient) === 'future' ? session?.user.id : (params.to ?? params.recipient)) ?? session?.user.id ?? null);
   const [mode, setMode] = useState<'type' | 'hand'>('type'), [message, setMessage] = useState(''), [hint, setHint] = useState(''), [drawingData, setDrawingData] = useState<string | null>(null);
   const [photo, setPhoto] = useState<string | null>(null), [photoChoices, setPhotoChoices] = useState(false);
   const [vessel, setVessel] = useState<VesselKind | null>(null), [place, setPlace] = useState<string | null>(null);
@@ -44,7 +79,7 @@ export default function CreateScreen() {
   const sendingRef = useRef(false);
   const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterNarrow = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, letterEntry = useRef(new Animated.Value(44)).current, letterOpacity = useRef(new Animated.Value(0)).current, letterFade = useRef(new Animated.Value(1)).current, drift = useRef(new Animated.Value(0)).current;
   const lidLift = useSharedValue(1);
-  useEffect(() => { if (!recipient && id) setRecipient(id); }, [id, recipient]);
+  useEffect(() => { if ((!recipient || recipient === 'future') && id) setRecipient(id); }, [id, recipient]);
   useEffect(() => {
     if (phase !== 'seal') return;
     letterEntry.setValue(reduced ? 0 : 44);
@@ -77,6 +112,11 @@ export default function CreateScreen() {
     setPhotoChoices(false); setError('');
     if (Platform.OS !== 'web') { const permission = source === 'camera' ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync(); if (!permission.granted) { setError(t('create.photoPermission')); return; } }
     try {
+      if (Platform.OS === 'web') {
+        const image = await pickWebPhoto(source);
+        if (image) { setPhoto(image); void haptics.tick(); }
+        return;
+      }
       const result = source === 'camera' ? await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 1 }) : await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 1 });
       if (result.canceled || !result.assets[0]) return;
       const asset = result.assets[0], scale = Math.min(1, 1280 / Math.max(asset.width, asset.height));
@@ -96,11 +136,11 @@ export default function CreateScreen() {
       setTimeout(driftAway, 250);
     };
     const dropLetter = () => Animated.parallel([
-      Animated.timing(letterDrop, { toValue: LETTER_DROP[vessel ?? 'dome'], duration: 380, easing: Easing.linear, useNativeDriver: true }),
-      Animated.timing(letterNarrow, { toValue: .24, duration: 200, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(letterDrop, { toValue: LETTER_DROP[vessel ?? 'dome'], duration: 550, easing: Easing.in(Easing.quad), useNativeDriver: true }),
+      Animated.timing(letterNarrow, { toValue: .24, duration: 300, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
       Animated.sequence([
-        Animated.delay(228),
-        Animated.timing(letterFade, { toValue: 0, duration: 152, useNativeDriver: true }),
+        Animated.delay(400),
+        Animated.timing(letterFade, { toValue: 0, duration: 150, useNativeDriver: true }),
       ]),
     ]).start(closeLid);
     Animated.sequence([
@@ -134,7 +174,7 @@ export default function CreateScreen() {
       finishAnimation();
     } catch (e) {
       const msg = String((e as any)?.message ?? e).toLowerCase(), code = String((e as any)?.hint ?? '');
-      setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('future') ? t('create.badDate') : t('create.sendError'));
+      setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('open time must be in the future') ? t('create.badDate') : t('create.sendError'));
       if (reduced) wax.setValue({ x: 0, y: 0 });
       else Animated.parallel([
         Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }),
@@ -154,30 +194,30 @@ export default function CreateScreen() {
   if (phase === 'seal') return <Screen>
     <Heading>{t('create.sealSend')}</Heading>
     <View style={{ height: 560, width: '100%' }}>
-      <Animated.View style={[card, { position: 'absolute', top: 20, left: '6%', width: '88%', height: 210, alignItems: 'center', justifyContent: 'center', transform: [{ translateY: letterDrop }, { translateY: letterEntry }, { scaleY: letter }, { scaleX: letterNarrow }], opacity: Animated.multiply(Animated.multiply(letterOpacity, letterFade), drift.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })) }]}>
+      <Animated.View style={{ position: 'absolute', zIndex: 2, top: 20, left: '6%', width: '88%', height: 210, transform: [{ translateY: letterDrop }, { translateY: letterEntry }], opacity: Animated.multiply(Animated.multiply(letterOpacity, letterFade), drift.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })) }}><Animated.View style={[card, { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', transform: [{ scaleY: letter }, { scaleX: letterNarrow }] }]}>
         <Text style={{ color: C.muted, fontFamily: handwriting, fontSize: 19 }}>{recipientName}</Text><View style={{ width: '75%', marginTop: 28, gap: 18 }}><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /></View>
-        {stamped && <View style={{ position: 'absolute', top: 83, left: 0, right: 0, alignItems: 'center' }}><View style={{ width: 70, height: 70, borderRadius: 35, borderWidth: 3, borderColor: C.plum, backgroundColor: C.wax, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: C.cream, fontSize: 29 }}>✦</Text></View></View>}
-      </Animated.View>
+        {stamped && <View style={{ position: 'absolute', top: 83, left: 0, right: 0, alignItems: 'center' }}><Image source={sealWax} style={{ width: 70, height: 70 }} resizeMode="contain" /></View>}
+      </Animated.View></Animated.View>
       <Animated.View style={{ position: 'absolute', top: 270, left: 0, right: 0, alignItems: 'center', transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [0, -120] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={120} lidLift={lidLift} /></Animated.View>
-      {!stamped && <View style={{ position: 'absolute', top: 425, left: 0, right: 0, alignItems: 'center' }}><Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, borderRadius: 38, backgroundColor: C.wax, borderWidth: 3, borderColor: C.plum, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }] }}><Text style={{ color: C.cream, fontSize: 31 }}>✦</Text></Animated.View></View>}
+      {!stamped && <View style={{ position: 'absolute', top: 425, left: 0, right: 0, alignItems: 'center' }}><Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }] }}><Image source={sealWax} style={{ width: 76, height: 76 }} resizeMode="contain" /></Animated.View></View>}
       <Text style={{ position: 'absolute', top: 515, left: 0, right: 0, textAlign: 'center', fontFamily: sans, color: C.muted }}>{busy || sentOnce.current ? t('create.sending') : t('create.drag')}</Text>
     </View>
     <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
   </Screen>;
-  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Vessel kind={vessel ?? 'dome'} size={180} /><Heading>{t('create.sealed')}</Heading><Body>{t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
+  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
   return <Screen>
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Pressable onPress={() => router.back()} accessibilityRole='button'><Text style={{ color: C.plum, fontFamily: sans }}>{t('create.close')}</Text></Pressable><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('create.langSwitch')}</Text></Pressable></View>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Pressable onPress={() => router.back()} accessibilityRole='button' accessibilityLabel={t('create.close')} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="close" color={C.plum} /></Pressable><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('create.langSwitch')}</Text></Pressable></View>
     <Heading>{t('create.title')}</Heading><Body>{t('create.step', step)}</Body><View style={{ height: 5, backgroundColor: C.line, borderRadius: 5 }}><View style={{ width: `${step * 25}%`, height: 5, backgroundColor: C.wax, borderRadius: 5 }} /></View>
     <Text style={{ fontFamily: serif, color: C.ink, fontSize: 23 }}>{t(['', 'create.who', 'create.write', 'create.vessel', 'create.whenWhere'][step])}</Text>
     {step === 1 && <View style={{ gap: 12 }}><View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
       <Pressable accessibilityRole='button' accessibilityState={{ selected: recipient === id }} onPress={() => { setRecipient(id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === id ? C.blue : C.line, backgroundColor: recipient === id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={profile?.avatar} size={60} future /></View><Text style={[label, { marginTop: 8 }]}>{t('create.self')}</Text></Pressable>
       {(friends.data ?? []).map(f => <Pressable key={f.friend_id} accessibilityRole='button' accessibilityState={{ selected: recipient === f.friend_id }} onPress={() => { setRecipient(f.friend_id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === f.friend_id ? C.blue : C.line, backgroundColor: recipient === f.friend_id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={(f as any).profiles?.avatar} size={60} /></View><Text style={[label, { marginTop: 8 }]}>{(f as any).profiles?.name}</Text></Pressable>)}
-      <Pressable onPress={() => router.push('/invite')} style={[card, { width: '46%', alignItems: 'center', justifyContent: 'center', minHeight: 116 }]}><Text style={{ color: C.blue, fontSize: 18 }}>＋</Text><Text style={{ color: C.blue }}>{t('create.invite')}</Text></Pressable>
+      <Pressable onPress={() => router.push('/invite')} style={[card, { width: '46%', alignItems: 'center', justifyContent: 'center', minHeight: 116 }]}><ArtIcon name="plus" color={C.blue} /><Text style={{ color: C.blue }}>{t('create.invite')}</Text></Pressable>
     </View>{friends.loading && <Body>{t('create.loading')}</Body>}{!friends.loading && !friends.data?.length && <Body>{t('create.noFriends')}</Body>}</View>}
     {<View style={{ gap: 15, display: step === 2 ? 'flex' : 'none' }}>
       <View style={{ flexDirection: 'row', gap: 8 }}>{(['type', 'hand'] as const).map(m => <Pressable key={m} onPress={() => { setMode(m); if (m === 'type') setDrawingData(null); void haptics.tick(); }} style={[card, { flex: 1, backgroundColor: mode === m ? C.cream : C.white }]}><Text style={{ textAlign: 'center', color: C.ink }}>{t(`create.${m}`)}</Text></Pressable>)}</View>
       {mode === 'type' ? <><TextInput value={message} onChangeText={setMessage} placeholder={t('create.message')} maxLength={500} multiline textAlignVertical='top' style={[card, { minHeight: 230, fontFamily: serif, fontSize: 18, color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{message.length} / 500</Text></> : <><DrawingPad ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
-      {photo ? <Pressable onPress={() => setPhoto(null)} accessibilityLabel={t('create.removePhoto')} style={{ alignSelf: 'flex-start' }}><Image source={{ uri: photo }} style={{ width: 110, height: 110, borderRadius: 8 }} /><Text style={{ color: C.blue }}>{t('create.removePhoto')}</Text></Pressable> : <Pressable onPress={() => setPhotoChoices(!photoChoices)} style={card}><Text style={{ color: C.blue }}>{t('create.photo')}</Text></Pressable>}
+      {photo ? <Pressable onPress={() => setPhoto(null)} accessibilityLabel={t('create.removePhoto')} style={{ alignSelf: 'flex-start' }}><Image source={{ uri: photo }} style={{ width: 110, height: 110, borderRadius: 8 }} /><Text style={{ color: C.blue }}>{t('create.removePhoto')}</Text></Pressable> : <Pressable onPress={() => setPhotoChoices(!photoChoices)} style={[card, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}><ArtIcon name="camera" color={C.blue} size={20} /><Text style={{ color: C.blue }}>{t('create.photo')}</Text></Pressable>}
       {photoChoices && <View style={{ flexDirection: 'row', gap: 8 }}><Button title={t('create.camera')} onPress={() => void choosePhoto('camera')} /><Button title={t('create.library')} onPress={() => void choosePhoto('library')} /></View>}
       <Text style={label}>{t('create.hint')}</Text><TextInput value={hint} onChangeText={setHint} maxLength={40} placeholder={t('create.hintPlaceholder')} style={[card, { color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{hint.length} / 40</Text>
     </View>}

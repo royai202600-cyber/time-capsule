@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { BackButton } from '../../components/Screen';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router, useFocusEffect } from "expo-router";
 import { useAuth } from "../../services/auth";
@@ -48,19 +49,19 @@ export default function JourneyScreen() {
   if (mapPlace) {
     const mapCapsule = capsules.find((capsule) => capsule.place === mapPlace.place.id && !capsule.opened_at);
     return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}>
-      <Pressable accessibilityRole="button" onPress={() => setMapPlace(null)} style={{ paddingHorizontal: spacing.md }}><Text style={{ fontFamily: sans, fontSize: 24, color: C.ink }}>‹ {t("back")}</Text></Pressable>
+      <BackButton label={t("back")} onPress={() => setMapPlace(null)} />
       <CapsuleMapPage place={mapPlace.place} vessel={(mapCapsule?.vessel ?? "dome") as VesselKind} onGoOpen={() => { if (mapCapsule) router.push({ pathname: "/capsule/[id]", params: { id: mapCapsule.id } }); }} />
     </SafeAreaView>;
   }
   return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}>
     <View style={{ width: "100%", maxWidth: 640, alignSelf: "center", flex: 1, padding: spacing.md, gap: spacing.md }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
-        <Pressable accessibilityRole="button" accessibilityLabel={t("back")} onPress={() => router.back()}><Text style={{ fontFamily: sans, fontSize: 24, color: C.ink }}>‹</Text></Pressable>
+        <BackButton label={t("back")} onPress={() => router.back()} />
         <Text style={{ fontFamily: serif, fontSize: 28, color: C.ink }}>{t("journey.title")}</Text>
       </View>
       {(placeData.error || capsuleData.error) && <Text style={{ fontFamily: sans, color: C.plum }}>{t("journey.loadError")}</Text>}
       <JourneyMap pins={pins} fix={fix} onSelect={(pin) => { void haptics.tick(); select(pin); }} />
-      {current && <View style={{ padding: spacing.md, borderRadius: radii.md, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
+      {current && <ScrollView style={{ flexGrow: 0, maxHeight: 200, borderRadius: radii.md, borderWidth: 1, borderColor: C.line, ...shadows.card }} contentContainerStyle={{ padding: spacing.md, backgroundColor: C.white }}>
         <Text style={{ fontFamily: serif, fontSize: 20, color: C.ink }}>{language === "zh" ? current.place.name_zh : current.place.name_en}</Text>
         <Text style={{ fontFamily: sans, color: C.muted }}>{language === "zh" ? current.place.city_zh : current.place.city_en}</Text>
         <Text style={{ fontFamily: sans, color: C.ink, marginTop: spacing.sm }}>{language === "zh" ? current.place.why_zh : current.place.why_en}</Text>
@@ -69,8 +70,8 @@ export default function JourneyScreen() {
         </Text>
         {waiting && <Pressable accessibilityRole="button" onPress={() => router.push({ pathname: "/capsule/[id]", params: { id: waiting.id } })} style={{ marginTop: spacing.sm, padding: spacing.sm, borderRadius: radii.sm, backgroundColor: C.blue, alignItems: "center" }}><Text style={{ fontFamily: sans, color: C.white }}>{t("journey.viewCapsule")}</Text></Pressable>}
         {waiting && <Pressable accessibilityRole="button" onPress={() => setMapPlace(current)} style={{ marginTop: spacing.sm, padding: spacing.sm, borderRadius: radii.sm, borderWidth: 1, borderColor: C.blue, alignItems: "center" }}><Text style={{ fontFamily: sans, color: C.blue }}>{t("journey.viewMap")}</Text></Pressable>}
-      </View>}
-      <Pressable accessibilityRole="button" onPress={() => { void haptics.tap(); setPassport(true); }} style={{ alignSelf: "flex-end", borderRadius: radii.pill, backgroundColor: C.ink, paddingHorizontal: spacing.lg, paddingVertical: spacing.md }}>
+      </ScrollView>}
+      <Pressable accessibilityRole="button" onPress={() => { void haptics.tap(); setPassport(true); }} style={{ alignSelf: "flex-end", borderRadius: radii.pill, backgroundColor: C.ink, paddingHorizontal: spacing.lg, paddingVertical: spacing.md, marginTop: 4, marginBottom: 8 }}>
         <Text style={{ fontFamily: serif, color: C.brass, fontSize: 16 }}>{t("journey.passport")}  {earned} / {total}</Text>
       </Pressable>
     </View>

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Modal, Pressable, Text, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Vessel, type VesselKind } from '../../components/Vessel';
-import { Screen, Button, Heading, Body } from '../../components/Screen';
+import { Screen, Button, Heading, Body, BackButton } from '../../components/Screen';
 import { Toast } from '../../components/Toast';
 import { haptics } from '../../components/haptics';
 import { useLanguage } from '../../i18n';
@@ -48,7 +48,7 @@ export default function ShopScreen() {
     </Pressable>;
   };
   return <Screen>
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Pressable onPress={() => router.back()} accessibilityRole='button'><Text style={{ color: C.plum, fontFamily: sans }}>{t('shop.back')}</Text></Pressable><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('shop.langSwitch')}</Text></Pressable></View><Heading>{t('shop.title')}</Heading>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><BackButton label={t('shop.back')} onPress={() => router.back()} /><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('shop.langSwitch')}</Text></Pressable></View><Heading>{t('shop.title')}</Heading>
     {featured && <View style={{ backgroundColor: C.ink, borderRadius: 20, padding: 20, alignItems: 'center', gap: 8 }}>
       <Vessel kind='maison' size={176} /><Text style={{ color: C.brass, fontFamily: serif, fontSize: 20, textAlign: 'center' }}>{t('shop.brandTitle')}</Text><Text style={{ color: C.white, textAlign: 'center', fontFamily: sans }}>{t('shop.brandBody')}</Text>
       <Text style={{ color: C.brass }}>{own('maison')?.edition_no ? t('shop.yourNo', own('maison')!.edition_no, featured.edition_total ?? 300) : remainder !== undefined ? t('shop.stock', remainder, featured.edition_total ?? 300) : ''}</Text>

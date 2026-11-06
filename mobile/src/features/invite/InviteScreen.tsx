@@ -3,7 +3,7 @@ import { Platform, Share, Text, TextInput } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import * as Linking from "expo-linking";
-import { Screen, Heading, Body, Button, Bar } from "../../components/Screen";
+import { Screen, Heading, Body, Button, Bar, BackButton } from "../../components/Screen";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
 import { useAuth } from "../../services/auth";
@@ -33,17 +33,13 @@ export default function InviteScreen() {
     return () => { alive = false; };
   }, [session?.user.id]));
   const copy = async () => { await Clipboard.setStringAsync(link); haptics.success(); setMessage(t("invite.copied")); };
-  const copyAppLink = async () => { await Clipboard.setStringAsync(appLink); haptics.success(); setMessage(t("invite.copied")); };
   const share = async () => { try { await Share.share({ title: t("invite.shareTitle"), message: t("invite.shareText", profile?.name ?? "") + "\n" + link + "\n" + t("invite.appLink") + ": " + appLink }); } catch (e) { setMessage(e instanceof Error ? e.message : String(e)); } };
   return <Screen>
-    <Bar><Heading>{t("invite.title")}</Heading><Button title={t("back")} onPress={() => router.back()} /></Bar>
+    <Bar><BackButton label={t("back")} onPress={() => router.back()} /><Heading>{t("invite.title")}</Heading></Bar>
     <Body>{t("invite.heading")}</Body>
     <Body>{t("invite.shareText", profile?.name ?? "")}</Body>
     <TextInput accessibilityLabel={t("invite.link")} value={link} editable={false} selectTextOnFocus style={{ borderWidth: 1, borderColor: C.line, borderRadius: 12, backgroundColor: C.white, color: C.ink, padding: 14 }} />
     <Button title={t("invite.copy")} onPress={() => void copy()} disabled={!link} />
-    <Body>{t("invite.appLink")}</Body>
-    <TextInput accessibilityLabel={t("invite.appLink")} value={appLink} editable={false} selectTextOnFocus style={{ borderWidth: 1, borderColor: C.line, borderRadius: 12, backgroundColor: C.white, color: C.ink, padding: 14 }} />
-    <Button title={t("invite.copyAppLink")} onPress={() => void copyAppLink()} disabled={!appLink} />
     <Button title={t("invite.share")} onPress={() => void share()} disabled={!link} />
     {!!message && <Text style={{ color: C.plum }}>{message}</Text>}
   </Screen>;

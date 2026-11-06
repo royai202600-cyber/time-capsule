@@ -17,14 +17,14 @@ From `mobile/`, run `npm ci`, `npm test`, `npm run typecheck`, `npx expo install
 
 ## Layout and conventions
 
-- `app/`: Expo Router entry points, auth callback, modal create route, and developer playground.
+- `app/`: Expo Router entry points, auth callback, and modal create route.
 - `src/features/`: one folder per screen; F1 owns home/capsule, F2 create/shop, F3 journey, and F4 me/friends/invite/cabinet. F0 owns auth/profile and shared foundation.
-- `src/components/`: shared UI; `src/art/manifest.ts` registers bundled illustrated assets as they become available. Legacy SVG artwork remains available and can be selected in the dev setting.
+- `src/components/`: shared UI; `src/art/manifest.ts` registers WebP illustrations from the repository's `public/art/` through Metro. Legacy SVG vessels and avatars remain available as fallbacks.
 - `src/services/`: Supabase client, auth state, and existing table/RPC access. Do not read `capsule_contents` directly.
 - `src/theme.ts`: colours, font names, spacing, shadows, motion; `src/components/haptics.ts` is the haptic vocabulary.
 - `src/i18n/webStrings.ts` mirrors the web keys; add translations to both languages and use `useLanguage().t` in UI.
 
-The six scenes from the feel demo remain in the development-only Playground. Illustration assets are not bundled yet, so avatars and vessels use SVG fallbacks.
+Metro watches the repository root and resolves packages from `mobile/node_modules`. This keeps one copy of each art file. The feel demo playground and CanvasKit bundle were removed after the app screens took over.
 
 ## Opening the project on a phone
 
