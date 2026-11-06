@@ -82,6 +82,52 @@
     "transparent": false,
     "prompt": "A simplified accurate map of East and Southeast Asia for a Time Capsule journey page: coastline and islands of China, Korea, Japan, Taiwan, Philippines, Vietnam, Thailand, Cambodia, Laos, Malaysia, Singapore, Indonesia, and nearby seas. View straight down, north up; recognizable geography but calm and simplified. Pale paper background, cool light blue sea, subtle ink-blue coastlines, tiny decorative compass rose without letters. No place labels or icons. OPAQUE full-bleed square map, intended 2048x2048, use the largest square resolution available. Image 1 is approved style sheet A. Match its gentle hand-inked storybook line, flat colors with one soft shading tone, subtle paper grain, soft top-left light, tender nostalgic feel. Palette #2F5D8A #5A8FD0 #DCE8F2 #6E2B3F #C9A15A #A3364F #16263F #F6F8FB #F3E2BB. No text, letters, numbers, logos, brands or watermark. ",
     "model": "gpt-image-2",
+    "pins": {
+      "senado": {
+        "x": 501,
+        "y": 583
+      },
+      "tst-clock": {
+        "x": 525,
+        "y": 578
+      },
+      "taipei101": {
+        "x": 655,
+        "y": 532
+      },
+      "sensoji": {
+        "x": 978,
+        "y": 307
+      },
+      "fushimi": {
+        "x": 900,
+        "y": 340
+      },
+      "gyeongbok": {
+        "x": 758,
+        "y": 249
+      },
+      "merlion": {
+        "x": 275,
+        "y": 1026
+      },
+      "grandpal": {
+        "x": 218,
+        "y": 748
+      },
+      "wumen": {
+        "x": 560,
+        "y": 206
+      },
+      "petronas": {
+        "x": 230,
+        "y": 970
+      },
+      "aurele-cotai": {
+        "x": 509,
+        "y": 582
+      }
+    },
     "web_export": "public/art/map-asia.webp"
   },
   {
