@@ -369,3 +369,25 @@ html[lang=en] .auth-title{letter-spacing:.02em}
   .card{flex-basis:360px}
   .rail{padding-left:calc(50% - 180px);padding-right:calc(50% - 180px)}
 }
+
+/* ---------- Home cards: every card the same height, whatever its text ---------- */
+.rail{align-items:center}
+.card{display:flex;flex-direction:column;align-items:center;height:410px;flex-shrink:0}
+.card .vessel{flex:none}
+/* The headline reads as one sentence ("Opens in 30 days" / 倒數 30 天打開) and wraps like one. */
+.head{display:block;line-height:1.25;min-height:0;height:62px;margin:6px 0 4px;overflow:hidden}
+.head .num{vertical-align:-3px;margin:0 2px}
+html[lang=en] .head{font-size:17px}
+/* Place: one line, "…" if it doesn't fit. */
+.place{max-width:100%;margin:0 0 12px}
+.place span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+/* Sender and date always sit at the bottom. */
+.meta{margin-top:auto;align-self:stretch}
+.who{justify-content:flex-end}
+.card.empty{height:410px;min-height:0}
+@media (max-width:360px){.card{height:390px}.card .vessel{width:128px}}
+@media (min-width:700px){.card{height:440px}}
+/* Room for a two-line headline, centred, so short and long ones line up. */
+.head{display:flex;align-items:center;justify-content:center;height:84px;margin:2px 0}
+.head>span{display:block;text-align:center}
+.card .num{font-size:clamp(36px,11vw,46px)}

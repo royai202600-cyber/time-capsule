@@ -449,8 +449,8 @@ function cardHTML(c, side) {
     ${c.handwritten ? `<span class="seal-mark" title="${tr('handMarkTitle')}">${tr('handMark')}</span>` : ''}
     ${c.edition ? `<span class="ed">${esc(S.vessels.get(c.vessel)?.brand || '')} No.${pad3(c.edition)}</span>` : ''}
     ${vessel(c.vessel)}
-    <p class="head">${head}</p>
-    <p class="place">${IC.pin}${c.place ? esc(plname(c.place)) : tr('anywhere')}</p>
+    <p class="head"><span>${head}</span></p>
+    <p class="place">${IC.pin}<span>${c.place ? esc(plname(c.place)) : tr('anywhere')}</span></p>
     <div class="meta"><span class="who">${tr(side === 'in' ? 'from' : 'to')} ${avatar(who)} ${esc(pname(who))}</span><time>${fmt(c.sealedAt)}</time></div>
   </button>`;
 }
