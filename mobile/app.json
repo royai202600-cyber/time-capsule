@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "時光膠囊",
+    "slug": "time-capsule",
+    "scheme": "timecapsule",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-status-bar",
+      "expo-web-browser"
+    ],
+    "web": {
+      "bundler": "metro",
+      "name": "時光膠囊"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.timecapsule.mobile"
+    },
+    "android": {
+      "package": "app.timecapsule.mobile"
+    }
+  }
+}
