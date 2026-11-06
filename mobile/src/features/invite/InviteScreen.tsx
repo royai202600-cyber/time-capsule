@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from "react";
-import { Share, Text, TextInput } from "react-native";
+import { Platform, Share, Text, TextInput } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import * as Clipboard from "expo-clipboard";
+import * as Linking from "expo-linking";
 import { Screen, Heading, Body, Button, Bar } from "../../components/Screen";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
@@ -25,7 +26,7 @@ export default function InviteScreen() {
       if (!code) throw new Error(t("invite.error"));
       if (alive) {
         setLink("https://time-capsule-pi-two.vercel.app/?invite=" + encodeURIComponent(code));
-        setAppLink("timecapsule://?invite=" + encodeURIComponent(code));
+        setAppLink(Platform.OS === "web" ? "timecapsule://?invite=" + encodeURIComponent(code) : Linking.createURL("", { queryParams: { invite: code } }));
       }
     };
     void load().catch(e => { if (alive) setMessage(e instanceof Error ? e.message : String(e)); });
