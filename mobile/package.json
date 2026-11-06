@@ -6,7 +6,8 @@
   "scripts": {
     "start": "expo start --go",
     "web": "expo start --web",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@expo-google-fonts/lxgw-wenkai-tc": "^0.4.3",
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.0"
   }
 }
