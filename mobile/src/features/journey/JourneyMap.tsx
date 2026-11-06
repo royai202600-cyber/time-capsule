@@ -15,6 +15,9 @@ import { clusterPins, nextClusterScale, MAP_HEIGHT, MAP_WIDTH, MAX_MAP_SCALE } f
 export type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string; waiting?: boolean };
 const W = MAP_WIDTH, H = MAP_HEIGHT;
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
+const keepCovered = (offset: number, imageSize: number, frameSize: number) => imageSize <= frameSize
+  ? (frameSize - imageSize) / 2
+  : clamp(offset, frameSize - imageSize, 0);
 const art = manifest as typeof manifest & { mapAsia?: ImageSourcePropType };
 
 export function JourneyMap({ pins, fix, onSelect }: {
@@ -28,24 +31,24 @@ export function JourneyMap({ pins, fix, onSelect }: {
   const { t } = useLanguage();
   const live = useRef(transform);
   const gesture = useRef({ x: 0, y: 0, scale: 1, span: 0 });
-  const centered = useRef(false);
   const fade = useRef(new Animated.Value(1)).current;
   const stopZoom = useRef<(() => void) | null>(null);
   const set = (value: typeof transform) => { live.current = value; setTransform(value); };
   const groups = useMemo(() => clusterPins(pins, transform.scale), [pins, transform.scale]);
+  const coverScale = Math.max(viewport.width / W, viewport.height / H);
   useEffect(() => {
-    if (centered.current || viewport.width < 1) return;
-    const scale = Math.min(viewport.width / W, viewport.height / H);
+    if (viewport.width < 1 || viewport.height < 1) return;
+    const scale = Math.max(viewport.width / W, viewport.height / H);
     set({ x: (viewport.width - W * scale) / 2, y: (viewport.height - H * scale) / 2, scale });
-    centered.current = true;
-  }, [fix?.lat, fix?.lng, viewport.width, viewport.height]);
+  }, [viewport.width, viewport.height]);
   useEffect(() => () => stopZoom.current?.(), []);
   const zoomTo = (x: number, y: number, scale: number) => {
     stopZoom.current?.();
+    const nextScale = Math.max(coverScale, scale);
     const next = {
-      x: clamp(viewport.width / 2 - x * scale, viewport.width - W * scale - 40, 40),
-      y: clamp(viewport.height / 2 - y * scale, viewport.height - H * scale - 40, 40),
-      scale,
+      x: keepCovered(viewport.width / 2 - x * nextScale, W * nextScale, viewport.width),
+      y: keepCovered(viewport.height / 2 - y * nextScale, H * nextScale, viewport.height),
+      scale: nextScale,
     };
     if (reduced) {
       fade.setValue(0);
@@ -84,15 +87,15 @@ export function JourneyMap({ pins, fix, onSelect }: {
       let scale = start.scale;
       if (touches.length > 1 && start.span > 0) {
         const span = Math.hypot(touches[0].pageX - touches[1].pageX, touches[0].pageY - touches[1].pageY);
-        scale = clamp(start.scale * span / start.span, .25, MAX_MAP_SCALE);
+        scale = clamp(start.scale * span / start.span, coverScale, MAX_MAP_SCALE);
       }
       set({
-        x: clamp(start.x + g.dx - (scale - start.scale) * W / 2, viewport.width - W * scale - 40, 40),
-        y: clamp(start.y + g.dy - (scale - start.scale) * H / 2, viewport.height - H * scale - 40, 40),
+        x: keepCovered(start.x + g.dx - (scale - start.scale) * W / 2, W * scale, viewport.width),
+        y: keepCovered(start.y + g.dy - (scale - start.scale) * H / 2, H * scale, viewport.height),
         scale,
       });
     },
-  }), [viewport.width, viewport.height]);
+  }), [viewport.width, viewport.height, coverScale]);
   const layout = (e: LayoutChangeEvent) => setViewport(e.nativeEvent.layout);
   return <View onLayout={layout} style={{ flex: 1, overflow: "hidden", backgroundColor: C.glass, borderRadius: 20, borderWidth: 1, borderColor: C.line }} {...pan.panHandlers}>
     <Animated.View pointerEvents="none" style={{ width: W, height: H, opacity: fade, transformOrigin: "top left", transform: [{ translateX: transform.x }, { translateY: transform.y }, { scale: transform.scale }] }}>

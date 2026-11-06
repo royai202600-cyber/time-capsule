@@ -11,7 +11,7 @@ export type DrawingHandle = { clear: () => void; hasInk: () => boolean; png: () 
 export const DrawingPad = forwardRef<DrawingHandle, { label: string }>(function DrawingPad({ label }, ref) {
   const [strokes, setStrokes] = useState<Point[][]>([]);
   const strokesRef = useRef<Point[][]>([]);
-  const view = useRef<any>(null);
+  const inkView = useRef<any>(null);
   const size = useRef({ width: WIDTH, height: HEIGHT });
   const update = (next: Point[][]) => { strokesRef.current = next; setStrokes(next); };
   const point = (e: any): Point => ({
@@ -28,7 +28,7 @@ export const DrawingPad = forwardRef<DrawingHandle, { label: string }>(function 
         canvas.width = WIDTH * 2; canvas.height = HEIGHT * 2;
         const ctx = canvas.getContext("2d");
         if (!ctx) throw new Error("canvas unavailable");
-        ctx.scale(2, 2); ctx.fillStyle = "#fffdf7"; ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        ctx.scale(2, 2);
         ctx.strokeStyle = C.blue; ctx.lineWidth = 3; ctx.lineCap = "round"; ctx.lineJoin = "round";
         for (const stroke of strokesRef.current) {
           ctx.beginPath(); stroke.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
@@ -37,16 +37,20 @@ export const DrawingPad = forwardRef<DrawingHandle, { label: string }>(function 
         }
         return canvas.toDataURL("image/png");
       }
-      const base64 = await captureRef(view, { format: "png", result: "base64", width: WIDTH * 2, height: HEIGHT * 2 });
+      const base64 = await captureRef(inkView, { format: "png", result: "base64", width: WIDTH * 2, height: HEIGHT * 2 });
       return `data:image/png;base64,${base64}`;
     },
   }));
-  return <View ref={view} collapsable={false} style={{ backgroundColor: "#fffdf7", borderWidth: 1.5, borderColor: C.plum, borderRadius: 12, overflow: "hidden" }}
+  return <View style={{ backgroundColor: "#fffdf7", borderWidth: 1.5, borderColor: C.plum, borderRadius: 12, overflow: "hidden" }}
     onLayout={e => { size.current = e.nativeEvent.layout; }}>
     <Svg width="100%" height={HEIGHT} viewBox={`0 0 ${WIDTH} ${HEIGHT}`} pointerEvents="none">
       {[56, 104, 152, 200].map(y => <Line key={y} x1="14" x2="306" y1={y} y2={y} stroke={C.line} strokeWidth="1" />)}
-      {strokes.map((stroke, i) => <Path key={i} d={stroke.map((p, j) => `${j ? "L" : "M"}${p.x} ${p.y}`).join(" ") + (stroke.length === 1 ? ` L${stroke[0].x + .1} ${stroke[0].y + .1}` : "")} stroke={C.blue} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />)}
     </Svg>
+    <View ref={inkView} collapsable={false} pointerEvents="none" style={{ position: "absolute", top: 0, left: 0, right: 0, height: HEIGHT, backgroundColor: "transparent" }}>
+      <Svg width="100%" height={HEIGHT} viewBox={`0 0 ${WIDTH} ${HEIGHT}`}>
+        {strokes.map((stroke, i) => <Path key={i} d={stroke.map((p, j) => `${j ? "L" : "M"}${p.x} ${p.y}`).join(" ") + (stroke.length === 1 ? ` L${stroke[0].x + .1} ${stroke[0].y + .1}` : "")} stroke={C.blue} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />)}
+      </Svg>
+    </View>
     {!strokes.length && <Text pointerEvents="none" style={{ position: "absolute", top: 20, left: 18, color: C.muted, fontFamily: handwriting }}>{label}</Text>}
     <View style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
       onStartShouldSetResponder={() => true} onMoveShouldSetResponder={() => true}

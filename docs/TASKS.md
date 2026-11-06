@@ -10,7 +10,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
-| A1 | Wire illustrated art into the Expo app, polish screens and remove feel-demo leftovers | Codex | Art and cleanup on `codex/a1-art-wiring`; Claude visual review and Roy phone check before merge. |
+| A1 | Wire illustrated art into the Expo app, polish screens and remove feel-demo leftovers | Codex | PR #16 Cabinet, map, letters, original web design parity, sender view, and seven vessel motion follow-up ready for Claude's re-review. Do not merge or deploy; Roy phone check remains before merge. |
 | T9c | Add positions for eleven places on the illustrated 1254 × 1254 map, with a review overlay. | Codex | Compare with Roy's map and an online geographic image. PR awaits Roy's approval before merge. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |

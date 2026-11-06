@@ -26,7 +26,40 @@ const customDate = (s: string) => { if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return n
 const card = { borderWidth: 1.5, borderColor: C.line, backgroundColor: C.white, borderRadius: 16, padding: 14 } as const;
 const label = { fontFamily: sans, color: C.ink } as const;
 // The letter's centre is at stage y=125; these drops meet each vessel's opening at stage y=270–325.
-const LETTER_DROP: Record<VesselKind, number> = { dome: 205, bottle: 155, envelope: 185, tin: 190, lantern: 165, musicbox: 180, maison: 175 };
+const LETTER_DROP: Record<VesselKind, number> = { dome: 205, bottle: 190, envelope: 205, tin: 215, lantern: 210, musicbox: 220, maison: 215 };
+
+// Expo SDK 58 currently prefixes its web file accept filter with a comma, which
+// leaves Chrome's macOS picker unable to select images. Use a plain image input.
+function pickWebPhoto(source: 'camera' | 'library'): Promise<string | null> {
+  return new Promise((resolve, reject) => {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = 'image/*';
+    if (source === 'camera') input.capture = 'environment';
+    input.style.display = 'none';
+    input.oncancel = () => { input.remove(); resolve(null); };
+    input.onchange = () => {
+      const file = input.files?.[0]; input.remove();
+      if (!file) { resolve(null); return; }
+      const url = URL.createObjectURL(file);
+      const image = document.createElement('img');
+      image.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image load failed')); };
+      image.onload = () => {
+        const scale = Math.min(1, 1280 / Math.max(image.naturalWidth, image.naturalHeight));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(image.naturalWidth * scale);
+        canvas.height = Math.round(image.naturalHeight * scale);
+        const context = canvas.getContext('2d');
+        if (!context) { URL.revokeObjectURL(url); reject(new Error('canvas unavailable')); return; }
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL('image/jpeg', .78));
+      };
+      image.src = url;
+    };
+    document.body.appendChild(input);
+    input.click();
+  });
+}
 
 export default function CreateScreen() {
   const { t, language, setLanguage } = useLanguage();
@@ -79,6 +112,11 @@ export default function CreateScreen() {
     setPhotoChoices(false); setError('');
     if (Platform.OS !== 'web') { const permission = source === 'camera' ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync(); if (!permission.granted) { setError(t('create.photoPermission')); return; } }
     try {
+      if (Platform.OS === 'web') {
+        const image = await pickWebPhoto(source);
+        if (image) { setPhoto(image); void haptics.tick(); }
+        return;
+      }
       const result = source === 'camera' ? await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 1 }) : await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 1 });
       if (result.canceled || !result.assets[0]) return;
       const asset = result.assets[0], scale = Math.min(1, 1280 / Math.max(asset.width, asset.height));
@@ -98,11 +136,11 @@ export default function CreateScreen() {
       setTimeout(driftAway, 250);
     };
     const dropLetter = () => Animated.parallel([
-      Animated.timing(letterDrop, { toValue: LETTER_DROP[vessel ?? 'dome'], duration: 380, easing: Easing.linear, useNativeDriver: true }),
-      Animated.timing(letterNarrow, { toValue: .24, duration: 200, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
+      Animated.timing(letterDrop, { toValue: LETTER_DROP[vessel ?? 'dome'], duration: 550, easing: Easing.in(Easing.quad), useNativeDriver: true }),
+      Animated.timing(letterNarrow, { toValue: .24, duration: 300, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
       Animated.sequence([
-        Animated.delay(228),
-        Animated.timing(letterFade, { toValue: 0, duration: 152, useNativeDriver: true }),
+        Animated.delay(400),
+        Animated.timing(letterFade, { toValue: 0, duration: 150, useNativeDriver: true }),
       ]),
     ]).start(closeLid);
     Animated.sequence([
@@ -156,10 +194,10 @@ export default function CreateScreen() {
   if (phase === 'seal') return <Screen>
     <Heading>{t('create.sealSend')}</Heading>
     <View style={{ height: 560, width: '100%' }}>
-      <Animated.View style={[card, { position: 'absolute', top: 20, left: '6%', width: '88%', height: 210, alignItems: 'center', justifyContent: 'center', transform: [{ translateY: letterDrop }, { translateY: letterEntry }, { scaleY: letter }, { scaleX: letterNarrow }], opacity: Animated.multiply(Animated.multiply(letterOpacity, letterFade), drift.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })) }]}>
+      <Animated.View style={{ position: 'absolute', zIndex: 2, top: 20, left: '6%', width: '88%', height: 210, transform: [{ translateY: letterDrop }, { translateY: letterEntry }], opacity: Animated.multiply(Animated.multiply(letterOpacity, letterFade), drift.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })) }}><Animated.View style={[card, { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', transform: [{ scaleY: letter }, { scaleX: letterNarrow }] }]}>
         <Text style={{ color: C.muted, fontFamily: handwriting, fontSize: 19 }}>{recipientName}</Text><View style={{ width: '75%', marginTop: 28, gap: 18 }}><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /></View>
         {stamped && <View style={{ position: 'absolute', top: 83, left: 0, right: 0, alignItems: 'center' }}><Image source={sealWax} style={{ width: 70, height: 70 }} resizeMode="contain" /></View>}
-      </Animated.View>
+      </Animated.View></Animated.View>
       <Animated.View style={{ position: 'absolute', top: 270, left: 0, right: 0, alignItems: 'center', transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [0, -120] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={120} lidLift={lidLift} /></Animated.View>
       {!stamped && <View style={{ position: 'absolute', top: 425, left: 0, right: 0, alignItems: 'center' }}><Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }] }}><Image source={sealWax} style={{ width: 76, height: 76 }} resizeMode="contain" /></Animated.View></View>}
       <Text style={{ position: 'absolute', top: 515, left: 0, right: 0, textAlign: 'center', fontFamily: sans, color: C.muted }}>{busy || sentOnce.current ? t('create.sending') : t('create.drag')}</Text>
