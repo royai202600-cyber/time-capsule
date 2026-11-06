@@ -12,7 +12,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | ID | Task | Owner | Note |
 |---|---|---|---|
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
-| F2 | Create, seal and Shop | Codex | Roy completed a self-send and acquired Maison Aurèle No.002 in Expo Go. Claude's seal animation review and phone checks of handwritten/photo and friend sends remain before merge. |
+| F2 | Create, seal and Shop | Codex | Roy completed a self-send, acquired Maison Aurèle No.002, and says the revised seal feels okay in Expo Go. Claude's motion opinion and checks of handwritten/photo and friend sends remain before merge. |
 | F4 | Cabinet, Me, Friends, Invite and portrait picker | Codex | Roy confirmed the Expo Go build works; web layout and typecheck pass. T9 portrait manifest integration remains pending. |
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
