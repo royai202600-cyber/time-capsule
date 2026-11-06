@@ -79,6 +79,30 @@ export default function CreateScreen() {
   const sendingRef = useRef(false);
   const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterNarrow = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, letterEntry = useRef(new Animated.Value(44)).current, letterOpacity = useRef(new Animated.Value(0)).current, letterFade = useRef(new Animated.Value(1)).current, drift = useRef(new Animated.Value(0)).current;
   const lidLift = useSharedValue(1);
+  const [sealTouched, setSealTouched] = useState(false);
+  const hintFade = useRef(new Animated.Value(1)).current;
+  const hintCycle = useRef(new Animated.Value(0)).current;
+  const idleNudge = useRef(new Animated.Value(0)).current;
+  const sealNear = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (phase !== 'seal') return;
+    setSealTouched(false); hintFade.setValue(1); sealNear.setValue(0);
+  }, [phase, hintFade, sealNear]);
+  useEffect(() => {
+    if (phase !== 'seal' || stamped || sealTouched || reduced) return;
+    hintCycle.setValue(0); idleNudge.setValue(0);
+    const lights = Animated.loop(Animated.timing(hintCycle, { toValue: 3, duration: 1200, easing: Easing.linear, useNativeDriver: false }));
+    const nudge = Animated.loop(Animated.sequence([
+      Animated.delay(1500),
+      Animated.spring(idleNudge, { toValue: -8, ...motion.spring.soft, useNativeDriver: false }),
+      Animated.spring(idleNudge, { toValue: 0, ...motion.spring.soft, useNativeDriver: false }),
+    ]));
+    lights.start(); nudge.start();
+    return () => { lights.stop(); nudge.stop(); };
+  }, [phase, stamped, sealTouched, reduced, hintCycle, idleNudge]);
+  useEffect(() => {
+    if (sealTouched || reduced) Animated.timing(idleNudge, { toValue: 0, duration: motion.fade.quick, useNativeDriver: false }).start();
+  }, [sealTouched, reduced, idleNudge]);
   useEffect(() => { if ((!recipient || recipient === 'future') && id) setRecipient(id); }, [id, recipient]);
   useEffect(() => {
     if (phase !== 'seal') return;
@@ -151,11 +175,13 @@ export default function CreateScreen() {
   const sendRef = useRef<() => void>(() => {});
   const send = async () => {
     if (sendingRef.current || sentOnce.current || !recipient || !vessel || !openAt) return;
+    setSealTouched(true);
+    Animated.timing(hintFade, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }).start();
     sendingRef.current = true;
     setBusy(true); setError('');
     void (reduced ? haptics.tap() : haptics.thump());
     const contact = reduced ? Promise.resolve() : new Promise<void>(resolve => Animated.parallel([
-      Animated.spring(wax, { toValue: { x: 0, y: -338 }, ...motion.spring.snappy, restDisplacementThreshold: 1, restSpeedThreshold: 3, useNativeDriver: true }),
+      Animated.spring(wax, { toValue: { x: 0, y: -325 }, ...motion.spring.snappy, restDisplacementThreshold: 1, restSpeedThreshold: 3, useNativeDriver: true }),
       Animated.sequence([
         Animated.timing(waxScale, { toValue: 1.25, duration: motion.fade.quick, useNativeDriver: true }),
         Animated.timing(waxScale, { toValue: .95, duration: motion.fade.quick, useNativeDriver: true }),
@@ -185,8 +211,10 @@ export default function CreateScreen() {
   };
   sendRef.current = () => { void send(); };
   const pan = useRef(PanResponder.create({ onStartShouldSetPanResponder: () => true, onMoveShouldSetPanResponder: () => true,
-    onPanResponderMove: (_, g) => { if (!sentOnce.current && !sendingRef.current) wax.setValue({ x: g.dx, y: g.dy }); },
-    onPanResponderRelease: (_, g) => { if (sentOnce.current || sendingRef.current) return; if (g.dy < -160 && Math.abs(g.dx) < 130) sendRef.current(); else Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); },
+    onPanResponderGrant: () => { setSealTouched(true); Animated.timing(hintFade, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }).start(); },
+    onPanResponderMove: (_, g) => { if (!sentOnce.current && !sendingRef.current) { wax.setValue({ x: g.dx, y: g.dy }); sealNear.setValue(Math.max(0, 1 - Math.hypot(g.dx, g.dy + 325) / 180)); } },
+    onPanResponderRelease: (_, g) => { if (sentOnce.current || sendingRef.current) return; if (g.dy < -160 && Math.abs(g.dx) < 130) sendRef.current(); else { Animated.timing(sealNear, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }).start(); Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); } },
+    onPanResponderTerminate: () => { sealNear.setValue(0); Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); },
   })).current;
 
   if (authLoading) return <Screen><Body>{t('create.loading')}</Body></Screen>;
@@ -197,9 +225,11 @@ export default function CreateScreen() {
       <Animated.View style={{ position: 'absolute', zIndex: 2, top: 20, left: '6%', width: '88%', height: 210, transform: [{ translateY: letterDrop }, { translateY: letterEntry }], opacity: Animated.multiply(Animated.multiply(letterOpacity, letterFade), drift.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })) }}><Animated.View style={[card, { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', transform: [{ scaleY: letter }, { scaleX: letterNarrow }] }]}>
         <Text style={{ color: C.muted, fontFamily: handwriting, fontSize: 19 }}>{recipientName}</Text><View style={{ width: '75%', marginTop: 28, gap: 18 }}><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /></View>
         {stamped && <View style={{ position: 'absolute', top: 83, left: 0, right: 0, alignItems: 'center' }}><Image source={sealWax} style={{ width: 70, height: 70 }} resizeMode="contain" /></View>}
+        {!stamped && <View pointerEvents="none" style={{ position: 'absolute', top: 83, left: 0, right: 0, alignItems: 'center' }}><Animated.View style={{ width: 70, height: 70, borderRadius: 35, borderWidth: 1.5, borderStyle: 'dashed', borderColor: C.brass, opacity: sealNear.interpolate({ inputRange: [0, 1], outputRange: [.25, .85] }) }} /></View>}
       </Animated.View></Animated.View>
       <Animated.View style={{ position: 'absolute', top: 270, left: 0, right: 0, alignItems: 'center', transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [0, -120] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={120} lidLift={lidLift} /></Animated.View>
-      {!stamped && <View style={{ position: 'absolute', top: 425, left: 0, right: 0, alignItems: 'center' }}><Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }] }}><Image source={sealWax} style={{ width: 76, height: 76 }} resizeMode="contain" /></Animated.View></View>}
+      {!stamped && <Animated.View pointerEvents="none" style={{ position: 'absolute', zIndex: 3, top: 235, left: 0, right: 0, alignItems: 'center', gap: 13, opacity: hintFade }}>{[2, 1, 0].map(i => <Animated.View key={i} style={{ width: 10, height: 10, borderTopWidth: 2, borderLeftWidth: 2, borderColor: C.brass, transform: [{ rotate: '45deg' }], opacity: reduced ? .45 : hintCycle.interpolate({ inputRange: [i, i + .5, i + 1], outputRange: [.18, 1, .18], extrapolate: 'clamp' }) }} />)}</Animated.View>}
+      {!stamped && <View style={{ position: 'absolute', zIndex: 10, elevation: 10, top: 425, left: 0, right: 0, alignItems: 'center' }}><Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }, { translateY: idleNudge }] }}><Image source={sealWax} style={{ width: 76, height: 76 }} resizeMode="contain" /></Animated.View></View>}
       <Text style={{ position: 'absolute', top: 515, left: 0, right: 0, textAlign: 'center', fontFamily: sans, color: C.muted }}>{busy || sentOnce.current ? t('create.sending') : t('create.drag')}</Text>
     </View>
     <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
