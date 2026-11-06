@@ -63,6 +63,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - Run: `npm install`, put the project URL and publishable key in `.env.local` (see `.env.example`), then `npm run dev` → http://localhost:5173.
 
 ## Decisions log
+- 2026-11-07: Mobile task F2 owns both Create (including the seal ceremony) and Shop. F4 owns Me, Friends, Invite, and Cabinet. F2 uses the existing Supabase functions without schema changes; Expo Go phone verification is required before merge.
 - 2026-11-06: Project moved from prototype to development. Roy asked to keep it simple and to always be able to run it locally.
 - 2026-11-06: **Tech stack agreed (Option A).** Frontend: plain HTML/CSS/JS ported from the prototype, Vite as dev server/bundler only (no framework), installable PWA later. Backend: Supabase (Postgres + row-level security, Auth with email one-time code, Storage for photos, server functions). The time lock is enforced on the server: capsule content is only returned by a database function that checks the open time against server time. Notifications: email first, Web Push later. Hosting: Vercel (Roy's account) + hosted Supabase. 
 - 2026-11-06: Code lives in a **private** GitHub repo, transferred to `royai202600-cyber/time-capsule`.
