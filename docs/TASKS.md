@@ -6,7 +6,8 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| T9 | Generate illustration assets using Codex's built-in `gpt-image-2` (no API key). Roy chose style sheet A. Await Roy's review of the dome test and its transparency/stack checks before making other assets. Music box and ring box assembled art must be closed; hatching lighter for 120 px. Keep existing SVG art and app code untouched. | Codex | Roy approves the dome test; requested PNG masters, WebP copies, icons, checks, manifest and README are complete; build passes and PR is reviewed. |
+| T9 | Generate illustration assets using Codex's built-in `gpt-image-2` (no API key). Roy chose style sheet A and approved the dome test. Clear glass must not obscure contents; assembled music box and ring box are closed; hatching is light enough for 120 px. Make the remaining vessels, then three portraits and a 24/40 px test strip; pause for Roy's approval before the remaining assets. Keep existing SVG art and app code untouched. | Codex | Roy approves the portrait test; requested PNG masters, WebP copies, icons, checks, manifest and README are complete; build passes and PR is reviewed. |
+| T9b | Add matching paper textures, four scenes, opening light burst, passport cover/page, cabinet wall, and a 13-icon reference sheet (icons remain code-drawn). Include these in the art manifest, README and WebP exports. | Codex | Assets and checks complete after portrait approval; PR reviewed before merge. |
 
 ## Review
 | ID | Task | Owner | Note |

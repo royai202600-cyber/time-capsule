@@ -1,0 +1,62 @@
+[
+  {
+    "file": "portraits/portrait-01.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bbox": [
+      0,
+      12,
+      1008,
+      1006
+    ]
+  },
+  {
+    "file": "portraits/portrait-02.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bbox": [
+      0,
+      11,
+      998,
+      991
+    ]
+  },
+  {
+    "file": "portraits/portrait-03.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visible_bbox": [
+      0,
+      0,
+      1006,
+      1018
+    ]
+  }
+]
