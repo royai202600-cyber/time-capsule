@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Image, PanResponder, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -26,12 +26,12 @@ const label = { fontFamily: sans, color: C.ink } as const;
 
 export default function CreateScreen() {
   const { t, language, setLanguage } = useLanguage();
-  const { session, profile } = useAuth();
+  const { session, profile, loading: authLoading } = useAuth();
   const params = useLocalSearchParams<{ to?: string; recipient?: string }>();
   const id = session?.user.id ?? '';
   const friends = useFriends(id), catalog = useVessels(), owned = useOwnedVessels(id), places = usePlaces();
   const reduced = useReducedMotion();
-  const [step, setStep] = useState(1), [recipient, setRecipient] = useState<string | null>(params.to ?? params.recipient ?? null);
+  const [step, setStep] = useState(1), [recipient, setRecipient] = useState<string | null>((params.to === 'future' ? session?.user.id : params.to) ?? params.recipient ?? session?.user.id ?? null);
   const [mode, setMode] = useState<'type' | 'hand'>('type'), [message, setMessage] = useState(''), [hint, setHint] = useState(''), [drawingData, setDrawingData] = useState<string | null>(null);
   const [photo, setPhoto] = useState<string | null>(null), [photoChoices, setPhotoChoices] = useState(false);
   const [vessel, setVessel] = useState<VesselKind | null>(null), [place, setPlace] = useState<string | null>(null);
@@ -42,6 +42,7 @@ export default function CreateScreen() {
   const sendingRef = useRef(false);
   const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, drift = useRef(new Animated.Value(0)).current;
   const lidLift = useSharedValue(1);
+  useEffect(() => { if (!recipient && id) setRecipient(id); }, [id, recipient]);
   useFocusEffect(useCallback(() => { void owned.refresh(); void catalog.refresh(); }, [id]));
   const chosenVessel = catalog.data?.find(v => v.id === vessel);
   const canUseVessel = (v: { id: string; price_mop: number }) => v.price_mop === 0 || !!owned.data?.some(o => o.vessel === v.id);
@@ -111,6 +112,8 @@ export default function CreateScreen() {
     onPanResponderRelease: (_, g) => { if (sentOnce.current) return; if (g.dy < -160 && Math.abs(g.dx) < 130) sendRef.current(); else Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); },
   })).current;
 
+  if (authLoading) return <Screen><Body>{t('create.loading')}</Body></Screen>;
+  if (!session) return <Screen><Body>{t('create.signIn')}</Body><Button title={t('create.close')} onPress={() => router.replace('/')} /></Screen>;
   if (phase !== 'steps') return <Screen><View style={{ minHeight: 610, alignItems: 'center', justifyContent: 'center', gap: 18 }}>
     {phase === 'seal' ? <>
       <Text style={{ fontFamily: serif, fontSize: 26, color: C.ink }}>{t('create.sealSend')}</Text>
@@ -128,8 +131,8 @@ export default function CreateScreen() {
     <Heading>{t('create.title')}</Heading><Body>{t('create.step', step)}</Body><View style={{ height: 5, backgroundColor: C.line, borderRadius: 5 }}><View style={{ width: `${step * 25}%`, height: 5, backgroundColor: C.wax, borderRadius: 5 }} /></View>
     <Text style={{ fontFamily: serif, color: C.ink, fontSize: 23 }}>{t(['', 'create.who', 'create.write', 'create.vessel', 'create.whenWhere'][step])}</Text>
     {step === 1 && <View style={{ gap: 12 }}><View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-      <Pressable onPress={() => { setRecipient(id); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === id ? C.blue : C.line }]}><Avatar avatar={profile?.avatar} size={60} future /><Text style={[label, { marginTop: 8 }]}>{t('create.self')}</Text></Pressable>
-      {(friends.data ?? []).map(f => <Pressable key={f.friend_id} onPress={() => { setRecipient(f.friend_id); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === f.friend_id ? C.blue : C.line }]}><Avatar avatar={(f as any).profiles?.avatar} size={60} /><Text style={[label, { marginTop: 8 }]}>{(f as any).profiles?.name}</Text></Pressable>)}
+      <Pressable accessibilityRole='button' accessibilityState={{ selected: recipient === id }} onPress={() => { setRecipient(id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === id ? C.blue : C.line, backgroundColor: recipient === id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={profile?.avatar} size={60} future /></View><Text style={[label, { marginTop: 8 }]}>{t('create.self')}</Text></Pressable>
+      {(friends.data ?? []).map(f => <Pressable key={f.friend_id} accessibilityRole='button' accessibilityState={{ selected: recipient === f.friend_id }} onPress={() => { setRecipient(f.friend_id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === f.friend_id ? C.blue : C.line, backgroundColor: recipient === f.friend_id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={(f as any).profiles?.avatar} size={60} /></View><Text style={[label, { marginTop: 8 }]}>{(f as any).profiles?.name}</Text></Pressable>)}
       <Pressable onPress={() => router.push('/invite')} style={[card, { width: '46%', alignItems: 'center', justifyContent: 'center', minHeight: 116 }]}><Text style={{ color: C.blue, fontSize: 18 }}>＋</Text><Text style={{ color: C.blue }}>{t('create.invite')}</Text></Pressable>
     </View>{friends.loading && <Body>{t('create.loading')}</Body>}{!friends.loading && !friends.data?.length && <Body>{t('create.noFriends')}</Body>}</View>}
     {<View style={{ gap: 15, display: step === 2 ? 'flex' : 'none' }}>

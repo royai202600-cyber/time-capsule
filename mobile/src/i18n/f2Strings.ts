@@ -1,7 +1,7 @@
 export const f2Strings = {
   zh: {
     "create.title": "寄一個新膠囊", "create.step": (n: number) => `第 ${n} 步，共 4 步`, "create.loading": "正在載入…",
-    "create.back": "上一步", "create.next": "下一步", "create.close": "關閉", "create.langSwitch": "EN",
+    "create.back": "上一步", "create.next": "下一步", "create.close": "關閉", "create.langSwitch": "EN", "create.signIn": "請先登入，再寄膠囊。",
     "create.who": "寄給誰？", "create.self": "未來的自己", "create.invite": "邀請好友", "create.noFriends": "還沒有好友，邀請一位吧。",
     "create.write": "寫下內容", "create.type": "打字", "create.hand": "親筆手寫", "create.message": "寫下想在那一天說的話…", "create.clear": "清除", "create.pad": "用手指在這裡寫信", "create.photo": "附上一張照片", "create.camera": "拍照", "create.library": "從相簿選取", "create.removePhoto": "移除照片", "create.photoPermission": "需要相機或相簿權限才能附上照片。", "create.photoError": "照片處理失敗，請重試。",
     "create.hint": "提示（打開前可見）", "create.hintPlaceholder": "例如：記得帶拖鞋。", "create.hintDefault": "到時候見。",
@@ -17,7 +17,7 @@ export const f2Strings = {
   },
   en: {
     "create.title": "Send a new capsule", "create.step": (n: number) => `Step ${n} of 4`, "create.loading": "Loading…",
-    "create.back": "Back", "create.next": "Next", "create.close": "Close", "create.langSwitch": "繁中",
+    "create.back": "Back", "create.next": "Next", "create.close": "Close", "create.langSwitch": "繁中", "create.signIn": "Sign in before sending a capsule.",
     "create.who": "To whom?", "create.self": "Future me", "create.invite": "Invite a friend", "create.noFriends": "No friends yet. Invite one.",
     "create.write": "Write your letter", "create.type": "Type", "create.hand": "Handwrite", "create.message": "What would you like to say that day?", "create.clear": "Clear", "create.pad": "Write here with your finger", "create.photo": "Attach a photo", "create.camera": "Take photo", "create.library": "Choose from library", "create.removePhoto": "Remove photo", "create.photoPermission": "Allow camera or photo access to attach a photo.", "create.photoError": "Could not process the photo. Try again.",
     "create.hint": "Hint (visible before opening)", "create.hintPlaceholder": "For example: bring your slippers.", "create.hintDefault": "See you then.",
