@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    env:
+      EXPO_NO_TELEMETRY: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            mobile/package-lock.json
+      - name: Install mobile dependencies
+        run: npm ci
+        working-directory: mobile
+      - name: Test mobile logic
+        run: npm test
+        working-directory: mobile
+      - name: Typecheck mobile
+        run: npm run typecheck
+        working-directory: mobile
+      - name: Check Expo dependencies
+        run: npx expo install --check
+        working-directory: mobile
+      - name: Export mobile web
+        run: npx expo export --platform web
+        working-directory: mobile
+      - name: Install root dependencies
+        run: npm ci
+      - name: Build root web app
+        run: npm run build

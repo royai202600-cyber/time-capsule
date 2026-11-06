@@ -31,6 +31,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+- N1: Pull-request CI checks mobile tests, TypeScript, Expo dependency versions and web export, plus the root web build. Older runs for the same PR are cancelled; iOS export is a local check.
 - T9c: Eleven illustrated map pin positions and overlay, checked against Roy's map and online references; Roy approved and PR #12 merged as `b47ab15`.
 - F2: Create, seal and Shop — Roy completed a self-send and acquired Maison Aurèle No.002 in Expo Go; Claude verified a handwritten letter with a photo self-send in the browser and approved the drop/contact motion. Final visual tweaks are in PR #8.
 - T9 and T9b: 66 illustration masters, WebP exports, manifest, README and checks; Roy approved and PR #11 merged as `16f741e`.
