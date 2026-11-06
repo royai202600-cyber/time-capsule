@@ -38,5 +38,5 @@ export const useFriends = (id: string) =>
 export const usePlaces = () => useData(() => places.list(), []);
 export const useVessels = () => useData(() => vessels.list(), []);
 export const useOwnedVessels = (id: string) =>
-  useData(() => vessels.owned(id), [id]);
+  useData(() => id ? vessels.owned(id) : Promise.resolve({ data: [], error: null }), [id]);
 export const useVesselStock = () => useData(() => vessels.stock(), []);
