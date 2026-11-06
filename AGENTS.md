@@ -84,3 +84,5 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 
 - 2026-11-06: Roy approved React Native + Expo for iOS, Android and later web. The new app lives in `mobile/`; the root web app stays live until parity. Shared services, components, theme and translations live under `mobile/src/`, and routes under `mobile/app/`. Illustrated portraits are the chosen direction, with existing SVG portraits as the fallback until art assets are available.
 - 2026-11-06: Added the native `timecapsule://auth/callback` redirect and temporary Expo Go / web callbacks for the current M6 development server to Supabase Authentication URL Configuration. Expo Go OAuth requires a development build; the website redirect settings were preserved.
+
+- 2026-11-07: Roy approved updating `mobile/` from the feel demo’s SDK 57 to SDK 58 to match the current iPhone Expo Go release. The original feel demo remains unchanged.

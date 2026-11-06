@@ -7,8 +7,9 @@ import Svg, { Circle, Ellipse, G, Path, Rect, Text as SvgText } from 'react-nati
 import * as Haptics from 'expo-haptics';
 import { Accelerometer } from 'expo-sensors';
 import { useFonts } from 'expo-font';
-import { NotoSerifTC_400Regular, NotoSerifTC_700Bold } from '@expo-google-fonts/noto-serif-tc';
-import { NotoSansTC_400Regular } from '@expo-google-fonts/noto-sans-tc';
+import { NotoSerifTC_400Regular } from '@expo-google-fonts/noto-serif-tc/400Regular';
+import { NotoSerifTC_700Bold } from '@expo-google-fonts/noto-serif-tc/700Bold';
+import { NotoSansTC_400Regular } from '@expo-google-fonts/noto-sans-tc/400Regular';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Vessel } from './Vessel';
 import { VesselKind } from './vesselArt';

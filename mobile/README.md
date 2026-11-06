@@ -1,6 +1,6 @@
 # Time Capsule mobile foundation
 
-Expo SDK 57 / React Native / TypeScript. The root Vite app remains the production web app.
+Expo SDK 58 / React Native / TypeScript. The root Vite app remains the production web app.
 
 ## Run
 
@@ -24,4 +24,4 @@ The six scenes from the feel demo remain in the development-only Playground. Ill
 
 ## Opening the project on a phone
 
-Use Expo Go rather than the phone browser for an `exp://` or `exps://` link. If a LAN QR times out, start a separate tunnel with `npx expo start --go --tunnel --port 8085` and scan its new QR. Expo may install its ngrok helper for the tunnel. Keep the terminal process running. Each Expo Go build supports a matching SDK; this project uses SDK 57. On physical iOS, Expo may also require Expo CLI and Expo Go to be signed into the same Expo account (`npx expo login`, then the account menu on the phone).
+Use Expo Go rather than the phone browser for an `exp://` or `exps://` link. If a LAN QR times out, start a separate tunnel with `npx expo start --go --tunnel --port 8085` and scan its new QR. Expo may install its ngrok helper for the tunnel. Keep the terminal process running. Each Expo Go build supports a matching SDK; this project uses SDK 58. On physical iOS, Expo may also require Expo CLI and Expo Go to be signed into the same Expo account (`npx expo login`, then the account menu on the phone).
