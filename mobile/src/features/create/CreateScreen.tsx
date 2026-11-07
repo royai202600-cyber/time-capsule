@@ -24,6 +24,9 @@ import { SealLoader } from '../../components/SealLoader';
 import { WaxSteps } from '../../components/WaxSteps';
 import { VoiceRecorder } from '../voice/VoiceRecorder';
 import { stubAttachVoice, uploadVoice, VOICE_BACKEND, VOICE_ENABLED, type VoiceClip } from '../../services/voice';
+import { PREDICTION_ENABLED, predictionSendArgs, type CapsuleKind } from '../../services/prediction';
+import { KindChoice, PredictionInput } from '../prediction/PredictionParts';
+import { usePredictionText } from '../prediction/strings';
 
 type Quick = 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
 const quickDate = (q: Quick) => { const d = new Date(); if (q === 'm1') d.setMonth(d.getMonth() + 1); if (q === 'm6') d.setMonth(d.getMonth() + 6); if (q === 'y1') d.setFullYear(d.getFullYear() + 1); if (q === 'y5') d.setFullYear(d.getFullYear() + 5); if (q === 'dev') d.setMinutes(d.getMinutes() + 2); return d; };
@@ -69,7 +72,11 @@ function pickWebPhoto(source: 'camera' | 'library'): Promise<string | null> {
 export default function CreateScreen() {
   const { t, language, setLanguage } = useLanguage();
   const { session, profile, loading: authLoading } = useAuth();
-  const params = useLocalSearchParams<{ to?: string; recipient?: string }>();
+  const params = useLocalSearchParams<{ to?: string; recipient?: string; kind?: string }>();
+  const p = usePredictionText();
+  // A prediction is a special kind of capsule: same four steps, but its main content is one prediction line.
+  const [kind, setKind] = useState<CapsuleKind>(PREDICTION_ENABLED && params.kind === 'prediction' ? 'prediction' : 'letter'), [prediction, setPrediction] = useState('');
+  const predicting = kind === 'prediction';
   const id = session?.user.id ?? '';
   const friends = useFriends(id), catalog = useVessels(), owned = useOwnedVessels(id), places = usePlaces();
   const reduced = useReducedMotion();
@@ -144,13 +151,14 @@ export default function CreateScreen() {
   const placeName = selectedPlace ? (language === 'zh' ? selectedPlace.name_zh : selectedPlace.name_en) : '';
   const validate = () => {
     if (!recipient) return t('create.needRecipient');
-    if (step >= 2 && (mode === 'type' ? !message.trim() : step === 2 ? !drawing.current?.hasInk() : !drawingData)) return t('create.needMessage');
+    if (step >= 2 && predicting && !prediction.trim()) return p('need');
+    if (step >= 2 && !predicting && (mode === 'type' ? !message.trim() : step === 2 ? !drawing.current?.hasInk() : !drawingData)) return t('create.needMessage');
     if (step >= 3 && !vessel) return t('create.chooseFirst');
     if (step >= 3 && chosenVessel && !canUseVessel(chosenVessel)) return t('create.notOwned');
     if (step >= 4 && !openAt) return t('create.badDate');
     return '';
   };
-  const next = async () => { const issue = validate(); if (issue) { setError(issue); void haptics.warn(); return; } if (step === 2 && mode === 'hand') { try { setDrawingData(await drawing.current?.png() ?? null); } catch { setError(t('create.sendError')); return; } } setError(''); Keyboard.dismiss(); void haptics.tap(); if (step < 4) setStep(step + 1); else setPhase('seal'); };
+  const next = async () => { const issue = validate(); if (issue) { setError(issue); void haptics.warn(); return; } if (step === 2 && mode === 'hand') { try { setDrawingData(drawing.current?.hasInk() ? await drawing.current.png() ?? null : null); } catch { setError(t('create.sendError')); return; } } setError(''); Keyboard.dismiss(); void haptics.tap(); if (step === 2 && predicting && !vessel) { const cookie = catalog.data?.find(v => v.id === 'fortune-cookie'); if (cookie && canUseVessel(cookie)) setVessel('fortune-cookie'); } if (step < 4) setStep(step + 1); else setPhase('seal'); };
   const choosePhoto = async (source: 'camera' | 'library') => {
     setPhotoChoices(false); setError('');
     if (Platform.OS !== 'web') { const permission = source === 'camera' ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync(); if (!permission.granted) { setError(t('create.photoPermission')); return; } }
@@ -210,7 +218,7 @@ export default function CreateScreen() {
     ]); contactMotion.start(() => resolve()); });
     try {
       const ink = mode === 'hand' ? drawingData : null;
-      if (mode === 'hand' && !ink) throw new Error('empty drawing');
+      if (mode === 'hand' && !ink && !predicting) throw new Error('empty drawing');
       // Upload once per recording; a retried send reuses the same pending path.
       let voiceArgs = {};
       if (voice && VOICE_BACKEND) {
@@ -220,7 +228,7 @@ export default function CreateScreen() {
         }
         voiceArgs = { p_voice: voicePath.current.path, p_voice_ms: Math.round(voice.durationMs) };
       }
-      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: mode === 'type' ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), p_place: place ?? undefined, ...voiceArgs });
+      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: mode === 'type' ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), p_place: place ?? undefined, ...voiceArgs, ...predictionSendArgs(kind, prediction) });
       if (rpcError) throw rpcError;
       if (voice && capsuleId) stubAttachVoice(String(capsuleId), voice);
       sentOnce.current = true;
@@ -336,19 +344,21 @@ export default function CreateScreen() {
     </View>
     <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
   </Screen>;
-  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
+  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
   return <Screen scrollGesture={drawScrollGesture} footer={<View style={{ flexDirection: 'row', gap: 8, marginTop: 'auto' }}>{step > 1 && <View style={{ flex: 1 }}><Button title={t('create.back')} onPress={() => { Keyboard.dismiss(); setStep(step - 1); setError(''); void haptics.tap(); }} /></View>}<View style={{ flex: 1 }}><Button title={t(step === 4 ? 'create.sealSend' : 'create.next')} onPress={next} /></View></View>}>
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Pressable onPress={goBack} accessibilityRole='button' accessibilityLabel={t('create.close')} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="close" color={C.plum} /></Pressable><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('create.langSwitch')}</Text></Pressable></View>
     <Heading>{t('create.title')}</Heading><WaxSteps step={step} label={t('create.step', step)} labels={[t('create.stepName1'), t('create.stepName2'), t('create.stepName3'), t('create.stepName4')]} onBack={n => { Keyboard.dismiss(); setStep(n); setError(''); void haptics.tap(); }} />
-    <Text style={{ fontFamily: serif, color: C.ink, fontSize: 23 }}>{t(['', 'create.who', 'create.write', 'create.vessel', 'create.whenWhere'][step])}</Text>
+    {step === 1 && PREDICTION_ENABLED && <KindChoice kind={kind} onChange={k => { setKind(k); setError(''); }} />}
+    <Text style={{ fontFamily: serif, color: C.ink, fontSize: 23 }}>{step === 2 && predicting ? p('write') : t(['', 'create.who', 'create.write', 'create.vessel', 'create.whenWhere'][step])}</Text>
     {step === 1 && <View style={{ gap: 12 }}><View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
       <Pressable accessibilityRole='button' accessibilityState={{ selected: recipient === id }} onPress={() => { setRecipient(id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === id ? C.blue : C.line, backgroundColor: recipient === id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={profile?.avatar} size={60} future /></View><Text style={[label, { marginTop: 8 }]}>{t('create.self')}</Text></Pressable>
       {(friends.data ?? []).map(f => <Pressable key={f.friend_id} accessibilityRole='button' accessibilityState={{ selected: recipient === f.friend_id }} onPress={() => { setRecipient(f.friend_id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === f.friend_id ? C.blue : C.line, backgroundColor: recipient === f.friend_id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={(f as any).profiles?.avatar} size={60} /></View><Text style={[label, { marginTop: 8 }]}>{(f as any).profiles?.name}</Text></Pressable>)}
       <Pressable onPress={() => router.push('/invite')} style={[card, { width: '46%', alignItems: 'center', justifyContent: 'center', minHeight: 116 }]}><ArtIcon name="plus" color={C.blue} /><Text style={{ color: C.blue }}>{t('create.invite')}</Text></Pressable>
     </View>{friends.loading && <SealLoader size={44} label={t('create.loading')} />}{!friends.loading && !friends.data?.length && <Body>{t('create.noFriends')}</Body>}</View>}
     {<View style={{ gap: 15, display: step === 2 ? 'flex' : 'none' }}>
+      {predicting && <><PredictionInput value={prediction} onChange={setPrediction} /><Text style={label}>{p('letterOptional')}</Text></>}
       <View style={{ flexDirection: 'row', gap: 8 }}>{(['type', 'hand'] as const).map(m => <Pressable key={m} onPress={() => { setMode(m); if (m === 'type') setDrawingData(null); void haptics.tick(); }} style={[card, { flex: 1, backgroundColor: mode === m ? C.cream : C.white }]}><Text style={{ textAlign: 'center', color: C.ink }}>{t(`create.${m}`)}</Text></Pressable>)}</View>
-      {mode === 'type' ? <><TextInput value={message} onChangeText={setMessage} placeholder={t('create.message')} maxLength={500} multiline textAlignVertical='top' style={[card, { minHeight: 230, fontFamily: serif, fontSize: 18, color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{message.length} / 500</Text></> : <><DrawingPad scrollGesture={drawScrollGesture} ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
+      {mode === 'type' ? <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} maxLength={500} multiline textAlignVertical='top' style={[card, { minHeight: predicting ? 140 : 230, fontFamily: serif, fontSize: 18, color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{message.length} / 500</Text></> : <><DrawingPad scrollGesture={drawScrollGesture} ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
       {VOICE_ENABLED && <VoiceRecorder value={voice} onChange={setVoice} active={step === 2 && phase === 'steps'} />}
       {photo ? <Pressable onPress={() => setPhoto(null)} accessibilityLabel={t('create.removePhoto')} style={{ alignSelf: 'flex-start' }}><Image source={{ uri: photo }} style={{ width: 110, height: 110, borderRadius: 8 }} /><Text style={{ color: C.blue }}>{t('create.removePhoto')}</Text></Pressable> : <Pressable onPress={() => setPhotoChoices(!photoChoices)} style={[card, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}><ArtIcon name="camera" color={C.blue} size={20} /><Text style={{ color: C.blue }}>{t('create.photo')}</Text></Pressable>}
       {photoChoices && <View style={{ flexDirection: 'row', gap: 8 }}><Button title={t('create.camera')} onPress={() => void choosePhoto('camera')} /><Button title={t('create.library')} onPress={() => void choosePhoto('library')} /></View>}
