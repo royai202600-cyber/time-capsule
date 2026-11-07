@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AppState, Linking } from "react-native";
+import { AppState, Linking, Platform } from "react-native";
 import * as Location from "expo-location";
 import { distanceMeters } from "../../services/data";
 
@@ -8,94 +8,145 @@ export type LocationStatus = "checking" | "explain" | "granted" | "denied" | "un
 type State = { status: LocationStatus; fix: Fix | null; fake: boolean; error: string | null };
 let state: State = { status: "checking", fix: null, fake: false, error: null };
 const listeners = new Set<() => void>();
-let subscription: Location.LocationSubscription | null = null;
+let subscription: { remove(): void } | null = null;
 let starting: Promise<void> | null = null;
+let fixTimer: ReturnType<typeof setTimeout> | null = null;
+let generation = 0;
+let requesting = false;
 let appStateSubscription: ReturnType<typeof AppState.addEventListener> | null = null;
 const publish = (next: Partial<State>) => {
   state = { ...state, ...next };
   listeners.forEach((listener) => listener());
 };
-const receive = (position: Location.LocationObject) => {
+const receive = (position: { coords: { latitude: number; longitude: number; accuracy: number | null }; timestamp: number }) => {
   if (state.fake) return;
   const { latitude, longitude, accuracy } = position.coords;
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
-  publish({
-    status: "granted",
-    fix: { lat: latitude, lng: longitude, accuracy: accuracy ?? 9999, at: position.timestamp },
-    error: null,
-  });
+  if (state.fix && position.timestamp < state.fix.at) return;
+  if (fixTimer) clearTimeout(fixTimer);
+  fixTimer = null;
+  publish({ status: "granted", fix: { lat: latitude, lng: longitude, accuracy: accuracy ?? 9999, at: position.timestamp }, error: null });
 };
-async function watch() {
-  if (subscription || starting) return starting;
+function stop() {
+  generation++;
+  if (fixTimer) clearTimeout(fixTimer);
+  fixTimer = null;
+  subscription?.remove();
+  subscription = null;
+}
+
+// Browser geolocation is used directly: Expo's web permissions query is not
+// available in all Safari versions, and its watcher can discard browser events.
+function watchWeb() {
+  if (subscription) return;
+  if (typeof navigator === "undefined" || !navigator.geolocation) {
+    publish({ status: "unavailable", fix: null });
+    return;
+  }
+  publish({ status: "granted", error: null });
+  const run = generation;
+  const id = navigator.geolocation.watchPosition((fix) => { if (run === generation) receive(fix); }, (error) => {
+    if (run !== generation) return;
+    stop();
+    publish({ status: error.code === 1 ? "denied" : "unavailable", fix: null, error: error.message });
+  }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 });
+  subscription = { remove: () => navigator.geolocation.clearWatch(id) };
+  navigator.geolocation.getCurrentPosition?.((fix) => { if (run === generation) receive(fix); }, () => {},
+    { enableHighAccuracy: false, timeout: 8000, maximumAge: 15000 });
+}
+
+async function watchNative() {
+  if (subscription) return;
+  if (starting) {
+    await starting;
+    if (!subscription && state.status === "granted" && listeners.size) return watchNative();
+    return;
+  }
+  const run = generation;
   starting = (async () => {
     try {
-      const available = await Location.hasServicesEnabledAsync();
-      if (!available) return publish({ status: "unavailable", error: null });
-      const current = await Location.getLastKnownPositionAsync({ maxAge: 60000, requiredAccuracy: 200 });
-      if (current) receive(current);
+      if (!await Location.hasServicesEnabledAsync()) {
+        if (run === generation) publish({ status: "unavailable", fix: null });
+        return;
+      }
+      if (run !== generation) return;
+      fixTimer = setTimeout(() => {
+        if (run === generation && !state.fix) publish({ status: "unavailable", error: "Location timed out" });
+      }, 12000);
+      // A missing cached fix must not prevent the live watcher from starting.
+      void Location.getLastKnownPositionAsync({ maxAge: 60000, requiredAccuracy: 200 })
+        .then((fix) => { if (fix && run === generation) receive(fix); }).catch(() => {});
+      // A balanced one-shot fix can arrive before a high-accuracy GPS fix.
+      void Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced })
+        .then((fix) => { if (run === generation) receive(fix); }).catch(() => {});
       const opened = await Location.watchPositionAsync(
-        { accuracy: Location.Accuracy.BestForNavigation, timeInterval: 3000, distanceInterval: 2 },
-        receive,
-        (error) => publish({ error }),
+        { accuracy: Location.Accuracy.High, timeInterval: 3000, distanceInterval: 2 },
+        (fix) => { if (run === generation) receive(fix); },
+        (error) => { if (run === generation) publish({ status: "unavailable", fix: null, error }); },
       );
-      if (listeners.size === 0) opened.remove();
+      if (run !== generation || listeners.size === 0) opened.remove();
       else subscription = opened;
     } catch (error) {
-      publish({ status: "unavailable", error: String(error) });
-    } finally {
-      starting = null;
-    }
+      if (run === generation) publish({ status: "unavailable", fix: null, error: String(error) });
+    } finally { starting = null; }
   })();
   return starting;
 }
 
 /** Checks a prior grant; never triggers the system permission dialog. */
 export async function checkLocation() {
-  if (__DEV__ && state.fake) return;
+  if ((__DEV__ && state.fake) || requesting) return;
+  const run = generation;
   try {
-    const permission = await Location.getForegroundPermissionsAsync();
-    if (permission.granted) {
-      publish({ status: "granted" });
-      await watch();
-    } else {
-      publish({ status: permission.canAskAgain ? "explain" : "denied", fix: null });
+    if (Platform.OS === "web") {
+      if (typeof navigator === "undefined" || !navigator.geolocation) {
+        publish({ status: "unavailable", fix: null });
+        return;
+      }
+      // Safari may not implement the permissions API for geolocation.
+      let permission: PermissionState | "unknown" = "unknown";
+      try { if (navigator.permissions?.query) permission = (await navigator.permissions.query({ name: "geolocation" })).state; } catch { /* ask on tap */ }
+      if (run !== generation || requesting) return;
+      if (permission === "granted") watchWeb();
+      else if (permission === "denied") { stop(); publish({ status: "denied", fix: null }); }
+      else if (!subscription) publish({ status: "explain", fix: null });
+      return;
     }
+    const permission = await Location.getForegroundPermissionsAsync();
+    if (run !== generation || requesting) return;
+    if (permission.granted) { publish({ status: "granted" }); await watchNative(); }
+    else { stop(); publish({ status: permission.status === "denied" || !permission.canAskAgain ? "denied" : "explain", fix: null }); }
   } catch (error) {
-    publish({ status: "unavailable", error: String(error) });
+    if (run === generation) publish({ status: "unavailable", fix: null, error: String(error) });
   }
 }
 
 /** Call only after the user taps the explainer card's action. */
 export async function requestLocation() {
+  generation++;
+  stop();
+  requesting = true;
   try {
+    if (Platform.OS === "web") { watchWeb(); return; }
     const permission = await Location.requestForegroundPermissionsAsync();
-    if (!permission.granted) {
-      publish({ status: "denied", fix: null });
-      return;
-    }
-    publish({ status: "granted" });
-    await watch();
+    if (!permission.granted) { stop(); publish({ status: "denied", fix: null }); return; }
+    publish({ status: "granted", error: null });
+    await watchNative();
   } catch (error) {
-    publish({ status: "unavailable", error: String(error) });
-  }
+    publish({ status: "unavailable", fix: null, error: String(error) });
+  } finally { requesting = false; }
 }
 export const openLocationSettings = () => Linking.openSettings();
 export const currentFix = () => state.fix;
-/** F1 can pass this directly to capsules.open(id, lat, lng, accuracy). */
 export function openingCoordinates() {
   const fix = state.fix;
   return fix && (state.fake || Date.now() - fix.at <= 60000)
-    ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy }
-    : null;
+    ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null;
 }
-/** Development only; never expose a fake fix in a store build. */
 export function setFakeLocation(fix: Pick<Fix, "lat" | "lng"> | null) {
   if (!__DEV__) return;
-  publish({
-    fake: !!fix,
-    fix: fix ? { ...fix, accuracy: 10, at: Date.now() } : null,
-    status: fix ? "granted" : state.status,
-  });
+  if (!fix) { generation++; stop(); }
+  publish({ fake: !!fix, fix: fix ? { ...fix, accuracy: 10, at: Date.now() } : null, status: fix ? "granted" : state.status });
   if (!fix) void checkLocation();
 }
 export function useForegroundLocation(enabled = true) {
@@ -110,8 +161,8 @@ export function useForegroundLocation(enabled = true) {
     return () => {
       listeners.delete(update);
       if (listeners.size === 0) {
-        subscription?.remove();
-        subscription = null;
+        generation++;
+        stop();
         appStateSubscription?.remove();
         appStateSubscription = null;
       }
@@ -121,10 +172,5 @@ export function useForegroundLocation(enabled = true) {
 }
 export function usePlaceDistance(place?: { lat: number; lng: number } | null) {
   const { fix, status } = useForegroundLocation(!!place);
-  return {
-    meters: place && fix ? distanceMeters(fix.lat, fix.lng, place.lat, place.lng) : null,
-    accuracy: fix?.accuracy ?? null,
-    status,
-    fix,
-  };
+  return { meters: place && fix ? distanceMeters(fix.lat, fix.lng, place.lat, place.lng) : null, accuracy: fix?.accuracy ?? null, status, fix };
 }
