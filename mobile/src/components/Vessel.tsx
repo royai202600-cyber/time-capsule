@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Animated, { Easing, type SharedValue, cancelAnimation, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { Vessel as SvgVessel } from '../Vessel';
 import type { VesselKind } from '../vesselArt';
-import { vesselParts, type ArtLayer } from '../art/manifest';
+import { domeGlint, fxGlint, vesselParts, type ArtLayer } from '../art/manifest';
 import { useReducedMotion } from '../useReducedMotion';
 
 type Variant = 'svg' | 'illustrated';
@@ -108,12 +108,32 @@ function idleStyle(kind: VesselKind, part: string, t: number, size: number, read
     case 'musicbox:lid': return { transform: at(541, 292, [{ rotate: `${-3 * hump * hump}deg` }]) };
     case 'maison:outer': return { transform: [{ translateY: -size * .01 * hump }] };
     case 'maison:lid': return { transform: at(605, 300, [{ rotate: `${-1.5 * hump * hump}deg` }]) };
+    // The dome's highlight gleams once per loop, drifting a hair along the glass.
+    case 'dome:glint': {
+      const gleam = Math.pow(Math.max(0, Math.sin(TAU * (t - .3))), 3);
+      return { opacity: .9 * gleam, transform: [{ translateX: size * .01 * (gleam - .5) }] };
+    }
+    // A sparkle twinkles once per loop on the wax or brass: grows, turns a little, fades.
+    case 'envelope:sparkle': case 'tin:sparkle': case 'maison:sparkle': case 'lantern:sparkle': {
+      const s = Math.pow(Math.max(0, Math.sin(TAU * (t - .55))), 8);
+      return { opacity: s, transform: [{ scale: .45 + .65 * s }, { rotate: `${25 * s}deg` }] };
+    }
     default: return {};
   }
 }
 function IdlePart({ kind, part, t, size, ready, children }: { kind: VesselKind; part: string; t: SharedValue<number>; size: number; ready: boolean; children: React.ReactNode }) {
   const style = useAnimatedStyle(() => idleStyle(kind, part, t.value, size, ready), [kind, part, size, ready]);
   return <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: 0, top: 0, width: size, height: size }, style]}>{children}</Animated.View>;
+}
+// Where the sparkle sits on each vessel's 1024 canvas (wax seal, tin lid front edge, Maison clasp, lantern top ring).
+const SPARKLE: Partial<Record<VesselKind, { x: number; y: number }>> = {
+  envelope: { x: 440, y: 512 }, tin: { x: 300, y: 470 }, maison: { x: 438, y: 612 }, lantern: { x: 578, y: 214 },
+};
+function Sparkle({ kind, t, size, at }: { kind: VesselKind; t: SharedValue<number>; size: number; at: { x: number; y: number } }) {
+  const w = size * .2;
+  const style = useAnimatedStyle(() => idleStyle(kind, 'sparkle', t.value, size, false), [kind, size]);
+  return <Animated.Image pointerEvents="none" source={fxGlint} resizeMode="contain"
+    style={[{ position: 'absolute', left: at.x * size / 1024 - w / 2, top: at.y * size / 1024 - w / 2, width: w, height: w }, style]} />;
 }
 function IdleVessel({ kind, size, ready }: { kind: VesselKind; size: number; ready: boolean }) {
   const t = useSharedValue(0);
@@ -129,8 +149,13 @@ function IdleVessel({ kind, size, ready }: { kind: VesselKind; size: number; rea
   const body = kind === 'bottle'
     ? [layer(layers[0]), <IdlePart key="float" kind={kind} part="float" t={t} size={size} ready={ready}>{layers.slice(1).map(layer)}</IdlePart>]
     : layers.map(layer);
+  const sparkle = SPARKLE[kind];
   return <View style={{ width: size, height: size }} accessible accessibilityLabel={kind}>
-    <IdlePart kind={kind} part="outer" t={t} size={size} ready={ready}>{body}</IdlePart>
+    <IdlePart kind={kind} part="outer" t={t} size={size} ready={ready}>
+      {body}
+      {kind === 'dome' && <IdlePart kind={kind} part="glint" t={t} size={size} ready={ready}><Image source={domeGlint} style={{ width: size, height: size }} resizeMode="contain" /></IdlePart>}
+      {sparkle && <Sparkle kind={kind} t={t} size={size} at={sparkle} />}
+    </IdlePart>
   </View>;
 }
 export function Vessel({ kind, size = 180, lidLift, contentSway, mode, ready = false, idle = false }: {
