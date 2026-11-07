@@ -43,6 +43,21 @@ describe("foreground location", () => {
     expect(location.currentFix()).toBeNull();
   });
 
+  it("clears a previously granted fix if the browser permission is revoked", async () => {
+    let receive!: PositionCallback;
+    const clearWatch = vi.fn();
+    vi.stubGlobal("navigator", {
+      geolocation: { watchPosition: (success: PositionCallback) => { receive = success; return 4; }, clearWatch },
+      permissions: { query: vi.fn().mockResolvedValue({ state: "denied" }) },
+    });
+    const location = await import("./location");
+    await location.requestLocation();
+    receive({ coords: { latitude: 22, longitude: 114, accuracy: 20 }, timestamp: Date.now() } as GeolocationPosition);
+    await location.checkLocation();
+    expect(clearWatch).toHaveBeenCalledWith(4);
+    expect(location.currentFix()).toBeNull();
+  });
+
   it("starts the iOS watch even if the cached lookup fails", async () => {
     mocks.platform.OS = "ios";
     mocks.requestPermission.mockResolvedValue({ granted: true });
