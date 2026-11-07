@@ -10,6 +10,7 @@ import { LXGWWenKaiTC_400Regular } from "@expo-google-fonts/lxgw-wenkai-tc/400Re
 import { VesselSettingsProvider } from "../src/components/Vessel";
 import { LanguageProvider } from "../src/i18n";
 import { AuthProvider } from "../src/services/auth";
+import { MusicProvider } from "../src/services/music";
 export default function RootLayout() {
   const [loaded] = useFonts({
     NotoSerifTC: NotoSerifTC_400Regular,
@@ -20,6 +21,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <LanguageProvider>
+      <MusicProvider>
         <AuthProvider>
           <VesselSettingsProvider>
             <StatusBar style="dark" />
@@ -31,6 +33,7 @@ export default function RootLayout() {
             </Stack>
           </VesselSettingsProvider>
         </AuthProvider>
+      </MusicProvider>
       </LanguageProvider>
     </GestureHandlerRootView>
   );

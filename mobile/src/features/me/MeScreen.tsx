@@ -1,5 +1,7 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Pressable, Switch, Text, View } from "react-native";
+import { useMusic } from "../../services/music";
+import { onSoundEffectsChange, playSound, setSoundEffects, soundEffectsOn } from "../../services/sfx";
 import { router, useFocusEffect } from "expo-router";
 import { goBack } from "../../navigation";
 import { Avatar } from "../../components/Avatar";
@@ -22,6 +24,9 @@ export default function MeScreen() {
   const { t, language, setLanguage } = useLanguage();
   const { session, profile, refresh } = useAuth();
   const [counts, setCounts] = useState({ inbox: 0, sent: 0, opened: 0, friends: 0, owned: 0 });
+  const music = useMusic();
+  const [sfx, setSfx] = useState(soundEffectsOn());
+  useEffect(() => onSoundEffectsChange(setSfx), []);
   const [prefs, setPrefs] = useState({ remind_open: true, remind_nearby: true });
   const [error, setError] = useState("");
   useFocusEffect(useCallback(() => {
@@ -65,6 +70,8 @@ export default function MeScreen() {
       <Row label={t("me.invite")} onPress={() => router.push("/invite")} />
     </View>
     <View style={{ backgroundColor: C.white, borderRadius: 16, borderWidth: 1, borderColor: C.line, padding: 16, gap: 14 }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}><Text style={{ flex: 1, color: C.ink, fontFamily: sans }}>{t("me.music")}</Text><Switch accessibilityLabel={t("me.music")} value={music.on} onValueChange={music.setOn} trackColor={{ true: C.blue }} /></View>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}><Text style={{ flex: 1, color: C.ink, fontFamily: sans }}>{t("me.sfx")}</Text><Switch accessibilityLabel={t("me.sfx")} value={sfx} onValueChange={v => { setSfx(v); setSoundEffects(v); if (v) playSound("tap"); }} trackColor={{ true: C.blue }} /></View>
       {(["remind_open", "remind_nearby"] as const).map(k => <View key={k} style={{ flexDirection: "row", alignItems: "center", gap: 12 }}><Text style={{ flex: 1, color: C.ink, fontFamily: sans }}>{t("me." + k)}</Text><Switch accessibilityLabel={t("me." + k)} value={prefs[k]} onValueChange={v => void savePref(k, v)} trackColor={{ true: C.blue }} /></View>)}
       <Text style={{ color: C.muted, fontFamily: sans, fontSize: 13 }}>{t("me.remindersSoon")}</Text>
     </View>

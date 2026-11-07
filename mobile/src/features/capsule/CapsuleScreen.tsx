@@ -149,7 +149,7 @@ export default function CapsuleScreen() {
         pagePosition.setValue(x / pageWidth);
         if (discovery.nudging.current) return;
         const n = Math.max(0, Math.min(pageCount - 1, Math.round(x / pageWidth)));
-        if (n !== pageIndex.current) { pageIndex.current = n; setPage(n); void haptics.tick(); }
+        if (n !== pageIndex.current) { pageIndex.current = n; setPage(n); void haptics.page(); }
         if (x > 8) discovery.dismiss();
       }} onLayout={e => setPagerHeight(e.nativeEvent.layout.height)} style={{ flex: 1 }}>
         <View style={{ width: pageWidth, height: pagerHeight || undefined, paddingHorizontal: 18, paddingTop: 10, paddingBottom: 6 }}><View style={{ flex: 1, width: "100%", maxWidth: 600, alignSelf: "center", paddingHorizontal: 22, paddingTop: 18, paddingBottom: 12, backgroundColor: C.white, borderRadius: 14, borderWidth: 1.5, borderColor: "#5B6474", marginBottom: 8 }}>
