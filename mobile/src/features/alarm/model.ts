@@ -19,6 +19,8 @@ export type Alarm = {
   on: boolean;
   /** Ids the scheduler returned, so they can be cancelled. Empty when off or unscheduled. */
   scheduled: string[];
+  /** The pending one-time snooze, cancelled when this alarm is switched off. */
+  snoozeId?: string | null;
 };
 
 export const everyDay = (days: number[]) => ALL_DAYS.every(d => days.includes(d));
