@@ -4,6 +4,7 @@ Owner per task: **Claude** (UI, design, planning) or **Codex** (backend, merging
 Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move a task by editing this file in the same PR as the work.
 
 ## Doing
+- S1: Restore iPhone Safari sound effects with a shared touch-unlocked Web Audio context. Nineteen unit tests, TypeScript and web/iOS exports pass; Chrome context-unlock and repeated playback observed. Awaiting physical Safari verification and release.
 | ID | Task | Owner | Done when |
 |---|---|---|---|
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |

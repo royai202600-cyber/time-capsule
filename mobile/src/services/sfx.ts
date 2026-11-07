@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createAudioPlayer, type AudioPlayer } from "expo-audio";
+import { createEffectPlayer, type EffectPlayer } from "./sfxPlayer";
 
 // Short sound effects, synthesized for this app (no third-party audio). Played together with
 // the matching haptic in components/haptics.ts, so every vibration point also has a sound.
@@ -20,17 +20,18 @@ let enabled = true;
 const listeners = new Set<(on: boolean) => void>();
 void AsyncStorage.getItem(KEY).then(v => { if (v === "off") { enabled = false; listeners.forEach(l => l(false)); } }).catch(() => {});
 
-type Effect = { player: AudioPlayer; ready: boolean; subscription: { remove(): void } };
+type Effect = { player: EffectPlayer; ready: boolean; subscription: { remove(): void } };
 const players: Partial<Record<Sound, Effect>> = {};
 /** Download/decode short effects at app startup, outside the interaction path. */
 export function prepareSoundEffects() {
   for (const name of Object.keys(SOURCES) as Sound[]) {
     if (players[name]) continue;
     try {
-      const player = createAudioPlayer(SOURCES[name], { downloadFirst: true, keepAudioSessionActive: true });
+      const player = createEffectPlayer(SOURCES[name]);
       player.volume = 0.6;
       const effect: Effect = { player, ready: true, subscription: { remove() {} } };
       effect.subscription = player.addListener('playbackStatusUpdate', status => {
+        if (status.error) { effect.ready = true; return; }
         if (!status.didJustFinish) return;
         // Rewind after playback, so a later tap never waits for a seek round trip.
         effect.ready = false;
@@ -52,7 +53,7 @@ export function playSound(name: Sound) {
   // A stale feedback sound is worse than skipping one before loading finishes.
   // Never queue playback behind a download, decode, previous sound, or seek.
   if (!effect?.ready || !effect.player.isLoaded || effect.player.playing) return;
-  try { effect.ready = false; effect.player.play(); }
+  try { effect.ready = false; if (effect.player.play() === false) effect.ready = true; }
   catch { effect.ready = true; }
 }
 export const soundEffectsOn = () => enabled;
