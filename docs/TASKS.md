@@ -11,7 +11,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
-| C1 | Scrolling Cabinet: crown + one tiling shelf row + base, 3 per row on phones and 4–5 on wide screens, virtualised rows (PR #39) | Claude | Wired to the A3 tiles (PR #44). Verified in the browser at 375/390 px and desktop with 9, 30 and 300 vessels; close-up, seams and virtualised scrolling checked. Codex merges and deploys. |
 | W1 | Daily wake-up alarm from an opened capsule | Codex / Roy | PR #41 merged as `ed60924` after green CI. Browser editor, wake and snooze previews, 23 tests, TypeScript and iOS/web exports pass. Roy waived the pre-merge phone gate; physical Expo Go alarm delivery, tap-to-wake and real nine-minute snooze remain for his QR check. Installed-build AlarmKit / Android exact alarms remain later work. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
@@ -35,6 +34,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+- PR #39 / C1: Scrolling Cabinet wired to A3 crown/row/base tiles, virtualized rows and responsive columns. Reviewed and squash-merged as `2d25bf2` after green CI; combined 23 tests, TypeScript and iOS export pass. Browser checks cover 375/390 px, desktop, base scrolling and close-up return. PR #42 baseY compatibility is retained. An owner-authored release follows; physical Expo Go tilt/gestures remain unverified.
 - PR #42: Data-driven vessel spec and generic motion engine, with the seven existing vessels preserved in the manifest. Green CI, TypeScript, 19 tests and iOS export pass; squash-merged as `a3b3c24`. Roy will check native idle/open behavior on all seven vessels later through Expo Go.
 - A3: Roy approved cabinet tiles review `7b1f646`; crown, repeatable row and base masters plus full-width 1024 px WebPs at quality 85 with exact alpha preservation are complete. All 71 art masters pass the scoped audit; measured geometry, seam review and regenerated contact sheet are recorded. Claude wires the app separately.
 - PR #37: Larger, faster vessel idle motion and glints, with the centred-card and Reduce Motion gates preserved. Green CI, 19 tests, TypeScript and iOS export pass. Browser checked at 390 px, including music-box lid rotation and the static fallback; console clean. Squash-merged as `e48fcb1`, followed by an owner-authored production release. Physical phone appearance for this amplitude change remains unverified.
