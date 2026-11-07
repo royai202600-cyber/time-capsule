@@ -34,7 +34,10 @@ const strings = {
     recordTo: (n: string) => `寫給 ${n}`,
     recordFrom: (n: string) => `${n} 寫給你`,
     recordSelf: "寫給未來的自己",
-    noRank: "沒有排行榜，沒有連續紀錄，也沒有分數。",
+    recordNoSuccess: "還沒有成真的預言。",
+    recordMore: "更多",
+    recordViewAll: "查看全部預言紀錄",
+    recordClose: "關閉預言紀錄",
   },
   en: {
     kindTitle: "What are you sending?",
@@ -69,7 +72,10 @@ const strings = {
     recordTo: (n: string) => `To ${n}`,
     recordFrom: (n: string) => `From ${n}`,
     recordSelf: "To future me",
-    noRank: "No leaderboard, no streaks, no score.",
+    recordNoSuccess: "No successful predictions yet.",
+    recordMore: "More",
+    recordViewAll: "View all predictions",
+    recordClose: "Close prediction record",
   },
 } as const;
 
