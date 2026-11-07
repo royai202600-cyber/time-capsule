@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Image, TextInput, Text, View, Pressable, ScrollView, useWindowDimensions } from "react-native";
+import { Image, TextInput, Text, View, Pressable, useWindowDimensions } from "react-native";
+import { KeyboardScrollView } from "../../components/Screen";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 import { scenes } from "../../art/manifest";
@@ -81,7 +82,7 @@ export default function AuthScreen() {
     }
   };
   const primary = auth.recovery ? "newPwBtn" : mode === "forgot" ? "sendReset" : mode === "signup" ? "signUpBtn" : "signInBtn";
-  return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}><ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, width: "100%", maxWidth: 600, alignSelf: "center", paddingHorizontal: 22, paddingBottom: 28 }}>
+  return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}><KeyboardScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, width: "100%", maxWidth: 600, alignSelf: "center", paddingHorizontal: 22, paddingBottom: 28 }}>
     <View style={{ alignItems: "flex-end", paddingTop: 10 }}><Pressable accessibilityRole="button" accessibilityLabel={t("langAria")} onPress={() => setLanguage(language === "zh" ? "en" : "zh")} style={{ height: 30, minWidth: 34, paddingHorizontal: 8, borderWidth: 1.5, borderColor: "#CDD5DF", borderRadius: 999, backgroundColor: C.white, justifyContent: "center", alignItems: "center" }}><Text style={{ color: "#4A5466", fontSize: 13, fontFamily: sans }}>{language === "zh" ? "EN" : "繁中"}</Text></Pressable></View>
     <View style={{ alignItems: "center", marginTop: 8 }}><Image source={scenes.welcome} resizeMode="contain" accessibilityLabel={t("appTitle")} style={{ width: welcomeWidth, height: welcomeWidth * 2 / 3 }} /><Text style={{ fontFamily: serif, fontWeight: "700", fontSize: 30, color: C.ink, letterSpacing: language === "zh" ? 3 : 0, marginTop: 10 }}>{t("appTitle")}</Text><Text style={{ fontFamily: handwriting, color: "#4A5466", fontSize: 17, textAlign: "center", marginBottom: 18 }}>{t("tagline")}</Text></View>
     {auth.inviter && <View style={{ flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: C.white, borderWidth: 1.5, borderColor: C.line, borderRadius: 12, padding: 12, marginBottom: 14 }}><Avatar avatar={auth.inviter.avatar} size={36} /><Text style={{ color: C.ink, flex: 1 }}>{t("inviteBanner", auth.inviter.name)}</Text></View>}
@@ -97,5 +98,5 @@ export default function AuthScreen() {
     </>}
     {!!message && <Text accessibilityRole="alert" style={{ color: C.wax, fontSize: 13, textAlign: "center", marginTop: 10 }}>{message}</Text>}
     <View style={{ marginTop: "auto", paddingTop: 28 }}><LegalLinks /></View>
-  </ScrollView></SafeAreaView>;
+  </KeyboardScrollView></SafeAreaView>;
 }
