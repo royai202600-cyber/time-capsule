@@ -73,6 +73,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-07: Roy approved PR #26, restoring the four softly blurred solid sealed lines. Squash merge follows green CI, with an owner-authored release commit for Vercel Hobby.
 - 2026-11-07: Roy approved squash-merging PR #24 after its rebase onto PR #25. GitHub retained the contributor as squash author, so an owner-authored release commit follows it for Vercel Hobby deployment. The Sent view uses blurred decorative word shapes; sealed capsule content is never fetched to render them.
 - 2026-11-07: Roy requested location testing without enabling macOS Location Services. Release verification therefore uses simulated browser permission/position callbacks plus native unit tests and iOS export. A real sensor fix and physical iPhone verification remain unverified and must be reported explicitly; the temporary test harness is excluded from production.
 - 2026-11-07: Roy requested more reliable foreground location and named map directions. The Journey location dot is approximate on the stylised artwork; the detailed map and server checks use real coordinates. The fictional Maison Aurèle destination uses its stored coordinates.

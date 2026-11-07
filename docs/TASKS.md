@@ -33,6 +33,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+- PR #26: Restore the original four solid sealed lines (92/76/88/56%) with soft blur. Green CI; squash-merged as `7653a9b`, followed by an owner-authored production release.
 - PR #24: Sent view sealed placeholder uses blurred word-shaped lines. Rebased PR CI passed; squash-merged as `bdae57d`, followed by an owner-authored release commit for production.
 - A1: Illustrated Expo app replaced the Vite production app in PR #16; PR #17 fixed Shop session loading. Roy's production follow-up adds Chinese-only letter spacing, scroll-driven pagination and the animated seal guide, with 390 px comparison captures under `docs/review/production-polish/`. Roy tests on his phone at the end.
 - N2: Claude-approved bilingual privacy, terms and support pages moved into the Expo web export with final contact details, app links, and Vercel routes. Account deletion remains N3.
