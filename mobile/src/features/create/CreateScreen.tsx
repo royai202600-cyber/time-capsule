@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Image, PanResponder, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { Animated, Easing, Image, PanResponder, Keyboard, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { goBack } from "../../navigation";
 import * as ImagePicker from 'expo-image-picker';
@@ -81,6 +81,10 @@ export default function CreateScreen() {
   const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterNarrow = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, letterEntry = useRef(new Animated.Value(44)).current, letterOpacity = useRef(new Animated.Value(0)).current, letterFade = useRef(new Animated.Value(1)).current, drift = useRef(new Animated.Value(0)).current;
   const lidLift = useSharedValue(1);
   const [sealTouched, setSealTouched] = useState(false);
+  const [sealDragging, setSealDragging] = useState(false);
+  const dragActive = useRef(false);
+  const dragOrigin = useRef({ x: 0, y: 0 });
+  const dragDelta = useRef({ x: 0, y: 0 });
   const hintFade = useRef(new Animated.Value(1)).current;
   const hintCycle = useRef(new Animated.Value(0)).current;
   const idleNudge = useRef(new Animated.Value(0)).current;
@@ -102,17 +106,17 @@ export default function CreateScreen() {
   useEffect(() => {
     if (phase !== 'seal' || stamped || sealTouched || reduced) return;
     hintCycle.setValue(0); idleNudge.setValue(0);
-    const lights = Animated.loop(Animated.timing(hintCycle, { toValue: 3, duration: 1200, easing: Easing.linear, useNativeDriver: false }));
+    const lights = Animated.loop(Animated.timing(hintCycle, { toValue: 3, duration: 1200, easing: Easing.linear, useNativeDriver: true }));
     const nudge = Animated.loop(Animated.sequence([
       Animated.delay(1500),
-      Animated.spring(idleNudge, { toValue: -8, ...motion.spring.soft, useNativeDriver: false }),
-      Animated.spring(idleNudge, { toValue: 0, ...motion.spring.soft, useNativeDriver: false }),
+      Animated.spring(idleNudge, { toValue: -8, ...motion.spring.soft, useNativeDriver: true }),
+      Animated.spring(idleNudge, { toValue: 0, ...motion.spring.soft, useNativeDriver: true }),
     ]));
     lights.start(); nudge.start();
     return () => { lights.stop(); nudge.stop(); };
   }, [phase, stamped, sealTouched, reduced, hintCycle, idleNudge]);
   useEffect(() => {
-    if (sealTouched || reduced) Animated.timing(idleNudge, { toValue: 0, duration: motion.fade.quick, useNativeDriver: false }).start();
+    if (sealTouched || reduced) Animated.timing(idleNudge, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }).start();
   }, [sealTouched, reduced, idleNudge]);
   useEffect(() => { if ((!recipient || recipient === 'future') && id) setRecipient(id); }, [id, recipient]);
   useEffect(() => {
@@ -142,7 +146,7 @@ export default function CreateScreen() {
     if (step >= 4 && !openAt) return t('create.badDate');
     return '';
   };
-  const next = async () => { const issue = validate(); if (issue) { setError(issue); void haptics.warn(); return; } if (step === 2 && mode === 'hand') { try { setDrawingData(await drawing.current?.png() ?? null); } catch { setError(t('create.sendError')); return; } } setError(''); void haptics.tap(); if (step < 4) setStep(step + 1); else setPhase('seal'); };
+  const next = async () => { const issue = validate(); if (issue) { setError(issue); void haptics.warn(); return; } if (step === 2 && mode === 'hand') { try { setDrawingData(await drawing.current?.png() ?? null); } catch { setError(t('create.sendError')); return; } } setError(''); Keyboard.dismiss(); void haptics.tap(); if (step < 4) setStep(step + 1); else setPhase('seal'); };
   const choosePhoto = async (source: 'camera' | 'library') => {
     setPhotoChoices(false); setError('');
     if (Platform.OS !== 'web') { const permission = source === 'camera' ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync(); if (!permission.granted) { setError(t('create.photoPermission')); return; } }
@@ -191,14 +195,15 @@ export default function CreateScreen() {
     sendingRef.current = true;
     setBusy(true); setError('');
     void (reduced ? haptics.tap() : haptics.thump());
-    const contact = reduced ? Promise.resolve() : new Promise<void>(resolve => Animated.parallel([
+    let contactMotion: Animated.CompositeAnimation | undefined;
+    const contact = reduced ? Promise.resolve() : new Promise<void>(resolve => { contactMotion = Animated.parallel([
       Animated.spring(wax, { toValue: { x: 0, y: -348 }, ...motion.spring.snappy, restDisplacementThreshold: 1, restSpeedThreshold: 3, useNativeDriver: true }),
       Animated.sequence([
         Animated.timing(waxScale, { toValue: 1.25, duration: motion.fade.quick, useNativeDriver: true }),
         Animated.timing(waxScale, { toValue: .95, duration: motion.fade.quick, useNativeDriver: true }),
         Animated.timing(waxScale, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }),
       ]),
-    ]).start(() => resolve()));
+    ]); contactMotion.start(() => resolve()); });
     try {
       const ink = mode === 'hand' ? drawingData : null;
       if (mode === 'hand' && !ink) throw new Error('empty drawing');
@@ -210,6 +215,8 @@ export default function CreateScreen() {
       setStamped(true);
       finishAnimation();
     } catch (e) {
+      contactMotion?.stop();
+      wax.stopAnimation(); waxScale.stopAnimation();
       const msg = String((e as any)?.message ?? e).toLowerCase(), code = String((e as any)?.hint ?? '');
       setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('open time must be in the future') ? t('create.badDate') : t('create.sendError'));
       if (reduced) wax.setValue({ x: 0, y: 0 });
@@ -222,16 +229,62 @@ export default function CreateScreen() {
     } finally { sendingRef.current = false; setBusy(false); }
   };
   sendRef.current = () => { void send(); };
-  const pan = useRef(PanResponder.create({ onStartShouldSetPanResponder: () => true, onMoveShouldSetPanResponder: () => true,
-    onPanResponderGrant: () => { setSealTouched(true); Animated.timing(hintFade, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }).start(); },
-    onPanResponderMove: (_, g) => { if (!sentOnce.current && !sendingRef.current) { wax.setValue({ x: g.dx, y: g.dy }); sealNear.setValue(Math.max(0, 1 - Math.hypot(g.dx, g.dy + 348) / 180)); } },
-    onPanResponderRelease: (_, g) => { if (sentOnce.current || sendingRef.current) return; if (g.dy < -160 && Math.abs(g.dx) < 130) sendRef.current(); else { Animated.timing(sealNear, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }).start(); Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); restoreHint(); } },
-    onPanResponderTerminate: () => { if (sentOnce.current || sendingRef.current) return; sealNear.setValue(0); Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); restoreHint(); },
+  const snapBack = () => {
+    sealNear.stopAnimation();
+    Animated.timing(sealNear, { toValue: 0, duration: motion.fade.quick, useNativeDriver: false }).start();
+    if (reduced) wax.setValue({ x: 0, y: 0 });
+    else Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start();
+    restoreHint();
+  };
+  // Keep a stable responder while its callbacks read the current Reduce Motion/state.
+  const gesture = useRef({ grant: () => {}, move: (_dx: number, _dy: number) => {}, release: (_dx: number, _dy: number) => {}, cancel: () => {} });
+  gesture.current = {
+    grant: () => {
+      if (sentOnce.current || sendingRef.current) return;
+      dragActive.current = true; dragDelta.current = { x: 0, y: 0 };
+      setSealDragging(true); setSealTouched(true);
+      sealNear.stopAnimation(); waxScale.stopAnimation(); idleNudge.stopAnimation(); idleNudge.setValue(0);
+      wax.stopAnimation(position => {
+        if (!dragActive.current) return;
+        dragOrigin.current = position;
+        wax.setValue({ x: position.x + dragDelta.current.x, y: position.y + dragDelta.current.y });
+      });
+      Animated.timing(hintFade, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }).start();
+    },
+    move: (dx, dy) => {
+      if (!dragActive.current || sentOnce.current || sendingRef.current) return;
+      dragDelta.current = { x: dx, y: dy };
+      const x = dragOrigin.current.x + dx, y = dragOrigin.current.y + dy;
+      wax.setValue({ x, y });
+      // Proximity is JS-driven throughout; never hand this value to the native driver.
+      sealNear.setValue(Math.max(0, 1 - Math.hypot(x, y + 348) / 180));
+    },
+    release: (dx, dy) => {
+      dragActive.current = false; setSealDragging(false);
+      if (sentOnce.current || sendingRef.current) return;
+      const x = dragOrigin.current.x + dx, y = dragOrigin.current.y + dy;
+      if (y < -160 && Math.abs(x) < 130) sendRef.current();
+      else snapBack();
+    },
+    cancel: () => {
+      dragActive.current = false; setSealDragging(false);
+      if (!sentOnce.current && !sendingRef.current) snapBack();
+    },
+  };
+  const pan = useRef(PanResponder.create({
+    onStartShouldSetPanResponder: () => !sentOnce.current && !sendingRef.current,
+    onMoveShouldSetPanResponder: () => !sentOnce.current && !sendingRef.current,
+    onPanResponderTerminationRequest: () => false,
+    onShouldBlockNativeResponder: () => true,
+    onPanResponderGrant: () => gesture.current.grant(),
+    onPanResponderMove: (_, g) => gesture.current.move(g.dx, g.dy),
+    onPanResponderRelease: (_, g) => gesture.current.release(g.dx, g.dy),
+    onPanResponderTerminate: () => gesture.current.cancel(),
   })).current;
 
   if (authLoading) return <Screen><Body>{t('create.loading')}</Body></Screen>;
   if (!session) return <Screen><Body>{t('create.signIn')}</Body><Button title={t('create.close')} onPress={() => router.replace('/')} /></Screen>;
-  if (phase === 'seal') return <Screen>
+  if (phase === 'seal') return <Screen scrollEnabled={!sealDragging && !busy}>
     <Heading>{t('create.sealSend')}</Heading>
     <View style={{ height: 570, width: '100%' }}>
       <Animated.View style={{ position: 'absolute', zIndex: 2, top: 20, left: '6%', width: '88%', height: 210, transform: [{ translateY: letterDrop }, { translateY: letterEntry }], opacity: Animated.multiply(Animated.multiply(letterOpacity, letterFade), drift.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })) }}><Animated.View style={[card, { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', transform: [{ scaleY: letter }, { scaleX: letterNarrow }] }]}>
@@ -254,7 +307,7 @@ export default function CreateScreen() {
     <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
   </Screen>;
   if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
-  return <Screen>
+  return <Screen footer={<View style={{ flexDirection: 'row', gap: 8, marginTop: 'auto' }}>{step > 1 && <View style={{ flex: 1 }}><Button title={t('create.back')} onPress={() => { Keyboard.dismiss(); setStep(step - 1); setError(''); void haptics.tap(); }} /></View>}<View style={{ flex: 1 }}><Button title={t(step === 4 ? 'create.sealSend' : 'create.next')} onPress={next} /></View></View>}>
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Pressable onPress={goBack} accessibilityRole='button' accessibilityLabel={t('create.close')} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="close" color={C.plum} /></Pressable><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('create.langSwitch')}</Text></Pressable></View>
     <Heading>{t('create.title')}</Heading><Body>{t('create.step', step)}</Body><View style={{ height: 5, backgroundColor: C.line, borderRadius: 5 }}><View style={{ width: `${step * 25}%`, height: 5, backgroundColor: C.wax, borderRadius: 5 }} /></View>
     <Text style={{ fontFamily: serif, color: C.ink, fontSize: 23 }}>{t(['', 'create.who', 'create.write', 'create.vessel', 'create.whenWhere'][step])}</Text>
@@ -284,6 +337,6 @@ export default function CreateScreen() {
       <Body>{t('create.radius')}</Body><Text style={{ color: C.muted, fontSize: 12 }}>{t('create.serverTime')}</Text>
     </View>}
     <Toast message={error || ((friends.error || catalog.error || places.error) ? t('create.noData') : '')} />
-    <View style={{ flexDirection: 'row', gap: 8, marginTop: 'auto' }}>{step > 1 && <View style={{ flex: 1 }}><Button title={t('create.back')} onPress={() => { setStep(step - 1); setError(''); void haptics.tap(); }} /></View>}<View style={{ flex: 1 }}><Button title={t(step === 4 ? 'create.sealSend' : 'create.next')} onPress={next} /></View></View>
+
   </Screen>;
 }
