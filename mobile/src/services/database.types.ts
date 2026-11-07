@@ -20,6 +20,7 @@ export type Database = {
           drawing: string | null
           message: string | null
           photo: string | null
+          prediction: string | null
           voice_ms: number | null
           voice_path: string | null
         }
@@ -28,6 +29,7 @@ export type Database = {
           drawing?: string | null
           message?: string | null
           photo?: string | null
+          prediction?: string | null
           voice_ms?: number | null
           voice_path?: string | null
         }
@@ -36,6 +38,7 @@ export type Database = {
           drawing?: string | null
           message?: string | null
           photo?: string | null
+          prediction?: string | null
           voice_ms?: number | null
           voice_path?: string | null
         }
@@ -57,6 +60,7 @@ export type Database = {
           has_voice: boolean
           hint: string
           id: string
+          kind: string
           open_at: string
           opened_at: string | null
           opened_distance_m: number | null
@@ -67,6 +71,8 @@ export type Database = {
           sealed_at: string
           seen_at: string | null
           sender: string
+          verdict: boolean | null
+          verdict_at: string | null
           vessel: string
         }
         Insert: {
@@ -76,6 +82,7 @@ export type Database = {
           has_voice?: boolean
           hint?: string
           id?: string
+          kind?: string
           open_at: string
           opened_at?: string | null
           opened_distance_m?: number | null
@@ -86,6 +93,8 @@ export type Database = {
           sealed_at?: string
           seen_at?: string | null
           sender: string
+          verdict?: boolean | null
+          verdict_at?: string | null
           vessel: string
         }
         Update: {
@@ -95,6 +104,7 @@ export type Database = {
           has_voice?: boolean
           hint?: string
           id?: string
+          kind?: string
           open_at?: string
           opened_at?: string | null
           opened_distance_m?: number | null
@@ -105,6 +115,8 @@ export type Database = {
           sealed_at?: string
           seen_at?: string | null
           sender?: string
+          verdict?: boolean | null
+          verdict_at?: string | null
           vessel?: string
         }
         Relationships: [
@@ -365,24 +377,52 @@ export type Database = {
           message: string
           opened_at: string
           photo: string
+          prediction: string
+          verdict: boolean
           voice_ms: number
           voice_path: string
+        }[]
+      }
+      prediction_for_sender: {
+        Args: { p_id: string }
+        Returns: {
+          prediction: string
+          verdict: boolean
+          verdict_at: string
+        }[]
+      }
+      prediction_record: {
+        Args: never
+        Returns: {
+          capsule_id: string
+          opened_at: string
+          other: string
+          prediction: string
+          role: string
+          sealed_at: string
+          verdict: boolean
         }[]
       }
       send_capsule: {
         Args: {
           p_drawing?: string
           p_hint: string
+          p_kind?: string
           p_message: string
           p_open_at: string
           p_photo?: string
           p_place?: string
+          p_prediction?: string
           p_recipient: string
           p_vessel: string
           p_voice?: string
           p_voice_ms?: number
         }
         Returns: string
+      }
+      set_prediction_verdict: {
+        Args: { p_id: string; p_verdict: boolean }
+        Returns: undefined
       }
       vessel_stock: {
         Args: never
