@@ -85,6 +85,16 @@ export default function CreateScreen() {
   const hintCycle = useRef(new Animated.Value(0)).current;
   const idleNudge = useRef(new Animated.Value(0)).current;
   const sealNear = useRef(new Animated.Value(0)).current;
+  const targetPulse = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (phase !== 'seal' || stamped || reduced) return;
+    targetPulse.setValue(0);
+    const loop = Animated.loop(Animated.timing(targetPulse, { toValue: 1, duration: 2000, easing: Easing.out(Easing.quad), useNativeDriver: true }));
+    loop.start();
+    return () => loop.stop();
+  }, [phase, stamped, reduced, targetPulse]);
+  // The seal went back to its starting spot without sealing: bring the guide back.
+  const restoreHint = () => { setSealTouched(false); Animated.timing(hintFade, { toValue: 1, duration: motion.fade.quick, useNativeDriver: true }).start(); };
   useEffect(() => {
     if (phase !== 'seal') return;
     setSealTouched(false); hintFade.setValue(1); sealNear.setValue(0);
@@ -207,6 +217,7 @@ export default function CreateScreen() {
         Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }),
         Animated.spring(waxScale, { toValue: 1, ...motion.spring.soft, useNativeDriver: true }),
       ]).start();
+      sealNear.setValue(0); restoreHint();
       void haptics.warn();
     } finally { sendingRef.current = false; setBusy(false); }
   };
@@ -214,8 +225,8 @@ export default function CreateScreen() {
   const pan = useRef(PanResponder.create({ onStartShouldSetPanResponder: () => true, onMoveShouldSetPanResponder: () => true,
     onPanResponderGrant: () => { setSealTouched(true); Animated.timing(hintFade, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }).start(); },
     onPanResponderMove: (_, g) => { if (!sentOnce.current && !sendingRef.current) { wax.setValue({ x: g.dx, y: g.dy }); sealNear.setValue(Math.max(0, 1 - Math.hypot(g.dx, g.dy + 348) / 180)); } },
-    onPanResponderRelease: (_, g) => { if (sentOnce.current || sendingRef.current) return; if (g.dy < -160 && Math.abs(g.dx) < 130) sendRef.current(); else { Animated.timing(sealNear, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }).start(); Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); } },
-    onPanResponderTerminate: () => { sealNear.setValue(0); Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); },
+    onPanResponderRelease: (_, g) => { if (sentOnce.current || sendingRef.current) return; if (g.dy < -160 && Math.abs(g.dx) < 130) sendRef.current(); else { Animated.timing(sealNear, { toValue: 0, duration: motion.fade.quick, useNativeDriver: true }).start(); Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); restoreHint(); } },
+    onPanResponderTerminate: () => { if (sentOnce.current || sendingRef.current) return; sealNear.setValue(0); Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }).start(); restoreHint(); },
   })).current;
 
   if (authLoading) return <Screen><Body>{t('create.loading')}</Body></Screen>;
@@ -226,7 +237,14 @@ export default function CreateScreen() {
       <Animated.View style={{ position: 'absolute', zIndex: 2, top: 20, left: '6%', width: '88%', height: 210, transform: [{ translateY: letterDrop }, { translateY: letterEntry }], opacity: Animated.multiply(Animated.multiply(letterOpacity, letterFade), drift.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })) }}><Animated.View style={[card, { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', transform: [{ scaleY: letter }, { scaleX: letterNarrow }] }]}>
         <Text style={{ color: C.muted, fontFamily: handwriting, fontSize: 19 }}>{recipientName}</Text><View style={{ width: '75%', marginTop: 28, gap: 18 }}><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /><View style={{ borderBottomWidth: 1, borderColor: C.line }} /></View>
         {stamped && <View style={{ position: 'absolute', top: 83, left: 0, right: 0, alignItems: 'center' }}><Image source={sealWax} style={{ width: 70, height: 70 }} resizeMode="contain" /></View>}
-        {!stamped && <View pointerEvents="none" style={{ position: 'absolute', top: 83, left: 0, right: 0, alignItems: 'center' }}><Animated.View style={{ width: 70, height: 70, borderRadius: 35, borderWidth: 2, borderStyle: 'dashed', borderColor: C.brass, backgroundColor: 'rgba(201,161,90,0.06)', opacity: sealNear.interpolate({ inputRange: [0, 1], outputRange: [.55, 1] }), transform: [{ scale: sealNear.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] }) }] }} /></View>}
+        {!stamped && <View pointerEvents="none" style={{ position: 'absolute', top: 83, left: 0, right: 0, alignItems: 'center' }}><View style={{ width: 70, height: 70, alignItems: 'center', justifyContent: 'center' }}>
+          {/* Brass ripple spreading out from where the wax goes, like warm wax settling. */}
+          {!reduced && <Animated.View style={{ position: 'absolute', width: 70, height: 70, borderRadius: 35, borderWidth: 1.5, borderColor: C.brass, opacity: targetPulse.interpolate({ inputRange: [0, 1], outputRange: [.5, 0] }), transform: [{ scale: targetPulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.55] }) }] }} />}
+          <Animated.View style={{ width: 70, height: 70, borderRadius: 35, borderWidth: 1.5, borderColor: C.brass, backgroundColor: 'rgba(201,161,90,0.08)', alignItems: 'center', justifyContent: 'center', opacity: sealNear.interpolate({ inputRange: [0, 1], outputRange: [.7, 1] }), transform: [{ scale: sealNear.interpolate({ inputRange: [0, 1], outputRange: [1, 1.1] }) }] }}>
+            {/* A faint impression of the seal shows exactly what goes here. */}
+            <Animated.Image source={sealWax} style={{ width: 58, height: 58, opacity: sealNear.interpolate({ inputRange: [0, 1], outputRange: [.2, .45] }) }} resizeMode="contain" />
+          </Animated.View>
+        </View></View>}
       </Animated.View></Animated.View>
       <Animated.View style={{ position: 'absolute', top: 270, left: 0, right: 0, alignItems: 'center', transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [0, -120] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={120} lidLift={lidLift} /></Animated.View>
       {!stamped && <Animated.View pointerEvents="none" style={{ position: 'absolute', zIndex: 3, top: 398, left: 0, right: 0, alignItems: 'center', gap: 5, opacity: hintFade }}>{[2, 1, 0].map(i => <Animated.View key={i} style={{ width: 12, height: 12, borderTopWidth: 2.5, borderLeftWidth: 2.5, borderColor: C.brass, transform: [{ rotate: '45deg' }], opacity: reduced ? .45 : hintCycle.interpolate({ inputRange: [i, i + .5, i + 1], outputRange: [.35, 1, .35], extrapolate: 'clamp' }) }} />)}</Animated.View>}
