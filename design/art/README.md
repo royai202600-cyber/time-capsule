@@ -4,7 +4,7 @@ To make new art, follow [STYLE.md](STYLE.md). This README lists what already exi
 
 Roy chose style sheet A. All generated masters use the built-in `gpt-image-2` image tool with the approved sheet as their style reference; the exact prompts and any postprocessing are in `manifest.json`.
 
-PNG masters live in `design/art/`. WebP copies live at matching paths in `public/art/`, except the style sheets and `_checks/`. Names use kebab-case: `<category>-<id>-<part>` where a part exists. Vessel IDs: dome, bottle, envelope, tin, lantern, musicbox, maison. Place IDs: senado, tst-clock, taipei101, sensoji, fushimi, gyeongbok, merlion, grandpal, wumen, petronas, aurele-cotai.
+PNG masters live in `design/art/`. WebP copies live at matching paths in `public/art/`, except the style sheets and `_checks/`. Names use kebab-case: `<category>-<id>-<part>` where a part exists. Vessel IDs: dome, bottle, envelope, tin, lantern, musicbox, maison, snow-globe, mixtape, instant-camera, ramen, fortune-cookie, red-packet, phone-booth, firefly-jar, hourglass, gashapon. Place IDs: senado, tst-clock, taipei101, sensoji, fushimi, gyeongbok, merlion, grandpal, wumen, petronas, aurele-cotai.
 
 The original SVG art remains in `src/art.js` and is recoverable from Git tag `art-svg-v1`. These bitmap assets are not wired into app screens yet.
 
@@ -15,6 +15,8 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 - All nine portraits are the main profile pictures, with an identical 860 px diameter disc centered at (505, 526). `_checks/portraits-small.png` shows 24 px and 40 px tests.
 - Passport stamps use one ink color each. Paper textures are opaque and seamlessly tile at all edges. Scene edges fade to transparency.
 - A2 idle effects: `vessels/vessel-dome-glint.png` overlays the existing dome glass without changing vessel art; `fx/fx-glint.png` catches on wax seals and brass edges. Roy approved both after `_checks/idle-glint-review.png` showed the dome at 120/240 px and the sparkle at 16/24 px on envelope and tin. `finish-idle-glints.py` downscaled and refined the generated layers.
+- T10a snow-globe test: original winter scene inside a clear lifting globe, with separate base, scene, drifting snow, glass and idle glint. Its data-driven vessel block follows the PR #42 `IllustratedParts` field names. `_checks/snow-globe-motion.png` shows the measured open keyframes and mouth/sparkle/base anchors; `_checks/snow-globe-silhouette.png` shows 40/120 px. Roy approved this test with a full-clear glass lift and 22 small pale falling snow particles.
+- T10a batch 1: all ten vessels follow the approved plan and PR #42 vessel data format. No `ground` layers or split/twist/door roles. Moving layers have measured opening keyframes; snow and sand drift down, steam/fireflies rise. The cassette reels spin independently. Each new vessel has 40/120 px silhouette and closed/half/open motion sheets. The complete camera photo uses its at=0 keyframe for the resting stack; raw part compositing alone would expose it. Pivots and anchors are measured on the normalized canvas. All ten original designs were checked against the plan’s rejected IP ideas; assembled designs were retained. PR #46 review updates redraw the firefly layer as 19 warm golden points that rise/fade, add chopsticks to the ramen lid, keep steam visible, add the six requested whole-vessel idle motions, keep the phone-booth light on, and constrain the fully-out camera photo to the canvas.
 - The built-in image tool returned the map at native 1254 × 1254, its largest square output here; no artificial upscale was used.
 - The map entry in `manifest.json` has eleven hand-placed `pins` coordinates in that native 1254 × 1254 pixel space. They follow the illustrative coastlines rather than a precise map projection. `_checks/map-pins.png` overlays their exact points and labels; the Macau boutique pin sits beside Senado Square.
 - The T9c pin placement was checked against Roy's supplied world map and an [online East/Southeast Asia map](https://maplab-icon.com/blog-entry-784-html/); [Natural Earth coastlines](https://www.naturalearthdata.com/downloads/10m-physical-vectors/) were consulted for a reliable geographic source. These pins are display positions only; actual location checks use the app's place coordinates.
@@ -22,22 +24,16 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 - WebP exports use sharp/libvips quality 85 and preserve transparency. Vessel, stamp, portrait and seal exports have max edge 512 px; map has max edge 1600 px. App icon PNG sizes are in `public/icons/`.
 - Run checks with the Python scripts in `design/art/scripts/` (Pillow required). Run `npm run build` before merging.
 
-- A3 cabinet tiles are cut from one generated source in `_checks/cabinet-source.png`. The 1024 px masters have a repeatable 384 px row, a 256 px crown and a 192 px base; their measured geometry is in `manifest.json`. `_checks/cabinet-tiles-review.png` shows three rows with vessels at phone and desktop widths and 400% seam crops. Roy approved the review at `7b1f646`. The three WebP copies keep the full 1024 px width, quality 85 and alpha, exported with the unchanged shared exporter through `_checks/export-cabinet.cjs`. Claude wires the app separately.
-
-| Cabinet WebP | Size | Bytes |
-|---|---:|---:|
-| `public/art/cabinet/cabinet-crown.webp` | 1024×256 | 21,370 |
-| `public/art/cabinet/cabinet-row.webp` | 1024×384 | 19,020 |
-| `public/art/cabinet/cabinet-base.webp` | 1024×192 | 13,748 |
+A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: crown 1024×256, repeatable row 1024×384, base 1024×192. They were cut from one generated source; Roy approved `_checks/cabinet-tiles-review.png` at `7b1f646`. The manifest preserves the exact A3 prompts and measured geometry.
 
 ## Masters
 
 | File | What | Size | Notes |
 |---|---|---:|---|
 | `app-icon.png` | Blue rose dome app icon master | 1024×1024 | opaque |
-| `cabinet/cabinet-base.png` | Tiling cabinet base with brass feet | 1024×192 |  |
-| `cabinet/cabinet-crown.png` | Tiling cabinet crown with brass finials | 1024×256 |  |
-| `cabinet/cabinet-row.png` | One repeatable cabinet shelf row | 1024×384 |  |
+| `cabinet/cabinet-base.png` | Tiling cabinet base with brass feet | 1024×192 | processed; see manifest |
+| `cabinet/cabinet-crown.png` | Tiling cabinet crown with brass finials | 1024×256 | processed; see manifest |
+| `cabinet/cabinet-row.png` | One repeatable cabinet shelf row | 1024×384 | processed; see manifest |
 | `cabinet/cabinet-wall.png` | Warm plaster and wood-panel wall | 1024×1536 | opaque |
 | `fx/fx-glint.png` | Small four-point idle sparkle for wax and brass | 1024×1024 | processed; see manifest |
 | `fx/fx-light-burst.png` | Warm radial opening light effect | 1024×1024 | processed; see manifest |
@@ -91,6 +87,25 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 | `vessels/vessel-envelope-flap.png` | Wax-Sealed Letter — flap layer | 1024×1024 | pivot 496,260 |
 | `vessels/vessel-envelope-seal.png` | Wax-Sealed Letter — seal layer | 1024×1024 |  |
 | `vessels/vessel-envelope.png` | Assembled wax-sealed letter vessel | 1024×1024 |  |
+| `vessels/vessel-firefly-jar-fireflies.png` | Cloth-Covered Firefly Jar — fireflies layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-firefly-jar-jar.png` | Cloth-Covered Firefly Jar — jar layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-firefly-jar-lid.png` | Cloth-Covered Firefly Jar — lid layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-firefly-jar.png` | Assembled cloth-covered firefly jar vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-fortune-cookie-left.png` | Fortune Cookie On A Plate — left layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-fortune-cookie-plate.png` | Fortune Cookie On A Plate — plate layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-fortune-cookie-right.png` | Fortune Cookie On A Plate — right layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-fortune-cookie-slip.png` | Fortune Cookie On A Plate — slip layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-fortune-cookie.png` | Assembled fortune cookie on a plate vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-gashapon-bottom.png` | Pastel Clear-Top Toy Capsule — bottom layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-gashapon-top.png` | Pastel Clear-Top Toy Capsule — top layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-gashapon.png` | Assembled pastel clear-top toy capsule vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-hourglass-cap.png` | Wood And Brass Hourglass — cap layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-hourglass-frame-and-glass.png` | Wood And Brass Hourglass — frame-and-glass layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-hourglass-sand.png` | Wood And Brass Hourglass — sand layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-hourglass.png` | Assembled wood and brass hourglass vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-instant-camera-camera.png` | Original Instant Camera — camera layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-instant-camera-photo.png` | Original Instant Camera — photo layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-instant-camera.png` | Assembled original instant camera vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-lantern-body.png` | Mid-Autumn Lantern — body layer | 1024×1024 |  |
 | `vessels/vessel-lantern-cap.png` | Mid-Autumn Lantern — cap layer | 1024×1024 |  |
 | `vessels/vessel-lantern-glow.png` | Mid-Autumn Lantern — glow layer | 1024×1024 |  |
@@ -99,13 +114,37 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 | `vessels/vessel-maison-lid.png` | Maison Aurèle Ring Box — lid layer | 1024×1024 | pivot 605,300 |
 | `vessels/vessel-maison-ring.png` | Maison Aurèle Ring Box — ring layer | 1024×1024 |  |
 | `vessels/vessel-maison.png` | Assembled Maison Aurèle ring box vessel | 1024×1024 |  |
+| `vessels/vessel-mixtape-case.png` | Cassette In A Clear Case — case layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-mixtape-cassette.png` | Cassette In A Clear Case — cassette layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-mixtape-glint.png` | Cassette In A Clear Case — glint layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-mixtape-reel-left.png` | Cassette In A Clear Case — reel-left layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-mixtape-reel-right.png` | Cassette In A Clear Case — reel-right layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-mixtape.png` | Assembled cassette in a clear case vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-musicbox-box.png` | Warm Wood Music Box — box layer | 1024×1024 |  |
 | `vessels/vessel-musicbox-lid.png` | Warm Wood Music Box — lid layer | 1024×1024 | pivot 541,292 |
 | `vessels/vessel-musicbox.png` | Assembled warm wood music box vessel | 1024×1024 |  |
+| `vessels/vessel-phone-booth-booth.png` | Original Red Phone Booth — booth layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-phone-booth-door.png` | Original Red Phone Booth — door layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-phone-booth-light.png` | Original Red Phone Booth — light layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-phone-booth.png` | Assembled original red phone booth vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-ramen-bowl.png` | Covered Ramen Bowl — bowl layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-ramen-lid.png` | Covered Ramen Bowl — lid layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-ramen-steam.png` | Covered Ramen Bowl — steam layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-ramen.png` | Assembled covered ramen bowl vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-red-packet-flap.png` | Gold-Foil Red Packet — flap layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-red-packet-packet.png` | Gold-Foil Red Packet — packet layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-red-packet-seal.png` | Gold-Foil Red Packet — seal layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-red-packet.png` | Assembled gold-foil red packet vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-snow-globe-base.png` | Winter Scene Snow Globe — base layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-snow-globe-glint.png` | Winter Scene Snow Globe — glint layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-snow-globe-globe.png` | Winter Scene Snow Globe — globe layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-snow-globe-scene.png` | Winter Scene Snow Globe — scene layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-snow-globe-snow.png` | Winter Scene Snow Globe — snow layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-snow-globe.png` | Assembled winter scene snow globe vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-tin-box.png` | Tin Box — box layer | 1024×1024 |  |
 | `vessels/vessel-tin-lid.png` | Tin Box — lid layer | 1024×1024 | pivot 505,310 |
 | `vessels/vessel-tin.png` | Assembled tin box vessel | 1024×1024 |  |
 
 ## Review
 
-[Full contact sheet](_checks/contact-sheet.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png) · [Cabinet tile review](_checks/cabinet-tiles-review.png)
+[Full contact sheet](_checks/contact-sheet.png) · [Snow globe motion](_checks/snow-globe-motion.png) · [Snow globe 40/120 px](_checks/snow-globe-silhouette.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png) · [Cabinet tile review](_checks/cabinet-tiles-review.png)

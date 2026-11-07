@@ -1,0 +1,200 @@
+{
+  "mixtape": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      142,
+      361,
+      881,
+      901
+    ],
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rest_stack_exact": true,
+    "schema_pass": true,
+    "motion_sheet": "mixtape-motion.png",
+    "ip_review": "Original, no trademarks, characters, logos or text; rejected-ideas list checked."
+  },
+  "instant-camera": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      188,
+      327,
+      836,
+      900
+    ],
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rest_stack_exact": true,
+    "schema_pass": true,
+    "motion_sheet": "instant-camera-motion.png",
+    "ip_review": "Original, no trademarks, characters, logos or text; rejected-ideas list checked."
+  },
+  "ramen": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      232,
+      304,
+      827,
+      900
+    ],
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rest_stack_exact": true,
+    "schema_pass": true,
+    "motion_sheet": "ramen-motion.png",
+    "ip_review": "Original, no trademarks, characters, logos or text; rejected-ideas list checked."
+  },
+  "fortune-cookie": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      144,
+      308,
+      879,
+      900
+    ],
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rest_stack_exact": true,
+    "schema_pass": true,
+    "motion_sheet": "fortune-cookie-motion.png",
+    "ip_review": "Original, no trademarks, characters, logos or text; rejected-ideas list checked."
+  },
+  "red-packet": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      255,
+      166,
+      769,
+      900
+    ],
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rest_stack_exact": true,
+    "schema_pass": true,
+    "motion_sheet": "red-packet-motion.png",
+    "ip_review": "Original, no trademarks, characters, logos or text; rejected-ideas list checked."
+  },
+  "phone-booth": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      296,
+      126,
+      728,
+      900
+    ],
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rest_stack_exact": true,
+    "schema_pass": true,
+    "motion_sheet": "phone-booth-motion.png",
+    "ip_review": "Original, no trademarks, characters, logos or text; rejected-ideas list checked."
+  },
+  "firefly-jar": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      220,
+      193,
+      804,
+      901
+    ],
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rest_stack_exact": true,
+    "schema_pass": true,
+    "motion_sheet": "firefly-jar-motion.png",
+    "ip_review": "Original, no trademarks, characters, logos or text; rejected-ideas list checked."
+  },
+  "hourglass": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      297,
+      122,
+      727,
+      899
+    ],
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rest_stack_exact": true,
+    "schema_pass": true,
+    "motion_sheet": "hourglass-motion.png",
+    "ip_review": "Original, no trademarks, characters, logos or text; rejected-ideas list checked."
+  },
+  "gashapon": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      244,
+      235,
+      780,
+      900
+    ],
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "rest_stack_exact": true,
+    "schema_pass": true,
+    "motion_sheet": "gashapon-motion.png",
+    "ip_review": "Original, no trademarks, characters, logos or text; rejected-ideas list checked."
+  }
+}
