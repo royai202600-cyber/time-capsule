@@ -638,6 +638,156 @@ export const VESSELS = {
     desc: { zh: "膠囊裡的小驚喜。", en: "A little surprise in a capsule." },
     price: 0,
   },
+  "vinyl": {
+    name: { zh: "黑膠唱片", en: "Vinyl record" },
+    desc: { zh: "把我們的歌，留給那一天。", en: "Our song, saved for that day." },
+    price: 22,
+  },
+  "vhs": {
+    name: { zh: "錄影帶", en: "Home-video VHS" },
+    desc: { zh: "倒帶，回到那一年。", en: "Rewind to that year." },
+    price: 16,
+  },
+  "photo-strip": {
+    name: { zh: "人生四格", en: "Photo-booth strip" },
+    desc: { zh: "四格裡的我們。", en: "Us, in four frames." },
+    price: 0,
+  },
+  "arcade": {
+    name: { zh: "迷你街機", en: "Mini arcade" },
+    desc: { zh: "投幣，再玩一局。", en: "Insert a coin, one more round." },
+    price: 22,
+  },
+  "pager": {
+    name: { zh: "傳呼機", en: "Pager" },
+    desc: { zh: "520，1314。", en: "520, 1314." },
+    price: 14,
+  },
+  "rotary-phone": {
+    name: { zh: "撥號電話", en: "Rotary phone" },
+    desc: { zh: "一通遲來好多年的電話。", en: "A call that arrives years later." },
+    price: 18,
+  },
+  "umbrella": {
+    name: { zh: "共撐一把傘", en: "Shared umbrella" },
+    desc: { zh: "雨天，一起撐。", en: "Sharing one umbrella in the rain." },
+    price: 16,
+  },
+  "love-padlock": {
+    name: { zh: "同心鎖", en: "Love padlock" },
+    desc: { zh: "把承諾鎖起來。", en: "A promise, locked in." },
+    price: 18,
+  },
+  "lucky-stars": {
+    name: { zh: "幸運星瓶", en: "Lucky-star jar" },
+    desc: { zh: "一顆一顆摺好的心意。", en: "Wishes, folded one by one." },
+    price: 12,
+  },
+  "paper-plane": {
+    name: { zh: "紙飛機", en: "Paper plane" },
+    desc: { zh: "讓話乘風飛去。", en: "Let your words take flight." },
+    price: 0,
+  },
+  "lucky-cat": {
+    name: { zh: "招財貓", en: "Lucky cat" },
+    desc: { zh: "招來好運。", en: "Waving in good luck." },
+    price: 18,
+  },
+  "mooncake-tin": {
+    name: { zh: "月餅禮盒", en: "Mooncake tin" },
+    desc: { zh: "月圓，人團圓。", en: "Full moon, family together." },
+    price: 16,
+  },
+  "cake-box": {
+    name: { zh: "生日蛋糕盒", en: "Birthday cake box" },
+    desc: { zh: "生日快樂，許個願。", en: "Happy birthday, make a wish." },
+    price: 0,
+  },
+  "candy-box": {
+    name: { zh: "糖果全盒", en: "New Year candy box" },
+    desc: { zh: "甜甜蜜蜜過新年。", en: "A sweet new year." },
+    price: 16,
+  },
+  "chocolate-heart": {
+    name: { zh: "朱古力心盒", en: "Heart chocolate box" },
+    desc: { zh: "一盒甜蜜的心意。", en: "A box of sweet feelings." },
+    price: 16,
+  },
+  "stocking": {
+    name: { zh: "聖誕襪", en: "Christmas stocking" },
+    desc: { zh: "聖誕早晨的驚喜。", en: "A Christmas-morning surprise." },
+    price: 16,
+  },
+  "pumpkin": {
+    name: { zh: "南瓜燈", en: "Pumpkin lantern" },
+    desc: { zh: "不給糖就搗蛋。", en: "Trick or treat." },
+    price: 16,
+  },
+  "rice-dumpling": {
+    name: { zh: "粽子", en: "Rice dumpling" },
+    desc: { zh: "端午安康。", en: "For the Dragon Boat Festival." },
+    price: 16,
+  },
+  "wish-tag": {
+    name: { zh: "七夕願望籤", en: "Qixi wish tag" },
+    desc: { zh: "把願望掛在星河下。", en: "A wish hung beneath the stars." },
+    price: 16,
+  },
+  "river-lantern": {
+    name: { zh: "河燈", en: "Floating river lantern" },
+    desc: { zh: "讓思念順水漂遠。", en: "Let a thought float downstream." },
+    price: 0,
+  },
+  "clock-tower": {
+    name: { zh: "鐘樓座鐘", en: "Clock-tower clock" },
+    desc: { zh: "在尖沙咀鐘樓下打開。", en: "Made for the Tsim Sha Tsui Clock Tower." },
+    price: 0,
+  },
+  "senado-fountain": {
+    name: { zh: "噴泉花磚盒", en: "Fountain and wave-tile box" },
+    desc: { zh: "議事亭前地的噴泉與波浪地磚。", en: "Senado Square's fountain and wave tiles." },
+    price: 0,
+  },
+  "bamboo-tower": {
+    name: { zh: "竹節高塔罐", en: "Bamboo-tier tower tin" },
+    desc: { zh: "節節高升。", en: "Rising tier by tier." },
+    price: 0,
+  },
+  "gate-lantern": {
+    name: { zh: "大紅燈籠", en: "Great red gate lantern" },
+    desc: { zh: "雷門下的一盞紅燈籠。", en: "A great red lantern by the gate." },
+    price: 0,
+  },
+  "torii-scroll": {
+    name: { zh: "鳥居卷軸", en: "Torii-gate scroll" },
+    desc: { zh: "穿過千座鳥居。", en: "Through a thousand vermilion gates." },
+    price: 0,
+  },
+  "palace-pavilion": {
+    name: { zh: "宮殿亭閣盒", en: "Palace-pavilion box" },
+    desc: { zh: "彩繪屋簷下的秘密。", en: "A secret under painted eaves." },
+    price: 0,
+  },
+  "lionfish-fountain": {
+    name: { zh: "獅頭魚尾噴泉瓶", en: "Lion-fish fountain bottle" },
+    desc: { zh: "海邊的噴泉，替你守候。", en: "A seaside fountain keeps watch." },
+    price: 0,
+  },
+  "golden-roof": {
+    name: { zh: "金頂寶盒", en: "Golden-roof jewel box" },
+    desc: { zh: "層層金頂裡的珍寶。", en: "A treasure under tiered gold roofs." },
+    price: 0,
+  },
+  "gate-lacquer": {
+    name: { zh: "紅牆宮門漆盒", en: "Red-wall gate lacquer box" },
+    desc: { zh: "紅牆宮門後的話。", en: "Words behind the red palace wall." },
+    price: 0,
+  },
+  "twin-towers": {
+    name: { zh: "雙塔對罐", en: "Twin-tower tins" },
+    desc: { zh: "一對，永遠並肩。", en: "A pair, always side by side." },
+    price: 0,
+  },
 };
 
 // F4 screen copy. Keys are namespaced to keep parallel screen work independent.
