@@ -11,6 +11,7 @@ import { VesselSettingsProvider } from "../src/components/Vessel";
 import { LanguageProvider } from "../src/i18n";
 import { AuthProvider } from "../src/services/auth";
 import { MusicProvider } from "../src/services/music";
+import { AlarmLaunch } from "../src/features/alarm/AlarmLaunch";
 export default function RootLayout() {
   const [loaded] = useFonts({
     NotoSerifTC: NotoSerifTC_400Regular,
@@ -30,7 +31,12 @@ export default function RootLayout() {
                 name="create/index"
                 options={{ presentation: "modal" }}
               />
+              <Stack.Screen
+                name="wake/[id]"
+                options={{ presentation: "fullScreenModal", gestureEnabled: false, animation: "fade" }}
+              />
             </Stack>
+            <AlarmLaunch />
           </VesselSettingsProvider>
         </AuthProvider>
       </MusicProvider>

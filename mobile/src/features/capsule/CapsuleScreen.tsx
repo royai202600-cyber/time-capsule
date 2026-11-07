@@ -27,6 +27,7 @@ import { GiftQr } from "./GiftQr";
 import { LightBurst } from "./LightBurst";
 import { RitualHold } from "./RitualHold";
 import { SealedLines } from "./SealedLines";
+import { useAlarmText } from "../alarm/strings";
 import { formatDate, loadOne, openForRecipient, status, type Bundle, type Opened, type Row } from "./model";
 
 const blank: Bundle = { capsules: [], people: {}, places: {}, vessels: {} };
@@ -201,5 +202,15 @@ function LetterView({ c, content, name, placeName, self, language, t }: { c: Row
     <Text style={{ color: C.plum, fontFamily: handwriting, fontSize: 19, textAlign: "right", marginTop: 25 }}>{self ? t("capsule.pastMe") : name}</Text><Text style={{ color: C.muted, fontSize: 12, textAlign: "right" }}>{t("capsule.sealedOn", formatDate(c.sealed_at, language, true))}</Text>
   </View>{!!content.gift_code && <View style={{ backgroundColor: C.ink, borderRadius: 16, padding: 22, alignItems: "center", gap: 12 }}><Text style={{ color: C.cream, fontFamily: serif, fontSize: 19, textAlign: "center" }}>{t("capsule.giftHead", brand)}</Text><Text style={{ color: C.white }}>{t("capsule.giftItem")}</Text><Text style={{ color: C.cream, fontFamily: serif, fontSize: 23 }}>{content.gift_code}</Text><GiftQr value={content.gift_code} label={t("capsule.qr")} /><Text style={{ color: C.white, textAlign: "center" }}>{t("capsule.giftNote")}</Text></View>}
     <Text style={{ color: C.blue, fontFamily: serif, textAlign: "center", marginTop: 8 }}>{t("capsule.record", formatDate(content.opened_at, language, true), placeName)}</Text><Action ghost title={self ? t("capsule.replySelf") : t("capsule.reply", name)} onPress={() => router.push({ pathname: "/create", params: { recipient: self ? "future" : c.sender } })} />
+    <WakeMe c={c} name={name} self={self} />
   </View>;
+}
+
+/** Turn this opened capsule into a daily wake-up alarm (features/alarm). */
+function WakeMe({ c, name, self }: { c: Row; name: string; self: boolean }) {
+  const at = useAlarmText();
+  return <Pressable accessibilityRole="button" onPress={() => { void haptics.tap(); router.push({ pathname: "/alarms/edit", params: { capsule: c.id, vessel: c.vessel, name, self: self ? "1" : "0" } }); }}
+    style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingVertical: 14, borderRadius: 14, borderWidth: 1, borderColor: C.brass, backgroundColor: "#FBF6EA" }}>
+    <ArtIcon name="alarm" size={20} color="#8A6A2E" /><Text style={{ color: "#8A6A2E", fontFamily: sans, fontSize: 16 }}>{at("wakeMe")}</Text>
+  </Pressable>;
 }

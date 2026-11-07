@@ -13,6 +13,8 @@ import { useAuth } from "../../services/auth";
 import { capsules, friendships, vessels } from "../../services/data";
 import { supabase } from "../../services/supabase";
 import { C, serif, sans, shadows } from "../../theme";
+import { useAlarms } from "../alarm/store";
+import { useAlarmText } from "../alarm/strings";
 
 function Row({ label, value, onPress }: { label: string; value?: string; onPress: () => void }) {
   return <Pressable accessibilityRole="button" onPress={() => { haptics.tap(); onPress(); }} style={{ paddingVertical: 18, borderBottomColor: C.line, borderBottomWidth: 1, flexDirection: "row", justifyContent: "space-between" }}>
@@ -25,6 +27,8 @@ export default function MeScreen() {
   const { session, profile, refresh } = useAuth();
   const [counts, setCounts] = useState({ inbox: 0, sent: 0, opened: 0, friends: 0, owned: 0 });
   const music = useMusic();
+  const alarms = useAlarms();
+  const at = useAlarmText();
   const [sfx, setSfx] = useState(soundEffectsOn());
   useEffect(() => onSoundEffectsChange(setSfx), []);
   const [prefs, setPrefs] = useState({ remind_open: true, remind_nearby: true });
@@ -66,6 +70,7 @@ export default function MeScreen() {
     <View style={{ paddingHorizontal: 16, backgroundColor: C.white, borderRadius: 16, borderWidth: 1, borderColor: C.line }}>
       <Row label={t("me.language")} value={language === "zh" ? "繁中" : "English"} onPress={() => setLanguage(language === "zh" ? "en" : "zh")} />
       <Row label={t("me.friends")} value={String(counts.friends)} onPress={() => router.push("/friends")} />
+      <Row label={at("title")} value={alarms?.length ? String(alarms.filter(a => a.on).length) : ""} onPress={() => router.push("/alarms")} />
       <Row label={t("me.owned")} value={String(counts.owned)} onPress={() => router.push("/cabinet")} />
       <Row label={t("me.invite")} onPress={() => router.push("/invite")} />
     </View>

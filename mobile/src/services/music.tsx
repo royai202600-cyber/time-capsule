@@ -9,8 +9,9 @@ import { prepareSoundEffects, releaseSoundEffects } from "./sfx";
 // remembered per device, pauses when the app is in the background.
 const KEY = "tc.music";
 const VOLUME = 0.3;
-type Music = { on: boolean; setOn: (on: boolean) => void };
-const MusicContext = createContext<Music>({ on: true, setOn: () => {} });
+/** `hold` pauses the background music while a screen plays its own sound (the alarm wake view). */
+type Music = { on: boolean; setOn: (on: boolean) => void; hold: (held: boolean) => void };
+const MusicContext = createContext<Music>({ on: true, setOn: () => {}, hold: () => {} });
 export const useMusic = () => useContext(MusicContext);
 
 export function MusicProvider({ children }: { children: React.ReactNode }) {
@@ -20,6 +21,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const fade = useRef<ReturnType<typeof setInterval> | null>(null);
   const onRef = useRef(on);
   onRef.current = on;
+  const held = useRef(false);
 
   const fadeTo = (target: number, ms: number, then?: () => void) => {
     const p = player.current; if (!p) return;
@@ -31,7 +33,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
       if (i >= steps) { if (fade.current) clearInterval(fade.current); fade.current = null; then?.(); }
     }, 50);
   };
-  const play = () => { const p = player.current; if (!p || !onRef.current) return; if (!p.playing) { p.volume = 0; p.play(); } fadeTo(VOLUME, 2500); };
+  const play = () => { const p = player.current; if (!p || !onRef.current || held.current) return; if (!p.playing) { p.volume = 0; p.play(); } fadeTo(VOLUME, 2500); };
   const pause = () => { const p = player.current; if (!p?.playing) return; fadeTo(0, 600, () => p.pause()); };
 
   useEffect(() => {
@@ -66,5 +68,6 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setOn = (next: boolean) => { setOnState(next); void AsyncStorage.setItem(KEY, next ? "on" : "off").catch(() => {}); };
-  return <MusicContext.Provider value={{ on, setOn }}>{children}</MusicContext.Provider>;
+  const hold = (next: boolean) => { held.current = next; if (next) pause(); else play(); };
+  return <MusicContext.Provider value={{ on, setOn, hold }}>{children}</MusicContext.Provider>;
 }
