@@ -7,11 +7,11 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | ID | Task | Owner | Done when |
 |---|---|---|---|
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
-| W1 | Daily wake-up alarm from an opened capsule. Claude: screens on `claude/capsule-alarm` (letter button, alarm editor, Me → Alarms, full-screen wake view). Claude built it, including the `expo-notifications` wiring. Codex: verify in iPhone Expo Go and merge. | Claude → Codex | In Expo Go an alarm fires at the set time with the default sound, tapping it opens the wake view, Snooze rings again 9 min later, Stop ends it. Website explains it can't ring. Later: swap `scheduler.ts` for AlarmKit / Android exact alarms in the installed build. |
 
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
+| W1 | Daily wake-up alarm from an opened capsule | Codex / Roy | PR #41 merged as `ed60924` after green CI. Browser editor, wake and snooze previews, 23 tests, TypeScript and iOS/web exports pass. Roy waived the pre-merge phone gate; physical Expo Go alarm delivery, tap-to-wake and real nine-minute snooze remain for his QR check. Installed-build AlarmKit / Android exact alarms remain later work. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | F1 | Home and capsule opening | Codex | Claude verified Home → opening ritual → letter and opening record in browser. F3 native location and map, full-width pages, Sent routing and package QR are integrated; typecheck and web/iOS exports pass. |
@@ -34,6 +34,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+- PR #42: Data-driven vessel spec and generic motion engine, with the seven existing vessels preserved in the manifest. Green CI, TypeScript, 19 tests and iOS export pass; squash-merged as `a3b3c24`. Roy will check native idle/open behavior on all seven vessels later through Expo Go.
 - A3: Roy approved cabinet tiles review `7b1f646`; crown, repeatable row and base masters plus full-width 1024 px WebPs at quality 85 with exact alpha preservation are complete. All 71 art masters pass the scoped audit; measured geometry, seam review and regenerated contact sheet are recorded. Claude wires the app separately.
 - PR #37: Larger, faster vessel idle motion and glints, with the centred-card and Reduce Motion gates preserved. Green CI, 19 tests, TypeScript and iOS export pass. Browser checked at 390 px, including music-box lid rotation and the static fallback; console clean. Squash-merged as `e48fcb1`, followed by an owner-authored production release. Physical phone appearance for this amplitude change remains unverified.
 - PR #35 / #36: Continuous iPhone handwriting plus custom Journey, wax-seal + and Cabinet dock icons. Roy verified long strokes, fast scribbles and outside-pad scrolling on both physical iPhone Expo Go and Safari before merge. Each PR CI passed; the combined candidate passes 19 tests, TypeScript and web/iOS exports. Browser checks covered stroke continuity, scrolling and all three dock routes. Squash-merged in order as `e59df7b` and `fd26580`, followed by one owner-authored production release.
