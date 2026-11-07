@@ -46,6 +46,7 @@ export const capsules = {
       p_lng: lng,
       p_accuracy: accuracy,
     }),
+  // p_voice / p_voice_ms: a voice note already uploaded to the sender's folder (services/voice.ts).
   send: (args: Database["public"]["Functions"]["send_capsule"]["Args"]) =>
     supabase.rpc("send_capsule", args),
 };

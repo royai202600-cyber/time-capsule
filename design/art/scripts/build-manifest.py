@@ -140,9 +140,13 @@ def main() -> None:
     VESSEL_SPECS.update(json.loads((CHECKS / "t10a-specs.json").read_text()))
     audit = json.loads((CHECKS / "assets.json").read_text())
     pivots = json.loads((CHECKS / "pivots.json").read_text())
+    preserved = json.loads((CHECKS / "manifest-cabinet.json").read_text())
     entries = []
     for item in audit["assets"]:
         rel = item["path"]
+        if rel in preserved:
+            entries.append(preserved[rel])
+            continue
         if rel not in prompts:
             raise KeyError(f"missing exact prompt: {rel}")
         entry = {
@@ -189,6 +193,7 @@ def main() -> None:
         "- `icon-reference.png` is one 4×4 sheet on paper. Row-major order: pin, back, close, plus, lock, check, shop, user, map, cabinet, share, camera, pen; the last three cells are blank. These are references only; the screens team draws final UI icons in code.",
         "- WebP exports use sharp/libvips quality 85 and preserve transparency. Vessel, stamp, portrait and seal exports have max edge 512 px; map has max edge 1600 px. App icon PNG sizes are in `public/icons/`.",
         "- Run checks with the Python scripts in `design/art/scripts/` (Pillow required). Run `npm run build` before merging.", "",
+        "A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: crown 1024×256, repeatable row 1024×384, base 1024×192. They were cut from one generated source; Roy approved `_checks/cabinet-tiles-review.png` at `7b1f646`. The manifest preserves the exact A3 prompts and measured geometry.", "",
         "## Masters", "", "| File | What | Size | Notes |", "|---|---|---:|---|",
     ]
     for entry in entries:
@@ -201,7 +206,7 @@ def main() -> None:
         if not entry["transparent"]:
             notes.append("opaque")
         lines.append(f"| `{rel}` | {entry['what']} | {entry['size_px'][0]}×{entry['size_px'][1]} | {', '.join(notes)} |")
-    lines += ["", "## Review", "", "[Full contact sheet](_checks/contact-sheet.png) · [Snow globe motion](_checks/snow-globe-motion.png) · [Snow globe 40/120 px](_checks/snow-globe-silhouette.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png)", ""]
+    lines += ["", "## Review", "", "[Full contact sheet](_checks/contact-sheet.png) · [Snow globe motion](_checks/snow-globe-motion.png) · [Snow globe 40/120 px](_checks/snow-globe-silhouette.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png) · [Cabinet tile review](_checks/cabinet-tiles-review.png)", ""]
     (ROOT / "README.md").write_text("\n".join(lines))
     print("manifest and README:", len(entries), "masters", len(prompts), "prompts")
 

@@ -6,12 +6,15 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| T10a | First batch of 10 approved new vessels (★ rows of the 50-vessel plan), art only | Codex | Snow globe approved and fixes applied. All 10 vessels, layers, WebPs, PR #42 vessel blocks, 40/120 px and motion checks complete; 111/111 PNG audit and root build pass. Art PR awaiting Roy’s final OK. |
+| T10a | First batch of 10 approved new vessels (★ rows of the 50-vessel plan), art only | Codex | Snow globe approved and fixes applied. All 10 vessels, layers, WebPs, PR #42 vessel blocks, 40/120 px and motion checks complete; 114/114 PNG audit and root build pass. PR #46 awaiting Roy’s final OK. |
+| D1 | Main-only Vercel Git deployments and production retry | Codex | Requested ignore command saved and reloaded. PR #45 adds `git.deploymentEnabled` to block preview creation; main and slash-containing feature names pass policy checks. Verify this PR push is skipped, then retry latest owner-authored main once the Hobby daily quota clears. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
+| V1 | Sealed sender voice notes | Claude UI → Codex backend | Implementation, 16 live security groups, green PR CI and Roy’s full Safari/Expo Go voice checklist passed; #40 merged as `04d1e71`. Production deployment is blocked by Vercel’s 100 deployments/day quota (`api-deployments-free-per-day`, retry in 24 hours). Reattempt latest owner-authored main after reset, then move to Done. Orphan cleanup remains a follow-up. |
+| W1 | Daily wake-up alarm from an opened capsule | Codex / Roy | PR #41 merged as `ed60924`; PR #40 connects the sender's signed voice URL, waits for auth on cold start, sends Stop Home, tracks and cancels snoozes on Off/Delete, and adds a dev-only roughly two-minute test shortcut. TypeScript, 23 tests and iOS/web exports pass. Roy waived the pre-merge phone gate; physical Expo Go alarm delivery, tap-to-wake, real nine-minute snooze and Off remain for his QR check. Installed-build AlarmKit / Android exact alarms remain later work. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | F1 | Home and capsule opening | Codex | Claude verified Home → opening ritual → letter and opening record in browser. F3 native location and map, full-width pages, Sent routing and package QR are integrated; typecheck and web/iOS exports pass. |
@@ -19,6 +22,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
+- V1 cleanup follow-up: remove unattached `voice-notes` uploads older than 24 hours through the Storage API, with an attachment re-check. Pending uploads remain unreadable. Never delete attached recordings or manipulate Storage metadata to delete blobs.
 | ID | Task | Owner | Done when |
 |---|---|---|---|
 | T2 | Email for everyone: buy/choose a domain (Roy), set up Resend SMTP in Supabase, bilingual verify + reset-password templates, raise email rate limit | Codex (+ Roy for the domain and Resend account) | A non-team email address can sign up, verify and reset its password; emails are in 繁中 + English |
@@ -34,6 +38,9 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+- PR #39 / C1: Scrolling Cabinet wired to A3 crown/row/base tiles, virtualized rows and responsive columns. Reviewed and squash-merged as `2d25bf2` after green CI; combined 23 tests, TypeScript and iOS export pass. Browser checks cover 375/390 px, desktop, base scrolling and close-up return. PR #42 baseY compatibility is retained. An owner-authored release follows; physical Expo Go tilt/gestures remain unverified.
+- PR #42: Data-driven vessel spec and generic motion engine, with the seven existing vessels preserved in the manifest. Green CI, TypeScript, 19 tests and iOS export pass; squash-merged as `a3b3c24`. Roy will check native idle/open behavior on all seven vessels later through Expo Go.
+- A3: Roy approved cabinet tiles review `7b1f646`; crown, repeatable row and base masters plus full-width 1024 px WebPs at quality 85 with exact alpha preservation are complete. All 71 art masters pass the scoped audit; measured geometry, seam review and regenerated contact sheet are recorded. Claude wires the app separately.
 - PR #37: Larger, faster vessel idle motion and glints, with the centred-card and Reduce Motion gates preserved. Green CI, 19 tests, TypeScript and iOS export pass. Browser checked at 390 px, including music-box lid rotation and the static fallback; console clean. Squash-merged as `e48fcb1`, followed by an owner-authored production release. Physical phone appearance for this amplitude change remains unverified.
 - PR #35 / #36: Continuous iPhone handwriting plus custom Journey, wax-seal + and Cabinet dock icons. Roy verified long strokes, fast scribbles and outside-pad scrolling on both physical iPhone Expo Go and Safari before merge. Each PR CI passed; the combined candidate passes 19 tests, TypeScript and web/iOS exports. Browser checks covered stroke continuity, scrolling and all three dock routes. Squash-merged in order as `e59df7b` and `fd26580`, followed by one owner-authored production release.
 - A2 wiring / PR #34: Approved dome highlight and wax/brass sparkle bundled through the art manifest and shown only during idle motion. Reviewed at 390 px on signed-in Home; captured dome, Maison and lantern peaks, verified Reduce Motion removes the layers, and checked a clean browser console. Green CI, 19 tests, TypeScript and iOS export; squash-merged as `edfafaf`, followed by an owner-authored production release. Physical Expo Go glint appearance remains unverified.

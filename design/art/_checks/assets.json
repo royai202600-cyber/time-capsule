@@ -1,6 +1,6 @@
 {
-  "count": 111,
-  "passed": 111,
+  "count": 114,
+  "passed": 114,
   "failed": [],
   "assets": [
     {
@@ -15,6 +15,63 @@
         255,
         255,
         255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "cabinet/cabinet-base.png",
+      "size": [
+        1024,
+        192
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "cabinet/cabinet-crown.png",
+      "size": [
+        1024,
+        256
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "cabinet/cabinet-row.png",
+      "size": [
+        1024,
+        384
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
       ],
       "checks": {
         "size": true,
