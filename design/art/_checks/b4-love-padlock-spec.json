@@ -1,0 +1,57 @@
+{
+  "id": "love-padlock",
+  "opening": "A",
+  "idleMs": 4000,
+  "layers": [
+    {
+      "name": "lock",
+      "file": "vessel-love-padlock-lock.png",
+      "role": "static"
+    },
+    {
+      "name": "shackle",
+      "file": "vessel-love-padlock-shackle.png",
+      "role": "hinge",
+      "pivot": {
+        "x": 352,
+        "y": 402
+      },
+      "open": [
+        {
+          "at": 0,
+          "rotate": 0
+        },
+        {
+          "at": 0.5,
+          "rotate": -18
+        },
+        {
+          "at": 1,
+          "rotate": -36
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 511,
+    "y": 394
+  },
+  "baseY": 901,
+  "sparkle": {
+    "x": 658,
+    "y": 410
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null,
+  "idle": [
+    {
+      "type": "sway",
+      "deg": 3,
+      "pivot": {
+        "x": 511,
+        "y": 128
+      }
+    }
+  ]
+}

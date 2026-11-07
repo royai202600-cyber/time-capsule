@@ -1,6 +1,6 @@
 {
-  "count": 117,
-  "passed": 117,
+  "count": 148,
+  "passed": 148,
   "failed": [],
   "assets": [
     {
@@ -834,6 +834,82 @@
       "pass": true
     },
     {
+      "path": "vessels/vessel-arcade-cabinet.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-arcade-door.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-arcade-screen.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-arcade.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
       "path": "vessels/vessel-bottle-body.png",
       "size": [
         1024,
@@ -1537,6 +1613,139 @@
       "pass": true
     },
     {
+      "path": "vessels/vessel-love-padlock-lock.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-love-padlock-shackle.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-love-padlock.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-lucky-stars-glint.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-lucky-stars-jar.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-lucky-stars-lid.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-lucky-stars.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
       "path": "vessels/vessel-maison-box.png",
       "size": [
         1024,
@@ -1784,6 +1993,139 @@
       "pass": true
     },
     {
+      "path": "vessels/vessel-pager-body.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-pager-cover.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-pager-screen.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-pager.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-paper-plane-fold.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-paper-plane-plane.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-paper-plane.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
       "path": "vessels/vessel-phone-booth-booth.png",
       "size": [
         1024,
@@ -1842,6 +2184,63 @@
     },
     {
       "path": "vessels/vessel-phone-booth.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-photo-strip-sleeve.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-photo-strip-strip.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-photo-strip.png",
       "size": [
         1024,
         1024
@@ -1994,6 +2393,63 @@
     },
     {
       "path": "vessels/vessel-red-packet.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-rotary-phone-handset.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-rotary-phone-phone.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-rotary-phone.png",
       "size": [
         1024,
         1024
@@ -2165,6 +2621,139 @@
     },
     {
       "path": "vessels/vessel-tin.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-umbrella-note.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-umbrella-strap.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-umbrella-umbrella.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-umbrella.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-vhs-sleeve.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-vhs-tape.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-vhs.png",
       "size": [
         1024,
         1024

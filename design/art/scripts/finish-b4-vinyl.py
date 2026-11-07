@@ -2,7 +2,6 @@
 """Align the approved vinyl generation and its two gpt-image-2 isolation edits."""
 import argparse
 import json
-import math
 from pathlib import Path
 
 from PIL import Image, ImageChops, ImageDraw, ImageFont
@@ -32,9 +31,13 @@ def normalize(image):
     return canvas
 
 
-def move(image, amount):
+def transform_record(image, x=0, y=0, scale=1):
+    """Use the app's default 512,512 scale pivot and fractional x/y translations."""
+    size = round(1024 * scale)
+    scaled = image.resize((size, size), Image.Resampling.LANCZOS)
     canvas = Image.new("RGBA", (1024, 1024))
-    canvas.alpha_composite(image, (0, round(amount * 1024)))
+    canvas.alpha_composite(scaled, (round(512 + x * 1024 - size / 2),
+                                    round(512 + y * 1024 - size / 2)))
     return canvas
 
 
@@ -66,18 +69,22 @@ def main():
     assert bounds[2] - bounds[0] <= 760 and bounds[1] >= 100 and 880 <= bounds[3] - 1 <= 920, bounds
     assert all(im.getchannel("A").getpixel(point) == 0 for im in (record, sleeve, assembled)
                for point in ((0, 0), (1023, 0), (0, 1023), (1023, 1023)))
-    # F slide: the lower edge clears the sleeve's upper lip by the fully open pose.
-    slide_end = -0.30
-    moved = move(record, slide_end)
-    assert bbox(moved)[3] < bbox(sleeve)[1], (bbox(moved), bbox(sleeve))
+    # The full-size disk and the unchanged sleeve cannot stand side by side within
+    # 1024 px. Scale during the diagonal slide so the revealed disk ends complete,
+    # above the sleeve, fully inside the canvas, and at opacity 1.
+    end = {"x": 0.12, "y": -0.245, "scale": 0.65, "opacity": 1}
+    moved = transform_record(record, end["x"], end["y"], end["scale"])
+    moved_box, sleeve_box = bbox(moved), bbox(sleeve)
+    assert moved_box[3] < sleeve_box[1], (moved_box, sleeve_box)
+    assert all(0 < value < 1024 for value in moved_box), moved_box
     spec = {
         "id": "vinyl", "opening": "F", "idleMs": 4000,
         "idle": [{"type": "sway", "deg": 2.5, "pivot": {"x": 512, "y": bounds[3] - 1}}],
         "layers": [
             {"name": "record", "file": "vessel-vinyl-record.png", "role": "slide",
-             "open": [{"at": 0, "y": 0, "opacity": 1},
-                      {"at": 0.5, "y": -0.10, "opacity": 1},
-                      {"at": 1, "y": slide_end, "opacity": 0}]},
+             "open": [{"at": 0, "x": 0, "y": 0, "scale": 1, "opacity": 1},
+                      {"at": 0.5, "x": 0.06, "y": -0.08, "scale": 0.82, "opacity": 1},
+                      {"at": 1, **end}]},
             {"name": "sleeve", "file": "vessel-vinyl-sleeve.png", "role": "static"},
         ],
         "mouth": {"x": 512, "y": round(bbox(sleeve)[1] + 28)},
@@ -93,10 +100,8 @@ def main():
     font = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf", 18)
     for i, t in enumerate((0, 0.5, 1)):
         ox = 15 + i * 410
-        y = -0.20 * t if t <= 0.5 else -0.10 + (slide_end + 0.10) * (t - 0.5) * 2
-        shifted = move(record, y)
-        if t > 0.5:
-            shifted.putalpha(shifted.getchannel("A").point(lambda a: round(a * (2 - 2 * t))))
+        key = spec["layers"][0]["open"][i]
+        shifted = transform_record(record, key["x"], key["y"], key["scale"])
         frame = Image.alpha_composite(shifted, sleeve)
         sheet.paste(on_paper(frame).resize((400, 400), Image.Resampling.LANCZOS), (ox, 40))
         draw.text((ox + 10, 10), labels[i], fill="#16263F", font=font)
@@ -107,7 +112,7 @@ def main():
             draw.line((x - 6, y, x + 6, y), fill=colour, width=2)
             draw.line((x, y - 6, x, y + 6), fill=colour, width=2)
     draw.text((20, 463), f"vinyl · F slide · baseY {spec['baseY']} · mouth {spec['mouth']} · sparkle {spec['sparkle']}", fill="#16263F", font=font)
-    draw.text((20, 495), f"record slide: y 0 → -0.10 → {slide_end}; opacity 1 → 1 → 0 · sleeve static", fill="#16263F", font=font)
+    draw.text((20, 495), "record: (x,y,scale) (0,0,1) → (.06,-.08,.82) → (.12,-.245,.65); opacity 1", fill="#16263F", font=font)
     draw.text((20, 527), "idle: whole-vessel sway 2.5° from base · 4000 ms", fill="#16263F", font=font)
     draw.text((20, 559), "Crosshairs: plum = pivot, wax red = mouth, brass = sparkle", fill="#16263F", font=font)
     sheet.save(CHECKS / "vinyl-motion.png", optimize=True)
@@ -125,7 +130,8 @@ def main():
     comparison.save(CHECKS / "vinyl-comparison.png", optimize=True)
     report = {"canvas": [1024, 1024], "bbox": bounds, "baseY": spec["baseY"],
               "corners_alpha_zero": True, "rest_stack_exact": True, "record_complete": True,
-              "open_record_clears_sleeve": True, "ip_review": "Original abstract sleeve, no marks, text, characters or brand shapes."}
+              "open_record_clears_sleeve": True, "open_record_inside_canvas": moved_box,
+              "open_record_opacity": 1, "ip_review": "Original abstract sleeve, no marks, text, characters or brand shapes."}
     (CHECKS / "vinyl-check.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
 
