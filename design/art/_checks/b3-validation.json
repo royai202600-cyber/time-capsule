@@ -26,9 +26,9 @@
   "candy-box": {
     "closed_stack_exact": true,
     "bbox": [
-      161,
-      216,
-      864,
+      160,
+      230,
+      869,
       902
     ],
     "corners_zero": true,

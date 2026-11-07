@@ -4,7 +4,7 @@ import json,subprocess,hashlib
 from pathlib import Path
 from PIL import Image
 R=Path(__file__).resolve().parents[1];C=R/'_checks';REPO=R.parent.parent
-NAMES={'lucky-cat':'Folk lucky cat with letter drawer','mooncake-tin':'Cloud-pattern mooncake tin','cake-box':'Windowed birthday cake box','candy-box':'Eight-compartment New Year candy box','chocolate-heart':'Ribboned heart chocolate box','stocking':'Knitted Christmas stocking','pumpkin':'Friendly pumpkin lantern','rice-dumpling':'Bamboo-leaf rice dumpling','wish-tag':'Blank bamboo wish tag','river-lantern':'Floating lotus memorial lantern'}
+NAMES={'lucky-cat':'Folk lucky cat with letter drawer','mooncake-tin':'Cloud-pattern mooncake tin','cake-box':'Windowed birthday cake box','candy-box':'Octagonal eight-compartment New Year candy box','chocolate-heart':'Ribboned heart chocolate box','stocking':'Knitted Christmas stocking','pumpkin':'Friendly pumpkin lantern','rice-dumpling':'Bamboo-leaf rice dumpling','wish-tag':'Blank bamboo wish tag','river-lantern':'Floating lotus memorial lantern'}
 def main():
  specs=json.loads((C/'b3-specs.json').read_text());specs['lucky-cat']=json.loads((C/'b3-lucky-cat-spec.json').read_text())
  prompts=json.loads((C/'b3-prompts.json').read_text());prompts.update(json.loads((C/'b3-lucky-cat-prompts.json').read_text()))
@@ -19,6 +19,8 @@ def main():
    im=Image.open(R/rel).convert('RGBA');assert im.size==(1024,1024)
    entry={'path':path,'what':NAMES[id]+(' — '+layer['name']+' layer' if layer else ' — assembled closed'),'size_px':[1024,1024],'transparent':True,'prompt':prompts[rel],'model':'gpt-image-2','web_export':'public/art/'+rel[:-4]+'.webp','postprocess':'finish-b3.py: exact registered extraction from assembled art and complete gpt-image-2 reveal edit, common canvas normalization; closed assembly applies every at=0 keyframe.'}
    if id=='lucky-cat':entry['postprocess']='finish-b3-lucky-cat.py: approved cat/paw/base/assembled bytes retained; original closed drawer front fades into full drawer with sides, interior and rolled letter; full drawer opens straight forward y +0.10, scale 1.08.'
+   if (C/'b3-fix-config.json').exists() and id in ('pumpkin','rice-dumpling','candy-box','river-lantern'):
+    entry['postprocess'] += ' T10c-fix: '+{'pumpkin':'masked amber-orange shell recolour, preserving alpha, face and glow.','rice-dumpling':'masked teal-green bamboo leaves matching the dome leaf direction, preserving rice/string/alpha.','candy-box':'octagonal gpt-image-2 assembled/reveal edits, aligned on the same 1024 canvas; filenames and motion metadata retained.','river-lantern':'glow opening opacity stays 1 throughout; all remaining motion retained.'}[id]
    if layer and 'pivot'in layer:entry['pivot']=layer['pivot']
    if not layer:entry['vessel']=spec
    entries=[e for e in entries if e['path']!=path];entries.append(entry)
@@ -35,7 +37,7 @@ def main():
  readme=(R/'README.md').read_text();lines=readme.splitlines()
  lines=[l for l in lines if not l.startswith('- T10c B3 ')]
  lines=[l for l in lines if not any(l.startswith('| `vessels/vessel-'+id+'.png`') or l.startswith('| `vessels/vessel-'+id+'-') for id in NAMES)]
- note='- T10c B3: ten original festival/keepsake vessels, complete reveal edits, exact CLOSED keyframes, measured 40/120 px and opening sheets. Lucky-cat test approved by Roy; its full drawer pulls straight forward with a rolled letter, while approved cat/paw/base/closed bytes remain unchanged. Separate dark interior layers support the pumpkin/river glows; the stocking stand stays fixed while sock/letter sway. Only river water is ground. Final batch approval remains pending.'
+ note='- T10c B3: ten original festival/keepsake vessels, complete reveal edits, exact CLOSED keyframes, measured 40/120 px and opening sheets. Lucky-cat test approved by Roy; its full drawer pulls straight forward with a rolled letter, while approved cat/paw/base/closed bytes remain unchanged. Separate dark interior layers support the pumpkin/river glows; the stocking stand stays fixed while sock/letter sway. Only river water is ground. PR #56 approved and merged as 4309b55. Roy approved T10c-fix PR #61 for merge.'
  ix=lines.index('## Rules and checks')+2;lines.insert(ix,note)
  for i,l in enumerate(lines):
   if l.startswith('PNG masters live'):
@@ -53,5 +55,6 @@ def main():
  review=['# B3 art review','', 'Generated with built-in gpt-image-2 and approved style sheet A. All ten CLOSED stacks match their masters exactly.','', '[Contact sheet](b3-contact-sheet.png)','']
  for id in specs:review+=['- '+id+': [motion]('+id+'-motion.png) · [40/120 px]('+id+'-silhouette.png)']
  review+=['','The proposed vessel blocks are in ../manifest.json. No app or database wiring is included.','', 'IP review: traditional/generic festival objects; blank tags/coin, no logos, text, branded silhouettes or franchise characters.','']
+ if (C/'b3-fix-config.json').exists():review+=['T10c-fix: [40/120 px before/after](b3-fix-review.png) · [browser review](b3-fix-review.html). Roy approved T10c-fix PR #61 for merge.','']
  (C/'b3-review.md').write_text('\n'.join(review));print('Registered',len(paths),'B3 masters, retaining other art metadata.')
 if __name__=='__main__':main()
