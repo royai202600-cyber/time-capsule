@@ -15,6 +15,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | F1 | Home and capsule opening | Codex | Claude verified Home → opening ritual → letter and opening record in browser. F3 native location and map, full-width pages, Sent routing and package QR are integrated; typecheck and web/iOS exports pass. |
 | F4 | Cabinet, Me, Friends, Invite and portrait picker | Codex | Roy confirmed the Expo Go build works; web layout and typecheck pass. T9 portrait manifest integration remains pending. |
+| M1 | Vessel idle motion: each resting vessel moves gently (3–6 s loops) using its existing layers; Reduce Motion stays static | Claude | Browser-checked at 375 px; PR open for Codex to merge. Expo Go check at the end. |
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
@@ -27,6 +28,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | T6 | Installable app (PWA): manifest, icons, offline shell | Claude | "Add to Home Screen" gives a proper icon and full-screen app |
 | T7 | Brand capsules for real: staff check-in QR at the boutique, gift escrow/expiry rules, partner console (README §2, §7) | Claude plans → Codex builds | To be specified |
 | T8 | Real payments for the shop (only when Roy decides) | Codex | Roy has chosen a provider |
+| A2 | Idle glint art: `vessel-dome-glint` and `fx-glint` (gpt-image-2, per STYLE.md), then Claude wires them into the M1 idle loops | Codex art → Claude wiring | Roy approves the review overlay; art PR merged |
 | N3 | TODO: in-app account deletion | Codex | A signed-in user can initiate deletion inside the app before App Store release. Current support-email request remains the interim process. |
 
 ## End-of-project phone checklist

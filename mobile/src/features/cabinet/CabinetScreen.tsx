@@ -78,7 +78,7 @@ function ShelfSlot({ id, name, isOwned, selected, row, column, scale, parallaxX,
         onHoverOut={() => moveHover(0)}
         onPress={() => vesselRef.current?.measureInWindow((x: number, y: number, width: number, height: number) => onChoose({ x, y, width, height }))}
         style={[{ width: size, height: size }, Platform.OS === "web" ? { cursor: "pointer" } as any : null]}>
-        <Vessel kind={id} size={size} />
+        <Vessel kind={id} size={size} idle={isOwned && !selected} />
         {glass && Platform.OS === "web" && !reduced && <Animated.Image pointerEvents="none" source={glass}
           resizeMode="contain" style={{ position: "absolute", width: size, height: size,
             opacity: hover.interpolate({ inputRange: [0, 1], outputRange: [0, .13] }),
@@ -265,7 +265,7 @@ export default function CabinetScreen() {
               { rotateY: spin.interpolate({ inputRange: [-360, 0, 360], outputRange: ["-360deg", "0deg", "360deg"] }) },
             ], opacity: reduced ? fly : 1,
           }}>
-            <Vessel kind={selected.id} size={230} />
+            <Vessel kind={selected.id} size={230} idle />
           </Animated.View>
           <Animated.View accessibilityViewIsModal style={{
             position: "absolute", left: (viewportWidth - cardWidth) / 2, top: targetTop + 212,

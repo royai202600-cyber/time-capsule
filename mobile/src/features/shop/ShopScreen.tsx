@@ -43,7 +43,7 @@ export default function ShopScreen() {
   const vesselCard = (v: NonNullable<typeof catalog.data>[number]) => {
     const mine = own(v.id), sold = v.edition_total !== null && v.id === 'maison' && remainder === 0;
     return <Pressable key={v.id} accessibilityRole='button' accessibilityState={{ disabled: sold && !mine }} onPress={() => { if (sold && !mine) return; if (!mine && v.price_mop > 0) openSheet(v.id); else void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: params.focus === v.id ? C.brass : C.line, opacity: sold && !mine ? .55 : 1 }]}>
-      <Vessel kind={v.id as VesselKind} size={110} /><Text style={{ fontFamily: serif, fontSize: 16, color: C.ink, textAlign: 'center' }}>{name(v.id)}</Text>
+      <Vessel kind={v.id as VesselKind} size={110} idle={!selected} /><Text style={{ fontFamily: serif, fontSize: 16, color: C.ink, textAlign: 'center' }}>{name(v.id)}</Text>
       <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12, textAlign: 'center' }}>{t(`shop.desc.${v.id}`)}</Text>
       <Text style={{ fontFamily: sans, color: mine ? C.blue : C.plum, marginTop: 7 }}>{mine ? t('shop.owned') : sold ? t('shop.soldOut') : v.price_mop ? t('shop.price', v.price_mop) : t('shop.free')}</Text>
     </Pressable>;
@@ -51,7 +51,7 @@ export default function ShopScreen() {
   return <Screen>
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><BackButton label={t('shop.back')} onPress={goBack} /><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('shop.langSwitch')}</Text></Pressable></View><Heading>{t('shop.title')}</Heading>
     {featured && <View style={{ backgroundColor: C.ink, borderRadius: 20, padding: 20, alignItems: 'center', gap: 8 }}>
-      <Vessel kind='maison' size={176} /><Text style={{ color: C.brass, fontFamily: serif, fontSize: 20, textAlign: 'center' }}>{t('shop.brandTitle')}</Text><Text style={{ color: C.white, textAlign: 'center', fontFamily: sans }}>{t('shop.brandBody')}</Text>
+      <Vessel kind='maison' size={176} idle={!selected} /><Text style={{ color: C.brass, fontFamily: serif, fontSize: 20, textAlign: 'center' }}>{t('shop.brandTitle')}</Text><Text style={{ color: C.white, textAlign: 'center', fontFamily: sans }}>{t('shop.brandBody')}</Text>
       <Text style={{ color: C.brass }}>{own('maison')?.edition_no ? t('shop.yourNo', own('maison')!.edition_no, featured.edition_total ?? 300) : remainder !== undefined ? t('shop.stock', remainder, featured.edition_total ?? 300) : ''}</Text>
       {!own('maison') && <Button title={remainder === 0 ? t('shop.soldOut') : t('shop.get')} disabled={remainder === 0} onPress={() => openSheet('maison')} />}
     </View>}
@@ -61,7 +61,7 @@ export default function ShopScreen() {
     <Toast message={notice || (catalog.error || owned.error || stock.error ? t('shop.error') : '')} />
     <Pressable onPress={() => router.push('/cabinet')} style={{ alignSelf: 'flex-end', backgroundColor: C.cream, borderRadius: 20, padding: 12 }}><Text style={{ color: C.plum }}>{t('shop.cabinet')} →</Text></Pressable>
     <Modal transparent visible={!!selected} animationType={reduced ? 'fade' : 'slide'} onRequestClose={() => { if (!busy) setSheet(null); }}>{selected && <View style={{ flex: 1, backgroundColor: '#16263FAA', justifyContent: 'flex-end' }}><View style={{ backgroundColor: C.paper, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, alignItems: 'center', gap: 10 }}>
-      <Animated.View style={{ transform: [{ translateX: flight.interpolate({ inputRange: [0, 1], outputRange: [0, 135] }) }, { translateY: flight.interpolate({ inputRange: [0, 1], outputRange: [0, 240] }) }, { scale: flight.interpolate({ inputRange: [0, 1], outputRange: [1, .2] }) }], opacity: flight.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={selected.id as VesselKind} size={160} /></Animated.View>
+      <Animated.View style={{ transform: [{ translateX: flight.interpolate({ inputRange: [0, 1], outputRange: [0, 135] }) }, { translateY: flight.interpolate({ inputRange: [0, 1], outputRange: [0, 240] }) }, { scale: flight.interpolate({ inputRange: [0, 1], outputRange: [1, .2] }) }], opacity: flight.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={selected.id as VesselKind} size={160} idle={!busy} /></Animated.View>
       <Text style={{ fontFamily: serif, fontSize: 22, color: C.ink }}>{t('shop.getTitle', name(selected.id))}</Text><Text style={{ color: C.plum }}>{t('shop.price', selected.price_mop)}</Text><Body>{t('shop.getNote')}</Body><Toast message={error} />
       <View style={{ width: '100%', gap: 8 }}><Button title={t('shop.get')} disabled={busy} onPress={() => void acquire()} /><Button title={t('shop.cancel')} disabled={busy} onPress={() => setSheet(null)} /></View>
     </View></View>}</Modal>
