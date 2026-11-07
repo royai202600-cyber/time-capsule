@@ -2,9 +2,9 @@ import React from 'react';
 import { View, StyleProp, ViewStyle } from 'react-native';
 import Animated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import { SvgXml } from 'react-native-svg';
-import { VESSEL_ART, VESSEL_PIVOTS, VesselKind } from './vesselArt';
+import { VESSEL_ART, VESSEL_PIVOTS, SvgVesselKind } from './vesselArt';
 const wrap = (part: string) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 170">${part}</svg>`;
-export function Vessel({kind, size=180, lidLift, contentSway, style}: {kind:VesselKind; size?:number; lidLift?:SharedValue<number>; contentSway?:SharedValue<number>; style?:StyleProp<ViewStyle>}) {
+export function Vessel({kind, size=180, lidLift, contentSway, style}: {kind:SvgVesselKind; size?:number; lidLift?:SharedValue<number>; contentSway?:SharedValue<number>; style?:StyleProp<ViewStyle>}) {
   const pivot=VESSEL_PIVOTS[kind],px=(pivot.x-.5)*size,py=(pivot.y-.5)*size*170/160;
   const lidStyle=useAnimatedStyle(()=>({transform:[{translateY:-(lidLift?.value??0)*size*.48},{translateX:px},{translateY:py},{rotate:`${-(lidLift?.value??0)*13}deg`},{translateY:-py},{translateX:-px}],opacity:1-Math.min(1,lidLift?.value??0)*.7}));
   const contentStyle=useAnimatedStyle(()=>({transform:[{rotate:`${contentSway?.value??0}deg`},{translateY: (contentSway?.value??0)*.15}]}));

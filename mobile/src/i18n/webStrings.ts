@@ -588,6 +588,56 @@ export const VESSELS = {
     edition: 300,
     left: 41,
   },
+  "mixtape": {
+    name: { zh: "混音卡帶", en: "Mixtape cassette" },
+    desc: { zh: "一卷只為你錄的歌。", en: "A tape of songs made just for you." },
+    price: 18,
+  },
+  "instant-camera": {
+    name: { zh: "即影即有相機", en: "Instant camera" },
+    desc: { zh: "那一刻，慢慢顯影。", en: "A moment that develops slowly." },
+    price: 22,
+  },
+  "ramen": {
+    name: { zh: "拉麵碗", en: "Ramen bowl" },
+    desc: { zh: "趁熱，好好吃飯。", en: "Eat well, while it's warm." },
+    price: 12,
+  },
+  "fortune-cookie": {
+    name: { zh: "幸運籤餅", en: "Fortune cookie" },
+    desc: { zh: "掰開，看看你的好運。", en: "Crack it open for your luck." },
+    price: 0,
+  },
+  "red-packet": {
+    name: { zh: "紅包", en: "Red packet" },
+    desc: { zh: "把祝福封進紅包裡。", en: "Blessings sealed in red." },
+    price: 0,
+  },
+  "snow-globe": {
+    name: { zh: "雪花水晶球", en: "Snow globe" },
+    desc: { zh: "搖一搖，雪就落下。", en: "Shake it and the snow falls." },
+    price: 28,
+  },
+  "phone-booth": {
+    name: { zh: "紅色電話亭", en: "Red phone booth" },
+    desc: { zh: "一通遲來的長途電話。", en: "A long-distance call, years later." },
+    price: 22,
+  },
+  "firefly-jar": {
+    name: { zh: "螢火蟲瓶", en: "Jar of fireflies" },
+    desc: { zh: "收起一個夏夜。", en: "A summer night, kept in a jar." },
+    price: 20,
+  },
+  "hourglass": {
+    name: { zh: "沙漏", en: "Hourglass" },
+    desc: { zh: "時間正一點一點落下。", en: "Time, falling grain by grain." },
+    price: 0,
+  },
+  "gashapon": {
+    name: { zh: "扭蛋", en: "Gashapon capsule" },
+    desc: { zh: "膠囊裡的小驚喜。", en: "A little surprise in a capsule." },
+    price: 0,
+  },
 };
 
 // F4 screen copy. Keys are namespaced to keep parallel screen work independent.
