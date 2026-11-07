@@ -33,6 +33,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+- A2 wiring / PR #34: Approved dome highlight and wax/brass sparkle bundled through the art manifest and shown only during idle motion. Reviewed at 390 px on signed-in Home; captured dome, Maison and lantern peaks, verified Reduce Motion removes the layers, and checked a clean browser console. Green CI, 19 tests, TypeScript and iOS export; squash-merged as `edfafaf`, followed by an owner-authored production release. Physical Expo Go glint appearance remains unverified.
 - S1 / PR #33: Restored iPhone Safari sound effects using one touch-unlocked Web Audio context and predecoded buffers. Native keeps prepared Expo players. Roy verified repeated tap effects on the Safari preview; CI, 19 tests, TypeScript and web/iOS exports pass. Squash-merged as `e103e82`, followed by an owner-authored production release. No dependencies, migrations or settings changed.
 - PR #31: Softer tap/tick/warning WAV files, no application-code changes. Green PR CI on `6dcba1a`; squash-merged as `f2370cc` through the owner account, followed by an owner-authored production release. All three files validated as mono 16-bit PCM at 44.1 kHz.
 - M1 / PR #29: Resting vessel motion merged after green CI as `be267a9`; Home and Create selection retain the active-vessel and Reduce Motion controls.
