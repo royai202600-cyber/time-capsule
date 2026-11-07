@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, FlatList, Image, Modal, PanResponder, Platform, Pressable, ScrollView, Text, View, useWindowDimensions, type ImageSourcePropType } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { GestureDetector, GestureHandlerRootView, usePanGesture } from "react-native-gesture-handler";
 import { cabinetTiles, vesselParts } from "../../art/manifest";
 import { router, useFocusEffect } from "expo-router";
 import { goBack } from "../../navigation";
@@ -222,6 +223,21 @@ export function CabinetView({ items, notice, error }: { items: CabinetItem[]; no
       if (!reduced) Animated.decay(spin, { velocity: g.vx * 30, deceleration: .995, useNativeDriver: true }).start();
     },
   }), [reduced, spin]);
+  // Expo Go needs a native pan recognizer in the modal's own gesture root.
+  // Keep the working web responder and convert native px/s to its px/ms velocity.
+  const spinPan = usePanGesture({
+    enabled: Platform.OS !== "web" && !reduced,
+    minDistance: 5,
+    runOnJS: true,
+    shouldCancelWhenOutside: false,
+    onBegin: () => spin.stopAnimation(value => { spinOffset.current = value; }),
+    onUpdate: event => spin.setValue(spinOffset.current + event.translationX * .55),
+    onDeactivate: event => {
+      if (!event.canceled && !reduced) Animated.decay(spin, {
+        velocity: event.velocityX * .03, deceleration: .995, useNativeDriver: true,
+      }).start();
+    },
+  });
   const sel = selected?.item;
   const label = (id: VesselKind) => VESSELS[id];
   const targetTop = Math.max(30, (viewportHeight - 520) / 2);
@@ -248,6 +264,18 @@ export function CabinetView({ items, notice, error }: { items: CabinetItem[]; no
   </Animated.View>;
   const crownHeight = Math.round(ART.crown.crop.h * scale);
   const baseHeight = Math.round(ART.base.crop.h * scale);
+  const closeup = sel && selected ? <Animated.View collapsable={false}
+    {...(Platform.OS === "web" ? gesture.panHandlers : {})} style={{
+      position: "absolute", left: (viewportWidth - 230) / 2, top: targetTop, width: 230, height: 230,
+      transform: [
+        { translateX: fly.interpolate({ inputRange: [0, 1], outputRange: [reduced ? 0 : selected.rect.x + selected.rect.width / 2 - viewportWidth / 2, 0] }) },
+        { translateY: fly.interpolate({ inputRange: [0, 1], outputRange: [reduced ? 0 : selected.rect.y + selected.rect.height / 2 - targetTop - 115, 0] }) },
+        { scale: fly.interpolate({ inputRange: [0, 1], outputRange: [reduced ? 1 : selected.rect.width / 230, 1] }) },
+        { rotateY: spin.interpolate({ inputRange: [-360, 0, 360], outputRange: ["-360deg", "0deg", "360deg"] }) },
+      ], opacity: reduced ? fly : 1,
+    }}>
+    <Vessel kind={sel.kind} size={230} idle />
+  </Animated.View> : null;
 
   return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}>
     <View style={{ flex: 1 }} {...(Platform.OS === "web" ? { onPointerMove, onPointerLeave } : {})}>
@@ -278,24 +306,14 @@ export function CabinetView({ items, notice, error }: { items: CabinetItem[]; no
         </View>} />
     </View>
     <Modal visible={!!selected} transparent animationType="none" onRequestClose={close}>
-      <View style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
         <Animated.View pointerEvents="none" style={{
           position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: C.ink, opacity: fly.interpolate({ inputRange: [0, 1], outputRange: [0, .60] }),
         }} />
         <Pressable onPress={close} style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }} accessibilityLabel={t("cabinet.close")} />
         {sel && selected && <>
-          <Animated.View {...gesture.panHandlers} style={{
-            position: "absolute", left: (viewportWidth - 230) / 2, top: targetTop, width: 230, height: 230,
-            transform: [
-              { translateX: fly.interpolate({ inputRange: [0, 1], outputRange: [reduced ? 0 : selected.rect.x + selected.rect.width / 2 - viewportWidth / 2, 0] }) },
-              { translateY: fly.interpolate({ inputRange: [0, 1], outputRange: [reduced ? 0 : selected.rect.y + selected.rect.height / 2 - targetTop - 115, 0] }) },
-              { scale: fly.interpolate({ inputRange: [0, 1], outputRange: [reduced ? 1 : selected.rect.width / 230, 1] }) },
-              { rotateY: spin.interpolate({ inputRange: [-360, 0, 360], outputRange: ["-360deg", "0deg", "360deg"] }) },
-            ], opacity: reduced ? fly : 1,
-          }}>
-            <Vessel kind={sel.kind} size={230} idle />
-          </Animated.View>
+          {Platform.OS === "web" ? closeup : <GestureDetector gesture={spinPan}>{closeup}</GestureDetector>}
           <Animated.View accessibilityViewIsModal style={{
             position: "absolute", left: (viewportWidth - cardWidth) / 2, top: targetTop + 212,
             width: cardWidth, maxHeight: Math.max(185, viewportHeight - targetTop - 230),
@@ -313,7 +331,7 @@ export function CabinetView({ items, notice, error }: { items: CabinetItem[]; no
             </ScrollView>
           </Animated.View>
         </>}
-      </View>
+      </GestureHandlerRootView>
     </Modal>
   </SafeAreaView>;
 }

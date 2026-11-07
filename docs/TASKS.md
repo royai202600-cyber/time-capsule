@@ -6,7 +6,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| Cabinet still shelves / #47 | Keep shelf vessels still and Home + wax red | Codex / Roy | #47 owner squash-merged as `9743371` after green CI; Cabinet shelf-only prop change and browser checks pass. Await Expo Go check and Cabinet PR CI/owner squash merge. Queue both for the next combined release; no separate deploy. |
+| Cabinet still shelves / #47 | Keep shelf vessels still and Home + wax red | Codex / Roy | #47 owner squash-merged as `9743371` after green CI; Cabinet still shelves and browser checks pass. Roy confirmed iPhone behaviour except native close-up spin; a native pan fix awaits phone retest and final CI/owner squash merge. Queue both for the next combined release; no separate deploy. |
 | D1 | Main-only Vercel Git deployments and production retry | Codex | Requested ignore command saved and reloaded. PR #45 adds `git.deploymentEnabled` to block preview creation; main and slash-containing feature names pass policy checks. Verify this PR push is skipped, then retry latest owner-authored main once the Hobby daily quota clears. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 

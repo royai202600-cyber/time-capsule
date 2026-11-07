@@ -15,7 +15,8 @@
   },
   "closeup": {
     "moves": true,
-    "reducedMotionUsesAssembled": true
+    "reducedMotionUsesAssembled": true,
+    "webDragSpinObserved": true
   },
   "browserErrors": []
 }
