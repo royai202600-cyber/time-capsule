@@ -28,6 +28,7 @@ const receive = (position: { coords: { latitude: number; longitude: number; accu
   publish({ status: "granted", fix: { lat: latitude, lng: longitude, accuracy: accuracy ?? 9999, at: position.timestamp }, error: null });
 };
 function stop() {
+  generation++;
   if (fixTimer) clearTimeout(fixTimer);
   fixTimer = null;
   subscription?.remove();
@@ -43,11 +44,15 @@ function watchWeb() {
     return;
   }
   publish({ status: "granted", error: null });
-  const id = navigator.geolocation.watchPosition(receive, (error) => {
+  const run = generation;
+  const id = navigator.geolocation.watchPosition((fix) => { if (run === generation) receive(fix); }, (error) => {
+    if (run !== generation) return;
     stop();
     publish({ status: error.code === 1 ? "denied" : "unavailable", fix: null, error: error.message });
   }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 });
   subscription = { remove: () => navigator.geolocation.clearWatch(id) };
+  navigator.geolocation.getCurrentPosition?.((fix) => { if (run === generation) receive(fix); }, () => {},
+    { enableHighAccuracy: false, timeout: 8000, maximumAge: 15000 });
 }
 
 async function watchNative() {

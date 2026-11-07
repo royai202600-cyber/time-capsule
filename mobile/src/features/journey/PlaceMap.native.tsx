@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { View } from "react-native";
 import MapView, { Circle, Marker, Polyline } from "react-native-maps";
 import { type VesselKind } from "../../components/Vessel";
@@ -13,14 +13,15 @@ export function PlaceMap({ place, fix, vessel }: {
   vessel: VesselKind;
 }) {
   const map = useRef<MapView>(null);
-  useEffect(() => {
+  const fit = useCallback(() => {
     const target = { latitude: place.lat, longitude: place.lng };
     if (fix && distanceMeters(fix.lat, fix.lng, place.lat, place.lng) > 250) map.current?.fitToCoordinates([target, { latitude: fix.lat, longitude: fix.lng }], {
       edgePadding: { top: 60, right: 50, bottom: 60, left: 50 }, animated: true,
     });
     else map.current?.animateToRegion({ ...target, latitudeDelta: 0.006, longitudeDelta: 0.006 }, 350);
   }, [place.lat, place.lng, fix?.lat, fix?.lng]);
-  return <MapView ref={map} style={{ flex: 1 }} initialRegion={{ latitude: place.lat, longitude: place.lng, latitudeDelta: 0.012, longitudeDelta: 0.012 }}>
+  useEffect(() => { fit(); }, [fit]);
+  return <MapView ref={map} onMapReady={fit} style={{ flex: 1 }} initialRegion={{ latitude: place.lat, longitude: place.lng, latitudeDelta: 0.012, longitudeDelta: 0.012 }}>
     <Circle center={{ latitude: place.lat, longitude: place.lng }} radius={place.radius_m} strokeColor={C.blue} fillColor="#5A8FD02B" strokeWidth={2} />
     {fix && <>
       <Polyline coordinates={[{ latitude: fix.lat, longitude: fix.lng }, { latitude: place.lat, longitude: place.lng }]} strokeColor={C.blue} strokeWidth={2} lineDashPattern={[5, 5]} />
