@@ -16,6 +16,7 @@ const strings = {
     saving: "正在設定…",
     delete: "刪除這個鬧鐘",
     preview: "試一下叫醒畫面",
+    testTwoMinutes: "開發測試：約兩分鐘後",
     needDay: "請至少選擇一天。",
     empty: "還沒有鬧鐘。打開一個膠囊後，在信下按「用這個膠囊叫醒我」。",
     // Permission, asked only when the first alarm is saved.
@@ -62,6 +63,7 @@ const strings = {
     saving: "Setting it…",
     delete: "Delete this alarm",
     preview: "Try the wake screen",
+    testTwoMinutes: "Dev test: in about two minutes",
     needDay: "Choose at least one day.",
     empty: "No alarms yet. Open a capsule, then tap “Wake me with this capsule” under the letter.",
     askTitle: "Allow notifications so we can wake you",
