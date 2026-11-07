@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useRef, useState } from "r
 import { AppState, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from "expo-audio";
+import { prepareSoundEffects, releaseSoundEffects } from "./sfx";
 
 // Soft background music on every screen ("Emotional Piano and Strings" by JorisVermeer,
 // Pixabay Content License: free for use in apps, no credit required). On by default,
@@ -37,10 +38,11 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
     void AsyncStorage.getItem(KEY).then(v => { if (v === "off") setOnState(false); }).catch(() => {}).finally(() => setReady(true));
     // Respect the iPhone silent switch and mix with other audio rather than stopping it.
     if (Platform.OS !== "web") void setAudioModeAsync({ playsInSilentMode: false, interruptionMode: "mixWithOthers", shouldPlayInBackground: false }).catch(() => {});
+    prepareSoundEffects();
     const p = createAudioPlayer(require("../../assets/audio/background.m4a"));
     p.loop = true; p.volume = 0;
     player.current = p;
-    return () => { if (fade.current) clearInterval(fade.current); p.remove(); player.current = null; };
+    return () => { if (fade.current) clearInterval(fade.current); p.remove(); releaseSoundEffects(); player.current = null; };
   }, []);
 
   useEffect(() => {

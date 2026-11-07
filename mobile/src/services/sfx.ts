@@ -20,15 +20,40 @@ let enabled = true;
 const listeners = new Set<(on: boolean) => void>();
 void AsyncStorage.getItem(KEY).then(v => { if (v === "off") { enabled = false; listeners.forEach(l => l(false)); } }).catch(() => {});
 
-const players: Partial<Record<Sound, AudioPlayer>> = {};
+type Effect = { player: AudioPlayer; ready: boolean; subscription: { remove(): void } };
+const players: Partial<Record<Sound, Effect>> = {};
+/** Download/decode short effects at app startup, outside the interaction path. */
+export function prepareSoundEffects() {
+  for (const name of Object.keys(SOURCES) as Sound[]) {
+    if (players[name]) continue;
+    try {
+      const player = createAudioPlayer(SOURCES[name], { downloadFirst: true, keepAudioSessionActive: true });
+      player.volume = 0.6;
+      const effect: Effect = { player, ready: true, subscription: { remove() {} } };
+      effect.subscription = player.addListener('playbackStatusUpdate', status => {
+        if (!status.didJustFinish) return;
+        // Rewind after playback, so a later tap never waits for a seek round trip.
+        effect.ready = false;
+        void player.seekTo(0).then(() => { effect.ready = true; }).catch(() => {});
+      });
+      players[name] = effect;
+    } catch { /* an unavailable effect must not break startup */ }
+  }
+}
+export function releaseSoundEffects() {
+  for (const name of Object.keys(players) as Sound[]) {
+    const effect = players[name];
+    effect?.subscription.remove(); effect?.player.remove(); delete players[name];
+  }
+}
 export function playSound(name: Sound) {
   if (!enabled) return;
-  try {
-    let p = players[name];
-    if (!p) { p = createAudioPlayer(SOURCES[name]); p.volume = 0.6; players[name] = p; }
-    void p.seekTo(0).catch(() => {});
-    p.play();
-  } catch { /* sound is a nicety; never break an action */ }
+  const effect = players[name];
+  // A stale feedback sound is worse than skipping one before loading finishes.
+  // Never queue playback behind a download, decode, previous sound, or seek.
+  if (!effect?.ready || !effect.player.isLoaded || effect.player.playing) return;
+  try { effect.ready = false; effect.player.play(); }
+  catch { effect.ready = true; }
 }
 export const soundEffectsOn = () => enabled;
 export function setSoundEffects(on: boolean) {
