@@ -15,6 +15,8 @@ import { supabase } from "../../services/supabase";
 import { C, serif, sans, shadows } from "../../theme";
 import { useAlarms } from "../alarm/store";
 import { useAlarmText } from "../alarm/strings";
+import { PREDICTION_ENABLED } from "../../services/prediction";
+import { PredictionRecord } from "../prediction/PredictionRecord";
 
 function Row({ label, value, onPress }: { label: string; value?: string; onPress: () => void }) {
   return <Pressable accessibilityRole="button" onPress={() => { haptics.tap(); onPress(); }} style={{ paddingVertical: 18, borderBottomColor: C.line, borderBottomWidth: 1, flexDirection: "row", justifyContent: "space-between" }}>
@@ -67,6 +69,7 @@ export default function MeScreen() {
     <View style={{ flexDirection: "row", backgroundColor: C.white, borderRadius: 16, borderWidth: 1.5, borderColor: C.line, paddingVertical: 18, ...shadows.card }}>
       {(["inbox", "sent", "opened"] as const).map(k => <View key={k} style={{ flex: 1, alignItems: "center" }}><Text style={{ fontFamily: serif, color: C.plum, fontSize: 26 }}>{counts[k]}</Text><Text style={{ color: C.muted, fontFamily: sans }}>{t("me." + k)}</Text></View>)}
     </View>
+    {PREDICTION_ENABLED && session && <PredictionRecord userId={session.user.id} />}
     <View style={{ paddingHorizontal: 16, backgroundColor: C.white, borderRadius: 16, borderWidth: 1, borderColor: C.line }}>
       <Row label={t("me.language")} value={language === "zh" ? "繁中" : "English"} onPress={() => setLanguage(language === "zh" ? "en" : "zh")} />
       <Row label={t("me.friends")} value={String(counts.friends)} onPress={() => router.push("/friends")} />
