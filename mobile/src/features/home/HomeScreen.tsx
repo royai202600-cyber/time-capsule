@@ -17,6 +17,8 @@ import { useReducedMotion } from "../../useReducedMotion";
 import type { VesselKind } from "../../vesselArt";
 import { usePlaceDistance } from "../journey/location";
 import { distance, formatDate, loadBundle, status, type Bundle, type Row } from "../capsule/model";
+import { isPrediction } from "../../services/prediction";
+import { predictionText } from "../prediction/strings";
 
 const W = 300, GAP = 16, STEP = W + GAP;
 const empty: Bundle = { capsules: [], people: {}, places: {}, vessels: {} };
@@ -113,7 +115,7 @@ export default function HomeScreen() {
         const state = status(c, side, fix, bundle.places[c.place ?? ""], now), p = person(c), pl = bundle.places[c.place ?? ""], v = bundle.vessels[c.vessel];
         const inputRange = [(i - 1) * STEP, i * STEP, (i + 1) * STEP];
         return <Animated.View style={{ opacity: scroll.interpolate({ inputRange, outputRange: [0.5, 1, 0.5], extrapolate: "clamp" }), transform: [{ perspective: 900 }, { scale: scroll.interpolate({ inputRange, outputRange: [0.9, 1, 0.9], extrapolate: "clamp" }) }, { rotateY: scroll.interpolate({ inputRange, outputRange: ["8deg", "0deg", "-8deg"], extrapolate: "clamp" }) }] }}><Pressable onPress={() => { const centre = Math.max(0, Math.min(rows.length - 1, Math.round(scrollOffset.current / STEP))); if (i === centre) open(c); else { list.current?.scrollToIndex({ index: i, animated: true }); setIndex(i); void haptics.tick(); } }} accessibilityRole="button" accessibilityLabel={`${headline(c)}, ${p.name}`} style={{ width: W, height: 430, backgroundColor: C.white, borderWidth: 1.5, borderColor: "#5B6474", borderRadius: 20, padding: 18, alignItems: "center", justifyContent: "space-between", ...shadows.card }}>
-          <View style={{ height: 26, flexDirection: "row", gap: 6, alignItems: "center" }}>{side === "inbox" && !c.seen_at && !c.opened_at && <Text style={{ color: C.wax, fontSize: 11 }}>{t("home.newTag")}</Text>}{c.handwritten && <Text style={{ color: C.wax, fontFamily: handwriting }}>{t("home.handTag")}</Text>}{c.edition_no && v?.brand && <Text style={{ color: C.brass, fontSize: 11 }}>{v.brand} No.{String(c.edition_no).padStart(3, "0")}</Text>}</View>
+          <View style={{ height: 26, flexDirection: "row", gap: 6, alignItems: "center" }}>{side === "inbox" && !c.seen_at && !c.opened_at && <Text style={{ color: C.wax, fontSize: 11 }}>{t("home.newTag")}</Text>}{c.handwritten && <Text style={{ color: C.wax, fontFamily: handwriting }}>{t("home.handTag")}</Text>}{isPrediction(c) && <Text style={{ color: C.plum, fontFamily: handwriting }}>{predictionText(language)("tag")}</Text>}{c.edition_no && v?.brand && <Text style={{ color: C.brass, fontSize: 11 }}>{v.brand} No.{String(c.edition_no).padStart(3, "0")}</Text>}</View>
           <CardVessel kind={c.vessel as VesselKind} state={state} reduced={reduced} active={i === index} />
           {headlineView(c, state)}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "center", gap: 6, maxWidth: "100%", marginBottom: 12 }}><ArtIcon name="pin" size={18} color="#4A5466" /><Text numberOfLines={1} style={{ color: "#4A5466", fontFamily: serif, fontSize: 15, flexShrink: 1 }}>{pl ? pl[language === "zh" ? "name_zh" : "name_en"] : t("home.anywhere")}</Text></View>

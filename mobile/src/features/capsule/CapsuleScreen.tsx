@@ -29,6 +29,9 @@ import { RitualHold } from "./RitualHold";
 import { SealedLines } from "./SealedLines";
 import { useAlarmText } from "../alarm/strings";
 import { LetterVoice } from "../voice/LetterVoice";
+import { isPrediction, openedPrediction, senderPrediction, type SenderPrediction } from "../../services/prediction";
+import { PredictionStamp, SenderPredictionCard } from "../prediction/PredictionParts";
+import { usePredictionText } from "../prediction/strings";
 import { formatDate, loadOne, openForRecipient, status, type Bundle, type Opened, type Row } from "./model";
 
 const blank: Bundle = { capsules: [], people: {}, places: {}, vessels: {} };
@@ -180,6 +183,14 @@ function Checklist({ label, value, done }: { label: string; value: string; done:
 }
 
 function SenderView({ c, name, placeName, language, t }: { c: Row; name: string; placeName: string; language: "zh" | "en"; t: ReturnType<typeof useF1Text> }) {
+  const predicted = isPrediction(c);
+  const [own, setOwn] = useState<SenderPrediction | null>(null);
+  useEffect(() => {
+    if (!predicted || !c.opened_at) return;
+    let alive = true;
+    senderPrediction(c.id).then(row => { if (alive) setOwn(row); }).catch(() => {});
+    return () => { alive = false; };
+  }, [predicted, c.id, c.opened_at]);
   const stages = [
     [t("capsule.timelineSent"), formatDate(c.sealed_at, language, true), true],
     [t("capsule.timelineDelivered", name), formatDate(c.open_at, language, true), Date.now() >= new Date(c.open_at).getTime()],
@@ -187,6 +198,7 @@ function SenderView({ c, name, placeName, language, t }: { c: Row; name: string;
   ] as const;
   return <ScrollView contentContainerStyle={{ width: "100%", maxWidth: 600, alignSelf: "center", paddingHorizontal: 22, paddingTop: 8, paddingBottom: 50, gap: 14 }}><View style={{ alignItems: "center" }}><Vessel kind={c.vessel as VesselKind} size={190} idle /><Text style={{ fontFamily: serif, fontSize: 19, color: "#4A5466", marginTop: 2 }}>{(VESSELS as any)[c.vessel]?.name[language] ?? c.vessel}</Text>{!c.opened_at && <Countdown until={c.open_at} />}</View>
     <View style={{ paddingLeft: 8, gap: 0 }}>{stages.map(([label, date, done], i) => <View key={i} style={{ flexDirection: "row", gap: 16, minHeight: 56, opacity: done ? 1 : .7 }}><View style={{ width: 1, backgroundColor: i === stages.length - 1 ? "transparent" : "#CDD5DF", marginLeft: 6, position: "absolute", top: 14, bottom: -4 }} /><View style={{ width: 14, height: 14, borderRadius: 7, borderWidth: 2, borderColor: done ? C.blue : "#CDD5DF", backgroundColor: done ? C.blue : C.white, marginTop: 3 }} /><View style={{ flex: 1 }}><Text style={{ fontFamily: sans, color: C.ink, fontSize: 15 }}>{label}</Text><Text style={{ color: C.muted, fontFamily: sans, fontSize: 13, marginTop: 3 }}>{date}</Text></View></View>)}</View>
+    {predicted && <SenderPredictionCard opened={!!c.opened_at} prediction={own?.prediction ?? null} verdict={own?.verdict ?? null} />}
     <View style={{ borderWidth: 1.5, borderStyle: "dashed", borderColor: "#CDD5DF", borderRadius: 12, paddingHorizontal: 22, paddingVertical: 20, gap: 7, backgroundColor: "rgba(255,255,255,.25)" }}><SealedLines /><Text style={{ color: C.muted, fontFamily: sans, fontSize: 13, textAlign: "center", lineHeight: 21, marginTop: 12 }}>{t("capsule.sealed")}</Text></View>
     <View style={{ alignItems: "center", paddingTop: 4 }}><Text style={{ fontFamily: serif, fontSize: 18, color: C.ink, textAlign: "center" }}>「{c.hint || t("capsule.defaultHint")}」</Text><Text style={{ color: C.muted, fontFamily: sans, fontSize: 13, textAlign: "center", marginTop: 4 }}>{t("capsule.yourHint")}</Text></View>
   </ScrollView>;
@@ -194,7 +206,10 @@ function SenderView({ c, name, placeName, language, t }: { c: Row; name: string;
 
 function LetterView({ c, content, name, placeName, self, language, t }: { c: Row; content: Opened; name: string; placeName: string; self: boolean; language: "zh" | "en"; t: ReturnType<typeof useF1Text> }) {
   const brand = c.edition_no ? "Maison Aurèle" : "";
-  return <View style={{ gap: 18 }}><View style={{ alignItems: "center", opacity: 0.55 }}><Vessel kind={c.vessel as VesselKind} size={95} /></View><View style={{ width: '100%', overflow: 'hidden', backgroundColor: "#FFFDF8", borderWidth: 1, borderColor: C.line, padding: 22, borderRadius: 6, minHeight: 240, ...shadows.card }}>
+  const p = usePredictionText();
+  const predicted = openedPrediction(c.id, content as Record<string, unknown>);
+  return <View style={{ gap: 18 }}><View style={{ alignItems: "center", opacity: 0.55 }}><Vessel kind={c.vessel as VesselKind} size={95} /></View>
+    {predicted && <PredictionStamp capsuleId={c.id} prediction={predicted.prediction} initial={predicted.verdict} who={self ? p("fromSelf") : p("fromName", name)} />}<View style={{ width: '100%', overflow: 'hidden', backgroundColor: "#FFFDF8", borderWidth: 1, borderColor: C.line, padding: 22, borderRadius: 6, minHeight: 240, ...shadows.card }}>
     <Image source={paperLetter} pointerEvents="none" resizeMode="repeat" style={[StyleSheet.absoluteFill, { opacity: .55 }]} />
     {c.handwritten && <Text style={{ color: C.wax, fontFamily: handwriting, alignSelf: "flex-end" }}>{t("home.handTag")}</Text>}
     {!!content.drawing && <Image source={{ uri: content.drawing }} resizeMode="contain" accessibilityLabel={t("home.handTag")} style={{ width: "100%", height: 240 }} />}
