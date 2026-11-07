@@ -46,11 +46,14 @@ const ART = {
   face: [234, 262],  // Board front face, where plaques sit.
   back: { x: [68, 736], color: "#F5DFB3" } as { x: [number, number]; color: string } | null, // Stand-in back panel; the A3 row draws its own.
 };
-// Alpha bounds of the assembled 512 px WebP files, measured at alpha > 32.
-const baseY: Record<VesselKind, number> = {
-  dome: 460 / 512, bottle: 406 / 512, envelope: 407 / 512,
-  tin: 388 / 512, lantern: 478 / 512, musicbox: 409 / 512, maison: 392 / 512,
+// Where a vessel's base sits, as a fraction of its square: the manifest's `baseY` (lowest opaque
+// row on the 1024 canvas) when present, so new vessels need no Cabinet edit. The table is only a
+// fallback for the seven original vessels until the manifest carries `baseY` for them (PR #42).
+const legacyBaseY: Partial<Record<string, number>> = {
+  dome: 920, bottle: 812, envelope: 814, tin: 776, lantern: 956, musicbox: 818, maison: 784,
 };
+const baseFraction = (id: VesselKind) =>
+  ((vesselParts[id] as { baseY?: number } | undefined)?.baseY ?? legacyBaseY[id] ?? 870) / 1024;
 
 /** Draws a piece at any width: the edge caps keep their shape and the middle stretches sideways. */
 function PieceView({ piece, width, height, scale }: { piece: Piece; width: number; height: number; scale: number }) {
@@ -83,7 +86,7 @@ function ShelfSlot({ item, name, selected, left, surface, size, face, slotWidth,
   const hover = useRef(new Animated.Value(0)).current;
   const pressed = useRef(new Animated.Value(1)).current;
   const vesselRef = useRef<React.ComponentRef<typeof Pressable>>(null);
-  const top = surface - size * baseY[id];
+  const top = surface - size * baseFraction(id);
   const faceHeight = face[1] - face[0];
   const plaqueHeight = Math.max(14, faceHeight - 2);
   const plaqueWidth = Math.min(slotWidth * .82, size + 16);
@@ -94,8 +97,8 @@ function ShelfSlot({ item, name, selected, left, surface, size, face, slotWidth,
   const movePress = (value: number) => {
     Animated.spring(pressed, { toValue: value, useNativeDriver: true, ...motion.spring.snappy }).start();
   };
-  const glass = id === "dome" ? vesselParts.dome.layers[2].source
-    : id === "bottle" ? vesselParts.bottle.layers[2].source : null;
+  const glassName = id === "bottle" ? "body" : "glass"; // The bottle's glass layer predates the naming rule.
+  const glass = vesselParts[id]?.layers.find(layer => layer.name === glassName)?.source ?? null;
   return <>
     <Animated.View pointerEvents="box-none" style={{
       position: "absolute", left: left - size / 2, top, width: size, height: size,
