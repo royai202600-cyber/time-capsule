@@ -2,7 +2,12 @@
   "vessels/vessel-mixtape.png": {
     "opening": "F",
     "idleMs": 4000,
-    "idle": [],
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.03
+      }
+    ],
     "layers": [
       {
         "name": "case",
@@ -107,7 +112,12 @@
   "vessels/vessel-instant-camera.png": {
     "opening": "F",
     "idleMs": 4000,
-    "idle": [],
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.03
+      }
+    ],
     "layers": [
       {
         "name": "camera",
@@ -136,7 +146,7 @@
           {
             "at": 1,
             "scaleY": 1,
-            "y": 0.3
+            "y": 0.17
           }
         ]
       }
@@ -157,7 +167,12 @@
   "vessels/vessel-ramen.png": {
     "opening": "B",
     "idleMs": 4000,
-    "idle": [],
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.025
+      }
+    ],
     "layers": [
       {
         "name": "bowl",
@@ -301,7 +316,16 @@
   "vessels/vessel-red-packet.png": {
     "opening": "E",
     "idleMs": 4000,
-    "idle": [],
+    "idle": [
+      {
+        "type": "sway",
+        "deg": 3,
+        "pivot": {
+          "x": 512,
+          "y": 300
+        }
+      }
+    ],
     "layers": [
       {
         "name": "packet",
@@ -362,7 +386,12 @@
   "vessels/vessel-phone-booth.png": {
     "opening": "J",
     "idleMs": 4000,
-    "idle": [],
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
     "layers": [
       {
         "name": "booth",
@@ -380,7 +409,7 @@
           },
           {
             "at": 1,
-            "opacity": 0
+            "opacity": 1
           }
         ],
         "idle": [
@@ -444,10 +473,12 @@
         "open": [
           {
             "at": 0,
+            "y": 0,
             "opacity": 1
           },
           {
             "at": 1,
+            "y": -0.25,
             "opacity": 0
           }
         ],
@@ -509,7 +540,16 @@
   "vessels/vessel-hourglass.png": {
     "opening": "C",
     "idleMs": 4000,
-    "idle": [],
+    "idle": [
+      {
+        "type": "sway",
+        "deg": 2.5,
+        "pivot": {
+          "x": 512,
+          "y": 900
+        }
+      }
+    ],
     "layers": [
       {
         "name": "frame-and-glass",

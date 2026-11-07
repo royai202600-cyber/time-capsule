@@ -84,7 +84,7 @@ def make_spec(id,point):
  if id=='mixtape':
   ls=[static('case'),moving('cassette','slide',{'y':-.55,'opacity':0})];mouth=P(600,430);spark=P(325,370);glint=f'vessel-{id}-glint.png'
  elif id=='instant-camera':
-  ls=[static('camera'),moving('photo','slide',{},(510,1055),[{'at':0,'scaleY':.06,'y':0},{'at':.25,'scaleY':.4,'y':.08},{'at':1,'scaleY':1,'y':.3}])];mouth=P(520,1000);spark=P(745,625)
+  ls=[static('camera'),moving('photo','slide',{},(510,1055),[{'at':0,'scaleY':.06,'y':0},{'at':.25,'scaleY':.4,'y':.08},{'at':1,'scaleY':1,'y':.17}])];mouth=P(520,1000);spark=P(745,625)
  elif id=='ramen':
   ls=[static('bowl'),fade('steam'),moving('lid','lift',{'y':-.45,'opacity':0})];ls[1]['idle']=[{'type':'drift','amount':.03}];mouth=P(620,620);spark=P(610,435)
  elif id=='fortune-cookie':
@@ -92,13 +92,15 @@ def make_spec(id,point):
  elif id=='red-packet':
   ls=[static('packet'),moving('flap','hinge',{'scaleY':-1},(615,205)),fade('seal')];mouth=P(615,240);spark=P(590,470)
  elif id=='phone-booth':
-  ls=[static('booth'),fade('light'),moving('door','hinge',{'scaleX':.08},(425,700))];ls[1]['idle']=[{'type':'glow','base':.35,'range':.4}];mouth=P(610,620);spark=P(690,700)
+  ls=[static('booth'),fade('light'),moving('door','hinge',{'scaleX':.08},(425,700))];ls[1]['open']=[{'at':0,'opacity':1},{'at':1,'opacity':1}];ls[1]['idle']=[{'type':'glow','base':.35,'range':.4}];mouth=P(610,620);spark=P(690,700)
  elif id=='firefly-jar':
-  ls=[static('jar'),fade('fireflies'),moving('lid','lift',{},(615,400),[{'at':0,'y':0,'rotate':0,'opacity':1},{'at':.25,'y':0,'rotate':-12,'opacity':1},{'at':1,'y':-.5,'rotate':-12,'opacity':0}])];ls[1]['idle']=[{'type':'drift','amount':.03},{'type':'glow','base':.65,'range':.3}];mouth=P(615,365);spark=P(350,585)
+  ls=[static('jar'),fade('fireflies'),moving('lid','lift',{},(615,400),[{'at':0,'y':0,'rotate':0,'opacity':1},{'at':.25,'y':0,'rotate':-12,'opacity':1},{'at':1,'y':-.5,'rotate':-12,'opacity':0}])];ls[1]['open']=[{'at':0,'y':0,'opacity':1},{'at':1,'y':-.25,'opacity':0}];ls[1]['idle']=[{'type':'drift','amount':.03},{'type':'glow','base':.65,'range':.3}];mouth=P(615,365);spark=P(350,585)
  elif id=='hourglass':
   ls=[static('frame-and-glass'),static('sand'),moving('cap','lift',{'y':-.35,'opacity':0})];ls[1]['idle']=[{'type':'drift','amount':.03,'direction':'down'}];mouth=P(615,320);spark=P(485,210)
  else:
   ls=[moving('bottom','hinge',{},(520,720),[{'at':0,'rotate':0,'x':0,'y':0},{'at':.25,'rotate':-6,'x':0,'y':0},{'at':1,'rotate':-23,'x':-.1,'y':.08}]),moving('top','hinge',{},(720,720),[{'at':0,'rotate':0,'x':0,'y':0},{'at':.25,'rotate':6,'x':0,'y':0},{'at':1,'rotate':27,'x':.12,'y':-.22,'opacity':.2}])];idle=[{'type':'tick','deg':3,'pivot':P(620,950)}];mouth=P(620,650);spark=P(450,340)
+ idle_overrides={'red-packet':[{'type':'sway','deg':3,'pivot':{'x':512,'y':300}}],'instant-camera':[{'type':'bob','amount':.03}],'mixtape':[{'type':'bob','amount':.03}],'ramen':[{'type':'bob','amount':.025}],'phone-booth':[{'type':'breathe','amount':.025}],'hourglass':[{'type':'sway','deg':2.5,'pivot':{'x':512,'y':900}}]}
+ idle=idle_overrides.get(id,idle)
  return {'opening':{'mixtape':'F','instant-camera':'F','ramen':'B','fortune-cookie':'H','red-packet':'E','phone-booth':'J','firefly-jar':'G','hourglass':'C','gashapon':'H'}[id],'idleMs':4000,'idle':idle,'layers':ls,'mouth':mouth,'baseY':900,'sparkle':spark,'glint':glint,'openGlow':None,'readyPulse':None}
 
 def main():
@@ -109,7 +111,7 @@ def main():
    im=clean(Image.open(entry['source']))
    if (id,name) in FIT:im=fit(im,FIT[id,name])
    if (id,name) in [('mixtape','case'),('phone-booth','door'),('firefly-jar','jar'),('hourglass','frame-and-glass'),('gashapon','top')]:im=glass(im)
-   if name=='steam':im=soft(im,.5,4)
+   if name=='steam':im=soft(im,.7,4)
    if name=='light':im=soft(im,.22,14)
    if name=='fireflies':im=fireflies(im)
    if id=='fortune-cookie' and name in ('left','right'):
@@ -130,6 +132,25 @@ def main():
   point=lambda x,y:(round(x*s+dx),round(y*s+dy))
   for name,im in parts.items():
    out=Image.new('RGBA',(1024,1024));small=im.resize((round(1254*s),round(1254*s)),Image.Resampling.LANCZOS);out.alpha_composite(small,(round(dx),round(dy)));parts[name]=clean(out,5)
+  fixes=json.loads((C/'t10a-review-fixes.json').read_text())
+  if id=='firefly-jar':
+   im=Image.open(fixes['fireflies']['source']).convert('RGBA')
+   assert im.width>=1024 and im.height>=1024
+   im=im.resize((1024,1024),Image.Resampling.LANCZOS)
+   pix=im.load()
+   for y in range(1024):
+    for x in range(1024):
+     r,g,b,a=pix[x,y]
+     # Remove grey/brown halo RGB without darkening transparent gold bloom.
+     if a<12:pix[x,y]=(0,0,0,0)
+     elif min(r,g,b)>225 and a>190:pix[x,y]=(255,246,206,a)
+     else:pix[x,y]=(255,210,100,min(245,round(a*1.15)))
+   parts['fireflies']=im
+  if id=='ramen':
+   im=Image.open(fixes['chopsticks']['source']).convert('RGBA')
+   assert im.width>=1024 and im.height>=1024
+   im=clean(im.resize((1024,1024),Image.Resampling.LANCZOS),20)
+   parts['lid']=Image.alpha_composite(parts['lid'],im)
   spec=make_spec(id,point)
   if id=='mixtape':
    # Reel disks are exact scripted isolations of the edited cassette; they slide with it.
@@ -144,6 +165,8 @@ def main():
   assembled=frame(parts,spec,0);assembled.save(V/f'vessel-{id}.png',optimize=True);specs[f'vessels/vessel-{id}.png']=spec
   prompts[f'vessels/vessel-{id}.png']=data['prompt']
   for n,p in data['parts'].items():prompts[f'vessels/vessel-{id}-{n}.png']=p['prompt']
+  if id=='firefly-jar':prompts['vessels/vessel-firefly-jar-fireflies.png']=fixes['fireflies']['prompt']
+  if id=='ramen':prompts['vessels/vessel-ramen-lid.png'] += '\n\nAdditional chopsticks overlay edit (composited into the unchanged lid):\n'+fixes['chopsticks']['prompt']
   report[id]={'native_to_master':{'scale':s,'dx':dx,'dy':dy},'canvas':list(assembled.size),'bbox_alpha_gt25':bbox(assembled),'baseY':900,'generation_attempts':1,'ip_check':'PASS: original design, no logo/text/character/brand shapes; compared with plan rejected ideas','rest_keyframes_applied':True}
  (C/'t10a-specs.json').write_text(json.dumps(specs,indent=2)+'\n');(C/'prompts-t10a-extra.json').write_text(json.dumps(prompts,ensure_ascii=False,indent=2)+'\n');(C/'t10a-check.json').write_text(json.dumps(report,indent=2)+'\n')
  print('Prepared',len(specs),'vessels and',len(prompts),'masters')

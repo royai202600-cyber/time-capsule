@@ -37,6 +37,12 @@ def main():
    if l['role']!='static':assert l.get('open')
   assert 3400<=spec['idleMs']<=4600
   if id=='hourglass':assert spec['layers'][1]['idle'][0]['direction']=='down'
+  if id=='instant-camera':
+   full=expanded(parts,spec,1).getchannel('A').point(lambda a:255 if a>25 else 0).getbbox()
+   assert all(v>=256 for v in full[:2]) and all(v<=1280 for v in full[2:]),full
+   print('camera fully open bbox on 1024:',tuple(v-256 for v in full))
+  if id=='phone-booth':assert [k['opacity'] for k in spec['layers'][1]['open']]==[1,1]
+  if id=='firefly-jar':assert spec['layers'][1]['open'][-1]=={'at':1,'y':-.25,'opacity':0}
   # Thin outline crosshairs: pivot plum, mouth red, sparkle brass.
   sh=Image.new('RGB',(1240,720),PAPER[:3]);d=ImageDraw.Draw(sh)
   for i,t in enumerate((0,.5,1)):

@@ -24,8 +24,8 @@
       "center_alpha": 255,
       "visible_bbox_alpha_gt_20": [
         232,
-        304,
-        827,
+        303,
+        828,
         900
       ]
     },
@@ -63,10 +63,10 @@
       ],
       "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        635,
-        304,
-        827,
-        509
+        632,
+        303,
+        828,
+        511
       ]
     },
     "lid": {
