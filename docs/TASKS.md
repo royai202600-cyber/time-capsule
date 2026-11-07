@@ -80,3 +80,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 
 ### Combined vessel release — 2026-11-07
 Batch 1 is applied and verified in live Shop/Create. PR #62 merged as `49b5833` after green CI; owner release follows. The landmark catalogue/reward migration must follow confirmed deployment, with API ownership/reward tests and production web/Expo Go checks.
+
+### Landmark rewards backend — release blocked by Vercel quota
+PR #62 merged `49b5833`; owner release `1e2134e` was rejected with build-rate-limit. Production remains `9d0a328`, with batch 1 applied (17 rows total). Migration `20261107103039_landmark_vessels_and_rewards` is prepared but MUST remain unapplied until #62 is deployed and confirmed. All ten mappings passed hosted authenticated-role rollback integration tests. Cabinet earned-ownership and focused-Shop visibility fixes share tested access predicates. Then: deploy latest owner-authored main → confirm #62 and Cabinet guard → db push held migration → regenerate database.types.ts → production Shop/Create/Cabinet/place-reward checks and Roy Expo Go check. Physical batch-1 Expo Go checks requested via port 8087 QR. No billing/settings changes authorized or made.

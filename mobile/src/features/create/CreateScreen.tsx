@@ -1,3 +1,4 @@
+import { canUseVessel as canAccessVessel, showVesselInShop } from "../../services/vesselAccess";
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Image, PanResponder, Keyboard, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { GestureDetector, useNativeGesture, usePanGesture } from 'react-native-gesture-handler';
@@ -144,8 +145,7 @@ export default function CreateScreen() {
   const chosenVessel = catalog.data?.find(v => v.id === vessel);
   // Earned (landmark) vessels are only usable once earned by opening a capsule at their place.
   const ownsVessel = (id: string) => !!owned.data?.some(o => o.vessel === id);
-  const isEarned = (v: object) => !!(v as { earned_place?: string | null }).earned_place;
-  const canUseVessel = (v: { id: string; price_mop: number }) => ownsVessel(v.id) || (v.price_mop === 0 && !isEarned(v));
+  const canUseVessel = (v: { id: string; price_mop: number }) => canAccessVessel(v, ownsVessel(v.id));
   const selectedPlace = places.data?.find(p => p.id === place);
   const recipientRow = friends.data?.find(f => f.friend_id === recipient);
   const recipientName = recipient === id ? t('create.self') : ((recipientRow as any)?.profiles?.name ?? '');
@@ -368,7 +368,7 @@ export default function CreateScreen() {
       <Text style={label}>{t('create.hint')}</Text><TextInput value={hint} onChangeText={setHint} maxLength={40} placeholder={t('create.hintPlaceholder')} style={[card, { color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{hint.length} / 40</Text>
     </View>}
     {step === 3 && <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-      {(catalog.data ?? []).filter(v => !isEarned(v) || ownsVessel(v.id)).map(v => { const usable = canUseVessel(v); return <Pressable key={v.id} onPress={() => { setVessel(v.id as VesselKind); if (selectedPlace?.brand_vessel && selectedPlace.brand_vessel !== v.id) setPlace(null); if (usable) void haptics.tick(); else router.push({ pathname: '/shop', params: { focus: v.id, returnTo: 'create' } }); }} style={[card, { width: '46%', alignItems: 'center', borderColor: vessel === v.id ? C.blue : C.line, opacity: usable ? 1 : .68 }]}><Vessel kind={v.id as VesselKind} size={105} idle={vessel === v.id} /><Text style={{ fontFamily: serif, color: C.ink, textAlign: 'center' }}>{t(`shop.vessel.${v.id}`)}</Text><Text style={{ color: usable ? C.blue : C.plum, fontSize: 12 }}>{t(usable ? 'create.owned' : 'create.getShop')}</Text></Pressable>; })}
+      {(catalog.data ?? []).filter(v => showVesselInShop(v, ownsVessel(v.id))).map(v => { const usable = canUseVessel(v); return <Pressable key={v.id} onPress={() => { setVessel(v.id as VesselKind); if (selectedPlace?.brand_vessel && selectedPlace.brand_vessel !== v.id) setPlace(null); if (usable) void haptics.tick(); else router.push({ pathname: '/shop', params: { focus: v.id, returnTo: 'create' } }); }} style={[card, { width: '46%', alignItems: 'center', borderColor: vessel === v.id ? C.blue : C.line, opacity: usable ? 1 : .68 }]}><Vessel kind={v.id as VesselKind} size={105} idle={vessel === v.id} /><Text style={{ fontFamily: serif, color: C.ink, textAlign: 'center' }}>{t(`shop.vessel.${v.id}`)}</Text><Text style={{ color: usable ? C.blue : C.plum, fontSize: 12 }}>{t(usable ? 'create.owned' : 'create.getShop')}</Text></Pressable>; })}
       {catalog.loading && <SealLoader size={44} label={t('create.loading')} />}
       {catalog.error && <Button title={t('create.retry')} onPress={() => void catalog.refresh()} />}
     </View>}

@@ -11,13 +11,14 @@ import { Heading, Bar, BackButton } from "../../components/Screen";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
 import { useAuth } from "../../services/auth";
+import { canUseVessel } from "../../services/vesselAccess";
 import { capsules, vessels } from "../../services/data";
 import { VESSELS } from "../../i18n/webStrings";
 import { useReducedMotion } from "../../useReducedMotion";
 import { C, motion, sans, serif } from "../../theme";
 
 type Owned = { vessel: string; edition_no: number | null; acquired_at: string };
-type VesselRow = { id: string; price_mop: number; edition_total: number | null; sort: number };
+type VesselRow = { earned_place?: string | null; id: string; price_mop: number; edition_total: number | null; sort: number };
 type SlotRect = { x: number; y: number; width: number; height: number };
 /** One vessel on the shelves. `key` is unique even when the same kind appears more than once. */
 export type CabinetItem = {
@@ -366,12 +367,12 @@ export default function CabinetScreen() {
     return () => { alive = false; };
   }, [session?.user.id]));
   const items = useMemo(() => {
-    const rank = (v: VesselRow) => v.price_mop === 0 ? 0 : owned.some(o => o.vessel === v.id) ? 1 : 2;
+    const rank = (v: VesselRow) => canUseVessel(v, false) ? 0 : owned.some(o => o.vessel === v.id) ? 1 : 2;
     return [...all].sort((a, b) => rank(a) - rank(b) || a.sort - b.sort).flatMap((v): CabinetItem[] => {
       if (!isVessel(v.id)) return [];
       const own = owned.find(o => o.vessel === v.id);
       return [{
-        key: v.id, kind: v.id, owned: v.price_mop === 0 || !!own,
+        key: v.id, kind: v.id, owned: canUseVessel(v, !!own),
         editionNo: own?.edition_no, editionTotal: v.edition_total, acquiredAt: own?.acquired_at, used: usage[v.id] ?? 0,
       }];
     });
