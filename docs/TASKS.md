@@ -86,3 +86,9 @@ PR #62 merged `49b5833`; owner release `1e2134e` was rejected with build-rate-li
 
 ### Combined vessel release — live completion update
 PR #62 `49b5833` and PR #64 `99e70f5` are merged after green CI. Production domain confirmed Ready on owner-authored `99e70f5`, then migration `20261107103039_landmark_vessels_and_rewards` applied. Both catalogue migrations are applied: 47 rows. Live schema types regenerated; six public-key/JWT API groups and all-ten-place rollback tests pass. Live Shop shows 37 regular vessels and hides ten unearned landmarks. Roy confirmed all batch-1 Expo Go checks; remaining-wave catalogue/reward phone verification requested. Earlier quota hold is superseded.
+
+### Combined vessel release — Done; phone confirmation
+Roy confirmed the remaining regular vessels and successfully earned Clock-tower clock on iPhone Expo Go using a newly place-locked self-capsule and dev simulated arrival. All production web/backend/device release checks are complete. QA users/sessions and their fixture data were removed. Regenerated types/API evidence merged in #65 (`5dc08d4`) after green CI; production runtime is #64 (`99e70f5`, includes #62), with both catalogue migrations applied.
+
+### Claude follow-up — landmark reward celebration / obtain animation / popup
+Roy: earning the Clock Tower works, but the reveal is not impressive. Claude should add a themed celebration, vessel obtain animation and popup when a landmark vessel is newly earned; preserve existing artwork, palette, typography and sizes, and provide a Reduce Motion alternative. Avoid replaying the reward on an already-opened capsule or already-owned vessel. Backend grants are complete and server-checked. This UI follow-up is requested for Claude; Codex has not implemented it in this release.

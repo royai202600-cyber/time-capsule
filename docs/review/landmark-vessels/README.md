@@ -14,10 +14,12 @@ TypeScript, 26 unit tests, Expo dependency check, iOS/web exports and root Vite 
 
 `supabase/tests/landmark-vessels-api.mjs` then ran six real public-key/JWT API groups against the applied schema: exact catalogue counts, all ten acquisition/unowned-send denials, failed openings without rewards, all ten successful recipient-only/idempotent rewards, owned/free/paid sends, and direct-table access denials. See api.json. Test coordinates simulate arrival; no real GPS sensor claim.
 
-Live web: all ten batch-1 vessels in Shop and Create; 37 regular vessels and no unowned landmarks in the full Shop; Shop acquisition gives an owned Cabinet close-up; fortune-cookie hold/open animation leads to its letter. Roy confirmed batch-1 Shop/Create/acquisition/Cabinet/free opening in iPhone Expo Go. Remaining-wave physical check was requested.
+Live web: all ten batch-1 vessels in Shop and Create; 37 regular vessels and no unowned landmarks in the full Shop; Shop acquisition gives an owned Cabinet close-up; fortune-cookie hold/open animation leads to its letter. Roy confirmed batch-1 Shop/Create/acquisition/Cabinet/free opening in iPhone Expo Go. Roy then confirmed the remaining-wave phone check and successfully earned Clock-tower clock using a new place-locked self-capsule and dev simulated arrival. He requested a separate Claude UI follow-up for a celebration, obtain animation and popup.
 
 ## Rules and local commands
 
 Rewards are granted only inside the first successful opening transaction, after existing server time/distance/accuracy checks. Existing already-opened capsules are not retroactively rewarded. ON CONFLICT prevents duplicate ownership. Cabinet uses the same earned-access predicates as Shop/Create, and Shop focus links respect visibility.
 
 Expo Go: `cd mobile && npm start -- --tunnel` (8087). Web: `cd mobile && npm run web`, http://localhost:8088. No billing/hosting/auth settings changes. Security advisor baseline has intentional sealed-table/no-policy and guarded-RPC notices, plus pre-existing rls_auto_enable/leaked-password-protection notices; no new public RPC was added.
+
+Final cleanup confirmed zero disposable QA users remain. #65 merged as owner-authored `5dc08d4` after green CI 42365113922; its type/docs-only redundant build hit the rate limit, while runtime `99e70f5` remains live with both migrations applied. Screenshots show the live simulated arrival and newly earned Cabinet close-up.
