@@ -4,7 +4,6 @@ Owner per task: **Claude** (UI, design, planning) or **Codex** (backend, merging
 Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move a task by editing this file in the same PR as the work.
 
 ## Doing
-- S1: Restore iPhone Safari sound effects with a shared touch-unlocked Web Audio context. Nineteen unit tests, TypeScript and web/iOS exports pass; Chrome context-unlock and repeated playback observed. Awaiting physical Safari verification and release.
 | ID | Task | Owner | Done when |
 |---|---|---|---|
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
@@ -34,6 +33,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+- S1 / PR #33: Restored iPhone Safari sound effects using one touch-unlocked Web Audio context and predecoded buffers. Native keeps prepared Expo players. Roy verified repeated tap effects on the Safari preview; CI, 19 tests, TypeScript and web/iOS exports pass. Squash-merged as `e103e82`, followed by an owner-authored production release. No dependencies, migrations or settings changed.
 - PR #31: Softer tap/tick/warning WAV files, no application-code changes. Green PR CI on `6dcba1a`; squash-merged as `f2370cc` through the owner account, followed by an owner-authored production release. All three files validated as mono 16-bit PCM at 44.1 kHz.
 - M1 / PR #29: Resting vessel motion merged after green CI as `be267a9`; Home and Create selection retain the active-vessel and Reduce Motion controls.
 - PR #30: Background music, nine effects and independent Me switches merged after green CI as `139a1a0`. Effects prepare at startup and rewind between plays. Roy confirmed both audio types in iPhone Expo Go SDK 58 and confirmed the swipe/tap delay is fixed. Fifteen unit tests, TypeScript, dependency checks and web/iOS exports pass; browser Home and audio controls checked. One owner-authored release follows the ordered merges; native seal and keyboard fixes retained.
