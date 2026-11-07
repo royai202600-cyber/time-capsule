@@ -2,6 +2,7 @@
 """Composite vessel layers and record size, alpha, and visual-difference checks."""
 
 import json
+import runpy
 from pathlib import Path
 
 from PIL import Image, ImageChops, ImageStat
@@ -41,6 +42,13 @@ def check_vessel(vessel: str, layer_names: list[str]) -> dict:
         stack = Image.alpha_composite(stack, parts[name])
     stack.save(CHECKS / f"{vessel}-stack.png", optimize=True)
 
+    specs_path = CHECKS / "t10a-specs.json"
+    specs = json.loads(specs_path.read_text()) if specs_path.exists() else {}
+    rel = f"vessels/vessel-{vessel}.png"
+    if rel in specs:
+        render = runpy.run_path(str(ROOT / "scripts" / "finish-batch1.py"))["frame"]
+        stack = render(parts, specs[rel], 0)
+        stack.save(CHECKS / f"{vessel}-stack.png", optimize=True)
     original_on_paper, stack_on_paper = flatten(assembled), flatten(stack)
     diff = ImageChops.difference(original_on_paper, stack_on_paper)
     mae = round(sum(ImageStat.Stat(diff).mean) / 3, 3)
@@ -81,6 +89,10 @@ def check_vessel(vessel: str, layer_names: list[str]) -> dict:
 
 def main() -> None:
     CHECKS.mkdir(parents=True, exist_ok=True)
+    specs_path = CHECKS / "t10a-specs.json"
+    if specs_path.exists():
+        for path, spec in json.loads(specs_path.read_text()).items():
+            LAYERS[Path(path).stem.removeprefix("vessel-")] = [l["name"] for l in spec["layers"]]
     for vessel, layer_names in LAYERS.items():
         result = check_vessel(vessel, layer_names)
         print(vessel, "MAE", result["assembled_vs_stack_mae_rgb_on_paper_0_to_255"],

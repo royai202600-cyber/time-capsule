@@ -69,8 +69,8 @@ def make_motion() -> None:
     draw = ImageDraw.Draw(sheet)
     states = (
         ("CLOSED", 0, 0, 1.0, 1.0),
-        ("HALF OPEN", 0.5, -77, 0.5, 0.7),
-        ("OPEN", 1, -154, 0.0, 0.2),
+        ("HALF OPEN", 0.5, -179, 0.5, 0.5),
+        ("OPEN", 1, -358, 0.0, 0.0),
     )
     for index, (title, at, offset, snow_alpha, globe_alpha) in enumerate(states):
         ox = 35 + index * 405
@@ -84,7 +84,8 @@ def make_motion() -> None:
         sparkle_x = ox + round(SPARKLE[0] * scale)
         sparkle_y = oy + round((SPARKLE[1] + offset) * scale)
         marker(draw, mouth_x, mouth_y, (163, 54, 79))
-        marker(draw, sparkle_x, sparkle_y, (201, 161, 90))
+        if globe_alpha > 0:
+            marker(draw, sparkle_x, sparkle_y, (201, 161, 90))
         base_line = oy + round(BASE_Y * scale)
         draw.line((ox, base_line, ox + 350, base_line), fill=(47, 93, 138), width=1)
         draw.text((ox + 3, 399), f"at {at:g}: globe y {offset / 1024:.3f}, opacity {globe_alpha:g}", fill=(22, 38, 63), font=font(15))

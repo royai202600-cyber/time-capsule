@@ -114,6 +114,21 @@ def make_glint(globe: Image.Image) -> Image.Image:
     return clean(result, 3)
 
 
+def small_snow():
+    """Roy-approved scripted replacement: 22 pale falling particles."""
+    im = Image.new("RGBA", (1024,1024))
+    d = ImageDraw.Draw(im)
+    points = [(392,244,3),(477,234,2),(574,259,3),(635,299,2),(337,312,3),
+              (425,330,2),(529,307,4),(590,359,2),(678,381,3),(290,418,2),
+              (393,415,3),(483,389,2),(557,437,3),(712,467,2),(324,509,3),
+              (421,491,2),(615,506,3),(687,561,2),(366,577,3),(512,572,2),
+              (574,633,2),(432,653,3)]
+    for x,y,r in points:
+        d.ellipse((x-r-1,y-r-1,x+r+1,y+r+1),fill=(169,203,230,155))
+        d.ellipse((x-r,y-r,x+r,y+r),fill=(255,255,255,235))
+    return im.filter(ImageFilter.GaussianBlur(.5))
+
+
 def main() -> None:
     if len(sys.argv) != 6:
         raise SystemExit(__doc__)
@@ -124,7 +139,7 @@ def main() -> None:
     parts = {
         "base": finish(pedestal(base)),
         "scene": finish(inside_globe(clean(scene, 15))),
-        "snow": finish(inside_globe(clean(snow, 20))),
+        "snow": small_snow(),
         "globe": finish(clear_globe(globe)),
     }
     make_glint(parts["globe"]).save(OUT / "vessel-snow-globe-glint.png", optimize=True)

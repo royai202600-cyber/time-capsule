@@ -1,0 +1,651 @@
+{
+  "vessels/vessel-mixtape.png": {
+    "opening": "F",
+    "idleMs": 4000,
+    "idle": [],
+    "layers": [
+      {
+        "name": "case",
+        "file": "vessel-mixtape-case.png",
+        "role": "static"
+      },
+      {
+        "name": "cassette",
+        "file": "vessel-mixtape-cassette.png",
+        "role": "slide",
+        "open": [
+          {
+            "at": 0,
+            "x": 0,
+            "y": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.55,
+            "opacity": 0
+          }
+        ]
+      },
+      {
+        "name": "reel-left",
+        "file": "vessel-mixtape-reel-left.png",
+        "role": "slide",
+        "pivot": {
+          "x": 344,
+          "y": 663
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.55,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "spin",
+            "pivot": {
+              "x": 344,
+              "y": 663
+            },
+            "turns": 1
+          }
+        ]
+      },
+      {
+        "name": "reel-right",
+        "file": "vessel-mixtape-reel-right.png",
+        "role": "slide",
+        "pivot": {
+          "x": 605,
+          "y": 663
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.55,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "spin",
+            "pivot": {
+              "x": 605,
+              "y": 663
+            },
+            "turns": 1
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 490,
+      "y": 451
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 266,
+      "y": 402
+    },
+    "glint": "vessel-mixtape-glint.png",
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "vessels/vessel-instant-camera.png": {
+    "opening": "F",
+    "idleMs": 4000,
+    "idle": [],
+    "layers": [
+      {
+        "name": "camera",
+        "file": "vessel-instant-camera-camera.png",
+        "role": "static"
+      },
+      {
+        "name": "photo",
+        "file": "vessel-instant-camera-photo.png",
+        "role": "slide",
+        "pivot": {
+          "x": 421,
+          "y": 847
+        },
+        "open": [
+          {
+            "at": 0,
+            "scaleY": 0.06,
+            "y": 0
+          },
+          {
+            "at": 0.25,
+            "scaleY": 0.4,
+            "y": 0.08
+          },
+          {
+            "at": 1,
+            "scaleY": 1,
+            "y": 0.3
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 430,
+      "y": 802
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 613,
+      "y": 496
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "vessels/vessel-ramen.png": {
+    "opening": "B",
+    "idleMs": 4000,
+    "idle": [],
+    "layers": [
+      {
+        "name": "bowl",
+        "file": "vessel-ramen-bowl.png",
+        "role": "static"
+      },
+      {
+        "name": "steam",
+        "file": "vessel-ramen-steam.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "drift",
+            "amount": 0.03
+          }
+        ]
+      },
+      {
+        "name": "lid",
+        "file": "vessel-ramen-lid.png",
+        "role": "lift",
+        "open": [
+          {
+            "at": 0,
+            "x": 0,
+            "y": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.45,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 509,
+      "y": 581
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 501,
+      "y": 430
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "vessels/vessel-fortune-cookie.png": {
+    "opening": "H",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "plate",
+        "file": "vessel-fortune-cookie-plate.png",
+        "role": "static"
+      },
+      {
+        "name": "slip",
+        "file": "vessel-fortune-cookie-slip.png",
+        "role": "static"
+      },
+      {
+        "name": "left",
+        "file": "vessel-fortune-cookie-left.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 315,
+          "y": 744
+        },
+        "open": [
+          {
+            "at": 0,
+            "x": 0,
+            "y": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "x": -0.13,
+            "rotate": -32
+          }
+        ]
+      },
+      {
+        "name": "right",
+        "file": "vessel-fortune-cookie-right.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 686,
+          "y": 748
+        },
+        "open": [
+          {
+            "at": 0,
+            "x": 0,
+            "y": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "x": 0.13,
+            "rotate": 32
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 511,
+      "y": 622
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 511,
+      "y": 368
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "vessels/vessel-red-packet.png": {
+    "opening": "E",
+    "idleMs": 4000,
+    "idle": [],
+    "layers": [
+      {
+        "name": "packet",
+        "file": "vessel-red-packet-packet.png",
+        "role": "static"
+      },
+      {
+        "name": "flap",
+        "file": "vessel-red-packet-flap.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 505,
+          "y": 190
+        },
+        "open": [
+          {
+            "at": 0,
+            "x": 0,
+            "y": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "scaleY": -1
+          }
+        ]
+      },
+      {
+        "name": "seal",
+        "file": "vessel-red-packet-seal.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 505,
+      "y": 219
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 484,
+      "y": 407
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "vessels/vessel-phone-booth.png": {
+    "opening": "J",
+    "idleMs": 4000,
+    "idle": [],
+    "layers": [
+      {
+        "name": "booth",
+        "file": "vessel-phone-booth-booth.png",
+        "role": "static"
+      },
+      {
+        "name": "light",
+        "file": "vessel-phone-booth-light.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "glow",
+            "base": 0.35,
+            "range": 0.4
+          }
+        ]
+      },
+      {
+        "name": "door",
+        "file": "vessel-phone-booth-door.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 355,
+          "y": 564
+        },
+        "open": [
+          {
+            "at": 0,
+            "x": 0,
+            "y": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "scaleX": 0.08
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 506,
+      "y": 499
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 571,
+      "y": 564
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "vessels/vessel-firefly-jar.png": {
+    "opening": "G",
+    "idleMs": 4000,
+    "idle": [],
+    "layers": [
+      {
+        "name": "jar",
+        "file": "vessel-firefly-jar-jar.png",
+        "role": "static"
+      },
+      {
+        "name": "fireflies",
+        "file": "vessel-firefly-jar-fireflies.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "drift",
+            "amount": 0.03
+          },
+          {
+            "type": "glow",
+            "base": 0.65,
+            "range": 0.3
+          }
+        ]
+      },
+      {
+        "name": "lid",
+        "file": "vessel-firefly-jar-lid.png",
+        "role": "lift",
+        "pivot": {
+          "x": 512,
+          "y": 360
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.25,
+            "y": 0,
+            "rotate": -12,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.5,
+            "rotate": -12,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 512,
+      "y": 332
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 296,
+      "y": 511
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "vessels/vessel-hourglass.png": {
+    "opening": "C",
+    "idleMs": 4000,
+    "idle": [],
+    "layers": [
+      {
+        "name": "frame-and-glass",
+        "file": "vessel-hourglass-frame-and-glass.png",
+        "role": "static"
+      },
+      {
+        "name": "sand",
+        "file": "vessel-hourglass-sand.png",
+        "role": "static",
+        "idle": [
+          {
+            "type": "drift",
+            "amount": 0.03,
+            "direction": "down"
+          }
+        ]
+      },
+      {
+        "name": "cap",
+        "file": "vessel-hourglass-cap.png",
+        "role": "lift",
+        "open": [
+          {
+            "at": 0,
+            "x": 0,
+            "y": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.35,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 513,
+      "y": 260
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 407,
+      "y": 170
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "vessels/vessel-gashapon.png": {
+    "opening": "H",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "tick",
+        "deg": 3,
+        "pivot": {
+          "x": 510,
+          "y": 832
+        }
+      }
+    ],
+    "layers": [
+      {
+        "name": "bottom",
+        "file": "vessel-gashapon-bottom.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 428,
+          "y": 644
+        },
+        "open": [
+          {
+            "at": 0,
+            "rotate": 0,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "at": 0.25,
+            "rotate": -6,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "at": 1,
+            "rotate": -23,
+            "x": -0.1,
+            "y": 0.08
+          }
+        ]
+      },
+      {
+        "name": "top",
+        "file": "vessel-gashapon-top.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 592,
+          "y": 644
+        },
+        "open": [
+          {
+            "at": 0,
+            "rotate": 0,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "at": 0.25,
+            "rotate": 6,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "at": 1,
+            "rotate": 27,
+            "x": 0.12,
+            "y": -0.22,
+            "opacity": 0.2
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 510,
+      "y": 587
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 371,
+      "y": 334
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  }
+}

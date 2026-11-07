@@ -13,6 +13,11 @@ VESSELS = {
     "lantern": "Mid-Autumn lantern", "musicbox": "warm wood music box",
     "maison": "Maison Aurèle ring box",
     "snow-globe": "winter scene snow globe",
+    "mixtape": "cassette in a clear case", "instant-camera": "original instant camera",
+    "ramen": "covered ramen bowl", "fortune-cookie": "fortune cookie on a plate",
+    "red-packet": "gold-foil red packet", "phone-booth": "original red phone booth",
+    "firefly-jar": "cloth-covered firefly jar", "hourglass": "wood and brass hourglass",
+    "gashapon": "pastel clear-top toy capsule",
 }
 PLACES = {
     "senado": "Senado Square", "tst-clock": "Tsim Sha Tsui Clock Tower",
@@ -56,7 +61,7 @@ POSTPROCESS = {
     "vessels/vessel-snow-globe.png": "Composited from the four edited layers after finish-snow-globe.py downscaled and aligned them on one 1024 canvas.",
     "vessels/vessel-snow-globe-base.png": "The edit revealed the pedestal seat; finish-snow-globe.py fitted its footprint and baseY to the assembled art.",
     "vessels/vessel-snow-globe-scene.png": "finish-snow-globe.py clipped the complete winter scene inside the globe footprint.",
-    "vessels/vessel-snow-globe-snow.png": "finish-snow-globe.py clipped drifting snowflakes inside the globe footprint.",
+    "vessels/vessel-snow-globe-snow.png": "finish-snow-globe.py replaced large flakes with 22 small soft white/light-blue particles per Roy; idle direction is down.",
     "vessels/vessel-snow-globe-globe.png": "finish-snow-globe.py removed erase residue and scaled glass fill alpha below 200 to 37.5%; rim and highlights stay strong.",
     "vessels/vessel-snow-globe-glint.png": "finish-snow-globe.py extracted the generated glass highlight into a soft idle-glint layer.",
 }
@@ -68,10 +73,10 @@ VESSEL_SPECS = {
             {"name": "scene", "file": "vessel-snow-globe-scene.png", "role": "static"},
             {"name": "snow", "file": "vessel-snow-globe-snow.png", "role": "fade",
              "open": [{"at": 0, "opacity": 1}, {"at": 0.5, "opacity": 0.5}, {"at": 1, "opacity": 0}],
-             "idle": [{"type": "drift", "amount": 0.03}]},
+             "idle": [{"type": "drift", "amount": 0.03, "direction": "down"}]},
             {"name": "globe", "file": "vessel-snow-globe-globe.png", "role": "lift",
-             "open": [{"at": 0, "y": 0, "opacity": 1}, {"at": 0.5, "y": -0.075, "opacity": 0.7},
-                      {"at": 1, "y": -0.15, "opacity": 0.2}]},
+             "open": [{"at": 0, "y": 0, "opacity": 1}, {"at": 0.5, "y": -0.175, "opacity": 0.5},
+                      {"at": 1, "y": -0.35, "opacity": 0}]},
         ],
         "mouth": {"x": 512, "y": 724}, "letterDrop": 230, "baseY": 902,
         "sparkle": {"x": 340, "y": 270}, "glint": "vessel-snow-globe-glint.png",
@@ -125,12 +130,14 @@ def load_prompts() -> dict[str, str]:
     for name, prompt in portraits.items():
         prompts[f"portraits/{name}.png"] = prompt
     prompts.update(completion)
+    prompts.update(json.loads((CHECKS / "prompts-t10a-extra.json").read_text()))
     prompts.update(runpy.run_path(str(Path(__file__).with_name("prompts-t10a.py")))["PROMPTS"])
     return prompts
 
 
 def main() -> None:
     prompts = load_prompts()
+    VESSEL_SPECS.update(json.loads((CHECKS / "t10a-specs.json").read_text()))
     audit = json.loads((CHECKS / "assets.json").read_text())
     pivots = json.loads((CHECKS / "pivots.json").read_text())
     entries = []
@@ -153,6 +160,8 @@ def main() -> None:
             entry["postprocess"] = "Perfect circle: center (505,526), radius 430 px; transparent outside, by mask-portraits.py."
         elif rel.startswith("stamps/"):
             entry["postprocess"] = "Single palette ink color with white fills and stray colors removed by normalize-stamps.py."
+        elif rel.startswith("vessels/") and rel.removeprefix("vessels/vessel-").split(".png")[0].split("-")[0] in ("mixtape", "instant", "ramen", "fortune", "red", "phone", "firefly", "hourglass", "gashapon"):
+            entry["postprocess"] = "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest."
         elif rel in POSTPROCESS:
             entry["postprocess"] = POSTPROCESS[rel]
         if not rel.startswith("style-sheet"):
@@ -164,7 +173,7 @@ def main() -> None:
         "# Time Capsule art assets", "",
         "To make new art, follow [STYLE.md](STYLE.md). This README lists what already exists.", "",
         "Roy chose style sheet A. All generated masters use the built-in `gpt-image-2` image tool with the approved sheet as their style reference; the exact prompts and any postprocessing are in `manifest.json`.", "",
-        "PNG masters live in `design/art/`. WebP copies live at matching paths in `public/art/`, except the style sheets and `_checks/`. Names use kebab-case: `<category>-<id>-<part>` where a part exists. Vessel IDs: dome, bottle, envelope, tin, lantern, musicbox, maison, snow-globe. Place IDs: senado, tst-clock, taipei101, sensoji, fushimi, gyeongbok, merlion, grandpal, wumen, petronas, aurele-cotai.", "",
+        "PNG masters live in `design/art/`. WebP copies live at matching paths in `public/art/`, except the style sheets and `_checks/`. Names use kebab-case: `<category>-<id>-<part>` where a part exists. Vessel IDs: dome, bottle, envelope, tin, lantern, musicbox, maison, snow-globe, mixtape, instant-camera, ramen, fortune-cookie, red-packet, phone-booth, firefly-jar, hourglass, gashapon. Place IDs: senado, tst-clock, taipei101, sensoji, fushimi, gyeongbok, merlion, grandpal, wumen, petronas, aurele-cotai.", "",
         "The original SVG art remains in `src/art.js` and is recoverable from Git tag `art-svg-v1`. These bitmap assets are not wired into app screens yet.", "",
         "## Rules and checks", "",
         "- Music box and ring box assembled views are closed. Their lids are separate complete parts. Vessel part order and 120 px comparisons are in `_checks/`; lid, flap and cork pivots are in `manifest.json` and `_checks/pivots.json`.",
@@ -172,7 +181,8 @@ def main() -> None:
         "- All nine portraits are the main profile pictures, with an identical 860 px diameter disc centered at (505, 526). `_checks/portraits-small.png` shows 24 px and 40 px tests.",
         "- Passport stamps use one ink color each. Paper textures are opaque and seamlessly tile at all edges. Scene edges fade to transparency.",
         "- A2 idle effects: `vessels/vessel-dome-glint.png` overlays the existing dome glass without changing vessel art; `fx/fx-glint.png` catches on wax seals and brass edges. Roy approved both after `_checks/idle-glint-review.png` showed the dome at 120/240 px and the sparkle at 16/24 px on envelope and tin. `finish-idle-glints.py` downscaled and refined the generated layers.",
-        "- T10a snow-globe test: original winter scene inside a clear lifting globe, with separate base, scene, drifting snow, glass and idle glint. Its data-driven vessel block follows the PR #42 `IllustratedParts` field names. `_checks/snow-globe-motion.png` shows the measured open keyframes and mouth/sparkle/base anchors; `_checks/snow-globe-silhouette.png` shows 40/120 px. This test awaits Roy's approval before the remaining nine vessels.",
+        "- T10a snow-globe test: original winter scene inside a clear lifting globe, with separate base, scene, drifting snow, glass and idle glint. Its data-driven vessel block follows the PR #42 `IllustratedParts` field names. `_checks/snow-globe-motion.png` shows the measured open keyframes and mouth/sparkle/base anchors; `_checks/snow-globe-silhouette.png` shows 40/120 px. Roy approved this test with a full-clear glass lift and 22 small pale falling snow particles.",
+        "- T10a batch 1: all ten vessels follow the approved plan and PR #42 vessel data format. No `ground` layers or split/twist/door roles. Moving layers have measured opening keyframes; snow and sand drift down, steam/fireflies rise. The cassette reels spin independently. Each new vessel has 40/120 px silhouette and closed/half/open motion sheets. The complete camera photo uses its at=0 keyframe for the resting stack; raw part compositing alone would expose it. Pivots and anchors are measured on the normalized canvas. All ten original designs were checked against the plan’s rejected IP ideas; none was regenerated.",
         "- The built-in image tool returned the map at native 1254 × 1254, its largest square output here; no artificial upscale was used.",
         "- The map entry in `manifest.json` has eleven hand-placed `pins` coordinates in that native 1254 × 1254 pixel space. They follow the illustrative coastlines rather than a precise map projection. `_checks/map-pins.png` overlays their exact points and labels; the Macau boutique pin sits beside Senado Square.",
         "- The T9c pin placement was checked against Roy's supplied world map and an [online East/Southeast Asia map](https://maplab-icon.com/blog-entry-784-html/); [Natural Earth coastlines](https://www.naturalearthdata.com/downloads/10m-physical-vectors/) were consulted for a reliable geographic source. These pins are display positions only; actual location checks use the app's place coordinates.",

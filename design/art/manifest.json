@@ -725,6 +725,604 @@
     "web_export": "public/art/vessels/vessel-envelope.webp"
   },
   {
+    "path": "design/art/vessels/vessel-firefly-jar-fireflies.png",
+    "what": "Cloth-Covered Firefly Jar — fireflies layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled firefly jar. Keep ONLY its many small firefly lights, about 22 tiny warm cream-white cores with soft brass blooms, mixed sizes, same original positions INSIDE the jar footprint. No outline or large discs. Remove jar, glass tint, lid, string and everything else to fully transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-firefly-jar-fireflies.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-firefly-jar-jar.png",
+    "what": "Cloth-Covered Firefly Jar — jar layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled firefly jar. Keep ONLY the empty clear glass jar body, including its complete open glass mouth beneath the cloth. Remove cloth, string bow and ALL firefly lights. Glass interior very faint with outline and highlights retained. Same square canvas, same position and scale, everything else transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-firefly-jar-jar.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-firefly-jar-lid.png",
+    "what": "Cloth-Covered Firefly Jar — lid layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled firefly jar. Keep ONLY the cream cloth lid, its tied string and bow. Exact original closed position and scale; remove all glass and firefly lights. Same square canvas, same position and scale, everything else transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-firefly-jar-lid.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-firefly-jar.png",
+    "what": "Assembled cloth-covered firefly jar vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "One closed clear glass firefly jar vessel, squat rounded mason-like jar but original simple shape with NO embossed symbols. A cream cloth lid is tied snugly over the mouth by a thin brass-brown string bow, closed. Inside the clear jar: 18–22 tiny warm cream/brass points of light, mixed sizes and softly glowing, no large insects, no faces. Glass is almost invisible, fine plum outline and narrow white highlights; contents remain visible. Three-quarter front view, no ground shadow, centered transparent square; width <=65%, base at88%, top>=10% clear. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "vessel": {
+      "opening": "G",
+      "idleMs": 4000,
+      "idle": [],
+      "layers": [
+        {
+          "name": "jar",
+          "file": "vessel-firefly-jar-jar.png",
+          "role": "static"
+        },
+        {
+          "name": "fireflies",
+          "file": "vessel-firefly-jar-fireflies.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "opacity": 0
+            }
+          ],
+          "idle": [
+            {
+              "type": "drift",
+              "amount": 0.03
+            },
+            {
+              "type": "glow",
+              "base": 0.65,
+              "range": 0.3
+            }
+          ]
+        },
+        {
+          "name": "lid",
+          "file": "vessel-firefly-jar-lid.png",
+          "role": "lift",
+          "pivot": {
+            "x": 512,
+            "y": 360
+          },
+          "open": [
+            {
+              "at": 0,
+              "y": 0,
+              "rotate": 0,
+              "opacity": 1
+            },
+            {
+              "at": 0.25,
+              "y": 0,
+              "rotate": -12,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": -0.5,
+              "rotate": -12,
+              "opacity": 0
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 512,
+        "y": 332
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 296,
+        "y": 511
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-firefly-jar.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-fortune-cookie-left.png",
+    "what": "Fortune Cookie On A Plate — left layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled fortune cookie. Keep ONLY its left cookie lobe, at the exact original position and scale. Remove the other lobe, paper slip and plate completely. Complete the thin inner broken edge at the center seam so this half can rotate apart. Same square canvas, everything else transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-fortune-cookie-left.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-fortune-cookie-plate.png",
+    "what": "Fortune Cookie On A Plate — plate layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled fortune cookie. Keep only the complete empty blue plate. Remove cookie and paper. Fill the hidden center of the plate completely. Same original position and scale, same square canvas, everything else fully transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-fortune-cookie-plate.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-fortune-cookie-right.png",
+    "what": "Fortune Cookie On A Plate — right layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled fortune cookie. Keep ONLY its right cookie lobe, at the exact original position and scale. Remove the other lobe, paper slip and plate completely. Complete the thin inner broken edge at the center seam so this half can rotate apart. Same square canvas, everything else transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-fortune-cookie-right.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-fortune-cookie-slip.png",
+    "what": "Fortune Cookie On A Plate — slip layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled fortune cookie. Keep only the blank paper slip. Complete it as a long narrow cream paper strip lying across the plate center behind the cookie, with its original visible tip fixed. Remove plate and cookie, no marks. Same original position and scale, same square canvas, everything else fully transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-fortune-cookie-slip.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-fortune-cookie.png",
+    "what": "Assembled fortune cookie on a plate vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "One closed golden-cream fortune cookie on a small shallow ink-blue ceramic plate. Cookie is whole with two folded lobes touching along a clear middle seam, no face. A tiny tip of blank cream fortune paper peeks from the seam, no letters. Three-quarter front view, soft simple shading, light hatching only. Centered square transparent canvas, width <=70%, lowest plate pixel at 88% canvas height, >=10% clear above, no cast ground shadow. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "vessel": {
+      "opening": "H",
+      "idleMs": 4000,
+      "idle": [
+        {
+          "type": "bob",
+          "amount": 0.025
+        }
+      ],
+      "layers": [
+        {
+          "name": "plate",
+          "file": "vessel-fortune-cookie-plate.png",
+          "role": "static"
+        },
+        {
+          "name": "slip",
+          "file": "vessel-fortune-cookie-slip.png",
+          "role": "static"
+        },
+        {
+          "name": "left",
+          "file": "vessel-fortune-cookie-left.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 315,
+            "y": 744
+          },
+          "open": [
+            {
+              "at": 0,
+              "x": 0,
+              "y": 0,
+              "rotate": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "x": -0.13,
+              "rotate": -32
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "file": "vessel-fortune-cookie-right.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 686,
+            "y": 748
+          },
+          "open": [
+            {
+              "at": 0,
+              "x": 0,
+              "y": 0,
+              "rotate": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "x": 0.13,
+              "rotate": 32
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 511,
+        "y": 622
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 511,
+        "y": 368
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-fortune-cookie.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-gashapon-bottom.png",
+    "what": "Pastel Clear-Top Toy Capsule — bottom layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled capsule toy. Keep ONLY the blue lower capsule half, including a complete inner bowl and the blank rolled cream slip resting inside it. Remove upper clear half and its highlights. Same original position, width and scale. Same square canvas, everything else transparent. No center band or button. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-gashapon-bottom.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-gashapon-top.png",
+    "what": "Pastel Clear-Top Toy Capsule — top layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled capsule toy. Keep ONLY the CLEAR upper capsule half. Remove the lower blue half, rolled slip and all contents. Complete the glass back rim. Faint transparent glass-blue interior, preserve plum outline and white highlights. Same closed position and scale. Same square canvas, everything else transparent. No center band or button. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-gashapon-top.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-gashapon.png",
+    "what": "Assembled pastel clear-top toy capsule vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "One closed generic capsule-toy capsule vessel, rounded egg-oval silhouette, pastel ink-blue lower half and clear glass-blue upper half, plain thin meeting seam. NO center band, NO button, NOT red and white, no symbols, no recognizable game franchise shape. Two halves visibly fit together. Three-quarter front view with a tiny cream blank rolled slip visible inside, fine plum outline and light hatching. Centered transparent square, width <=65%, base y88%, top>=10% clear, no ground shadow. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "vessel": {
+      "opening": "H",
+      "idleMs": 4000,
+      "idle": [
+        {
+          "type": "tick",
+          "deg": 3,
+          "pivot": {
+            "x": 510,
+            "y": 832
+          }
+        }
+      ],
+      "layers": [
+        {
+          "name": "bottom",
+          "file": "vessel-gashapon-bottom.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 428,
+            "y": 644
+          },
+          "open": [
+            {
+              "at": 0,
+              "rotate": 0,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "at": 0.25,
+              "rotate": -6,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "at": 1,
+              "rotate": -23,
+              "x": -0.1,
+              "y": 0.08
+            }
+          ]
+        },
+        {
+          "name": "top",
+          "file": "vessel-gashapon-top.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 592,
+            "y": 644
+          },
+          "open": [
+            {
+              "at": 0,
+              "rotate": 0,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "at": 0.25,
+              "rotate": 6,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "at": 1,
+              "rotate": 27,
+              "x": 0.12,
+              "y": -0.22,
+              "opacity": 0.2
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 510,
+        "y": 587
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 371,
+        "y": 334
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-gashapon.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-hourglass-cap.png",
+    "what": "Wood And Brass Hourglass — cap layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled hourglass. Keep ONLY the flat round brass top cap, exact original closed position and scale, including its complete lower edge. Remove wooden posts, glass, sand and base completely. Same square canvas, everything else fully transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-hourglass-cap.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-hourglass-frame-and-glass.png",
+    "what": "Wood And Brass Hourglass — frame-and-glass layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled hourglass. Keep ONLY wooden base, both wooden side posts and complete EMPTY clear hourglass glass. Remove ALL sand grains and sand piles and remove the top brass cap. Complete the top glass mouth revealed under the cap. Faint glass fill, opaque outlines and white highlights. Same square canvas, same position and scale, everything else fully transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-hourglass-frame-and-glass.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-hourglass-sand.png",
+    "what": "Wood And Brass Hourglass — sand layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled hourglass. Keep ONLY the cream/brass sand inside the two bulbs and the thin trickle of 20–30 tiny separate grains. Preserve exact position/scale and contour of piles. Remove frame, glass, highlights, top cap and everything else. Same square canvas, same position and scale, everything else fully transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-hourglass-sand.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-hourglass.png",
+    "what": "Assembled wood and brass hourglass vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "One CLOSED wooden-and-brass hourglass vessel. Two slim warm-brown wooden side posts, low round wooden base, a flat round brass top cap fully seated; clear two-bulb glass inside, pale cream/brass sand in upper and lower bulbs with a thin trickle of many tiny grains at the neck. Glass never hides sand. Simple original design, no ornament, front three-quarter view, light hatching, no ground shadow. Centered transparent square, width <=65%, base y88%, top >=10% clear. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "vessel": {
+      "opening": "C",
+      "idleMs": 4000,
+      "idle": [],
+      "layers": [
+        {
+          "name": "frame-and-glass",
+          "file": "vessel-hourglass-frame-and-glass.png",
+          "role": "static"
+        },
+        {
+          "name": "sand",
+          "file": "vessel-hourglass-sand.png",
+          "role": "static",
+          "idle": [
+            {
+              "type": "drift",
+              "amount": 0.03,
+              "direction": "down"
+            }
+          ]
+        },
+        {
+          "name": "cap",
+          "file": "vessel-hourglass-cap.png",
+          "role": "lift",
+          "open": [
+            {
+              "at": 0,
+              "x": 0,
+              "y": 0,
+              "rotate": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": -0.35,
+              "opacity": 0
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 513,
+        "y": 260
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 407,
+        "y": 170
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-hourglass.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-instant-camera-camera.png",
+    "what": "Original Instant Camera — camera layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled instant camera. Keep only the complete camera body and front slot. Remove the cream paper lip from slot, leaving an empty dark slot. Remove cast ground shadow. Same position and scale on the same square canvas, everything else fully transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-instant-camera-camera.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-instant-camera-photo.png",
+    "what": "Original Instant Camera — photo layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled instant camera. Keep only the instant photograph. Complete its hidden rectangle upward behind the slot to create a full cream rectangular photo frame with a soft abstract pastel-blue image, no lettering. The visible bottom edge stays at the original paper lip position, and its width matches that lip. Remove camera and ground shadow entirely. Same position and scale on the same square canvas, everything else fully transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-instant-camera-photo.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-instant-camera.png",
+    "what": "Assembled original instant camera vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Create one CLOSED resting instant-camera vessel, an original generic squat navy and cream camera with rounded shoulders, a single round lens, small brass flash window, a clearly visible front lower photo slot and a blank cream instant-photo frame seated in the slot (only a short lip visible). Absolutely no rainbow stripe and no recognizable brand silhouette or trademark design. Three-quarter front view, simple silhouette at 40px. Centered square canvas; width <=74%, base at 88% canvas height and >=10% clear above. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "vessel": {
+      "opening": "F",
+      "idleMs": 4000,
+      "idle": [],
+      "layers": [
+        {
+          "name": "camera",
+          "file": "vessel-instant-camera-camera.png",
+          "role": "static"
+        },
+        {
+          "name": "photo",
+          "file": "vessel-instant-camera-photo.png",
+          "role": "slide",
+          "pivot": {
+            "x": 421,
+            "y": 847
+          },
+          "open": [
+            {
+              "at": 0,
+              "scaleY": 0.06,
+              "y": 0
+            },
+            {
+              "at": 0.25,
+              "scaleY": 0.4,
+              "y": 0.08
+            },
+            {
+              "at": 1,
+              "scaleY": 1,
+              "y": 0.3
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 430,
+        "y": 802
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 613,
+        "y": 496
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-instant-camera.webp"
+  },
+  {
     "path": "design/art/vessels/vessel-lantern-body.png",
     "what": "Mid-Autumn Lantern — body layer",
     "size_px": [
@@ -825,6 +1423,189 @@
     "web_export": "public/art/vessels/vessel-maison.webp"
   },
   {
+    "path": "design/art/vessels/vessel-mixtape-case.png",
+    "what": "Cassette In A Clear Case — case layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled mixtape. Keep only the case, same position and same scale on the same square canvas, everything else fully transparent. Only the EMPTY clear cassette case with its complete back and transparent front rim; remove the cassette and label. Keep the original exterior contour. Do not enlarge, recenter, or change the object. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-mixtape-case.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-mixtape-cassette.png",
+    "what": "Cassette In A Clear Case — cassette layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled mixtape. Keep only the cassette, same position and same scale on the same square canvas, everything else fully transparent. Only the cassette tape, with cream scribble-line label and both reels, entirely complete. Remove all clear case borders and glass reflections. Do not enlarge, recenter, or change the object. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-mixtape-cassette.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-mixtape-glint.png",
+    "what": "Cassette In A Clear Case — glint layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled mixtape. Keep only the case, same position and same scale on the same square canvas, everything else fully transparent. Only the EMPTY clear cassette case with its complete back and transparent front rim; remove the cassette and label. Keep the original exterior contour. Do not enlarge, recenter, or change the object. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-mixtape-glint.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-mixtape-reel-left.png",
+    "what": "Cassette In A Clear Case — reel-left layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled mixtape. Keep only the cassette, same position and same scale on the same square canvas, everything else fully transparent. Only the cassette tape, with cream scribble-line label and both reels, entirely complete. Remove all clear case borders and glass reflections. Do not enlarge, recenter, or change the object. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-mixtape-reel-left.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-mixtape-reel-right.png",
+    "what": "Cassette In A Clear Case — reel-right layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled mixtape. Keep only the cassette, same position and same scale on the same square canvas, everything else fully transparent. Only the cassette tape, with cream scribble-line label and both reels, entirely complete. Remove all clear case borders and glass reflections. Do not enlarge, recenter, or change the object. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-mixtape-reel-right.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-mixtape.png",
+    "what": "Assembled cassette in a clear case vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Create one closed assembled mixtape vessel: a generic ink-blue cassette inside a clear fitted cassette case, three-quarter front view. Blank cream cassette label with only 3 scribble lines, no real letters. Two simple round reels. The clear case must reveal the cassette. Entire object centered on square transparent canvas, width <=74%, lowest opaque pixel at 88% canvas height, top at least 10% clear. Original proportions, simple plum line, light hatching, style sheet A. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "vessel": {
+      "opening": "F",
+      "idleMs": 4000,
+      "idle": [],
+      "layers": [
+        {
+          "name": "case",
+          "file": "vessel-mixtape-case.png",
+          "role": "static"
+        },
+        {
+          "name": "cassette",
+          "file": "vessel-mixtape-cassette.png",
+          "role": "slide",
+          "open": [
+            {
+              "at": 0,
+              "x": 0,
+              "y": 0,
+              "rotate": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": -0.55,
+              "opacity": 0
+            }
+          ]
+        },
+        {
+          "name": "reel-left",
+          "file": "vessel-mixtape-reel-left.png",
+          "role": "slide",
+          "pivot": {
+            "x": 344,
+            "y": 663
+          },
+          "open": [
+            {
+              "at": 0,
+              "y": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": -0.55,
+              "opacity": 0
+            }
+          ],
+          "idle": [
+            {
+              "type": "spin",
+              "pivot": {
+                "x": 344,
+                "y": 663
+              },
+              "turns": 1
+            }
+          ]
+        },
+        {
+          "name": "reel-right",
+          "file": "vessel-mixtape-reel-right.png",
+          "role": "slide",
+          "pivot": {
+            "x": 605,
+            "y": 663
+          },
+          "open": [
+            {
+              "at": 0,
+              "y": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": -0.55,
+              "opacity": 0
+            }
+          ],
+          "idle": [
+            {
+              "type": "spin",
+              "pivot": {
+                "x": 605,
+                "y": 663
+              },
+              "turns": 1
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 490,
+        "y": 451
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 266,
+        "y": 402
+      },
+      "glint": "vessel-mixtape-glint.png",
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-mixtape.webp"
+  },
+  {
     "path": "design/art/vessels/vessel-musicbox-box.png",
     "what": "Warm Wood Music Box — box layer",
     "size_px": [
@@ -863,6 +1644,355 @@
     "prompt": "Edit Image 2, the closed Time Capsule music box. Use Image 1 (approved style sheet A) as the exact reference for its warm medium-brown wood color, visible wood grain, plum/navy ink line and brass hardware. Change ONLY the pale cream-painted wood surfaces of Image 2 to warm brown natural wood like the OPEN music box depicted in Image 1. Keep Image 2 CLOSED, same exact overall position, scale, shape, brass crank on the right, lid seam and shadow. Simplify the decorative lid motif if needed to make natural wood read clearly at 120px. No text, logos or letters. Preserve genuine transparent background and 1024 square framing. Tender hand-inked storybook; lighter hatching; no glossy 3D.",
     "model": "gpt-image-2",
     "web_export": "public/art/vessels/vessel-musicbox.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-phone-booth-booth.png",
+    "what": "Original Red Phone Booth — booth layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled phone booth. Keep only the booth structure, roof, sides, floor and complete warm cream interior with the tiny handset. REMOVE the entire FRONT DOOR, leaving doorway fully open and all hidden interior drawn. Same booth position and size. Same square canvas and scale, everything else transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-phone-booth-booth.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-phone-booth-door.png",
+    "what": "Original Red Phone Booth — door layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled phone booth. Keep ONLY the closed front door panel including diamond glass and two lower panes, brass handle and left hinges. Remove booth structure and all interior objects including the handset. Glass panes are faint transparent glass-blue, no cream interior fill. Exact original closed position. Same square canvas and scale, everything else transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-phone-booth-door.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-phone-booth-light.png",
+    "what": "Original Red Phone Booth — light layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled phone booth. Keep ONLY its warm soft interior light, at same position and scale in the doorway, a very gentle cream/brass glow feathered to fully transparent. No booth, no door, no handset, no outline, no hard rectangle edge. This is a soft light layer. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-phone-booth-light.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-phone-booth.png",
+    "what": "Assembled original red phone booth vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "An ORIGINAL generic red phone booth vessel, closed single front door. Squat faceted canopy roof with brass edge, wax-red uprights, unusual large diamond upper window plus two tall simple rectangular lower window panels, small brass handle, warm cream interior with a tiny plain handset on back wall. NOT classic British design, no dome roof, no crown, no sign panel, no TELEPHONE word. Three-quarter front view, light hatching, no ground shadow, whole booth centered transparent square; width <=65%, base at88%, top>=10% clear. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "vessel": {
+      "opening": "J",
+      "idleMs": 4000,
+      "idle": [],
+      "layers": [
+        {
+          "name": "booth",
+          "file": "vessel-phone-booth-booth.png",
+          "role": "static"
+        },
+        {
+          "name": "light",
+          "file": "vessel-phone-booth-light.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "opacity": 0
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0.35,
+              "range": 0.4
+            }
+          ]
+        },
+        {
+          "name": "door",
+          "file": "vessel-phone-booth-door.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 355,
+            "y": 564
+          },
+          "open": [
+            {
+              "at": 0,
+              "x": 0,
+              "y": 0,
+              "rotate": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "scaleX": 0.08
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 506,
+        "y": 499
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 571,
+        "y": 564
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-phone-booth.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-ramen-bowl.png",
+    "what": "Covered Ramen Bowl — bowl layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled ramen bowl. Only the bowl body, REMOVE lid and steam. Complete its revealed open elliptical mouth with warm broth, simple noodle loops and 2 tiny garnish pieces, no faces. Keep bowl position, width, bottom exactly. Same square canvas and same scale; everything else fully transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-ramen-bowl.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-ramen-lid.png",
+    "what": "Covered Ramen Bowl — lid layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled ramen bowl. Only the matching complete domed lid and brass knob, same original position and width. Remove bowl, contents and steam. Same square canvas and same scale; everything else fully transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-ramen-lid.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-ramen-steam.png",
+    "what": "Covered Ramen Bowl — steam layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit the attached assembled ramen bowl. Keep ONLY the steam, same position and scale: many small soft translucent white/glass-blue curls and wisps, feathered, no outlines, no hard-edged ribbons, all inside the 100px top padding. Remove bowl and lid and all solid objects completely. Everything else transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-ramen-steam.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-ramen.png",
+    "what": "Assembled covered ramen bowl vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "One closed ramen bowl vessel: deep cream ceramic bowl with a simple ink-blue rim and low domed matching lid fully seated, small brass lid knob, a few very soft steam wisps escaping beside it. Original everyday bowl with no motifs or characters. Three-quarter front view, light hatching, no ground shadow, centered on transparent square; width <=70%, base at 88% height, >=10% free above. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "vessel": {
+      "opening": "B",
+      "idleMs": 4000,
+      "idle": [],
+      "layers": [
+        {
+          "name": "bowl",
+          "file": "vessel-ramen-bowl.png",
+          "role": "static"
+        },
+        {
+          "name": "steam",
+          "file": "vessel-ramen-steam.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "opacity": 0
+            }
+          ],
+          "idle": [
+            {
+              "type": "drift",
+              "amount": 0.03
+            }
+          ]
+        },
+        {
+          "name": "lid",
+          "file": "vessel-ramen-lid.png",
+          "role": "lift",
+          "open": [
+            {
+              "at": 0,
+              "x": 0,
+              "y": 0,
+              "rotate": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": -0.45,
+              "opacity": 0
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 509,
+        "y": 581
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 501,
+        "y": 430
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-ramen.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-red-packet-flap.png",
+    "what": "Gold-Foil Red Packet — flap layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled red packet. Only the triangular folded top flap with its abstract gold detail. Remove body and round sticker, complete red paper under sticker. Same original closed pose. Exact same position and scale on same canvas, everything else transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-red-packet-flap.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-red-packet-packet.png",
+    "what": "Gold-Foil Red Packet — packet layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled red packet. Only the packet body, remove triangular top flap and round sticker. Complete the open mouth and dark-red inner lining where flap was, with no holes. Exact same position and scale on same canvas, everything else transparent. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-red-packet-packet.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-red-packet-seal.png",
+    "what": "Gold-Foil Red Packet — seal layer",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Edit attached assembled red packet. Keep ONLY the round brass-gold sticker seal, exact same position and scale; remove all red packet and pattern. Everything else fully transparent on same square canvas. Match this style exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-red-packet-seal.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-red-packet.png",
+    "what": "Assembled gold-foil red packet vessel",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "One CLOSED wax-red gift packet vessel, portrait rectangular envelope with a folded triangular flap on the FRONT upper third, sealed with a small round brass-gold sticker. Fine abstract gold-foil vine curves and tiny dots, no symbols, no Chinese characters. Slight three-quarter front view with visible side thickness, no ground shadow. Centered transparent square, width <=60%, base y88%, top >=10% clear. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "vessel": {
+      "opening": "E",
+      "idleMs": 4000,
+      "idle": [],
+      "layers": [
+        {
+          "name": "packet",
+          "file": "vessel-red-packet-packet.png",
+          "role": "static"
+        },
+        {
+          "name": "flap",
+          "file": "vessel-red-packet-flap.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 505,
+            "y": 190
+          },
+          "open": [
+            {
+              "at": 0,
+              "x": 0,
+              "y": 0,
+              "rotate": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "scaleY": -1
+            }
+          ]
+        },
+        {
+          "name": "seal",
+          "file": "vessel-red-packet-seal.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "opacity": 0
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 505,
+        "y": 219
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 484,
+        "y": 407
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "postprocess": "finish-batch1.py: align isolation edits, common downscale and baseline, clean alpha; clear glass fill and soft particles where relevant. Assembled resting view composites the recorded at=0 keyframes; complete hidden photo is compressed at rest.",
+    "web_export": "public/art/vessels/vessel-red-packet.webp"
   },
   {
     "path": "design/art/vessels/vessel-snow-globe-base.png",
@@ -926,7 +2056,7 @@
     "transparent": true,
     "prompt": "EDIT the attached assembled snow globe to isolate ONLY the four or five small floating snowflake particles that are clearly visible in the upper glass area, at exactly the same positions and scale on the same square canvas. No snowbank, no house, no trees, no globe glass, no glass highlights, no base. Make each flake a soft ink-blue/glass-blue particle with no surrounding rectangular patch; everything else fully transparent. This is the snow layer that will drift gently. Match the attached style sheet exactly. original design, no logos, no brand names or brand shapes, no characters, no text.\n\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
     "model": "gpt-image-2",
-    "postprocess": "finish-snow-globe.py clipped drifting snowflakes inside the globe footprint.",
+    "postprocess": "finish-snow-globe.py replaced large flakes with 22 small soft white/light-blue particles per Roy; idle direction is down.",
     "web_export": "public/art/vessels/vessel-snow-globe-snow.webp"
   },
   {
@@ -975,7 +2105,8 @@
           "idle": [
             {
               "type": "drift",
-              "amount": 0.03
+              "amount": 0.03,
+              "direction": "down"
             }
           ]
         },
@@ -991,13 +2122,13 @@
             },
             {
               "at": 0.5,
-              "y": -0.075,
-              "opacity": 0.7
+              "y": -0.175,
+              "opacity": 0.5
             },
             {
               "at": 1,
-              "y": -0.15,
-              "opacity": 0.2
+              "y": -0.35,
+              "opacity": 0
             }
           ]
         }
