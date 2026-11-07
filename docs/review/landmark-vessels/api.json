@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "47 catalogue rows: 37 regular and ten earned landmarks",
+    "all ten landmarks reject acquisition and zero-price unowned sending",
+    "missing, inaccurate, far and wrong-recipient opens give no reward",
+    "all ten server-checked openings award only the recipient, once",
+    "earned owners may send; ordinary paid acquisition and free sending still work",
+    "ownership writes and sealed contents remain forbidden"
+  ],
+  "passed": 6
+}

@@ -324,6 +324,7 @@ export type Database = {
       vessels: {
         Row: {
           brand: string | null
+          earned_place: string | null
           edition_total: number | null
           id: string
           price_mop: number
@@ -331,6 +332,7 @@ export type Database = {
         }
         Insert: {
           brand?: string | null
+          earned_place?: string | null
           edition_total?: number | null
           id: string
           price_mop?: number
@@ -338,12 +340,21 @@ export type Database = {
         }
         Update: {
           brand?: string | null
+          earned_place?: string | null
           edition_total?: number | null
           id?: string
           price_mop?: number
           sort?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "vessels_earned_place_fkey"
+            columns: ["earned_place"]
+            isOneToOne: false
+            referencedRelation: "places"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
