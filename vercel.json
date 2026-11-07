@@ -1,4 +1,10 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "**": false,
+      "main": true
+    }
+  },
   "installCommand": "cd mobile && npm ci",
   "buildCommand": "cd mobile && npx expo export --platform web",
   "outputDirectory": "mobile/dist",
