@@ -3,8 +3,10 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View, Pressable, type ScrollViewProps } from "react-native";
 import { C, serif, sans } from "../theme";
 import { ArtIcon } from './ArtIcon';
+import { GestureDetector, type useNativeGesture } from 'react-native-gesture-handler';
+type ScrollGesture = ReturnType<typeof useNativeGesture>;
 /** Shared native keyboard handling; web keeps the browser's normal focus scrolling. */
-export function KeyboardScrollView({ children, footer, onFocus, onBlur, onLayout, ...props }: ScrollViewProps & { footer?: React.ReactNode }) {
+export function KeyboardScrollView({ children, footer, scrollGesture, onFocus, onBlur, onLayout, ...props }: ScrollViewProps & { footer?: React.ReactNode; scrollGesture?: ScrollGesture }) {
   const scroll = useRef<React.ElementRef<typeof ScrollView>>(null);
   const focusWithin = useRef(false);
   const insets = useSafeAreaInsets();
@@ -29,14 +31,14 @@ export function KeyboardScrollView({ children, footer, onFocus, onBlur, onLayout
   </ScrollView>;
   if (Platform.OS === "web") return content;
   return <KeyboardAvoidingView style={{ flex: 1 }} enabled={Platform.OS === "ios"} behavior="padding" keyboardVerticalOffset={insets.top}>
-    {content}
+    {scrollGesture ? <GestureDetector gesture={scrollGesture}>{content}</GestureDetector> : content}
     {footer && <View onLayout={event => setFooterHeight(event.nativeEvent.layout.height)} style={{ width: "100%", maxWidth: 640, alignSelf: "center", paddingHorizontal: 24, paddingVertical: 12, backgroundColor: C.paper }}>{footer}</View>}
   </KeyboardAvoidingView>;
 }
-export function Screen({ children, scrollEnabled = true, dragContent = false, footer }: { children: React.ReactNode; scrollEnabled?: boolean; dragContent?: boolean; footer?: React.ReactNode }) {
+export function Screen({ children, scrollEnabled = true, dragContent = false, scrollGesture, footer }: { children: React.ReactNode; scrollEnabled?: boolean; dragContent?: boolean; scrollGesture?: ScrollGesture; footer?: React.ReactNode }) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}>
-      <KeyboardScrollView scrollEnabled={scrollEnabled} footer={footer}
+      <KeyboardScrollView scrollEnabled={scrollEnabled} footer={footer} scrollGesture={scrollGesture}
         disableScrollViewPanResponder={dragContent} canCancelContentTouches={!dragContent}
         contentContainerStyle={{
           flexGrow: 1,

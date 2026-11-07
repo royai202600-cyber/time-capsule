@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Image, PanResponder, Keyboard, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { GestureDetector, useNativeGesture, usePanGesture } from 'react-native-gesture-handler';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { goBack } from "../../navigation";
 import * as ImagePicker from 'expo-image-picker';
@@ -281,9 +282,24 @@ export default function CreateScreen() {
     onPanResponderTerminate: () => gesture.current.cancel(),
   })).current;
 
+  const sealScrollGesture = useNativeGesture({});
+  const sealPanGesture = usePanGesture({
+    minDistance: 0,
+    runOnJS: true,
+    shouldCancelWhenOutside: false,
+    block: sealScrollGesture,
+    onBegin: () => gesture.current.grant(),
+    onUpdate: event => gesture.current.move(event.translationX, event.translationY),
+    onDeactivate: event => {
+      if (event.canceled) gesture.current.cancel();
+      else gesture.current.release(event.translationX, event.translationY);
+    },
+    onFinalize: () => { if (dragActive.current) gesture.current.cancel(); },
+  });
+  const waxControl = <Animated.View {...(Platform.OS === 'web' ? pan.panHandlers : {})} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }, { translateY: idleNudge }] }}><Image source={sealWax} style={{ width: 76, height: 76 }} resizeMode="contain" /></Animated.View>;
   if (authLoading) return <Screen><Body>{t('create.loading')}</Body></Screen>;
   if (!session) return <Screen><Body>{t('create.signIn')}</Body><Button title={t('create.close')} onPress={() => router.replace('/')} /></Screen>;
-  if (phase === 'seal') return <Screen dragContent scrollEnabled={!busy}>
+  if (phase === 'seal') return <Screen dragContent scrollGesture={sealScrollGesture} scrollEnabled={!busy}>
     <Heading>{t('create.sealSend')}</Heading>
     <View style={{ height: 570, width: '100%' }}>
       <Animated.View style={{ position: 'absolute', zIndex: 2, top: 20, left: '6%', width: '88%', height: 210, transform: [{ translateY: letterDrop }, { translateY: letterEntry }], opacity: Animated.multiply(Animated.multiply(letterOpacity, letterFade), drift.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })) }}><Animated.View style={[card, { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', transform: [{ scaleY: letter }, { scaleX: letterNarrow }] }]}>
@@ -300,7 +316,7 @@ export default function CreateScreen() {
       </Animated.View></Animated.View>
       <Animated.View style={{ position: 'absolute', top: 270, left: 0, right: 0, alignItems: 'center', transform: [{ translateY: drift.interpolate({ inputRange: [0, 1], outputRange: [0, -120] }) }, { scale: drift.interpolate({ inputRange: [0, 1], outputRange: [1, .5] }) }], opacity: drift.interpolate({ inputRange: [0, .8, 1], outputRange: [1, 1, 0] }) }}><Vessel kind={vessel ?? 'dome'} size={120} lidLift={lidLift} /></Animated.View>
       {!stamped && <Animated.View pointerEvents="none" style={{ position: 'absolute', zIndex: 3, top: 398, left: 0, right: 0, alignItems: 'center', gap: 5, opacity: hintFade }}>{[2, 1, 0].map(i => <Animated.View key={i} style={{ width: 12, height: 12, borderTopWidth: 2.5, borderLeftWidth: 2.5, borderColor: C.brass, transform: [{ rotate: '45deg' }], opacity: reduced ? .45 : hintCycle.interpolate({ inputRange: [i, i + .5, i + 1], outputRange: [.35, 1, .35], extrapolate: 'clamp' }) }} />)}</Animated.View>}
-      {!stamped && <View style={{ position: 'absolute', zIndex: 10, elevation: 10, top: 448, left: 0, right: 0, alignItems: 'center' }}><Animated.View {...pan.panHandlers} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }, { translateY: idleNudge }] }}><Image source={sealWax} style={{ width: 76, height: 76 }} resizeMode="contain" /></Animated.View></View>}
+      {!stamped && <View style={{ position: 'absolute', zIndex: 10, elevation: 10, top: 448, left: 0, right: 0, alignItems: 'center' }}>{Platform.OS === 'web' ? waxControl : <GestureDetector gesture={sealPanGesture}>{waxControl}</GestureDetector>}</View>}
       <Text style={{ position: 'absolute', top: 534, left: 0, right: 0, textAlign: 'center', fontFamily: sans, color: C.muted }}>{busy || sentOnce.current ? t('create.sending') : t('create.drag')}</Text>
     </View>
     <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
