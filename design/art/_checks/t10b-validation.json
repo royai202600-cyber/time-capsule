@@ -1,0 +1,222 @@
+{
+  "clock-tower": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "visible_bbox": [
+      410,
+      120,
+      614,
+      900
+    ],
+    "baseY": 899,
+    "rest_stack_exact": true,
+    "corners_alpha_zero": true,
+    "native_to_master": {
+      "scale": 0.7330827067669173,
+      "dx": 59,
+      "dy": 41
+    },
+    "ip_sensitivity": "Original souvenir interpretation, no logos, writing, emblems or sacred figures; trademarked forms kept loose.",
+    "silhouette_review": "120 px review required before shipment"
+  },
+  "senado-fountain": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "visible_bbox": [
+      180,
+      257,
+      845,
+      901
+    ],
+    "baseY": 900,
+    "rest_stack_exact": true,
+    "corners_alpha_zero": true,
+    "native_to_master": {
+      "scale": 0.8165869218500797,
+      "dx": 4,
+      "dy": 55
+    },
+    "ip_sensitivity": "Original souvenir interpretation, no logos, writing, emblems or sacred figures; trademarked forms kept loose.",
+    "silhouette_review": "120 px review required before shipment"
+  },
+  "bamboo-tower": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "visible_bbox": [
+      402,
+      120,
+      622,
+      900
+    ],
+    "baseY": 899,
+    "rest_stack_exact": true,
+    "corners_alpha_zero": true,
+    "native_to_master": {
+      "scale": 0.7065217391304348,
+      "dx": 75,
+      "dy": 81
+    },
+    "ip_sensitivity": "Original souvenir interpretation, no logos, writing, emblems or sacred figures; trademarked forms kept loose.",
+    "silhouette_review": "120 px review required before shipment"
+  },
+  "gate-lantern": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "visible_bbox": [
+      242,
+      120,
+      781,
+      900
+    ],
+    "baseY": 899,
+    "rest_stack_exact": true,
+    "corners_alpha_zero": true,
+    "native_to_master": {
+      "scale": 0.7344632768361582,
+      "dx": 51,
+      "dy": 32
+    },
+    "ip_sensitivity": "Original souvenir interpretation, no logos, writing, emblems or sacred figures; trademarked forms kept loose.",
+    "silhouette_review": "120 px review required before shipment"
+  },
+  "torii-scroll": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "visible_bbox": [
+      142,
+      228,
+      882,
+      900
+    ],
+    "baseY": 899,
+    "rest_stack_exact": true,
+    "corners_alpha_zero": true,
+    "native_to_master": {
+      "scale": 0.783068783068783,
+      "dx": 19,
+      "dy": 63
+    },
+    "ip_sensitivity": "Original souvenir interpretation, no logos, writing, emblems or sacred figures; trademarked forms kept loose.",
+    "silhouette_review": "120 px review required before shipment"
+  },
+  "palace-pavilion": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "visible_bbox": [
+      141,
+      386,
+      881,
+      900
+    ],
+    "baseY": 899,
+    "rest_stack_exact": true,
+    "corners_alpha_zero": true,
+    "native_to_master": {
+      "scale": 0.7020872865275142,
+      "dx": 72,
+      "dy": 127
+    },
+    "ip_sensitivity": "Original souvenir interpretation, no logos, writing, emblems or sacred figures; trademarked forms kept loose.",
+    "silhouette_review": "120 px review required before shipment"
+  },
+  "lionfish-fountain": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "visible_bbox": [
+      257,
+      120,
+      767,
+      900
+    ],
+    "baseY": 899,
+    "rest_stack_exact": true,
+    "corners_alpha_zero": true,
+    "native_to_master": {
+      "scale": 0.790273556231003,
+      "dx": 26,
+      "dy": 1
+    },
+    "ip_sensitivity": "Original souvenir interpretation, no logos, writing, emblems or sacred figures; trademarked forms kept loose.",
+    "silhouette_review": "120 px review required before shipment"
+  },
+  "golden-roof": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "visible_bbox": [
+      192,
+      120,
+      832,
+      900
+    ],
+    "baseY": 899,
+    "rest_stack_exact": true,
+    "corners_alpha_zero": true,
+    "native_to_master": {
+      "scale": 0.7654563297350343,
+      "dx": 34,
+      "dy": 24
+    },
+    "ip_sensitivity": "Original souvenir interpretation, no logos, writing, emblems or sacred figures; trademarked forms kept loose.",
+    "silhouette_review": "120 px review required before shipment"
+  },
+  "gate-lacquer": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "visible_bbox": [
+      143,
+      320,
+      882,
+      900
+    ],
+    "baseY": 899,
+    "rest_stack_exact": true,
+    "corners_alpha_zero": true,
+    "native_to_master": {
+      "scale": 0.783068783068783,
+      "dx": 25,
+      "dy": 103
+    },
+    "ip_sensitivity": "Original souvenir interpretation, no logos, writing, emblems or sacred figures; trademarked forms kept loose.",
+    "silhouette_review": "120 px review required before shipment"
+  },
+  "twin-towers": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "visible_bbox": [
+      261,
+      120,
+      763,
+      900
+    ],
+    "baseY": 899,
+    "rest_stack_exact": true,
+    "corners_alpha_zero": true,
+    "native_to_master": {
+      "scale": 0.790273556231003,
+      "dx": 16,
+      "dy": 16
+    },
+    "ip_sensitivity": "Original souvenir interpretation, no logos, writing, emblems or sacred figures; trademarked forms kept loose.",
+    "silhouette_review": "120 px review required before shipment"
+  }
+}

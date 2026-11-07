@@ -1,0 +1,82 @@
+{
+  "id": "lionfish-fountain",
+  "opening": "D",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "bob",
+      "amount": 0.025
+    }
+  ],
+  "layers": [
+    {
+      "name": "bottle",
+      "file": "vessel-lionfish-fountain-bottle.png",
+      "role": "static"
+    },
+    {
+      "name": "spray",
+      "file": "vessel-lionfish-fountain-spray.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "y": -0.16,
+          "opacity": 0
+        }
+      ],
+      "idle": [
+        {
+          "type": "drift",
+          "amount": 0.03
+        }
+      ]
+    },
+    {
+      "name": "stopper",
+      "file": "vessel-lionfish-fountain-stopper.png",
+      "role": "hinge",
+      "pivot": {
+        "x": 516,
+        "y": 345
+      },
+      "open": [
+        {
+          "at": 0,
+          "y": 0,
+          "rotate": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.35,
+          "y": -0.12,
+          "rotate": -12,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "x": 0.17,
+          "y": -0.3,
+          "rotate": -25,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 516,
+    "y": 330
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 358,
+    "y": 563
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

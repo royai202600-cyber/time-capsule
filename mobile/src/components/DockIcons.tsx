@@ -69,7 +69,7 @@ export function SealPlusIcon({ size = 68 }: { size?: number }) {
 
 // Keyhole: a round head over a tapered slot, centred in the 68-unit seal.
 const KEYHOLE = 'M34 22.5 a5.2 5.2 0 0 1 2.7 9.6 L38.7 44.5 h-9.4 l2-12.4 A5.2 5.2 0 0 1 34 22.5 Z';
-const RING_R = 24, RING_LEN = 2 * Math.PI * RING_R;
+export const RING_R = 24, RING_LEN = 2 * Math.PI * RING_R;
 
 /** Hold to open: the Home wax seal with an embossed keyhole. A brass groove inside the seal
  *  fills clockwise from the top as `progress` goes 0 → 1, and the keyhole warms to gold. */

@@ -1,0 +1,56 @@
+{
+  "id": "senado-fountain",
+  "opening": "B",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "breathe",
+      "amount": 0.025
+    }
+  ],
+  "layers": [
+    {
+      "name": "box",
+      "file": "vessel-senado-fountain-box.png",
+      "role": "static"
+    },
+    {
+      "name": "lid",
+      "file": "vessel-senado-fountain-lid.png",
+      "role": "lift",
+      "pivot": {
+        "x": 511,
+        "y": 586
+      },
+      "open": [
+        {
+          "at": 0,
+          "y": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.65,
+          "y": -0.4,
+          "opacity": 0.65
+        },
+        {
+          "at": 1,
+          "y": -0.65,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 511,
+    "y": 545
+  },
+  "baseY": 900,
+  "sparkle": {
+    "x": 535,
+    "y": 455
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

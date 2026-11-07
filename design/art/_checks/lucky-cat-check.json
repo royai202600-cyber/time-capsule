@@ -1,0 +1,25 @@
+{
+  "canvas": [
+    1024,
+    1024
+  ],
+  "bbox": [
+    251,
+    100,
+    771,
+    900
+  ],
+  "baseY": 900,
+  "closed_stack_exact": true,
+  "top_clear_px": 100,
+  "widest_px": 520,
+  "corners_alpha_zero": true,
+  "layer_order": [
+    "cat",
+    "paw",
+    "drawer-closed",
+    "drawer"
+  ],
+  "ip_review": "Original folk cat figurine; blank coin and drawer, no logos, named characters, letters or brand shapes.",
+  "source_comparison": "lucky-cat-comparison.png"
+}
