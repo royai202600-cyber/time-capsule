@@ -1,6 +1,6 @@
-# 50 new vessels: plan (for Roy's OK)
+# 60 new vessels: plan
 
-Status: **approved by Roy on 2026-11-07** (the list and the first batch of 10). Tiers and prices are still a proposal. Every vessel follows [design/art/VESSEL-SOP.md](../../design/art/VESSEL-SOP.md).
+Status: #1–50 **approved by Roy on 2026-11-07**; batch 1 (★) is done. The landmark collection #51–60 is a **proposal** waiting for Roy's OK. Tiers and prices are still a proposal. Every vessel follows [design/art/VESSEL-SOP.md](../../design/art/VESSEL-SOP.md).
 
 ## The idea in one line
 Each vessel is an **object people already have feelings about**: a mixtape, a ramen bowl, a red packet, a snow globe. Sending one says something before the letter is even opened. They're inspired by pop-culture moods and tropes, but every design is our own.
@@ -132,6 +132,29 @@ Tiers:
 | 49 | 思念蠟燭 / Memorial candle | Lighting a candle for someone | Memorial | Free | **C**: the glass lid lifts (jar, lid, flame) | Flame flickers | Grief deserves a gentle, free vessel |
 | 50 | 時光火箭 / Toy rocket tin | Launching into the future | Future self, kids | Shop | **C**: the nose cone lifts (rocket, cone, flame) | Bob, exhaust glow | Kids writing to their grown-up selves |
 
+## Landmark collection (#51–60, proposal)
+
+Ten more vessels, one for each place already in the app's place lock (the `places` table), so a capsule can be sent in the vessel of the place where it will open. Each is a **souvenir-style object inspired by the landmark**, drawn in style A, never an exact replica, with no text, logos or official emblems.
+
+**Tier proposal: Earned.** You unlock a landmark vessel by opening a capsule at that place. That makes them a travel collection people can't buy, which suits "being somewhere can't be faked". Unlocking needs a small backend change (Roy decides). Until then they can be free or shop items.
+
+**Care points:**
+- **Trademarked landmarks.** The Merlion (Singapore Tourism Board), the Petronas Towers and Taipei 101 are registered marks, so their vessels stay loosely inspired, not replicas. They're safest as Earned or free items rather than sold ones.
+- **Religious sites.** Sensō-ji and the Grand Palace are sacred sites, so these vessels use the architecture only (a lantern, a roof): no Buddha figures, no altars, nothing sacred used as a container.
+
+| # | 中文 / English | Inspired by | Occasion | Tier | Opens (parts) | Idles | Why people love it |
+|---|---|---|---|---|---|---|---|
+| 51 | 噴泉花磚盒 / Fountain and wave-tile box | Senado Square, Macau: the fountain and the black-and-white wave pavement | Macau trip, hometown | Earned | **B**: the fountain-top lid lifts (box, lid, water) | Water shimmer (glow) | Every Macau local and visitor knows that pavement |
+| 52 | 鐘樓座鐘 / Clock-tower clock | Tsim Sha Tsui Clock Tower, Hong Kong | Long-distance, "meet me under the clock" | Earned | **J**: the clock-face door swings open (tower, door) | Hands tick | The classic Hong Kong meeting point |
+| 53 | 竹節高塔罐 / Bamboo-tier tower tin | Taipei 101's stacked "bamboo" tiers (loosely) | New year, new heights | Earned | **C**: the top tiers lift off (tin, top) | Small sway in the wind | Taipei's New Year fireworks moment |
+| 54 | 大紅燈籠 / Great red gate lantern | Sensō-ji's Kaminarimon lantern, Tokyo (no characters on it) | Tokyo trip, good luck | Earned | **C**: the bottom ring lowers, then the top cap lifts (lantern, cap) | Sways, warm glow | The most photographed lantern in Japan |
+| 55 | 鳥居卷軸 / Torii-gate scroll | Fushimi Inari's endless vermilion gates, Kyoto | Wishes, new chapter | Earned | **F**: the scroll slides out from under the gate (gate, scroll) | Tassel sways | Walking through a thousand gates |
+| 56 | 宮殿亭閣盒 / Palace-pavilion box | Gyeongbokgung's painted roofs, Seoul | K-drama fans, Seoul trip | Earned | **B**: the roof lifts (pavilion, roof) | Sparkle on the roof tips | Hanbok photos at the palace |
+| 57 | 獅頭魚尾噴泉瓶 / Lion-fish fountain bottle | The Merlion, Singapore (loosely; a trademark) | Singapore trip | Earned | **D**: the stopper pops and water sprays (bottle, stopper, spray) | Spray drifts | Everyone's Singapore photo pose |
+| 58 | 金頂寶盒 / Golden-roof jewel box | The Grand Palace's tiered golden roofs, Bangkok (architecture only) | Bangkok trip, celebration | Earned | **B**: the tiered roof lifts (box, roof) | Gold glint | Dazzling gold, a natural sparkle vessel |
+| 59 | 紅牆宮門漆盒 / Red-wall gate lacquer box | The Forbidden City's Meridian Gate, Beijing | Beijing trip, family | Earned | **B**: the gate-roof lid lifts (box, roof) | Sparkle | Imperial red and gold, a heritage keepsake |
+| 60 | 雙塔對罐 / Twin-tower tins | The Petronas Towers, Kuala Lumpur (loosely; a trademark) | Couples, best friends (one tower each) | Earned | **C**: both tops lift, the bridge glows (towers, tops, bridge glow) | Bridge glow pulses | Two of you, joined by a bridge |
+
 ## Spread
 - **By category:** retro 8, food 8, love 7, festival 8, travel 7, magic 6, milestones 6.
 - **By tier:** 9 free, 32 shop, 9 limited.
@@ -158,6 +181,17 @@ Why these 10:
 - **Seasons coming up:** Christmas (26) and Lunar New Year (24).
 - **Four free ones** (10, 24, 45, 48) so new users fall in love before the shop.
 - **They teach the app the four new opening types** (F slide, G unscrew, H split, J door) once, so the other 40 mostly reuse them.
+
+## Remaining batches (proposal)
+50 vessels are left, in five batches of 10. Up to three batches can run at once in separate Codex sessions (own branch and worktree each). They are merged one at a time; after each merge, the next branch updates from main and regenerates the manifest, README and contact sheets.
+
+| Batch | Theme | Vessels | Run |
+|---|---|---|---|
+| B2 | Landmarks | 51–60 | First wave |
+| B3 | Festivals and keepsakes (timed for Lunar New Year onward) | 11, 15, 16, 22, 25, 27, 28, 29, 30, 31 | First wave |
+| B4 | Retro and love | 2, 3, 5, 6, 7, 8, 17, 18, 20, 23 | First wave |
+| B5 | Food and travel | 12, 13, 14, 19, 21, 33, 34, 35, 37, 38 | Second wave |
+| B6 | Magic and milestones | 36, 39, 40, 41, 42, 44, 46, 47, 49, 50 | Second wave |
 
 ## Decisions for Roy
 1. Approve the list, or swap any items.
