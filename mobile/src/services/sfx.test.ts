@@ -43,6 +43,12 @@ describe('sound feedback latency', () => {
     expect(effects[0].seekTo).toHaveBeenCalledWith(0);
     sfx.playSound('tick'); expect(effects[0].play).toHaveBeenCalledTimes(2);
   });
+  it('retries after a browser declines playback instead of staying busy', async () => {
+    const sfx = await import('./sfx'); sfx.prepareSoundEffects();
+    effects[0].play.mockReturnValueOnce(false);
+    sfx.playSound('tick'); sfx.playSound('tick');
+    expect(effects[0].play).toHaveBeenCalledTimes(2);
+  });
   it('respects the separate sound-effects switch', async () => {
     const sfx = await import('./sfx'); sfx.prepareSoundEffects(); sfx.setSoundEffects(false); sfx.playSound('tick');
     expect(effects[0].play).not.toHaveBeenCalled();
