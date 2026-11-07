@@ -2,21 +2,35 @@ import React, { forwardRef, useImperativeHandle, useRef, useState } from "react"
 import { Platform, Text, View } from "react-native";
 import Svg, { Line, Path } from "react-native-svg";
 import { captureRef } from "react-native-view-shot";
+import { GestureDetector, usePanGesture, type useNativeGesture } from "react-native-gesture-handler";
 import { C, handwriting } from "../../theme";
 
 const WIDTH = 320, HEIGHT = 240;
 type Point = { x: number; y: number };
 export type DrawingHandle = { clear: () => void; hasInk: () => boolean; png: () => Promise<string | null> };
 
-export const DrawingPad = forwardRef<DrawingHandle, { label: string }>(function DrawingPad({ label }, ref) {
+// The page around the pad can scroll (keyboard handling), so drawing must block that scroll or
+// the scroll view steals the finger after a few millimetres: on phones the pan below blocks the
+// page's native scroll gesture; on the web the touch layer refuses to hand over and sets
+// touch-action: none so the browser doesn't scroll instead.
+export const DrawingPad = forwardRef<DrawingHandle, { label: string; scrollGesture?: ReturnType<typeof useNativeGesture> }>(function DrawingPad({ label, scrollGesture }, ref) {
   const [strokes, setStrokes] = useState<Point[][]>([]);
   const strokesRef = useRef<Point[][]>([]);
   const inkView = useRef<any>(null);
   const size = useRef({ width: WIDTH, height: HEIGHT });
   const update = (next: Point[][]) => { strokesRef.current = next; setStrokes(next); };
-  const point = (e: any): Point => ({
-    x: Math.max(0, Math.min(WIDTH, e.nativeEvent.locationX * WIDTH / size.current.width)),
-    y: Math.max(0, Math.min(HEIGHT, e.nativeEvent.locationY * HEIGHT / size.current.height)),
+  const toPoint = (x: number, y: number): Point => ({
+    x: Math.max(0, Math.min(WIDTH, x * WIDTH / size.current.width)),
+    y: Math.max(0, Math.min(HEIGHT, y * HEIGHT / size.current.height)),
+  });
+  const point = (e: any) => toPoint(e.nativeEvent.locationX, e.nativeEvent.locationY);
+  const begin = (p: Point) => update([...strokesRef.current, [p]]);
+  const extend = (p: Point) => { const next = strokesRef.current.slice(); const last = next[next.length - 1]; if (last) { next[next.length - 1] = [...last, p]; update(next); } };
+  const pan = usePanGesture({
+    minDistance: 0, runOnJS: true, shouldCancelWhenOutside: false,
+    block: scrollGesture,
+    onBegin: e => begin(toPoint(e.x, e.y)),
+    onUpdate: e => extend(toPoint(e.x, e.y)),
   });
   useImperativeHandle(ref, () => ({
     clear: () => update([]),
@@ -52,9 +66,11 @@ export const DrawingPad = forwardRef<DrawingHandle, { label: string }>(function 
       </Svg>
     </View>
     {!strokes.length && <Text pointerEvents="none" style={{ position: "absolute", top: 20, left: 18, color: C.muted, fontFamily: handwriting }}>{label}</Text>}
-    <View style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
-      onStartShouldSetResponder={() => true} onMoveShouldSetResponder={() => true}
-      onResponderGrant={e => update([...strokesRef.current, [point(e)]])}
-      onResponderMove={e => { const next = strokesRef.current.slice(); const last = next[next.length - 1]; if (last) { next[next.length - 1] = [...last, point(e)]; update(next); } }} />
+    {Platform.OS === "web"
+      ? <View style={[{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }, { touchAction: "none" } as any]}
+          onStartShouldSetResponder={() => true} onMoveShouldSetResponder={() => true}
+          onResponderTerminationRequest={() => false}
+          onResponderGrant={e => begin(point(e))} onResponderMove={e => extend(point(e))} />
+      : <GestureDetector gesture={pan}><View collapsable={false} style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }} /></GestureDetector>}
   </View>;
 });

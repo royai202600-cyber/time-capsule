@@ -81,9 +81,9 @@ function AssembledOverlay({ source, size, lidLift }: { source: ArtLayer['source'
     <Image source={source} style={{ width: size, height: size }} resizeMode="contain" />
   </Animated.View>;
 }
-// Idle motion: a quiet loop while a vessel rests on screen. One linear clock per vessel (0 → 1),
+// Idle motion (Roy, 2026-11-07: make it clearly visible on a phone, game-like): a loop while a vessel rests on screen. One linear clock per vessel (0 → 1),
 // every term is sin/cos of a whole number of turns, so the loop is seamless and t = 0 or 1 is the rest pose.
-const IDLE_MS: Record<VesselKind, number> = { dome: 5600, bottle: 4800, lantern: 4400, envelope: 5200, tin: 6000, musicbox: 5000, maison: 6400 };
+const IDLE_MS: Record<VesselKind, number> = { dome: 4200, bottle: 3600, lantern: 3400, envelope: 3800, tin: 4400, musicbox: 3800, maison: 4600 };
 const TAU = Math.PI * 2;
 function idleStyle(kind: VesselKind, part: string, t: number, size: number, ready: boolean) {
   'worklet';
@@ -94,29 +94,29 @@ function idleStyle(kind: VesselKind, part: string, t: number, size: number, read
     return [{ translateX: px }, { translateY: py }, ...inner, { translateX: -px }, { translateY: -py }];
   };
   switch (`${kind}:${part}`) {
-    case 'dome:rose': return { transform: at(505, 790, [{ rotate: `${2.4 * wave(1)}deg` }]) };
-    case 'bottle:waves': return { transform: [{ translateX: size * .014 * wave(1) }] };
-    case 'bottle:float': return { transform: [{ translateY: size * .009 * wave(2) }, ...at(500, 640, [{ rotate: `${2.2 * wave(1)}deg` }])] };
-    case 'lantern:outer': return { transform: at(512, 110, [{ rotate: `${1.5 * wave(1)}deg` }]) };
+    case 'dome:rose': return { transform: at(505, 790, [{ rotate: `${6 * wave(1)}deg` }]) };
+    case 'bottle:waves': return { transform: [{ translateX: size * .035 * wave(1) }] };
+    case 'bottle:float': return { transform: [{ translateY: size * .025 * wave(2) }, ...at(500, 640, [{ rotate: `${5.5 * wave(1)}deg` }])] };
+    case 'lantern:outer': return { transform: at(512, 110, [{ rotate: `${4.5 * wave(1)}deg` }]) };
     case 'lantern:glow': {
-      const breath = .5 - .5 * Math.cos(TAU * 2 * t), flicker = .04 * wave(5) + .02 * wave(9);
-      return { opacity: (ready ? .5 + .32 * breath : .22 + .2 * breath) + flicker };
+      const breath = .5 - .5 * Math.cos(TAU * 2 * t), flicker = .08 * wave(5) + .05 * wave(9);
+      return { opacity: (ready ? .45 + .45 * breath : .15 + .45 * breath) + flicker };
     }
-    case 'envelope:outer': return { transform: [{ translateY: -size * .012 * hump }, { rotate: `${.7 * wave(1)}deg` }] };
-    case 'tin:outer': return { transform: [{ translateY: -size * .009 * hump }, { scale: 1 + .012 * hump }] };
-    case 'musicbox:outer': return { transform: [{ scale: 1 + .008 * hump }] };
-    case 'musicbox:lid': return { transform: at(541, 292, [{ rotate: `${-3 * hump * hump}deg` }]) };
-    case 'maison:outer': return { transform: [{ translateY: -size * .01 * hump }] };
-    case 'maison:lid': return { transform: at(605, 300, [{ rotate: `${-1.5 * hump * hump}deg` }]) };
+    case 'envelope:outer': return { transform: [{ translateY: -size * .035 * hump }, { rotate: `${2.5 * wave(1)}deg` }] };
+    case 'tin:outer': return { transform: [{ translateY: -size * .03 * hump }, { scale: 1 + .035 * hump }] };
+    case 'musicbox:outer': return { transform: [{ scale: 1 + .025 * hump }] };
+    case 'musicbox:lid': return { transform: at(541, 292, [{ rotate: `${-9 * hump * hump}deg` }]) };
+    case 'maison:outer': return { transform: [{ translateY: -size * .03 * hump }] };
+    case 'maison:lid': return { transform: at(605, 300, [{ rotate: `${-6 * hump * hump}deg` }]) };
     // The dome's highlight gleams once per loop, drifting a hair along the glass.
     case 'dome:glint': {
       const gleam = Math.pow(Math.max(0, Math.sin(TAU * (t - .3))), 3);
-      return { opacity: .9 * gleam, transform: [{ translateX: size * .01 * (gleam - .5) }] };
+      return { opacity: .9 * gleam, transform: [{ translateX: size * .05 * (gleam - .5) }] };
     }
     // A sparkle twinkles once per loop on the wax or brass: grows, turns a little, fades.
     case 'envelope:sparkle': case 'tin:sparkle': case 'maison:sparkle': case 'lantern:sparkle': {
       const s = Math.pow(Math.max(0, Math.sin(TAU * (t - .55))), 8);
-      return { opacity: s, transform: [{ scale: .45 + .65 * s }, { rotate: `${25 * s}deg` }] };
+      return { opacity: s, transform: [{ scale: .5 + .9 * s }, { rotate: `${35 * s}deg` }] };
     }
     default: return {};
   }
@@ -130,7 +130,7 @@ const SPARKLE: Partial<Record<VesselKind, { x: number; y: number }>> = {
   envelope: { x: 440, y: 512 }, tin: { x: 300, y: 470 }, maison: { x: 438, y: 612 }, lantern: { x: 578, y: 214 },
 };
 function Sparkle({ kind, t, size, at }: { kind: VesselKind; t: SharedValue<number>; size: number; at: { x: number; y: number } }) {
-  const w = size * .2;
+  const w = size * .26;
   const style = useAnimatedStyle(() => idleStyle(kind, 'sparkle', t.value, size, false), [kind, size]);
   return <Animated.Image pointerEvents="none" source={fxGlint} resizeMode="contain"
     style={[{ position: 'absolute', left: at.x * size / 1024 - w / 2, top: at.y * size / 1024 - w / 2, width: w, height: w }, style]} />;
