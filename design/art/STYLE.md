@@ -20,6 +20,8 @@ App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be o
 Match the attached style sheet exactly.
 ```
 
+Roy approved a palette exception for warm amber-orange pumpkin shells on 2026-11-07 (T10c-fix), and teal-green bamboo leaves matching the existing dome rose leaves. Keep the style block above unchanged in prompts; state the approved exception separately when applicable.
+
 Roy approved style sheet **A** (`style-sheet.png`). `style-sheet-a/b/c.png` are kept for history only, so never use B or C as the reference.
 
 ## 3. Rules by kind of asset

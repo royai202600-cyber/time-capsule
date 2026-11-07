@@ -133,4 +133,5 @@ def main():
   prompts[f'vessels/vessel-{id}.png']=cfg[id]['prompt']
   for name in native:prompts[f'vessels/vessel-{id}-{name}.png']=cfg[id]['body_prompt'] if name in ('box','tin','pumpkin','dumpling','bamboo','lantern','letter') else cfg[id]['prompt']
  (C/'b3-specs.json').write_text(json.dumps(specs,indent=2)+'\n');(C/'b3-prompts.json').write_text(json.dumps(prompts,ensure_ascii=False,indent=2)+'\n');print('Prepared',len(specs),'B3 vessels')
+ if (C/'b3-fix-config.json').exists():runpy.run_path(str(R/'scripts/finish-b3-fix.py'))['main']()
 if __name__=='__main__':main()

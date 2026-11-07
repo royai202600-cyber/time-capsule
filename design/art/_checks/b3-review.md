@@ -18,3 +18,5 @@ Generated with built-in gpt-image-2 and approved style sheet A. All ten CLOSED s
 The proposed vessel blocks are in ../manifest.json. No app or database wiring is included.
 
 IP review: traditional/generic festival objects; blank tags/coin, no logos, text, branded silhouettes or franchise characters.
+
+T10c-fix: [40/120 px before/after](b3-fix-review.png) · [browser review](b3-fix-review.html). Roy approved T10c-fix PR #61 for merge.
