@@ -20,7 +20,7 @@
           "locationWhenInUsePermission": "打開地點膠囊時，時光膠囊會確認你是否在 100 米內。 Time Capsule checks that you are within 100 m when opening a place capsule."
         }
       ],
-      ["expo-audio", { "microphonePermission": false, "recordAudioAndroid": false, "enableBackgroundPlayback": false }]
+      ["expo-audio", { "microphonePermission": "時光膠囊會用麥克風錄下你想封存在膠囊裡的聲音。 Time Capsule uses the microphone to record a voice note you seal in a capsule.", "recordAudioAndroid": true, "enableBackgroundPlayback": false }]
     ],
     "web": {
       "bundler": "metro",

@@ -20,6 +20,8 @@ import { C, handwriting, motion, serif, sans } from '../../theme';
 import { DrawingPad, type DrawingHandle } from './DrawingPad';
 import { scenes, sealWax } from '../../art/manifest';
 import { ArtIcon } from '../../components/ArtIcon';
+import { VoiceRecorder } from '../voice/VoiceRecorder';
+import { stubAttachVoice, uploadVoice, VOICE_BACKEND, VOICE_ENABLED, type VoiceClip } from '../../services/voice';
 
 type Quick = 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
 const quickDate = (q: Quick) => { const d = new Date(); if (q === 'm1') d.setMonth(d.getMonth() + 1); if (q === 'm6') d.setMonth(d.getMonth() + 6); if (q === 'y1') d.setFullYear(d.getFullYear() + 1); if (q === 'y5') d.setFullYear(d.getFullYear() + 5); if (q === 'dev') d.setMinutes(d.getMinutes() + 2); return d; };
@@ -72,7 +74,8 @@ export default function CreateScreen() {
   const reduced = useReducedMotion();
   const [step, setStep] = useState(1), [recipient, setRecipient] = useState<string | null>(((params.to ?? params.recipient) === 'future' ? session?.user.id : (params.to ?? params.recipient)) ?? session?.user.id ?? null);
   const [mode, setMode] = useState<'type' | 'hand'>('type'), [message, setMessage] = useState(''), [hint, setHint] = useState(''), [drawingData, setDrawingData] = useState<string | null>(null);
-  const [photo, setPhoto] = useState<string | null>(null), [photoChoices, setPhotoChoices] = useState(false);
+  const [photo, setPhoto] = useState<string | null>(null), [photoChoices, setPhotoChoices] = useState(false), [voice, setVoice] = useState<VoiceClip | null>(null);
+  const voicePath = useRef<{ uri: string; path: string } | null>(null);
   const [vessel, setVessel] = useState<VesselKind | null>(null), [place, setPlace] = useState<string | null>(null);
   const [quick, setQuick] = useState<Quick>('m1'), [dateText, setDateText] = useState(dateValue(quickDate('m1')));
   const [error, setError] = useState(''), [busy, setBusy] = useState(false), [phase, setPhase] = useState<'steps' | 'seal' | 'sealed'>('steps'), [sealedAt, setSealedAt] = useState<Date | null>(null), [stamped, setStamped] = useState(false);
@@ -207,8 +210,18 @@ export default function CreateScreen() {
     try {
       const ink = mode === 'hand' ? drawingData : null;
       if (mode === 'hand' && !ink) throw new Error('empty drawing');
-      const { error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: mode === 'type' ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), p_place: place ?? undefined });
+      // Upload once per recording; a retried send reuses the same pending path.
+      let voiceArgs = {};
+      if (voice && VOICE_BACKEND) {
+        if (voicePath.current?.uri !== voice.uri) {
+          try { voicePath.current = { uri: voice.uri, path: await uploadVoice(id, voice) }; }
+          catch { throw new Error('voice upload'); }
+        }
+        voiceArgs = { p_voice: voicePath.current.path, p_voice_ms: Math.round(voice.durationMs) };
+      }
+      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: mode === 'type' ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), p_place: place ?? undefined, ...voiceArgs });
       if (rpcError) throw rpcError;
+      if (voice && capsuleId) stubAttachVoice(String(capsuleId), voice);
       sentOnce.current = true;
       setSealedAt(openAt);
       await contact;
@@ -218,7 +231,7 @@ export default function CreateScreen() {
       contactMotion?.stop();
       wax.stopAnimation(); waxScale.stopAnimation();
       const msg = String((e as any)?.message ?? e).toLowerCase(), code = String((e as any)?.hint ?? '');
-      setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('open time must be in the future') ? t('create.badDate') : t('create.sendError'));
+      setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('open time must be in the future') ? t('create.badDate') : msg.includes('voice') ? t('voice.uploadError') : t('create.sendError'));
       if (reduced) wax.setValue({ x: 0, y: 0 });
       else Animated.parallel([
         Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }),
@@ -334,6 +347,7 @@ export default function CreateScreen() {
     {<View style={{ gap: 15, display: step === 2 ? 'flex' : 'none' }}>
       <View style={{ flexDirection: 'row', gap: 8 }}>{(['type', 'hand'] as const).map(m => <Pressable key={m} onPress={() => { setMode(m); if (m === 'type') setDrawingData(null); void haptics.tick(); }} style={[card, { flex: 1, backgroundColor: mode === m ? C.cream : C.white }]}><Text style={{ textAlign: 'center', color: C.ink }}>{t(`create.${m}`)}</Text></Pressable>)}</View>
       {mode === 'type' ? <><TextInput value={message} onChangeText={setMessage} placeholder={t('create.message')} maxLength={500} multiline textAlignVertical='top' style={[card, { minHeight: 230, fontFamily: serif, fontSize: 18, color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{message.length} / 500</Text></> : <><DrawingPad ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
+      {VOICE_ENABLED && <VoiceRecorder value={voice} onChange={setVoice} active={step === 2 && phase === 'steps'} />}
       {photo ? <Pressable onPress={() => setPhoto(null)} accessibilityLabel={t('create.removePhoto')} style={{ alignSelf: 'flex-start' }}><Image source={{ uri: photo }} style={{ width: 110, height: 110, borderRadius: 8 }} /><Text style={{ color: C.blue }}>{t('create.removePhoto')}</Text></Pressable> : <Pressable onPress={() => setPhotoChoices(!photoChoices)} style={[card, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}><ArtIcon name="camera" color={C.blue} size={20} /><Text style={{ color: C.blue }}>{t('create.photo')}</Text></Pressable>}
       {photoChoices && <View style={{ flexDirection: 'row', gap: 8 }}><Button title={t('create.camera')} onPress={() => void choosePhoto('camera')} /><Button title={t('create.library')} onPress={() => void choosePhoto('library')} /></View>}
       <Text style={label}>{t('create.hint')}</Text><TextInput value={hint} onChangeText={setHint} maxLength={40} placeholder={t('create.hintPlaceholder')} style={[card, { color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{hint.length} / 40</Text>

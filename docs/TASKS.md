@@ -6,6 +6,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
+| V1 | Sender voice notes: record up to 60 s in Create step 2, sealed like the letter, played on the opened letter (alarm session reuses `voiceNoteForCapsule`) | Claude UI (PR) → Codex backend | Private `voice-notes` bucket and policies, `send_capsule(p_voice, p_voice_ms)`, `open_capsule` returns `voice_path`/`voice_ms`, `VOICE_BACKEND = true`; sender cannot fetch the note; Expo Go and iPhone Safari record and play. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 
 ## Review

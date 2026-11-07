@@ -1,12 +1,13 @@
 import { supabase } from "../../services/supabase";
 import { capsules, distanceMeters } from "../../services/data";
 import type { Database } from "../../services/database.types";
+import type { OpenedVoice } from "../../services/voice";
 
 export type Row = Database["public"]["Tables"]["capsules"]["Row"];
 export type Person = Pick<Database["public"]["Tables"]["profiles"]["Row"], "id" | "name" | "avatar">;
 export type Place = Database["public"]["Tables"]["places"]["Row"];
 export type VesselInfo = Database["public"]["Tables"]["vessels"]["Row"];
-export type Opened = Database["public"]["Functions"]["open_capsule"]["Returns"][number];
+export type Opened = Database["public"]["Functions"]["open_capsule"]["Returns"][number] & OpenedVoice;
 export type Fix = { lat: number; lng: number; accuracy: number };
 export type Bundle = {
   capsules: Row[];

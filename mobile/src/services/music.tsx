@@ -9,8 +9,9 @@ import { prepareSoundEffects, releaseSoundEffects } from "./sfx";
 // remembered per device, pauses when the app is in the background.
 const KEY = "tc.music";
 const VOLUME = 0.3;
-type Music = { on: boolean; setOn: (on: boolean) => void };
-const MusicContext = createContext<Music>({ on: true, setOn: () => {} });
+/** `hold()` pauses the music (e.g. while a voice note records or plays); call the returned function to release. */
+type Music = { on: boolean; setOn: (on: boolean) => void; hold: () => () => void };
+const MusicContext = createContext<Music>({ on: true, setOn: () => {}, hold: () => () => {} });
 export const useMusic = () => useContext(MusicContext);
 
 export function MusicProvider({ children }: { children: React.ReactNode }) {
@@ -19,6 +20,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   const player = useRef<AudioPlayer | null>(null);
   const fade = useRef<ReturnType<typeof setInterval> | null>(null);
   const onRef = useRef(on);
+  const holds = useRef(0);
   onRef.current = on;
 
   const fadeTo = (target: number, ms: number, then?: () => void) => {
@@ -31,7 +33,7 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
       if (i >= steps) { if (fade.current) clearInterval(fade.current); fade.current = null; then?.(); }
     }, 50);
   };
-  const play = () => { const p = player.current; if (!p || !onRef.current) return; if (!p.playing) { p.volume = 0; p.play(); } fadeTo(VOLUME, 2500); };
+  const play = () => { const p = player.current; if (!p || !onRef.current || holds.current > 0) return; if (!p.playing) { p.volume = 0; p.play(); } fadeTo(VOLUME, 2500); };
   const pause = () => { const p = player.current; if (!p?.playing) return; fadeTo(0, 600, () => p.pause()); };
 
   useEffect(() => {
@@ -66,5 +68,10 @@ export function MusicProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setOn = (next: boolean) => { setOnState(next); void AsyncStorage.setItem(KEY, next ? "on" : "off").catch(() => {}); };
-  return <MusicContext.Provider value={{ on, setOn }}>{children}</MusicContext.Provider>;
+  const hold = () => {
+    holds.current++; pause();
+    let released = false;
+    return () => { if (released) return; released = true; holds.current = Math.max(0, holds.current - 1); if (AppState.currentState === "active") play(); };
+  };
+  return <MusicContext.Provider value={{ on, setOn, hold }}>{children}</MusicContext.Provider>;
 }
