@@ -28,7 +28,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | T6 | Installable app (PWA): manifest, icons, offline shell | Claude | "Add to Home Screen" gives a proper icon and full-screen app |
 | T7 | Brand capsules for real: staff check-in QR at the boutique, gift escrow/expiry rules, partner console (README §2, §7) | Claude plans → Codex builds | To be specified |
 | T8 | Real payments for the shop (only when Roy decides) | Codex | Roy has chosen a provider |
-| A2 | Idle glint art: `vessel-dome-glint` and `fx-glint` (gpt-image-2, per STYLE.md), then Claude wires them into the M1 idle loops | Codex art → Claude wiring | Roy approves the review overlay; art PR merged |
 | N3 | TODO: in-app account deletion | Codex | A signed-in user can initiate deletion inside the app before App Store release. Current support-email request remains the interim process. |
 
 ## End-of-project phone checklist
@@ -38,6 +37,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - PR #31: Softer tap/tick/warning WAV files, no application-code changes. Green PR CI on `6dcba1a`; squash-merged as `f2370cc` through the owner account, followed by an owner-authored production release. All three files validated as mono 16-bit PCM at 44.1 kHz.
 - M1 / PR #29: Resting vessel motion merged after green CI as `be267a9`; Home and Create selection retain the active-vessel and Reduce Motion controls.
 - PR #30: Background music, nine effects and independent Me switches merged after green CI as `139a1a0`. Effects prepare at startup and rewind between plays. Roy confirmed both audio types in iPhone Expo Go SDK 58 and confirmed the swipe/tap delay is fixed. Fifteen unit tests, TypeScript, dependency checks and web/iOS exports pass; browser Home and audio controls checked. One owner-authored release follows the ordered merges; native seal and keyboard fixes retained.
+- A2: Roy approved the separate dome-glass idle highlight and refined four-point wax/brass sparkle; masters, WebP exports, manifest, checks and contact sheet are in the art PR. Claude wires the effects into idle motion separately.
 - N4: Native seal pan blocks the ScrollView, with consistent animation drivers and reliable cancellation/snap-back. Screen/Auth share keyboard avoidance; native Create actions stay above the keyboard. Roy confirmed keyboard, seal drag, release and flick in iPhone Expo Go; web checks and iOS/web exports pass. Physical screenshots were not captured from this Mac. Release follows green PR CI.
 - PR #26: Restore the original four solid sealed lines (92/76/88/56%) with soft blur. Green CI; squash-merged as `7653a9b`, followed by an owner-authored production release.
 - PR #24: Sent view sealed placeholder uses blurred word-shaped lines. Rebased PR CI passed; squash-merged as `bdae57d`, followed by an owner-authored release commit for production.

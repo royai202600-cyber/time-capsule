@@ -24,6 +24,19 @@
     "web_export": "public/art/cabinet/cabinet-wall.webp"
   },
   {
+    "path": "design/art/fx/fx-glint.png",
+    "what": "Small four-point idle sparkle for wax and brass",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: stylized-concept\nAsset type: tiny transparent idle-motion sparkle overlay for wax seal and brass vessel edges\nInput images: Image 1 is the approved style sheet A — match this style exactly.\nPrimary request: Create exactly one small four-point star sparkle with a soft round bloom. Center the star on a square transparent canvas. The visible object, including the bloom, occupies about 40% of canvas width and height. Warm white core fading to brass #C9A15A. Shape must be clear when the full canvas is shown at 16 px and 24 px.\nStyle/medium: a gentle hand-inked storybook light effect, but no ink outline. Soft translucent edge and transparent background.\nConstraints: No extra stars, dust, scattered specks, shadow, border, text, symbols, object or scenery. Truly transparent corners. Keep the bloom restrained, and the four star points distinct.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "Generated four-point sparkle; finish-idle-glints.py smoothed the star edge, strengthened its warm-white core and brass tint, and faded the bloom to transparent for 16/24 px use.",
+    "web_export": "public/art/fx/fx-glint.webp"
+  },
+  {
     "path": "design/art/fx/fx-light-burst.png",
     "what": "Warm radial opening light effect",
     "size_px": [
@@ -621,6 +634,19 @@
     "model": "gpt-image-2",
     "postprocess": "Alpha below 200 scaled to 37.5% by adjust-glass-alpha.py; opaque outline and highlights preserved.",
     "web_export": "public/art/vessels/vessel-dome-glass.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-dome-glint.png",
+    "what": "Travelling highlight for the dome glass",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "Use case: precise-object-edit\nAsset type: separate transparent animation overlay for the existing glass-dome blue rose vessel\nInput images: Image 1 is the approved style sheet A — match this style exactly. Image 2 is the exact assembled dome to edit. Image 3 is its aligned glass-only part, for position reference.\nPrimary request: Edit Image 2: keep only a single soft curved white highlight streak on the left side of the glass dome, following the dome's curve, at exactly the same position and scale on the same square canvas. Everything else must be fully transparent. This must register pixel-for-pixel over the existing vessel-dome-glass.png layer.\nSubject: one narrow travelling light band, about 8–12% of the dome width, white and glass blue #DCE8F2, soft feathered edges, peak opacity about 70%.\nConstraints: The output is an RGBA layer, transparent corners and background. No dome outline, knob, rose, base, shadow, texture, extra glints, stars, or other vessel pixels. Do not move or redraw the existing vessel. No text.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "postprocess": "Generated edit of the assembled dome; downscaled to 1024, stray alpha removed and peak alpha capped at 179 by finish-idle-glints.py.",
+    "web_export": "public/art/vessels/vessel-dome-glint.webp"
   },
   {
     "path": "design/art/vessels/vessel-dome-rose.png",

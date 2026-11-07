@@ -1,6 +1,6 @@
 {
-  "count": 66,
-  "passed": 66,
+  "count": 68,
+  "passed": 68,
   "failed": [],
   "assets": [
     {
@@ -34,6 +34,25 @@
         255,
         255,
         255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "fx/fx-glint.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
       ],
       "checks": {
         "size": true,
@@ -873,6 +892,25 @@
     },
     {
       "path": "vessels/vessel-dome-glass.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-dome-glint.png",
       "size": [
         1024,
         1024
