@@ -3,7 +3,7 @@
 Input: _checks/t10a-generation.json (exact prompts and local native sources).
 All native edits use one common downscale/translation per vessel after alignment.
 """
-import json, math
+import json, math, runpy
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageChops
 R=Path(__file__).resolve().parents[1]; V=R/'vessels'; C=R/'_checks'
@@ -151,6 +151,8 @@ def main():
    assert im.width>=1024 and im.height>=1024
    im=clean(im.resize((1024,1024),Image.Resampling.LANCZOS),20)
    parts['lid']=Image.alpha_composite(parts['lid'],im)
+  if id=='firefly-jar' and (C/'t10a-firefly-card-fix.json').exists():
+   cfg=json.loads((C/'t10a-firefly-card-fix.json').read_text());parts['fireflies']=runpy.run_path(str(R/'scripts/finish-firefly-card.py'))['prepare'](cfg['source'])[0]
   spec=make_spec(id,point)
   if id=='mixtape':
    # Reel disks are exact scripted isolations of the edited cassette; they slide with it.
@@ -167,6 +169,7 @@ def main():
   for n,p in data['parts'].items():prompts[f'vessels/vessel-{id}-{n}.png']=p['prompt']
   if id=='firefly-jar':prompts['vessels/vessel-firefly-jar-fireflies.png']=fixes['fireflies']['prompt']
   if id=='ramen':prompts['vessels/vessel-ramen-lid.png'] += '\n\nAdditional chopsticks overlay edit (composited into the unchanged lid):\n'+fixes['chopsticks']['prompt']
+  if id=='firefly-jar' and (C/'t10a-firefly-card-fix.json').exists():prompts['vessels/vessel-firefly-jar-fireflies.png']=json.loads((C/'t10a-firefly-card-fix.json').read_text())['prompt']
   report[id]={'native_to_master':{'scale':s,'dx':dx,'dy':dy},'canvas':list(assembled.size),'bbox_alpha_gt25':bbox(assembled),'baseY':900,'generation_attempts':1,'ip_check':'PASS: original design, no logo/text/character/brand shapes; compared with plan rejected ideas','rest_keyframes_applied':True}
  (C/'t10a-specs.json').write_text(json.dumps(specs,indent=2)+'\n');(C/'prompts-t10a-extra.json').write_text(json.dumps(prompts,ensure_ascii=False,indent=2)+'\n');(C/'t10a-check.json').write_text(json.dumps(report,indent=2)+'\n')
  print('Prepared',len(specs),'vessels and',len(prompts),'masters')
