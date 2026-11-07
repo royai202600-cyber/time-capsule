@@ -18,7 +18,7 @@ import { capsules } from '../../services/data';
 import { useFriends, useOwnedVessels, usePlaces, useVessels } from '../../services/hooks';
 import { C, handwriting, motion, serif, sans } from '../../theme';
 import { DrawingPad, type DrawingHandle } from './DrawingPad';
-import { scenes, sealWax } from '../../art/manifest';
+import { letterDropFor, scenes, sealWax } from '../../art/manifest';
 import { ArtIcon } from '../../components/ArtIcon';
 
 type Quick = 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
@@ -28,7 +28,6 @@ const customDate = (s: string) => { if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return n
 const card = { borderWidth: 1.5, borderColor: C.line, backgroundColor: C.white, borderRadius: 16, padding: 14 } as const;
 const label = { fontFamily: sans, color: C.ink } as const;
 // The letter's centre is at stage y=125; these drops meet each vessel's opening at stage y=270–325.
-const LETTER_DROP: Record<VesselKind, number> = { dome: 205, bottle: 190, envelope: 205, tin: 215, lantern: 210, musicbox: 220, maison: 215 };
 
 // Expo SDK 58 currently prefixes its web file accept filter with a comma, which
 // leaves Chrome's macOS picker unable to select images. Use a plain image input.
@@ -175,7 +174,7 @@ export default function CreateScreen() {
       setTimeout(driftAway, 250);
     };
     const dropLetter = () => Animated.parallel([
-      Animated.timing(letterDrop, { toValue: LETTER_DROP[vessel ?? 'dome'], duration: 550, easing: Easing.in(Easing.quad), useNativeDriver: true }),
+      Animated.timing(letterDrop, { toValue: letterDropFor(vessel ?? 'dome'), duration: 550, easing: Easing.in(Easing.quad), useNativeDriver: true }),
       Animated.timing(letterNarrow, { toValue: .24, duration: 300, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
       Animated.sequence([
         Animated.delay(400),
