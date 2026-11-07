@@ -1,6 +1,6 @@
 # Art in the UI: concept
 
-Status: Roy picked all six ideas below on 2026-11-07. Nothing is built yet. Each one becomes a Claude screens task when Roy asks for it.
+Status: Roy picked all six ideas below on 2026-11-07. Built so far (PR #55): 3 flip countdown (`mobile/src/components/Countdown.tsx`), 4 seal loader (`SealLoader.tsx`) and 5 wax-drop steps (`WaxSteps.tsx`). Ideas 1, 2 and 6 are still to build.
 
 ## The idea
 The vessels, portraits, scenes and stamps are illustrated, but a lot of the UI around them is still generic: a system spinner, a red progress bar, bordered number boxes, plain date text. The keyhole wax seal on hold-to-open (PR #53) showed the fix: draw the control itself as one of the app's objects (wax, brass, ink, paper), in code. These six ideas apply the same move to the places people see most.
@@ -11,7 +11,7 @@ The vessels, portraits, scenes and stamps are illustrated, but a lot of the UI a
 - **Reuse one wax shape.** Every seal uses the existing `SEAL` path from `DockIcons.tsx`, so the plus button, hold-to-open, verdict seals and loader look like one family.
 - **Text stays text.** Numbers, dates and labels are real `<Text>` (or SVG text) from the zh/en translation files, never baked into a drawing, and keep accessibility labels.
 - **Reduce Motion:** every animation has a still version.
-- **No new images** for these six. New component file: `mobile/src/components/ArtUI.tsx`.
+- **No new images** for these six. One small component file per idea in `mobile/src/components/`.
 
 ## The six (ranked by how much they add)
 
@@ -54,7 +54,7 @@ The countdown is the one thing a waiting capsule shows; it should feel like a cl
 - Effort: **small**.
 
 ## Order to build
-One screens PR can carry 3–6 together (shared `ArtUI.tsx`, small changes on many screens): loader, wax-drop steps, flourish headers, flip countdown, postmarks. Verdict seals (1) ship with the Predict-me screens task, after Codex's backend for it.
+One screens PR can carry 3–6 together (small changes on many screens): loader, wax-drop steps, flourish headers, flip countdown, postmarks. Verdict seals (1) ship with the Predict-me screens task, after Codex's backend for it.
 
 ## Not picked or left for later
 - Me counts as small paper tags, brass toggle switches, and hanging brass price tags in the Shop. Possible later; not mocked up.
