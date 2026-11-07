@@ -1,0 +1,68 @@
+{
+  "exporter": "design/art/scripts/export-webp.cjs",
+  "quality": 85,
+  "assets": [
+    {
+      "path": "public/art/cabinet/cabinet-crown.webp",
+      "size_px": [
+        1024,
+        256
+      ],
+      "bytes": 21370,
+      "alpha_preserved_exactly": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "public/art/cabinet/cabinet-row.webp",
+      "size_px": [
+        1024,
+        384
+      ],
+      "bytes": 19020,
+      "alpha_preserved_exactly": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "path": "public/art/cabinet/cabinet-base.webp",
+      "size_px": [
+        1024,
+        192
+      ],
+      "bytes": 13748,
+      "alpha_preserved_exactly": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "seams": [
+    {
+      "join": "crown/row",
+      "opaque_interior_mean_rgb_delta": 1.695,
+      "max_rgb_delta": 9
+    },
+    {
+      "join": "row/row",
+      "opaque_interior_mean_rgb_delta": 2.481,
+      "max_rgb_delta": 6
+    },
+    {
+      "join": "row/base",
+      "opaque_interior_mean_rgb_delta": 1.383,
+      "max_rgb_delta": 6
+    }
+  ]
+}

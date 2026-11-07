@@ -89,7 +89,15 @@ def main():
         "The 1024 px masters have a repeatable 384 px row, a 256 px crown and a 192 px base; "
         "their measured geometry is in `manifest.json`. `_checks/cabinet-tiles-review.png` "
         "shows three rows with vessels at phone and desktop widths and 400% seam crops. "
-        "The WebP export and PR wait for Roy's visual approval; Claude wires the app separately.\n\n## Masters",
+        "Roy approved the review at `7b1f646`. The three WebP copies keep the full 1024 px width, "
+        "quality 85 and alpha, exported with the unchanged shared exporter through "
+        "`_checks/export-cabinet.cjs`. Claude wires the app separately.\n\n"
+        "| Cabinet WebP | Size | Bytes |\n|---|---:|---:|\n"
+        + "\n".join(
+            f"| `public/art/cabinet/cabinet-{name}.webp` | 1024×{height} | "
+            f"{(ROOT.parents[1] / 'public/art/cabinet' / f'cabinet-{name}.webp').stat().st_size:,} |"
+            for name, height in (("crown", 256), ("row", 384), ("base", 192))
+        ) + "\n\n## Masters",
     )
     readme = readme.replace(
         "[Idle glint review](_checks/idle-glint-review.png)",
