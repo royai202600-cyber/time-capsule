@@ -6,6 +6,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
+| V1 | Sender voice notes: record up to 60 s in Create step 2, sealed like the letter, played on the opened letter (alarm session reuses `voiceNoteForCapsule`) | Claude UI (PR) → Codex backend | Backend migration applied, types generated and 16 live security groups pass; sender cannot fetch stored notes. Await physical Expo Go/Safari recording, playback and cross-platform checks, then combined release. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 
 ## Review
@@ -19,6 +20,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
+- V1 cleanup follow-up: remove unattached `voice-notes` uploads older than 24 hours through the Storage API, with an attachment re-check. Pending uploads remain unreadable. Never delete attached recordings or manipulate Storage metadata to delete blobs.
 | ID | Task | Owner | Done when |
 |---|---|---|---|
 | T2 | Email for everyone: buy/choose a domain (Roy), set up Resend SMTP in Supabase, bilingual verify + reset-password templates, raise email rate limit | Codex (+ Roy for the domain and Resend account) | A non-team email address can sign up, verify and reset its password; emails are in 繁中 + English |

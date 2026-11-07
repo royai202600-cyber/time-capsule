@@ -2,7 +2,7 @@ import React from 'react';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { C } from '../theme';
 
-export type IconName = 'pin' | 'back' | 'close' | 'plus' | 'lock' | 'check' | 'shop' | 'user' | 'map' | 'cabinet' | 'share' | 'camera' | 'pen' | 'alarm' | 'up' | 'down';
+export type IconName = 'pin' | 'back' | 'close' | 'plus' | 'lock' | 'check' | 'shop' | 'user' | 'map' | 'cabinet' | 'share' | 'camera' | 'pen' | 'mic' | 'alarm' | 'up' | 'down';
 const lines: Record<IconName, string> = {
   pin: 'M12 22C8 17 4 13.5 4 9a8 8 0 0 1 16 0c0 4.5-4 8-8 13Z',
   back: 'M19 12H5m7-7-7 7 7 7',
@@ -20,6 +20,7 @@ const lines: Record<IconName, string> = {
   alarm: 'M12 21a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm0-12v4l3 2M3.5 6.5l3-3m14 3-3-3M7 20l-1.5 2m11.5-2 1.5 2',
   up: 'M6 15l6-6 6 6',
   down: 'M6 9l6 6 6-6',
+  mic: 'M9 5a3 3 0 0 1 6 0v6a3 3 0 0 1-6 0V5ZM5 11a7 7 0 0 0 14 0M12 18v3m-4 0h8',
 };
 export function ArtIcon({ name, size = 24, color = C.ink }: { name: IconName; size?: number; color?: string }) {
   return <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
