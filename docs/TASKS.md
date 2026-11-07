@@ -77,3 +77,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - T1: Onboarding, deployment setup, and backend security review — reviewed and approved by Claude.
 - T10: Feel demo built in a separate folder outside the repository.
 - Milestone 1 (sign in, friends, send, time lock, hold-to-open), place lock with server GPS check, handwriting, photos, vessel shop (free during testing), brand demo capsule with gift code + QR, responsive layout, Google + email/password sign-in, Vercel deploy. See the Decisions log in `AGENTS.md`.
+
+### Combined vessel release — 2026-11-07
+Batch 1 is applied and verified in live Shop/Create. PR #62 merged as `49b5833` after green CI; owner release follows. The landmark catalogue/reward migration must follow confirmed deployment, with API ownership/reward tests and production web/Expo Go checks.
