@@ -152,7 +152,7 @@ def main():
    im=clean(im.resize((1024,1024),Image.Resampling.LANCZOS),20)
    parts['lid']=Image.alpha_composite(parts['lid'],im)
   if id=='firefly-jar' and (C/'t10a-firefly-card-fix.json').exists():
-   cfg=json.loads((C/'t10a-firefly-card-fix.json').read_text());parts['fireflies']=runpy.run_path(str(R/'scripts/finish-firefly-card.py'))['prepare'](cfg['source'])[0]
+   cfg=json.loads((C/'t10a-firefly-card-fix.json').read_text());finish=runpy.run_path(str(R/'scripts/finish-firefly-card.py'));parts['fireflies']=finish['prepare'](cfg['source'])[0];parts['jar']=finish['prepare_jar'](parts['jar'])
   spec=make_spec(id,point)
   if id=='mixtape':
    # Reel disks are exact scripted isolations of the edited cassette; they slide with it.
