@@ -24,10 +24,14 @@ The migration first passed a hosted transaction/rollback preflight. Mobile unit 
 
 ## Device checks
 
-Roy reported that iPhone Expo Go and Safari voice recording/playback checks passed. The two-minute cross-platform send/open sequence was not separately reported. The web recorder was also checked at 390 px on localhost:8088 (`create-recorder-390.png`). Expo Go uses its host application's iOS permission dialog; the custom bilingual microphone string was verified in the generated iOS Info.plist via `expo config --type introspect`, but requires an app/development build to verify the installed dialog. See [Expo permissions](https://docs.expo.dev/guides/permissions/).
+Roy confirmed the requested iPhone Safari and Expo Go SDK 58 checks: microphone permission, moving meter/timer, stop/play, re-record/delete, 60-second auto-stop, music pause/resume and the two-minute self-capsule send/open/playback including playback of the Expo Go recording in Safari. The web recorder was also checked at 390 px on localhost:8088 (`create-recorder-390.png`). Expo Go uses its host application's iOS permission dialog; the custom bilingual microphone string was verified in the generated iOS Info.plist via `expo config --type introspect`, but requires an app/development build to verify the installed dialog. See [Expo permissions](https://docs.expo.dev/guides/permissions/).
 
 Production previews keep the dev two-minute option hidden. Use Expo Go's dev option for a two-minute self-capsule; the same opened note can then be played in the Safari preview. Safari-origin recording can be checked on the HTTPS development server for the reverse cross-platform send/open check, while retaining the production-only checks on the preview.
 
 ## Orphan cleanup follow-up
 
 A recording uploaded but never attached stays unreadable. A scheduled privileged Storage API cleanup for unattached objects older than 24 h is deferred; attached objects must be rechecked and preserved. Do not use direct SQL DELETE on `storage.objects`, which can leave orphaned blob bytes.
+
+## Release verification
+
+Backend PR #43 squash-merged as `6b332ad` into the UI branch; combined PR #40 passed CI on `ea890a9` and owner squash-merged to main as `04d1e71`. After main integration, 23 local tests, TypeScript and iOS export pass. Local browser checks confirm the recorder remains available and the alarm preview Stop returns Home with no browser errors. The existing W1 alarm delivery/snooze phone checks remain separate from V1.
