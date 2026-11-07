@@ -83,24 +83,30 @@ The app draws vessels at **35–46 px** (map pins, chips), **95–120 px** (card
 - [ ] IP check: an original design, no logos, no brand shapes, no characters (see the plan's list of rejected ideas).
 
 ## 8. Manifest fields (`design/art/manifest.json`)
-Add these to each vessel's assembled-file entry, alongside the usual `path`, `what`, `size_px`, `transparent`, `prompt` and `model`:
+Add a `vessel` block to each vessel's assembled-file entry, alongside `path`, `what`, `size_px`, `transparent`, `prompt` and `model`. It uses exactly the field names of `IllustratedParts` in `mobile/src/art/manifest.ts` (§9), with `file` in place of `source`. Pivots, mouth, baseY and sparkle are px on the 1024 canvas. In `open` keyframes, `at` is how far it has opened (0–1), x/y are fractions of the drawn size and rotate is in degrees, measured on the motion overlay. Idle motions are `{ "type": "<sway|bob|float|breathe|peek|spin|tick|drift|glow>", ...params }`.
 ```json
 "vessel": {
   "id": "ramen",
   "opening": "B",
+  "idleMs": 4000,
+  "idle": [{ "type": "bob", "amount": 0.03 }],
   "layers": [
     { "name": "bowl", "file": "vessel-ramen-bowl.png", "role": "static" },
-    { "name": "steam", "file": "vessel-ramen-steam.png", "role": "fade", "idle": { "type": "drift" } },
-    { "name": "lid", "file": "vessel-ramen-lid.png", "role": "lift", "pivot": { "x": 512, "y": 470 } }
+    { "name": "steam", "file": "vessel-ramen-steam.png", "role": "fade",
+      "open": [{ "at": 0, "opacity": 0.6 }, { "at": 1, "opacity": 0 }],
+      "idle": [{ "type": "drift", "amount": 0.04 }] },
+    { "name": "lid", "file": "vessel-ramen-lid.png", "role": "lift", "pivot": { "x": 512, "y": 470 },
+      "open": [{ "at": 0, "y": 0, "opacity": 1 }, { "at": 1, "y": -0.32, "rotate": -6, "opacity": 0 }] }
   ],
-  "baseY": 905,
   "mouth": { "x": 512, "y": 470 },
+  "baseY": 905,
   "sparkle": { "x": 640, "y": 455 },
   "glint": null,
-  "idleMs": 5200
+  "openGlow": null,
+  "readyPulse": null
 }
 ```
-`layers` are listed **bottom to top**, in drawing order.
+`layers` are listed **bottom to top**. Mark a layer `"ground": true` only if it must stay still while the rest of the vessel idles (like the sea under the bottle); ground layers must come first.
 
 ## 9. Code changes per vessel (screens team / Codex)
 Motion is **data-driven** (PR "vessel spec"): a vessel's opening, idle loop, letter drop, shelf base, sparkle and glint all come from its entry in `vesselParts` in `mobile/src/art/manifest.ts` (type `IllustratedParts`). No motion code per vessel. Each new vessel needs:
