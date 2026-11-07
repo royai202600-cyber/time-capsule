@@ -4,7 +4,7 @@ To make new art, follow [STYLE.md](STYLE.md). This README lists what already exi
 
 Roy chose style sheet A. All generated masters use the built-in `gpt-image-2` image tool with the approved sheet as their style reference; the exact prompts and any postprocessing are in `manifest.json`.
 
-PNG masters live in `design/art/`. WebP copies live at matching paths in `public/art/`, except the style sheets and `_checks/`. Names use kebab-case: `<category>-<id>-<part>` where a part exists. Vessel IDs: dome, bottle, envelope, tin, lantern, musicbox, maison, snow-globe, mixtape, instant-camera, ramen, fortune-cookie, red-packet, phone-booth, firefly-jar, hourglass, gashapon. Place IDs: senado, tst-clock, taipei101, sensoji, fushimi, gyeongbok, merlion, grandpal, wumen, petronas, aurele-cotai.
+PNG masters live in `design/art/`. WebP copies live at matching paths in `public/art/`, except the style sheets and `_checks/`. Names use kebab-case: `<category>-<id>-<part>` where a part exists. Vessel IDs: dome, bottle, envelope, tin, lantern, musicbox, maison, snow-globe, mixtape, instant-camera, ramen, fortune-cookie, red-packet, phone-booth, firefly-jar, hourglass, gashapon, clock-tower, senado-fountain, bamboo-tower, gate-lantern, torii-scroll, palace-pavilion, lionfish-fountain, golden-roof, gate-lacquer, twin-towers. Place IDs: senado, tst-clock, taipei101, sensoji, fushimi, gyeongbok, merlion, grandpal, wumen, petronas, aurele-cotai.
 
 The original SVG art remains in `src/art.js` and is recoverable from Git tag `art-svg-v1`. These bitmap assets are not wired into app screens yet.
 
@@ -26,6 +26,8 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 - Run checks with the Python scripts in `design/art/scripts/` (Pillow required). Run `npm run build` before merging.
 
 A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: crown 1024×256, repeatable row 1024×384, base 1024×192. They were cut from one generated source; Roy approved `_checks/cabinet-tiles-review.png` at `7b1f646`. The manifest preserves the exact A3 prompts and measured geometry.
+
+- T10b B2: ten original landmark souvenir vessels with complete revealed interiors, exact at=0 stacks, measured motion sheets and 40/120 px silhouettes. Roy requested a tall slender clock tower with a high clock-face door and a 6-degree hands tick; the other nine follow the same silhouette-first review. The clock shape was compared with an [RTHK reference photograph](https://newsstatic.rthk.hk/images/mfile_1832413_1_20251119192432.jpg). Trademarked landmark forms remain loose interpretations; sacred-site vessels use architecture only. `finish-b2.py` prepares layers and `register-b2.py` merges B2 records while preserving other batches. Final art PR approval is pending.
 
 ## Masters
 
@@ -74,11 +76,18 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `style-sheet.png` | Roy-approved style sheet A | 1536×1024 | opaque |
 | `textures/paper-letter.png` | Warm seamless letter-paper texture | 1024×1024 | processed; see manifest, opaque |
 | `textures/paper.png` | Cool seamless paper texture | 1024×1024 | processed; see manifest, opaque |
+| `vessels/vessel-bamboo-tower-tin.png` | Bamboo-Tier Skyscraper Tin — tin layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-bamboo-tower-top.png` | Bamboo-Tier Skyscraper Tin — top layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-bamboo-tower.png` | Assembled bamboo-tier skyscraper tin vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-bottle-body.png` | Message In A Bottle — body layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-bottle-cork.png` | Message In A Bottle — cork layer | 1024×1024 | pivot 724,355 |
 | `vessels/vessel-bottle-letter.png` | Message In A Bottle — letter layer | 1024×1024 |  |
 | `vessels/vessel-bottle-waves.png` | Message In A Bottle — waves layer | 1024×1024 |  |
 | `vessels/vessel-bottle.png` | Assembled message in a bottle vessel | 1024×1024 |  |
+| `vessels/vessel-clock-tower-door.png` | Small Standing Clock-Tower Keepsake — door layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-clock-tower-hands.png` | Small Standing Clock-Tower Keepsake — hands layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-clock-tower-tower.png` | Small Standing Clock-Tower Keepsake — tower layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-clock-tower.png` | Assembled small standing clock-tower keepsake vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-dome-base.png` | Glass-Dome Blue Rose — base layer | 1024×1024 |  |
 | `vessels/vessel-dome-glass.png` | Glass-Dome Blue Rose — glass layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-dome-glint.png` | Travelling highlight for the dome glass | 1024×1024 | processed; see manifest |
@@ -100,6 +109,16 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-gashapon-bottom.png` | Pastel Clear-Top Toy Capsule — bottom layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-gashapon-top.png` | Pastel Clear-Top Toy Capsule — top layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-gashapon.png` | Assembled pastel clear-top toy capsule vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-gate-lacquer-box.png` | Imperial-Gate Lacquer Box — box layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-gate-lacquer-roof.png` | Imperial-Gate Lacquer Box — roof layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-gate-lacquer.png` | Assembled imperial-gate lacquer box vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-gate-lantern-cap.png` | Great Red Gate Lantern — cap layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-gate-lantern-glow.png` | Great Red Gate Lantern — glow layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-gate-lantern-lantern.png` | Great Red Gate Lantern — lantern layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-gate-lantern.png` | Assembled great red gate lantern vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-golden-roof-box.png` | Thai Golden-Roof Jewel Box — box layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-golden-roof-roof.png` | Thai Golden-Roof Jewel Box — roof layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-golden-roof.png` | Assembled Thai golden-roof jewel box vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-hourglass-cap.png` | Wood And Brass Hourglass — cap layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-hourglass-frame-and-glass.png` | Wood And Brass Hourglass — frame-and-glass layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-hourglass-sand.png` | Wood And Brass Hourglass — sand layer | 1024×1024 | processed; see manifest |
@@ -111,6 +130,10 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-lantern-cap.png` | Mid-Autumn Lantern — cap layer | 1024×1024 |  |
 | `vessels/vessel-lantern-glow.png` | Mid-Autumn Lantern — glow layer | 1024×1024 |  |
 | `vessels/vessel-lantern.png` | Assembled Mid-Autumn lantern vessel | 1024×1024 |  |
+| `vessels/vessel-lionfish-fountain-bottle.png` | Lion-Head Fish-Scale Fountain Bottle — bottle layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-lionfish-fountain-spray.png` | Lion-Head Fish-Scale Fountain Bottle — spray layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-lionfish-fountain-stopper.png` | Lion-Head Fish-Scale Fountain Bottle — stopper layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-lionfish-fountain.png` | Assembled lion-head fish-scale fountain bottle vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-maison-box.png` | Maison Aurèle Ring Box — box layer | 1024×1024 |  |
 | `vessels/vessel-maison-lid.png` | Maison Aurèle Ring Box — lid layer | 1024×1024 | pivot 605,300 |
 | `vessels/vessel-maison-ring.png` | Maison Aurèle Ring Box — ring layer | 1024×1024 |  |
@@ -124,6 +147,9 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-musicbox-box.png` | Warm Wood Music Box — box layer | 1024×1024 |  |
 | `vessels/vessel-musicbox-lid.png` | Warm Wood Music Box — lid layer | 1024×1024 | pivot 541,292 |
 | `vessels/vessel-musicbox.png` | Assembled warm wood music box vessel | 1024×1024 |  |
+| `vessels/vessel-palace-pavilion-base.png` | Korean Palace-Pavilion Box — base layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-palace-pavilion-roof.png` | Korean Palace-Pavilion Box — roof layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-palace-pavilion.png` | Assembled Korean palace-pavilion box vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-phone-booth-booth.png` | Original Red Phone Booth — booth layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-phone-booth-door.png` | Original Red Phone Booth — door layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-phone-booth-light.png` | Original Red Phone Booth — light layer | 1024×1024 | processed; see manifest |
@@ -136,6 +162,9 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-red-packet-packet.png` | Gold-Foil Red Packet — packet layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-red-packet-seal.png` | Gold-Foil Red Packet — seal layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-red-packet.png` | Assembled gold-foil red packet vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-senado-fountain-box.png` | Wave-Tile Fountain Box — box layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-senado-fountain-lid.png` | Wave-Tile Fountain Box — lid layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-senado-fountain.png` | Assembled wave-tile fountain box vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-snow-globe-base.png` | Winter Scene Snow Globe — base layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-snow-globe-glint.png` | Winter Scene Snow Globe — glint layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-snow-globe-globe.png` | Winter Scene Snow Globe — globe layer | 1024×1024 | processed; see manifest |
@@ -145,7 +174,14 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-tin-box.png` | Tin Box — box layer | 1024×1024 |  |
 | `vessels/vessel-tin-lid.png` | Tin Box — lid layer | 1024×1024 | pivot 505,310 |
 | `vessels/vessel-tin.png` | Assembled tin box vessel | 1024×1024 |  |
+| `vessels/vessel-torii-scroll-gate.png` | Torii Gate And Scroll — gate layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-torii-scroll-scroll.png` | Torii Gate And Scroll — scroll layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-torii-scroll.png` | Assembled torii gate and scroll vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-twin-towers-glow.png` | Paired Silver-And-Brass Tower Tins — glow layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-twin-towers-tops.png` | Paired Silver-And-Brass Tower Tins — tops layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-twin-towers-towers.png` | Paired Silver-And-Brass Tower Tins — towers layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-twin-towers.png` | Assembled paired silver-and-brass tower tins vessel | 1024×1024 | processed; see manifest |
 
 ## Review
 
-[Full contact sheet](_checks/contact-sheet.png) · [Snow globe motion](_checks/snow-globe-motion.png) · [Snow globe 40/120 px](_checks/snow-globe-silhouette.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png) · [Cabinet tile review](_checks/cabinet-tiles-review.png)
+[B2 contact sheet](_checks/b2-contact-sheet.png) · [Clock-tower motion](_checks/clock-tower-motion.png) · [Clock-tower 40/120 px](_checks/clock-tower-silhouette.png) · [Full contact sheet](_checks/contact-sheet.png) · [Snow globe motion](_checks/snow-globe-motion.png) · [Snow globe 40/120 px](_checks/snow-globe-silhouette.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png) · [Cabinet tile review](_checks/cabinet-tiles-review.png)

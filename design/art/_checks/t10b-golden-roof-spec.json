@@ -1,0 +1,56 @@
+{
+  "id": "golden-roof",
+  "opening": "B",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "breathe",
+      "amount": 0.025
+    }
+  ],
+  "layers": [
+    {
+      "name": "box",
+      "file": "vessel-golden-roof-box.png",
+      "role": "static"
+    },
+    {
+      "name": "roof",
+      "file": "vessel-golden-roof-roof.png",
+      "role": "lift",
+      "pivot": {
+        "x": 509,
+        "y": 674
+      },
+      "open": [
+        {
+          "at": 0,
+          "y": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.65,
+          "y": -0.4,
+          "opacity": 0.65
+        },
+        {
+          "at": 1,
+          "y": -0.65,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 509,
+    "y": 636
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 679,
+    "y": 556
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}
