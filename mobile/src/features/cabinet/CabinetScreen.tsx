@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Modal, PanResponder, Platform, Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
-import { cabinetWall, shelf, vesselParts } from "../../art/manifest";
+import { Animated, FlatList, Image, Modal, PanResponder, Platform, Pressable, ScrollView, Text, View, useWindowDimensions, type ImageSourcePropType } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { cabinetTiles, vesselParts } from "../../art/manifest";
 import { router, useFocusEffect } from "expo-router";
 import { goBack } from "../../navigation";
 import { DeviceMotion } from "expo-sensors";
 import { Vessel, type VesselKind } from "../../components/Vessel";
-import { Screen, Heading, Bar, BackButton } from "../../components/Screen";
+import { Heading, Bar, BackButton } from "../../components/Screen";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
 import { useAuth } from "../../services/auth";
@@ -17,29 +18,77 @@ import { C, motion, sans, serif } from "../../theme";
 type Owned = { vessel: string; edition_no: number | null; acquired_at: string };
 type VesselRow = { id: string; price_mop: number; edition_total: number | null; sort: number };
 type SlotRect = { x: number; y: number; width: number; height: number };
-type Selection = { id: string; rect: SlotRect };
-const isVessel = (id: string): id is VesselKind => id in VESSELS;
-const boards = [250, 510, 765];
-const columns = [287.5, 512.5, 737.5]; // Evenly within x=175–850 on the 1024 px shelf.
-// Alpha bounds of the assembled 512 px WebP files, measured at alpha > 32.
-const baseY: Record<VesselKind, number> = {
-  dome: 460 / 512, bottle: 406 / 512, envelope: 407 / 512,
-  tin: 388 / 512, lantern: 478 / 512, musicbox: 409 / 512, maison: 392 / 512,
+/** One vessel on the shelves. `key` is unique even when the same kind appears more than once. */
+export type CabinetItem = {
+  key: string; kind: VesselKind; owned: boolean;
+  editionNo?: number | null; editionTotal?: number | null; acquiredAt?: string; used: number;
 };
+type Selection = { item: CabinetItem; rect: SlotRect };
+const isVessel = (id: string): id is VesselKind => id in VESSELS;
 
-function ShelfSlot({ id, name, isOwned, selected, row, column, scale, parallaxX, parallaxY, reduced, onChoose }: {
-  id: VesselKind; name: string; isOwned: boolean; selected: boolean;
-  row: number; column: number; scale: number; parallaxX: Animated.Value; parallaxY: Animated.Value;
+type Crop = { x: number; y: number; w: number; h: number };
+type Piece = { source: ImageSourcePropType; size: { w: number; h: number }; crop: Crop };
+/**
+ * The cabinet is a crown, one shelf row repeated per row of vessels, and a base (art A3, PR #44).
+ * All numbers are art px on the 1024 px wide tiles, as measured in design/art/manifest.json:
+ * posts x 25–89 / 935–999, stretch zone x 176–848, row standing surface y 300, plaque face y 300–352,
+ * usable x 112–912. Heights: crown 256, row 384, base 192.
+ */
+const tile = (source: ImageSourcePropType, h: number): Piece => ({ source, size: { w: 1024, h }, crop: { x: 0, y: 0, w: 1024, h } });
+const ART = {
+  crown: tile(cabinetTiles.crown, 256),
+  row: tile(cabinetTiles.row, 384),
+  base: tile(cabinetTiles.base, 192),
+  cap: 176,          // Left/right edge (posts and brackets) drawn unstretched; the middle stretches.
+  inset: 112,        // From each edge to the usable width.
+  slot: 800 / 3,     // Width per vessel; a three-column row is exactly 2 × inset + 3 × slot = 1024 wide.
+  surface: 300,      // Standing surface inside the row.
+  face: [300, 352],  // Board front face, where plaques sit.
+};
+// Where a vessel's base sits, as a fraction of its square: the manifest's `baseY` (lowest opaque
+// row on the 1024 canvas) when present, so new vessels need no Cabinet edit. The table is only a
+// fallback for the seven original vessels until the manifest carries `baseY` for them (PR #42).
+const legacyBaseY: Partial<Record<string, number>> = {
+  dome: 920, bottle: 812, envelope: 814, tin: 776, lantern: 956, musicbox: 818, maison: 784,
+};
+const baseFraction = (id: VesselKind) =>
+  ((vesselParts[id] as { baseY?: number } | undefined)?.baseY ?? legacyBaseY[id] ?? 870) / 1024;
+
+/** Draws a piece at any width: the edge caps keep their shape and the middle stretches sideways. */
+function PieceView({ piece, width, height, scale }: { piece: Piece; width: number; height: number; scale: number }) {
+  const { crop } = piece;
+  const capW = Math.round(ART.cap * scale);
+  const sy = height / crop.h;
+  const part = (x: number, w: number, left: number, dw: number) => {
+    const sx = dw / w;
+    return <View key={x} style={{ position: "absolute", left, top: 0, width: dw, height, overflow: "hidden" }}>
+      <Image source={piece.source} resizeMode="stretch" style={{
+        position: "absolute", left: -(crop.x + x) * sx, top: -crop.y * sy,
+        width: piece.size.w * sx, height: piece.size.h * sy,
+      }} />
+    </View>;
+  };
+  return <>
+    {part(ART.cap, crop.w - 2 * ART.cap, capW - 1, width - 2 * capW + 2)}
+    {part(0, ART.cap, 0, capW)}
+    {part(crop.w - ART.cap, ART.cap, width - capW, capW)}
+  </>;
+}
+
+function ShelfSlot({ item, name, selected, left, surface, size, face, slotWidth, parallaxX, parallaxY, reduced, onChoose }: {
+  item: CabinetItem; name: string; selected: boolean; left: number; surface: number; size: number;
+  face: [number, number]; slotWidth: number; parallaxX: Animated.Value; parallaxY: Animated.Value;
   reduced: boolean; onChoose: (rect: SlotRect) => void;
 }) {
+  const id = item.kind;
   const [hovered, setHovered] = useState(false);
   const hover = useRef(new Animated.Value(0)).current;
   const pressed = useRef(new Animated.Value(1)).current;
   const vesselRef = useRef<React.ComponentRef<typeof Pressable>>(null);
-  const size = (id === "lantern" ? 180 : 220) * scale;
-  const surface = boards[row] * scale;
-  const top = surface - size * baseY[id];
-  const plaqueTop = surface - top + 47 * scale;
+  const top = surface - size * baseFraction(id);
+  const faceHeight = face[1] - face[0];
+  const plaqueHeight = Math.max(14, faceHeight - 2);
+  const plaqueWidth = Math.min(slotWidth * .82, size + 16);
   const moveHover = (value: number) => {
     Animated.spring(hover, { toValue: value, useNativeDriver: true, ...motion.spring.snappy }).start();
     setHovered(value > 0);
@@ -47,100 +96,84 @@ function ShelfSlot({ id, name, isOwned, selected, row, column, scale, parallaxX,
   const movePress = (value: number) => {
     Animated.spring(pressed, { toValue: value, useNativeDriver: true, ...motion.spring.snappy }).start();
   };
-  const glass = id === "dome" ? vesselParts.dome.layers[2].source
-    : id === "bottle" ? vesselParts.bottle.layers[2].source : null;
-  return <Animated.View pointerEvents="box-none" style={{
-    position: "absolute", left: columns[column] * scale - size / 2, top, width: size, height: size + 30,
-    transform: reduced ? [] : [
-      { translateX: parallaxX.interpolate({ inputRange: [-1, 1], outputRange: [-6, 6] }) },
-      { translateY: parallaxY.interpolate({ inputRange: [-1, 1], outputRange: [-3, 3] }) },
-    ],
-  }}>
-    <Animated.View pointerEvents="none" style={{
-      position: "absolute", top: surface - top - 2, left: size * .22, width: size * .56, height: 5,
-      borderRadius: 99, backgroundColor: C.ink,
-      opacity: hover.interpolate({ inputRange: [0, 1], outputRange: [.20, .10] }),
-      transform: [{ scaleX: hover.interpolate({ inputRange: [0, 1], outputRange: [1, 1.35] }) }],
-    }} />
-    <Animated.View style={{
-      opacity: selected ? .16 : isOwned ? 1 : .23,
-      transform: [
-        { translateY: hover.interpolate({ inputRange: [0, 1], outputRange: [0, reduced ? 0 : -6] }) },
-        { scale: Animated.multiply(pressed, hover.interpolate({ inputRange: [0, 1], outputRange: [1, reduced ? 1 : 1.05] })) },
+  const glassName = id === "bottle" ? "body" : "glass"; // The bottle's glass layer predates the naming rule.
+  const glass = vesselParts[id]?.layers.find(layer => layer.name === glassName)?.source ?? null;
+  return <>
+    <Animated.View pointerEvents="box-none" style={{
+      position: "absolute", left: left - size / 2, top, width: size, height: size,
+      transform: reduced ? [] : [
+        { translateX: parallaxX.interpolate({ inputRange: [-1, 1], outputRange: [-6, 6] }) },
+        { translateY: parallaxY.interpolate({ inputRange: [-1, 1], outputRange: [-3, 3] }) },
       ],
     }}>
-      <Pressable ref={vesselRef} disabled={selected} accessibilityRole="button" accessibilityLabel={name}
-        onPressIn={() => { void haptics.tick(); movePress(.96); }}
-        onPressOut={() => movePress(1)}
-        onHoverIn={event => {
-          if (Platform.OS === "web" && (event.nativeEvent as any).pointerType !== "touch" && !reduced) moveHover(1);
-        }}
-        onHoverOut={() => moveHover(0)}
-        onPress={() => vesselRef.current?.measureInWindow((x: number, y: number, width: number, height: number) => onChoose({ x, y, width, height }))}
-        style={[{ width: size, height: size }, Platform.OS === "web" ? { cursor: "pointer" } as any : null]}>
-        <Vessel kind={id} size={size} idle={isOwned && !selected} />
-        {glass && Platform.OS === "web" && !reduced && <Animated.Image pointerEvents="none" source={glass}
-          resizeMode="contain" style={{ position: "absolute", width: size, height: size,
-            opacity: hover.interpolate({ inputRange: [0, 1], outputRange: [0, .13] }),
-            transform: [{ translateX: parallaxX.interpolate({ inputRange: [-1, 1], outputRange: [-3, 3] }) }],
-          }} />}
-      </Pressable>
+      <Animated.View pointerEvents="none" style={{
+        position: "absolute", top: surface - top - 2, left: size * .22, width: size * .56, height: 5,
+        borderRadius: 99, backgroundColor: C.ink,
+        opacity: hover.interpolate({ inputRange: [0, 1], outputRange: [.20, .10] }),
+        transform: [{ scaleX: hover.interpolate({ inputRange: [0, 1], outputRange: [1, 1.35] }) }],
+      }} />
+      <Animated.View style={{
+        opacity: selected ? .16 : item.owned ? 1 : .23,
+        transform: [
+          { translateY: hover.interpolate({ inputRange: [0, 1], outputRange: [0, reduced ? 0 : -6] }) },
+          { scale: Animated.multiply(pressed, hover.interpolate({ inputRange: [0, 1], outputRange: [1, reduced ? 1 : 1.05] })) },
+        ],
+      }}>
+        <Pressable ref={vesselRef} disabled={selected} accessibilityRole="button" accessibilityLabel={name}
+          onPressIn={() => { void haptics.tick(); movePress(.96); }}
+          onPressOut={() => movePress(1)}
+          onHoverIn={event => {
+            if (Platform.OS === "web" && (event.nativeEvent as any).pointerType !== "touch" && !reduced) moveHover(1);
+          }}
+          onHoverOut={() => moveHover(0)}
+          onPress={() => vesselRef.current?.measureInWindow((x: number, y: number, width: number, height: number) => onChoose({ x, y, width, height }))}
+          style={[{ width: size, height: size }, Platform.OS === "web" ? { cursor: "pointer" } as any : null]}>
+          <Vessel kind={id} size={size} idle={item.owned && !selected} />
+          {glass && Platform.OS === "web" && !reduced && <Animated.Image pointerEvents="none" source={glass}
+            resizeMode="contain" style={{ position: "absolute", width: size, height: size,
+              opacity: hover.interpolate({ inputRange: [0, 1], outputRange: [0, .13] }),
+              transform: [{ translateX: parallaxX.interpolate({ inputRange: [-1, 1], outputRange: [-3, 3] }) }],
+            }} />}
+        </Pressable>
+      </Animated.View>
     </Animated.View>
     <View pointerEvents="none" style={{
-      position: "absolute", top: plaqueTop, left: -6, width: size + 12,
-      alignItems: "center", justifyContent: "center", minHeight: 14,
+      position: "absolute", top: face[0] + (faceHeight - plaqueHeight) / 2, left: left - plaqueWidth / 2,
+      width: plaqueWidth, height: plaqueHeight, alignItems: "center", justifyContent: "center",
       borderRadius: 4, backgroundColor: hovered ? "#F9E9BD" : "#F1DFB4",
-      borderWidth: 1, borderColor: hovered ? C.brass : "#D4B476", opacity: isOwned ? 1 : .65,
+      borderWidth: 1, borderColor: hovered ? C.brass : "#D4B476", opacity: item.owned ? 1 : .65,
     }}>
-      <Text numberOfLines={2} style={{
-        fontFamily: sans, fontSize: id === "maison" ? 8 : 7.5, lineHeight: 9,
-        color: hovered ? C.plum : C.ink, textAlign: "center", paddingHorizontal: 2,
+      <Text numberOfLines={1} style={{
+        fontFamily: sans, fontSize: Math.max(7.5, Math.min(12, plaqueHeight * .55)),
+        color: hovered ? C.plum : C.ink, textAlign: "center", paddingHorizontal: 3,
       }}>{name}</Text>
     </View>
-  </Animated.View>;
+  </>;
 }
 
-export default function CabinetScreen() {
+/** The scrolling cabinet itself. Rows are virtualised, so it holds a few vessels or thousands. */
+export function CabinetView({ items, notice, error }: { items: CabinetItem[]; notice?: string; error?: string }) {
   const { t, language } = useLanguage();
-  const { session } = useAuth();
   const reduced = useReducedMotion();
-  const [all, setAll] = useState<VesselRow[]>([]);
-  const [owned, setOwned] = useState<Owned[]>([]);
-  const [usage, setUsage] = useState<Record<string, number>>({});
   const [selected, setSelected] = useState<Selection | null>(null);
-  const [error, setError] = useState("");
   const { width: viewportWidth, height: viewportHeight } = useWindowDimensions();
-  const cabinetWidth = Math.min(viewportWidth - 48, 592);
-  const artSize = cabinetWidth - 24;
-  const scale = artSize / 1024;
+  const width = Math.max(280, Math.min(viewportWidth - (viewportWidth < 700 ? 24 : 48), 960));
+  const columns = width < 560 ? 3 : width < 760 ? 4 : 5;
+  const scale = width / (2 * ART.inset + ART.slot * columns);
+  const rowHeight = Math.round(ART.row.crop.h * scale);
+  const sy = rowHeight / ART.row.crop.h;
+  const slotWidth = ART.slot * scale;
+  const face: [number, number] = [ART.face[0] * sy, ART.face[1] * sy];
   const parallaxX = useRef(new Animated.Value(0)).current;
   const parallaxY = useRef(new Animated.Value(0)).current;
   const fly = useRef(new Animated.Value(0)).current;
   const spin = useRef(new Animated.Value(0)).current;
   const spinOffset = useRef(0);
   const selectedRef = useRef(false);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  const rows = useMemo(() => Array.from({ length: Math.ceil(items.length / columns) },
+    (_, row) => items.slice(row * columns, row * columns + columns)), [items, columns]);
 
-  useFocusEffect(useCallback(() => {
-    let alive = true;
-    if (!session) {
-      if (__DEV__) setAll(Object.keys(VESSELS).map((id, sort) => {
-        const meta = VESSELS[id as VesselKind] as { price: number; edition?: number };
-        return { id, price_mop: meta.price, edition_total: meta.edition ?? null, sort };
-      }));
-      return () => { alive = false; };
-    }
-    void Promise.all([vessels.list(), vessels.owned(session.user.id), capsules.sent(session.user.id)]).then(([v, o, c]) => {
-      if (!alive) return;
-      const e = [v, o, c].find(r => r.error)?.error;
-      if (e) setError(e.message);
-      setAll(v.data ?? []);
-      setOwned(o.data ?? []);
-      const counts: Record<string, number> = {};
-      (c.data ?? []).forEach(item => { counts[item.vessel] = (counts[item.vessel] ?? 0) + 1; });
-      setUsage(counts);
-    });
-    return () => { alive = false; };
-  }, [session?.user.id]));
   useEffect(() => {
     if (reduced || Platform.OS === "web") return;
     let sub: { remove: () => void } | undefined;
@@ -156,20 +189,14 @@ export default function CabinetScreen() {
     });
     return () => { live = false; sub?.remove(); };
   }, [reduced, parallaxX, parallaxY]);
-  const list = useMemo(() => [...all].sort((a, b) => {
-    const rank = (v: VesselRow) => v.price_mop === 0 ? 0 : owned.some(o => o.vessel === v.id) ? 1 : 2;
-    return rank(a) - rank(b) || a.sort - b.sort;
-  }), [all, owned]);
-  const choose = (id: string, rect: SlotRect) => {
-    const v = all.find(v => v.id === id);
-    if (!v) return;
-    if (v.price_mop !== 0 && !owned.some(o => o.vessel === id)) { router.push("/shop"); return; }
+  const choose = (item: CabinetItem, rect: SlotRect) => {
+    if (!item.owned) { router.push("/shop"); return; }
     selectedRef.current = true;
     fly.setValue(0);
     spin.stopAnimation();
     spin.setValue(0);
     spinOffset.current = 0;
-    setSelected({ id, rect });
+    setSelected({ item, rect });
   };
   useEffect(() => {
     if (!selected) return;
@@ -195,9 +222,8 @@ export default function CabinetScreen() {
       if (!reduced) Animated.decay(spin, { velocity: g.vx * 30, deceleration: .995, useNativeDriver: true }).start();
     },
   }), [reduced, spin]);
-  const sel = all.find(v => v.id === selected?.id);
-  const selOwn = owned.find(o => o.vessel === selected?.id);
-  const label = (id: string) => isVessel(id) ? VESSELS[id] : null;
+  const sel = selected?.item;
+  const label = (id: VesselKind) => VESSELS[id];
   const targetTop = Math.max(30, (viewportHeight - 520) / 2);
   const cardWidth = Math.min(viewportWidth - 40, 480);
   const onPointerMove = (event: any) => {
@@ -212,50 +238,53 @@ export default function CabinetScreen() {
     Animated.spring(parallaxX, { toValue: 0, useNativeDriver: true, ...motion.spring.soft }).start();
     Animated.spring(parallaxY, { toValue: 0, useNativeDriver: true, ...motion.spring.soft }).start();
   };
+  const artMotion = reduced ? undefined : { transform: [
+    { translateX: parallaxX.interpolate({ inputRange: [-1, 1], outputRange: [-4, 4] }) },
+    { translateY: parallaxY.interpolate({ inputRange: [-1, 1], outputRange: [-2, 2] }) },
+  ] };
+  const piece = (p: Piece, height: number) => <Animated.View pointerEvents="none"
+    style={[{ position: "absolute", left: 0, top: 0, width, height }, artMotion]}>
+    <PieceView piece={p} width={width} height={height} scale={scale} />
+  </Animated.View>;
+  const crownHeight = Math.round(ART.crown.crop.h * scale);
+  const baseHeight = Math.round(ART.base.crop.h * scale);
 
-  return <Screen>
-    <Bar><BackButton label={t("back")} onPress={goBack} /><Heading>{t("cabinet.title")}</Heading></Bar>
-    <Text style={{ fontFamily: sans, color: C.muted }}>{t("cabinet.hint")}</Text>
-    {!session && <Text style={{ fontFamily: sans, color: C.muted }}>{t(__DEV__ ? "cabinet.preview" : "cabinet.signIn")}</Text>}
-    <View style={{ width: cabinetWidth, alignSelf: "center", borderRadius: 20, borderWidth: 2, borderColor: C.wood, overflow: "hidden" }}
-      {...(Platform.OS === "web" ? { onPointerMove, onPointerLeave } : {})}>
-      {Array.from({ length: Math.ceil(list.length / 9) }, (_, group) => <View key={group} style={{ width: cabinetWidth - 4, height: artSize + 24 }}>
-        <Animated.Image pointerEvents="none" source={cabinetWall} resizeMode="cover" style={{
-          position: "absolute", left: -6, top: -6, width: cabinetWidth + 8, height: artSize + 36,
-          transform: reduced ? [] : [
-            { translateX: parallaxX.interpolate({ inputRange: [-1, 1], outputRange: [-2, 2] }) },
-            { translateY: parallaxY.interpolate({ inputRange: [-1, 1], outputRange: [-2, 2] }) },
-          ],
-        }} />
-        <View style={{ position: "absolute", left: 10, top: 10, width: artSize, height: artSize }}>
-          <Animated.Image pointerEvents="none" source={shelf} resizeMode="contain" style={{
-            width: artSize, height: artSize,
-            transform: reduced ? [] : [
-              { translateX: parallaxX.interpolate({ inputRange: [-1, 1], outputRange: [-4, 4] }) },
-              { translateY: parallaxY.interpolate({ inputRange: [-1, 1], outputRange: [-2, 2] }) },
-            ],
-          }} />
-          {boards.flatMap((_, row) => columns.map((__, column) => {
-            const v = list[group * 9 + row * 3 + column];
-            if (!v || !isVessel(v.id)) return null;
-            return <ShelfSlot key={v.id} id={v.id} name={label(v.id)?.name[language] ?? v.id}
-              isOwned={v.price_mop === 0 || owned.some(o => o.vessel === v.id)}
-              selected={selected?.id === v.id} row={row} column={column} scale={scale}
-              parallaxX={parallaxX} parallaxY={parallaxY} reduced={reduced}
-              onChoose={rect => choose(v.id, rect)} />;
-          }))}
-        </View>
-      </View>)}
+  return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}>
+    <View style={{ flex: 1 }} {...(Platform.OS === "web" ? { onPointerMove, onPointerLeave } : {})}>
+      <FlatList data={rows} keyExtractor={(_, index) => String(index)}
+        initialNumToRender={8} windowSize={7} maxToRenderPerBatch={8} removeClippedSubviews={Platform.OS === "android"}
+        getItemLayout={(_, index) => ({ length: rowHeight, offset: headerHeight + rowHeight * index, index })}
+        contentContainerStyle={{ paddingBottom: 32 }}
+        ListHeaderComponent={<View style={{ width, alignSelf: "center" }} onLayout={event => setHeaderHeight(event.nativeEvent.layout.height)}>
+          <View style={{ paddingTop: 24, paddingBottom: 12, gap: 16, paddingHorizontal: viewportWidth < 700 ? 12 : 0 }}>
+            <Bar><BackButton label={t("back")} onPress={goBack} /><Heading>{t("cabinet.title")}</Heading></Bar>
+            <Text style={{ fontFamily: sans, color: C.muted }}>{t("cabinet.hint")}</Text>
+            {!!notice && <Text style={{ fontFamily: sans, color: C.muted }}>{notice}</Text>}
+          </View>
+          <View style={{ width, height: crownHeight }}>{piece(ART.crown, crownHeight)}</View>
+        </View>}
+        ListFooterComponent={<View style={{ width, alignSelf: "center" }}>
+          <View style={{ width, height: baseHeight }}>{piece(ART.base, baseHeight)}</View>
+          {!!error && <Text style={{ color: C.wax, marginTop: 12 }}>{error}</Text>}
+        </View>}
+        renderItem={({ item: row }) => <View style={{ width, height: rowHeight, alignSelf: "center" }}>
+          {piece(ART.row, rowHeight)}
+          {row.map((item, column) => <ShelfSlot key={item.key} item={item} name={label(item.kind).name[language]}
+            selected={selected?.item.key === item.key}
+            left={(ART.inset + ART.slot * (column + .5)) * scale}
+            surface={ART.surface * sy} size={slotWidth * (item.kind === "lantern" ? .78 : .92)}
+            face={face} slotWidth={slotWidth} parallaxX={parallaxX} parallaxY={parallaxY} reduced={reduced}
+            onChoose={rect => choose(item, rect)} />)}
+        </View>} />
     </View>
-    {!!error && <Text style={{ color: C.wax }}>{error}</Text>}
-    <Modal visible={!!sel && !!selected} transparent animationType="none" onRequestClose={close}>
+    <Modal visible={!!selected} transparent animationType="none" onRequestClose={close}>
       <View style={{ flex: 1 }}>
         <Animated.View pointerEvents="none" style={{
           position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: C.ink, opacity: fly.interpolate({ inputRange: [0, 1], outputRange: [0, .60] }),
         }} />
         <Pressable onPress={close} style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }} accessibilityLabel={t("cabinet.close")} />
-        {sel && selected && isVessel(selected.id) && <>
+        {sel && selected && <>
           <Animated.View {...gesture.panHandlers} style={{
             position: "absolute", left: (viewportWidth - 230) / 2, top: targetTop, width: 230, height: 230,
             transform: [
@@ -265,7 +294,7 @@ export default function CabinetScreen() {
               { rotateY: spin.interpolate({ inputRange: [-360, 0, 360], outputRange: ["-360deg", "0deg", "360deg"] }) },
             ], opacity: reduced ? fly : 1,
           }}>
-            <Vessel kind={selected.id} size={230} idle />
+            <Vessel kind={sel.kind} size={230} idle />
           </Animated.View>
           <Animated.View accessibilityViewIsModal style={{
             position: "absolute", left: (viewportWidth - cardWidth) / 2, top: targetTop + 212,
@@ -276,15 +305,59 @@ export default function CabinetScreen() {
           }}>
             <ScrollView contentContainerStyle={{ padding: 18, paddingTop: 28, alignItems: "center", gap: 8 }}>
               <Pressable accessibilityRole="button" onPress={close} style={{ alignSelf: "flex-end", minHeight: 44, justifyContent: "center" }}><Text style={{ color: C.blue }}>{t("cabinet.close")}</Text></Pressable>
-              <Text style={{ fontFamily: serif, color: C.ink, fontSize: 24, textAlign: "center" }}>{label(selected.id)?.name[language] ?? selected.id}</Text>
-              <Text style={{ fontFamily: sans, color: C.muted, textAlign: "center" }}>{label(selected.id)?.desc[language]}</Text>
-              {!!selOwn?.edition_no && <Text style={{ color: C.brass, fontFamily: serif }}>{t("cabinet.edition", String(selOwn.edition_no).padStart(3, "0"), sel.edition_total)}</Text>}
-              {!!selOwn?.acquired_at && <Text style={{ color: C.muted }}>{t("cabinet.acquired", new Date(selOwn.acquired_at).toLocaleDateString(language === "zh" ? "zh-TW" : "en-US"))}</Text>}
-              <Text style={{ color: C.muted }}>{t("cabinet.used", usage[selected.id] ?? 0)}</Text>
+              <Text style={{ fontFamily: serif, color: C.ink, fontSize: 24, textAlign: "center" }}>{label(sel.kind).name[language]}</Text>
+              <Text style={{ fontFamily: sans, color: C.muted, textAlign: "center" }}>{label(sel.kind).desc[language]}</Text>
+              {!!sel.editionNo && <Text style={{ color: C.brass, fontFamily: serif }}>{t("cabinet.edition", String(sel.editionNo).padStart(3, "0"), sel.editionTotal)}</Text>}
+              {!!sel.acquiredAt && <Text style={{ color: C.muted }}>{t("cabinet.acquired", new Date(sel.acquiredAt).toLocaleDateString(language === "zh" ? "zh-TW" : "en-US"))}</Text>}
+              <Text style={{ color: C.muted }}>{t("cabinet.used", sel.used)}</Text>
             </ScrollView>
           </Animated.View>
         </>}
       </View>
     </Modal>
-  </Screen>;
+  </SafeAreaView>;
+}
+
+export default function CabinetScreen() {
+  const { t } = useLanguage();
+  const { session } = useAuth();
+  const [all, setAll] = useState<VesselRow[]>([]);
+  const [owned, setOwned] = useState<Owned[]>([]);
+  const [usage, setUsage] = useState<Record<string, number>>({});
+  const [error, setError] = useState("");
+
+  useFocusEffect(useCallback(() => {
+    let alive = true;
+    if (!session) {
+      if (__DEV__) setAll(Object.keys(VESSELS).map((id, sort) => {
+        const meta = VESSELS[id as VesselKind] as { price: number; edition?: number };
+        return { id, price_mop: meta.price, edition_total: meta.edition ?? null, sort };
+      }));
+      return () => { alive = false; };
+    }
+    void Promise.all([vessels.list(), vessels.owned(session.user.id), capsules.sent(session.user.id)]).then(([v, o, c]) => {
+      if (!alive) return;
+      const e = [v, o, c].find(r => r.error)?.error;
+      if (e) setError(e.message);
+      setAll(v.data ?? []);
+      setOwned(o.data ?? []);
+      const counts: Record<string, number> = {};
+      (c.data ?? []).forEach(item => { counts[item.vessel] = (counts[item.vessel] ?? 0) + 1; });
+      setUsage(counts);
+    });
+    return () => { alive = false; };
+  }, [session?.user.id]));
+  const items = useMemo(() => {
+    const rank = (v: VesselRow) => v.price_mop === 0 ? 0 : owned.some(o => o.vessel === v.id) ? 1 : 2;
+    return [...all].sort((a, b) => rank(a) - rank(b) || a.sort - b.sort).flatMap((v): CabinetItem[] => {
+      if (!isVessel(v.id)) return [];
+      const own = owned.find(o => o.vessel === v.id);
+      return [{
+        key: v.id, kind: v.id, owned: v.price_mop === 0 || !!own,
+        editionNo: own?.edition_no, editionTotal: v.edition_total, acquiredAt: own?.acquired_at, used: usage[v.id] ?? 0,
+      }];
+    });
+  }, [all, owned, usage]);
+  return <CabinetView items={items} error={error}
+    notice={session ? undefined : t(__DEV__ ? "cabinet.preview" : "cabinet.signIn")} />;
 }

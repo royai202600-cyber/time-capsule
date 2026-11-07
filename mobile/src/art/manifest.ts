@@ -159,6 +159,12 @@ export const domeGlint = vesselParts.dome.glint!;
 export const fxGlint = require('../../../public/art/fx/fx-glint.webp');
 export const paperLetter = require('../../../public/art/textures/paper-letter.webp');
 export const cabinetWall = require('../../../public/art/cabinet/cabinet-wall.webp');
+// A3 tiling cabinet (PR #44): crown, one row repeated per row of vessels, base. Geometry is in design/art/manifest.json.
+export const cabinetTiles = {
+  crown: require('../../../public/art/cabinet/cabinet-crown.webp'),
+  row: require('../../../public/art/cabinet/cabinet-row.webp'),
+  base: require('../../../public/art/cabinet/cabinet-base.webp'),
+};
 export const shelf = require('../../../public/art/shelf.webp');
 export const mapAsia = require('../../../public/art/map-asia.webp');
 // Display coordinates on the 1254 px stylised map, reviewed in art PR #12.
