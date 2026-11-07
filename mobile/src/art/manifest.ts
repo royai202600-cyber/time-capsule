@@ -55,6 +55,9 @@ export const scenes = {
 };
 export const sealWax = require('../../../public/art/seal-wax.webp');
 export const lightBurst = require('../../../public/art/fx/fx-light-burst.webp');
+// Idle glints (art A2, PR #32): a highlight streak on the dome glass and a small sparkle for wax and brass.
+export const domeGlint = require('../../../public/art/vessels/vessel-dome-glint.webp');
+export const fxGlint = require('../../../public/art/fx/fx-glint.webp');
 export const paperLetter = require('../../../public/art/textures/paper-letter.webp');
 export const cabinetWall = require('../../../public/art/cabinet/cabinet-wall.webp');
 export const shelf = require('../../../public/art/shelf.webp');
