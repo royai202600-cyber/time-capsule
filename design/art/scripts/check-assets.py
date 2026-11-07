@@ -15,6 +15,9 @@ OPAQUE = {
 
 
 def expected_size(rel: str) -> tuple[int, int]:
+    tiles = {"cabinet/cabinet-crown.png": (1024, 256), "cabinet/cabinet-row.png": (1024, 384), "cabinet/cabinet-base.png": (1024, 192)}
+    if rel in tiles:
+        return tiles[rel]
     if rel.startswith("scenes/") or rel.startswith("style-sheet"):
         return (1536, 1024)
     if rel.startswith("journey/") or rel.startswith("cabinet/"):

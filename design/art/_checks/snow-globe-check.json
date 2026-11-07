@@ -1,0 +1,114 @@
+{
+  "style_reference": "design/art/style-sheet.png",
+  "layer_order": [
+    "base",
+    "scene",
+    "snow",
+    "globe"
+  ],
+  "assembled_vs_stack_mae_rgb_on_paper_0_to_255": 0.0,
+  "exact_pixel_match": true,
+  "all_corners_alpha_zero": true,
+  "layer_checks": {
+    "assembled": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 253,
+      "visible_bbox_alpha_gt_20": [
+        202,
+        170,
+        807,
+        902
+      ]
+    },
+    "base": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        275,
+        671,
+        749,
+        902
+      ]
+    },
+    "scene": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 253,
+      "visible_bbox_alpha_gt_20": [
+        266,
+        387,
+        740,
+        756
+      ]
+    },
+    "snow": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        287,
+        231,
+        716,
+        658
+      ]
+    },
+    "globe": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 24,
+      "visible_bbox_alpha_gt_20": [
+        202,
+        170,
+        807,
+        769
+      ]
+    }
+  }
+}

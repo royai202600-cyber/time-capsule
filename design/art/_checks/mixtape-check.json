@@ -1,0 +1,114 @@
+{
+  "style_reference": "design/art/style-sheet.png",
+  "layer_order": [
+    "case",
+    "cassette",
+    "reel-left",
+    "reel-right"
+  ],
+  "assembled_vs_stack_mae_rgb_on_paper_0_to_255": 0.0,
+  "exact_pixel_match": true,
+  "all_corners_alpha_zero": true,
+  "layer_checks": {
+    "assembled": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 254,
+      "visible_bbox_alpha_gt_20": [
+        142,
+        361,
+        881,
+        901
+      ]
+    },
+    "case": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 68,
+      "visible_bbox_alpha_gt_20": [
+        142,
+        361,
+        881,
+        901
+      ]
+    },
+    "cassette": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 253,
+      "visible_bbox_alpha_gt_20": [
+        183,
+        442,
+        799,
+        870
+      ]
+    },
+    "reel-left": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        302,
+        621,
+        387,
+        706
+      ]
+    },
+    "reel-right": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        563,
+        621,
+        648,
+        706
+      ]
+    }
+  }
+}

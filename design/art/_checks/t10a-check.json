@@ -1,0 +1,191 @@
+{
+  "mixtape": {
+    "native_to_master": {
+      "scale": 0.8165869218500797,
+      "dx": 0.4082934609250515,
+      "dy": 99.74481658692184
+    },
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox_alpha_gt25": [
+      142,
+      361,
+      881,
+      901
+    ],
+    "baseY": 900,
+    "generation_attempts": 1,
+    "ip_check": "PASS: original design, no logo/text/character/brand shapes; compared with plan rejected ideas",
+    "rest_keyframes_applied": true
+  },
+  "instant-camera": {
+    "native_to_master": {
+      "scale": 0.8165869218500797,
+      "dx": 4.899521531100447,
+      "dy": -14.577352472089274
+    },
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox_alpha_gt25": [
+      188,
+      327,
+      836,
+      900
+    ],
+    "baseY": 900,
+    "generation_attempts": 1,
+    "ip_check": "PASS: original design, no logo/text/character/brand shapes; compared with plan rejected ideas",
+    "rest_keyframes_applied": true
+  },
+  "ramen": {
+    "native_to_master": {
+      "scale": 0.8165869218500797,
+      "dx": 2.449760765550252,
+      "dy": 74.43062200956933
+    },
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox_alpha_gt25": [
+      232,
+      304,
+      827,
+      900
+    ],
+    "baseY": 900,
+    "generation_attempts": 1,
+    "ip_check": "PASS: original design, no logo/text/character/brand shapes; compared with plan rejected ideas",
+    "rest_keyframes_applied": true
+  },
+  "fortune-cookie": {
+    "native_to_master": {
+      "scale": 0.8165869218500797,
+      "dx": 4.491228070175453,
+      "dy": 25.435406698564634
+    },
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox_alpha_gt25": [
+      144,
+      308,
+      879,
+      900
+    ],
+    "baseY": 900,
+    "generation_attempts": 1,
+    "ip_check": "PASS: original design, no logo/text/character/brand shapes; compared with plan rejected ideas",
+    "rest_keyframes_applied": true
+  },
+  "red-packet": {
+    "native_to_master": {
+      "scale": 0.8165869218500797,
+      "dx": 2.449760765550252,
+      "dy": 22.985645933014325
+    },
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox_alpha_gt25": [
+      255,
+      166,
+      769,
+      900
+    ],
+    "baseY": 900,
+    "generation_attempts": 1,
+    "ip_check": "PASS: original design, no logo/text/character/brand shapes; compared with plan rejected ideas",
+    "rest_keyframes_applied": true
+  },
+  "phone-booth": {
+    "native_to_master": {
+      "scale": 0.8165869218500797,
+      "dx": 7.757575757575751,
+      "dy": -7.2280701754385746
+    },
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox_alpha_gt25": [
+      296,
+      126,
+      728,
+      900
+    ],
+    "baseY": 900,
+    "generation_attempts": 1,
+    "ip_check": "PASS: original design, no logo/text/character/brand shapes; compared with plan rejected ideas",
+    "rest_keyframes_applied": true
+  },
+  "firefly-jar": {
+    "native_to_master": {
+      "scale": 0.8165869218500797,
+      "dx": 10.207336523126003,
+      "dy": 33.601275917065436
+    },
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox_alpha_gt25": [
+      220,
+      193,
+      804,
+      901
+    ],
+    "baseY": 900,
+    "generation_attempts": 1,
+    "ip_check": "PASS: original design, no logo/text/character/brand shapes; compared with plan rejected ideas",
+    "rest_keyframes_applied": true
+  },
+  "hourglass": {
+    "native_to_master": {
+      "scale": 0.8165869218500797,
+      "dx": 11.023923444976049,
+      "dy": -1.5119617224880813
+    },
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox_alpha_gt25": [
+      297,
+      122,
+      727,
+      899
+    ],
+    "baseY": 900,
+    "generation_attempts": 1,
+    "ip_check": "PASS: original design, no logo/text/character/brand shapes; compared with plan rejected ideas",
+    "rest_keyframes_applied": true
+  },
+  "gashapon": {
+    "native_to_master": {
+      "scale": 0.8165869218500797,
+      "dx": 3.6746411483253496,
+      "dy": 56.46570972886764
+    },
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox_alpha_gt25": [
+      244,
+      235,
+      780,
+      900
+    ],
+    "baseY": 900,
+    "generation_attempts": 1,
+    "ip_check": "PASS: original design, no logo/text/character/brand shapes; compared with plan rejected ideas",
+    "rest_keyframes_applied": true
+  }
+}
