@@ -1,0 +1,74 @@
+{
+  "id": "arcade",
+  "opening": "J",
+  "idleMs": 4000,
+  "layers": [
+    {
+      "name": "cabinet",
+      "file": "vessel-arcade-cabinet.png",
+      "role": "static"
+    },
+    {
+      "name": "screen",
+      "file": "vessel-arcade-screen.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 0.55
+        },
+        {
+          "at": 1,
+          "opacity": 1
+        }
+      ],
+      "idle": [
+        {
+          "type": "glow",
+          "base": 0.55,
+          "range": 0.4,
+          "flicker": 0.08
+        }
+      ]
+    },
+    {
+      "name": "door",
+      "file": "vessel-arcade-door.png",
+      "role": "door",
+      "pivot": {
+        "x": 560,
+        "y": 776
+      },
+      "open": [
+        {
+          "at": 0,
+          "scaleX": 1,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "scaleX": 0.08,
+          "opacity": 1
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 442,
+    "y": 716
+  },
+  "baseY": 900,
+  "sparkle": {
+    "x": 402,
+    "y": 578
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null,
+  "idle": [
+    {
+      "type": "breathe",
+      "amount": 0.025
+    }
+  ]
+}
