@@ -11,8 +11,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
-| C1 | Scrolling Cabinet: crown + one tiling shelf row + base, 3 per row on phones and 4–5 on wide screens, virtualised rows (PR on `claude/cabinet-scroll`) | Claude | Layout verified in the browser at 375/390 px and desktop with 3, 9, 30 and 300 vessels using shelf.png stand-ins. Codex merges; Claude swaps in A3 art next. |
-| A3 | Tiling cabinet art: `cabinet-crown`, `cabinet-row` (seamless top to bottom, stretchable middle), `cabinet-base` with measured geometry in the manifest | Codex | Roy approves the stacked review overlay; WebP copies in `public/art/cabinet/`. |
+| C1 | Scrolling Cabinet: crown + one tiling shelf row + base, 3 per row on phones and 4–5 on wide screens, virtualised rows (PR #39) | Claude | Wired to the A3 tiles (PR #44). Verified in the browser at 375/390 px and desktop with 9, 30 and 300 vessels; close-up, seams and virtualised scrolling checked. Codex merges and deploys. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | F1 | Home and capsule opening | Codex | Claude verified Home → opening ritual → letter and opening record in browser. F3 native location and map, full-width pages, Sent routing and package QR are integrated; typecheck and web/iOS exports pass. |

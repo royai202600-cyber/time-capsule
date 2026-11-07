@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, FlatList, Image, Modal, PanResponder, Platform, Pressable, ScrollView, Text, View, useWindowDimensions, type ImageSourcePropType } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { shelf, vesselParts } from "../../art/manifest";
+import { cabinetTiles, vesselParts } from "../../art/manifest";
 import { router, useFocusEffect } from "expo-router";
 import { goBack } from "../../navigation";
 import { DeviceMotion } from "expo-sensors";
@@ -29,22 +29,21 @@ const isVessel = (id: string): id is VesselKind => id in VESSELS;
 type Crop = { x: number; y: number; w: number; h: number };
 type Piece = { source: ImageSourcePropType; size: { w: number; h: number }; crop: Crop };
 /**
- * The cabinet is a crown, one shelf row repeated per row of vessels, and a base.
- * All numbers are art px inside each piece's crop. Stand-ins are cut from shelf.png
- * (boards at y 225–289 / 487–554 / 743–810, posts x 133–178 and 845–890) until the
- * A3 tiles (cabinet-crown/row/base) land; swapping only changes this object.
+ * The cabinet is a crown, one shelf row repeated per row of vessels, and a base (art A3, PR #44).
+ * All numbers are art px on the 1024 px wide tiles, as measured in design/art/manifest.json:
+ * posts x 25–89 / 935–999, stretch zone x 176–848, row standing surface y 300, plaque face y 300–352,
+ * usable x 112–912. Heights: crown 256, row 384, base 192.
  */
-const sheet = { w: 1024, h: 1024 };
+const tile = (source: ImageSourcePropType, h: number): Piece => ({ source, size: { w: 1024, h }, crop: { x: 0, y: 0, w: 1024, h } });
 const ART = {
-  crown: { source: shelf, size: sheet, crop: { x: 110, y: 104, w: 804, h: 188 } } as Piece,
-  row: { source: shelf, size: sheet, crop: { x: 110, y: 292, w: 804, h: 262 } } as Piece,
-  base: { source: shelf, size: sheet, crop: { x: 110, y: 811, w: 804, h: 112 } } as Piece,
-  cap: 92,           // Left/right edge (posts and brackets) drawn unstretched; the middle stretches.
-  inset: 70,         // From each edge to the usable width.
-  slot: 221,         // Width per vessel; a three-column row is exactly 2 × inset + 3 × slot wide.
-  surface: 218,      // Standing surface inside the row.
-  face: [234, 262],  // Board front face, where plaques sit.
-  back: { x: [68, 736], color: "#F5DFB3" } as { x: [number, number]; color: string } | null, // Stand-in back panel; the A3 row draws its own.
+  crown: tile(cabinetTiles.crown, 256),
+  row: tile(cabinetTiles.row, 384),
+  base: tile(cabinetTiles.base, 192),
+  cap: 176,          // Left/right edge (posts and brackets) drawn unstretched; the middle stretches.
+  inset: 112,        // From each edge to the usable width.
+  slot: 800 / 3,     // Width per vessel; a three-column row is exactly 2 × inset + 3 × slot = 1024 wide.
+  surface: 300,      // Standing surface inside the row.
+  face: [300, 352],  // Board front face, where plaques sit.
 };
 // Where a vessel's base sits, as a fraction of its square: the manifest's `baseY` (lowest opaque
 // row on the 1024 canvas) when present, so new vessels need no Cabinet edit. The table is only a
@@ -243,9 +242,8 @@ export function CabinetView({ items, notice, error }: { items: CabinetItem[]; no
     { translateX: parallaxX.interpolate({ inputRange: [-1, 1], outputRange: [-4, 4] }) },
     { translateY: parallaxY.interpolate({ inputRange: [-1, 1], outputRange: [-2, 2] }) },
   ] };
-  const piece = (p: Piece, height: number, back?: boolean) => <Animated.View pointerEvents="none"
+  const piece = (p: Piece, height: number) => <Animated.View pointerEvents="none"
     style={[{ position: "absolute", left: 0, top: 0, width, height }, artMotion]}>
-    {back && ART.back && <View style={{ position: "absolute", left: ART.back.x[0] * scale, right: (p.crop.w - ART.back.x[1]) * scale, top: 0, height, backgroundColor: ART.back.color }} />}
     <PieceView piece={p} width={width} height={height} scale={scale} />
   </Animated.View>;
   const crownHeight = Math.round(ART.crown.crop.h * scale);
@@ -270,7 +268,7 @@ export function CabinetView({ items, notice, error }: { items: CabinetItem[]; no
           {!!error && <Text style={{ color: C.wax, marginTop: 12 }}>{error}</Text>}
         </View>}
         renderItem={({ item: row }) => <View style={{ width, height: rowHeight, alignSelf: "center" }}>
-          {piece(ART.row, rowHeight, true)}
+          {piece(ART.row, rowHeight)}
           {row.map((item, column) => <ShelfSlot key={item.key} item={item} name={label(item.kind).name[language]}
             selected={selected?.item.key === item.key}
             left={(ART.inset + ART.slot * (column + .5)) * scale}
