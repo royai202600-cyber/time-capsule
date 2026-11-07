@@ -92,3 +92,6 @@ Roy confirmed the remaining regular vessels and successfully earned Clock-tower 
 
 ### Claude follow-up — landmark reward celebration / obtain animation / popup
 Roy: earning the Clock Tower works, but the reveal is not impressive. Claude should add a themed celebration, vessel obtain animation and popup when a landmark vessel is newly earned; preserve existing artwork, palette, typography and sizes, and provide a Reduce Motion alternative. Avoid replaying the reward on an already-opened capsule or already-owned vessel. Backend grants are complete and server-checked. This UI follow-up is requested for Claude; Codex has not implemented it in this release.
+
+### PR #66 — landmark-earned celebration review
+In progress: fresh phone/browser recipients have no earned vessels; ready landmark-locked test capsules use the real send RPC. Review hardens ownership snapshot/error handling and scoped reveal cancellation, animation cleanup and Reduce Motion. Required before merge: iPhone Expo Go normal light/ring/vessel/card, Cabinet link, no replay on reopening/already-owned, and Reduce Motion. Then green CI, owner squash merge + owner release, production verification and fixture cleanup.
