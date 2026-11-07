@@ -11,7 +11,8 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
-| W1 | Daily wake-up alarm from an opened capsule | Codex / Roy | PR #41 merged as `ed60924` after green CI. Browser editor, wake and snooze previews, 23 tests, TypeScript and iOS/web exports pass. Roy waived the pre-merge phone gate; physical Expo Go alarm delivery, tap-to-wake and real nine-minute snooze remain for his QR check. Installed-build AlarmKit / Android exact alarms remain later work. |
+| V1 | Sender voice notes: record up to 60 s in Create step 2, sealed like the letter, played on the opened letter | Claude UI → Codex backend | Backend migration applied, types generated and 16 live security groups pass; sender cannot fetch stored notes. Roy reported iPhone Expo Go and Safari voice recording/playback checks passed. Separate two-minute cross-platform send/open evidence remains unrecorded; combined release follows CI. |
+| W1 | Daily wake-up alarm from an opened capsule | Codex / Roy | PR #41 merged as `ed60924` after green CI. Combined V1/W1 candidate resolves the sender's signed voice URL, waits for auth on cold start, sends Stop Home, tracks and cancels snoozes on Off/Delete, and adds a dev-only roughly two-minute test shortcut. TypeScript, 23 tests and iOS/web exports pass. Roy waived the pre-merge phone gate; physical Expo Go alarm delivery, tap-to-wake, real nine-minute snooze and Off remain for his QR check. Installed-build AlarmKit / Android exact alarms remain later work. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | F1 | Home and capsule opening | Codex | Claude verified Home → opening ritual → letter and opening record in browser. F3 native location and map, full-width pages, Sent routing and package QR are integrated; typecheck and web/iOS exports pass. |
@@ -19,6 +20,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
+- V1 cleanup follow-up: remove unattached `voice-notes` uploads older than 24 hours through the Storage API, with an attachment re-check. Pending uploads remain unreadable. Never delete attached recordings or manipulate Storage metadata to delete blobs.
 | ID | Task | Owner | Done when |
 |---|---|---|---|
 | T2 | Email for everyone: buy/choose a domain (Roy), set up Resend SMTP in Supabase, bilingual verify + reset-password templates, raise email rate limit | Codex (+ Roy for the domain and Resend account) | A non-team email address can sign up, verify and reset its password; emails are in 繁中 + English |

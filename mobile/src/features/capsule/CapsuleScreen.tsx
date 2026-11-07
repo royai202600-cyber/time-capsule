@@ -28,6 +28,7 @@ import { LightBurst } from "./LightBurst";
 import { RitualHold } from "./RitualHold";
 import { SealedLines } from "./SealedLines";
 import { useAlarmText } from "../alarm/strings";
+import { LetterVoice } from "../voice/LetterVoice";
 import { formatDate, loadOne, openForRecipient, status, type Bundle, type Opened, type Row } from "./model";
 
 const blank: Bundle = { capsules: [], people: {}, places: {}, vessels: {} };
@@ -198,6 +199,7 @@ function LetterView({ c, content, name, placeName, self, language, t }: { c: Row
     {c.handwritten && <Text style={{ color: C.wax, fontFamily: handwriting, alignSelf: "flex-end" }}>{t("home.handTag")}</Text>}
     {!!content.drawing && <Image source={{ uri: content.drawing }} resizeMode="contain" accessibilityLabel={t("home.handTag")} style={{ width: "100%", height: 240 }} />}
     {!!content.message && <Text style={{ color: C.ink, fontFamily: c.handwritten ? handwriting : serif, fontSize: 19, lineHeight: 32, marginTop: 12 }}>{content.message}</Text>}
+    <LetterVoice capsuleId={c.id} content={content} name={name} self={self} />
     {!!content.photo && <Image source={{ uri: content.photo }} resizeMode="contain" style={{ width: "100%", height: 230, marginTop: 20, borderRadius: 4 }} />}
     <Text style={{ color: C.plum, fontFamily: handwriting, fontSize: 19, textAlign: "right", marginTop: 25 }}>{self ? t("capsule.pastMe") : name}</Text><Text style={{ color: C.muted, fontSize: 12, textAlign: "right" }}>{t("capsule.sealedOn", formatDate(c.sealed_at, language, true))}</Text>
   </View>{!!content.gift_code && <View style={{ backgroundColor: C.ink, borderRadius: 16, padding: 22, alignItems: "center", gap: 12 }}><Text style={{ color: C.cream, fontFamily: serif, fontSize: 19, textAlign: "center" }}>{t("capsule.giftHead", brand)}</Text><Text style={{ color: C.white }}>{t("capsule.giftItem")}</Text><Text style={{ color: C.cream, fontFamily: serif, fontSize: 23 }}>{content.gift_code}</Text><GiftQr value={content.gift_code} label={t("capsule.qr")} /><Text style={{ color: C.white, textAlign: "center" }}>{t("capsule.giftNote")}</Text></View>}

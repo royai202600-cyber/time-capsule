@@ -8,31 +8,25 @@ import { Avatar } from "../../components/Avatar";
 import { Vessel } from "../../components/Vessel";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
-import { goBack } from "../../navigation";
 import { useAuth } from "../../services/auth";
+import { voiceUrl, type OpenedVoice } from "../../services/voice";
 import { C, handwriting, motion, sans, serif, shadows } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
 import type { VesselKind } from "../../vesselArt";
 import { formatDate, loadOne, openForRecipient, type Opened, type Person, type Row } from "../capsule/model";
 import { formatTime, SNOOZE_MINUTES, type Alarm } from "./model";
-import { scheduler } from "./scheduler";
-import { findAlarm } from "./store";
+import { findAlarm, snoozeAlarm } from "./store";
 import { useAlarmText } from "./strings";
 import { useWakeSound } from "./useWakeSound";
 
-/**
- * The sender's voice note, once capsules carry one (parallel "voice-notes" work).
- * Until then there is none, and the wake view plays the chime and music instead.
- */
-const voiceOf = (content: Opened | null): string | null => {
-  const c = content as any;
-  return c?.voice_url ?? c?.voice ?? c?.audio ?? null;
-};
+/** Sign a playable URL only after open_capsule has returned the sealed voice path. */
+const voiceOf = (capsuleId: string, content: Opened): Promise<string | null> =>
+  voiceUrl(capsuleId, content as OpenedVoice);
 
 export default function WakeScreen() {
   const params = useLocalSearchParams<{ id: string; alarm?: string; preview?: string; vessel?: string; name?: string; self?: string }>();
   const preview = params.preview === "1";
-  const { session } = useAuth();
+  const { session, loading: authLoading } = useAuth();
   const { language } = useLanguage();
   const t = useAlarmText();
   const reduced = useReducedMotion();
@@ -40,6 +34,7 @@ export default function WakeScreen() {
   const [capsule, setCapsule] = useState<Row | undefined>();
   const [sender, setSender] = useState<Person | undefined>();
   const [content, setContent] = useState<Opened | null>(null);
+  const [voiceUri, setVoiceUri] = useState<string | null>(null);
   const [letterState, setLetterState] = useState<"loading" | "ready" | "error">("loading");
   const [now, setNow] = useState(new Date());
   const [note, setNote] = useState("");
@@ -47,12 +42,15 @@ export default function WakeScreen() {
   const vessel = (capsule?.vessel ?? alarm?.vessel ?? params.vessel ?? "envelope") as VesselKind;
   const self = capsule ? capsule.sender === session?.user.id : alarm ? alarm.self : params.self === "1";
   const name = sender?.name ?? alarm?.senderName ?? params.name ?? "";
-  const sound = useWakeSound(letterState === "loading" ? undefined : voiceOf(content));
+  const sound = useWakeSound(letterState === "loading" ? undefined : voiceUri);
 
   useEffect(() => { void findAlarm(params.alarm).then(setAlarm); }, [params.alarm]);
   useEffect(() => {
+    if (authLoading) return;
     if (!session?.user.id || !params.id) { setLetterState("error"); return; }
     let alive = true;
+    setLetterState("loading");
+    setVoiceUri(null);
     (async () => {
       try {
         const b = await loadOne(params.id, session.user.id);
@@ -60,14 +58,16 @@ export default function WakeScreen() {
         if (!c?.opened_at) throw new Error("not opened");
         const result = await openForRecipient(c.id, null);
         if (result.error || !result.data?.[0]) throw result.error ?? new Error("no content");
+        // A signed URL is short lived. Resolve it when the wake view opens, then start sound.
+        const url = await voiceOf(c.id, result.data[0]).catch(() => null);
         if (!alive) return;
-        setCapsule(c); setSender(b.people[c.sender]); setContent(result.data[0]); setLetterState("ready");
+        setCapsule(c); setSender(b.people[c.sender]); setContent(result.data[0]); setVoiceUri(url); setLetterState("ready");
       } catch { if (alive) setLetterState("error"); }
     })();
     return () => { alive = false; };
-  }, [session?.user.id, params.id]);
+  }, [authLoading, session?.user.id, params.id]);
   // Start the sound once we know whether there is a voice note (or that the letter can't load).
-  useEffect(() => { if (letterState !== "loading") void sound.start(); }, [letterState]);
+  useEffect(() => { if (letterState !== "loading") void sound.start(); }, [letterState, sound.start]);
   useEffect(() => { const timer = setInterval(() => setNow(new Date()), 10000); return () => clearInterval(timer); }, []);
 
   // A soft sunrise behind the vessel breathes slowly; the letter rises after a moment.
@@ -94,12 +94,16 @@ export default function WakeScreen() {
     if (leaving.current) return;
     leaving.current = true;
     sound.stop();
-    if (message) { setNote(message); setTimeout(goBack, 1600); } else goBack();
+    if (message) { setNote(message); setTimeout(() => router.replace("/"), 1600); } else router.replace("/");
   };
   const stop = () => { void haptics.tap(); leave(); };
   const snooze = async () => {
     void haptics.tick();
-    if (!preview && alarm) await scheduler.snooze(alarm, SNOOZE_MINUTES).catch(() => null);
+    if (!preview) {
+      try {
+        if (!alarm || !await snoozeAlarm(alarm.id)) { setNote(t("snoozeError")); return; }
+      } catch { setNote(t("snoozeError")); return; }
+    }
     leave(preview ? t("previewNote") : t("snoozed", SNOOZE_MINUTES));
   };
 

@@ -76,6 +76,13 @@ export default function AlarmEditScreen() {
       </View>
       <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted, minHeight: 20 }}>{ring ? untilText(ring, language, now) : " "}</Text>
     </View>
+    {__DEV__ && <Pressable accessibilityRole="button" onPress={() => {
+      const soon = new Date(Date.now() + 2 * 60_000);
+      soon.setMinutes(soon.getMinutes() + (soon.getSeconds() ? 1 : 0), 0, 0);
+      set({ hour: soon.getHours(), minute: soon.getMinutes(), days: [...ALL_DAYS], on: true });
+    }} style={{ alignSelf: "flex-end", paddingVertical: 6 }}>
+      <Text style={{ color: C.blue, fontFamily: sans, fontSize: 13 }}>{t("testTwoMinutes")}</Text>
+    </Pressable>}
 
     <View style={{ gap: 10 }}>
       <Text style={{ fontFamily: sans, color: C.ink, fontSize: 15 }}>{t("repeat")}</Text>

@@ -17,22 +17,28 @@ export function useWakeSound(voiceUri: string | null | undefined) {
   const { hold } = useMusic();
   const holdRef = useRef(hold);
   holdRef.current = hold;
+  const releaseHold = useRef<(() => void) | null>(null);
+  const generation = useRef(0);
   const players = useRef<AudioPlayer[]>([]);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const [playing, setPlaying] = useState(false);
 
   const stop = useCallback(() => {
+    generation.current++;
     timers.current.forEach(clearTimeout); timers.current = [];
     players.current.forEach(p => { try { p.pause(); p.remove(); } catch {} }); players.current = [];
     setPlaying(false);
     if (Platform.OS !== "web") void setAudioModeAsync({ playsInSilentMode: false, interruptionMode: "mixWithOthers", shouldPlayInBackground: false }).catch(() => {});
-    holdRef.current(false);
+    releaseHold.current?.();
+    releaseHold.current = null;
   }, []);
 
   const start = useCallback(async () => {
-    if (players.current.length) return;
-    holdRef.current(true);
+    if (players.current.length || releaseHold.current) return;
+    const started = ++generation.current;
+    releaseHold.current = holdRef.current();
     if (Platform.OS !== "web") await setAudioModeAsync({ playsInSilentMode: true, interruptionMode: "doNotMix", shouldPlayInBackground: false }).catch(() => {});
+    if (started !== generation.current) return;
     const later = (ms: number, fn: () => void) => { timers.current.push(setTimeout(fn, ms)); };
     try {
       const chime = createAudioPlayer(CHIME); chime.volume = 0.7; players.current.push(chime); chime.play();
