@@ -15,7 +15,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | F1 | Home and capsule opening | Codex | Claude verified Home → opening ritual → letter and opening record in browser. F3 native location and map, full-width pages, Sent routing and package QR are integrated; typecheck and web/iOS exports pass. |
 | F4 | Cabinet, Me, Friends, Invite and portrait picker | Codex | Roy confirmed the Expo Go build works; web layout and typecheck pass. T9 portrait manifest integration remains pending. |
-| M1 | Vessel idle motion: each resting vessel moves gently (3–6 s loops) using its existing layers; Reduce Motion stays static | Claude | Browser-checked at 375 px; PR open for Codex to merge. Expo Go check at the end. |
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
@@ -35,6 +34,8 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+- M1 / PR #29: Resting vessel motion merged after green CI as `be267a9`; Home and Create selection retain the active-vessel and Reduce Motion controls.
+- PR #30: Background music, nine effects and independent Me switches merged after green CI as `139a1a0`. Effects prepare at startup and rewind between plays. Roy confirmed both audio types in iPhone Expo Go SDK 58 and confirmed the swipe/tap delay is fixed. Fifteen unit tests, TypeScript, dependency checks and web/iOS exports pass; browser Home and audio controls checked. One owner-authored release follows the ordered merges; native seal and keyboard fixes retained.
 - N4: Native seal pan blocks the ScrollView, with consistent animation drivers and reliable cancellation/snap-back. Screen/Auth share keyboard avoidance; native Create actions stay above the keyboard. Roy confirmed keyboard, seal drag, release and flick in iPhone Expo Go; web checks and iOS/web exports pass. Physical screenshots were not captured from this Mac. Release follows green PR CI.
 - PR #26: Restore the original four solid sealed lines (92/76/88/56%) with soft blur. Green CI; squash-merged as `7653a9b`, followed by an owner-authored production release.
 - PR #24: Sent view sealed placeholder uses blurred word-shaped lines. Rebased PR CI passed; squash-merged as `bdae57d`, followed by an owner-authored release commit for production.
