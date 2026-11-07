@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Animated, Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Animated, Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { SealLoader } from "../../components/SealLoader";
 import { paperLetter } from '../../art/manifest';
 import { ArtIcon } from '../../components/ArtIcon';
 import { router, useLocalSearchParams } from "expo-router";
@@ -141,7 +142,7 @@ export default function CapsuleScreen() {
     setBusy(false);
     setCharge(0);
   };
-  if (loading) return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper, justifyContent: "center" }}><ActivityIndicator color={C.blue} /></SafeAreaView>;
+  if (loading) return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper, justifyContent: "center", alignItems: "center" }}><SealLoader label={t("capsule.loading")} /></SafeAreaView>;
   if (!c) return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper, padding: 24 }}><Label>{error || t("capsule.error")}</Label><Action title={t("capsule.retry")} onPress={() => void refresh()} /></SafeAreaView>;
   return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}><View style={{ flex: 1, width: "100%" }}>
     <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}><Pressable onPress={() => goBack()} accessibilityLabel={t("capsule.back")} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="back" color={C.plum} /></Pressable><Text style={{ fontFamily: serif, fontSize: 18, color: C.ink }}>{side === "sent" ? t("capsule.sentTitle", name) : opened ? (c.sender === session?.user.id ? t("capsule.letterSelf") : t("capsule.letterFrom", name)) : t("capsule.title")}</Text><View style={{ width: 44 }} /></View>
