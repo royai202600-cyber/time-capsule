@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { PagerDots } from "../../components/PagerControls";
 import { Avatar } from "../../components/Avatar";
 import { ArtIcon, type IconName } from "../../components/ArtIcon";
+import { CabinetIcon, JourneyIcon, SealPlusIcon } from "../../components/DockIcons";
 import { scenes } from "../../art/manifest";
 import { Vessel } from "../../components/Vessel";
 import { haptics } from "../../components/haptics";
@@ -121,10 +122,10 @@ export default function HomeScreen() {
       }} /></View>
       <View style={{ alignItems: "center", gap: 2, paddingBottom: 6 }}><PagerDots count={rows.length} index={index} position={dotPosition} onSelect={i => list.current?.scrollToIndex({ index: i, animated: !reduced })} label={n => t("capsule.page", n)} /><Text style={{ color: C.muted, fontFamily: sans, fontSize: 12 }}>{side === "inbox" ? t("home.summaryIn", rows.length, ready) : t("home.summaryOut", rows.length, rows.filter(c => !c.opened_at).length)}</Text></View>
     </> : <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 10 }}><Image source={side === 'inbox' ? scenes.emptyInbox : scenes.emptySent} style={{ width: '100%', height: 240 }} resizeMode="contain" /><Text style={{ fontFamily: serif, fontSize: 22, color: C.ink }}>{t(side === "inbox" ? "home.emptyIn" : "home.emptyOut")}</Text><Text style={{ color: C.muted }}>{t("home.emptyHint")}</Text></View>}
-    <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 32, paddingBottom: 14 }}><Dock label={t("home.journey")} icon="map" onPress={() => router.push("/journey")} /><Pressable onPress={() => router.push("/create")} accessibilityLabel={t("home.new")} style={{ width: 68, height: 68, borderRadius: 34, backgroundColor: C.blue, alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="plus" size={36} color={C.white} /></Pressable><Dock label={t("home.cabinet")} icon="cabinet" onPress={() => router.push("/cabinet")} /></View>
+    <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 32, paddingBottom: 14 }}><Dock label={t("home.journey")} icon={<JourneyIcon />} onPress={() => router.push("/journey")} /><Pressable onPress={() => router.push("/create")} accessibilityRole="button" accessibilityLabel={t("home.new")} style={({ pressed }) => ({ width: 68, height: 68, borderRadius: 34, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.95 : 1 }], ...shadows.card })}><SealPlusIcon /></Pressable><Dock label={t("home.cabinet")} icon={<CabinetIcon />} onPress={() => router.push("/cabinet")} /></View>
   </View></SafeAreaView>;
 }
 
-function Dock({ label, icon, onPress }: { label: string; icon: IconName; onPress: () => void }) {
-  return <Pressable onPress={onPress} accessibilityLabel={label} style={{ alignItems: "center", gap: 2 }}><View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, alignItems: "center", justifyContent: "center" }}><ArtIcon name={icon} color={C.plum} /></View><Text style={{ color: C.muted, fontSize: 11 }}>{label}</Text></Pressable>;
+function Dock({ label, icon, onPress }: { label: string; icon: React.ReactNode; onPress: () => void }) {
+  return <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={({ pressed }) => ({ alignItems: "center", gap: 2, transform: [{ scale: pressed ? 0.95 : 1 }] })}><View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, alignItems: "center", justifyContent: "center" }}>{icon}</View><Text style={{ color: C.muted, fontSize: 11 }}>{label}</Text></Pressable>;
 }
