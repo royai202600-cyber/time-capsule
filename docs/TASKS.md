@@ -6,6 +6,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
+| T10d | Vessel batch B4, retro and love (art only) | Codex | Vinyl test vessel, 1024 px layers, proposed manifest block, WebP and motion/40–120 px checks prepared for Roy’s approval. After approval: finish VHS, photo strip, arcade, pager, rotary phone, umbrella, love padlock, lucky stars and paper plane; refresh shared art metadata from main, validate, open art PR and merge only with Roy’s OK. |
 | D1 | Main-only Vercel Git deployments and production retry | Codex | Requested ignore command saved and reloaded. PR #45 adds `git.deploymentEnabled` to block preview creation; main and slash-containing feature names pass policy checks. Verify this PR push is skipped, then retry latest owner-authored main once the Hobby daily quota clears. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 

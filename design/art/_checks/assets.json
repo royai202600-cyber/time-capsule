@@ -1,6 +1,6 @@
 {
-  "count": 114,
-  "passed": 114,
+  "count": 117,
+  "passed": 117,
   "failed": [],
   "assets": [
     {
@@ -2165,6 +2165,63 @@
     },
     {
       "path": "vessels/vessel-tin.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-vinyl-record.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-vinyl-sleeve.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-vinyl.png",
       "size": [
         1024,
         1024
