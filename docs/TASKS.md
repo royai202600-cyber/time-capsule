@@ -6,6 +6,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
+| L1 | Foreground location and named navigation destinations | Codex | Verify real Chrome location and iPhone Expo Go, named Maps destinations, PR CI and production deployment. |
 
 ## Review
 | ID | Task | Owner | Note |

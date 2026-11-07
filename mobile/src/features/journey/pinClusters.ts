@@ -13,6 +13,20 @@ export const mapPoint = (lat: number, lng: number) => ({
 });
 export const placePoint = (place: LocatedPin['place']) => mapPins[place.id] ?? mapPoint(place.lat, place.lng);
 
+/** The drawing is stylised: anchor a nearby fix to the closest hand-placed landmark. */
+export function approximateFixPoint(fix: { lat: number; lng: number }, pins: LocatedPin[]) {
+  if (fix.lat < -8 || fix.lat > 47 || fix.lng < 92 || fix.lng > 147) return null;
+  const reference = pins.filter((pin) => mapPins[pin.place.id]).sort((a, b) => {
+    const d = (p: LocatedPin) => Math.hypot((p.place.lng - fix.lng) * Math.cos(fix.lat * Math.PI / 180), p.place.lat - fix.lat);
+    return d(a) - d(b);
+  })[0];
+  if (!reference) return mapPoint(fix.lat, fix.lng);
+  const origin = mapPoint(reference.place.lat, reference.place.lng);
+  const target = mapPoint(fix.lat, fix.lng);
+  const anchor = placePoint(reference.place);
+  return { x: anchor.x + target.x - origin.x, y: anchor.y + target.y - origin.y };
+}
+
 /** Connected components of badges that overlap at the current screen scale. */
 export function clusterPins<T extends LocatedPin>(pins: T[], scale: number): PinGroup<T>[] {
   const points = pins.map((pin) => placePoint(pin.place));

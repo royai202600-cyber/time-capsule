@@ -10,7 +10,7 @@ import type { Fix } from "./location";
 import { useReducedMotion } from "../../useReducedMotion";
 import { useLanguage } from "../../i18n";
 import { haptics } from "../../components/haptics";
-import { clusterPins, nextClusterScale, MAP_HEIGHT, MAP_WIDTH, MAX_MAP_SCALE } from "./pinClusters";
+import { approximateFixPoint, clusterPins, nextClusterScale, MAP_HEIGHT, MAP_WIDTH, MAX_MAP_SCALE } from "./pinClusters";
 
 export type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string; waiting?: boolean };
 const W = MAP_WIDTH, H = MAP_HEIGHT;
@@ -35,6 +35,7 @@ export function JourneyMap({ pins, fix, onSelect }: {
   const stopZoom = useRef<(() => void) | null>(null);
   const set = (value: typeof transform) => { live.current = value; setTransform(value); };
   const groups = useMemo(() => clusterPins(pins, transform.scale), [pins, transform.scale]);
+  const userPoint = useMemo(() => fix ? approximateFixPoint(fix, pins) : null, [fix, pins]);
   const coverScale = Math.max(viewport.width / W, viewport.height / H);
   useEffect(() => {
     if (viewport.width < 1 || viewport.height < 1) return;
@@ -119,6 +120,8 @@ export function JourneyMap({ pins, fix, onSelect }: {
           {clustered ? <ClusterGlyph count={group.pins.length} waiting={waiting} /> : <PinGlyph pin={pin} />}
         </Pressable>;
       })}
+      {userPoint && <View pointerEvents="none" accessible accessibilityLabel={t("journey.currentLocation")}
+        style={{ position: "absolute", left: transform.x + userPoint.x * transform.scale - 9, top: transform.y + userPoint.y * transform.scale - 9, width: 18, height: 18, borderRadius: 9, backgroundColor: C.blue, borderColor: C.white, borderWidth: 3, ...shadows.card }} />}
     </Animated.View>
   </View>;
 }
