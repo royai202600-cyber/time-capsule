@@ -1,0 +1,35 @@
+{
+  "approved_base": "4309b55997b3fdcfe9193b0c7da3983709c28e80",
+  "canvas": [
+    1024,
+    1024
+  ],
+  "master_filenames_unchanged": true,
+  "unrelated_art_bytes_preserved": true,
+  "recolour_alpha_unchanged": true,
+  "motion_change_only": "river-lantern glow open opacity 1 -> 1",
+  "changed_art_files": [
+    "design/art/vessels/vessel-candy-box-box.png",
+    "design/art/vessels/vessel-candy-box-lid.png",
+    "design/art/vessels/vessel-candy-box.png",
+    "design/art/vessels/vessel-pumpkin-interior.png",
+    "design/art/vessels/vessel-pumpkin-lid.png",
+    "design/art/vessels/vessel-pumpkin-pumpkin.png",
+    "design/art/vessels/vessel-pumpkin.png",
+    "design/art/vessels/vessel-rice-dumpling-dumpling.png",
+    "design/art/vessels/vessel-rice-dumpling-leaf.png",
+    "design/art/vessels/vessel-rice-dumpling-string.png",
+    "design/art/vessels/vessel-rice-dumpling.png",
+    "public/art/vessels/vessel-candy-box-box.webp",
+    "public/art/vessels/vessel-candy-box-lid.webp",
+    "public/art/vessels/vessel-candy-box.webp",
+    "public/art/vessels/vessel-pumpkin-interior.webp",
+    "public/art/vessels/vessel-pumpkin-lid.webp",
+    "public/art/vessels/vessel-pumpkin-pumpkin.webp",
+    "public/art/vessels/vessel-pumpkin.webp",
+    "public/art/vessels/vessel-rice-dumpling-dumpling.webp",
+    "public/art/vessels/vessel-rice-dumpling-leaf.webp",
+    "public/art/vessels/vessel-rice-dumpling-string.webp",
+    "public/art/vessels/vessel-rice-dumpling.webp"
+  ]
+}
