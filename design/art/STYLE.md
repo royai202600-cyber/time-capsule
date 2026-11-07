@@ -25,6 +25,7 @@ Roy approved style sheet **A** (`style-sheet.png`). `style-sheet-a/b/c.png` are 
 ## 3. Rules by kind of asset
 
 **Vessels (anything that opens)**
+- **New vessels: follow [VESSEL-SOP.md](VESSEL-SOP.md)**, the per-vessel checklist for the canvas, layers, roles, pivots, the opening move, idle motion, checks, manifest fields and the code changes.
 - Generate the **assembled** image first. Then make each **part** by editing that same image ("keep only the <part>, same position and same scale, everything else fully transparent"), so the parts stack exactly on one 1024×1024 canvas.
 - Vessels are **closed** in the assembled image. Lids, flaps and corks are separate parts.
 - Draw anything that gets revealed completely, with no holes: a box's interior, the ring's velvet seat, the letter under a flap.
