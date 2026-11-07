@@ -1,0 +1,73 @@
+{
+  "id": "twin-towers",
+  "opening": "C",
+  "idleMs": 4000,
+  "idle": [],
+  "layers": [
+    {
+      "name": "towers",
+      "file": "vessel-twin-towers-towers.png",
+      "role": "static"
+    },
+    {
+      "name": "glow",
+      "file": "vessel-twin-towers-glow.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "opacity": 0
+        }
+      ],
+      "idle": [
+        {
+          "type": "glow",
+          "base": 0.25,
+          "range": 0.75
+        }
+      ]
+    },
+    {
+      "name": "tops",
+      "file": "vessel-twin-towers-tops.png",
+      "role": "lift",
+      "pivot": {
+        "x": 510,
+        "y": 348
+      },
+      "open": [
+        {
+          "at": 0,
+          "y": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.65,
+          "y": -0.4,
+          "opacity": 0.65
+        },
+        {
+          "at": 1,
+          "y": -0.65,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 362,
+    "y": 330
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 510,
+    "y": 541
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

@@ -1,0 +1,82 @@
+{
+  "id": "gate-lantern",
+  "opening": "C",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "sway",
+      "deg": 3,
+      "pivot": {
+        "x": 511,
+        "y": 153
+      }
+    }
+  ],
+  "layers": [
+    {
+      "name": "glow",
+      "file": "vessel-gate-lantern-glow.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "opacity": 0
+        }
+      ],
+      "idle": [
+        {
+          "type": "glow",
+          "base": 0.35,
+          "range": 0.65
+        }
+      ]
+    },
+    {
+      "name": "lantern",
+      "file": "vessel-gate-lantern-lantern.png",
+      "role": "static"
+    },
+    {
+      "name": "cap",
+      "file": "vessel-gate-lantern-cap.png",
+      "role": "lift",
+      "pivot": {
+        "x": 511,
+        "y": 274
+      },
+      "open": [
+        {
+          "at": 0,
+          "y": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.65,
+          "y": -0.4,
+          "opacity": 0.65
+        },
+        {
+          "at": 1,
+          "y": -0.65,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 507,
+    "y": 267
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 503,
+    "y": 197
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}
