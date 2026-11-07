@@ -6,13 +6,13 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| T10b | Landmark vessel batch B2 art (#51–60) | Codex | Clock-tower test passes art and motion checks and Roy approves it; remaining nine pass SOP checks and art PR is reviewed. |
 | D1 | Main-only Vercel Git deployments and production retry | Codex | Requested ignore command saved and reloaded. PR #45 adds `git.deploymentEnabled` to block preview creation; main and slash-containing feature names pass policy checks. Verify this PR push is skipped, then retry latest owner-authored main once the Hobby daily quota clears. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
+| T10b | Landmark vessel batch B2 art (#51–60) | Codex | Ten vessels complete, including Roy's tall slender clock redraw and 6-degree hands tick. 148/148 master audit, exact B2 closed stacks, motion/schema/WebP checks and root build pass. Motion, 40/120 px and batch contact sheets ready for art PR review; app wiring and migrations remain separate. |
 | Batch 1 catalogue / #49 | Ten new vessels: app wiring and catalogue rows | Codex / Roy | Wiring reviewed; migration `20261107073919_add_batch1_vessels` prepared and rollback-tested, NOT applied. Roy requires: next combined production deploy → confirm #49 live → immediately db push → web/iPhone Shop, Create step 3, free-vessel send/open animation and Cabinet checks. Old production cannot render the new ids. Shop acquisition stays free; no separate deploy. |
 | V1 | Sealed sender voice notes | Claude UI → Codex backend | Implementation, 16 live security groups, green PR CI and Roy’s full Safari/Expo Go voice checklist passed; #40 merged as `04d1e71`. Production deployment is blocked by Vercel’s 100 deployments/day quota (`api-deployments-free-per-day`, retry in 24 hours). Reattempt latest owner-authored main after reset, then move to Done. Orphan cleanup remains a follow-up. |
 | W1 | Daily wake-up alarm from an opened capsule | Codex / Roy | PR #41 merged as `ed60924`; PR #40 connects the sender's signed voice URL, waits for auth on cold start, sends Stop Home, tracks and cancels snoozes on Off/Delete, and adds a dev-only roughly two-minute test shortcut. TypeScript, 23 tests and iOS/web exports pass. Roy waived the pre-merge phone gate; physical Expo Go alarm delivery, tap-to-wake, real nine-minute snooze and Off remain for his QR check. Installed-build AlarmKit / Android exact alarms remain later work. |

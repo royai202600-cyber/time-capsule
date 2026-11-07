@@ -19,8 +19,8 @@
       "file": "vessel-clock-tower-door.png",
       "role": "door",
       "pivot": {
-        "x": 355,
-        "y": 545
+        "x": 444,
+        "y": 397
       },
       "open": [
         {
@@ -42,8 +42,8 @@
       "file": "vessel-clock-tower-hands.png",
       "role": "fade",
       "pivot": {
-        "x": 474,
-        "y": 545
+        "x": 495,
+        "y": 399
       },
       "open": [
         {
@@ -61,24 +61,24 @@
       ],
       "idle": [
         {
-          "type": "spin",
+          "type": "tick",
+          "deg": 6,
           "pivot": {
-            "x": 474,
-            "y": 545
-          },
-          "turns": 1
+            "x": 495,
+            "y": 399
+          }
         }
       ]
     }
   ],
   "mouth": {
-    "x": 471,
-    "y": 493
+    "x": 494,
+    "y": 371
   },
-  "baseY": 898,
+  "baseY": 899,
   "sparkle": {
-    "x": 600,
-    "y": 545
+    "x": 554,
+    "y": 399
   },
   "glint": null,
   "openGlow": null,

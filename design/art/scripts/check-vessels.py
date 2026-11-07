@@ -28,6 +28,15 @@ def flatten(image: Image.Image) -> Image.Image:
     return Image.alpha_composite(Image.new("RGBA", image.size, PAPER), image).convert("RGB")
 
 
+def load_specs() -> dict:
+    path = CHECKS / "t10a-specs.json"
+    specs = json.loads(path.read_text()) if path.exists() else {}
+    for entry in json.loads((ROOT / "manifest.json").read_text()):
+        if entry.get("vessel", {}).get("id"):
+            specs[entry["path"].removeprefix("design/art/")] = entry["vessel"]
+    return specs
+
+
 def check_vessel(vessel: str, layer_names: list[str]) -> dict:
     assembled = Image.open(VESSELS / f"vessel-{vessel}.png").convert("RGBA")
     parts = {
@@ -42,8 +51,7 @@ def check_vessel(vessel: str, layer_names: list[str]) -> dict:
         stack = Image.alpha_composite(stack, parts[name])
     stack.save(CHECKS / f"{vessel}-stack.png", optimize=True)
 
-    specs_path = CHECKS / "t10a-specs.json"
-    specs = json.loads(specs_path.read_text()) if specs_path.exists() else {}
+    specs = load_specs()
     rel = f"vessels/vessel-{vessel}.png"
     if rel in specs:
         render = runpy.run_path(str(ROOT / "scripts" / "finish-batch1.py"))["frame"]
@@ -89,10 +97,8 @@ def check_vessel(vessel: str, layer_names: list[str]) -> dict:
 
 def main() -> None:
     CHECKS.mkdir(parents=True, exist_ok=True)
-    specs_path = CHECKS / "t10a-specs.json"
-    if specs_path.exists():
-        for path, spec in json.loads(specs_path.read_text()).items():
-            LAYERS[Path(path).stem.removeprefix("vessel-")] = [l["name"] for l in spec["layers"]]
+    for path, spec in load_specs().items():
+        LAYERS[Path(path).stem.removeprefix("vessel-")] = [l["name"] for l in spec["layers"]]
     for vessel, layer_names in LAYERS.items():
         result = check_vessel(vessel, layer_names)
         print(vessel, "MAE", result["assembled_vs_stack_mae_rgb_on_paper_0_to_255"],

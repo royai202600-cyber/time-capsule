@@ -1,0 +1,82 @@
+{
+  "clock-tower": {
+    "canvas_baseline_padding": true,
+    "exact_closed_stack": true,
+    "schema_and_motion": true,
+    "transparent_corners": true,
+    "webp": true,
+    "silhouette_120px": "Visually reviewed: original landmark-inspired overall form remains distinct."
+  },
+  "senado-fountain": {
+    "canvas_baseline_padding": true,
+    "exact_closed_stack": true,
+    "schema_and_motion": true,
+    "transparent_corners": true,
+    "webp": true,
+    "silhouette_120px": "Visually reviewed: original landmark-inspired overall form remains distinct."
+  },
+  "bamboo-tower": {
+    "canvas_baseline_padding": true,
+    "exact_closed_stack": true,
+    "schema_and_motion": true,
+    "transparent_corners": true,
+    "webp": true,
+    "silhouette_120px": "Visually reviewed: original landmark-inspired overall form remains distinct."
+  },
+  "gate-lantern": {
+    "canvas_baseline_padding": true,
+    "exact_closed_stack": true,
+    "schema_and_motion": true,
+    "transparent_corners": true,
+    "webp": true,
+    "silhouette_120px": "Visually reviewed: original landmark-inspired overall form remains distinct."
+  },
+  "torii-scroll": {
+    "canvas_baseline_padding": true,
+    "exact_closed_stack": true,
+    "schema_and_motion": true,
+    "transparent_corners": true,
+    "webp": true,
+    "silhouette_120px": "Visually reviewed: original landmark-inspired overall form remains distinct."
+  },
+  "palace-pavilion": {
+    "canvas_baseline_padding": true,
+    "exact_closed_stack": true,
+    "schema_and_motion": true,
+    "transparent_corners": true,
+    "webp": true,
+    "silhouette_120px": "Visually reviewed: original landmark-inspired overall form remains distinct."
+  },
+  "lionfish-fountain": {
+    "canvas_baseline_padding": true,
+    "exact_closed_stack": true,
+    "schema_and_motion": true,
+    "transparent_corners": true,
+    "webp": true,
+    "silhouette_120px": "Visually reviewed: original landmark-inspired overall form remains distinct."
+  },
+  "golden-roof": {
+    "canvas_baseline_padding": true,
+    "exact_closed_stack": true,
+    "schema_and_motion": true,
+    "transparent_corners": true,
+    "webp": true,
+    "silhouette_120px": "Visually reviewed: original landmark-inspired overall form remains distinct."
+  },
+  "gate-lacquer": {
+    "canvas_baseline_padding": true,
+    "exact_closed_stack": true,
+    "schema_and_motion": true,
+    "transparent_corners": true,
+    "webp": true,
+    "silhouette_120px": "Visually reviewed: original landmark-inspired overall form remains distinct."
+  },
+  "twin-towers": {
+    "canvas_baseline_padding": true,
+    "exact_closed_stack": true,
+    "schema_and_motion": true,
+    "transparent_corners": true,
+    "webp": true,
+    "silhouette_120px": "Visually reviewed: original landmark-inspired overall form remains distinct."
+  }
+}

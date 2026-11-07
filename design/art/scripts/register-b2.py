@@ -15,6 +15,11 @@ IDS = (
 )
 LABELS = {
     "clock-tower": "small standing clock-tower keepsake",
+    "senado-fountain": "wave-tile fountain box", "bamboo-tower": "bamboo-tier skyscraper tin",
+    "gate-lantern": "great red gate lantern", "torii-scroll": "torii gate and scroll",
+    "palace-pavilion": "Korean palace-pavilion box", "lionfish-fountain": "lion-head fish-scale fountain bottle",
+    "golden-roof": "Thai golden-roof jewel box", "gate-lacquer": "imperial-gate lacquer box",
+    "twin-towers": "paired silver-and-brass tower tins",
 }
 PAPER = (246, 248, 251, 255)
 
@@ -47,7 +52,7 @@ def main():
             "path": f"design/art/{rel}", "what": what,
             "size_px": list(image.size), "transparent": True,
             "prompt": prompt, "model": "gpt-image-2",
-            "postprocess": "finish-clock-tower.py: registered layer masking and common 1254-to-1024 transform; closed master composites the at=0 keys." if id == "clock-tower" else "See B2 finishing script and motion sheet.",
+            "postprocess": "finish-b2.py: registered masks from the generated assembled source, complete revealed interiors from image edits, one common transform to 1024, clear glass fill at 37.5% and soft particle/glow refinement where relevant. Closed master composites the recorded at=0 keys.",
             "web_export": "public/art/" + rel.removesuffix(".png") + ".webp",
         }
         if rel in specs:
@@ -63,11 +68,13 @@ def main():
     current_ids = [id for id in IDS if f"vessels/vessel-{id}.png" in prompts]
     for id in current_ids:
         marker = "Place IDs:"
-        if f", {id}. {marker}" not in prefix:
+        if id not in prefix.split("Vessel IDs: ")[1].split(". Place IDs:")[0].split(", "):
             prefix = prefix.replace(f". {marker}", f", {id}. {marker}", 1)
-    note = "- T10b B2 landmark vessels are original souvenir objects inspired by place materials and architecture, not exact replicas. The clock-tower test uses a complete revealed letter compartment, an exact at=0 stack, a side-pivot door and fading/spinning hands; see `_checks/clock-tower-motion.png` and `_checks/clock-tower-silhouette.png`. Roy's test approval is pending.\n"
-    if "T10b B2 landmark vessels" not in prefix:
-        prefix = prefix.replace("## Masters\n", note + "\n## Masters\n") if "## Masters\n" in prefix else prefix + note + "\n"
+    note = "- T10b B2: ten original landmark souvenir vessels with complete revealed interiors, exact at=0 stacks, measured motion sheets and 40/120 px silhouettes. Roy requested a tall slender clock tower with a high clock-face door and a 6-degree hands tick; the other nine follow the same silhouette-first review. The clock shape was compared with an [RTHK reference photograph](https://newsstatic.rthk.hk/images/mfile_1832413_1_20251119192432.jpg). Trademarked landmark forms remain loose interpretations; sacred-site vessels use architecture only. `finish-b2.py` prepares layers and `register-b2.py` merges B2 records while preserving other batches. Final art PR approval is pending.\n"
+    if "T10b B2" in prefix:
+        prefix = "\n".join(note.rstrip() if line.startswith("- T10b B2") else line for line in prefix.split("\n"))
+    else:
+        prefix += note + "\n"
     lines = [
         "## Masters", "", "| File | What | Size | Notes |",
         "|---|---|---:|---|",

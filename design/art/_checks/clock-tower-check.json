@@ -1,29 +1,93 @@
 {
-  "canvas": [
-    1024,
-    1024
+  "style_reference": "design/art/style-sheet.png",
+  "layer_order": [
+    "tower",
+    "door",
+    "hands"
   ],
-  "bbox_alpha_gt25": [
-    273,
-    100,
-    750,
-    899
-  ],
-  "corners_alpha_zero": true,
-  "rest_stack_exact": true,
-  "opening": "J",
-  "pivot": {
-    "x": 355,
-    "y": 545
-  },
-  "mouth": {
-    "x": 471,
-    "y": 493
-  },
-  "baseY": 898,
-  "sparkle": {
-    "x": 600,
-    "y": 545
-  },
-  "ip_sensitivity": "Original small keepsake clock, loosely inspired by red brick and pale stone; no exact tower silhouette, logos, symbols, characters, numerals or religious imagery."
+  "assembled_vs_stack_mae_rgb_on_paper_0_to_255": 0.0,
+  "exact_pixel_match": true,
+  "all_corners_alpha_zero": true,
+  "layer_checks": {
+    "assembled": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 253,
+      "visible_bbox_alpha_gt_20": [
+        410,
+        120,
+        614,
+        900
+      ]
+    },
+    "tower": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 253,
+      "visible_bbox_alpha_gt_20": [
+        410,
+        120,
+        614,
+        900
+      ]
+    },
+    "door": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        435,
+        341,
+        565,
+        453
+      ]
+    },
+    "hands": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        459,
+        365,
+        540,
+        413
+      ]
+    }
+  }
 }
