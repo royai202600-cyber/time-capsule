@@ -2,7 +2,7 @@ import React from 'react';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { C } from '../theme';
 
-export type IconName = 'pin' | 'back' | 'close' | 'plus' | 'lock' | 'check' | 'shop' | 'user' | 'map' | 'cabinet' | 'share' | 'camera' | 'pen';
+export type IconName = 'pin' | 'back' | 'close' | 'plus' | 'lock' | 'check' | 'shop' | 'user' | 'map' | 'cabinet' | 'share' | 'camera' | 'pen' | 'alarm' | 'up' | 'down';
 const lines: Record<IconName, string> = {
   pin: 'M12 22C8 17 4 13.5 4 9a8 8 0 0 1 16 0c0 4.5-4 8-8 13Z',
   back: 'M19 12H5m7-7-7 7 7 7',
@@ -17,6 +17,9 @@ const lines: Record<IconName, string> = {
   share: 'M4 20c0-7 6-11 13-11V4l5 7-5 7v-5c-6 0-10 2-13 7Z',
   camera: 'M3 7h4l2-3h6l2 3h4v13H3V7Zm9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z',
   pen: 'M12 2 5 13l7 9 7-9-7-11Zm0 0v12m-3 0a3 3 0 1 0 6 0 3 3 0 0 0-6 0Z',
+  alarm: 'M12 21a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm0-12v4l3 2M3.5 6.5l3-3m14 3-3-3M7 20l-1.5 2m11.5-2 1.5 2',
+  up: 'M6 15l6-6 6 6',
+  down: 'M6 9l6 6 6-6',
 };
 export function ArtIcon({ name, size = 24, color = C.ink }: { name: IconName; size?: number; color?: string }) {
   return <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
