@@ -82,7 +82,7 @@ export function PredictionRecordCard({ rows, names, userId }: {
 
 const styles = StyleSheet.create({
   card: { backgroundColor: C.white, borderRadius: 16, borderWidth: 1, borderColor: C.line, padding: 16, gap: 10 },
-  title: { fontFamily: serif, fontWeight: "700", fontSize: 16, lineHeight: 24, color: C.ink, flexShrink: 1 },
+  title: { fontFamily: sans, fontSize: 16, lineHeight: 24, color: C.ink, flexShrink: 1 },
   prediction: { fontFamily: serif, fontSize: 16, lineHeight: 24, color: C.ink },
   detail: { fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted },
   empty: { fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted },
