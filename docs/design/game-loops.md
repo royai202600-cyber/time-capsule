@@ -26,7 +26,7 @@ Time Capsule is about emotion and being human in the AI age, not travel. So the 
 ## Backend contract (for Codex)
 The client is in `mobile/src/services/prediction.ts`.
 - `capsules.kind` text, `'letter'` (default) or `'prediction'`, readable like `hint`. It is set by `send_capsule`.
-- `send_capsule(..., p_kind text default 'letter', p_prediction text default null)`: for `'prediction'`, `p_prediction` is required (trimmed, 1–140 characters) and `p_message` may be empty. It is stored in `capsule_contents.prediction`, sealed like the letter. A prediction is rejected for kind `'letter'`.
+- `send_capsule(..., p_kind text default 'letter', p_prediction text default null)`: for `'prediction'`, `p_prediction` is required (trimmed, 1–140 characters) and `p_message` may be empty. It is stored in `capsule_contents.prediction`, sealed like the letter. A prediction is rejected for kind `'letter'`. The `capsule_contents_has_content` check must also accept a row whose only content is the prediction.
 - `open_capsule()` also returns `prediction` and `verdict` to the recipient.
 - `capsules.verdict boolean null` and `verdict_at timestamptz`. `set_prediction_verdict(p_id, p_verdict boolean)`: only the recipient, only after opening, only for kind `'prediction'`. `null` clears it. It can be changed later. The UI currently sends only `true` and `null`, but the backend accepts `false` too.
 - `prediction_for_sender(p_id)`: only the sender, only once `opened_at` is set. Returns `prediction, verdict, verdict_at`.
