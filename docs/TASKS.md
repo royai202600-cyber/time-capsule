@@ -6,13 +6,13 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| T10a | First batch of 10 approved new vessels (★ rows of the 50-vessel plan), art only | Codex | Snow globe approved and fixes applied. All 10 vessels, layers, WebPs, PR #42 vessel blocks, 40/120 px and motion checks complete; 114/114 PNG audit and root build pass. PR #46 awaiting Roy’s final OK. |
 | D1 | Main-only Vercel Git deployments and production retry | Codex | Requested ignore command saved and reloaded. PR #45 adds `git.deploymentEnabled` to block preview creation; main and slash-containing feature names pass policy checks. Verify this PR push is skipped, then retry latest owner-authored main once the Hobby daily quota clears. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
+| T10a | First batch of 10 approved new vessels (★ rows of the 50-vessel plan), art only | Codex | Snow globe approved and fixes applied. All 10 vessels, layers, WebPs, PR #42 vessel blocks, 40/120 px and motion checks complete; 114/114 PNG audit and root build pass. PR #46 awaiting Roy’s final OK. |
 | V1 | Sealed sender voice notes | Claude UI → Codex backend | Implementation, 16 live security groups, green PR CI and Roy’s full Safari/Expo Go voice checklist passed; #40 merged as `04d1e71`. Production deployment is blocked by Vercel’s 100 deployments/day quota (`api-deployments-free-per-day`, retry in 24 hours). Reattempt latest owner-authored main after reset, then move to Done. Orphan cleanup remains a follow-up. |
 | W1 | Daily wake-up alarm from an opened capsule | Codex / Roy | PR #41 merged as `ed60924`; PR #40 connects the sender's signed voice URL, waits for auth on cold start, sends Stop Home, tracks and cancels snoozes on Off/Delete, and adds a dev-only roughly two-minute test shortcut. TypeScript, 23 tests and iOS/web exports pass. Roy waived the pre-merge phone gate; physical Expo Go alarm delivery, tap-to-wake, real nine-minute snooze and Off remain for his QR check. Installed-build AlarmKit / Android exact alarms remain later work. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
