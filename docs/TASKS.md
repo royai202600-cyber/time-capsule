@@ -34,6 +34,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+- PR #31: Softer tap/tick/warning WAV files, no application-code changes. Green PR CI on `6dcba1a`; squash-merged as `f2370cc` through the owner account, followed by an owner-authored production release. All three files validated as mono 16-bit PCM at 44.1 kHz.
 - M1 / PR #29: Resting vessel motion merged after green CI as `be267a9`; Home and Create selection retain the active-vessel and Reduce Motion controls.
 - PR #30: Background music, nine effects and independent Me switches merged after green CI as `139a1a0`. Effects prepare at startup and rewind between plays. Roy confirmed both audio types in iPhone Expo Go SDK 58 and confirmed the swipe/tap delay is fixed. Fifteen unit tests, TypeScript, dependency checks and web/iOS exports pass; browser Home and audio controls checked. One owner-authored release follows the ordered merges; native seal and keyboard fixes retained.
 - N4: Native seal pan blocks the ScrollView, with consistent animation drivers and reliable cancellation/snap-back. Screen/Auth share keyboard avoidance; native Create actions stay above the keyboard. Roy confirmed keyboard, seal drag, release and flick in iPhone Expo Go; web checks and iOS/web exports pass. Physical screenshots were not captured from this Mac. Release follows green PR CI.
