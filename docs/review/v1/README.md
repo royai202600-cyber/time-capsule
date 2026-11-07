@@ -24,7 +24,7 @@ The migration first passed a hosted transaction/rollback preflight. Mobile unit 
 
 ## Device checks
 
-Physical iPhone Expo Go and Safari checks are pending. Expo Go uses its host application's iOS permission dialog; the custom bilingual microphone string was verified in the generated iOS Info.plist via `expo config --type introspect`, but requires an app/development build to verify the installed dialog. See [Expo permissions](https://docs.expo.dev/guides/permissions/).
+Roy confirmed the iPhone Safari preview recorder checks work. Physical Expo Go and the two-minute cross-platform send/open checks are pending. The web recorder was also checked at 390 px on localhost:8088 (`create-recorder-390.png`). Expo Go uses its host application's iOS permission dialog; the custom bilingual microphone string was verified in the generated iOS Info.plist via `expo config --type introspect`, but requires an app/development build to verify the installed dialog. See [Expo permissions](https://docs.expo.dev/guides/permissions/).
 
 Production previews keep the dev two-minute option hidden. Use Expo Go's dev option for a two-minute self-capsule; the same opened note can then be played in the Safari preview. Safari-origin recording can be checked on the HTTPS development server for the reverse cross-platform send/open check, while retaining the production-only checks on the preview.
 
