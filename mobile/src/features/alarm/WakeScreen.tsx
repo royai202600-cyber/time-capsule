@@ -26,7 +26,7 @@ const voiceOf = (capsuleId: string, content: Opened): Promise<string | null> =>
 export default function WakeScreen() {
   const params = useLocalSearchParams<{ id: string; alarm?: string; preview?: string; vessel?: string; name?: string; self?: string }>();
   const preview = params.preview === "1";
-  const { session } = useAuth();
+  const { session, loading: authLoading } = useAuth();
   const { language } = useLanguage();
   const t = useAlarmText();
   const reduced = useReducedMotion();
@@ -46,8 +46,11 @@ export default function WakeScreen() {
 
   useEffect(() => { void findAlarm(params.alarm).then(setAlarm); }, [params.alarm]);
   useEffect(() => {
+    if (authLoading) return;
     if (!session?.user.id || !params.id) { setLetterState("error"); return; }
     let alive = true;
+    setLetterState("loading");
+    setVoiceUri(null);
     (async () => {
       try {
         const b = await loadOne(params.id, session.user.id);
@@ -62,7 +65,7 @@ export default function WakeScreen() {
       } catch { if (alive) setLetterState("error"); }
     })();
     return () => { alive = false; };
-  }, [session?.user.id, params.id]);
+  }, [authLoading, session?.user.id, params.id]);
   // Start the sound once we know whether there is a voice note (or that the letter can't load).
   useEffect(() => { if (letterState !== "loading") void sound.start(); }, [letterState, sound.start]);
   useEffect(() => { const timer = setInterval(() => setNow(new Date()), 10000); return () => clearInterval(timer); }, []);
