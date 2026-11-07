@@ -1,0 +1,21 @@
+{
+  "approved_base": "a5c8697b80778c86ca198e576613cdb8c02d5d72",
+  "preserved_main": "27ae8e58fac53a12919755130764e70052a96d92",
+  "other_vessel_files_preserved_byte_for_byte": 352,
+  "same_four_png_and_four_webp_names": true,
+  "bridge_upper_edge_height_fraction": 0.304,
+  "whole_idle": [
+    {
+      "type": "breathe",
+      "amount": 0.025
+    }
+  ],
+  "bridge_glow": [
+    {
+      "type": "glow",
+      "base": 0.25,
+      "range": 0.75
+    }
+  ],
+  "visual_review": "Stepped tapered shafts, pointed spires, clear lower bridge at 40/120/240 px; no replica geometry, logos or emblems."
+}

@@ -203,18 +203,18 @@
       1024
     ],
     "visible_bbox": [
-      261,
+      314,
       120,
-      763,
+      711,
       900
     ],
     "baseY": 899,
     "rest_stack_exact": true,
     "corners_alpha_zero": true,
     "native_to_master": {
-      "scale": 0.790273556231003,
-      "dx": 16,
-      "dy": 16
+      "scale": 0.6976744186046512,
+      "dx": 79,
+      "dy": 72
     },
     "ip_sensitivity": "Original souvenir interpretation, no logos, writing, emblems or sacred figures; trademarked forms kept loose.",
     "silhouette_review": "120 px review required before shipment"

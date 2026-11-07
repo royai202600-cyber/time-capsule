@@ -70,7 +70,7 @@ def main():
         marker = "Place IDs:"
         if id not in prefix.split("Vessel IDs: ")[1].split(". Place IDs:")[0].split(", "):
             prefix = prefix.replace(f". {marker}", f", {id}. {marker}", 1)
-    note = "- T10b B2: ten original landmark souvenir vessels with complete revealed interiors, exact at=0 stacks, measured motion sheets and 40/120 px silhouettes. Roy requested a tall slender clock tower with a high clock-face door and a 6-degree hands tick; the other nine follow the same silhouette-first review. The clock shape was compared with an [RTHK reference photograph](https://newsstatic.rthk.hk/images/mfile_1832413_1_20251119192432.jpg). Trademarked landmark forms remain loose interpretations; sacred-site vessels use architecture only. `finish-b2.py` prepares layers and `register-b2.py` merges B2 records while preserving other batches. Final art PR approval is pending.\n"
+    note = "- T10b B2: ten original landmark souvenir vessels with complete revealed interiors, exact at=0 stacks, measured motion sheets and 40/120 px silhouettes. Roy requested a tall slender clock tower with a high clock-face door and a 6-degree hands tick; the other nine follow the same silhouette-first review. The clock shape was compared with an [RTHK reference photograph](https://newsstatic.rthk.hk/images/mfile_1832413_1_20251119192432.jpg). Trademarked landmark forms remain loose interpretations; sacred-site vessels use architecture only. `finish-b2.py` prepares layers and `register-b2.py` merges B2 records while preserving other batches. B2 was approved and merged in PR #57. T10b-fix redraws twin-towers as tapered stepped architecture with pointed spires and a lower sky bridge, adding breathe 0.025 to the bridge glow pulse; follow-up approval is pending. The silhouette was inspected against an [Architectural Digest photograph](https://www.architecturaldigest.com/gallery/skyscrapers-you-must-visit-before-you-die) and the [official design reference](https://www.petronastwintowers.com.my/the-towers/design-structure/).\n"
     if "T10b B2" in prefix:
         prefix = "\n".join(note.rstrip() if line.startswith("- T10b B2") else line for line in prefix.split("\n"))
     else:
@@ -91,6 +91,8 @@ def main():
         lines.append(f"| `{rel}` | {entry['what']} | {entry['size_px'][0]}×{entry['size_px'][1]} | {', '.join(notes)} |")
     if "[B2 contact sheet]" not in review:
         review = review.replace("[Full contact sheet]", "[B2 contact sheet](_checks/b2-contact-sheet.png) · [Clock-tower motion](_checks/clock-tower-motion.png) · [Clock-tower 40/120 px](_checks/clock-tower-silhouette.png) · [Full contact sheet]", 1)
+    if (CHECKS / "t10b-fix-generation.json").exists() and "[Twin-towers redraw]" not in review:
+        review = review.replace("[B2 contact sheet]", "[Twin-towers redraw](_checks/twin-towers-redraw-review.png) · [Twin-towers motion](_checks/twin-towers-motion.png) · [B2 contact sheet]", 1)
     readme_path.write_text(prefix.rstrip() + "\n\n" + "\n".join(lines) + "\n\n## Review\n" + review)
 
     # Compact batch-only sheet; future B2 vessels fill its remaining cards.
