@@ -6,6 +6,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
+| T10a | First batch of 10 approved new vessels (★ rows of the 50-vessel plan), art only | Codex | Roy approves the complete snow-globe test; all ten assembled and layered PNGs, WebPs, manifest vessel blocks, 40/120 px and motion checks, contact sheet and build pass; art PR merged after Roy's OK. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 
 ## Review

@@ -2,6 +2,7 @@
 """Build the art prompt manifest and master-file table."""
 
 import json
+import runpy
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,6 +12,7 @@ VESSELS = {
     "envelope": "wax-sealed letter", "tin": "tin box",
     "lantern": "Mid-Autumn lantern", "musicbox": "warm wood music box",
     "maison": "Maison Aurèle ring box",
+    "snow-globe": "winter scene snow globe",
 }
 PLACES = {
     "senado": "Senado Square", "tst-clock": "Tsim Sha Tsui Clock Tower",
@@ -51,6 +53,30 @@ POSTPROCESS = {
     "fx/fx-light-burst.png": "Outer gray rim removed and rays feathered by finish-backgrounds.py.",
     "vessels/vessel-dome-glint.png": "Generated edit of the assembled dome; downscaled to 1024, stray alpha removed and peak alpha capped at 179 by finish-idle-glints.py.",
     "fx/fx-glint.png": "Generated four-point sparkle; finish-idle-glints.py smoothed the star edge, strengthened its warm-white core and brass tint, and faded the bloom to transparent for 16/24 px use.",
+    "vessels/vessel-snow-globe.png": "Composited from the four edited layers after finish-snow-globe.py downscaled and aligned them on one 1024 canvas.",
+    "vessels/vessel-snow-globe-base.png": "The edit revealed the pedestal seat; finish-snow-globe.py fitted its footprint and baseY to the assembled art.",
+    "vessels/vessel-snow-globe-scene.png": "finish-snow-globe.py clipped the complete winter scene inside the globe footprint.",
+    "vessels/vessel-snow-globe-snow.png": "finish-snow-globe.py clipped drifting snowflakes inside the globe footprint.",
+    "vessels/vessel-snow-globe-globe.png": "finish-snow-globe.py removed erase residue and scaled glass fill alpha below 200 to 37.5%; rim and highlights stay strong.",
+    "vessels/vessel-snow-globe-glint.png": "finish-snow-globe.py extracted the generated glass highlight into a soft idle-glint layer.",
+}
+VESSEL_SPECS = {
+    "vessels/vessel-snow-globe.png": {
+        "opening": "B", "idleMs": 4000, "idle": [],
+        "layers": [
+            {"name": "base", "file": "vessel-snow-globe-base.png", "role": "static"},
+            {"name": "scene", "file": "vessel-snow-globe-scene.png", "role": "static"},
+            {"name": "snow", "file": "vessel-snow-globe-snow.png", "role": "fade",
+             "open": [{"at": 0, "opacity": 1}, {"at": 0.5, "opacity": 0.5}, {"at": 1, "opacity": 0}],
+             "idle": [{"type": "drift", "amount": 0.03}]},
+            {"name": "globe", "file": "vessel-snow-globe-globe.png", "role": "lift",
+             "open": [{"at": 0, "y": 0, "opacity": 1}, {"at": 0.5, "y": -0.075, "opacity": 0.7},
+                      {"at": 1, "y": -0.15, "opacity": 0.2}]},
+        ],
+        "mouth": {"x": 512, "y": 724}, "letterDrop": 230, "baseY": 902,
+        "sparkle": {"x": 340, "y": 270}, "glint": "vessel-snow-globe-glint.png",
+        "openGlow": None, "readyPulse": None,
+    },
 }
 MAP_PINS = {
     # Positions are hand-placed on the drawn 1254×1254 map, not a geographic projection.
@@ -99,6 +125,7 @@ def load_prompts() -> dict[str, str]:
     for name, prompt in portraits.items():
         prompts[f"portraits/{name}.png"] = prompt
     prompts.update(completion)
+    prompts.update(runpy.run_path(str(Path(__file__).with_name("prompts-t10a.py")))["PROMPTS"])
     return prompts
 
 
@@ -120,6 +147,8 @@ def main() -> None:
             entry["pivot"] = {k: pivots[Path(rel).name][k] for k in ("x", "y")}
         if rel == "map-asia.png":
             entry["pins"] = MAP_PINS
+        if rel in VESSEL_SPECS:
+            entry["vessel"] = VESSEL_SPECS[rel]
         if rel.startswith("portraits/"):
             entry["postprocess"] = "Perfect circle: center (505,526), radius 430 px; transparent outside, by mask-portraits.py."
         elif rel.startswith("stamps/"):
@@ -135,7 +164,7 @@ def main() -> None:
         "# Time Capsule art assets", "",
         "To make new art, follow [STYLE.md](STYLE.md). This README lists what already exists.", "",
         "Roy chose style sheet A. All generated masters use the built-in `gpt-image-2` image tool with the approved sheet as their style reference; the exact prompts and any postprocessing are in `manifest.json`.", "",
-        "PNG masters live in `design/art/`. WebP copies live at matching paths in `public/art/`, except the style sheets and `_checks/`. Names use kebab-case: `<category>-<id>-<part>` where a part exists. Vessel IDs: dome, bottle, envelope, tin, lantern, musicbox, maison. Place IDs: senado, tst-clock, taipei101, sensoji, fushimi, gyeongbok, merlion, grandpal, wumen, petronas, aurele-cotai.", "",
+        "PNG masters live in `design/art/`. WebP copies live at matching paths in `public/art/`, except the style sheets and `_checks/`. Names use kebab-case: `<category>-<id>-<part>` where a part exists. Vessel IDs: dome, bottle, envelope, tin, lantern, musicbox, maison, snow-globe. Place IDs: senado, tst-clock, taipei101, sensoji, fushimi, gyeongbok, merlion, grandpal, wumen, petronas, aurele-cotai.", "",
         "The original SVG art remains in `src/art.js` and is recoverable from Git tag `art-svg-v1`. These bitmap assets are not wired into app screens yet.", "",
         "## Rules and checks", "",
         "- Music box and ring box assembled views are closed. Their lids are separate complete parts. Vessel part order and 120 px comparisons are in `_checks/`; lid, flap and cork pivots are in `manifest.json` and `_checks/pivots.json`.",
@@ -143,6 +172,7 @@ def main() -> None:
         "- All nine portraits are the main profile pictures, with an identical 860 px diameter disc centered at (505, 526). `_checks/portraits-small.png` shows 24 px and 40 px tests.",
         "- Passport stamps use one ink color each. Paper textures are opaque and seamlessly tile at all edges. Scene edges fade to transparency.",
         "- A2 idle effects: `vessels/vessel-dome-glint.png` overlays the existing dome glass without changing vessel art; `fx/fx-glint.png` catches on wax seals and brass edges. Roy approved both after `_checks/idle-glint-review.png` showed the dome at 120/240 px and the sparkle at 16/24 px on envelope and tin. `finish-idle-glints.py` downscaled and refined the generated layers.",
+        "- T10a snow-globe test: original winter scene inside a clear lifting globe, with separate base, scene, drifting snow, glass and idle glint. Its data-driven vessel block follows the PR #42 `IllustratedParts` field names. `_checks/snow-globe-motion.png` shows the measured open keyframes and mouth/sparkle/base anchors; `_checks/snow-globe-silhouette.png` shows 40/120 px. This test awaits Roy's approval before the remaining nine vessels.",
         "- The built-in image tool returned the map at native 1254 × 1254, its largest square output here; no artificial upscale was used.",
         "- The map entry in `manifest.json` has eleven hand-placed `pins` coordinates in that native 1254 × 1254 pixel space. They follow the illustrative coastlines rather than a precise map projection. `_checks/map-pins.png` overlays their exact points and labels; the Macau boutique pin sits beside Senado Square.",
         "- The T9c pin placement was checked against Roy's supplied world map and an [online East/Southeast Asia map](https://maplab-icon.com/blog-entry-784-html/); [Natural Earth coastlines](https://www.naturalearthdata.com/downloads/10m-physical-vectors/) were consulted for a reliable geographic source. These pins are display positions only; actual location checks use the app's place coordinates.",
@@ -161,7 +191,7 @@ def main() -> None:
         if not entry["transparent"]:
             notes.append("opaque")
         lines.append(f"| `{rel}` | {entry['what']} | {entry['size_px'][0]}×{entry['size_px'][1]} | {', '.join(notes)} |")
-    lines += ["", "## Review", "", "[Full contact sheet](_checks/contact-sheet.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png)", ""]
+    lines += ["", "## Review", "", "[Full contact sheet](_checks/contact-sheet.png) · [Snow globe motion](_checks/snow-globe-motion.png) · [Snow globe 40/120 px](_checks/snow-globe-silhouette.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png)", ""]
     (ROOT / "README.md").write_text("\n".join(lines))
     print("manifest and README:", len(entries), "masters", len(prompts), "prompts")
 

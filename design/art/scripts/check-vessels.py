@@ -19,6 +19,7 @@ LAYERS = {
     "lantern": ["glow", "body", "cap"],
     "musicbox": ["box", "lid"],
     "maison": ["box", "ring", "lid"],
+    "snow-globe": ["base", "scene", "snow", "globe"],
 }
 
 
