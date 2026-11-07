@@ -1,0 +1,63 @@
+{
+  "id": "lucky-stars",
+  "opening": "G",
+  "idleMs": 4000,
+  "layers": [
+    {
+      "name": "jar",
+      "file": "vessel-lucky-stars-jar.png",
+      "role": "static"
+    },
+    {
+      "name": "lid",
+      "file": "vessel-lucky-stars-lid.png",
+      "role": "twist",
+      "pivot": {
+        "x": 512,
+        "y": 227
+      },
+      "open": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0,
+          "rotate": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.4,
+          "x": 0,
+          "y": 0,
+          "rotate": -12,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "x": 0.25,
+          "y": -0.1,
+          "rotate": -18,
+          "scale": 0.85,
+          "opacity": 1
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 513,
+    "y": 276
+  },
+  "baseY": 900,
+  "sparkle": {
+    "x": 359,
+    "y": 357
+  },
+  "glint": "vessel-lucky-stars-glint.png",
+  "openGlow": null,
+  "readyPulse": null,
+  "idle": [
+    {
+      "type": "breathe",
+      "amount": 0.025
+    }
+  ]
+}

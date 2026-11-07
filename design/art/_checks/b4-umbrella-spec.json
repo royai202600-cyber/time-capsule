@@ -1,0 +1,74 @@
+{
+  "id": "umbrella",
+  "opening": "F",
+  "idleMs": 4000,
+  "layers": [
+    {
+      "name": "umbrella",
+      "file": "vessel-umbrella-umbrella.png",
+      "role": "static"
+    },
+    {
+      "name": "note",
+      "file": "vessel-umbrella-note.png",
+      "role": "slide",
+      "open": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.5,
+          "x": 0.13,
+          "y": -0.04,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "x": 0.28,
+          "y": -0.08,
+          "opacity": 1
+        }
+      ]
+    },
+    {
+      "name": "strap",
+      "file": "vessel-umbrella-strap.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 507,
+    "y": 483
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 470,
+    "y": 818
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null,
+  "idle": [
+    {
+      "type": "sway",
+      "deg": 3,
+      "pivot": {
+        "x": 512,
+        "y": 899
+      }
+    }
+  ]
+}

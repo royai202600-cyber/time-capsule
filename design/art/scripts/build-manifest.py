@@ -132,10 +132,18 @@ def load_prompts() -> dict[str, str]:
     prompts.update(completion)
     prompts.update(json.loads((CHECKS / "prompts-t10a-extra.json").read_text()))
     prompts.update(runpy.run_path(str(Path(__file__).with_name("prompts-t10a.py")))["PROMPTS"])
+    b2_prompts = CHECKS / "t10b-batch-prompts.json"
+    if b2_prompts.exists():
+        prompts.update(json.loads(b2_prompts.read_text()))
     return prompts
 
 
 def main() -> None:
+    if (CHECKS / "t10b-batch-prompts.json").exists():
+        VESSELS.update(runpy.run_path(str(Path(__file__).with_name("register-b2.py")))["LABELS"])
+        for path in CHECKS.glob("t10b-*-spec.json"):
+            spec = json.loads(path.read_text())
+            VESSEL_SPECS[f"vessels/vessel-{spec['id']}.png"] = spec
     prompts = load_prompts()
     VESSEL_SPECS.update(json.loads((CHECKS / "t10a-specs.json").read_text()))
     audit = json.loads((CHECKS / "assets.json").read_text())
@@ -218,3 +226,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    if (CHECKS / "t10b-batch-prompts.json").exists():
+        runpy.run_path(str(Path(__file__).with_name("register-b2.py")), run_name="__main__")

@@ -1,0 +1,60 @@
+{
+  "id": "bamboo-tower",
+  "opening": "C",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "sway",
+      "deg": 2.5,
+      "pivot": {
+        "x": 513,
+        "y": 898
+      }
+    }
+  ],
+  "layers": [
+    {
+      "name": "tin",
+      "file": "vessel-bamboo-tower-tin.png",
+      "role": "static"
+    },
+    {
+      "name": "top",
+      "file": "vessel-bamboo-tower-top.png",
+      "role": "lift",
+      "pivot": {
+        "x": 513,
+        "y": 540
+      },
+      "open": [
+        {
+          "at": 0,
+          "y": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.65,
+          "y": -0.4,
+          "opacity": 0.65
+        },
+        {
+          "at": 1,
+          "y": -0.65,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 513,
+    "y": 538
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 435,
+    "y": 540
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

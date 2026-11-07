@@ -1,6 +1,6 @@
 # P1: Predict me backend and release review
 
-Migration: `20261107092428_predict_me_capsules.sql`, applied to hosted project `uzimuygyxwraybsipeij` with the CLI. PR #58 was refreshed from main; conflict resolution keeps prediction kind/input/sealed wording alongside PR #55's wax steps and seal loaders.
+Migration: `20261107092428_predict_me_capsules.sql`, applied to hosted project `uzimuygyxwraybsipeij` with the CLI. PR #58 was refreshed from main through the B2/B3/B4 art merges (#57/#56/#59); conflict resolution keeps prediction kind/input/sealed wording alongside PR #55's wax steps and seal loaders.
 
 ## Backend and compatibility
 
