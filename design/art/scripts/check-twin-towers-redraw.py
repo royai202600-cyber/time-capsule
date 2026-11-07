@@ -4,7 +4,7 @@ import hashlib,io,json,subprocess
 from pathlib import Path
 from PIL import Image,ImageDraw,ImageFont
 R=Path(__file__).resolve().parents[1];REPO=R.parent.parent;C=R/'_checks';BASE='a5c8697b80778c86ca198e576613cdb8c02d5d72'
-PRESERVE='4309b55997b3fdcfe9193b0c7da3983709c28e80'
+PRESERVE='bf40aa48974518cdc2e87f10d4d9ad556eca1292'
 def git(*args):return subprocess.check_output(['git',*args],cwd=REPO)
 def main():
  paths=git('ls-tree','-r','--name-only',PRESERVE,'design/art/vessels','public/art/vessels').decode().splitlines();preserved=[]

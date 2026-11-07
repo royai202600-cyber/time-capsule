@@ -1,0 +1,62 @@
+{
+  "id": "vinyl",
+  "opening": "F",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "sway",
+      "deg": 2.5,
+      "pivot": {
+        "x": 512,
+        "y": 899
+      }
+    }
+  ],
+  "layers": [
+    {
+      "name": "record",
+      "file": "vessel-vinyl-record.png",
+      "role": "slide",
+      "open": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0,
+          "scale": 1,
+          "opacity": 1
+        },
+        {
+          "at": 0.5,
+          "x": 0.06,
+          "y": -0.08,
+          "scale": 0.82,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "x": 0.12,
+          "y": -0.245,
+          "scale": 0.65,
+          "opacity": 1
+        }
+      ]
+    },
+    {
+      "name": "sleeve",
+      "file": "vessel-vinyl-sleeve.png",
+      "role": "static"
+    }
+  ],
+  "mouth": {
+    "x": 512,
+    "y": 393
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 764,
+    "y": 411
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

@@ -1,0 +1,59 @@
+{
+  "id": "photo-strip",
+  "opening": "F",
+  "idleMs": 4000,
+  "layers": [
+    {
+      "name": "strip",
+      "file": "vessel-photo-strip-strip.png",
+      "role": "slide",
+      "open": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.5,
+          "x": 0.12,
+          "y": -0.05,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "x": 0.25,
+          "y": -0.1,
+          "opacity": 1
+        }
+      ]
+    },
+    {
+      "name": "sleeve",
+      "file": "vessel-photo-strip-sleeve.png",
+      "role": "static"
+    }
+  ],
+  "mouth": {
+    "x": 514,
+    "y": 425
+  },
+  "baseY": 898,
+  "sparkle": {
+    "x": 514,
+    "y": 624
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null,
+  "idle": [
+    {
+      "type": "sway",
+      "deg": 3,
+      "pivot": {
+        "x": 514,
+        "y": 286
+      }
+    }
+  ]
+}

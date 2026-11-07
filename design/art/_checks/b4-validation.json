@@ -1,0 +1,185 @@
+{
+  "vhs": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      227,
+      201,
+      799,
+      901
+    ],
+    "corners_alpha_zero": true,
+    "rest_stack_exact": true,
+    "baseY": 900,
+    "layers": [
+      "tape",
+      "sleeve"
+    ],
+    "ip_review": "Original, no logos, text, characters or brand trade dress; checked against vessels-50 rejected list."
+  },
+  "photo-strip": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      397,
+      119,
+      629,
+      899
+    ],
+    "corners_alpha_zero": true,
+    "rest_stack_exact": true,
+    "baseY": 898,
+    "layers": [
+      "strip",
+      "sleeve"
+    ],
+    "ip_review": "Original, no logos, text, characters or brand trade dress; checked against vessels-50 rejected list."
+  },
+  "arcade": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      220,
+      118,
+      807,
+      901
+    ],
+    "corners_alpha_zero": true,
+    "rest_stack_exact": true,
+    "baseY": 900,
+    "layers": [
+      "cabinet",
+      "screen",
+      "door"
+    ],
+    "ip_review": "Original, no logos, text, characters or brand trade dress; checked against vessels-50 rejected list."
+  },
+  "pager": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      189,
+      252,
+      837,
+      900
+    ],
+    "corners_alpha_zero": true,
+    "rest_stack_exact": true,
+    "baseY": 899,
+    "layers": [
+      "body",
+      "screen",
+      "cover"
+    ],
+    "ip_review": "Original, no logos, text, characters or brand trade dress; checked against vessels-50 rejected list."
+  },
+  "rotary-phone": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      141,
+      261,
+      881,
+      901
+    ],
+    "corners_alpha_zero": true,
+    "rest_stack_exact": true,
+    "baseY": 900,
+    "layers": [
+      "phone",
+      "handset"
+    ],
+    "ip_review": "Original, no logos, text, characters or brand trade dress; checked against vessels-50 rejected list."
+  },
+  "umbrella": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      386,
+      119,
+      632,
+      900
+    ],
+    "corners_alpha_zero": true,
+    "rest_stack_exact": true,
+    "baseY": 899,
+    "layers": [
+      "umbrella",
+      "note",
+      "strap"
+    ],
+    "ip_review": "Original, no logos, text, characters or brand trade dress; checked against vessels-50 rejected list."
+  },
+  "love-padlock": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      205,
+      125,
+      817,
+      902
+    ],
+    "corners_alpha_zero": true,
+    "rest_stack_exact": true,
+    "baseY": 901,
+    "layers": [
+      "lock",
+      "shackle"
+    ],
+    "ip_review": "Original, no logos, text, characters or brand trade dress; checked against vessels-50 rejected list."
+  },
+  "lucky-stars": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      213,
+      119,
+      810,
+      901
+    ],
+    "corners_alpha_zero": true,
+    "rest_stack_exact": true,
+    "baseY": 900,
+    "layers": [
+      "jar",
+      "lid"
+    ],
+    "ip_review": "Original, no logos, text, characters or brand trade dress; checked against vessels-50 rejected list."
+  },
+  "paper-plane": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "bbox": [
+      141,
+      451,
+      884,
+      901
+    ],
+    "corners_alpha_zero": true,
+    "rest_stack_exact": true,
+    "baseY": 900,
+    "layers": [
+      "plane",
+      "fold"
+    ],
+    "ip_review": "Original, no logos, text, characters or brand trade dress; checked against vessels-50 rejected list."
+  }
+}

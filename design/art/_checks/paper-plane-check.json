@@ -1,0 +1,20 @@
+{
+  "canvas": [
+    1024,
+    1024
+  ],
+  "bbox": [
+    141,
+    451,
+    884,
+    901
+  ],
+  "corners_alpha_zero": true,
+  "rest_stack_exact": true,
+  "baseY": 900,
+  "layers": [
+    "plane",
+    "fold"
+  ],
+  "ip_review": "Original, no logos, text, characters or brand trade dress; checked against vessels-50 rejected list."
+}

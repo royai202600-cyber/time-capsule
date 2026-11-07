@@ -1,0 +1,21 @@
+{
+  "canvas": [
+    1024,
+    1024
+  ],
+  "bbox": [
+    220,
+    118,
+    807,
+    901
+  ],
+  "corners_alpha_zero": true,
+  "rest_stack_exact": true,
+  "baseY": 900,
+  "layers": [
+    "cabinet",
+    "screen",
+    "door"
+  ],
+  "ip_review": "Original, no logos, text, characters or brand trade dress; checked against vessels-50 rejected list."
+}
