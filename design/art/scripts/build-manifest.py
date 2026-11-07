@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the T9/T9b prompt manifest and master-file table."""
+"""Build the art prompt manifest and master-file table."""
 
 import json
 from pathlib import Path
@@ -36,6 +36,8 @@ SPECIAL = {
     "scenes/scene-empty-sent.png": "Empty sent: blank letter, pen and wax",
     "scenes/scene-sealed.png": "Letter being sealed with warm glow",
     "fx/fx-light-burst.png": "Warm radial opening light effect",
+    "fx/fx-glint.png": "Small four-point idle sparkle for wax and brass",
+    "vessels/vessel-dome-glint.png": "Travelling highlight for the dome glass",
     "journey/passport-cover.png": "Navy and brass passport cover",
     "journey/passport-page.png": "Blank cream passport page",
     "cabinet/cabinet-wall.png": "Warm plaster and wood-panel wall",
@@ -47,6 +49,8 @@ POSTPROCESS = {
     "textures/paper.png": "Resized to 1024 square and made seamless by finish-backgrounds.py.",
     "textures/paper-letter.png": "Resized to 1024 square and made seamless by finish-backgrounds.py.",
     "fx/fx-light-burst.png": "Outer gray rim removed and rays feathered by finish-backgrounds.py.",
+    "vessels/vessel-dome-glint.png": "Generated edit of the assembled dome; downscaled to 1024, stray alpha removed and peak alpha capped at 179 by finish-idle-glints.py.",
+    "fx/fx-glint.png": "Generated four-point sparkle; finish-idle-glints.py smoothed the star edge, strengthened its warm-white core and brass tint, and faded the bloom to transparent for 16/24 px use.",
 }
 MAP_PINS = {
     # Positions are hand-placed on the drawn 1254×1254 map, not a geographic projection.
@@ -129,6 +133,7 @@ def main() -> None:
 
     lines = [
         "# Time Capsule art assets", "",
+        "To make new art, follow [STYLE.md](STYLE.md). This README lists what already exists.", "",
         "Roy chose style sheet A. All generated masters use the built-in `gpt-image-2` image tool with the approved sheet as their style reference; the exact prompts and any postprocessing are in `manifest.json`.", "",
         "PNG masters live in `design/art/`. WebP copies live at matching paths in `public/art/`, except the style sheets and `_checks/`. Names use kebab-case: `<category>-<id>-<part>` where a part exists. Vessel IDs: dome, bottle, envelope, tin, lantern, musicbox, maison. Place IDs: senado, tst-clock, taipei101, sensoji, fushimi, gyeongbok, merlion, grandpal, wumen, petronas, aurele-cotai.", "",
         "The original SVG art remains in `src/art.js` and is recoverable from Git tag `art-svg-v1`. These bitmap assets are not wired into app screens yet.", "",
@@ -137,6 +142,7 @@ def main() -> None:
         "- Dome stack: base → rose → glass. Bottle stack: waves → letter → body → cork. Glass interior alpha below 200 was scaled to 37.5% so contents stay visible.",
         "- All nine portraits are the main profile pictures, with an identical 860 px diameter disc centered at (505, 526). `_checks/portraits-small.png` shows 24 px and 40 px tests.",
         "- Passport stamps use one ink color each. Paper textures are opaque and seamlessly tile at all edges. Scene edges fade to transparency.",
+        "- A2 idle effects: `vessels/vessel-dome-glint.png` overlays the existing dome glass without changing vessel art; `fx/fx-glint.png` catches on wax seals and brass edges. Roy approved both after `_checks/idle-glint-review.png` showed the dome at 120/240 px and the sparkle at 16/24 px on envelope and tin. `finish-idle-glints.py` downscaled and refined the generated layers.",
         "- The built-in image tool returned the map at native 1254 × 1254, its largest square output here; no artificial upscale was used.",
         "- The map entry in `manifest.json` has eleven hand-placed `pins` coordinates in that native 1254 × 1254 pixel space. They follow the illustrative coastlines rather than a precise map projection. `_checks/map-pins.png` overlays their exact points and labels; the Macau boutique pin sits beside Senado Square.",
         "- The T9c pin placement was checked against Roy's supplied world map and an [online East/Southeast Asia map](https://maplab-icon.com/blog-entry-784-html/); [Natural Earth coastlines](https://www.naturalearthdata.com/downloads/10m-physical-vectors/) were consulted for a reliable geographic source. These pins are display positions only; actual location checks use the app's place coordinates.",
@@ -155,7 +161,7 @@ def main() -> None:
         if not entry["transparent"]:
             notes.append("opaque")
         lines.append(f"| `{rel}` | {entry['what']} | {entry['size_px'][0]}×{entry['size_px'][1]} | {', '.join(notes)} |")
-    lines += ["", "## Review", "", "[Full contact sheet](_checks/contact-sheet.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png)", ""]
+    lines += ["", "## Review", "", "[Full contact sheet](_checks/contact-sheet.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png)", ""]
     (ROOT / "README.md").write_text("\n".join(lines))
     print("manifest and README:", len(entries), "masters", len(prompts), "prompts")
 
