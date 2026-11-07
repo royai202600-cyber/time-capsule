@@ -36,9 +36,12 @@ const useStub = () => !PREDICTION_BACKEND && __DEV__;
 export function stubAttachPrediction(capsuleId: string, prediction: string) { if (useStub()) stub.set(capsuleId, { prediction, verdict: null, verdict_at: null }); }
 
 /** Extra args for `send_capsule`. Empty for an ordinary letter, so the current RPC keeps working. */
-export function predictionSendArgs(kind: CapsuleKind, prediction: string): Record<string, string> {
-  if (kind !== "prediction" || !PREDICTION_BACKEND) return {};
-  return { p_kind: "prediction", p_prediction: prediction.trim() };
+export function predictionSendArgs(kind: CapsuleKind, prediction: string, message: string, hasDrawing: boolean): Record<string, string> {
+  if (kind !== "prediction") return {};
+  if (PREDICTION_BACKEND) return { p_kind: "prediction", p_prediction: prediction.trim() };
+  // Dev stub only: today's `capsule_contents_has_content` check needs some content, so an
+  // otherwise empty prediction capsule carries its prediction as the letter text.
+  return message.trim() || hasDrawing ? {} : { p_message: prediction.trim() };
 }
 
 /** Whether a capsule row is a prediction (public column, or the dev stub). */

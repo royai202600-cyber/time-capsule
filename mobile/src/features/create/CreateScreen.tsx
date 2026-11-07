@@ -226,7 +226,7 @@ export default function CreateScreen() {
         }
         voiceArgs = { p_voice: voicePath.current.path, p_voice_ms: Math.round(voice.durationMs) };
       }
-      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: mode === 'type' ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), p_place: place ?? undefined, ...voiceArgs, ...predictionSendArgs(kind, prediction) });
+      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: mode === 'type' ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), p_place: place ?? undefined, ...voiceArgs, ...predictionSendArgs(kind, prediction, mode === 'type' ? message : '', !!ink) });
       if (rpcError) throw rpcError;
       if (predicting && capsuleId) stubAttachPrediction(String(capsuleId), prediction.trim());
       if (voice && capsuleId) stubAttachVoice(String(capsuleId), voice);
