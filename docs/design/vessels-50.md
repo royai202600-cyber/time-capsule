@@ -1,6 +1,6 @@
 # 50 new vessels: plan (for Roy's OK)
 
-Status: **proposal**. No art is made until Roy approves this list and the first batch. Every vessel follows [design/art/VESSEL-SOP.md](../../design/art/VESSEL-SOP.md).
+Status: **approved by Roy on 2026-11-07** (the list and the first batch of 10). Tiers and prices are still a proposal. Every vessel follows [design/art/VESSEL-SOP.md](../../design/art/VESSEL-SOP.md).
 
 ## The idea in one line
 Each vessel is an **object people already have feelings about**: a mixtape, a ramen bowl, a red packet, a snow globe. Sending one says something before the letter is even opened. They're inspired by pop-culture moods and tropes, but every design is our own.
