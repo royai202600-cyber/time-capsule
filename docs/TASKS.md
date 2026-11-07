@@ -6,6 +6,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
+| T10c | Vessel batch B3: ten festivals and keepsakes (art only) | Codex | Lucky-cat test vessel and checks approved by Roy; remaining nine masters, layers, WebP exports, manifest specs, README, contact sheets and build checked; art PR reviewed and merged after Roy's OK. |
 | D1 | Main-only Vercel Git deployments and production retry | Codex | Requested ignore command saved and reloaded. PR #45 adds `git.deploymentEnabled` to block preview creation; main and slash-containing feature names pass policy checks. Verify this PR push is skipped, then retry latest owner-authored main once the Hobby daily quota clears. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 

@@ -1,0 +1,72 @@
+{
+  "id": "lucky-cat",
+  "opening": "F",
+  "idleMs": 4000,
+  "idle": [],
+  "layers": [
+    {
+      "name": "cat",
+      "file": "vessel-lucky-cat-cat.png",
+      "role": "static"
+    },
+    {
+      "name": "paw",
+      "file": "vessel-lucky-cat-paw.png",
+      "role": "static",
+      "pivot": {
+        "x": 652,
+        "y": 420
+      },
+      "idle": [
+        {
+          "type": "sway",
+          "deg": 6,
+          "pivot": {
+            "x": 652,
+            "y": 420
+          }
+        }
+      ]
+    },
+    {
+      "name": "drawer",
+      "file": "vessel-lucky-cat-drawer.png",
+      "role": "slide",
+      "open": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0,
+          "scale": 1,
+          "opacity": 1
+        },
+        {
+          "at": 0.5,
+          "x": 0.022,
+          "y": 0.022,
+          "scale": 1.02,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "x": 0.045,
+          "y": 0.045,
+          "scale": 1.045,
+          "opacity": 1
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 534,
+    "y": 796
+  },
+  "baseY": 900,
+  "sparkle": {
+    "x": 530,
+    "y": 443
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}
