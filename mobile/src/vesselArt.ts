@@ -1,8 +1,12 @@
 // Ported from the original prototype art.js. Each vessel is separated for animation.
-export type VesselKind = 'dome' | 'bottle' | 'envelope' | 'tin' | 'lantern' | 'musicbox' | 'maison';
+export type VesselKind = 'dome' | 'bottle' | 'envelope' | 'tin' | 'lantern' | 'musicbox' | 'maison'
+  // Batch 1 (illustrated only; no SVG drawings)
+  | 'mixtape' | 'instant-camera' | 'ramen' | 'fortune-cookie' | 'red-packet' | 'snow-globe' | 'phone-booth' | 'firefly-jar' | 'hourglass' | 'gashapon';
+/** The original 7 vessels, which also have SVG drawings. */
+export type SvgVesselKind = 'dome' | 'bottle' | 'envelope' | 'tin' | 'lantern' | 'musicbox' | 'maison';
 // Pivots are normalized to the vessel view box and identify the moving lid.
-export const VESSEL_PIVOTS:Record<VesselKind,{part:'lid';x:number;y:number}>={dome:{part:'lid',x:.5,y:.5},bottle:{part:'lid',x:.5,y:.12},envelope:{part:'lid',x:.5,y:.34},tin:{part:'lid',x:.5,y:.35},lantern:{part:'lid',x:.5,y:.2},musicbox:{part:'lid',x:.5,y:.48},maison:{part:'lid',x:.5,y:.48}};
-export const VESSEL_ART: Record<VesselKind, {body:string; contents:string; lid:string}> = {
+export const VESSEL_PIVOTS:Record<SvgVesselKind,{part:'lid';x:number;y:number}>={dome:{part:'lid',x:.5,y:.5},bottle:{part:'lid',x:.5,y:.12},envelope:{part:'lid',x:.5,y:.34},tin:{part:'lid',x:.5,y:.35},lantern:{part:'lid',x:.5,y:.2},musicbox:{part:'lid',x:.5,y:.48},maison:{part:'lid',x:.5,y:.48}};
+export const VESSEL_ART: Record<SvgVesselKind, {body:string; contents:string; lid:string}> = {
   "dome": {
     "body": "<ellipse cx=\"80\" cy=\"163\" rx=\"58\" ry=\"4\" fill=\"#1f2633\" opacity=\".08\"/>\n  <rect x=\"24\" y=\"144\" width=\"112\" height=\"14\" rx=\"7\" fill=\"#ecd4a0\" stroke=\"#6e2b3f\" stroke-width=\"2\"/>\n  <ellipse cx=\"80\" cy=\"145\" rx=\"50\" ry=\"6\" fill=\"#f3e2bb\" stroke=\"#6e2b3f\" stroke-width=\"2\"/>",
     "contents": "  <path d=\"M80 82 C77 102 84 120 80 143\" stroke=\"#3f6b3c\" stroke-width=\"3\" fill=\"none\" stroke-linecap=\"round\"/>\n  <path d=\"M79 108 C66 99 56 104 53 111 C64 115 73 113 79 108Z\" fill=\"#8dbb7a\" stroke=\"#3f6b3c\" stroke-width=\"1.6\"/>\n  <path d=\"M81 122 C94 113 104 117 107 124 C96 127 88 126 81 122Z\" fill=\"#8dbb7a\" stroke=\"#3f6b3c\" stroke-width=\"1.6\"/>\n  <path d=\"M80 42 C99 39 111 53 105 69 C101 81 89 85 80 85 C70 85 57 79 55 67 C51 53 63 42 80 42Z\" fill=\"#5a8fd0\" stroke=\"#23426e\" stroke-width=\"2\"/>\n  <path d=\"M66 60 C68 50 88 46 94 57 C98 66 88 73 79 69 C72 66 74 57 81 57\" fill=\"none\" stroke=\"#23426e\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>\n  <path d=\"M60 70 C68 80 92 80 101 66\" fill=\"none\" stroke=\"#23426e\" stroke-width=\"1.6\" stroke-linecap=\"round\"/>\n  <path d=\"M88 141 C92 133 103 133 104 140 C98 143 92 143 88 141Z\" fill=\"#5a8fd0\" stroke=\"#23426e\" stroke-width=\"1.4\"/>",
