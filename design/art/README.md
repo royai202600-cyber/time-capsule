@@ -22,11 +22,16 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 - WebP exports use sharp/libvips quality 85 and preserve transparency. Vessel, stamp, portrait and seal exports have max edge 512 px; map has max edge 1600 px. App icon PNG sizes are in `public/icons/`.
 - Run checks with the Python scripts in `design/art/scripts/` (Pillow required). Run `npm run build` before merging.
 
+- A3 cabinet tiles are cut from one generated source in `_checks/cabinet-source.png`. The 1024 px masters have a repeatable 384 px row, a 256 px crown and a 192 px base; their measured geometry is in `manifest.json`. `_checks/cabinet-tiles-review.png` shows three rows with vessels at phone and desktop widths and 400% seam crops. The WebP export and PR wait for Roy's visual approval; Claude wires the app separately.
+
 ## Masters
 
 | File | What | Size | Notes |
 |---|---|---:|---|
 | `app-icon.png` | Blue rose dome app icon master | 1024×1024 | opaque |
+| `cabinet/cabinet-base.png` | Tiling cabinet base with brass feet | 1024×192 |  |
+| `cabinet/cabinet-crown.png` | Tiling cabinet crown with brass finials | 1024×256 |  |
+| `cabinet/cabinet-row.png` | One repeatable cabinet shelf row | 1024×384 |  |
 | `cabinet/cabinet-wall.png` | Warm plaster and wood-panel wall | 1024×1536 | opaque |
 | `fx/fx-glint.png` | Small four-point idle sparkle for wax and brass | 1024×1024 | processed; see manifest |
 | `fx/fx-light-burst.png` | Warm radial opening light effect | 1024×1024 | processed; see manifest |
@@ -97,4 +102,4 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 
 ## Review
 
-[Full contact sheet](_checks/contact-sheet.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png)
+[Full contact sheet](_checks/contact-sheet.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png) · [Cabinet tile review](_checks/cabinet-tiles-review.png)
