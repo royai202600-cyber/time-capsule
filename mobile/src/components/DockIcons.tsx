@@ -40,7 +40,7 @@ export function CabinetIcon({ size = 30 }: { size?: number }) {
 }
 
 // Wax-seal outline: a circle with soft, uneven bumps like poured wax.
-const SEAL = (() => {
+export const SEAL = (() => {
   const cx = 34, cy = 34, n = 11, pts: string[] = [];
   for (let i = 0; i <= 90; i++) {
     const a = (i / 90) * Math.PI * 2;
@@ -64,5 +64,32 @@ export function SealPlusIcon({ size = 68 }: { size?: number }) {
     {/* embossed plus: a dark pressed groove under a cream ridge */}
     <Path d="M34 24.5 V44.5 M24 34.5 H44" stroke="#5E1529" strokeOpacity={0.55} strokeWidth={4.4} strokeLinecap="round" />
     <Path d="M34 23.5 V43.5 M24 33.5 H44" stroke="#FBF1E1" strokeWidth={3.6} strokeLinecap="round" />
+  </Svg>;
+}
+
+// Keyhole: a round head over a tapered slot, centred in the 68-unit seal.
+const KEYHOLE = 'M34 22.5 a5.2 5.2 0 0 1 2.7 9.6 L38.7 44.5 h-9.4 l2-12.4 A5.2 5.2 0 0 1 34 22.5 Z';
+const RING_R = 24, RING_LEN = 2 * Math.PI * RING_R;
+
+/** Hold to open: the Home wax seal with an embossed keyhole. A brass groove inside the seal
+ *  fills clockwise from the top as `progress` goes 0 → 1, and the keyhole warms to gold. */
+export function SealHoldIcon({ size = 150, progress = 0 }: { size?: number; progress?: number }) {
+  const a = (progress * 360 - 90) * Math.PI / 180;
+  const tipX = 34 + RING_R * Math.cos(a), tipY = 34 + RING_R * Math.sin(a);
+  return <Svg width={size} height={size} viewBox="0 0 68 68" fill="none">
+    <Path d={SEAL} fill="#9A2E48" stroke="#74203A" strokeWidth={1} />
+    <Circle cx={30} cy={29} r={23} fill="#BD4A66" opacity={0.55} />
+    <Circle cx={27} cy={25} r={13} fill="#C95A75" opacity={0.35} />
+    <Path d="M14 23 A22 22 0 0 1 27 11.5" stroke="#FFFFFF" strokeOpacity={0.35} strokeWidth={2.4} strokeLinecap="round" />
+    {/* pressed groove (the ring's track), then the brass that fills it */}
+    <Circle cx={34} cy={34} r={RING_R} stroke="#5E1529" strokeOpacity={0.6} strokeWidth={4.6} />
+    <Circle cx={34} cy={34} r={RING_R + 1.9} stroke="#E07A93" strokeOpacity={0.3} strokeWidth={0.7} />
+    {progress > 0 && <Circle cx={34} cy={34} r={RING_R} stroke="#E2B867" strokeWidth={3.6} strokeLinecap="round"
+      strokeDasharray={`${progress * RING_LEN} ${RING_LEN}`} transform="rotate(-90 34 34)" />}
+    {progress > 0 && progress < 1 && <Circle cx={tipX} cy={tipY} r={2.3} fill="#FFF6DD" opacity={0.9} />}
+    {/* embossed keyhole: dark pressed shadow under a cream face that warms to gold */}
+    <Path d={KEYHOLE} fill="#5E1529" opacity={0.55} transform="translate(0 0.9)" />
+    <Path d={KEYHOLE} fill="#FBF1E1" />
+    <Path d={KEYHOLE} fill="#E9B95C" opacity={progress} />
   </Svg>;
 }

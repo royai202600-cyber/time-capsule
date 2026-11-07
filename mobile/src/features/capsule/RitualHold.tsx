@@ -1,9 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import Svg, { Circle } from "react-native-svg";
+import { Platform, Pressable, Text, View } from "react-native";
+import { SealHoldIcon } from "../../components/DockIcons";
 import { haptics } from "../../components/haptics";
 import { C, sans } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
+
+// iPhone Safari turns a long press into text selection or a callout menu, which cancels the hold.
+// Nothing in the button is selectable, and the browser's long-press menu is blocked on it.
+const noSelect = Platform.OS === "web" ? ({ userSelect: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none", touchAction: "manipulation" } as object) : {};
 
 export function RitualHold({ title, disabled, onProgress, onComplete }: {
   title: string; disabled?: boolean; onProgress: (progress: number) => void; onComplete: () => void;
@@ -19,7 +23,16 @@ export function RitualHold({ title, disabled, onProgress, onComplete }: {
     timer.current = null;
     if (!completed.current) { setProgress(0); onProgress(0); }
   };
+  const node = useRef<React.ComponentRef<typeof Pressable>>(null);
   useEffect(() => () => { if (timer.current) clearInterval(timer.current); }, []);
+  useEffect(() => {
+    const el = node.current as unknown as HTMLElement | null;
+    if (Platform.OS !== "web" || !el?.addEventListener) return;
+    const block = (e: Event) => e.preventDefault();
+    el.addEventListener("contextmenu", block);
+    el.addEventListener("selectstart", block);
+    return () => { el.removeEventListener("contextmenu", block); el.removeEventListener("selectstart", block); };
+  }, []);
   const begin = () => {
     if (disabled || timer.current) return;
     completed.current = false;
@@ -43,10 +56,11 @@ export function RitualHold({ title, disabled, onProgress, onComplete }: {
       }
     }, 33);
   };
-  return <Pressable onPressIn={begin} onPressOut={stop} disabled={disabled} accessibilityRole="button" accessibilityLabel={title} style={{ opacity: disabled ? 0.5 : 1 }}>
-    <View style={{ width: 150, height: 150, alignItems: "center", justifyContent: "center" }}>
-      <Svg width={150} height={150} style={{ position: "absolute" }}><Circle cx={75} cy={75} r={68} fill="none" stroke={C.line} strokeWidth={4} /><Circle cx={75} cy={75} r={68} fill="none" stroke={C.brass} strokeWidth={4} strokeDasharray={`${progress * 427} 427`} /></Svg>
-      <Text style={{ color: C.ink, fontFamily: sans, fontSize: 16, textAlign: "center", paddingHorizontal: 20 }}>{title}</Text>
-    </View>
-  </Pressable>;
+  const pressed = timer.current !== null || progress > 0;
+  return <View style={[{ alignItems: "center", gap: 8 }, noSelect]}>
+    <Pressable ref={node} onPressIn={begin} onPressOut={stop} disabled={disabled} accessibilityRole="button" accessibilityLabel={title} style={[{ opacity: disabled ? 0.5 : 1 }, noSelect]}>
+      <View pointerEvents="none" style={{ transform: [{ scale: pressed && !reduced ? 0.95 : 1 }] }}><SealHoldIcon size={150} progress={progress} /></View>
+    </Pressable>
+    <Text selectable={false} style={[{ color: C.muted, fontFamily: sans, fontSize: 13, textAlign: "center" }, noSelect]}>{title}</Text>
+  </View>;
 }
