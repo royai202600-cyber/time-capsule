@@ -33,10 +33,11 @@ export function KeyboardScrollView({ children, footer, onFocus, onBlur, onLayout
     {footer && <View onLayout={event => setFooterHeight(event.nativeEvent.layout.height)} style={{ width: "100%", maxWidth: 640, alignSelf: "center", paddingHorizontal: 24, paddingVertical: 12, backgroundColor: C.paper }}>{footer}</View>}
   </KeyboardAvoidingView>;
 }
-export function Screen({ children, scrollEnabled = true, footer }: { children: React.ReactNode; scrollEnabled?: boolean; footer?: React.ReactNode }) {
+export function Screen({ children, scrollEnabled = true, dragContent = false, footer }: { children: React.ReactNode; scrollEnabled?: boolean; dragContent?: boolean; footer?: React.ReactNode }) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}>
       <KeyboardScrollView scrollEnabled={scrollEnabled} footer={footer}
+        disableScrollViewPanResponder={dragContent} canCancelContentTouches={!dragContent}
         contentContainerStyle={{
           flexGrow: 1,
           width: "100%",

@@ -81,7 +81,6 @@ export default function CreateScreen() {
   const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterNarrow = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, letterEntry = useRef(new Animated.Value(44)).current, letterOpacity = useRef(new Animated.Value(0)).current, letterFade = useRef(new Animated.Value(1)).current, drift = useRef(new Animated.Value(0)).current;
   const lidLift = useSharedValue(1);
   const [sealTouched, setSealTouched] = useState(false);
-  const [sealDragging, setSealDragging] = useState(false);
   const dragActive = useRef(false);
   const dragOrigin = useRef({ x: 0, y: 0 });
   const dragDelta = useRef({ x: 0, y: 0 });
@@ -242,7 +241,7 @@ export default function CreateScreen() {
     grant: () => {
       if (sentOnce.current || sendingRef.current) return;
       dragActive.current = true; dragDelta.current = { x: 0, y: 0 };
-      setSealDragging(true); setSealTouched(true);
+      setSealTouched(true);
       sealNear.stopAnimation(); waxScale.stopAnimation(); idleNudge.stopAnimation(); idleNudge.setValue(0);
       wax.stopAnimation(position => {
         if (!dragActive.current) return;
@@ -260,14 +259,14 @@ export default function CreateScreen() {
       sealNear.setValue(Math.max(0, 1 - Math.hypot(x, y + 348) / 180));
     },
     release: (dx, dy) => {
-      dragActive.current = false; setSealDragging(false);
+      dragActive.current = false;
       if (sentOnce.current || sendingRef.current) return;
       const x = dragOrigin.current.x + dx, y = dragOrigin.current.y + dy;
       if (y < -160 && Math.abs(x) < 130) sendRef.current();
       else snapBack();
     },
     cancel: () => {
-      dragActive.current = false; setSealDragging(false);
+      dragActive.current = false;
       if (!sentOnce.current && !sendingRef.current) snapBack();
     },
   };
@@ -284,7 +283,7 @@ export default function CreateScreen() {
 
   if (authLoading) return <Screen><Body>{t('create.loading')}</Body></Screen>;
   if (!session) return <Screen><Body>{t('create.signIn')}</Body><Button title={t('create.close')} onPress={() => router.replace('/')} /></Screen>;
-  if (phase === 'seal') return <Screen scrollEnabled={!sealDragging && !busy}>
+  if (phase === 'seal') return <Screen dragContent scrollEnabled={!busy}>
     <Heading>{t('create.sealSend')}</Heading>
     <View style={{ height: 570, width: '100%' }}>
       <Animated.View style={{ position: 'absolute', zIndex: 2, top: 20, left: '6%', width: '88%', height: 210, transform: [{ translateY: letterDrop }, { translateY: letterEntry }], opacity: Animated.multiply(Animated.multiply(letterOpacity, letterFade), drift.interpolate({ inputRange: [0, 1], outputRange: [1, 0] })) }}><Animated.View style={[card, { width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', transform: [{ scaleY: letter }, { scaleX: letterNarrow }] }]}>
