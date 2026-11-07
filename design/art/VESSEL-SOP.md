@@ -43,6 +43,8 @@ Idle extras: `sway` (rotate a little around a pivot), `bob` (up and down), `brea
 - [ ] Draw a crosshair at every pivot on a review overlay (section 7) and check it sits exactly on the hinge.
 
 ## 4. The opening move
+- [ ] **The resting pose is each layer's `open` keyframe at `at: 0`.** The app shows the layers in that pose while closed (for example, the instant-camera photo rests squashed into its slot), so the assembled image must look exactly like the layers at `at: 0`. Check this on the motion overlay's CLOSED panel.
+- [ ] A property you only set at a later key eases in from its default at 0 (x/y 0, rotate 0, scale 1, opacity 1), so the `at: 0` key doesn't need to repeat defaults. Repeating them is harmless.
 Pick **one opening type** per vessel (the codes match the plan):
 
 | Code | Type | Roles used |
@@ -68,6 +70,7 @@ A to E are already built. F, G, H, J and K each need code once (section 9), afte
 - [ ] Make motion clearly visible on a phone (Roy, 2026-11-07, PR #37) without looking frantic: sway about 2.5–6°, bob/float about 2.5–3.5% of the size, breathe about 2.5–3.5%, a lid peek up to about 9°. One loop lasts 3.4–4.6 s (`idleMs`). Every term repeats whole turns, so the loop is seamless and t = 0 is the rest pose.
 - [ ] **Sparkle anchor**: one `{x, y}` on wax, brass, gold or glass where `fx-glint.webp` twinkles once per loop (today: envelope 440,512 · tin 300,470 · maison 438,612 · lantern 578,214).
 - [ ] Glows and drifting particles are their own soft layers with no outline (like `vessel-lantern-glow`).
+- [ ] **`drift` fades the whole layer in and out every loop**, so use it only on a layer of loose particles (flakes, steam, fireflies, a falling stream of sand). Never put anything that must stay visible (a sand pile, a scene) on a drift layer. For trickling sand, draw two layers: a stream (drift down) and a pile (static). Batch 1's hourglass mixed them, so its drift had to be removed in code.
 - [ ] With **Reduce Motion** on, the app shows the assembled image. Nothing may depend on motion to make sense.
 
 ## 6. Transparency and glass
