@@ -1,95 +1,57 @@
 #!/usr/bin/env python3
-"""Add only B3 art to the shared manifest/README, preserving other batches."""
-import json
+"""Register B3 only, retaining every other batch's metadata and art bytes."""
+import json,subprocess,hashlib
 from pathlib import Path
-
-from PIL import Image, ImageDraw, ImageFont
-
-ROOT = Path(__file__).resolve().parents[1]
-REPO = ROOT.parent.parent
-CHECKS = ROOT / "_checks"
-ID = "lucky-cat"
-PARTS = ("cat", "paw", "drawer")
-WHAT = {
-    "": "Assembled original folk lucky-cat vessel",
-    "cat": "Lucky-cat fixed figurine and completed drawer recess",
-    "paw": "Lucky-cat raised foreleg with brass shoulder pin",
-    "drawer": "Lucky-cat sliding drawer front",
-}
-
-
+from PIL import Image
+R=Path(__file__).resolve().parents[1];C=R/'_checks';REPO=R.parent.parent
+NAMES={'lucky-cat':'Folk lucky cat with letter drawer','mooncake-tin':'Cloud-pattern mooncake tin','cake-box':'Windowed birthday cake box','candy-box':'Eight-compartment New Year candy box','chocolate-heart':'Ribboned heart chocolate box','stocking':'Knitted Christmas stocking','pumpkin':'Friendly pumpkin lantern','rice-dumpling':'Bamboo-leaf rice dumpling','wish-tag':'Blank bamboo wish tag','river-lantern':'Floating lotus memorial lantern'}
 def main():
-    prompts = json.loads((CHECKS / "b3-lucky-cat-prompts.json").read_text())
-    spec = json.loads((CHECKS / "b3-lucky-cat-spec.json").read_text())
-    manifest_path = ROOT / "manifest.json"
-    entries = json.loads(manifest_path.read_text())
-    for part in ("", *PARTS):
-        filename = f"vessel-{ID}" + (f"-{part}" if part else "") + ".png"
-        rel = f"vessels/{filename}"
-        path = f"design/art/{rel}"
-        image = Image.open(ROOT / rel).convert("RGBA")
-        assert image.size == (1024, 1024)
-        assert all(image.getchannel("A").getpixel(p) == 0 for p in
-                   ((0, 0), (1023, 0), (0, 1023), (1023, 1023)))
-        entry = {
-            "path": path, "what": WHAT[part], "size_px": [1024, 1024],
-            "transparent": True, "prompt": prompts[rel], "model": "gpt-image-2",
-            "web_export": f"public/art/vessels/{filename[:-4]}.webp",
-            "postprocess": "finish-b3-lucky-cat.py: downscale all layers together; use assembled pixels for moving pieces and the generated back edit for the shoulder and drawer recess.",
-        }
-        if not part:
-            entry["vessel"] = spec
-        if part == "paw":
-            entry["pivot"] = spec["layers"][1]["pivot"]
-        entries = [item for item in entries if item["path"] != path]
-        entries.append(entry)
-        image.resize((512, 512), Image.Resampling.LANCZOS).save(
-            REPO / "public" / "art" / "vessels" / (filename[:-4] + ".webp"),
-            "WEBP", quality=85, method=6)
-    entries.sort(key=lambda item: item["path"])
-    manifest_path.write_text(json.dumps(entries, ensure_ascii=False, indent=2) + "\n")
-
-    readme_path = ROOT / "README.md"
-    readme = readme_path.read_text()
-    if "lucky-cat" not in readme.split("Place IDs:")[0]:
-        readme = readme.replace(
-            "hourglass, gashapon. Place IDs:",
-            "hourglass, gashapon, lucky-cat. Place IDs:")
-    note = ("- T10c B3 lucky-cat test: original folk figurine with a blank coin, separate raised foreleg, "
-            "and an opening base drawer. All layers share one 1024 canvas; the back edit completes the "
-            "shoulder and drawer recess. The 40/120 px strip, exact resting stack, motion sheet and IP "
-            "review are in `_checks/lucky-cat-*`. Roy's test approval is pending.\n")
-    if note not in readme:
-        readme = readme.replace("- The built-in image tool returned the map", note + "- The built-in image tool returned the map")
-    for part in ("", *PARTS):
-        filename = f"vessel-{ID}" + (f"-{part}" if part else "") + ".png"
-        row = f"| `vessels/{filename}` | {WHAT[part]} | 1024×1024 | processed; see manifest |"
-        if row not in readme:
-            anchor = "| `vessels/vessel-maison-"
-            readme = readme.replace(anchor, row + "\n" + anchor, 1)
-    if "[B3 lucky-cat motion]" not in readme:
-        readme = readme.replace(
-            "[Full contact sheet](_checks/contact-sheet.png)",
-            "[Full contact sheet](_checks/contact-sheet.png) · [B3 lucky-cat motion](_checks/lucky-cat-motion.png) · [B3 contact sheet](_checks/b3-contact-sheet.png)")
-    readme_path.write_text(readme)
-
-    images = [Image.open(ROOT / "vessels" / ("vessel-lucky-cat" + (f"-{part}" if part else "") + ".png")).convert("RGBA")
-              for part in ("", *PARTS)]
-    sheet = Image.new("RGB", (4 * 245, 260), (246, 248, 251))
-    draw = ImageDraw.Draw(sheet)
-    try:
-        font = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf", 16)
-    except OSError:
-        font = ImageFont.load_default()
-    for i, (label, image) in enumerate(zip(("CLOSED", "CAT / RECESS", "PAW", "DRAWER"), images)):
-        thumb = image.resize((220, 220), Image.Resampling.LANCZOS)
-        paper = Image.new("RGBA", thumb.size, (246, 248, 251, 255))
-        paper.alpha_composite(thumb)
-        sheet.paste(paper.convert("RGB"), (i * 245 + 12, 8))
-        draw.text((i * 245 + 12, 232), label, fill="#16263F", font=font)
-    sheet.save(CHECKS / "b3-contact-sheet.png", optimize=True)
-    print("Registered lucky-cat art, WebP exports, README, and B3 contact sheet.")
-
-
-if __name__ == "__main__":
-    main()
+ specs=json.loads((C/'b3-specs.json').read_text());specs['lucky-cat']=json.loads((C/'b3-lucky-cat-spec.json').read_text())
+ prompts=json.loads((C/'b3-prompts.json').read_text());prompts.update(json.loads((C/'b3-lucky-cat-prompts.json').read_text()))
+ prompts['vessels/vessel-lucky-cat-drawer-closed.png']=prompts['vessels/vessel-lucky-cat.png']
+ prompts['vessels/vessel-lucky-cat-drawer.png']=json.loads((C/'b3-drawer-fix-prompt.json').read_text())['prompt']
+ entries=json.loads((R/'manifest.json').read_text());paths=set()
+ cachepath=C/'b3-export-hashes.json';cache=json.loads(cachepath.read_text()) if cachepath.exists() else {};newcache={}
+ for id,spec in specs.items():
+  files=[(f'vessel-{id}.png',None)]+[(l['file'],l)for l in spec['layers']]
+  for filename,layer in files:
+   rel='vessels/'+filename;path='design/art/'+rel;paths.add(path)
+   im=Image.open(R/rel).convert('RGBA');assert im.size==(1024,1024)
+   entry={'path':path,'what':NAMES[id]+(' — '+layer['name']+' layer' if layer else ' — assembled closed'),'size_px':[1024,1024],'transparent':True,'prompt':prompts[rel],'model':'gpt-image-2','web_export':'public/art/'+rel[:-4]+'.webp','postprocess':'finish-b3.py: exact registered extraction from assembled art and complete gpt-image-2 reveal edit, common canvas normalization; closed assembly applies every at=0 keyframe.'}
+   if id=='lucky-cat':entry['postprocess']='finish-b3-lucky-cat.py: approved cat/paw/base/assembled bytes retained; original closed drawer front fades into full drawer with sides, interior and rolled letter; full drawer opens straight forward y +0.10, scale 1.08.'
+   if layer and 'pivot'in layer:entry['pivot']=layer['pivot']
+   if not layer:entry['vessel']=spec
+   entries=[e for e in entries if e['path']!=path];entries.append(entry)
+   output=REPO/entry['web_export'];digest=hashlib.sha256((R/rel).read_bytes()).hexdigest();newcache[path]=digest
+   if cache.get(path)==digest and output.exists():continue
+   # Do not re-encode accepted, unchanged lucky-cat exports.
+   unchanged=subprocess.run(['git','diff','--quiet','3e7e470','--',path],cwd=REPO).returncode==0
+   if id=='lucky-cat' and unchanged and output.exists():continue
+   if filename=='vessel-lucky-cat-drawer-closed.png':
+    old=subprocess.check_output(['git','show','3e7e470:public/art/vessels/vessel-lucky-cat-drawer.webp'],cwd=REPO);output.write_bytes(old);continue
+   im.resize((512,512),Image.Resampling.LANCZOS).save(output,'WEBP',quality=85,method=6)
+ cachepath.write_text(json.dumps(newcache,indent=2)+'\n')
+ entries.sort(key=lambda e:e['path']);(R/'manifest.json').write_text(json.dumps(entries,ensure_ascii=False,indent=2)+'\n')
+ readme=(R/'README.md').read_text();lines=readme.splitlines()
+ lines=[l for l in lines if not l.startswith('- T10c B3 ')]
+ lines=[l for l in lines if not any(l.startswith('| `vessels/vessel-'+id+'.png`') or l.startswith('| `vessels/vessel-'+id+'-') for id in NAMES)]
+ note='- T10c B3: ten original festival/keepsake vessels, complete reveal edits, exact CLOSED keyframes, measured 40/120 px and opening sheets. Lucky-cat test approved by Roy; its full drawer pulls straight forward with a rolled letter, while approved cat/paw/base/closed bytes remain unchanged. Separate dark interior layers support the pumpkin/river glows; the stocking stand stays fixed while sock/letter sway. Only river water is ground. Final batch approval remains pending.'
+ ix=lines.index('## Rules and checks')+2;lines.insert(ix,note)
+ for i,l in enumerate(lines):
+  if l.startswith('PNG masters live'):
+   before,after=l.split('Place IDs:',1);before=before.rstrip().rstrip('.')
+   missing=[id for id in NAMES if id not in before];lines[i]=before+(', '+', '.join(missing) if missing else '')+'. Place IDs:'+after
+ ix=lines.index('## Review')
+ while ix>0 and not lines[ix-1].strip():
+  del lines[ix-1];ix-=1
+ rows=[]
+ for e in entries:
+  if e['path']in paths:rows.append('| `'+e['path'].removeprefix('design/art/')+'` | '+e['what']+' | 1024×1024 | B3; see manifest |')
+ lines[ix:ix]=rows+['']
+ if not any('[B3 motion index]'in l for l in lines):lines+=['','[B3 motion index](_checks/b3-review.md)']
+ (R/'README.md').write_text('\n'.join(lines)+'\n')
+ review=['# B3 art review','', 'Generated with built-in gpt-image-2 and approved style sheet A. All ten CLOSED stacks match their masters exactly.','', '[Contact sheet](b3-contact-sheet.png)','']
+ for id in specs:review+=['- '+id+': [motion]('+id+'-motion.png) · [40/120 px]('+id+'-silhouette.png)']
+ review+=['','The proposed vessel blocks are in ../manifest.json. No app or database wiring is included.','', 'IP review: traditional/generic festival objects; blank tags/coin, no logos, text, branded silhouettes or franchise characters.','']
+ (C/'b3-review.md').write_text('\n'.join(review));print('Registered',len(paths),'B3 masters, retaining other art metadata.')
+if __name__=='__main__':main()

@@ -54,6 +54,13 @@ def main():
     dy = 900 - box[3] * scale
     parts = {name: normalize(im, scale, dx, dy) for name, im in
              (("cat", cat), ("paw", paw), ("drawer", drawer))}
+    parts["drawer-closed"] = parts.pop("drawer")
+    full = Image.open(CHECKS / "b3-lucky-cat-full-drawer.png").convert("RGBA")
+    crop = full.crop(visible_box(full))
+    # Align the enlarged isolation edit, then place its full depth behind the front.
+    fitted = crop.resize((400, 160), Image.Resampling.LANCZOS)
+    parts["drawer"] = Image.new("RGBA", (1024, 1024))
+    parts["drawer"].alpha_composite(fitted, (332, 704))
     for name, image in parts.items():
         image.save(VESSELS / f"vessel-lucky-cat-{name}.png", optimize=True)
 
@@ -65,17 +72,20 @@ def main():
             {"name": "paw", "file": "vessel-lucky-cat-paw.png", "role": "static",
              "pivot": point(825, 535),
              "idle": [{"type": "sway", "deg": 6, "pivot": point(825, 535)}]},
+            {"name": "drawer-closed", "file": "vessel-lucky-cat-drawer-closed.png", "role": "fade",
+             "open": [{"at": 0, "opacity": 1}, {"at": 0.16, "opacity": 0}, {"at": 1, "opacity": 0}]},
             {"name": "drawer", "file": "vessel-lucky-cat-drawer.png", "role": "slide",
-             "open": [{"at": 0, "x": 0, "y": 0, "scale": 1, "opacity": 1},
-                      {"at": 0.5, "x": 0.022, "y": 0.022, "scale": 1.02, "opacity": 1},
-                      {"at": 1, "x": 0.045, "y": 0.045, "scale": 1.045, "opacity": 1}]},
+             "pivot": {"x": 532, "y": 812},
+             "open": [{"at": 0, "y": 0, "scale": 1, "opacity": 0},
+                      {"at": 0.16, "y": 0.016, "scale": 1.013, "opacity": 1},
+                      {"at": 1, "y": 0.10, "scale": 1.08, "opacity": 1}]},
         ],
-        "mouth": point(667, 1037), "baseY": 900, "sparkle": point(662, 566),
+        "mouth": point(667, 1037), "baseY": 899, "sparkle": point(662, 566),
         "glint": None, "openGlow": None, "readyPulse": None,
     }
     frame = runpy.run_path(str(ROOT / "scripts" / "finish-batch1.py"))["frame"]
     assembled = Image.new("RGBA", (1024, 1024))
-    for name in ("cat", "paw", "drawer"):
+    for name in ("cat", "paw", "drawer-closed"):
         assembled = Image.alpha_composite(assembled, parts[name])
     render = lambda t: assembled if t == 0 else frame(parts, spec, t)
     assembled.save(VESSELS / "vessel-lucky-cat.png", optimize=True)
@@ -120,24 +130,24 @@ def main():
             draw.line((px - 5, py, px + 5, py), fill=color, width=2)
             draw.line((px, py - 5, px, py + 5), fill=color, width=2)
     draw.text((25, 465),
-              f'lucky-cat | opening F | baseY 900 | mouth {spec["mouth"]} | sparkle {spec["sparkle"]}',
+              f'lucky-cat | opening F | baseY 899 | mouth {spec["mouth"]} | sparkle {spec["sparkle"]}',
               fill="#16263F", font=font)
     draw.text((25, 495),
               f'paw shoulder pivot {spec["layers"][1]["pivot"]}; idle sway 6 degrees / 4000 ms',
               fill="#16263F", font=font)
     draw.text((25, 525),
-              f'drawer slide: {json.dumps(spec["layers"][2]["open"])}',
+              'drawer slide: x 0; y 0 -> +0.10; scale 1 -> 1.08; full depth and rolled letter',
               fill="#16263F", font=font)
     draw.text((25, 675), "Crosshairs: plum = pivot; wax red = mouth; brass = sparkle.",
               fill="#16263F", font=font)
     motion.save(CHECKS / "lucky-cat-motion.png", optimize=True)
     (CHECKS / "b3-lucky-cat-spec.json").write_text(json.dumps(spec, indent=2) + "\n")
     report = {
-        "canvas": [1024, 1024], "bbox": result_box, "baseY": 900,
+        "canvas": [1024, 1024], "bbox": result_box, "baseY": 899,
         "closed_stack_exact": True, "top_clear_px": result_box[1],
         "widest_px": result_box[2] - result_box[0],
         "corners_alpha_zero": True,
-        "layer_order": ["cat", "paw", "drawer"],
+        "layer_order": ["cat", "paw", "drawer-closed", "drawer"],
         "ip_review": "Original folk cat figurine; blank coin and drawer, no logos, named characters, letters or brand shapes.",
         "source_comparison": "lucky-cat-comparison.png",
     }

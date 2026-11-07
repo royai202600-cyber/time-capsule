@@ -1,0 +1,597 @@
+{
+  "mooncake-tin": {
+    "id": "mooncake-tin",
+    "opening": "A",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "tin",
+        "file": "vessel-mooncake-tin-tin.png",
+        "role": "static"
+      },
+      {
+        "name": "lid",
+        "file": "vessel-mooncake-tin-lid.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 512,
+          "y": 326
+        },
+        "open": [
+          {
+            "at": 0,
+            "scaleY": 1,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "scaleY": -0.85,
+            "opacity": 1
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 512,
+      "y": 508
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 460,
+      "y": 356
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "cake-box": {
+    "id": "cake-box",
+    "opening": "B",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "box",
+        "file": "vessel-cake-box-box.png",
+        "role": "static"
+      },
+      {
+        "name": "flame",
+        "file": "vessel-cake-box-flame.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "glow",
+            "base": 0.7,
+            "range": 0.3,
+            "flicker": 0.12
+          }
+        ]
+      },
+      {
+        "name": "lid",
+        "file": "vessel-cake-box-lid.png",
+        "role": "lift",
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.55,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 496,
+      "y": 362
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 447,
+      "y": 533
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "candy-box": {
+    "id": "candy-box",
+    "opening": "A",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "box",
+        "file": "vessel-candy-box-box.png",
+        "role": "static"
+      },
+      {
+        "name": "lid",
+        "file": "vessel-candy-box-lid.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 512,
+          "y": 233
+        },
+        "open": [
+          {
+            "at": 0,
+            "scaleY": 1,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "scaleY": -0.85,
+            "opacity": 1
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 512,
+      "y": 466
+    },
+    "baseY": 901,
+    "sparkle": {
+      "x": 508,
+      "y": 400
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "chocolate-heart": {
+    "id": "chocolate-heart",
+    "opening": "B",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.03
+      }
+    ],
+    "layers": [
+      {
+        "name": "box",
+        "file": "vessel-chocolate-heart-box.png",
+        "role": "static"
+      },
+      {
+        "name": "lid",
+        "file": "vessel-chocolate-heart-lid.png",
+        "role": "lift",
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.55,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 506,
+      "y": 480
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 469,
+      "y": 439
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "stocking": {
+    "id": "stocking",
+    "opening": "K",
+    "idleMs": 4000,
+    "idle": [],
+    "layers": [
+      {
+        "name": "hook",
+        "file": "vessel-stocking-hook.png",
+        "role": "static"
+      },
+      {
+        "name": "stocking",
+        "file": "vessel-stocking-stocking.png",
+        "role": "static",
+        "idle": [
+          {
+            "type": "sway",
+            "deg": 3,
+            "pivot": {
+              "x": 494,
+              "y": 181
+            }
+          }
+        ]
+      },
+      {
+        "name": "letter",
+        "file": "vessel-stocking-letter.png",
+        "role": "pop",
+        "pivot": {
+          "x": 413,
+          "y": 249
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "scaleY": 0.6
+          },
+          {
+            "at": 0.8,
+            "y": -0.22,
+            "scaleY": 1
+          },
+          {
+            "at": 1,
+            "y": -0.19,
+            "scaleY": 1
+          }
+        ],
+        "idle": [
+          {
+            "type": "sway",
+            "deg": 3,
+            "pivot": {
+              "x": 494,
+              "y": 181
+            }
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 428,
+      "y": 330
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 493,
+      "y": 181
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "pumpkin": {
+    "id": "pumpkin",
+    "opening": "C",
+    "idleMs": 4000,
+    "idle": [],
+    "layers": [
+      {
+        "name": "interior",
+        "file": "vessel-pumpkin-interior.png",
+        "role": "static"
+      },
+      {
+        "name": "glow",
+        "file": "vessel-pumpkin-glow.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "glow",
+            "base": 0.7,
+            "range": 0.3,
+            "flicker": 0.15
+          }
+        ]
+      },
+      {
+        "name": "pumpkin",
+        "file": "vessel-pumpkin-pumpkin.png",
+        "role": "static"
+      },
+      {
+        "name": "lid",
+        "file": "vessel-pumpkin-lid.png",
+        "role": "lift",
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.55,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 517,
+      "y": 374
+    },
+    "baseY": 901,
+    "sparkle": {
+      "x": 525,
+      "y": 280
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "rice-dumpling": {
+    "id": "rice-dumpling",
+    "opening": "E",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "dumpling",
+        "file": "vessel-rice-dumpling-dumpling.png",
+        "role": "static"
+      },
+      {
+        "name": "string",
+        "file": "vessel-rice-dumpling-string.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.2,
+            "opacity": 0
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ]
+      },
+      {
+        "name": "leaf",
+        "file": "vessel-rice-dumpling-leaf.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 523,
+          "y": 234
+        },
+        "open": [
+          {
+            "at": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.2,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "rotate": -105,
+            "opacity": 0.3
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 509,
+      "y": 483
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 508,
+      "y": 633
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "wish-tag": {
+    "id": "wish-tag",
+    "opening": "B",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "sway",
+        "deg": 3,
+        "pivot": {
+          "x": 406,
+          "y": 840
+        }
+      }
+    ],
+    "layers": [
+      {
+        "name": "bamboo",
+        "file": "vessel-wish-tag-bamboo.png",
+        "role": "static"
+      },
+      {
+        "name": "knot",
+        "file": "vessel-wish-tag-knot.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.25,
+            "opacity": 0
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ]
+      },
+      {
+        "name": "tag",
+        "file": "vessel-wish-tag-tag.png",
+        "role": "lift",
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.25,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.55,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 546,
+      "y": 399
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 543,
+      "y": 400
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "river-lantern": {
+    "id": "river-lantern",
+    "opening": "C",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "float",
+        "amount": 0.03
+      }
+    ],
+    "layers": [
+      {
+        "name": "water",
+        "file": "vessel-river-lantern-water.png",
+        "role": "static",
+        "ground": true
+      },
+      {
+        "name": "interior",
+        "file": "vessel-river-lantern-interior.png",
+        "role": "static"
+      },
+      {
+        "name": "glow",
+        "file": "vessel-river-lantern-glow.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "glow",
+            "base": 0.7,
+            "range": 0.3
+          }
+        ]
+      },
+      {
+        "name": "lantern",
+        "file": "vessel-river-lantern-lantern.png",
+        "role": "static"
+      },
+      {
+        "name": "top",
+        "file": "vessel-river-lantern-top.png",
+        "role": "lift",
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.55,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 513,
+      "y": 547
+    },
+    "baseY": 903,
+    "sparkle": {
+      "x": 513,
+      "y": 320
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  }
+}

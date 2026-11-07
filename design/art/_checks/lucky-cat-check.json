@@ -1,93 +1,25 @@
 {
-  "style_reference": "design/art/style-sheet.png",
+  "canvas": [
+    1024,
+    1024
+  ],
+  "bbox": [
+    251,
+    100,
+    771,
+    900
+  ],
+  "baseY": 900,
+  "closed_stack_exact": true,
+  "top_clear_px": 100,
+  "widest_px": 520,
+  "corners_alpha_zero": true,
   "layer_order": [
     "cat",
     "paw",
+    "drawer-closed",
     "drawer"
   ],
-  "assembled_vs_stack_mae_rgb_on_paper_0_to_255": 0.0,
-  "exact_pixel_match": true,
-  "all_corners_alpha_zero": true,
-  "layer_checks": {
-    "assembled": {
-      "size": [
-        1024,
-        1024
-      ],
-      "mode": "RGBA",
-      "corners_alpha": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "center_alpha": 253,
-      "visible_bbox_alpha_gt_20": [
-        251,
-        100,
-        772,
-        900
-      ]
-    },
-    "cat": {
-      "size": [
-        1024,
-        1024
-      ],
-      "mode": "RGBA",
-      "corners_alpha": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "center_alpha": 253,
-      "visible_bbox_alpha_gt_20": [
-        251,
-        100,
-        766,
-        900
-      ]
-    },
-    "paw": {
-      "size": [
-        1024,
-        1024
-      ],
-      "mode": "RGBA",
-      "corners_alpha": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "center_alpha": 0,
-      "visible_bbox_alpha_gt_20": [
-        621,
-        216,
-        772,
-        473
-      ]
-    },
-    "drawer": {
-      "size": [
-        1024,
-        1024
-      ],
-      "mode": "RGBA",
-      "corners_alpha": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "center_alpha": 0,
-      "visible_bbox_alpha_gt_20": [
-        348,
-        759,
-        726,
-        869
-      ]
-    }
-  }
+  "ip_review": "Original folk cat figurine; blank coin and drawer, no logos, named characters, letters or brand shapes.",
+  "source_comparison": "lucky-cat-comparison.png"
 }
