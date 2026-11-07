@@ -6,12 +6,12 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| V1 | Sender voice notes: record up to 60 s in Create step 2, sealed like the letter, played on the opened letter (alarm session reuses `voiceNoteForCapsule`) | Claude UI (PR) → Codex backend | Backend migration applied, types generated and 16 live security groups pass; sender cannot fetch stored notes. Await physical Expo Go/Safari recording, playback and cross-platform checks, then combined release. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
+| V1 | Sender voice notes: record up to 60 s in Create step 2, sealed like the letter, played on the opened letter | Claude UI → Codex backend | Backend migration applied, types generated and 16 live security groups pass; sender cannot fetch stored notes. Roy reported iPhone Expo Go and Safari voice recording/playback checks passed. Separate two-minute cross-platform send/open evidence remains unrecorded; combined release follows CI. |
 | W1 | Daily wake-up alarm from an opened capsule | Codex / Roy | PR #41 merged as `ed60924` after green CI. Combined V1/W1 candidate resolves the sender's signed voice URL, waits for auth on cold start, sends Stop Home, tracks and cancels snoozes on Off/Delete, and adds a dev-only roughly two-minute test shortcut. TypeScript, 23 tests and iOS/web exports pass. Roy waived the pre-merge phone gate; physical Expo Go alarm delivery, tap-to-wake, real nine-minute snooze and Off remain for his QR check. Installed-build AlarmKit / Android exact alarms remain later work. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
