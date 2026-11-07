@@ -28,6 +28,7 @@ def main():
  for path,spec in specs.items():
   id=path.split('vessel-')[1].removesuffix('.png');parts={l['name']:Image.open(V/l['file']).convert('RGBA') for l in spec['layers']};assembled=Image.open(R/path).convert('RGBA');stack=F['frame'](parts,spec,0)
   assert ImageChops.difference(assembled,stack).getbbox() is None
+  assert ImageChops.difference(assembled,expanded(parts,spec,0).crop((256,256,1280,1280))).getbbox() is None
   alpha=assembled.getchannel('A');box=alpha.point(lambda a:255 if a>25 else 0).getbbox()
   assert box[2]-box[0]<=760 and box[1]>=100 and 880<=box[3]-1<=920,(id,box)
   assert all(l['role'] in ('static','hinge','lift','fade','slide','pop') for l in spec['layers'])
