@@ -2,7 +2,7 @@
 
 The checklist **every new vessel** follows, so it drops into the app's opening, sealing, idle and Cabinet animations without surprises. Read [STYLE.md](STYLE.md) first (model `gpt-image-2`, the reference sheet, the style block). This file adds the vessel-specific rules. The list of planned vessels is in [docs/design/vessels-50.md](../../docs/design/vessels-50.md).
 
-Code it relates to (owned by the screens team): `mobile/src/art/manifest.ts` (`vesselParts`), `mobile/src/components/Vessel.tsx` (`MovingLayer`, `IDLE_MS`, `idleStyle`, `SPARKLE`), `mobile/src/features/create/CreateScreen.tsx` (`LETTER_DROP`), `mobile/src/features/cabinet/CabinetScreen.tsx` (`baseY`), `mobile/src/vesselArt.ts` (`VesselKind`).
+Code it relates to (owned by the screens team): `mobile/src/art/manifest.ts` (`vesselParts`, the data every animation reads), `mobile/src/components/Vessel.tsx` (the generic motion engine), `mobile/src/vesselArt.ts` (`VesselKind`).
 
 ---
 
@@ -36,7 +36,7 @@ Every part gets one role. Opening roles describe what happens as `lidLift` goes 
 | `door` *(new)* | Swings on a vertical side hinge (narrows horizontally from `pivot`) | — |
 | `pop` *(new)* | Springs up with a small overshoot | — |
 
-Idle extras: `sway` (rotate a little around a pivot), `bob` (up and down), `breathe` (small scale), `glow` (opacity pulse or flicker), `drift` (a particle layer such as steam, snow or fireflies, rising and fading on a loop), `spin` (slow continuous turn), `tick` (a small periodic jolt).
+Idle extras: `sway` (rotate a little around a pivot), `bob` (up and down), `breathe` (small scale), `glow` (opacity pulse or flicker), `drift` (a particle layer drifting and fading on a loop: steam and fireflies rise, snow and sand fall with `"direction": "down"`), `spin` (slow continuous turn), `tick` (a small periodic jolt).
 
 ### Pivots
 - [ ] Measure pivots in **px on the 1024 canvas**, at the hinge line's midpoint (for example the back edge of a lid where it meets the box). For a `door`, use the hinge side's midpoint.
@@ -65,7 +65,7 @@ A to E are already built. F, G, H, J and K each need code once (section 9), afte
 
 ## 5. Idle motion and sparkles
 - [ ] Choose 1–2 idle motions from section 3 (more looks busy). Name which part each one moves, and give a pivot for `sway`.
-- [ ] Keep motion small: sway at most 3°, bob at most 1.5% of the size, scale at most 1.5%. One loop lasts 4.4–6.4 s (`IDLE_MS`). Every term repeats whole turns, so the loop is seamless and t = 0 is the rest pose.
+- [ ] Make motion clearly visible on a phone (Roy, 2026-11-07, PR #37) without looking frantic: sway about 2.5–6°, bob/float about 2.5–3.5% of the size, breathe about 2.5–3.5%, a lid peek up to about 9°. One loop lasts 3.4–4.6 s (`idleMs`). Every term repeats whole turns, so the loop is seamless and t = 0 is the rest pose.
 - [ ] **Sparkle anchor**: one `{x, y}` on wax, brass, gold or glass where `fx-glint.webp` twinkles once per loop (today: envelope 440,512 · tin 300,470 · maison 438,612 · lantern 578,214).
 - [ ] Glows and drifting particles are their own soft layers with no outline (like `vessel-lantern-glow`).
 - [ ] With **Reduce Motion** on, the app shows the assembled image. Nothing may depend on motion to make sense.
@@ -83,36 +83,43 @@ The app draws vessels at **35–46 px** (map pins, chips), **95–120 px** (card
 - [ ] IP check: an original design, no logos, no brand shapes, no characters (see the plan's list of rejected ideas).
 
 ## 8. Manifest fields (`design/art/manifest.json`)
-Add these to each vessel's assembled-file entry, alongside the usual `path`, `what`, `size_px`, `transparent`, `prompt` and `model`:
+Add a `vessel` block to each vessel's assembled-file entry, alongside `path`, `what`, `size_px`, `transparent`, `prompt` and `model`. It uses exactly the field names of `IllustratedParts` in `mobile/src/art/manifest.ts` (§9), with `file` in place of `source`. Pivots, mouth, baseY and sparkle are px on the 1024 canvas. In `open` keyframes, `at` is how far it has opened (0–1), x/y are fractions of the drawn size and rotate is in degrees, measured on the motion overlay. Idle motions are `{ "type": "<sway|bob|float|breathe|peek|spin|tick|drift|glow>", ...params }`.
 ```json
 "vessel": {
   "id": "ramen",
   "opening": "B",
+  "idleMs": 4000,
+  "idle": [{ "type": "bob", "amount": 0.03 }],
   "layers": [
     { "name": "bowl", "file": "vessel-ramen-bowl.png", "role": "static" },
-    { "name": "steam", "file": "vessel-ramen-steam.png", "role": "fade", "idle": { "type": "drift" } },
-    { "name": "lid", "file": "vessel-ramen-lid.png", "role": "lift", "pivot": { "x": 512, "y": 470 } }
+    { "name": "steam", "file": "vessel-ramen-steam.png", "role": "fade",
+      "open": [{ "at": 0, "opacity": 0.6 }, { "at": 1, "opacity": 0 }],
+      "idle": [{ "type": "drift", "amount": 0.04 }] },
+    { "name": "lid", "file": "vessel-ramen-lid.png", "role": "lift", "pivot": { "x": 512, "y": 470 },
+      "open": [{ "at": 0, "y": 0, "opacity": 1 }, { "at": 1, "y": -0.32, "rotate": -6, "opacity": 0 }] }
   ],
-  "baseY": 905,
   "mouth": { "x": 512, "y": 470 },
+  "baseY": 905,
   "sparkle": { "x": 640, "y": 455 },
   "glint": null,
-  "idleMs": 5200
+  "openGlow": null,
+  "readyPulse": null
 }
 ```
-`layers` are listed **bottom to top**, in drawing order.
+`layers` are listed **bottom to top**. Mark a layer `"ground": true` only if it must stay still while the rest of the vessel idles (like the sea under the bottle); ground layers must come first.
 
 ## 9. Code changes per vessel (screens team / Codex)
-Until motion is data-driven, every new vessel needs all of these:
-- [ ] `mobile/src/vesselArt.ts`: add the id to `VesselKind`. Also make the SVG fallback show the illustrated art for vessels that have no SVG drawing (only the original 7 have SVGs).
-- [ ] `mobile/src/art/manifest.ts`: add a `vesselParts` entry (requires for the assembled image and each layer, plus role and pivot).
-- [ ] `mobile/src/components/Vessel.tsx`: the opening motion in `MovingLayer` (a new type F/G/H/J/K needs its motion added once), plus `IDLE_MS`, the `idleStyle` cases and `SPARKLE`.
-- [ ] `CreateScreen.tsx`: a `LETTER_DROP` value from the mouth point. `CabinetScreen.tsx`: a `baseY` value (baseY / 1024).
+Motion is **data-driven** (PR "vessel spec"): a vessel's opening, idle loop, letter drop, shelf base, sparkle and glint all come from its entry in `vesselParts` in `mobile/src/art/manifest.ts` (type `IllustratedParts`). No motion code per vessel. Each new vessel needs:
+- [ ] `mobile/src/vesselArt.ts`: add the id to `VesselKind`. (Vessels without an SVG drawing automatically show the illustrated art.)
+- [ ] `mobile/src/art/manifest.ts`: one `vesselParts` entry, copied from `manifest.json` → `vessel`:
+  - `assembled`, and `layers` bottom to top: `name`, `source` (literal `require`), `role`, `pivot`;
+  - `open`: keyframes `{ at, x, y, rotate, scaleX, scaleY, scale, opacity }`, with `at` = lidLift 0–1, x/y as fractions of the size, rotate in degrees. Optional `openReady` (when the capsule is ready), `idle` (motions of this layer) and `ground: true` (stays still while the vessel idles; list ground layers first);
+  - `opening` (code A–K), `idleMs`, `idle` (whole-vessel motions), `mouth`, optional `letterDrop` (otherwise 145 + mouth.y × 120 / 1024), `baseY`, `sparkle`, `glint` (a glass highlight layer), `openGlow` (a light revealed while opening), `readyPulse` (a layer name that pulses while ready).
+  - Idle motion types: `sway {deg, pivot?, turns?}`, `bob {amount, axis?, turns?}`, `float {amount}`, `breathe {amount}`, `peek {deg, pivot}`, `spin {pivot?, turns?}`, `tick {deg, pivot?}`, `drift {amount, direction?}` (particles drift and fade; `direction: "down"` for snow or sand, default up for steam and fireflies), `glow {base, range, readyBase?, readyRange?, flicker?}`.
+  - Opening types are just keyframes: F slide = x/y; G unscrew = rotate then y; H split = two `hinge` layers with their own pivots; J door = `scaleX` from a side `pivot`; K pop = y/scale with an overshoot key.
 - [ ] i18n: `shop.vessel.<id>` and `shop.desc.<id>` in both 繁中 and English.
 - [ ] Database: a migration inserting the `vessels` row (`id, price_mop, edition_total, brand, sort`). The shop stays free while testing.
 - [ ] Run it on the phone and on web (port 8088): idle, open, the seal drop, the Cabinet shelf, and with Reduce Motion on.
-
-**Recommended once, before the first batch:** have `Vessel.tsx` read the motion from the manifest (role, pivot, opening type, idle, mouth, baseY, sparkle) instead of `if kind === …` code. After that, a new vessel is just art plus a manifest entry plus the database row and translations.
 
 ## 10. Order of work for a batch
 1. Test vessel first (one), with its checks and motion overlay → Roy's OK.
