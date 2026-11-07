@@ -3,7 +3,7 @@ import { Animated as NativeAnimated, Image, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Animated, { Easing, type SharedValue, cancelAnimation, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { Vessel as SvgVessel } from '../Vessel';
-import { VESSEL_ART, type VesselKind } from '../vesselArt';
+import { VESSEL_ART, type SvgVesselKind, type VesselKind } from '../vesselArt';
 import { fxGlint, vesselParts, type ArtLayer, type IdleMotion, type OpenKey, type Point } from '../art/manifest';
 import { useReducedMotion } from '../useReducedMotion';
 
@@ -17,15 +17,15 @@ export function VesselSettingsProvider({ children }: { children: React.ReactNode
 export const useVesselSettings = () => useContext(Context);
 
 const TAU = Math.PI * 2;
-/** Linear keyframe sampling of one property; keys without the property are skipped. */
+/** Linear keyframe sampling of one property. Keys without the property are skipped; before the first key
+ * that sets it, the value eases in from the default at lidLift 0 (so a key only at 1 opens gradually). */
 function sample(keys: OpenKey[], v: number, prop: keyof Omit<OpenKey, 'at'>, fallback: number) {
   'worklet';
-  let prevAt = -1, prevVal = fallback, found = false;
+  let prevAt = 0, prevVal = fallback;
   for (let i = 0; i < keys.length; i++) {
     const k = keys[i], val = k[prop];
     if (val === undefined) continue;
-    if (!found) { found = true; if (v <= k.at) return val; }
-    else if (v <= k.at) return prevVal + (val - prevVal) * ((v - prevAt) / Math.max(1e-6, k.at - prevAt));
+    if (v <= k.at) return k.at <= prevAt ? val : prevVal + (val - prevVal) * ((v - prevAt) / (k.at - prevAt));
     prevAt = k.at; prevVal = val;
   }
   return prevVal;
@@ -37,6 +37,17 @@ function about(pivot: Point, size: number, inner: any[]) {
   return [{ translateX: px }, { translateY: py }, ...inner, { translateX: -px }, { translateY: -py }];
 }
 
+/** A layer's pose at lidLift v (opening keyframes), as a style. Also used at v = 0 for the resting pose. */
+function openPose(keys: OpenKey[], pivot: Point, size: number, v: number) {
+  'worklet';
+  return {
+    opacity: sample(keys, v, 'opacity', 1),
+    transform: [
+      { translateX: size * sample(keys, v, 'x', 0) }, { translateY: size * sample(keys, v, 'y', 0) },
+      ...about(pivot, size, [{ rotate: `${sample(keys, v, 'rotate', 0)}deg` }, { scaleX: sample(keys, v, 'scaleX', 1) }, { scaleY: sample(keys, v, 'scaleY', 1) }, { scale: sample(keys, v, 'scale', 1) }]),
+    ],
+  };
+}
 // Opening: every moving layer follows its keyframes as lidLift goes 0 → 1 (VESSEL-SOP §3–4).
 function MovingLayer({ layer, size, lidLift, ready }: { layer: ArtLayer; size: number; lidLift: SharedValue<number>; ready: boolean }) {
   const reduced = useReducedMotion();
@@ -44,14 +55,7 @@ function MovingLayer({ layer, size, lidLift, ready }: { layer: ArtLayer; size: n
   const keys = (ready && layer.openReady) || layer.open || [];
   const style = useAnimatedStyle(() => {
     const raw = Math.max(0, Math.min(1, lidLift.value));
-    const v = reduced ? (raw > 0.5 ? 1 : 0) : raw;
-    return {
-      opacity: sample(keys, v, 'opacity', 1),
-      transform: [
-        { translateX: size * sample(keys, v, 'x', 0) }, { translateY: size * sample(keys, v, 'y', 0) },
-        ...about(pivot, size, [{ rotate: `${sample(keys, v, 'rotate', 0)}deg` }, { scaleX: sample(keys, v, 'scaleX', 1) }, { scaleY: sample(keys, v, 'scaleY', 1) }, { scale: sample(keys, v, 'scale', 1) }]),
-      ],
-    };
+    return openPose(keys, pivot, size, reduced ? (raw > 0.5 ? 1 : 0) : raw);
   }, [keys, size, reduced, pivot.x, pivot.y]);
   return <Animated.View pointerEvents="none" style={[{ position: 'absolute', width: size, height: size }, style]}><Image source={layer.source} style={{ width: size, height: size }} resizeMode="contain" /></Animated.View>;
 }
@@ -148,8 +152,11 @@ function IdleVessel({ kind, size, ready }: { kind: VesselKind; size: number; rea
     t.value = withRepeat(withTiming(1, { duration: spec.idleMs, easing: Easing.linear }), -1, false);
     return () => cancelAnimation(t);
   }, [spec.idleMs, t]);
+  // At rest each layer takes its closed position (opening keyframes at 0); its own opacity comes from idle motion.
   const layer = (l: ArtLayer) => <IdlePart key={l.name} motions={l.idle} t={t} size={size} ready={ready}>
-    <Image source={l.source} style={{ width: size, height: size }} resizeMode="contain" />
+    <View style={[{ width: size, height: size }, l.open ? { transform: openPose(l.open, l.pivot ?? { x: 512, y: 512 }, size, 0).transform } : null]}>
+      <Image source={l.source} style={{ width: size, height: size }} resizeMode="contain" />
+    </View>
   </IdlePart>;
   return <View style={{ width: size, height: size }} accessible accessibilityLabel={kind}>
     {spec.layers.filter(l => l.ground).map(layer)}
@@ -169,7 +176,7 @@ export function Vessel({ kind, size = 180, lidLift, contentSway, mode, ready = f
   const reduced = useReducedMotion();
   const spec = vesselParts[kind];
   // Only the original 7 vessels have SVG drawings; others always use the illustrated art.
-  if ((mode ?? variant) === 'svg' && kind in VESSEL_ART) return <SvgVessel kind={kind} size={size} lidLift={lidLift} contentSway={contentSway} />;
+  if ((mode ?? variant) === 'svg' && kind in VESSEL_ART) return <SvgVessel kind={kind as SvgVesselKind} size={size} lidLift={lidLift} contentSway={contentSway} />;
   if (!lidLift && idle && !reduced) return <IdleVessel kind={kind} size={size} ready={ready} />;
   const pulse = ready && spec.readyPulse ? spec.layers.find(l => l.name === spec.readyPulse) : undefined;
   if (!lidLift) return pulse
