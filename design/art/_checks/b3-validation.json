@@ -1,0 +1,122 @@
+{
+  "mooncake-tin": {
+    "closed_stack_exact": true,
+    "bbox": [
+      143,
+      294,
+      881,
+      900
+    ],
+    "corners_zero": true,
+    "errors": [],
+    "ip_review": "Original generic festival object; no logo, text, known character or branded shape."
+  },
+  "cake-box": {
+    "closed_stack_exact": true,
+    "bbox": [
+      163,
+      158,
+      858,
+      900
+    ],
+    "corners_zero": true,
+    "errors": [],
+    "ip_review": "Original generic festival object; no logo, text, known character or branded shape."
+  },
+  "candy-box": {
+    "closed_stack_exact": true,
+    "bbox": [
+      161,
+      216,
+      864,
+      902
+    ],
+    "corners_zero": true,
+    "errors": [],
+    "ip_review": "Original generic festival object; no logo, text, known character or branded shape."
+  },
+  "chocolate-heart": {
+    "closed_stack_exact": true,
+    "bbox": [
+      169,
+      282,
+      858,
+      900
+    ],
+    "corners_zero": true,
+    "errors": [],
+    "ip_review": "Original generic festival object; no logo, text, known character or branded shape."
+  },
+  "stocking": {
+    "closed_stack_exact": true,
+    "bbox": [
+      296,
+      105,
+      728,
+      900
+    ],
+    "corners_zero": true,
+    "errors": [],
+    "ip_review": "Original generic festival object; no logo, text, known character or branded shape."
+  },
+  "pumpkin": {
+    "closed_stack_exact": true,
+    "bbox": [
+      199,
+      184,
+      823,
+      902
+    ],
+    "corners_zero": true,
+    "errors": [],
+    "ip_review": "Original generic festival object; no logo, text, known character or branded shape."
+  },
+  "rice-dumpling": {
+    "closed_stack_exact": true,
+    "bbox": [
+      151,
+      227,
+      874,
+      900
+    ],
+    "corners_zero": true,
+    "errors": [],
+    "ip_review": "Original generic festival object; no logo, text, known character or branded shape."
+  },
+  "wish-tag": {
+    "closed_stack_exact": true,
+    "bbox": [
+      214,
+      104,
+      809,
+      901
+    ],
+    "corners_zero": true,
+    "errors": [],
+    "ip_review": "Original generic festival object; no logo, text, known character or branded shape."
+  },
+  "river-lantern": {
+    "closed_stack_exact": true,
+    "bbox": [
+      143,
+      291,
+      883,
+      904
+    ],
+    "corners_zero": true,
+    "errors": [],
+    "ip_review": "Original generic festival object; no logo, text, known character or branded shape."
+  },
+  "lucky-cat": {
+    "closed_stack_exact": true,
+    "bbox": [
+      251,
+      100,
+      771,
+      900
+    ],
+    "corners_zero": true,
+    "errors": [],
+    "ip_review": "Original generic festival object; no logo, text, known character or branded shape."
+  }
+}
