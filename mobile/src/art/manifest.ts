@@ -131,7 +131,7 @@ export const vesselParts: Record<VesselKind, IllustratedParts> = {
     layers: [
       { name: 'box', role: 'static', source: require('../../../public/art/vessels/vessel-maison-box.webp') },
       { name: 'ring', role: 'pop', source: require('../../../public/art/vessels/vessel-maison-ring.webp'),
-        open: [{ at: .22, y: 0, scale: 1, opacity: .85 }, { at: .77, y: -.035, scale: 1.22, opacity: 1 }] },
+        open: [{ at: 0, y: 0, scale: 1, opacity: .85 }, { at: .22, y: 0, scale: 1, opacity: .85 }, { at: .77, y: -.035, scale: 1.22, opacity: 1 }] },
       { name: 'lid', role: 'hinge', pivot: { x: 605, y: 300 }, source: require('../../../public/art/vessels/vessel-maison-lid.webp'),
         open: [{ at: 0, rotate: 0, scaleY: 1 }, { at: 1, rotate: -22, scaleY: .7 }], idle: [{ type: 'peek', deg: -6, pivot: { x: 605, y: 300 } }] },
     ],

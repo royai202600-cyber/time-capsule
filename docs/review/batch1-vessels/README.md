@@ -44,3 +44,7 @@ The old production Shop and Create map every catalogue row into a Vessel, but th
 - Hosted transaction/rollback insert and catalogue assertions passed. The dry run lists only the pending batch-1 migration.
 - PR #49 review: 17 vessel types/specs, ten bilingual names/descriptions, original SVG fallback restricted to its seven valid kinds, keyframe interpolation from the default and closed idle-layer positions. No Cabinet/Create screen changes overwrite PR #48.
 - Local TypeScript, 23 tests and iOS export passed. Full new-catalogue flows and phone checks are deliberately deferred until rows can be safely published.
+
+## Original-vessel regression audit
+
+The shared sampler change exposed an implicit Maison ring opacity before the first 0.22 key. Its explicit closed key now preserves the original 0.85 opacity. Comparing the old renderer/data against the new renderer/data at eight opening positions matched all 2,240 property samples for the original seven vessels. All 17 specs and bilingual catalogue entries are present, expected new prices match, and all 107 referenced art assets resolve. Results: `manifest-audit.json`.
