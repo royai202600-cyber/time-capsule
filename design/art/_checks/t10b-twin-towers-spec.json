@@ -2,7 +2,12 @@
   "id": "twin-towers",
   "opening": "C",
   "idleMs": 4000,
-  "idle": [],
+  "idle": [
+    {
+      "type": "breathe",
+      "amount": 0.025
+    }
+  ],
   "layers": [
     {
       "name": "towers",
@@ -36,8 +41,8 @@
       "file": "vessel-twin-towers-tops.png",
       "role": "lift",
       "pivot": {
-        "x": 510,
-        "y": 348
+        "x": 512,
+        "y": 400
       },
       "open": [
         {
@@ -46,26 +51,26 @@
           "opacity": 1
         },
         {
-          "at": 0.65,
-          "y": -0.4,
+          "at": 0.5,
+          "y": -0.1,
           "opacity": 0.65
         },
         {
           "at": 1,
-          "y": -0.65,
+          "y": -0.32,
           "opacity": 0
         }
       ]
     }
   ],
   "mouth": {
-    "x": 362,
-    "y": 330
+    "x": 410,
+    "y": 394
   },
   "baseY": 899,
   "sparkle": {
-    "x": 510,
-    "y": 541
+    "x": 498,
+    "y": 662
   },
   "glint": null,
   "openGlow": null,

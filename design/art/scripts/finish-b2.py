@@ -53,7 +53,7 @@ def make(id,orig,opened):
   elif id=='palace-pavilion':pts=[(0,667),(155,681),(250,733),(430,758),(750,767),(850,754),(1030,715),(1153,644),(1253,644)];name='roof';bodyname='base';anchor=(620,730);mouth=(620,660);spark=(1129,535)
   elif id=='golden-roof':pts=[(0,834),(255,871),(816,899),(1004,868),(1070,827),(1253,827)];name='roof';bodyname='box';anchor=(620,850);mouth=(620,800);spark=(842,696)
   elif id=='gate-lacquer':pts=[(0,586),(224,637),(800,647),(1006,618),(1105,588),(1253,588)];name='roof';bodyname='box';anchor=(620,626);mouth=(620,566);spark=(480,744)
-  elif id=='twin-towers':pts=[(0,437),(1253,437)];name='tops';bodyname='towers';anchor=(625,420);mouth=(438,398);spark=(625,665)
+  elif id=='twin-towers':pts=[(0,478),(1253,478)];name='tops';bodyname='towers';anchor=(620,470);mouth=(474,462);spark=(600,846)
   elif id=='lionfish-fountain':
    pts=[(0,0),(0,0)] # stopper mask is local, excluding the detached droplets
    m=polygon([(475,130),(770,130),(770,400),(740,457),(500,457),(475,400)])
@@ -78,7 +78,7 @@ def make(id,orig,opened):
     # dark lower band gives it contrast without drifting any solid artwork.
     a=parts['lantern'].getchannel('A');g=glow.getchannel('A').point(lambda v:round(v*.45));parts['lantern'].putalpha(ImageChops.subtract(a,g));parts={'glow':glow,**parts}
    if id=='twin-towers':
-    glow=softspot(size,(626,664),(25,21),(243,226,187),240);parts={'towers':parts['towers'],'glow':glow,'tops':parts['tops']}
+    glow=softspot(size,(600,869),(40,13),(243,226,187),240);parts={'towers':parts['towers'],'glow':glow,'tops':parts['tops']}
  return parts,anchor,mouth,spark
 
 def spec_for(id,P,anchor,mouth,spark,base):
@@ -95,7 +95,9 @@ def spec_for(id,P,anchor,mouth,spark,base):
   if id=='bamboo-tower':idle=[{'type':'sway','deg':2.5,'pivot':P(620,1156)}]
   elif id=='gate-lantern':
    layers.insert(0,{**static('glow'),'role':'fade','open':[{'at':0,'opacity':1},{'at':1,'opacity':0}],'idle':[{'type':'glow','base':.35,'range':.65}]});idle=[{'type':'sway','deg':3,'pivot':P(625,165)}]
-  elif id=='twin-towers':layers.insert(1,{**static('glow'),'role':'fade','open':[{'at':0,'opacity':1},{'at':1,'opacity':0}],'idle':[{'type':'glow','base':.25,'range':.75}]})
+  elif id=='twin-towers':
+   layers.insert(1,{**static('glow'),'role':'fade','open':[{'at':0,'opacity':1},{'at':1,'opacity':0}],'idle':[{'type':'glow','base':.25,'range':.75}]});idle=[{'type':'breathe','amount':.025}]
+   layers[-1]['open']=[{'at':0,'y':0,'opacity':1},{'at':.5,'y':-.1,'opacity':.65},{'at':1,'y':-.32,'opacity':0}]
   else:idle=[{'type':'breathe','amount':.025}]
  return {'id':id,'opening':code,'idleMs':4200 if id=='clock-tower' else 4000,'idle':idle,'layers':layers,'mouth':P(*mouth),'baseY':base,'sparkle':P(*spark),'glint':None,'openGlow':None,'readyPulse':None}
 
@@ -112,7 +114,9 @@ def review(id,parts,spec,assembled):
   if l.get('open'):
    line=l['name']+' '+l['role']+' pivot '+str(l.get('pivot'))+' keys '+json.dumps(l['open'],separators=(',',':'))
    for start in range(0,len(line),140):d.text((20,y),line[start:start+140],fill='#16263F',font=font(13));y+=18
- d.text((20,620),'Crosshairs: plum = pivots; red = mouth; brass = sparkle. Hands tick 6 degrees; never spin.',fill='#16263F',font=font(14))
+ footer='Crosshairs: plum = pivots; red = mouth; brass = sparkle. Hands tick 6 degrees; never spin.'
+ if id=='twin-towers':footer='Crosshairs: plum = top lift pivot; red = mouth; brass = sparkle. Idle: breathe 0.025 + bridge glow pulse.'
+ d.text((20,620),footer,fill='#16263F',font=font(14))
  sheet.save(C/f'{id}-motion.png',optimize=True)
  sizes=Image.new('RGB',(300,175),PAPER[:3]);sd=ImageDraw.Draw(sizes)
  for n,x in ((40,25),(120,130)):

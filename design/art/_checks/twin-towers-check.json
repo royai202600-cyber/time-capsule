@@ -21,11 +21,11 @@
         0,
         0
       ],
-      "center_alpha": 253,
+      "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        261,
+        314,
         120,
-        763,
+        711,
         900
       ]
     },
@@ -41,11 +41,11 @@
         0,
         0
       ],
-      "center_alpha": 253,
+      "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        261,
-        294,
-        763,
+        314,
+        380,
+        711,
         900
       ]
     },
@@ -63,10 +63,10 @@
       ],
       "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        484,
-        517,
-        539,
-        566
+        466,
+        665,
+        530,
+        693
       ]
     },
     "tops": {
@@ -83,10 +83,10 @@
       ],
       "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        263,
+        362,
         120,
-        760,
-        363
+        670,
+        407
       ]
     }
   }

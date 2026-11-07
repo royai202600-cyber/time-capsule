@@ -19,7 +19,12 @@ def main():
    if l['role'] in ('door','hinge'):assert l.get('pivot')
    for motion in l.get('idle',[]):
     if motion['type']=='drift':assert l['name']=='spray'
-   if l['role']=='lift':assert l['open'][-1]['opacity']==0 and l['open'][-1]['y']<=-.4
+   if l['role']=='lift':
+    end=l['open'][-1];cover_box=parts[l['name']].getchannel('A').point(lambda a:255 if a>25 else 0).getbbox()
+    assert end['opacity']==0 and cover_box[3]-1+end['y']*1024<=s['mouth']['y']-12
+  if id=='twin-towers':
+   assert s['idle']==[{'type':'breathe','amount':.025}]
+   assert s['layers'][1]['name']=='glow' and s['layers'][1]['idle'][0]['type']=='glow'
   if id=='clock-tower':
    hands=s['layers'][2];assert hands['idle']==[{'type':'tick','deg':6,'pivot':hands['pivot']}]
    assert next(k for k in hands['open'] if k['at']==.3)['opacity']==0
