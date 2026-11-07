@@ -10,6 +10,7 @@ const manifest = JSON.parse(fs.readFileSync(path.join(artRoot, 'manifest.json'),
 
 function maxEdge(relativePath) {
   if (/^(vessels|stamps|portraits)\//.test(relativePath) || relativePath === 'seal-wax.png') return 512;
+  if (relativePath === 'fx/fx-glint.png') return 512;
   if (relativePath === 'map-asia.png') return 1600;
   if (relativePath === 'app-icon.png') return 512;
   return null;
