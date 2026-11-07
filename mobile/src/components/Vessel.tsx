@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { Animated as NativeAnimated, Image, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Animated, { type SharedValue, useAnimatedStyle } from 'react-native-reanimated';
+import Animated, { Easing, type SharedValue, cancelAnimation, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { Vessel as SvgVessel } from '../Vessel';
 import type { VesselKind } from '../vesselArt';
 import { vesselParts, type ArtLayer } from '../art/manifest';
@@ -81,12 +81,68 @@ function AssembledOverlay({ source, size, lidLift }: { source: ArtLayer['source'
     <Image source={source} style={{ width: size, height: size }} resizeMode="contain" />
   </Animated.View>;
 }
-export function Vessel({ kind, size = 180, lidLift, contentSway, mode, ready = false }: {
+// Idle motion: a quiet loop while a vessel rests on screen. One linear clock per vessel (0 → 1),
+// every term is sin/cos of a whole number of turns, so the loop is seamless and t = 0 or 1 is the rest pose.
+const IDLE_MS: Record<VesselKind, number> = { dome: 5600, bottle: 4800, lantern: 4400, envelope: 5200, tin: 6000, musicbox: 5000, maison: 6400 };
+const TAU = Math.PI * 2;
+function idleStyle(kind: VesselKind, part: string, t: number, size: number, ready: boolean) {
+  'worklet';
+  const wave = (turns: number) => Math.sin(TAU * turns * t);
+  const hump = .5 - .5 * Math.cos(TAU * t);
+  const at = (x: number, y: number, inner: any[]) => {
+    const px = (x - 512) * size / 1024, py = (y - 512) * size / 1024;
+    return [{ translateX: px }, { translateY: py }, ...inner, { translateX: -px }, { translateY: -py }];
+  };
+  switch (`${kind}:${part}`) {
+    case 'dome:rose': return { transform: at(505, 790, [{ rotate: `${2.4 * wave(1)}deg` }]) };
+    case 'bottle:waves': return { transform: [{ translateX: size * .014 * wave(1) }] };
+    case 'bottle:float': return { transform: [{ translateY: size * .009 * wave(2) }, ...at(500, 640, [{ rotate: `${2.2 * wave(1)}deg` }])] };
+    case 'lantern:outer': return { transform: at(512, 110, [{ rotate: `${1.5 * wave(1)}deg` }]) };
+    case 'lantern:glow': {
+      const breath = .5 - .5 * Math.cos(TAU * 2 * t), flicker = .04 * wave(5) + .02 * wave(9);
+      return { opacity: (ready ? .5 + .32 * breath : .22 + .2 * breath) + flicker };
+    }
+    case 'envelope:outer': return { transform: [{ translateY: -size * .012 * hump }, { rotate: `${.7 * wave(1)}deg` }] };
+    case 'tin:outer': return { transform: [{ translateY: -size * .009 * hump }, { scale: 1 + .012 * hump }] };
+    case 'musicbox:outer': return { transform: [{ scale: 1 + .008 * hump }] };
+    case 'musicbox:lid': return { transform: at(541, 292, [{ rotate: `${-3 * hump * hump}deg` }]) };
+    case 'maison:outer': return { transform: [{ translateY: -size * .01 * hump }] };
+    case 'maison:lid': return { transform: at(605, 300, [{ rotate: `${-1.5 * hump * hump}deg` }]) };
+    default: return {};
+  }
+}
+function IdlePart({ kind, part, t, size, ready, children }: { kind: VesselKind; part: string; t: SharedValue<number>; size: number; ready: boolean; children: React.ReactNode }) {
+  const style = useAnimatedStyle(() => idleStyle(kind, part, t.value, size, ready), [kind, part, size, ready]);
+  return <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: 0, top: 0, width: size, height: size }, style]}>{children}</Animated.View>;
+}
+function IdleVessel({ kind, size, ready }: { kind: VesselKind; size: number; ready: boolean }) {
+  const t = useSharedValue(0);
+  useEffect(() => {
+    t.value = 0;
+    t.value = withRepeat(withTiming(1, { duration: IDLE_MS[kind], easing: Easing.linear }), -1, false);
+    return () => cancelAnimation(t);
+  }, [kind, t]);
+  const layers = vesselParts[kind].layers;
+  const layer = (l: ArtLayer) => <IdlePart key={l.name} kind={kind} part={l.name} t={t} size={size} ready={ready}>
+    <Image source={l.source} style={{ width: size, height: size }} resizeMode="contain" />
+  </IdlePart>;
+  const body = kind === 'bottle'
+    ? [layer(layers[0]), <IdlePart key="float" kind={kind} part="float" t={t} size={size} ready={ready}>{layers.slice(1).map(layer)}</IdlePart>]
+    : layers.map(layer);
+  return <View style={{ width: size, height: size }} accessible accessibilityLabel={kind}>
+    <IdlePart kind={kind} part="outer" t={t} size={size} ready={ready}>{body}</IdlePart>
+  </View>;
+}
+export function Vessel({ kind, size = 180, lidLift, contentSway, mode, ready = false, idle = false }: {
   kind: VesselKind; size?: number; lidLift?: SharedValue<number>; contentSway?: SharedValue<number>; mode?: Variant; ready?: boolean;
+  /** Gentle resting loop. Pass true only for the visible/active vessel; ignored with Reduce Motion or lidLift. */
+  idle?: boolean;
 }) {
   const { variant } = useVesselSettings();
+  const reduced = useReducedMotion();
   if ((mode ?? variant) === 'svg') return <SvgVessel kind={kind} size={size} lidLift={lidLift} contentSway={contentSway} />;
   const parts = vesselParts[kind];
+  if (!lidLift && idle && !reduced) return <IdleVessel kind={kind} size={size} ready={ready} />;
   if (!lidLift) return ready && kind === 'lantern'
     ? <View style={{ width: size, height: size }}><ReadyLantern size={size} /><Image source={parts.assembled} style={{ width: size, height: size }} resizeMode="contain" accessibilityLabel={kind} /></View>
     : <Image source={parts.assembled} style={{ width: size, height: size }} resizeMode="contain" accessibilityLabel={kind} />;
