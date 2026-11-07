@@ -11,6 +11,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
+| C1 | Scrolling Cabinet: crown + one tiling shelf row + base, 3 per row on phones and 4–5 on wide screens, virtualised rows (PR #39) | Claude | Wired to the A3 tiles (PR #44). Verified in the browser at 375/390 px and desktop with 9, 30 and 300 vessels; close-up, seams and virtualised scrolling checked. Codex merges and deploys. |
 | W1 | Daily wake-up alarm from an opened capsule | Codex / Roy | PR #41 merged as `ed60924` after green CI. Browser editor, wake and snooze previews, 23 tests, TypeScript and iOS/web exports pass. Roy waived the pre-merge phone gate; physical Expo Go alarm delivery, tap-to-wake and real nine-minute snooze remain for his QR check. Installed-build AlarmKit / Android exact alarms remain later work. |
 | T1 | Onboard: read `AGENTS.md`, run the app locally, review and merge PR "Team workflow", fix the deploy pipeline, review backend security | Codex | Local sign-in and PR #1 verified; security migration applied; Git deployment verification in report. |
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
