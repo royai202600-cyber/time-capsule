@@ -59,6 +59,13 @@ export const vessels = {
     supabase.from("owned_vessels").select("*").eq("user_id", id),
   stock: () => supabase.rpc("vessel_stock"),
   acquire: (id: string) => supabase.rpc("acquire_vessel", { p_vessel: id }),
+  /** The landmark vessel earned by opening a capsule at this place, and whether the user already owns it. */
+  earnedAt: async (place: string, userId: string) => {
+    const { data } = await supabase.from("vessels").select("id").eq("earned_place", place).maybeSingle();
+    if (!data) return null;
+    const { data: own } = await supabase.from("owned_vessels").select("vessel").eq("user_id", userId).eq("vessel", data.id).maybeSingle();
+    return { id: data.id, owned: !!own };
+  },
 };
 export function capsuleStatus(
   c: Capsule,
