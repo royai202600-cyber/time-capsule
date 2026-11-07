@@ -7,7 +7,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | ID | Task | Owner | Done when |
 |---|---|---|---|
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
-| W1 | Daily wake-up alarm from an opened capsule. Claude: screens on `claude/capsule-alarm` (letter button, alarm editor, Me → Alarms, full-screen wake view). Codex: wire `expo-notifications` into `mobile/src/features/alarm/scheduler.ts` + `AlarmLaunch.tsx`, add the plugin, verify in iPhone Expo Go, merge. | Claude → Codex | In Expo Go an alarm fires at the set time with the default sound, tapping it opens the wake view, Snooze rings again 9 min later, Stop ends it. Website explains it can't ring. Later: swap `scheduler.ts` for AlarmKit / Android exact alarms in the installed build. |
+| W1 | Daily wake-up alarm from an opened capsule. Claude: screens on `claude/capsule-alarm` (letter button, alarm editor, Me → Alarms, full-screen wake view). Claude built it, including the `expo-notifications` wiring. Codex: verify in iPhone Expo Go and merge. | Claude → Codex | In Expo Go an alarm fires at the set time with the default sound, tapping it opens the wake view, Snooze rings again 9 min later, Stop ends it. Website explains it can't ring. Later: swap `scheduler.ts` for AlarmKit / Android exact alarms in the installed build. |
 
 ## Review
 | ID | Task | Owner | Note |
