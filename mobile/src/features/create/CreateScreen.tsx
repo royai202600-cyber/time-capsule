@@ -20,6 +20,8 @@ import { C, handwriting, motion, serif, sans } from '../../theme';
 import { DrawingPad, type DrawingHandle } from './DrawingPad';
 import { letterDropFor, scenes, sealWax } from '../../art/manifest';
 import { ArtIcon } from '../../components/ArtIcon';
+import { SealLoader } from '../../components/SealLoader';
+import { WaxSteps } from '../../components/WaxSteps';
 import { VoiceRecorder } from '../voice/VoiceRecorder';
 import { stubAttachVoice, uploadVoice, VOICE_BACKEND, VOICE_ENABLED, type VoiceClip } from '../../services/voice';
 import { PREDICTION_ENABLED, predictionSendArgs, stubAttachPrediction, type CapsuleKind } from '../../services/prediction';
@@ -319,7 +321,7 @@ export default function CreateScreen() {
     onFinalize: () => { if (dragActive.current) gesture.current.cancel(); },
   });
   const waxControl = <Animated.View {...(Platform.OS === 'web' ? pan.panHandlers : {})} accessible accessibilityRole='button' accessibilityLabel={t('create.drag')} accessibilityActions={[{ name: 'activate', label: t('create.sealSend') }]} onAccessibilityAction={() => sendRef.current()} style={{ width: 76, height: 76, justifyContent: 'center', alignItems: 'center', transform: [...wax.getTranslateTransform(), { scale: waxScale }, { translateY: idleNudge }] }}><Image source={sealWax} style={{ width: 76, height: 76 }} resizeMode="contain" /></Animated.View>;
-  if (authLoading) return <Screen><Body>{t('create.loading')}</Body></Screen>;
+  if (authLoading) return <Screen><SealLoader size={44} label={t('create.loading')} /></Screen>;
   if (!session) return <Screen><Body>{t('create.signIn')}</Body><Button title={t('create.close')} onPress={() => router.replace('/')} /></Screen>;
   if (phase === 'seal') return <Screen dragContent scrollGesture={sealScrollGesture} scrollEnabled={!busy}>
     <Heading>{t('create.sealSend')}</Heading>
@@ -346,14 +348,14 @@ export default function CreateScreen() {
   if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
   return <Screen scrollGesture={drawScrollGesture} footer={<View style={{ flexDirection: 'row', gap: 8, marginTop: 'auto' }}>{step > 1 && <View style={{ flex: 1 }}><Button title={t('create.back')} onPress={() => { Keyboard.dismiss(); setStep(step - 1); setError(''); void haptics.tap(); }} /></View>}<View style={{ flex: 1 }}><Button title={t(step === 4 ? 'create.sealSend' : 'create.next')} onPress={next} /></View></View>}>
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Pressable onPress={goBack} accessibilityRole='button' accessibilityLabel={t('create.close')} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="close" color={C.plum} /></Pressable><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('create.langSwitch')}</Text></Pressable></View>
-    <Heading>{t('create.title')}</Heading><Body>{t('create.step', step)}</Body><View style={{ height: 5, backgroundColor: C.line, borderRadius: 5 }}><View style={{ width: `${step * 25}%`, height: 5, backgroundColor: C.wax, borderRadius: 5 }} /></View>
+    <Heading>{t('create.title')}</Heading><WaxSteps step={step} label={t('create.step', step)} labels={[t('create.stepName1'), t('create.stepName2'), t('create.stepName3'), t('create.stepName4')]} onBack={n => { Keyboard.dismiss(); setStep(n); setError(''); void haptics.tap(); }} />
     {step === 1 && PREDICTION_ENABLED && <KindChoice kind={kind} onChange={k => { setKind(k); setError(''); }} />}
     <Text style={{ fontFamily: serif, color: C.ink, fontSize: 23 }}>{step === 2 && predicting ? p('write') : t(['', 'create.who', 'create.write', 'create.vessel', 'create.whenWhere'][step])}</Text>
     {step === 1 && <View style={{ gap: 12 }}><View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
       <Pressable accessibilityRole='button' accessibilityState={{ selected: recipient === id }} onPress={() => { setRecipient(id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === id ? C.blue : C.line, backgroundColor: recipient === id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={profile?.avatar} size={60} future /></View><Text style={[label, { marginTop: 8 }]}>{t('create.self')}</Text></Pressable>
       {(friends.data ?? []).map(f => <Pressable key={f.friend_id} accessibilityRole='button' accessibilityState={{ selected: recipient === f.friend_id }} onPress={() => { setRecipient(f.friend_id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === f.friend_id ? C.blue : C.line, backgroundColor: recipient === f.friend_id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={(f as any).profiles?.avatar} size={60} /></View><Text style={[label, { marginTop: 8 }]}>{(f as any).profiles?.name}</Text></Pressable>)}
       <Pressable onPress={() => router.push('/invite')} style={[card, { width: '46%', alignItems: 'center', justifyContent: 'center', minHeight: 116 }]}><ArtIcon name="plus" color={C.blue} /><Text style={{ color: C.blue }}>{t('create.invite')}</Text></Pressable>
-    </View>{friends.loading && <Body>{t('create.loading')}</Body>}{!friends.loading && !friends.data?.length && <Body>{t('create.noFriends')}</Body>}</View>}
+    </View>{friends.loading && <SealLoader size={44} label={t('create.loading')} />}{!friends.loading && !friends.data?.length && <Body>{t('create.noFriends')}</Body>}</View>}
     {<View style={{ gap: 15, display: step === 2 ? 'flex' : 'none' }}>
       {predicting && <><PredictionInput value={prediction} onChange={setPrediction} /><Text style={label}>{p('letterOptional')}</Text></>}
       <View style={{ flexDirection: 'row', gap: 8 }}>{(['type', 'hand'] as const).map(m => <Pressable key={m} onPress={() => { setMode(m); if (m === 'type') setDrawingData(null); void haptics.tick(); }} style={[card, { flex: 1, backgroundColor: mode === m ? C.cream : C.white }]}><Text style={{ textAlign: 'center', color: C.ink }}>{t(`create.${m}`)}</Text></Pressable>)}</View>
@@ -365,7 +367,7 @@ export default function CreateScreen() {
     </View>}
     {step === 3 && <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
       {(catalog.data ?? []).map(v => { const usable = canUseVessel(v); return <Pressable key={v.id} onPress={() => { setVessel(v.id as VesselKind); if (selectedPlace?.brand_vessel && selectedPlace.brand_vessel !== v.id) setPlace(null); if (usable) void haptics.tick(); else router.push({ pathname: '/shop', params: { focus: v.id, returnTo: 'create' } }); }} style={[card, { width: '46%', alignItems: 'center', borderColor: vessel === v.id ? C.blue : C.line, opacity: usable ? 1 : .68 }]}><Vessel kind={v.id as VesselKind} size={105} idle={vessel === v.id} /><Text style={{ fontFamily: serif, color: C.ink, textAlign: 'center' }}>{t(`shop.vessel.${v.id}`)}</Text><Text style={{ color: usable ? C.blue : C.plum, fontSize: 12 }}>{t(usable ? 'create.owned' : 'create.getShop')}</Text></Pressable>; })}
-      {catalog.loading && <Body>{t('create.loading')}</Body>}
+      {catalog.loading && <SealLoader size={44} label={t('create.loading')} />}
       {catalog.error && <Button title={t('create.retry')} onPress={() => void catalog.refresh()} />}
     </View>}
     {step === 4 && <View style={{ gap: 15 }}>
