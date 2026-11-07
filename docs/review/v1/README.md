@@ -35,3 +35,7 @@ A recording uploaded but never attached stays unreadable. A scheduled privileged
 ## Release verification
 
 Backend PR #43 squash-merged as `6b332ad` into the UI branch; combined PR #40 passed CI on `ea890a9` and owner squash-merged to main as `04d1e71`. After main integration, 23 local tests, TypeScript and iOS export pass. Local browser checks confirm the recorder remains available and the alarm preview Stop returns Home with no browser errors. The existing W1 alarm delivery/snooze phone checks remain separate from V1.
+
+## Production deployment blocker
+
+Owner release `9d3a9a3` was pushed after green PR CI, but Vercel rejected Git auto-deploy with its Hobby build rate limit. A normal dashboard Create Deployment for production `main` confirmed: `Resource is limited - try again in 24 hours (more than 100, code: "api-deployments-free-per-day")`. No production deployment of V1 completed. No billing/project/auth settings were changed. Retry latest main after the daily quota resets; do not claim the preview is production. Evidence: `vercel-daily-limit.png`.
