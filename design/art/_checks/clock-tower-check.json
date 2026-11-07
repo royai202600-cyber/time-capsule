@@ -1,0 +1,29 @@
+{
+  "canvas": [
+    1024,
+    1024
+  ],
+  "bbox_alpha_gt25": [
+    273,
+    100,
+    750,
+    899
+  ],
+  "corners_alpha_zero": true,
+  "rest_stack_exact": true,
+  "opening": "J",
+  "pivot": {
+    "x": 355,
+    "y": 545
+  },
+  "mouth": {
+    "x": 471,
+    "y": 493
+  },
+  "baseY": 898,
+  "sparkle": {
+    "x": 600,
+    "y": 545
+  },
+  "ip_sensitivity": "Original small keepsake clock, loosely inspired by red brick and pale stone; no exact tower silhouette, logos, symbols, characters, numerals or religious imagery."
+}

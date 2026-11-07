@@ -1,0 +1,86 @@
+{
+  "id": "clock-tower",
+  "opening": "J",
+  "idleMs": 4200,
+  "idle": [
+    {
+      "type": "breathe",
+      "amount": 0.025
+    }
+  ],
+  "layers": [
+    {
+      "name": "tower",
+      "file": "vessel-clock-tower-tower.png",
+      "role": "static"
+    },
+    {
+      "name": "door",
+      "file": "vessel-clock-tower-door.png",
+      "role": "door",
+      "pivot": {
+        "x": 355,
+        "y": 545
+      },
+      "open": [
+        {
+          "at": 0,
+          "scaleX": 1
+        },
+        {
+          "at": 0.3,
+          "scaleX": 1
+        },
+        {
+          "at": 1,
+          "scaleX": 0.04
+        }
+      ]
+    },
+    {
+      "name": "hands",
+      "file": "vessel-clock-tower-hands.png",
+      "role": "fade",
+      "pivot": {
+        "x": 474,
+        "y": 545
+      },
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.3,
+          "opacity": 0
+        },
+        {
+          "at": 1,
+          "opacity": 0
+        }
+      ],
+      "idle": [
+        {
+          "type": "spin",
+          "pivot": {
+            "x": 474,
+            "y": 545
+          },
+          "turns": 1
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 471,
+    "y": 493
+  },
+  "baseY": 898,
+  "sparkle": {
+    "x": 600,
+    "y": 545
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}
