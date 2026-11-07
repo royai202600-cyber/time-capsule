@@ -19,4 +19,4 @@ The proposed vessel blocks are in ../manifest.json. No app or database wiring is
 
 IP review: traditional/generic festival objects; blank tags/coin, no logos, text, branded silhouettes or franchise characters.
 
-T10c-fix: [40/120 px before/after](b3-fix-review.png) · [browser review](b3-fix-review.html). PR #56 is merged; follow-up visual approval is pending.
+T10c-fix: [40/120 px before/after](b3-fix-review.png) · [browser review](b3-fix-review.html). Follow-up visual approval is pending.

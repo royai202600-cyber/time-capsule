@@ -1,0 +1,53 @@
+{
+  "id": "paper-plane",
+  "opening": "E",
+  "idleMs": 4000,
+  "layers": [
+    {
+      "name": "plane",
+      "file": "vessel-paper-plane-plane.png",
+      "role": "static"
+    },
+    {
+      "name": "fold",
+      "file": "vessel-paper-plane-fold.png",
+      "role": "hinge",
+      "pivot": {
+        "x": 510,
+        "y": 589
+      },
+      "open": [
+        {
+          "at": 0,
+          "scaleY": 1
+        },
+        {
+          "at": 0.5,
+          "scaleY": 0.18
+        },
+        {
+          "at": 1,
+          "scaleY": -0.8
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 507,
+    "y": 712
+  },
+  "baseY": 900,
+  "sparkle": {
+    "x": 530,
+    "y": 596
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null,
+  "idle": [
+    {
+      "type": "float",
+      "amount": 0.03
+    }
+  ]
+}

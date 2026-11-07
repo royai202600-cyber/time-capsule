@@ -1,0 +1,84 @@
+{
+  "id": "pager",
+  "opening": "F",
+  "idleMs": 4000,
+  "layers": [
+    {
+      "name": "body",
+      "file": "vessel-pager-body.png",
+      "role": "static"
+    },
+    {
+      "name": "screen",
+      "file": "vessel-pager-screen.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 0.55
+        },
+        {
+          "at": 1,
+          "opacity": 1
+        }
+      ],
+      "idle": [
+        {
+          "type": "glow",
+          "base": 0.55,
+          "range": 0.4
+        }
+      ]
+    },
+    {
+      "name": "cover",
+      "file": "vessel-pager-cover.png",
+      "role": "slide",
+      "open": [
+        {
+          "at": 0,
+          "x": 0,
+          "y": 0,
+          "scale": 1,
+          "opacity": 1
+        },
+        {
+          "at": 0.5,
+          "x": 0.05,
+          "y": -0.1,
+          "scale": 0.85,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "x": 0.15,
+          "y": -0.37,
+          "scale": 0.68,
+          "opacity": 1
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 499,
+    "y": 519
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 437,
+    "y": 690
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null,
+  "idle": [
+    {
+      "type": "tick",
+      "deg": 3,
+      "pivot": {
+        "x": 512,
+        "y": 899
+      }
+    }
+  ]
+}

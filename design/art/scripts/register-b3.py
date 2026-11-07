@@ -55,5 +55,6 @@ def main():
  review=['# B3 art review','', 'Generated with built-in gpt-image-2 and approved style sheet A. All ten CLOSED stacks match their masters exactly.','', '[Contact sheet](b3-contact-sheet.png)','']
  for id in specs:review+=['- '+id+': [motion]('+id+'-motion.png) · [40/120 px]('+id+'-silhouette.png)']
  review+=['','The proposed vessel blocks are in ../manifest.json. No app or database wiring is included.','', 'IP review: traditional/generic festival objects; blank tags/coin, no logos, text, branded silhouettes or franchise characters.','']
+ if (C/'b3-fix-config.json').exists():review+=['T10c-fix: [40/120 px before/after](b3-fix-review.png) · [browser review](b3-fix-review.html). Follow-up visual approval is pending.','']
  (C/'b3-review.md').write_text('\n'.join(review));print('Registered',len(paths),'B3 masters, retaining other art metadata.')
 if __name__=='__main__':main()
