@@ -1,0 +1,89 @@
+{
+  "project": "uzimuygyxwraybsipeij",
+  "completed": true,
+  "checks": [
+    {
+      "check": "three real password sessions use the public key",
+      "passed": true
+    },
+    {
+      "check": "prediction-only send succeeds; metadata exposes kind but no prediction text",
+      "passed": true
+    },
+    {
+      "check": "sender, recipient and stranger cannot read sealed content directly",
+      "passed": true
+    },
+    {
+      "check": "sender lookup and both records reveal nothing before opening",
+      "passed": true
+    },
+    {
+      "check": "time lock and recipient-only opening are preserved",
+      "passed": true
+    },
+    {
+      "check": "no participant can stamp an unopened prediction",
+      "passed": true
+    },
+    {
+      "check": "clients cannot patch verdict, kind, open time or sealed text directly",
+      "passed": true
+    },
+    {
+      "check": "anonymous callers cannot execute any prediction or send/open RPC",
+      "passed": true
+    },
+    {
+      "check": "invalid kind, absent/blank/overlong prediction and prediction on a letter are rejected",
+      "passed": true
+    },
+    {
+      "check": "friendship, vessel ownership, future time and brand-place guards are preserved",
+      "passed": true
+    },
+    {
+      "check": "voice is unreadable before opening and attachment reuse/duration guards hold",
+      "passed": true
+    },
+    {
+      "check": "recipient opens prediction and private letter; repeated opening keeps timestamp",
+      "passed": true
+    },
+    {
+      "check": "only recipient can change true/false/null verdict and clear its timestamp",
+      "passed": true
+    },
+    {
+      "check": "recipient and stranger cannot use sender lookup; stranger cannot see records",
+      "passed": true
+    },
+    {
+      "check": "opened self prediction appears once with null other; roles are caller-relative",
+      "passed": true
+    },
+    {
+      "check": "legacy letter plus voice opens; sender lookup stays empty and verdict is forbidden",
+      "passed": true
+    },
+    {
+      "check": "concurrent attachment attempts accept one recording only",
+      "passed": true
+    },
+    {
+      "check": "ordinary letter defaults still work with the pre-voice argument shape",
+      "passed": true
+    }
+  ],
+  "usedServiceRoleForAssertions": false,
+  "fixtureCleanup": {
+    "usersRemaining": 0,
+    "profilesRemaining": 0,
+    "capsulesRemaining": 0,
+    "objectsRemaining": 0,
+    "objectsRemovedViaStorageAPI": 2,
+    "browserFixtureSessionCleared": true
+  },
+  "catalogueRows": 7,
+  "batch1Applied": false
+}

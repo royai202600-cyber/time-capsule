@@ -1,6 +1,6 @@
 # Making it feel like a game: Predict me (預言膠囊)
 
-Status: Roy chose this direction on 2026-11-07. The screens are built in `claude/predict-me` behind `PREDICTION_BACKEND = false`; Codex wires the backend (task P1 in `docs/TASKS.md`).
+Status: P1 backend migration is applied and PR #58 is wired to the live RPCs. Local API/browser checks passed; owner squash merge follows final CI. Frontend production release is queued for the next combined deploy. The batch-1 catalogue migration remains held, so fortune-cookie preselection waits for that release.
 
 ## The direction
 Time Capsule is about emotion and being human in the AI age, not travel. So the "game" should be the emotion itself, and it should be simple. A prediction you make about yourself or a friend fits: only real time can show whether you were right, and you can't fake a year passing.
