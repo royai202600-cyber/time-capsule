@@ -73,6 +73,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8081. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-07: Roy requested location testing without enabling macOS Location Services. Release verification therefore uses simulated browser permission/position callbacks plus native unit tests and iOS export. A real sensor fix and physical iPhone verification remain unverified and must be reported explicitly; the temporary test harness is excluded from production.
 - 2026-11-07: Roy requested more reliable foreground location and named map directions. The Journey location dot is approximate on the stylised artwork; the detailed map and server checks use real coordinates. The fictional Maison Aurèle destination uses its stored coordinates.
 - 2026-11-07: Roy asked for one written art style guide so future art stays consistent: `design/art/STYLE.md` (model, reference, style block, rules for each asset, process). AGENTS.md points to it under Owner and working style.
 - 2026-11-07: Roy extended production polish to capsule paging and discovery. Home and capsule pages share larger interpolated dots and pointer-only arrows. A device remembers the capsule nudge and dismissed swipe hint in AsyncStorage; Reduce Motion skips the nudge. Map badges render above the radius and map with a coordinate-anchored tail; all capsule pages share plain serif page numbers.

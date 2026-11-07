@@ -35,7 +35,7 @@ export function PlaceMap({ place, fix, vessel }: {
   const radiusX = Math.abs(x(place.lng + place.radius_m / (111_000 * Math.cos(place.lat * Math.PI / 180))) - x(place.lng));
   const src = `https://www.openstreetmap.org/export/embed.html?bbox=${minLng}%2C${minLat}%2C${maxLng}%2C${maxLat}&layer=mapnik`;
   return <View onLayout={(event) => setSize(event.nativeEvent.layout)} style={{ flex: 1, overflow: "hidden", backgroundColor: C.glass }}>
-    <iframe title="OpenStreetMap" src={src} style={{ position: "absolute", inset: 0, zIndex: 0, width: "100%", height: "100%", border: 0, pointerEvents: "none" }} />
+    <iframe key={`${size.width}:${size.height}`} title="OpenStreetMap" src={src} style={{ position: "absolute", inset: 0, zIndex: 0, width: "100%", height: "100%", border: 0, pointerEvents: "none" }} />
     {size.width > 0 && size.height > 0 && <Svg style={{ position: "absolute", zIndex: 1, width: "100%", height: "100%" }} pointerEvents="none">
       {fix && <Line x1={x(fix.lng)} y1={y(fix.lat)} x2={x(place.lng)} y2={y(place.lat)} stroke={C.blue} strokeWidth="2" strokeDasharray="5 5" />}
       <Ellipse cx={x(place.lng)} cy={y(place.lat)} rx={radiusX} ry={radiusY} stroke={C.blue} strokeWidth="2" fill="#5A8FD055" />
