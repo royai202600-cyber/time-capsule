@@ -1,5 +1,5 @@
 import React from 'react';
-import Svg, { Circle, Defs, G, Line, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
+import Svg, { Circle, G, Line, Path, Rect } from 'react-native-svg';
 import { C } from '../theme';
 
 // Hand-built dock icons in the icon-reference style: plum ink lines over soft paper and brass fills.
@@ -53,13 +53,10 @@ const SEAL = (() => {
 /** New capsule: a wax seal with an embossed plus. Fills a 68 px button. */
 export function SealPlusIcon({ size = 68 }: { size?: number }) {
   return <Svg width={size} height={size} viewBox="0 0 68 68" fill="none">
-    <Defs>
-      <LinearGradient id="wax" x1="0.2" y1="0.1" x2="0.8" y2="0.95">
-        <Stop offset="0" stopColor="#BD4A66" />
-        <Stop offset="1" stopColor="#8A2840" />
-      </LinearGradient>
-    </Defs>
-    <Path d={SEAL} fill="url(#wax)" stroke="#74203A" strokeWidth={1} />
+    {/* Solid fills only: a gradient referenced by id can fail to render (the button then shows white). */}
+    <Path d={SEAL} fill="#9A2E48" stroke="#74203A" strokeWidth={1} />
+    <Circle cx={30} cy={29} r={23} fill="#BD4A66" opacity={0.55} />
+    <Circle cx={27} cy={25} r={13} fill="#C95A75" opacity={0.35} />
     <Circle cx={34} cy={34} r={21.5} stroke="#6F1D35" strokeOpacity={0.55} strokeWidth={1.6} />
     <Circle cx={34} cy={34} r={20} stroke="#E07A93" strokeOpacity={0.35} strokeWidth={0.8} />
     {/* soft highlight where light catches the wax */}
