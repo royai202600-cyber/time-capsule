@@ -11,7 +11,7 @@ import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
 import { useF1Text } from "../../i18n/f1";
 import { useAuth } from "../../services/auth";
-import { C, handwriting, motion, sans, serif, shadows } from "../../theme";
+import { C, handwriting, sans, serif, shadows } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
 import type { VesselKind } from "../../vesselArt";
 import { usePlaceDistance } from "../journey/location";
@@ -20,18 +20,9 @@ import { distance, formatDate, loadBundle, status, type Bundle, type Row } from 
 const W = 300, GAP = 16, STEP = W + GAP;
 const empty: Bundle = { capsules: [], people: {}, places: {}, vessels: {} };
 
-function CardVessel({ kind, state, reduced }: { kind: VesselKind; state: string; reduced: boolean }) {
-  const breath = useRef(new Animated.Value(0)).current;
+// Only the centred card's vessel runs its idle loop; the others rest, so a long stack costs nothing.
+function CardVessel({ kind, state, reduced, active }: { kind: VesselKind; state: string; reduced: boolean; active: boolean }) {
   const glow = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    if (reduced || state === "opened") return;
-    const anim = Animated.loop(Animated.sequence([
-      Animated.timing(breath, { toValue: 1, duration: motion.breathe.duration / 2, useNativeDriver: true }),
-      Animated.timing(breath, { toValue: 0, duration: motion.breathe.duration / 2, useNativeDriver: true }),
-    ]));
-    anim.start();
-    return () => anim.stop();
-  }, [breath, reduced, state]);
   useEffect(() => {
     if (state !== "ready" || reduced) return;
     const anim = Animated.loop(Animated.sequence([
@@ -41,9 +32,9 @@ function CardVessel({ kind, state, reduced }: { kind: VesselKind; state: string;
     anim.start();
     return () => anim.stop();
   }, [glow, reduced, state]);
-  return <Animated.View style={{ width: 180, height: 180, alignItems: "center", justifyContent: "center", opacity: state === "opened" ? 0.55 : 1, transform: [{ scale: breath.interpolate({ inputRange: [0, 1], outputRange: [1, motion.breathe.scale] }) }, { translateY: breath.interpolate({ inputRange: [0, 1], outputRange: [0, motion.breathe.translateY] }) }] }}>
+  return <Animated.View style={{ width: 180, height: 180, alignItems: "center", justifyContent: "center", opacity: state === "opened" ? 0.55 : 1 }}>
     {state === "ready" && <Animated.View style={{ position: "absolute", width: 160, height: 160, borderRadius: 80, backgroundColor: C.lightBlue, opacity: reduced ? 0.16 : glow.interpolate({ inputRange: [0, 1], outputRange: [0.10, 0.28] }), transform: [{ scale: glow.interpolate({ inputRange: [0, 1], outputRange: [1, 1.18] }) }] }} />}
-    <Vessel kind={kind} size={150} ready={state === "ready"} />
+    <Vessel kind={kind} size={150} ready={state === "ready"} idle={active && state !== "opened"} />
   </Animated.View>;
 }
 
@@ -122,7 +113,7 @@ export default function HomeScreen() {
         const inputRange = [(i - 1) * STEP, i * STEP, (i + 1) * STEP];
         return <Animated.View style={{ opacity: scroll.interpolate({ inputRange, outputRange: [0.5, 1, 0.5], extrapolate: "clamp" }), transform: [{ perspective: 900 }, { scale: scroll.interpolate({ inputRange, outputRange: [0.9, 1, 0.9], extrapolate: "clamp" }) }, { rotateY: scroll.interpolate({ inputRange, outputRange: ["8deg", "0deg", "-8deg"], extrapolate: "clamp" }) }] }}><Pressable onPress={() => { const centre = Math.max(0, Math.min(rows.length - 1, Math.round(scrollOffset.current / STEP))); if (i === centre) open(c); else { list.current?.scrollToIndex({ index: i, animated: true }); setIndex(i); void haptics.tick(); } }} accessibilityRole="button" accessibilityLabel={`${headline(c)}, ${p.name}`} style={{ width: W, height: 430, backgroundColor: C.white, borderWidth: 1.5, borderColor: "#5B6474", borderRadius: 20, padding: 18, alignItems: "center", justifyContent: "space-between", ...shadows.card }}>
           <View style={{ height: 26, flexDirection: "row", gap: 6, alignItems: "center" }}>{side === "inbox" && !c.seen_at && !c.opened_at && <Text style={{ color: C.wax, fontSize: 11 }}>{t("home.newTag")}</Text>}{c.handwritten && <Text style={{ color: C.wax, fontFamily: handwriting }}>{t("home.handTag")}</Text>}{c.edition_no && v?.brand && <Text style={{ color: C.brass, fontSize: 11 }}>{v.brand} No.{String(c.edition_no).padStart(3, "0")}</Text>}</View>
-          <CardVessel kind={c.vessel as VesselKind} state={state} reduced={reduced} />
+          <CardVessel kind={c.vessel as VesselKind} state={state} reduced={reduced} active={i === index} />
           {headlineView(c, state)}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: "center", gap: 6, maxWidth: "100%", marginBottom: 12 }}><ArtIcon name="pin" size={18} color="#4A5466" /><Text numberOfLines={1} style={{ color: "#4A5466", fontFamily: serif, fontSize: 15, flexShrink: 1 }}>{pl ? pl[language === "zh" ? "name_zh" : "name_en"] : t("home.anywhere")}</Text></View>
           <View style={{ width: "100%", borderTopWidth: 1, borderColor: C.line, paddingTop: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}><View style={{ flexDirection: "row", alignItems: "center", gap: 5, flexShrink: 1 }}><Text style={{ color: C.muted, fontSize: 11 }}>{t(side === "inbox" ? "home.from" : "home.to")}</Text><Avatar avatar={p.avatar as any} size={30} future={side === "sent" && c.recipient === session?.user.id} /><Text numberOfLines={1} style={{ color: C.ink, fontSize: 11, flexShrink: 1 }}>{p.name}</Text></View><Text style={{ color: C.muted, fontSize: 10 }}>{formatDate(c.sealed_at, language)}</Text></View>

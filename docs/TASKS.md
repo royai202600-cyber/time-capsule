@@ -15,6 +15,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | F0 | Expo native app foundation | Codex | SDK 58 Expo Go sign-in and profile save verified by Roy; shared foundation ready for F1–F4. Native Google needs a development build; email verification/reset delivery awaits T2. |
 | F1 | Home and capsule opening | Codex | Claude verified Home → opening ritual → letter and opening record in browser. F3 native location and map, full-width pages, Sent routing and package QR are integrated; typecheck and web/iOS exports pass. |
 | F4 | Cabinet, Me, Friends, Invite and portrait picker | Codex | Roy confirmed the Expo Go build works; web layout and typecheck pass. T9 portrait manifest integration remains pending. |
+| M1 | Vessel idle motion: each resting vessel moves gently (3–6 s loops) using its existing layers; Reduce Motion stays static | Claude | Browser-checked at 375 px; PR open for Codex to merge. Expo Go check at the end. |
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
@@ -27,12 +28,14 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | T6 | Installable app (PWA): manifest, icons, offline shell | Claude | "Add to Home Screen" gives a proper icon and full-screen app |
 | T7 | Brand capsules for real: staff check-in QR at the boutique, gift escrow/expiry rules, partner console (README §2, §7) | Claude plans → Codex builds | To be specified |
 | T8 | Real payments for the shop (only when Roy decides) | Codex | Roy has chosen a provider |
+| A2 | Idle glint art: `vessel-dome-glint` and `fx-glint` (gpt-image-2, per STYLE.md), then Claude wires them into the M1 idle loops | Codex art → Claude wiring | Roy approves the review overlay; art PR merged |
 | N3 | TODO: in-app account deletion | Codex | A signed-in user can initiate deletion inside the app before App Store release. Current support-email request remains the interim process. |
 
 ## End-of-project phone checklist
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+- N4: Native seal pan blocks the ScrollView, with consistent animation drivers and reliable cancellation/snap-back. Screen/Auth share keyboard avoidance; native Create actions stay above the keyboard. Roy confirmed keyboard, seal drag, release and flick in iPhone Expo Go; web checks and iOS/web exports pass. Physical screenshots were not captured from this Mac. Release follows green PR CI.
 - PR #26: Restore the original four solid sealed lines (92/76/88/56%) with soft blur. Green CI; squash-merged as `7653a9b`, followed by an owner-authored production release.
 - PR #24: Sent view sealed placeholder uses blurred word-shaped lines. Rebased PR CI passed; squash-merged as `bdae57d`, followed by an owner-authored release commit for production.
 - A1: Illustrated Expo app replaced the Vite production app in PR #16; PR #17 fixed Shop session loading. Roy's production follow-up adds Chinese-only letter spacing, scroll-driven pagination and the animated seal guide, with 390 px comparison captures under `docs/review/production-polish/`. Roy tests on his phone at the end.
