@@ -2,6 +2,7 @@ import { Platform } from "react-native";
 import * as Crypto from "expo-crypto";
 import { setAudioModeAsync } from "expo-audio";
 import { supabase } from "./supabase";
+import type { Database } from "./database.types";
 
 // Sender voice notes. A voice note is sealed exactly like the letter:
 // 1. The sender uploads the recording to the private `voice-notes` bucket at
@@ -12,7 +13,7 @@ import { supabase } from "./supabase";
 //    create a short-lived signed URL for it. The sender can never read it back.
 
 /** Codex sets this to true once the bucket, policies and `send_capsule`/`open_capsule` changes are live. */
-export const VOICE_BACKEND = false;
+export const VOICE_BACKEND = true;
 /** Recording UI: live with the backend; in development it runs against an in-memory stub. */
 export const VOICE_ENABLED = VOICE_BACKEND || __DEV__;
 export const VOICE_BUCKET = "voice-notes";
@@ -22,7 +23,7 @@ const SIGNED_URL_SECONDS = 600;
 
 export type VoiceClip = { uri: string; durationMs: number };
 /** What `open_capsule()` adds to each returned row. */
-export type OpenedVoice = { voice_path?: string | null; voice_ms?: number | null };
+export type OpenedVoice = Pick<Database["public"]["Functions"]["open_capsule"]["Returns"][number], "voice_path" | "voice_ms">;
 
 // iPhone Safari records only audio/mp4. Prefer it everywhere it is supported, so a note recorded
 // in a desktop browser still plays in the iOS app and alarm; fall back to WebM (older Chrome/Firefox).
@@ -70,7 +71,7 @@ export async function voiceNoteForCapsule(capsuleId: string): Promise<{ url: str
   if (!VOICE_BACKEND) { const clip = stubByCapsule.get(capsuleId); return clip ? { url: clip.uri, durationMs: clip.durationMs } : null; }
   const { data, error } = await supabase.rpc("open_capsule", { p_id: capsuleId });
   if (error) throw error;
-  const row = (data as OpenedVoice[] | null)?.[0];
+  const row = data?.[0];
   const url = await voiceUrl(capsuleId, row);
   return url ? { url, durationMs: row?.voice_ms ?? null } : null;
 }

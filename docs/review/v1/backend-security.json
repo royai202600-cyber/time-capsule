@@ -1,0 +1,73 @@
+{
+  "project": "uzimuygyxwraybsipeij",
+  "completed": true,
+  "checks": [
+    {
+      "check": "sender uploads own folder",
+      "passed": true
+    },
+    {
+      "check": "another folder and duplicate path denied",
+      "passed": true
+    },
+    {
+      "check": "invalid extension, MIME and >2 MB denied",
+      "passed": true
+    },
+    {
+      "check": "sender cannot download, sign or list pending upload",
+      "passed": true
+    },
+    {
+      "check": "send rejects foreign, missing and unowned objects and bad durations",
+      "passed": true
+    },
+    {
+      "check": "recipient and third party cannot sign/read before opening",
+      "passed": true
+    },
+    {
+      "check": "sealed contents stay unavailable through the table API",
+      "passed": true
+    },
+    {
+      "check": "has_voice is non-secret metadata",
+      "passed": true
+    },
+    {
+      "check": "time lock still enforced for a capsule without voice",
+      "passed": true
+    },
+    {
+      "check": "recipient can open and sign; simultaneous opens preserve first timestamp",
+      "passed": true
+    },
+    {
+      "check": "sender and third party still cannot download, sign or list after opening",
+      "passed": true
+    },
+    {
+      "check": "attached path cannot be reused",
+      "passed": true
+    },
+    {
+      "check": "no client can replace or delete the sealed object",
+      "passed": true
+    },
+    {
+      "check": "self-capsule is unreadable before opening and readable as recipient afterwards",
+      "passed": true
+    },
+    {
+      "check": "concurrent sends attach an upload only once",
+      "passed": true
+    },
+    {
+      "check": "voice-less opening retains place/GPS checks and returns null voice fields",
+      "passed": true
+    }
+  ],
+  "fixtureUsersRemoved": true,
+  "fixtureObjectsRemoved": 4,
+  "usedServiceRoleForAssertions": false
+}

@@ -47,8 +47,8 @@ export const capsules = {
       p_accuracy: accuracy,
     }),
   // p_voice / p_voice_ms: a voice note already uploaded to the sender's folder (services/voice.ts).
-  send: (args: Database["public"]["Functions"]["send_capsule"]["Args"] & { p_voice?: string; p_voice_ms?: number }) =>
-    supabase.rpc("send_capsule", args as Database["public"]["Functions"]["send_capsule"]["Args"]),
+  send: (args: Database["public"]["Functions"]["send_capsule"]["Args"]) =>
+    supabase.rpc("send_capsule", args),
 };
 export const places = {
   list: () => supabase.from("places").select("*").order("sort"),
