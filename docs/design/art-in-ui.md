@@ -19,7 +19,8 @@ The vessels, portraits, scenes and stamps are illustrated, but a lot of the UI a
 The verdict moment is the new game's peak, so it should feel like an act, not a form.
 - The prediction sits on a strip of cream paper with torn edges, in handwriting (LXGW WenKai TC), above the letter.
 - Two seals to press: **brass with an embossed ✓** for 成真了 / Came true, **ink blue with an embossed wave** for 沒有 / Didn't. Press-and-hold is not needed; a tap with a short "stamp down" (scale 1.08 → 1.0, haptic success) is enough.
-- After answering, the chosen seal sits stamped on the strip's corner. The same small seal shows on the sender's Sent card and on the gold cards in Me → 預言紀錄.
+- After answering, the chosen seal sits stamped on the strip's corner. The same small seal shows on the sender's Sent card, and the brass ✓ seal is the "gold seal" on the came-true cards in Me → 預言紀錄.
+- Follows `docs/design/game-loops.md` (PR #54): answering is optional, and tapping the stamped seal lets the recipient change the answer later. The sender sees only the prediction line and the seal, never the letter.
 - Effort: **small** (the seal shape exists). Depends on the Predict-me backend.
 
 ### 2. Postmarks
@@ -36,7 +37,7 @@ The countdown is the one thing a waiting capsule shows; it should feel like a cl
 - Effort: **small**.
 
 ### 4. Seal loader
-- A small keyhole wax seal (same as hold-to-open) with a short brass arc circling its groove, replacing `ActivityIndicator` on Home, the capsule page, Shop and the letter's voice note. Optional caption, for example 正在取出膠囊… / Fetching your capsule….
+- A small `SealHoldIcon` (the hold-to-open keyhole seal from PR #53, reused as is) with a short brass arc circling its groove instead of filling it, replacing `ActivityIndicator` on Home, the capsule page, Shop and the letter's voice note. Optional caption, for example 正在取出膠囊… / Fetching your capsule….
 - Reduce Motion: the arc stays still and pulses opacity instead.
 - Effort: **small**.
 
