@@ -128,7 +128,7 @@ function ShelfSlot({ item, name, selected, left, surface, size, face, slotWidth,
           onHoverOut={() => moveHover(0)}
           onPress={() => vesselRef.current?.measureInWindow((x: number, y: number, width: number, height: number) => onChoose({ x, y, width, height }))}
           style={[{ width: size, height: size }, Platform.OS === "web" ? { cursor: "pointer" } as any : null]}>
-          <Vessel kind={id} size={size} idle={item.owned && !selected} />
+          <Vessel kind={id} size={size} />
           {glass && Platform.OS === "web" && !reduced && <Animated.Image pointerEvents="none" source={glass}
             resizeMode="contain" style={{ position: "absolute", width: size, height: size,
               opacity: hover.interpolate({ inputRange: [0, 1], outputRange: [0, .13] }),

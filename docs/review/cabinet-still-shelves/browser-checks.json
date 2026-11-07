@@ -1,0 +1,21 @@
+{
+  "homePlus": {
+    "baseFill": "#9A2E48",
+    "gradientCount": 0
+  },
+  "shelves": {
+    "stillBetweenObservations": true,
+    "assembledArt": true
+  },
+  "hover": {
+    "liftPx": -6,
+    "scale": 1.05,
+    "sheenOpacity": 0.13,
+    "parallaxObserved": true
+  },
+  "closeup": {
+    "moves": true,
+    "reducedMotionUsesAssembled": true
+  },
+  "browserErrors": []
+}
