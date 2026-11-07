@@ -96,7 +96,11 @@ export default function WakeScreen() {
   const stop = () => { void haptics.tap(); leave(); };
   const snooze = async () => {
     void haptics.tick();
-    if (!preview && alarm) await snoozeAlarm(alarm.id).catch(() => null);
+    if (!preview) {
+      try {
+        if (!alarm || !await snoozeAlarm(alarm.id)) { setNote(t("snoozeError")); return; }
+      } catch { setNote(t("snoozeError")); return; }
+    }
     leave(preview ? t("previewNote") : t("snoozed", SNOOZE_MINUTES));
   };
 
