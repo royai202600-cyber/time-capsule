@@ -67,10 +67,19 @@ export default function CapsuleScreen() {
   const [now, setNow] = useState(Date.now());
   const [charge, setCharge] = useState(0);
   const [burst, setBurst] = useState(false);
-  // Landmark reward: before opening a place-locked capsule, note its place's earnable vessel and whether
-  // it's already owned; if opening grants it, celebrate (the server does the granting in open_capsule).
-  const earnable = useRef<{ id: string; owned: boolean } | null>(null);
-  const [earned, setEarned] = useState<string | null>(null);
+  const [earned, setEarned] = useState<VesselKind | null>(null);
+  const revealScope = useRef(0);
+  const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    revealScope.current += 1;
+    setEarned(null);
+    setOpened(null);
+    setBusy(false);
+    return () => {
+      revealScope.current += 1;
+      if (revealTimer.current) clearTimeout(revealTimer.current);
+    };
+  }, [id, side, session?.user.id]);
   const pages = useRef<React.ElementRef<typeof ScrollView>>(null);
   const pagePosition = useRef(new Animated.Value(0)).current;
   const pageIndex = useRef(0);
@@ -82,11 +91,6 @@ export default function CapsuleScreen() {
   const { fix } = usePlaceDistance(pl);
   const v = c ? bundle.vessels[c.vessel] : undefined;
   const sender = c ? bundle.people[c.sender] : undefined;
-  useEffect(() => {
-    earnable.current = null;
-    if (!c?.place || c.opened_at || side !== "inbox" || !session?.user.id) return;
-    void vessels.earnedAt(c.place, session.user.id).then(r => { earnable.current = r; }).catch(() => {});
-  }, [c?.id, c?.place, c?.opened_at, side, session?.user.id]);
   const receiver = c ? bundle.people[c.recipient] : undefined;
   const name = side === "sent" && c?.recipient === session?.user.id ? t("home.future") : (side === "sent" ? receiver?.name : sender?.name) ?? t("home.future");
   const placeName = pl ? pl[language === "zh" ? "name_zh" : "name_en"] : "";
@@ -132,12 +136,19 @@ export default function CapsuleScreen() {
       goPage(1);
       return;
     }
+    const scope = revealScope.current;
+    // Finish the before-open lookup before the RPC can award anything. A failed lookup
+    // suppresses the decoration, never the opening, and is never treated as "not owned".
+    const reward = c.place && !c.opened_at && session?.user.id
+      ? await vessels.earnedAt(c.place, session.user.id).catch(() => null) : null;
+    if (scope !== revealScope.current) return;
     setBurst(true);
     lid.value = reduced ? 1 : withSpring(1, motion.spring.heavy);
     const [result] = await Promise.all([
       openForRecipient(c.id, latestFix),
       new Promise(resolve => setTimeout(resolve, reduced ? 0 : 850)),
     ]);
+    if (scope !== revealScope.current) return;
     if (result.error || !result.data?.[0]) {
       lid.value = reduced ? 0 : withSpring(0, motion.spring.heavy);
       setBurst(false);
@@ -151,10 +162,14 @@ export default function CapsuleScreen() {
     }
     setOpened(result.data[0]);
     void haptics.success();
-    const reward = earnable.current;
-    if (reward && !reward.owned && session?.user.id && c.place) {
+    if (reward && !reward.owned && reward.id in VESSELS && session?.user.id && c.place) {
       const place = c.place, userId = session.user.id;
-      setTimeout(() => void vessels.earnedAt(place, userId).then(now => { if (now?.owned) setEarned(now.id); }).catch(() => {}), reduced ? 300 : 1400);
+      revealTimer.current = setTimeout(() => {
+        if (scope !== revealScope.current) return;
+        void vessels.earnedAt(place, userId).then(after => {
+          if (scope === revealScope.current && after?.owned && after.id === reward.id) setEarned(reward.id as VesselKind);
+        }).catch(() => {});
+      }, reduced ? 300 : 1400);
     }
     setBundle(old => ({ ...old, capsules: old.capsules.map(row => row.id === c.id ? { ...row, opened_at: result.data![0].opened_at, seen_at: row.seen_at ?? new Date().toISOString() } : row) }));
     setBusy(false);
@@ -188,8 +203,8 @@ export default function CapsuleScreen() {
       <PagerDots count={pageCount} index={page} position={pagePosition} onSelect={goPage} label={n => t("capsule.page", n)} />
       <Animated.Text style={{ opacity: discovery.hintOpacity, color: C.muted, fontFamily: sans, fontSize: 12, textAlign: "center", paddingBottom: 6 }}>{t("pager.swipe")}</Animated.Text>
     </>}
-    {earned && <LandmarkReveal kind={earned as VesselKind} placeName={(language === "zh" ? pl?.name_zh : pl?.name_en) ?? ""}
-      vesselName={(VESSELS as any)[earned]?.name[language] ?? earned}
+    {earned && <LandmarkReveal kind={earned}
+      vesselName={VESSELS[earned].name[language]}
       labels={{ kicker: t("capsule.earned.kicker"), title: t("capsule.earned.title", (language === "zh" ? pl?.name_zh : pl?.name_en) ?? ""), body: t("capsule.earned.body"), cabinet: t("capsule.earned.cabinet"), close: t("capsule.earned.close") }}
       onCabinet={() => { setEarned(null); router.push("/cabinet"); }} onClose={() => setEarned(null)} />}
   </View></SafeAreaView>;

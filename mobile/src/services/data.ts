@@ -61,9 +61,11 @@ export const vessels = {
   acquire: (id: string) => supabase.rpc("acquire_vessel", { p_vessel: id }),
   /** The landmark vessel earned by opening a capsule at this place, and whether the user already owns it. */
   earnedAt: async (place: string, userId: string) => {
-    const { data } = await supabase.from("vessels").select("id").eq("earned_place", place).maybeSingle();
+    const { data, error } = await supabase.from("vessels").select("id").eq("earned_place", place).maybeSingle();
+    if (error) throw error;
     if (!data) return null;
-    const { data: own } = await supabase.from("owned_vessels").select("vessel").eq("user_id", userId).eq("vessel", data.id).maybeSingle();
+    const { data: own, error: ownershipError } = await supabase.from("owned_vessels").select("vessel").eq("user_id", userId).eq("vessel", data.id).maybeSingle();
+    if (ownershipError) throw ownershipError;
     return { id: data.id, owned: !!own };
   },
 };
