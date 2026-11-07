@@ -37,7 +37,7 @@ def main():
  readme=(R/'README.md').read_text();lines=readme.splitlines()
  lines=[l for l in lines if not l.startswith('- T10c B3 ')]
  lines=[l for l in lines if not any(l.startswith('| `vessels/vessel-'+id+'.png`') or l.startswith('| `vessels/vessel-'+id+'-') for id in NAMES)]
- note='- T10c B3: ten original festival/keepsake vessels, complete reveal edits, exact CLOSED keyframes, measured 40/120 px and opening sheets. Lucky-cat test approved by Roy; its full drawer pulls straight forward with a rolled letter, while approved cat/paw/base/closed bytes remain unchanged. Separate dark interior layers support the pumpkin/river glows; the stocking stand stays fixed while sock/letter sway. Only river water is ground. PR #56 approved and merged as 4309b55. T10c-fix colour/shape/light review awaits Roy’s OK.'
+ note='- T10c B3: ten original festival/keepsake vessels, complete reveal edits, exact CLOSED keyframes, measured 40/120 px and opening sheets. Lucky-cat test approved by Roy; its full drawer pulls straight forward with a rolled letter, while approved cat/paw/base/closed bytes remain unchanged. Separate dark interior layers support the pumpkin/river glows; the stocking stand stays fixed while sock/letter sway. Only river water is ground. PR #56 approved and merged as 4309b55. Roy approved T10c-fix PR #61 for merge.'
  ix=lines.index('## Rules and checks')+2;lines.insert(ix,note)
  for i,l in enumerate(lines):
   if l.startswith('PNG masters live'):
@@ -55,6 +55,6 @@ def main():
  review=['# B3 art review','', 'Generated with built-in gpt-image-2 and approved style sheet A. All ten CLOSED stacks match their masters exactly.','', '[Contact sheet](b3-contact-sheet.png)','']
  for id in specs:review+=['- '+id+': [motion]('+id+'-motion.png) · [40/120 px]('+id+'-silhouette.png)']
  review+=['','The proposed vessel blocks are in ../manifest.json. No app or database wiring is included.','', 'IP review: traditional/generic festival objects; blank tags/coin, no logos, text, branded silhouettes or franchise characters.','']
- if (C/'b3-fix-config.json').exists():review+=['T10c-fix: [40/120 px before/after](b3-fix-review.png) · [browser review](b3-fix-review.html). Follow-up visual approval is pending.','']
+ if (C/'b3-fix-config.json').exists():review+=['T10c-fix: [40/120 px before/after](b3-fix-review.png) · [browser review](b3-fix-review.html). Roy approved T10c-fix PR #61 for merge.','']
  (C/'b3-review.md').write_text('\n'.join(review));print('Registered',len(paths),'B3 masters, retaining other art metadata.')
 if __name__=='__main__':main()
