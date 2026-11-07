@@ -26,6 +26,7 @@ import { openingCoordinates, usePlaceDistance } from "../journey/location";
 import { GiftQr } from "./GiftQr";
 import { LightBurst } from "./LightBurst";
 import { RitualHold } from "./RitualHold";
+import { SealedLines } from "./SealedLines";
 import { formatDate, loadOne, openForRecipient, status, type Bundle, type Opened, type Row } from "./model";
 
 const blank: Bundle = { capsules: [], people: {}, places: {}, vessels: {} };
@@ -184,7 +185,7 @@ function SenderView({ c, name, placeName, language, t }: { c: Row; name: string;
   ] as const;
   return <ScrollView contentContainerStyle={{ width: "100%", maxWidth: 600, alignSelf: "center", paddingHorizontal: 22, paddingTop: 8, paddingBottom: 50, gap: 14 }}><View style={{ alignItems: "center" }}><Vessel kind={c.vessel as VesselKind} size={190} /><Text style={{ fontFamily: serif, fontSize: 19, color: "#4A5466", marginTop: 2 }}>{(VESSELS as any)[c.vessel]?.name[language] ?? c.vessel}</Text>{!c.opened_at && <Countdown until={c.open_at} />}</View>
     <View style={{ paddingLeft: 8, gap: 0 }}>{stages.map(([label, date, done], i) => <View key={i} style={{ flexDirection: "row", gap: 16, minHeight: 56, opacity: done ? 1 : .7 }}><View style={{ width: 1, backgroundColor: i === stages.length - 1 ? "transparent" : "#CDD5DF", marginLeft: 6, position: "absolute", top: 14, bottom: -4 }} /><View style={{ width: 14, height: 14, borderRadius: 7, borderWidth: 2, borderColor: done ? C.blue : "#CDD5DF", backgroundColor: done ? C.blue : C.white, marginTop: 3 }} /><View style={{ flex: 1 }}><Text style={{ fontFamily: sans, color: C.ink, fontSize: 15 }}>{label}</Text><Text style={{ color: C.muted, fontFamily: sans, fontSize: 13, marginTop: 3 }}>{date}</Text></View></View>)}</View>
-    <View style={{ borderWidth: 1.5, borderStyle: "dashed", borderColor: "#CDD5DF", borderRadius: 12, paddingHorizontal: 22, paddingVertical: 20, gap: 7, backgroundColor: "rgba(255,255,255,.25)" }}>{[92, 76, 88, 56].map((width, i) => <View key={i} style={{ width: `${width}%`, height: 7, borderRadius: 4, backgroundColor: "#CDD5DF", opacity: .45 }} />)}<Text style={{ color: C.muted, fontFamily: sans, fontSize: 13, textAlign: "center", lineHeight: 21, marginTop: 12 }}>{t("capsule.sealed")}</Text></View>
+    <View style={{ borderWidth: 1.5, borderStyle: "dashed", borderColor: "#CDD5DF", borderRadius: 12, paddingHorizontal: 22, paddingVertical: 20, gap: 7, backgroundColor: "rgba(255,255,255,.25)" }}><SealedLines /><Text style={{ color: C.muted, fontFamily: sans, fontSize: 13, textAlign: "center", lineHeight: 21, marginTop: 12 }}>{t("capsule.sealed")}</Text></View>
     <View style={{ alignItems: "center", paddingTop: 4 }}><Text style={{ fontFamily: serif, fontSize: 18, color: C.ink, textAlign: "center" }}>「{c.hint || t("capsule.defaultHint")}」</Text><Text style={{ color: C.muted, fontFamily: sans, fontSize: 13, textAlign: "center", marginTop: 4 }}>{t("capsule.yourHint")}</Text></View>
   </ScrollView>;
 }
