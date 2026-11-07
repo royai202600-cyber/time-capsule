@@ -4,12 +4,13 @@ To make new art, follow [STYLE.md](STYLE.md). This README lists what already exi
 
 Roy chose style sheet A. All generated masters use the built-in `gpt-image-2` image tool with the approved sheet as their style reference; the exact prompts and any postprocessing are in `manifest.json`.
 
-PNG masters live in `design/art/`. WebP copies live at matching paths in `public/art/`, except the style sheets and `_checks/`. Names use kebab-case: `<category>-<id>-<part>` where a part exists. Vessel IDs: dome, bottle, envelope, tin, lantern, musicbox, maison, snow-globe, mixtape, instant-camera, ramen, fortune-cookie, red-packet, phone-booth, firefly-jar, hourglass, gashapon, clock-tower, senado-fountain, bamboo-tower, gate-lantern, torii-scroll, palace-pavilion, lionfish-fountain, golden-roof, gate-lacquer, twin-towers. Place IDs: senado, tst-clock, taipei101, sensoji, fushimi, gyeongbok, merlion, grandpal, wumen, petronas, aurele-cotai.
+PNG masters live in `design/art/`. WebP copies live at matching paths in `public/art/`, except the style sheets and `_checks/`. Names use kebab-case: `<category>-<id>-<part>` where a part exists. Vessel IDs: dome, bottle, envelope, tin, lantern, musicbox, maison, snow-globe, mixtape, instant-camera, ramen, fortune-cookie, red-packet, phone-booth, firefly-jar, hourglass, gashapon, clock-tower, senado-fountain, bamboo-tower, gate-lantern, torii-scroll, palace-pavilion, lionfish-fountain, golden-roof, gate-lacquer, twin-towers, lucky-cat, mooncake-tin, cake-box, candy-box, chocolate-heart, stocking, pumpkin, rice-dumpling, wish-tag, river-lantern. Place IDs: senado, tst-clock, taipei101, sensoji, fushimi, gyeongbok, merlion, grandpal, wumen, petronas, aurele-cotai.
 
 The original SVG art remains in `src/art.js` and is recoverable from Git tag `art-svg-v1`. These bitmap assets are not wired into app screens yet.
 
 ## Rules and checks
 
+- T10c B3: ten original festival/keepsake vessels, complete reveal edits, exact CLOSED keyframes, measured 40/120 px and opening sheets. Lucky-cat test approved by Roy; its full drawer pulls straight forward with a rolled letter, while approved cat/paw/base/closed bytes remain unchanged. Separate dark interior layers support the pumpkin/river glows; the stocking stand stays fixed while sock/letter sway. Only river water is ground. Final batch approval remains pending.
 - Music box and ring box assembled views are closed. Their lids are separate complete parts. Vessel part order and 120 px comparisons are in `_checks/`; lid, flap and cork pivots are in `manifest.json` and `_checks/pivots.json`.
 - Dome stack: base → rose → glass. Bottle stack: waves → letter → body → cork. Glass interior alpha below 200 was scaled to 37.5% so contents stay visible.
 - All nine portraits are the main profile pictures, with an identical 860 px diameter disc centered at (505, 526). `_checks/portraits-small.png` shows 24 px and 40 px tests.
@@ -181,7 +182,50 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-twin-towers-tops.png` | Paired Silver-And-Brass Tower Tins — tops layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-twin-towers-towers.png` | Paired Silver-And-Brass Tower Tins — towers layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-twin-towers.png` | Assembled paired silver-and-brass tower tins vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-cake-box-box.png` | Windowed birthday cake box — box layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-cake-box-flame.png` | Windowed birthday cake box — flame layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-cake-box-lid.png` | Windowed birthday cake box — lid layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-cake-box.png` | Windowed birthday cake box — assembled closed | 1024×1024 | B3; see manifest |
+| `vessels/vessel-candy-box-box.png` | Eight-compartment New Year candy box — box layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-candy-box-lid.png` | Eight-compartment New Year candy box — lid layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-candy-box.png` | Eight-compartment New Year candy box — assembled closed | 1024×1024 | B3; see manifest |
+| `vessels/vessel-chocolate-heart-box.png` | Ribboned heart chocolate box — box layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-chocolate-heart-lid.png` | Ribboned heart chocolate box — lid layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-chocolate-heart.png` | Ribboned heart chocolate box — assembled closed | 1024×1024 | B3; see manifest |
+| `vessels/vessel-lucky-cat-cat.png` | Folk lucky cat with letter drawer — cat layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-lucky-cat-drawer-closed.png` | Folk lucky cat with letter drawer — drawer-closed layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-lucky-cat-drawer.png` | Folk lucky cat with letter drawer — drawer layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-lucky-cat-paw.png` | Folk lucky cat with letter drawer — paw layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-lucky-cat.png` | Folk lucky cat with letter drawer — assembled closed | 1024×1024 | B3; see manifest |
+| `vessels/vessel-mooncake-tin-lid.png` | Cloud-pattern mooncake tin — lid layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-mooncake-tin-tin.png` | Cloud-pattern mooncake tin — tin layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-mooncake-tin.png` | Cloud-pattern mooncake tin — assembled closed | 1024×1024 | B3; see manifest |
+| `vessels/vessel-pumpkin-glow.png` | Friendly pumpkin lantern — glow layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-pumpkin-interior.png` | Friendly pumpkin lantern — interior layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-pumpkin-lid.png` | Friendly pumpkin lantern — lid layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-pumpkin-pumpkin.png` | Friendly pumpkin lantern — pumpkin layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-pumpkin.png` | Friendly pumpkin lantern — assembled closed | 1024×1024 | B3; see manifest |
+| `vessels/vessel-rice-dumpling-dumpling.png` | Bamboo-leaf rice dumpling — dumpling layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-rice-dumpling-leaf.png` | Bamboo-leaf rice dumpling — leaf layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-rice-dumpling-string.png` | Bamboo-leaf rice dumpling — string layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-rice-dumpling.png` | Bamboo-leaf rice dumpling — assembled closed | 1024×1024 | B3; see manifest |
+| `vessels/vessel-river-lantern-glow.png` | Floating lotus memorial lantern — glow layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-river-lantern-interior.png` | Floating lotus memorial lantern — interior layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-river-lantern-lantern.png` | Floating lotus memorial lantern — lantern layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-river-lantern-top.png` | Floating lotus memorial lantern — top layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-river-lantern-water.png` | Floating lotus memorial lantern — water layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-river-lantern.png` | Floating lotus memorial lantern — assembled closed | 1024×1024 | B3; see manifest |
+| `vessels/vessel-stocking-hook.png` | Knitted Christmas stocking — hook layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-stocking-letter.png` | Knitted Christmas stocking — letter layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-stocking-stocking.png` | Knitted Christmas stocking — stocking layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-stocking.png` | Knitted Christmas stocking — assembled closed | 1024×1024 | B3; see manifest |
+| `vessels/vessel-wish-tag-bamboo.png` | Blank bamboo wish tag — bamboo layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-wish-tag-knot.png` | Blank bamboo wish tag — knot layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-wish-tag-tag.png` | Blank bamboo wish tag — tag layer | 1024×1024 | B3; see manifest |
+| `vessels/vessel-wish-tag.png` | Blank bamboo wish tag — assembled closed | 1024×1024 | B3; see manifest |
 
 ## Review
 
 [B2 contact sheet](_checks/b2-contact-sheet.png) · [Clock-tower motion](_checks/clock-tower-motion.png) · [Clock-tower 40/120 px](_checks/clock-tower-silhouette.png) · [Full contact sheet](_checks/contact-sheet.png) · [Snow globe motion](_checks/snow-globe-motion.png) · [Snow globe 40/120 px](_checks/snow-globe-silhouette.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png) · [Cabinet tile review](_checks/cabinet-tiles-review.png)
+
+[B3 motion index](_checks/b3-review.md)
