@@ -108,7 +108,7 @@ function idleStyle(motions: IdleMotion[], t: number, size: number, ready: boolea
     else if (m.type === 'peek') transform.push(...about(m.pivot, size, [{ rotate: `${m.deg * hump * hump}deg` }]));
     else if (m.type === 'spin') transform.push(...about(m.pivot ?? center, size, [{ rotate: `${360 * (m.turns ?? 1) * t}deg` }]));
     else if (m.type === 'tick') transform.push(...about(m.pivot ?? center, size, [{ rotate: `${m.deg * Math.pow(Math.max(0, Math.sin(TAU * t)), 8)}deg` }]));
-    else if (m.type === 'drift') { transform.push({ translateY: -size * m.amount * t }); opacity = Math.sin(Math.PI * t); }
+    else if (m.type === 'drift') { transform.push({ translateY: (m.direction === 'down' ? 1 : -1) * size * m.amount * t }); opacity = Math.sin(Math.PI * t); }
     else if (m.type === 'glow') {
       const breath = .5 - .5 * Math.cos(TAU * 2 * t), f = m.flicker ?? 0;
       const base = ready ? (m.readyBase ?? m.base) : m.base, range = ready ? (m.readyRange ?? m.range) : m.range;

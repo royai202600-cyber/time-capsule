@@ -36,7 +36,7 @@ Every part gets one role. Opening roles describe what happens as `lidLift` goes 
 | `door` *(new)* | Swings on a vertical side hinge (narrows horizontally from `pivot`) | — |
 | `pop` *(new)* | Springs up with a small overshoot | — |
 
-Idle extras: `sway` (rotate a little around a pivot), `bob` (up and down), `breathe` (small scale), `glow` (opacity pulse or flicker), `drift` (a particle layer such as steam, snow or fireflies, rising and fading on a loop), `spin` (slow continuous turn), `tick` (a small periodic jolt).
+Idle extras: `sway` (rotate a little around a pivot), `bob` (up and down), `breathe` (small scale), `glow` (opacity pulse or flicker), `drift` (a particle layer drifting and fading on a loop: steam and fireflies rise, snow and sand fall with `"direction": "down"`), `spin` (slow continuous turn), `tick` (a small periodic jolt).
 
 ### Pivots
 - [ ] Measure pivots in **px on the 1024 canvas**, at the hinge line's midpoint (for example the back edge of a lid where it meets the box). For a `door`, use the hinge side's midpoint.
@@ -115,7 +115,7 @@ Motion is **data-driven** (PR "vessel spec"): a vessel's opening, idle loop, let
   - `assembled`, and `layers` bottom to top: `name`, `source` (literal `require`), `role`, `pivot`;
   - `open`: keyframes `{ at, x, y, rotate, scaleX, scaleY, scale, opacity }`, with `at` = lidLift 0–1, x/y as fractions of the size, rotate in degrees. Optional `openReady` (when the capsule is ready), `idle` (motions of this layer) and `ground: true` (stays still while the vessel idles; list ground layers first);
   - `opening` (code A–K), `idleMs`, `idle` (whole-vessel motions), `mouth`, optional `letterDrop` (otherwise 145 + mouth.y × 120 / 1024), `baseY`, `sparkle`, `glint` (a glass highlight layer), `openGlow` (a light revealed while opening), `readyPulse` (a layer name that pulses while ready).
-  - Idle motion types: `sway {deg, pivot?, turns?}`, `bob {amount, axis?, turns?}`, `float {amount}`, `breathe {amount}`, `peek {deg, pivot}`, `spin {pivot?, turns?}`, `tick {deg, pivot?}`, `drift {amount}` (particles rise and fade), `glow {base, range, readyBase?, readyRange?, flicker?}`.
+  - Idle motion types: `sway {deg, pivot?, turns?}`, `bob {amount, axis?, turns?}`, `float {amount}`, `breathe {amount}`, `peek {deg, pivot}`, `spin {pivot?, turns?}`, `tick {deg, pivot?}`, `drift {amount, direction?}` (particles drift and fade; `direction: "down"` for snow or sand, default up for steam and fireflies), `glow {base, range, readyBase?, readyRange?, flicker?}`.
   - Opening types are just keyframes: F slide = x/y; G unscrew = rotate then y; H split = two `hinge` layers with their own pivots; J door = `scaleX` from a side `pivot`; K pop = y/scale with an overshoot key.
 - [ ] i18n: `shop.vessel.<id>` and `shop.desc.<id>` in both 繁中 and English.
 - [ ] Database: a migration inserting the `vessels` row (`id, price_mop, edition_total, brand, sort`). The shop stays free while testing.

@@ -17,7 +17,7 @@ export type IdleMotion =
   | { type: 'peek'; deg: number; pivot: Point }                           // a lid lifts a little and settles
   | { type: 'spin'; pivot?: Point; turns?: number }                       // continuous turn
   | { type: 'tick'; deg: number; pivot?: Point }                          // a small jolt once per loop
-  | { type: 'drift'; amount: number }                                     // particles rise and fade (steam, snow, fireflies)
+  | { type: 'drift'; amount: number; direction?: 'up' | 'down' }        // particles drift and fade: up (steam, fireflies, default) or down (snow, sand)
   | { type: 'glow'; base: number; range: number; readyBase?: number; readyRange?: number; flicker?: number }; // opacity pulse
 export type Point = { x: number; y: number };
 export type ArtLayer = {
