@@ -5,6 +5,7 @@ import { goBack } from "../../navigation";
 import { Vessel, type VesselKind } from '../../components/Vessel';
 import { Screen, Button, Heading, Body, BackButton } from '../../components/Screen';
 import { Toast } from '../../components/Toast';
+import { SealLoader } from '../../components/SealLoader';
 import { haptics } from '../../components/haptics';
 import { useLanguage } from '../../i18n';
 import { useAuth } from '../../services/auth';
@@ -56,7 +57,7 @@ export default function ShopScreen() {
       {!own('maison') && <Button title={remainder === 0 ? t('shop.soldOut') : t('shop.get')} disabled={remainder === 0} onPress={() => openSheet('maison')} />}
     </View>}
     {focused && <View style={[card, { borderColor: C.brass }]}><Text style={{ color: C.plum, fontFamily: serif }}>{name(focused.id)}</Text><Body>{t(`shop.desc.${focused.id}`)}</Body>{!own(focused.id) && focused.price_mop > 0 && <Button title={focused.id === 'maison' && remainder === 0 ? t('shop.soldOut') : t('shop.get')} disabled={focused.id === 'maison' && remainder === 0} onPress={() => openSheet(focused.id)} />}</View>}
-    <Heading>{t('shop.all')}</Heading>{catalog.loading && <Body>{t('shop.loading')}</Body>}<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>{(catalog.data ?? []).map(vesselCard)}</View><Body>{t('shop.testing')}</Body>
+    <Heading>{t('shop.all')}</Heading>{catalog.loading && <SealLoader size={44} label={t('shop.loading')} />}<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>{(catalog.data ?? []).map(vesselCard)}</View><Body>{t('shop.testing')}</Body>
     {(catalog.error || owned.error || stock.error) && <Button title={t('shop.retry')} onPress={() => { void catalog.refresh(); void owned.refresh(); void stock.refresh(); }} />}
     <Toast message={notice || (catalog.error || owned.error || stock.error ? t('shop.error') : '')} />
     <Pressable onPress={() => router.push('/cabinet')} style={{ alignSelf: 'flex-end', backgroundColor: C.cream, borderRadius: 20, padding: 12 }}><Text style={{ color: C.plum }}>{t('shop.cabinet')} →</Text></Pressable>
