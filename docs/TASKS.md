@@ -95,3 +95,6 @@ Roy: earning the Clock Tower works, but the reveal is not impressive. Claude sho
 
 ### PR #66 — landmark-earned celebration review
 In progress: fresh phone/browser recipients have no earned vessels; ready landmark-locked test capsules use the real send RPC. Review hardens ownership snapshot/error handling and scoped reveal cancellation, animation cleanup and Reduce Motion. Required before merge: iPhone Expo Go normal light/ring/vessel/card, Cabinet link, no replay on reopening/already-owned, and Reduce Motion. Then green CI, owner squash merge + owner release, production verification and fixture cleanup.
+
+### PR #66 — verified and merged
+Done: `d92f13f`, green CI 42366748860 on `b7b02b5`. Roy verified actual iPhone Expo Go first earn, Cabinet/no replay and iOS Reduce Motion on a fresh landmark. Test account began unowned and earned two distinct landmarks. Browser verifies first/owned/reopened cases, both languages, 390/375 px and no reduced-motion rays/ring/sparkles. TypeScript, 29 tests, Expo dependencies, iOS/web exports and root build pass. Owner-authored production release follows; production smoke and fixture cleanup finish the release. No backend migration/settings/dependency change.
