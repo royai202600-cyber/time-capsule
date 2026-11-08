@@ -6,7 +6,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| S1 | Public Sea: sea bottles as capsules + live MapLibre Journey (`docs/design/public-sea.md`) | Claude UI → Codex backend | Claude's UI is on `claude/public-sea` behind `SEA_BACKEND=false` with a dev sea. Codex adds shores, capsule columns, the six `sea_*` RPCs, profile RLS, the safety check and R2 city PMTiles; then sets `SEA_BACKEND=true` and `EXPO_PUBLIC_MAP_PMTILES_URL`, and Claude reviews. Map art (sea portrait, golden bottle) is a separate art task. |
+| S1 | Public Sea: sea bottles as capsules + live MapLibre Journey (`docs/design/public-sea.md`) | Claude UI → Codex backend | Backend branch in progress: 60 shores, additive migration and six RPCs passed hosted rollback preflight; R2 city PMTiles and production Vercel URL config are ready; TypeScript, 29 tests, dependency check and web/iOS exports pass. Next: real-JWT checks after ordered release/migration, 375 px signed-in browser checks, CI and owner merges. Map art (sea portrait, golden bottle) is separate. |
 | D1 | Main-only Vercel Git deployments and production retry | Codex | Requested ignore command saved and reloaded. PR #45 adds `git.deploymentEnabled` to block preview creation; main and slash-containing feature names pass policy checks. Verify this PR push is skipped, then retry latest owner-authored main once the Hobby daily quota clears. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 

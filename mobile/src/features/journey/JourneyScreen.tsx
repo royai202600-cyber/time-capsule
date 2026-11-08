@@ -20,7 +20,7 @@ import { CapsuleMapPage } from "./CapsuleMapPage";
 import { LiveMap } from "./live/LiveMap";
 import { mapHtml } from "./live/mapHtml";
 import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
-import { MAP_PMTILES_URL, sea, SeaError, SEA_BACKEND, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
+import { MAP_PMTILES_URL, sea, SeaError, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
 import { daysSince, distanceText, useSeaText } from "../sea/strings";
 
 const FALLBACK = { lat: 22.19358, lng: 113.53917 }; // Senado Square, Macau (development only)
@@ -43,8 +43,7 @@ export default function JourneyScreen() {
   const capsuleData = useCapsules(userId, "inbox");
   const location = useForegroundLocation();
   const { fix, status } = location;
-  const devSea = __DEV__ && !SEA_BACKEND;
-  const you = fix ? { lat: fix.lat, lng: fix.lng } : devSea ? FALLBACK : null;
+  const you = fix ? { lat: fix.lat, lng: fix.lng } : null;
   const map = useRef<LiveMapHandle>(null);
   const [bottles, setBottles] = useState<SeaBottle[]>([]);
   const [pickupsLeft, setPickupsLeft] = useState<number | null>(null);
@@ -136,11 +135,10 @@ export default function JourneyScreen() {
     if (busy) return;
     setBusy(true);
     try {
-      const capsuleId = await sea.pickUp(item.id, fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : you ? { ...you, accuracy: 10 } : null);
+      const capsuleId = await sea.pickUp(item.id, fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null);
       void haptics.success();
       setSelectedId(null);
-      if (capsuleId) router.push({ pathname: "/capsule/[id]", params: { id: capsuleId } });
-      else setToast(s("devPicked"));
+      router.push({ pathname: "/capsule/[id]", params: { id: capsuleId } });
       void loadSea();
     } catch (e) {
       void haptics.warn();
@@ -178,7 +176,6 @@ export default function JourneyScreen() {
         <Chip onPress={() => { void haptics.tap(); setAsia(true); }} label={s("asia")}><ArtIcon name="map" size={22} color={C.blue} /></Chip>
         <Chip onPress={() => { void haptics.tap(); setPassport(true); }} label={s("passport")}><Text style={{ fontFamily: serif, fontSize: 12, color: C.brass }}>{earned}/{total}</Text></Chip>
       </View>
-      {devSea && !fix && <Text style={{ marginHorizontal: spacing.md, marginTop: 6, alignSelf: "flex-start", fontFamily: sans, fontSize: 11, color: C.muted, backgroundColor: "rgba(246,248,251,.9)", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3, maxWidth: 340 }}>{s("devFallback")}</Text>}
     </SafeAreaView>
 
     <SafeAreaView edges={["bottom"]} pointerEvents="box-none" style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>

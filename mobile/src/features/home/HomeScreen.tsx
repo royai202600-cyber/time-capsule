@@ -85,7 +85,7 @@ export default function HomeScreen() {
     const id = side === "inbox" ? c.sender : c.recipient;
     if (side === "sent" && id === session?.user.id) return { name: t("home.future"), avatar: { set: "illus", id: "future" } };
     if (side === "sent" && isSeaCapsule(c) && !c.recipient) return { name: seaText(language)("toTheSea"), avatar: null };
-    return bundle.people[id] ?? { name: t("home.future"), avatar: null };
+    return (id ? bundle.people[id] : undefined) ?? { name: t("home.future"), avatar: null };
   };
   const headline = (c: Row) => {
     const state = status(c, side, fix, bundle.places[c.place ?? ""], now);
