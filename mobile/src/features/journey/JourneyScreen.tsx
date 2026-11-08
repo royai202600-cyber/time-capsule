@@ -23,6 +23,9 @@ import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
 import type { Tables } from "../../services/database.types";
 import { MAP_PMTILES_URL, sea, SeaError, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
 import { daysSince, distanceText, useSeaText } from "../sea/strings";
+import { game, GameError, GAME_ACTION_RADIUS_M, GAME_ENABLED, type GameState, type LostCapsule, type Nearby, type Waypost } from "../../services/game";
+import { ThrowScreen } from "../game/ThrowScreen";
+import { useGameText } from "../game/strings";
 
 type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string; waiting?: boolean };
 
@@ -43,6 +46,7 @@ export default function JourneyScreen() {
   const userId = session?.user.id ?? "";
   const { t, language } = useLanguage();
   const s = useSeaText();
+  const g = useGameText();
   const placeData = usePlaces();
   const capsuleData = useCapsules(userId, "inbox");
   const location = useForegroundLocation();
@@ -57,6 +61,10 @@ export default function JourneyScreen() {
   const [passport, setPassport] = useState(false);
   const [mapPlace, setMapPlace] = useState<Extract<Item, { kind: "place" }> | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
+  const [gameState, setGameState] = useState<GameState | null>(null);
+  const [nearby, setNearby] = useState<Nearby>({ lost: [], wayposts: [] });
+  const [throwing, setThrowing] = useState<LostCapsule | null>(null);
+  const [gameCard, setGameCard] = useState<{ kind: "lost"; capsule: LostCapsule; meters: number } | { kind: "waypost"; waypost: Waypost; meters: number } | null>(null);
   const last = useRef<{ lat: number; lng: number } | null>(null);
   // Heading from movement: the cone points the way you walked.
   useEffect(() => {
@@ -76,6 +84,14 @@ export default function JourneyScreen() {
       setBottles(await sea.nearby(fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null));
     } catch { /* the map still works without the sea */ }
   }, [cell]);
+  const loadGame = useCallback(async () => {
+    if (!GAME_ENABLED || !you) return;
+    try {
+      const [state, around] = await Promise.all([game.state(), game.nearby({ lat: you.lat, lng: you.lng, accuracy: fix?.accuracy })]);
+      setGameState(state); setNearby(around);
+    } catch { /* the map still works without the game */ }
+  }, [cell]);
+  useEffect(() => { void loadGame(); }, [loadGame]);
   useFocusEffect(useCallback(() => {
     if (userId) { void placeData.refresh(); void capsuleData.refresh(); }
     void loadSea();
@@ -94,8 +110,6 @@ export default function JourneyScreen() {
     const openedAt = capsules.filter((capsule) => capsule.place === place.id && capsule.opened_at).map((capsule) => capsule.opened_at!).sort().at(-1) ?? null;
     return { place, openedAt };
   }), [places, capsules]);
-  const earned = stampRows.filter((row) => row.openedAt && !row.place.brand_vessel).length;
-  const total = places.filter((place) => !place.brand_vessel).length;
 
   // Nearby Sea bottles and every received place capsule, including distant/opened ones.
   const items = useMemo<Item[]>(() => {
@@ -111,14 +125,27 @@ export default function JourneyScreen() {
   }, [bottles, pins, capsules, you?.lat, you?.lng]);
   const selected = items.find((i) => i.id === selectedId) ?? null;
 
+  const metersTo = (lat: number, lng: number) => you ? distanceMeters(you.lat, you.lng, lat, lng) : Infinity;
+  const gamePins = useMemo<LivePin[]>(() => [
+    ...nearby.lost.filter((c) => c.id !== throwing?.id).map<LivePin>((c) => {
+      const m = metersTo(c.lat, c.lng);
+      return { id: `lost-${c.id}`, lat: c.lat, lng: c.lng, kind: "lost", vessel: vesselUri(c.vessel), rarity: c.rarity, near: m <= GAME_ACTION_RADIUS_M, far: m > 600, tag: m <= GAME_ACTION_RADIUS_M ? undefined : distanceText(m) };
+    }),
+    ...nearby.wayposts.map<LivePin>((w) => ({
+      id: `way-${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: w.kind === "landmark" ? vesselUri("hourglass") : "",
+      done: !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now(),
+    })),
+  ], [nearby, throwing?.id, you?.lat, you?.lng]);
+
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: you ?? FALLBACK }), [!!you]);
   const mapState = useMemo(() => ({
     you, heading, reach: SEA_PICKUP_RADIUS_M,
     portrait: portraitUri(profile?.avatar),
-    pins: items.map<LivePin>((i) => i.kind === "sea"
+    // While throwing, the capsule is alone on the plain map.
+    pins: throwing ? [] : [...items.map<LivePin>((i) => i.kind === "sea"
       ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri(i.bottle.vessel), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
-      : { id: i.id, lat: i.lat, lng: i.lng, kind: "place", vessel: vesselUri(i.pin.vessel ?? "dome"), near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId, tag: language === "zh" ? i.pin.place.name_zh : i.pin.place.name_en }),
-  }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language]);
+      : { id: i.id, lat: i.lat, lng: i.lng, kind: "place", vessel: vesselUri(i.pin.vessel ?? "dome"), near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId, tag: language === "zh" ? i.pin.place.name_zh : i.pin.place.name_en }), ...gamePins],
+  }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language, gamePins, !!throwing]);
 
   const select = (id: string | null) => {
     setWalkTo(null);
@@ -147,6 +174,41 @@ export default function JourneyScreen() {
       if (code === "taken") void loadSea();
     } finally { setBusy(false); }
   };
+  const onPin = (id: string) => {
+    if (id.startsWith("lost-")) {
+      const capsule = nearby.lost.find((c) => `lost-${c.id}` === id);
+      if (!capsule) return;
+      const meters = metersTo(capsule.lat, capsule.lng);
+      setSelectedId(null); void haptics.tick();
+      if (meters <= GAME_ACTION_RADIUS_M) { setGameCard(null); map.current?.focus(capsule.lat, capsule.lng); setThrowing(capsule); }
+      else setGameCard({ kind: "lost", capsule, meters });
+      return;
+    }
+    if (id.startsWith("way-")) {
+      const waypost = nearby.wayposts.find((w) => `way-${w.id}` === id);
+      if (!waypost) return;
+      setSelectedId(null); void haptics.tick();
+      setGameCard({ kind: "waypost", waypost, meters: metersTo(waypost.lat, waypost.lng) });
+      return;
+    }
+    setGameCard(null);
+    select(id);
+  };
+  const spin = async (waypost: Waypost) => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const out = await game.spin(waypost.id);
+      void haptics.success();
+      setGameState(out.state);
+      setToast(g("spun", out.wax, out.gold));
+      setGameCard(null);
+      void loadGame();
+    } catch (e) {
+      void haptics.warn();
+      setToast(e instanceof GameError && e.code === "cooldown" ? g("cooldown") : g("error"));
+    } finally { setBusy(false); }
+  };
   const directions = (lat: number, lng: number) => {
     const at = `${lat},${lng}`;
     void Linking.openURL(Platform.OS === "ios" ? `https://maps.apple.com/?daddr=${at}` : `https://www.google.com/maps/dir/?api=1&destination=${at}`);
@@ -163,27 +225,30 @@ export default function JourneyScreen() {
   return <JourneyViewport>
     <View style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, zIndex: 0 }}>
     {you
-      ? <LiveMap ref={map} html={html} state={mapState} onSelect={select}
-        onTap={(lat, lng) => { if (selectedId) setSelectedId(null); else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
+      ? <LiveMap ref={map} html={html} state={mapState} onSelect={onPin}
+        onTap={(lat, lng) => { if (gameCard) setGameCard(null); else if (selectedId) setSelectedId(null); else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
       : <LocationGate status={status} onAllow={() => void location.request()} onSettings={() => void location.openSettings()} />}
     </View>
 
-    <SafeAreaView edges={["top", "left", "right"]} pointerEvents="box-none" style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 30 }}>
+    <SafeAreaView edges={["top", "left", "right"]} pointerEvents="box-none" style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 30, display: throwing ? "none" : "flex" }}>
       <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.sm }}>
         <Chip onPress={goBack} label={t("back")}><ArtIcon name="back" size={22} /></Chip>
         <View style={{ flex: 1 }} pointerEvents="none" />
-        <Chip onPress={() => { void haptics.tap(); setPassport(true); }} label={s("passport")}><Text style={{ fontFamily: serif, fontSize: 12, color: C.brass }}>{earned}/{total}</Text></Chip>
+        {GAME_ENABLED && gameState && <View accessibilityRole="text" style={{ height: 44, paddingHorizontal: 14, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", justifyContent: "center", ...shadows.card }}>
+          <Text style={{ fontFamily: sans, fontSize: 12, color: C.ink }}>{g("level", gameState.level)} · {g("balls", gameState.wax_balls)}</Text>
+        </View>}
       </View>
     </SafeAreaView>
 
-    <SafeAreaView edges={["bottom", "left", "right"]} pointerEvents="box-none" style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 20 }}>
+    <SafeAreaView edges={["bottom", "left", "right"]} pointerEvents="box-none" style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 20, display: throwing ? "none" : "flex" }}>
       <View pointerEvents="box-none" style={{ width: "100%", alignSelf: "center", paddingHorizontal: spacing.md, paddingBottom: spacing.md, gap: spacing.sm }}>
         <View pointerEvents="box-none" style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
           {walkTo ? <Pill onPress={() => { setFakeLocation(walkTo); setWalkTo(null); void haptics.tick(); }} label={s("devWalk")} /> : <View />}
           {you && <Chip onPress={() => { setSelectedId(null); setWalkTo(null); map.current?.recenter(); void haptics.tick(); }} label={s("recenter")} translucent><ArtIcon name="locate" size={24} color={C.blue} /></Chip>}
         </View>
         {!!toast && <Text accessibilityRole="alert" style={{ alignSelf: "center", backgroundColor: C.ink, color: C.white, fontFamily: sans, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, overflow: "hidden" }}>{toast}</Text>}
-        {you && (selected
+        {you && !selected && gameCard && <GameCard card={gameCard} busy={busy} g={g} language={language} onSpin={spin} onSoon={() => setToast(g("landmarkSoon"))} />}
+        {you && !gameCard && (selected
           ? <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
             <SelectedCard item={selected} busy={busy} onPickUp={pickUp} onDirections={directions}
               onView={(item) => router.push({ pathname: "/capsule/[id]", params: { id: item.capsuleId } })}
@@ -194,17 +259,44 @@ export default function JourneyScreen() {
               style={{ alignSelf: "flex-end", marginRight: -spacing.md - insets.right, backgroundColor: "rgba(255,255,255,.9)", borderTopLeftRadius: 12, borderBottomLeftRadius: 12, padding: 12, paddingRight: 12 + insets.right, borderWidth: 1, borderRightWidth: 0, borderColor: C.line, ...shadows.card }}>
             <Text style={{ fontFamily: sans, fontSize: 11, fontWeight: "700", letterSpacing: 1.2, color: C.blue }}>{s("kicker")}</Text>
           </Pressable>)}
-        {SEA_ENABLED && !selected && <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
+        {!selected && !gameCard && <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <Pressable accessibilityRole="button" accessibilityLabel={s("passport")} onPress={() => { void haptics.tap(); setPassport(true); }} style={{ width: 62, alignItems: "center", gap: 3 }}>
+          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="passport" size={27} color={C.blue} /></View>
+          <Text style={{ fontFamily: sans, fontSize: 11, color: C.ink }}>{s("passport")}</Text>
+        </Pressable>
+        {SEA_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
           onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: "sea" } }); }}
           style={({ pressed }) => ({ alignSelf: "center", flexShrink: 0, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: C.wax, borderRadius: radii.pill, paddingLeft: 8, paddingRight: 20, paddingVertical: 7, opacity: pressed ? .9 : 1, ...shadows.card })}>
           <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}><Vessel kind="hourglass" size={26} /></View>
           <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("throwCta")}</Text>
-        </Pressable>}
+        </Pressable> : null}
+        <View style={{ width: 62 }} />
+        </View>}
       </View>
     </SafeAreaView>
 
+    {throwing && gameState && <ThrowScreen capsule={throwing} state={gameState} onState={setGameState}
+      onClose={() => { setThrowing(null); map.current?.recenter(); void loadGame(); }} />}
     <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows} />
   </JourneyViewport>;
+}
+
+type GameCardValue = { kind: "lost"; capsule: LostCapsule; meters: number } | { kind: "waypost"; waypost: Waypost; meters: number };
+function GameCard({ card, busy, g, language, onSpin, onSoon }: {
+  card: GameCardValue; busy: boolean; g: ReturnType<typeof useGameText>; language: "zh" | "en"; onSpin: (w: Waypost) => void; onSoon: () => void;
+}) {
+  const near = card.meters <= GAME_ACTION_RADIUS_M;
+  const left = distanceText(Math.max(0, card.meters - GAME_ACTION_RADIUS_M));
+  const landmark = card.kind === "waypost" && card.waypost.kind === "landmark";
+  const title = card.kind === "lost" ? g("lostCapsule") : language === "zh" ? card.waypost.name_zh : card.waypost.name_en;
+  const note = card.kind === "lost" ? g("walkCloser", left) : landmark ? g("landmarkSoon") : near ? "" : g("spinWalkCloser", left);
+  return <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", gap: spacing.sm, backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
+    <Text style={{ fontFamily: serif, fontSize: 18, color: C.ink }}>{title}</Text>
+    {!!note && <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{note}</Text>}
+    {card.kind === "waypost" && !landmark && near && <Pressable accessibilityRole="button" disabled={busy} onPress={() => onSpin(card.waypost)} style={{ alignItems: "center", backgroundColor: C.blue, borderRadius: radii.pill, paddingVertical: 11, opacity: busy ? .6 : 1 }}>
+      <Text style={{ fontFamily: serif, fontSize: 15, color: C.white }}>{g("spin")}</Text>
+    </Pressable>}
+  </View>;
 }
 
 function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections, onView, onMap }: {

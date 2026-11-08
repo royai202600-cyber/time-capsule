@@ -69,8 +69,19 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.sel .pin-body{transform:scale(1.18)}
 .pin.sel .v{filter:drop-shadow(0 0 8px ${C.brass})}
 .pin.sealed .v{filter:grayscale(.2)}
+.pin .crack{position:absolute;left:0;bottom:2px;width:80px;height:80px;animation:bob 3.6s ease-in-out infinite}
+.pin.lost .v,.pin.landmark .v{filter:saturate(.55) brightness(.84)}
+.pin.lost.rare .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
+.pin.lost.uncommon .disc{background:radial-gradient(${C.lightBlue}99,transparent 70%)}
+.pin.waypost{width:40px;height:50px}
+.pin.waypost .disc{left:6px;width:28px;height:8px}
+.pin.waypost .post{position:absolute;left:6px;bottom:3px;width:28px;height:34px}
+.pin.waypost.done{opacity:.45}
+.pin.landmark{width:128px;height:146px}
+.pin.landmark .disc{left:24px;width:80px;height:18px}
+.pin.landmark .v,.pin.landmark .crack{width:128px;height:128px}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@media (prefers-reduced-motion: reduce){.pin .v,.you .pulse{animation:none}}
+@media (prefers-reduced-motion: reduce){.pin .v,.pin .crack,.you .pulse{animation:none}}
 </style></head><body><div id="map"></div>
 <script>
 const send=m=>{const s=JSON.stringify(m);if(window.ReactNativeWebView)window.ReactNativeWebView.postMessage(s);else parent.postMessage({__tcmap:s},'*')};
@@ -86,6 +97,9 @@ const pickupZoom=(lat,r=100)=>Math.log2(40075016.686*Math.cos(lat*Math.PI/180)*M
 const cameraPadding={top:80,bottom:160,left:0,right:0};
 const map=new maplibregl.Map({container:'map',style:${JSON.stringify(style)},center:[${center.lng},${center.lat}],zoom:pickupZoom(${center.lat}),padding:cameraPadding,pitch:40,maxPitch:70,bearing:0,attributionControl:{compact:true},localIdeographFontFamily:'"PingFang TC","Noto Sans TC",sans-serif'});
 let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
+const crack='<svg class="crack" viewBox="0 0 100 100"><circle cx="50" cy="52" r="38" fill="${C.ink}" opacity=".14"/><path d="M30 22l9 15-6 9 11 12-4 12 8 12M70 26l-8 13 7 10-12 9 5 13-7 9M18 54l13-2 7 7M84 50l-12 3-6 8" stroke="${C.ink}" stroke-opacity=".72" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+// Wayposts stay one flat colour and small, so only capsules read as objects to go after.
+const post='<svg class="post" viewBox="0 0 28 34"><path d="M14 1 27 12v3H1v-3Z" fill="${C.blue}"/><path d="M4 15h20v18H4Z" fill="${C.blue}"/><path d="M11 22h6v11h-6Z" fill="${C.paper}"/></svg>';
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
 map.on('load',()=>{
@@ -107,8 +121,8 @@ function render(){
   const want=new Set(state.pins.map(p=>p.id));
   for(const [id,m] of marks){if(!want.has(id)){m.marker.remove();marks.delete(id)}}
   for(const p of state.pins){
-    const html='<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
-    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'');
+    const html=p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+post+'</div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='lost'||p.kind==='landmark'?crack:'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
+    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'');
     let m=marks.get(p.id);
     if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:p.id})});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
     const el=m.marker.getElement();

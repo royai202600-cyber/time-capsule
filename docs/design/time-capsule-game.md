@@ -32,7 +32,7 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 
 ## Catching
 - **The ball is a red wax ball**, starting point, can change later. Solid wax red, never red and white, never two halves, no band or button.
-- You flick the ball up from the bottom of the screen. A thin hand-inked brass ring tightens around the capsule; the tighter the ring when you hit, the better the result.
+- You flick the ball up from the bottom of the screen. **The app draws the target in code, not as artwork:** a fixed white circle with an inner ring that grows and shrinks inside it. The smaller the ring when you hit, the better the result. The capsule sometimes jumps, and a ball thrown mid-jump misses.
 - On a hit the ball bursts into dust, the cracks close, and the clean vessel returns. **The capsule is never pulled inside the ball.**
 - **It happens on the map.** The background is the same live Journey map you were just on, kept simple and in our palette. No separate painted scenes and no camera view.
 - **Two items only:** Wax Ball, and Gold Wax Ball (makes a hit easier). Nothing else: no berries, keys, charms, shards or crafting.
@@ -45,7 +45,8 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 - **Real time and place decide what appears.** The firefly jar only after dark, the Mid-Autumn lantern only at Mid-Autumn, the bottle by the water. Common vessels can appear anywhere.
 
 ## Wayposts
-- **Common Waypost:** a small, simple building on the map. Tap, spin, get balls, then a cooldown. Our own building and our own spinning object. No photos of real places.
+- **Common Waypost:** a small, very simplified building on the map, in one flat colour. Tap, spin, get balls, then a cooldown. Our own shape, and no photos of real places.
+- **Only capsules are detailed and colourful.** Wayposts and any other buildings stay plain and quiet, so nobody confuses a capsule with a building.
 - **Landmark Waypost:** a giant, badly cracked Lost Capsule. Throw balls to close the cracks before time runs out.
   - **Beatable alone for now.** Friends making it easier comes later.
   - **No lucky final catch.** Clear the cracks and the landmark vessel and Passport stamp are yours.
@@ -59,7 +60,7 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 
 ## Collection
 - **Cabinet is the collection book:** numbered No.001–067, with faint outlines for what you don't have yet.
-- **Passport stays**, and landmark stamps go in it.
+- **Passport stays**, and landmark stamps go in it. On Journey it is a recognisable icon at the bottom of the screen, not a bare count.
 
 ## Shop and sending
 - **Collecting is the main way to get vessels.** The Shop sells only what can't be found: brand and numbered editions. It stays free while testing.
