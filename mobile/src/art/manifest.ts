@@ -694,12 +694,15 @@ export const portraits: Record<string, ImageSourcePropType> = {
   '05': require('../../../public/art/portraits/portrait-05.webp'), '06': require('../../../public/art/portraits/portrait-06.webp'),
   '07': require('../../../public/art/portraits/portrait-07.webp'), '08': require('../../../public/art/portraits/portrait-08.webp'),
   future: require('../../../public/art/portraits/portrait-future.webp'),
+  // Public Sea recipient (art PR #68): not a person preset, so the profile picker never lists it.
+  sea: require('../../../public/art/portraits/portrait-sea.webp'),
 };
 export const scenes = {
   welcome: require('../../../public/art/scenes/scene-welcome.webp'),
   emptyInbox: require('../../../public/art/scenes/scene-empty-inbox.webp'),
   emptySent: require('../../../public/art/scenes/scene-empty-sent.webp'),
   sealed: require('../../../public/art/scenes/scene-sealed.webp'),
+  seaSealed: require('../../../public/art/scenes/scene-sea-sealed.webp'),
 };
 export const sealWax = require('../../../public/art/seal-wax.webp');
 export const lightBurst = require('../../../public/art/fx/fx-light-burst.webp');

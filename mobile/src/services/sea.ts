@@ -4,6 +4,8 @@ import { supabase } from "./supabase";
 export const SEA_BACKEND = true;
 export const SEA_ENABLED = true;
 export const SEA_RECIPIENT = "sea";
+/** Avatar value for "the sea" as a recipient (portrait-sea). */
+export const SEA_AVATAR = { set: "illus", id: "sea" } as const;
 export const SEA_MESSAGE_MAX = 280;
 export const SEA_PICKUP_RADIUS_M = 100;
 export const SEA_VISIBLE_RADIUS_M = 5000;
