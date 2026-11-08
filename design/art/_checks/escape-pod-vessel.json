@@ -1,0 +1,73 @@
+{
+  "id": "escape-pod",
+  "opening": "A",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "float",
+      "amount": 0.03
+    }
+  ],
+  "layers": [
+    {
+      "name": "pod",
+      "file": "vessel-escape-pod-pod.png",
+      "role": "static"
+    },
+    {
+      "name": "glow",
+      "file": "vessel-escape-pod-glow.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "opacity": 1
+        }
+      ],
+      "idle": [
+        {
+          "type": "glow",
+          "base": 0.8,
+          "range": 0.2
+        }
+      ]
+    },
+    {
+      "name": "hatch",
+      "file": "vessel-escape-pod-hatch.png",
+      "role": "hinge",
+      "pivot": {
+        "x": 776,
+        "y": 527
+      },
+      "open": [
+        {
+          "at": 0,
+          "scaleX": 1,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "scaleX": 0.05,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 619,
+    "y": 508
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 402,
+    "y": 469
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

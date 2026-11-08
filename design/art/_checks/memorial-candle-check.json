@@ -1,0 +1,93 @@
+{
+  "style_reference": "design/art/style-sheet.png",
+  "layer_order": [
+    "glow",
+    "jar",
+    "lid"
+  ],
+  "assembled_vs_stack_mae_rgb_on_paper_0_to_255": 0.0,
+  "exact_pixel_match": true,
+  "all_corners_alpha_zero": true,
+  "layer_checks": {
+    "assembled": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 255,
+      "visible_bbox_alpha_gt_20": [
+        222,
+        160,
+        801,
+        900
+      ]
+    },
+    "glow": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 210,
+      "visible_bbox_alpha_gt_20": [
+        281,
+        294,
+        760,
+        739
+      ]
+    },
+    "jar": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 253,
+      "visible_bbox_alpha_gt_20": [
+        222,
+        237,
+        801,
+        900
+      ]
+    },
+    "lid": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        252,
+        160,
+        779,
+        399
+      ]
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "id": "wishing-lamp",
+  "opening": "C",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "bob",
+      "amount": 0.025
+    }
+  ],
+  "layers": [
+    {
+      "name": "lamp",
+      "file": "vessel-wishing-lamp-lamp.png",
+      "role": "static"
+    },
+    {
+      "name": "smoke",
+      "file": "vessel-wishing-lamp-smoke.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "opacity": 0
+        }
+      ],
+      "idle": [
+        {
+          "type": "drift",
+          "amount": 0.03
+        }
+      ]
+    },
+    {
+      "name": "lid",
+      "file": "vessel-wishing-lamp-lid.png",
+      "role": "lift",
+      "pivot": {
+        "x": 483,
+        "y": 423
+      },
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "y": -0.4,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 483,
+    "y": 575
+  },
+  "baseY": 889,
+  "sparkle": {
+    "x": 346,
+    "y": 575
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

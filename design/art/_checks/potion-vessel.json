@@ -1,0 +1,72 @@
+{
+  "id": "potion",
+  "opening": "D",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "bob",
+      "amount": 0.025
+    }
+  ],
+  "layers": [
+    {
+      "name": "flask",
+      "file": "vessel-potion-flask.png",
+      "role": "static"
+    },
+    {
+      "name": "bubbles",
+      "file": "vessel-potion-bubbles.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "opacity": 0
+        }
+      ],
+      "idle": [
+        {
+          "type": "drift",
+          "amount": 0.03
+        }
+      ]
+    },
+    {
+      "name": "cork",
+      "file": "vessel-potion-cork.png",
+      "role": "hinge",
+      "pivot": {
+        "x": 403,
+        "y": 153
+      },
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "y": -0.36,
+          "rotate": -10,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 516,
+    "y": 306
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 450,
+    "y": 298
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

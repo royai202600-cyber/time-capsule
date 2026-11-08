@@ -34,5 +34,5 @@ Original generic objects with no logo, text, real brand shape, royal cipher or c
 
 ## Review status
 
-Local checks: ten exact raw CLOSED stacks, 36 alpha-exact WebPs, 261/261 PNG masters, 452 existing/approved artwork hashes and root build pass. The browser tool rejected the file URL; the page has only been syntax-checked and static sheets were visually inspected.
+Local checks: ten exact raw CLOSED stacks, 36 alpha-exact WebPs, 300/300 PNG masters, 530 existing/approved artwork hashes and root build pass. The browser tool rejected the file URL; the page has only been syntax-checked and static sheets were visually inspected.
 Roy approved PR #70 on 2026-11-08; merge follows fresh checks and green CI. These review controls reproduce the manifest transforms in a standalone page; they do not constitute screen integration or a physical-device test.

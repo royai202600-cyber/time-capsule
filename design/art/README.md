@@ -10,6 +10,11 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 
 ## Rules and checks
 
+- T10f B6: ten original magic and milestone vessels have measured opening and 40/120 px sheets. The spellbook glow fix is approved; the remaining nine are presented for final batch review. Layer order, motion and anchors are proposed in the manifest; screen wiring and catalogue changes are separate. The lamp uses a cylindrical brass burner and short straight spout to avoid the well-known animated lamp silhouette. [B6 contact sheet](_checks/b6-contact-sheet.png).
+
+
+- T10f B6 spellbook test: closed navy leather book with brass corners/clasp and an abstract star-and-rose motif, complete blank page and rolled letter beneath the front cover. The clasp fades before the cover swings from its measured left-spine pivot. Page-edge glow persists through opening; a 0.025 breathe and glow pulse animate at rest. Exact CLOSED stack, transparent corners, 40/120 px silhouettes, in-canvas open letter and [B6 contact sheet](_checks/b6-contact-sheet.png) were reviewed by Roy. Roy approved the spellbook with brighter golden page-edge and open-page light; glow remains on through opening. No recognizable fantasy-franchise marks were used. The other nine are in progress.
+
 - T10c B3: ten original festival/keepsake vessels, complete reveal edits, exact CLOSED keyframes, measured 40/120 px and opening sheets. Lucky-cat test approved by Roy; its full drawer pulls straight forward with a rolled letter, while approved cat/paw/base/closed bytes remain unchanged. Separate dark interior layers support the pumpkin/river glows; the stocking stand stays fixed while sock/letter sway. Only river water is ground. PR #56 approved and merged as 4309b55. Roy approved T10c-fix PR #61 for merge.
 - T10c B3: ten original festival/keepsake vessels, complete reveal edits, exact CLOSED keyframes, measured 40/120 px and opening sheets. Lucky-cat test approved by Roy; its full drawer pulls straight forward with a rolled letter, while approved cat/paw/base/closed bytes remain unchanged. Separate dark interior layers support the pumpkin/river glows; the stocking stand stays fixed while sock/letter sway. Only river water is ground. PR #56 approved and merged as 4309b55. Roy approved T10c-fix PR #61 for merge.
 - T10c B3: ten original festival/keepsake vessels, complete reveal edits, exact CLOSED keyframes, measured 40/120 px and opening sheets. Lucky-cat test approved by Roy; its full drawer pulls straight forward with a rolled letter, while approved cat/paw/base/closed bytes remain unchanged. Separate dark interior layers support the pumpkin/river glows; the stocking stand stays fixed while sock/letter sway. Only river water is ground. Final batch approval remains pending.
@@ -91,6 +96,9 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-arcade-door.png` | arcade — door layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-arcade-screen.png` | arcade — screen layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-arcade.png` | Assembled arcade vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-baby-shoes-box.png` | baby-shoes box layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-baby-shoes-lid.png` | baby-shoes lid layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-baby-shoes.png` | baby-shoes assembled vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-bamboo-tower-tin.png` | Bamboo-Tier Skyscraper Tin — tin layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-bamboo-tower-top.png` | Bamboo-Tier Skyscraper Tin — top layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-bamboo-tower.png` | Assembled bamboo-tier skyscraper tin vessel | 1024×1024 | processed; see manifest |
@@ -125,10 +133,18 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-clock-tower-hands.png` | Small Standing Clock-Tower Keepsake — hands layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-clock-tower-tower.png` | Small Standing Clock-Tower Keepsake — tower layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-clock-tower.png` | Assembled small standing clock-tower keepsake vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-crystal-ball-ball.png` | crystal-ball ball layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-crystal-ball-mist.png` | crystal-ball mist layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-crystal-ball-stand.png` | crystal-ball stand layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-crystal-ball.png` | crystal-ball assembled vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-dim-sum-steamer-lid.png` | dim-sum-steamer — lid layer | 1024×1024 | pivot 522,519, processed; see manifest |
 | `vessels/vessel-dim-sum-steamer-steam.png` | dim-sum-steamer — steam layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-dim-sum-steamer-steamer.png` | dim-sum-steamer — steamer layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-dim-sum-steamer.png` | Assembled dim-sum-steamer vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-diploma-tube-cap.png` | diploma-tube cap layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-diploma-tube-diploma.png` | diploma-tube diploma layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-diploma-tube-tube.png` | diploma-tube tube layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-diploma-tube.png` | diploma-tube assembled vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-dome-base.png` | Glass-Dome Blue Rose — base layer | 1024×1024 |  |
 | `vessels/vessel-dome-glass.png` | Glass-Dome Blue Rose — glass layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-dome-glint.png` | Travelling highlight for the dome glass | 1024×1024 | processed; see manifest |
@@ -138,6 +154,10 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-envelope-flap.png` | Wax-Sealed Letter — flap layer | 1024×1024 | pivot 496,260 |
 | `vessels/vessel-envelope-seal.png` | Wax-Sealed Letter — seal layer | 1024×1024 |  |
 | `vessels/vessel-envelope.png` | Assembled wax-sealed letter vessel | 1024×1024 |  |
+| `vessels/vessel-escape-pod-glow.png` | escape-pod glow layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-escape-pod-hatch.png` | escape-pod hatch layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-escape-pod-pod.png` | escape-pod pod layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-escape-pod.png` | escape-pod assembled vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-firefly-jar-fireflies.png` | Cloth-Covered Firefly Jar — fireflies layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-firefly-jar-jar.png` | Cloth-Covered Firefly Jar — jar layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-firefly-jar-lid.png` | Cloth-Covered Firefly Jar — lid layer | 1024×1024 | processed; see manifest |
@@ -198,6 +218,10 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-maison-lid.png` | Maison Aurèle Ring Box — lid layer | 1024×1024 | pivot 605,300 |
 | `vessels/vessel-maison-ring.png` | Maison Aurèle Ring Box — ring layer | 1024×1024 |  |
 | `vessels/vessel-maison.png` | Assembled Maison Aurèle ring box vessel | 1024×1024 |  |
+| `vessels/vessel-memorial-candle-glow.png` | memorial-candle glow layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-memorial-candle-jar.png` | memorial-candle jar layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-memorial-candle-lid.png` | memorial-candle lid layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-memorial-candle.png` | memorial-candle assembled vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-mixtape-case.png` | Cassette In A Clear Case — case layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-mixtape-cassette.png` | Cassette In A Clear Case — cassette layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-mixtape-glint.png` | Cassette In A Clear Case — glint layer | 1024×1024 | processed; see manifest |
@@ -231,9 +255,16 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-photo-strip-sleeve.png` | photo-strip — sleeve layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-photo-strip-strip.png` | photo-strip — strip layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-photo-strip.png` | Assembled photo-strip vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-pocket-watch-cover.png` | pocket-watch cover layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-pocket-watch-watch.png` | pocket-watch watch layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-pocket-watch.png` | pocket-watch assembled vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-postbox-box.png` | postbox — box layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-postbox-door.png` | postbox — door layer | 1024×1024 | pivot 635,602, processed; see manifest |
 | `vessels/vessel-postbox.png` | Assembled postbox vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-potion-bubbles.png` | potion bubbles layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-potion-cork.png` | potion cork layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-potion-flask.png` | potion flask layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-potion.png` | potion assembled vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-pumpkin-glow.png` | Friendly pumpkin lantern — glow layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-pumpkin-interior.png` | Friendly pumpkin lantern — interior layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-pumpkin-lid.png` | Friendly pumpkin lantern — lid layer | 1024×1024 | processed; see manifest |
@@ -257,6 +288,10 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-river-lantern-top.png` | Floating lotus memorial lantern — top layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-river-lantern-water.png` | Floating lotus memorial lantern — water layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-river-lantern.png` | Floating lotus memorial lantern — assembled closed | 1024×1024 | processed; see manifest |
+| `vessels/vessel-rocket-tin-cone.png` | rocket-tin cone layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-rocket-tin-flame.png` | rocket-tin flame layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-rocket-tin-rocket.png` | rocket-tin rocket layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-rocket-tin.png` | rocket-tin assembled vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-rotary-phone-handset.png` | rotary-phone — handset layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-rotary-phone-phone.png` | rotary-phone — phone layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-rotary-phone.png` | Assembled rotary-phone vessel | 1024×1024 | processed; see manifest |
@@ -269,6 +304,11 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-snow-globe-scene.png` | Winter Scene Snow Globe — scene layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-snow-globe-snow.png` | Winter Scene Snow Globe — snow layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-snow-globe.png` | Assembled winter scene snow globe vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-spellbook-book.png` | Spellbook — book layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-spellbook-clasp.png` | Spellbook — clasp layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-spellbook-cover.png` | Spellbook — cover layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-spellbook-glow.png` | Spellbook — glow layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-spellbook.png` | Assembled closed spellbook vessel | 1024×1024 | processed; see manifest |
 | `vessels/vessel-stocking-hook.png` | Knitted Christmas stocking — hook layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-stocking-letter.png` | Knitted Christmas stocking — letter layer | 1024×1024 | pivot 413,249, processed; see manifest |
 | `vessels/vessel-stocking-stocking.png` | Knitted Christmas stocking — stocking layer | 1024×1024 | processed; see manifest |
@@ -303,6 +343,10 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-wish-tag-knot.png` | Blank bamboo wish tag — knot layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-wish-tag-tag.png` | Blank bamboo wish tag — tag layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-wish-tag.png` | Blank bamboo wish tag — assembled closed | 1024×1024 | processed; see manifest |
+| `vessels/vessel-wishing-lamp-lamp.png` | wishing-lamp lamp layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-wishing-lamp-lid.png` | wishing-lamp lid layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-wishing-lamp-smoke.png` | wishing-lamp smoke layer | 1024×1024 | processed; see manifest |
+| `vessels/vessel-wishing-lamp.png` | wishing-lamp assembled vessel | 1024×1024 | processed; see manifest |
 
 ## Review
 
