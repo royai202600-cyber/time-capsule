@@ -11,7 +11,7 @@ import { game, GameError, type BallKind, type GameState, type CorruptedCapsule, 
 import { mapPalette } from "../journey/live/mapHtml";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
-import { useGameText } from "./strings";
+import { errorKey, useGameText } from "./strings";
 
 const NATIVE = Platform.OS !== "web";
 const RING = 196;
@@ -211,7 +211,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     } catch (e) {
       if (!alive.current) return;
       const code = e instanceof GameError ? e.code : "unknown";
-      flash(code === "no_balls" ? s("noBalls") : code === "expired" ? s("timeUp") : s("error"));
+      flash(code === "expired" ? s("timeUp") : s(errorKey(code)));
       reset();
     }
   };
@@ -251,7 +251,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     } catch (e) {
       if (!alive.current) return;
       const code = e instanceof GameError ? e.code : "unknown";
-      flash(code === "no_balls" ? s("noBalls") : code === "expired" || code === "no_attempts" ? s("expired") : s("error"));
+      flash(s(errorKey(code)));
       reset();
     }
   };

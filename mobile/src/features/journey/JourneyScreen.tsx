@@ -26,7 +26,7 @@ import { daysSince, distanceText, useSeaText } from "../sea/strings";
 import { game, GameError, GAME_ACTION_RADIUS_M, GAME_ENABLED, type GameState, type CorruptedCapsule, type DevLetter, type LandmarkAttempt, type Nearby, type Waypost } from "../../services/game";
 import { SpinScreen } from "../game/SpinScreen";
 import { ThrowScreen } from "../game/ThrowScreen";
-import { useGameText } from "../game/strings";
+import { errorKey, useGameText } from "../game/strings";
 
 type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string; waiting?: boolean };
 
@@ -67,6 +67,7 @@ export default function JourneyScreen() {
   const [throwing, setThrowing] = useState<CorruptedCapsule | null>(null);
   const [devLetter, setDevLetter] = useState<DevLetter | null>(null);
   const [fight, setFight] = useState<LandmarkAttempt | null>(null);
+  const [passportStamps, setPassportStamps] = useState<Record<string, string>>({});
   const [spinning, setSpinning] = useState<Waypost | null>(null);
   const [gameCard, setGameCard] = useState<{ waypost: Waypost; meters: number } | null>(null);
   const last = useRef<{ lat: number; lng: number } | null>(null);
@@ -93,11 +94,12 @@ export default function JourneyScreen() {
   const loadGame = useCallback(async () => {
     if (!GAME_ENABLED || !you) return;
     try {
-      const [state, around] = await Promise.all([game.state(), game.nearby({ lat: you.lat, lng: you.lng, accuracy: fix?.accuracy })]);
-      setGameState(state); setNearby(around);
+      const [state, around, stamps] = await Promise.all([game.state(), game.nearby({ lat: you.lat, lng: you.lng, accuracy: fix?.accuracy }), game.passport()]);
+      setGameState(state); setNearby(around); setPassportStamps(stamps);
     } catch { /* the map still works without the game */ }
   }, [cell]);
   useEffect(() => { void loadGame(); }, [loadGame]);
+  useEffect(() => { if (fix) game.setPosition({ lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy }); }, [fix?.lat, fix?.lng, fix?.accuracy]);
   useFocusEffect(useCallback(() => {
     if (userId) { void placeData.refresh(); void capsuleData.refresh(); }
     void loadSea();
@@ -113,9 +115,9 @@ export default function JourneyScreen() {
     return { place, kind: visited ? "visited" : waiting ? "waiting" : "other", vessel: waiting?.vessel, waiting: !!waiting };
   }), [places, capsules]);
   const stampRows = useMemo(() => places.map((place) => {
-    const openedAt = capsules.filter((capsule) => capsule.place === place.id && capsule.opened_at).map((capsule) => capsule.opened_at!).sort().at(-1) ?? null;
+    const openedAt = capsules.filter((capsule) => capsule.place === place.id && capsule.opened_at).map((capsule) => capsule.opened_at!).sort().at(-1) ?? passportStamps[place.id] ?? null;
     return { place, openedAt };
-  }), [places, capsules]);
+  }), [places, capsules, passportStamps]);
 
   // Nearby Sea bottles and every received place capsule, including distant/opened ones.
   const items = useMemo<Item[]>(() => {
@@ -211,13 +213,13 @@ export default function JourneyScreen() {
     if (busy) return;
     setBusy(true);
     try {
-      const attempt = await game.landmarkStart(waypost.id);
+      const attempt = await game.landmarkStart(waypost);
       void haptics.tap();
       setGameCard(null); setFight(attempt);
       setThrowing({ id: attempt.id, vessel: attempt.vessel, rarity: "uncommon", lat: waypost.lat, lng: waypost.lng, expires_at: attempt.expires_at, attempts_left: 0 });
-    } catch {
+    } catch (e) {
       void haptics.warn();
-      setToast(g("error"));
+      setToast(g(errorKey(e instanceof GameError ? e.code : "unknown")));
     } finally { setBusy(false); }
   };
   const directions = (lat: number, lng: number) => {

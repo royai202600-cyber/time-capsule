@@ -349,9 +349,11 @@ export default function CabinetScreen() {
   const [owned, setOwned] = useState<Owned[]>([]);
   const [usage, setUsage] = useState<Record<string, number>>({});
   const [error, setError] = useState("");
+  const [caught, setCaught] = useState<Record<string, { copies: number; stars: number }>>({});
 
   useFocusEffect(useCallback(() => {
     let alive = true;
+    if (GAME_ENABLED) void game.collection().then(next => { if (alive) setCaught(next); }).catch(() => undefined);
     if (!session) {
       if (__DEV__) setAll(Object.keys(VESSELS).map((id, sort) => {
         const meta = VESSELS[id as VesselKind] as { price: number; edition?: number };
@@ -372,7 +374,7 @@ export default function CabinetScreen() {
     return () => { alive = false; };
   }, [session?.user.id]));
   const items = useMemo(() => {
-    const collected = GAME_ENABLED ? game.devCollection() : {};
+    const collected = caught;
     // The Cabinet only ever shows what you have; the Capsule Album is where the gaps are.
     return [...all].sort((a, b) => a.sort - b.sort).flatMap((v, index): CabinetItem[] => {
       if (!isVessel(v.id)) return [];
@@ -383,7 +385,7 @@ export default function CabinetScreen() {
         editionNo: own?.edition_no, editionTotal: v.edition_total, acquiredAt: own?.acquired_at, used: usage[v.id] ?? 0,
       }];
     });
-  }, [all, owned, usage]);
+  }, [all, owned, usage, caught]);
   return <CabinetView items={items} error={error}
     notice={session ? undefined : t(__DEV__ ? "cabinet.preview" : "cabinet.signIn")} />;
 }

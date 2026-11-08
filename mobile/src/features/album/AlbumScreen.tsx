@@ -44,9 +44,11 @@ export default function AlbumScreen() {
   const { width: windowWidth } = useWindowDimensions();
   const [all, setAll] = useState<Row[]>([]);
   const [owned, setOwned] = useState<string[]>([]);
+  const [caught, setCaught] = useState<Record<string, { copies: number; stars: number }>>({});
 
   useFocusEffect(useCallback(() => {
     let alive = true;
+    if (GAME_ENABLED) void game.collection().then(next => { if (alive) setCaught(next); }).catch(() => undefined);
     if (!session) {
       if (__DEV__) setAll(Object.keys(VESSELS).map((id, sort) => ({ id, price_mop: (VESSELS[id as VesselKind] as { price: number }).price, sort })));
       return () => { alive = false; };
@@ -60,11 +62,10 @@ export default function AlbumScreen() {
   }, [session?.user.id]));
 
   const cards = useMemo(() => {
-    const caught = GAME_ENABLED ? game.devCollection() : {};
     return [...all].sort((a, b) => a.sort - b.sort).flatMap((v, index): Card[] => isVessel(v.id)
       ? [{ id: v.id, no: index + 1, collected: isCollected(v, owned.includes(v.id) || !!caught[v.id], GAME_ENABLED), stars: caught[v.id]?.stars ?? 0 }]
       : []);
-  }, [all, owned]);
+  }, [all, owned, caught]);
 
   const columns = windowWidth >= 760 ? 5 : windowWidth >= 560 ? 4 : 3;
   const content = Math.min(windowWidth, MAX_WIDTH) - spacing.md * 2;

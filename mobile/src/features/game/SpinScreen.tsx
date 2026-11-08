@@ -6,7 +6,7 @@ import { ArtIcon } from "../../components/ArtIcon";
 import { haptics } from "../../components/haptics";
 import { game, GameError, type GameState, type Waypost } from "../../services/game";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
-import { useGameText } from "./strings";
+import { errorKey, useGameText } from "./strings";
 import { ThrowBackground, WaxBall } from "./ThrowScreen";
 
 const NATIVE = Platform.OS !== "web";
@@ -55,7 +55,7 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
       }, 900);
     } catch (e) {
       void haptics.warn();
-      setNote(e instanceof GameError && e.code === "cooldown" ? s("cooldown") : s("error"));
+      setNote(s(errorKey(e instanceof GameError ? e.code : "unknown")));
       setSpent(true);
     }
   };
