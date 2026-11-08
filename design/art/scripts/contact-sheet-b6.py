@@ -1,0 +1,16 @@
+from pathlib import Path
+from PIL import Image,ImageDraw
+p=Path(__file__).resolve().parents[1]; paper=(246,248,251)
+assembled=Image.open(p/'vessels/vessel-spellbook.png').convert('RGBA')
+small=Image.new('RGBA',(1024,1024),paper+(255,));small=Image.alpha_composite(small,assembled).convert('RGB')
+motion=Image.open(p/'_checks/spellbook-motion.png').convert('RGB')
+out=Image.new('RGB',(1320,1050),paper);d=ImageDraw.Draw(out)
+d.text((30,20),'B6 MAGIC + MILESTONES | TEST 1/10: SPELLBOOK',fill=(22,38,63))
+out.paste(small.resize((380,380),Image.Resampling.LANCZOS),(30,70))
+d.text((30,465),'Closed at 380 px',fill=(22,38,63))
+out.paste(small.resize((120,120),Image.Resampling.LANCZOS),(440,170))
+d.text((440,310),'Card: 120 px',fill=(22,38,63))
+out.paste(small.resize((40,40),Image.Resampling.LANCZOS),(600,210))
+d.text((600,310),'Chip: 40 px',fill=(22,38,63))
+out.paste(motion.resize((1260,525),Image.Resampling.LANCZOS),(30,500))
+out.save(p/'_checks/b6-contact-sheet.png',optimize=True)

@@ -6,6 +6,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Doing
 | ID | Task | Owner | Done when |
 |---|---|---|---|
+| T10f | Vessel B6 magic and milestones (art only) | Codex | Spellbook test vessel and measured 40/120 px, exact CLOSED, motion and contact-sheet review complete; branch pushed for Roy’s OK before the other nine. App wiring and catalogue migration are separate. |
 | D1 | Main-only Vercel Git deployments and production retry | Codex | Requested ignore command saved and reloaded. PR #45 adds `git.deploymentEnabled` to block preview creation; main and slash-containing feature names pass policy checks. Verify this PR push is skipped, then retry latest owner-authored main once the Hobby daily quota clears. |
 | L1 | Foreground location and named navigation destinations | Codex | Simulated browser callbacks verified at Roy’s request; native tests and iOS export pass. Await release CI and deployment; physical sensor tests remain unverified. |
 
