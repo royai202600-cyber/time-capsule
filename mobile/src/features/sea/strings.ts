@@ -3,7 +3,7 @@ import { useLanguage } from "../../i18n";
 const strings = {
   zh: {
     // Live map (Journey)
-    kicker: "附近有甚麼在等你？",
+    kicker: "附近有什麼",
     nearbyCount: (n: number) => n ? `附近有 ${n} 個瓶子和膠囊` : "附近暫時很安靜",
     nearbyEmpty: "大海今天很安靜。走走看，或者先放一個瓶子出去。",
     here: "就在這裡",
@@ -16,7 +16,6 @@ const strings = {
     canPick: "可以撿起",
     pickUp: "撿起瓶子",
     picking: "正在撿起…",
-    pickupsLeft: (n: number) => `今天還可以撿 ${n} 個`,
     walkCloser: (d: string) => `再走近 ${d} 就能撿起`,
     navigate: "導航過去",
     viewCapsule: "查看膠囊",
@@ -24,7 +23,7 @@ const strings = {
     recenter: "回到我身邊",
     asia: "亞洲",
     passport: "護照",
-    throwCta: "放一個瓶子入海",
+    throwCta: "放下一個瓶子",
     locationAsk: "大海需要知道你在哪個岸邊。只在你使用時讀取位置，不會公開。",
     locationAllow: "允許位置",
     locationDenied: "位置權限已關閉，請在設定中開啟。",
@@ -32,7 +31,6 @@ const strings = {
     locationWaiting: "正在尋找你的位置…",
     errTooFar: "距離太遠了，走到 100 米內再試。",
     errTaken: "晚了一步，這個瓶子已被別人撿走了。",
-    errDaily: "今天已經撿了 3 個瓶子。明天大海會再送來新的。",
     errOwn: "這是你自己放出的瓶子。",
     errUnknown: "大海暫時沒有回應，請再試一次。",
     // Create
@@ -68,7 +66,7 @@ const strings = {
     foundBy: (name: string) => `被 ${name} 撿到了`,
   },
   en: {
-    kicker: "What's waiting near you?",
+    kicker: "what's waiting",
     nearbyCount: (n: number) => n ? `${n} bottle${n === 1 ? "" : "s"} and capsules nearby` : "It's quiet nearby",
     nearbyEmpty: "The sea is quiet today. Take a walk, or throw a bottle first.",
     here: "Right here",
@@ -81,7 +79,6 @@ const strings = {
     canPick: "Pick up",
     pickUp: "Pick up the bottle",
     picking: "Picking it up…",
-    pickupsLeft: (n: number) => `${n} pick-up${n === 1 ? "" : "s"} left today`,
     walkCloser: (d: string) => `Walk ${d} closer to pick it up`,
     navigate: "Directions",
     viewCapsule: "View capsule",
@@ -89,7 +86,7 @@ const strings = {
     recenter: "Back to me",
     asia: "Asia",
     passport: "Passport",
-    throwCta: "Throw a bottle",
+    throwCta: "Drop a bottle",
     locationAsk: "The sea needs to know which shore you're on. Location is read only while you use it and never shown to anyone.",
     locationAllow: "Allow location",
     locationDenied: "Location is off. Turn it on in Settings.",
@@ -97,7 +94,6 @@ const strings = {
     locationWaiting: "Finding where you are…",
     errTooFar: "Too far away. Walk within 100 m and try again.",
     errTaken: "Just missed it: someone else picked this bottle up.",
-    errDaily: "You've picked up 3 bottles today. The sea brings more tomorrow.",
     errOwn: "This is a bottle you threw.",
     errUnknown: "The sea isn't answering. Please try again.",
     toSea: "The sea",
