@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Linking, Modal, Platform, Pressable, Text, View } from "react-native";
+import { Linking, Platform, Pressable, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useFocusEffect } from "expo-router";
 import { goBack } from "../../navigation";
@@ -14,15 +14,17 @@ import { Vessel, type VesselKind } from "../../components/Vessel";
 import { portraits, vesselParts } from "../../art/manifest";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { isTestLocationUser, setFakeLocation, useForegroundLocation } from "./location";
-import { JourneyMap, type JourneyPin } from "./JourneyMap";
 import { Passport } from "./Passport";
 import { CapsuleMapPage } from "./CapsuleMapPage";
 import { LiveMap } from "./live/LiveMap";
 import { JourneyViewport } from "./JourneyViewport";
 import { mapHtml } from "./live/mapHtml";
 import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
+import type { Tables } from "../../services/database.types";
 import { MAP_PMTILES_URL, sea, SeaError, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
 import { daysSince, distanceText, useSeaText } from "../sea/strings";
+
+type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string; waiting?: boolean };
 
 const FALLBACK = { lat: 22.19358, lng: 113.53917 }; // Senado Square, Macau (development only)
 type Item =
@@ -52,7 +54,6 @@ export default function JourneyScreen() {
   const [walkTo, setWalkTo] = useState<{ lat: number; lng: number } | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
-  const [asia, setAsia] = useState(false);
   const [passport, setPassport] = useState(false);
   const [mapPlace, setMapPlace] = useState<Extract<Item, { kind: "place" }> | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
@@ -171,7 +172,6 @@ export default function JourneyScreen() {
       <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.sm }}>
         <Chip onPress={goBack} label={t("back")}><ArtIcon name="back" size={22} /></Chip>
         <View style={{ flex: 1 }} pointerEvents="none" />
-        <Chip onPress={() => { void haptics.tap(); setAsia(true); }} label={s("asia")}><ArtIcon name="map" size={22} color={C.blue} /></Chip>
         <Chip onPress={() => { void haptics.tap(); setPassport(true); }} label={s("passport")}><Text style={{ fontFamily: serif, fontSize: 12, color: C.brass }}>{earned}/{total}</Text></Chip>
       </View>
     </SafeAreaView>
@@ -197,21 +197,12 @@ export default function JourneyScreen() {
         {SEA_ENABLED && !selected && <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
           onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: "sea" } }); }}
           style={({ pressed }) => ({ alignSelf: "center", flexShrink: 0, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: C.wax, borderRadius: radii.pill, paddingLeft: 8, paddingRight: 20, paddingVertical: 7, opacity: pressed ? .9 : 1, ...shadows.card })}>
-          <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}><Vessel kind="bottle" size={26} /></View>
+          <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}><Vessel kind="hourglass" size={26} /></View>
           <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("throwCta")}</Text>
         </Pressable>}
       </View>
     </SafeAreaView>
 
-    <Modal visible={asia} animationType="fade" onRequestClose={() => setAsia(false)}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: C.paper, padding: spacing.md, gap: spacing.md }}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-          <Chip onPress={() => setAsia(false)} label={t("back")}><ArtIcon name="close" size={22} /></Chip>
-          <Text style={{ fontFamily: serif, fontSize: 24, color: C.ink }}>{t("journey.title")} · {s("asia")}</Text>
-        </View>
-        <JourneyMap pins={pins} fix={fix} onSelect={(pin) => { void haptics.tick(); setAsia(false); const item = items.find((i) => i.kind === "place" && i.pin.place.id === pin.place.id); if (item?.kind === "place") { select(item.id); } }} />
-      </SafeAreaView>
-    </Modal>
     <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows} />
   </JourneyViewport>;
 }
@@ -275,7 +266,7 @@ function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections
 function LocationGate({ status, onAllow, onSettings }: { status: string; onAllow: () => void; onSettings: () => void }) {
   const s = useSeaText();
   return <SafeAreaView style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.lg, gap: spacing.md, backgroundColor: C.glass }}>
-    <Vessel kind="bottle" size={130} idle />
+    <Vessel kind="hourglass" size={130} idle />
     <Text style={{ fontFamily: sans, color: C.ink, textAlign: "center", lineHeight: 22, maxWidth: 360 }}>{status === "denied" ? s("locationDenied") : status === "checking" || status === "granted" ? s("locationWaiting") : s("locationAsk")}</Text>
     {status === "denied" && <Btn title={s("openSettings")} onPress={onSettings} />}
     {(status === "explain" || status === "unavailable") && <Btn title={s("locationAllow")} onPress={onAllow} />}
