@@ -70,4 +70,18 @@ describe("foreground location", () => {
     expect(mocks.watch).toHaveBeenCalledOnce();
     expect(location.currentFix()).toMatchObject({ lat: 22, lng: 114, accuracy: 80 });
   });
+
+  it("limits the production Taipei test fix to Roy's dedicated account", async () => {
+    vi.stubGlobal("__DEV__", false);
+    vi.stubGlobal("navigator", {});
+    const location = await import("./location");
+    location.setFakeLocation({ lat: 25, lng: 121 });
+    expect(location.currentFix()).toBeNull();
+    location.setTestLocationForUser("1ca3f9b3-c405-4daa-a05a-22cbc3689774");
+    expect(location.openingCoordinates()).toMatchObject({ lat: 25.037546, lng: 121.562754, accuracy: 10 });
+    location.setTestLocationForUser("another-user");
+    expect(location.currentFix()).toBeNull();
+    location.setFakeLocation({ lat: 25, lng: 121 });
+    expect(location.currentFix()).toBeNull();
+  });
 });

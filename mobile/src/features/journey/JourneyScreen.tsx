@@ -13,7 +13,7 @@ import { Avatar } from "../../components/Avatar";
 import { Vessel, type VesselKind } from "../../components/Vessel";
 import { portraits, vesselParts } from "../../art/manifest";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
-import { setFakeLocation, useForegroundLocation } from "./location";
+import { isTestLocationUser, setFakeLocation, useForegroundLocation } from "./location";
 import { JourneyMap, type JourneyPin } from "./JourneyMap";
 import { Passport } from "./Passport";
 import { CapsuleMapPage } from "./CapsuleMapPage";
@@ -163,14 +163,14 @@ export default function JourneyScreen() {
   return <View style={{ flex: 1, backgroundColor: C.paper }}>
     {you
       ? <LiveMap ref={map} html={html} state={mapState} onSelect={select} onFollowChange={setFollowing}
-        onTap={(lat, lng) => { if (selectedId) setSelectedId(null); else if (__DEV__) setWalkTo({ lat, lng }); }} />
+        onTap={(lat, lng) => { if (selectedId) setSelectedId(null); else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
       : <LocationGate status={status} onAllow={() => void location.request()} onSettings={() => void location.openSettings()} />}
 
     <SafeAreaView pointerEvents="box-none" style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
       <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.sm }}>
         <Chip onPress={goBack} label={t("back")}><ArtIcon name="back" size={22} /></Chip>
         <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 8, alignSelf: "center", backgroundColor: "rgba(246,248,251,.92)", borderRadius: radii.pill, paddingHorizontal: 14, paddingVertical: 7, ...shadows.card }}>
-          <Text style={{ fontFamily: serif, fontSize: 18, color: C.ink }}>{t("journey.title")}</Text>
+          <Text numberOfLines={1} style={{ flexShrink: 0, fontFamily: serif, fontSize: 18, color: C.ink }}>{t("journey.title")}</Text>
           {pickupsLeft !== null && <Text numberOfLines={1} style={{ flexShrink: 1, fontFamily: sans, fontSize: 11, color: C.blue }}>{s("pickupsLeft", pickupsLeft)}</Text>}
         </View>
         <Chip onPress={() => { void haptics.tap(); setAsia(true); }} label={s("asia")}><ArtIcon name="map" size={22} color={C.blue} /></Chip>
