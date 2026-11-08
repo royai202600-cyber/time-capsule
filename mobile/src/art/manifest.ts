@@ -685,6 +685,1267 @@ export const vesselParts: Record<VesselKind, IllustratedParts> = {
       { name: 'tops', role: 'lift', source: require('../../../public/art/vessels/vessel-twin-towers-tops.webp'), pivot: {x: 510, y: 348}, open: [{at: 0, y: 0, opacity: 1}, {at: 0.65, y: -0.4, opacity: 0.65}, {at: 1, y: -0.65, opacity: 0}] },
     ],
   },
+  // Final 20 vessels: copied from the approved art manifest.
+  "hot-air-balloon": {
+    "assembled": require('../../../public/art/vessels/vessel-hot-air-balloon.webp'),
+    "opening": "B",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "float",
+        "amount": 0.03
+      }
+    ],
+    "mouth": {
+      "x": 512,
+      "y": 719
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 407,
+      "y": 760
+    },
+    "layers": [
+      {
+        "name": "basket",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-hot-air-balloon-basket.webp')
+      },
+      {
+        "name": "balloon",
+        "role": "lift",
+        "pivot": {
+          "x": 512,
+          "y": 678
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.5,
+            "y": -0.1,
+            "opacity": 0.85
+          },
+          {
+            "at": 1,
+            "y": -0.65,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-hot-air-balloon-balloon.webp')
+      }
+    ]
+  },
+  "bubble-tea": {
+    "assembled": require('../../../public/art/vessels/vessel-bubble-tea.webp'),
+    "opening": "C",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 513,
+      "y": 395
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 321,
+      "y": 462
+    },
+    "layers": [
+      {
+        "name": "cup",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-bubble-tea-cup.webp')
+      },
+      {
+        "name": "lid",
+        "role": "lift",
+        "pivot": {
+          "x": 513,
+          "y": 391
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.45,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-bubble-tea-lid.webp')
+      }
+    ]
+  },
+  "dim-sum-steamer": {
+    "assembled": require('../../../public/art/vessels/vessel-dim-sum-steamer.webp'),
+    "opening": "B",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 522,
+      "y": 478
+    },
+    "baseY": 898,
+    "sparkle": {
+      "x": 673,
+      "y": 608
+    },
+    "layers": [
+      {
+        "name": "steamer",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-dim-sum-steamer-steamer.webp')
+      },
+      {
+        "name": "steam",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "drift",
+            "amount": 0.03
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-dim-sum-steamer-steam.webp')
+      },
+      {
+        "name": "lid",
+        "role": "lift",
+        "pivot": {
+          "x": 522,
+          "y": 519
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.45,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-dim-sum-steamer-lid.webp')
+      }
+    ]
+  },
+  "bento": {
+    "assembled": require('../../../public/art/vessels/vessel-bento.webp'),
+    "opening": "B",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 518,
+      "y": 507
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 816,
+      "y": 666
+    },
+    "layers": [
+      {
+        "name": "box",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-bento-box.webp')
+      },
+      {
+        "name": "lid",
+        "role": "lift",
+        "pivot": {
+          "x": 518,
+          "y": 503
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.35,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.48,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-bento-lid.webp')
+      },
+      {
+        "name": "knot",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.35,
+            "opacity": 0
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-bento-knot.webp')
+      }
+    ]
+  },
+  "paper-cranes": {
+    "assembled": require('../../../public/art/vessels/vessel-paper-cranes.webp'),
+    "opening": "G",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 514,
+      "y": 321
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 281,
+      "y": 427
+    },
+    "glint": require('../../../public/art/vessels/vessel-paper-cranes-glint.webp'),
+    "layers": [
+      {
+        "name": "jar",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-paper-cranes-jar.webp')
+      },
+      {
+        "name": "lid",
+        "role": "twist",
+        "pivot": {
+          "x": 514,
+          "y": 329
+        },
+        "open": [
+          {
+            "at": 0,
+            "rotate": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.3,
+            "rotate": -12,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "rotate": -12,
+            "y": -0.4,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-paper-cranes-lid.webp')
+      }
+    ]
+  },
+  "heart-locket": {
+    "assembled": require('../../../public/art/vessels/vessel-heart-locket.webp'),
+    "opening": "J",
+    "idleMs": 4000,
+    "idle": [],
+    "mouth": {
+      "x": 584,
+      "y": 458
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 341,
+      "y": 220
+    },
+    "layers": [
+      {
+        "name": "stand",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-heart-locket-stand.webp')
+      },
+      {
+        "name": "back",
+        "role": "static",
+        "idle": [
+          {
+            "type": "sway",
+            "deg": 4,
+            "pivot": {
+              "x": 584,
+              "y": 204
+            }
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-heart-locket-back.webp')
+      },
+      {
+        "name": "front",
+        "role": "hinge",
+        "pivot": {
+          "x": 414,
+          "y": 550
+        },
+        "open": [
+          {
+            "at": 0,
+            "scaleX": 1
+          },
+          {
+            "at": 1,
+            "scaleX": 0.03
+          }
+        ],
+        "idle": [
+          {
+            "type": "sway",
+            "deg": 4,
+            "pivot": {
+              "x": 584,
+              "y": 204
+            }
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-heart-locket-front.webp')
+      }
+    ]
+  },
+  "suitcase": {
+    "assembled": require('../../../public/art/vessels/vessel-suitcase.webp'),
+    "opening": "A",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 507,
+      "y": 514
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 792,
+      "y": 445
+    },
+    "layers": [
+      {
+        "name": "case",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-suitcase-case.webp')
+      },
+      {
+        "name": "lid",
+        "role": "hinge",
+        "pivot": {
+          "x": 507,
+          "y": 397
+        },
+        "open": [
+          {
+            "at": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.5,
+            "rotate": -30,
+            "opacity": 0.8
+          },
+          {
+            "at": 1,
+            "rotate": -65,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-suitcase-lid.webp')
+      }
+    ]
+  },
+  "postbox": {
+    "assembled": require('../../../public/art/vessels/vessel-postbox.webp'),
+    "opening": "J",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 508,
+      "y": 417
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 394,
+      "y": 400
+    },
+    "layers": [
+      {
+        "name": "box",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-postbox-box.webp')
+      },
+      {
+        "name": "door",
+        "role": "hinge",
+        "pivot": {
+          "x": 635,
+          "y": 602
+        },
+        "open": [
+          {
+            "at": 0,
+            "scaleX": 1
+          },
+          {
+            "at": 1,
+            "scaleX": 0.03
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-postbox-door.webp')
+      }
+    ]
+  },
+  "camp-lantern": {
+    "assembled": require('../../../public/art/vessels/vessel-camp-lantern.webp'),
+    "opening": "C",
+    "idleMs": 4000,
+    "idle": [],
+    "mouth": {
+      "x": 518,
+      "y": 407
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 388,
+      "y": 672
+    },
+    "layers": [
+      {
+        "name": "backing",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-camp-lantern-backing.webp')
+      },
+      {
+        "name": "glow",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 1
+          }
+        ],
+        "idle": [
+          {
+            "type": "glow",
+            "base": 0.65,
+            "range": 0.3,
+            "flicker": 0.06
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-camp-lantern-glow.webp')
+      },
+      {
+        "name": "lantern",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-camp-lantern-lantern.webp')
+      },
+      {
+        "name": "cap",
+        "role": "lift",
+        "pivot": {
+          "x": 518,
+          "y": 357
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.45,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-camp-lantern-cap.webp')
+      }
+    ]
+  },
+  "treasure-chest": {
+    "assembled": require('../../../public/art/vessels/vessel-treasure-chest.webp'),
+    "opening": "A",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 502,
+      "y": 530
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 600,
+      "y": 591
+    },
+    "layers": [
+      {
+        "name": "chest",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-treasure-chest-chest.webp')
+      },
+      {
+        "name": "lid",
+        "role": "hinge",
+        "pivot": {
+          "x": 502,
+          "y": 444
+        },
+        "open": [
+          {
+            "at": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.5,
+            "rotate": -30,
+            "opacity": 0.8
+          },
+          {
+            "at": 1,
+            "rotate": -65,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-treasure-chest-lid.webp')
+      }
+    ]
+  },
+  "spellbook": {
+    "assembled": require('../../../public/art/vessels/vessel-spellbook.webp'),
+    "opening": "J",
+    "idleMs": 3900,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 551,
+      "y": 518
+    },
+    "baseY": 898,
+    "sparkle": {
+      "x": 735,
+      "y": 283
+    },
+    "layers": [
+      {
+        "name": "book",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-spellbook-book.webp')
+      },
+      {
+        "name": "glow",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 1
+          }
+        ],
+        "idle": [
+          {
+            "type": "glow",
+            "base": 0.85,
+            "range": 0.15
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-spellbook-glow.webp')
+      },
+      {
+        "name": "cover",
+        "role": "hinge",
+        "pivot": {
+          "x": 312,
+          "y": 587
+        },
+        "open": [
+          {
+            "at": 0,
+            "scaleX": 1,
+            "opacity": 1
+          },
+          {
+            "at": 0.5,
+            "scaleX": 0.55,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "scaleX": 0.04,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-spellbook-cover.webp')
+      },
+      {
+        "name": "clasp",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.25,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-spellbook-clasp.webp')
+      }
+    ]
+  },
+  "escape-pod": {
+    "assembled": require('../../../public/art/vessels/vessel-escape-pod.webp'),
+    "opening": "A",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "float",
+        "amount": 0.03
+      }
+    ],
+    "mouth": {
+      "x": 619,
+      "y": 508
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 402,
+      "y": 469
+    },
+    "layers": [
+      {
+        "name": "pod",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-escape-pod-pod.webp')
+      },
+      {
+        "name": "glow",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 1
+          }
+        ],
+        "idle": [
+          {
+            "type": "glow",
+            "base": 0.8,
+            "range": 0.2
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-escape-pod-glow.webp')
+      },
+      {
+        "name": "hatch",
+        "role": "hinge",
+        "pivot": {
+          "x": 776,
+          "y": 527
+        },
+        "open": [
+          {
+            "at": 0,
+            "scaleX": 1,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "scaleX": 0.05,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-escape-pod-hatch.webp')
+      }
+    ]
+  },
+  "crystal-ball": {
+    "assembled": require('../../../public/art/vessels/vessel-crystal-ball.webp'),
+    "opening": "B",
+    "idleMs": 4200,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 512,
+      "y": 647
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 283,
+      "y": 251
+    },
+    "layers": [
+      {
+        "name": "stand",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-crystal-ball-stand.webp')
+      },
+      {
+        "name": "mist",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "glow",
+            "base": 0.75,
+            "range": 0.25
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-crystal-ball-mist.webp')
+      },
+      {
+        "name": "ball",
+        "role": "lift",
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.45,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-crystal-ball-ball.webp')
+      }
+    ]
+  },
+  "wishing-lamp": {
+    "assembled": require('../../../public/art/vessels/vessel-wishing-lamp.webp'),
+    "opening": "C",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 542,
+      "y": 685
+    },
+    "baseY": 889,
+    "sparkle": {
+      "x": 532,
+      "y": 662
+    },
+    "layers": [
+      {
+        "name": "lamp",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-wishing-lamp-lamp.webp')
+      },
+      {
+        "name": "smoke",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "drift",
+            "amount": 0.03
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-wishing-lamp-smoke.webp')
+      },
+      {
+        "name": "lid",
+        "role": "lift",
+        "pivot": {
+          "x": 542,
+          "y": 685
+        },
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.4,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-wishing-lamp-lid.webp')
+      }
+    ]
+  },
+  "potion": {
+    "assembled": require('../../../public/art/vessels/vessel-potion.webp'),
+    "opening": "D",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 516,
+      "y": 306
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 450,
+      "y": 298
+    },
+    "layers": [
+      {
+        "name": "flask",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-potion-flask.webp')
+      },
+      {
+        "name": "bubbles",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "drift",
+            "amount": 0.03
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-potion-bubbles.webp')
+      },
+      {
+        "name": "cork",
+        "role": "hinge",
+        "pivot": {
+          "x": 403,
+          "y": 153
+        },
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.36,
+            "rotate": -10,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-potion-cork.webp')
+      }
+    ]
+  },
+  "pocket-watch": {
+    "assembled": require('../../../public/art/vessels/vessel-pocket-watch.webp'),
+    "opening": "A",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "sway",
+        "deg": 4,
+        "pivot": {
+          "x": 461,
+          "y": 175
+        }
+      }
+    ],
+    "mouth": {
+      "x": 429,
+      "y": 811
+    },
+    "baseY": 890,
+    "sparkle": {
+      "x": 291,
+      "y": 441
+    },
+    "layers": [
+      {
+        "name": "watch",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-pocket-watch-watch.webp')
+      },
+      {
+        "name": "cover",
+        "role": "hinge",
+        "pivot": {
+          "x": 651,
+          "y": 598
+        },
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "scaleX": 0.03,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-pocket-watch-cover.webp')
+      }
+    ]
+  },
+  "diploma-tube": {
+    "assembled": require('../../../public/art/vessels/vessel-diploma-tube.webp'),
+    "opening": "D",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 511,
+      "y": 278
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 445,
+      "y": 190
+    },
+    "layers": [
+      {
+        "name": "tube",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-diploma-tube-tube.webp')
+      },
+      {
+        "name": "diploma",
+        "role": "slide",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 0,
+            "y": 0.15
+          },
+          {
+            "at": 0.35,
+            "opacity": 0,
+            "y": 0.15
+          },
+          {
+            "at": 1,
+            "opacity": 1,
+            "y": -0.08
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-diploma-tube-diploma.webp')
+      },
+      {
+        "name": "cap",
+        "role": "hinge",
+        "pivot": {
+          "x": 357,
+          "y": 155
+        },
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.36,
+            "rotate": -10,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-diploma-tube-cap.webp')
+      }
+    ]
+  },
+  "baby-shoes": {
+    "assembled": require('../../../public/art/vessels/vessel-baby-shoes.webp'),
+    "opening": "B",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 512,
+      "y": 590
+    },
+    "baseY": 889,
+    "sparkle": {
+      "x": 436,
+      "y": 384
+    },
+    "layers": [
+      {
+        "name": "box",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-baby-shoes-box.webp')
+      },
+      {
+        "name": "lid",
+        "role": "lift",
+        "pivot": {
+          "x": 512,
+          "y": 224
+        },
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.4,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-baby-shoes-lid.webp')
+      }
+    ]
+  },
+  "memorial-candle": {
+    "assembled": require('../../../public/art/vessels/vessel-memorial-candle.webp'),
+    "opening": "C",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "mouth": {
+      "x": 512,
+      "y": 395
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 300,
+      "y": 341
+    },
+    "layers": [
+      {
+        "name": "glow",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 1
+          }
+        ],
+        "idle": [
+          {
+            "type": "glow",
+            "base": 0.8,
+            "range": 0.2,
+            "flicker": 0.1
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-memorial-candle-glow.webp')
+      },
+      {
+        "name": "jar",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-memorial-candle-jar.webp')
+      },
+      {
+        "name": "lid",
+        "role": "lift",
+        "pivot": {
+          "x": 220,
+          "y": 150
+        },
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.36,
+            "rotate": 0,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-memorial-candle-lid.webp')
+      }
+    ]
+  },
+  "rocket-tin": {
+    "assembled": require('../../../public/art/vessels/vessel-rocket-tin.webp'),
+    "opening": "C",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "float",
+        "amount": 0.03
+      }
+    ],
+    "mouth": {
+      "x": 514,
+      "y": 317
+    },
+    "baseY": 889,
+    "sparkle": {
+      "x": 512,
+      "y": 321
+    },
+    "layers": [
+      {
+        "name": "rocket",
+        "role": "static",
+        "source": require('../../../public/art/vessels/vessel-rocket-tin-rocket.webp')
+      },
+      {
+        "name": "flame",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 1
+          }
+        ],
+        "idle": [
+          {
+            "type": "glow",
+            "base": 0.8,
+            "range": 0.2,
+            "flicker": 0.1
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-rocket-tin-flame.webp')
+      },
+      {
+        "name": "cone",
+        "role": "lift",
+        "pivot": {
+          "x": 514,
+          "y": 149
+        },
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.4,
+            "opacity": 0
+          }
+        ],
+        "source": require('../../../public/art/vessels/vessel-rocket-tin-cone.webp')
+      }
+    ]
+  },
 };
 /** Seal-step drop distance for a vessel (VESSEL-SOP §4). */
 export const letterDropFor = (kind: VesselKind) => { const p = vesselParts[kind]; return p.letterDrop ?? Math.round(145 + p.mouth.y * 120 / 1024); };
