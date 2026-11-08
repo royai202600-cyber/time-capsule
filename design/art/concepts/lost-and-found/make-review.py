@@ -4,7 +4,7 @@ from PIL import Image, ImageOps, ImageDraw, ImageFilter, ImageFont
 P=Path(__file__).resolve().parent
 LAND=(243,239,230); NAVY=(22,38,63); BRASS=(201,161,90); PLUM=(110,43,63)
 SIZE=(1024,1536)
-NAMES=("simple-waypost-a-house","simple-waypost-b-hut","simple-waypost-c-kiosk","simple-spinner-a-pinwheel","simple-spinner-b-envelopes")
+NAMES=("block-waypost-a-house","block-waypost-b-hut","block-waypost-c-kiosk","block-spinner-a-pinwheel","block-spinner-b-envelopes")
 def load(path): return Image.open(path).convert("RGBA")
 def box(im): return im.getchannel("A").point(lambda x:255 if x>=16 else 0).getbbox()
 def crop(im): return im.crop(box(im))
@@ -16,66 +16,34 @@ def fit(im,w,h):
 def layer(im,xy):
     out=Image.new("RGBA",SIZE);out.alpha_composite(im,xy);return out
 def export(name,im): im.save(P/name)
-LANDMARKS=("simple-landmark-a-hall","simple-landmark-b-steps")
-def shapes():
-    for name in LANDMARKS:
-        f=P/f"waypost/{name}-raw.png";im=load(f)
+LANDMARKS=("block-landmark-a-hall","block-landmark-b-steps")
+def prepare_objects():
+    for name in NAMES+LANDMARKS:
+        f=P/f"waypost/{name}.png";im=load(f)
         if max(im.size)>1024:im.thumbnail((1024,1024),Image.Resampling.LANCZOS)
-        # Pad to a white square; preserve geometry and never upscale.
-        if im.size!=(1024,1024):
-            square=Image.new("RGBA",(1024,1024),"white");square.alpha_composite(im,((1024-im.width)//2,(1024-im.height)//2));im=square
-        im.convert("RGB").save(f)
-        gray=ImageOps.grayscale(im)
-        alpha=gray.point(lambda v:max(0,min(255,round((255-v)*255/218))))
-        # Remove near-white paper noise; retain antialiased boundaries.
-        alpha=alpha.point(lambda v:0 if v<8 else v)
-        for colour,rgb in (("navy",NAVY),):
-            out=Image.new("RGBA",im.size,rgb+(0,));out.putalpha(alpha)
-            export(f"waypost/{name}-{colour}.png",out)
-def compositions():
-    background=load(P/"screens/catch-background.png")
-    assert background.size==SIZE
-    shadow=load(P/"screens/layers/shadow.png")
-    capsule=load(P/"screens/layers/capsule-corrupted.png")
-    mending=load(P/"screens/layers/capsule-mending.png")
-    ball=load(P/"screens/layers/ball-a.png")
-    dust=load(P/"screens/layers/dust.png")
-    throw=background.copy()
-    for im in (shadow,capsule,ball):throw=Image.alpha_composite(throw,im)
-    export("screens/screen-throw.png",throw.convert("RGB"))
-    hit=background.copy()
-    for im in (shadow,mending,dust):hit=Image.alpha_composite(hit,im)
-    export("screens/screen-hit.png",hit.convert("RGB"))
-    fountain=resized(crop(load(P/"cracks/senado-corrupted-heavy.png")),width=717)
-    fx=(1024-fountain.width)//2;fy=240
-    large_shadow=resized(shadow.crop(shadow.getchannel("A").getbbox()),width=620)
-    fight_shadow=layer(large_shadow,((1024-large_shadow.width)//2,fy+fountain.height-8))
-    fight_capsule=layer(fountain,(fx,fy))
-    export("screens/layers/landmark-shadow.png",fight_shadow)
-    export("screens/layers/landmark-capsule.png",fight_capsule)
-    fight=background.copy()
-    for im in (fight_shadow,fight_capsule,ball):fight=Image.alpha_composite(fight,im)
-    export("screens/screen-landmark-fight.png",fight.convert("RGB"))
-    overview=load(P/"screens/map-plain.png")
+        # Remove near-transparent specks while preserving pale opaque walls.
+        im.putalpha(im.getchannel("A").point(lambda v:0 if v<4 else v))
+        im.save(f)
+def overview():
+    out=load(P/"screens/map-plain.png")
     hero=resized(crop(load(P/"cracks/hourglass-corrupted-a.png")),height=200)
-    overview.alpha_composite(hero,((1024-hero.width)//2,500))
+    out.alpha_composite(hero,((1024-hero.width)//2,500))
     for name,(cx,cy) in zip(NAMES[:3],((170,650),(850,740),(610,1130))):
-        im=resized(crop(load(P/f"waypost/{name}-brass.png")),width=64)
-        overview.alpha_composite(im,(cx-im.width//2,cy-im.height//2))
+        im=resized(crop(load(P/f"waypost/{name}.png")),width=80)
+        out.alpha_composite(im,(cx-im.width//2,cy-im.height//2))
     for name,(cx,cy) in zip(LANDMARKS,((380,290),(830,1040))):
-        im=resized(crop(load(P/f"waypost/{name}-navy.png")),width=120)
-        overview.alpha_composite(im,(cx-im.width//2,cy-im.height//2))
-    export("screens/map-capsule-and-wayposts.png",overview.convert("RGB"))
+        im=resized(crop(load(P/f"waypost/{name}.png")),width=140)
+        out.alpha_composite(im,(cx-im.width//2,cy-im.height//2))
+    export("screens/map-capsule-and-wayposts.png",out.convert("RGB"))
 def small_check():
     out=Image.new("RGBA",(1000,500),LAND+(255,))
     for i,name in enumerate(NAMES):
-        for j,colour in enumerate(("brass","plum")):
-            for row,size in enumerate((48,64)):
-                im=fit(crop(load(P/f"waypost/{name}-{colour}.png")),size,size)
-                out.alpha_composite(im,(i*200+j*90+(90-im.width)//2,15+row*125+(80-im.height)//2))
+        for row,size in enumerate((48,64)):
+            im=fit(crop(load(P/f"waypost/{name}.png")),size,size)
+            out.alpha_composite(im,(i*200+(200-im.width)//2,15+row*125+(80-im.height)//2))
     for i,name in enumerate(LANDMARKS):
         for row,size in enumerate((64,96)):
-            im=fit(crop(load(P/f"waypost/{name}-navy.png")),size,size)
+            im=fit(crop(load(P/f"waypost/{name}.png")),size,size)
             out.alpha_composite(im,(350+i*200+(100-im.width)//2,280+row*110))
     export("checks/wayposts-64.png",out)
 def sheet():
@@ -91,10 +59,10 @@ def sheet():
       ("3 Throw and hit",[("screens/screen-throw.png","Throw: shared catch background, no target artwork"),("screens/screen-hit.png","Hit: separate dust and mending capsule")],700),
       ("",[("screens/catch-background.png","Shared catch and Landmark fight background")],650),
       ("",[("screens/hit-dust.png","Separate wax-red dust effect")],220),
-      ("4 Common Wayposts",[(f"waypost/{n}-brass.png",label+", brass") for n,label in zip(NAMES,names)],320),
-      ("",[(f"waypost/{n}-plum.png",label+", plum") for n,label in zip(NAMES,names)],320),
-      ("",[("checks/wayposts-64.png","Common: brass/plum at 48/64 px; Landmark: navy at 64/96 px")],500),
-      ("5 Landmark Waypost",[("waypost/simple-landmark-a-hall-navy.png","Landmark A: wide hall, navy"),("waypost/simple-landmark-b-steps-navy.png","Landmark B: two-storey building, navy")],300),
+      ("4 Common Wayposts",[(f"waypost/{n}.png",label+", brass roof") for n,label in zip(NAMES[:3],names[:3])],320),
+      ("",[(f"waypost/{n}.png",label+", brass and cream") for n,label in zip(NAMES[3:],names[3:])],320),
+      ("",[("checks/wayposts-64.png","Common and spinners: 48/64 px; Landmark: 64/96 px")],500),
+      ("5 Landmark Waypost",[("waypost/block-landmark-a-hall.png","Landmark Waypost A: wide hall, plum roof"),("waypost/block-landmark-b-steps.png","Landmark Waypost B: two storeys, plum roof")],300),
       ("",[("screens/map-capsule-and-wayposts.png","Map: common and Landmark buildings"),("screens/screen-landmark-fight.png","Landmark fight: giant Corrupted Capsule")],650),
       ("6 To whoever passes by",[("whoever/portrait-a-bench.png","Portrait A: waiting envelope on bench"),("whoever/portrait-b-lamp.png","Portrait B: envelope tied to lamp")],380),
       ("",[("whoever/scene-a-bench.png","Scene A: envelope waiting on bench"),("whoever/scene-b-lamp.png","Scene B: envelope tied to lamp")],450),
@@ -112,4 +80,4 @@ def sheet():
         y+=h+36
     export("contact-sheet.png",out.convert("RGB"))
 if __name__=="__main__":
-    shapes();compositions();small_check();sheet()
+    prepare_objects();overview();small_check();sheet()
