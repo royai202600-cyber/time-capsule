@@ -83,10 +83,12 @@ export function ThrowBackground() {
   </Svg>;
 }
 
-/** Stand-in for the shared cracked look until the chosen art arrives. */
-function Cracks({ size }: { size: number }) {
+const ANGER = "M40 12C40 30 30 40 12 40M60 12C60 30 70 40 88 40M12 60C30 60 40 70 40 88M88 60C70 60 60 70 60 88";
+/** The comic anger mark that shows a capsule is corrupted, at its upper right. */
+function AngerMark({ size }: { size: number }) {
   return <Svg width={size} height={size} viewBox="0 0 100 100">
-    <Path d="M38 26l5 11-5 8 8 10-3 9M66 34l-6 9 5 7-8 7M30 62l9-2 5 5" stroke={C.ink} strokeOpacity={.5} strokeWidth={.9} fill="none" strokeLinejoin="round" strokeLinecap="round" />
+    <Path d={ANGER} stroke="#fff" strokeWidth={18} fill="none" strokeLinecap="round" />
+    <Path d={ANGER} stroke={C.wax} strokeWidth={10} fill="none" strokeLinecap="round" />
   </Svg>;
 }
 
@@ -116,6 +118,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   const ballOpacity = useRef(new Animated.Value(1)).current;
   const crack = useRef(new Animated.Value(1)).current;
   const dust = useRef(new Animated.Value(0)).current;
+  const throb = useRef(new Animated.Value(1)).current;
 
   const ringStart = useRef(Date.now());
   const busy = useRef(false);
@@ -143,6 +146,16 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   }, [halfMs, ringPhase]);
 
   useEffect(() => () => { alive.current = false; }, []);
+
+  useEffect(() => {
+    if (reduced) return;
+    const loop = Animated.loop(Animated.sequence([
+      Animated.timing(throb, { toValue: 1.16, duration: 320, easing: Easing.out(Easing.quad), useNativeDriver: NATIVE }),
+      Animated.timing(throb, { toValue: 1, duration: 420, easing: Easing.in(Easing.quad), useNativeDriver: NATIVE }),
+    ]));
+    loop.start();
+    return () => loop.stop();
+  }, [reduced, throb]);
 
   useEffect(() => {
     if (!landmark || result) return;
@@ -307,7 +320,10 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
       <View pointerEvents="none" style={{ position: "absolute", left: 0, right: 0, top: capsuleY(height) - vesselSize / 2, height: vesselSize, alignItems: "center" }}>
         <Animated.View style={{ width: vesselSize, height: vesselSize, alignItems: "center", justifyContent: "center", transform: [{ translateY: hop }, { translateX: shake }] }}>
           {source ? <Image source={source} style={{ width: vesselSize, height: vesselSize }} resizeMode="contain" accessibilityLabel={s("corruptedCapsule")} /> : null}
-          <Animated.View style={{ position: "absolute", opacity: crack }}><Cracks size={vesselSize} /></Animated.View>
+          <Animated.View pointerEvents="none" style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize, opacity: crack }}>
+            {source ? <Image source={source} style={{ width: vesselSize, height: vesselSize, tintColor: C.ink, opacity: .3 }} resizeMode="contain" /> : null}
+            <Animated.View style={{ position: "absolute", top: vesselSize * .02, right: vesselSize * .04, transform: [{ scale: throb }] }}><AngerMark size={vesselSize * .34} /></Animated.View>
+          </Animated.View>
           {!result && <View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 2, borderColor: "rgba(255,255,255,.95)" }} />}
           {!result && <Animated.View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 4, borderColor: RING_COLOR[capsule.rarity], transform: [{ scale: ringScale }] }} />}
           {DUST.map((d, i) => <Animated.View key={i} style={{

@@ -70,7 +70,8 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.sel .pin-body{transform:scale(1.18)}
 .pin.sel .v{filter:drop-shadow(0 0 8px ${C.brass})}
 .pin.sealed .v{filter:grayscale(.2)}
-.pin .crack{position:absolute;left:0;bottom:2px;width:80px;height:80px;animation:bob 3.6s ease-in-out infinite}
+.pin .crack{position:absolute;right:6px;top:12px;width:30px;height:30px;animation:throb .8s ease-in-out infinite}
+@keyframes throb{0%,100%{transform:scale(1)}40%{transform:scale(1.18)}}
 .pin.corrupted .v{filter:saturate(.55) brightness(.84)}
 .pin.corrupted.rare .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
 .pin.corrupted.uncommon .disc{background:radial-gradient(${C.lightBlue}99,transparent 70%)}
@@ -100,7 +101,7 @@ const pickupZoom=(lat,r=100)=>Math.log2(40075016.686*Math.cos(lat*Math.PI/180)*M
 const cameraPadding={top:80,bottom:160,left:0,right:0};
 const map=new maplibregl.Map({container:'map',style:${JSON.stringify(style)},center:[${center.lng},${center.lat}],zoom:pickupZoom(${center.lat}),padding:cameraPadding,pitch:40,maxPitch:70,bearing:0,attributionControl:{compact:true},localIdeographFontFamily:'"PingFang TC","Noto Sans TC",sans-serif'});
 let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
-const crack='<svg class="crack" viewBox="0 0 100 100"><path d="M38 26l5 11-5 8 8 10-3 9M66 34l-6 9 5 7-8 7M30 62l9-2 5 5" stroke="${C.ink}" stroke-opacity=".5" stroke-width="1" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+const crack='<svg class="crack" viewBox="0 0 100 100"><path d="M40 12C40 30 30 40 12 40M60 12C60 30 70 40 88 40M12 60C30 60 40 70 40 88M88 60C70 60 60 70 60 88" stroke="#fff" stroke-width="18" fill="none" stroke-linecap="round"/><path d="M40 12C40 30 30 40 12 40M60 12C60 30 70 40 88 40M12 60C30 60 40 70 40 88M88 60C70 60 60 70 60 88" stroke="${C.wax}" stroke-width="10" fill="none" stroke-linecap="round"/></svg>';
 // Wayposts are floating gems, clearly not buildings and clearly not capsules.
 const post='<svg class="post" viewBox="0 0 32 40"><path d="M16 1 1 17h8Z" fill="#B48EA2"/><path d="M16 1 9 17h14Z" fill="#9C7285"/><path d="M16 1l7 16h8Z" fill="#8A6175"/><path d="M1 17h8l7 22Z" fill="#8A6175"/><path d="M9 17h14l-7 22Z" fill="#6F4759"/><path d="M23 17h8L16 39Z" fill="#5C3949"/></svg>';
 const tower='<svg class="post" viewBox="0 0 32 40"><path d="M16 1 1 17h8Z" fill="#8C5A80"/><path d="M16 1 9 17h14Z" fill="#754567"/><path d="M16 1l7 16h8Z" fill="#613757"/><path d="M1 17h8l7 22Z" fill="#613757"/><path d="M9 17h14l-7 22Z" fill="#4A2743"/><path d="M23 17h8L16 39Z" fill="#3A1D35"/></svg>';
