@@ -37,7 +37,7 @@ def main():
     text = README.read_text()
     if '- T10e B5 balloon test:' not in text:
         marker = '- T10a snow-globe test:'
-        info = ('- T10e B5 balloon test: A generic striped hot-air balloon lifts and fades, leaving a complete wicker basket and rolled letter visible. The original generated pixels were normalized onto one 1024 canvas; the assembled CLOSED pose is an exact stack. `_checks/hot-air-balloon-motion.png` shows opening and measured pivot, mouth, base and sparkle; `_checks/hot-air-balloon-silhouette.png` shows 40/120 px. [B5 contact sheet](_checks/b5-contact-sheet.png). IP review found no text, characters, logos or brand shapes. Roy’s test-vessel approval is pending; the other nine B5 vessels have not started.\n')
+        info = ('- T10e B5 balloon test: A generic striped hot-air balloon lifts and fades, leaving a complete wicker basket and rolled letter visible. The original generated pixels were normalized onto one 1024 canvas; the assembled CLOSED pose is an exact stack. `_checks/hot-air-balloon-motion.png` shows opening and measured pivot, mouth, base and sparkle; `_checks/hot-air-balloon-silhouette.png` shows 40/120 px. [B5 contact sheet](_checks/b5-contact-sheet.png). IP review found no text, characters, logos or brand shapes. Roy approved the test as shown, including the basket rope ends; the other nine B5 vessels are in progress.\n')
         text = text.replace(marker, info + marker, 1)
     if '· [B5 contact sheet]' not in text:
         text = text.replace('[Full contact sheet](_checks/contact-sheet.png)',
