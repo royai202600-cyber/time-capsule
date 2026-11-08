@@ -1,0 +1,22 @@
+{
+  "canvas": [
+    1024,
+    1024
+  ],
+  "bbox_alpha_gt_20": [
+    270,
+    120,
+    755,
+    900
+  ],
+  "baseY": 899,
+  "closed_stack_exact": true,
+  "transparent_corners": true,
+  "layer_order": [
+    "basket",
+    "balloon"
+  ],
+  "gift_visible_at_open": true,
+  "open_balloon_opacity": 0,
+  "ip_review": "Original striped balloon and generic wicker basket; no logo, brand shape, character or text."
+}
