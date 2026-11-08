@@ -32,10 +32,12 @@ clasp=Image.new('RGBA',closed.size); clasp.paste(closed,(0,0),clasp_mask)
 # Soft gold light against the navy board and page edge; no hard outlined particles.
 glow=Image.new('RGBA',closed.size)
 g=Image.new('L',closed.size,0); gd=ImageDraw.Draw(g)
-gd.rounded_rectangle((312,245,910,302),radius=21,fill=105)
-gd.rounded_rectangle((921,284,957,1000),radius=18,fill=55)
-g=g.filter(ImageFilter.GaussianBlur(19))
-glow.paste((243,226,187,0),(0,0,1254,1254)); glow.putalpha(g)
+# Broad warm halo spills from the page edges, with a softer pool over the revealed page.
+gd.ellipse((375,330,930,980),fill=55)
+gd.rounded_rectangle((285,217,928,315),radius=48,fill=190)
+gd.rounded_rectangle((906,264,987,1000),radius=36,fill=175)
+g=g.filter(ImageFilter.GaussianBlur(27))
+glow.paste((238,185,91,0),(0,0,1254,1254)); glow.putalpha(g)
 # Common transform: scale to 1024, lower the base to about y=900, preserve >=100 px top.
 def norm(im):
     im=im.resize((1024,1024),Image.Resampling.LANCZOS)
