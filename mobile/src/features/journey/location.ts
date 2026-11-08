@@ -14,6 +14,12 @@ let fixTimer: ReturnType<typeof setTimeout> | null = null;
 let generation = 0;
 let requesting = false;
 let appStateSubscription: ReturnType<typeof AppState.addEventListener> | null = null;
+// Roy's dedicated test account can explore Taipei shores in production.
+// This is a client-side test fix; all Sea RPCs still perform their distance checks.
+const TAIPEI_TEST_USER_ID = "1ca3f9b3-c405-4daa-a05a-22cbc3689774";
+const TAIPEI_TEST_FIX = { lat: 25.037546, lng: 121.562754 }; // Taipei Civic Square
+let testLocationEnabled = false;
+export const isTestLocationUser = (userId: string | null) => userId === TAIPEI_TEST_USER_ID;
 const publish = (next: Partial<State>) => {
   state = { ...state, ...next };
   listeners.forEach((listener) => listener());
@@ -95,7 +101,7 @@ async function watchNative() {
 
 /** Checks a prior grant; never triggers the system permission dialog. */
 export async function checkLocation() {
-  if ((__DEV__ && state.fake) || requesting) return;
+  if (state.fake || requesting) return;
   const run = generation;
   try {
     if (Platform.OS === "web") {
@@ -144,10 +150,20 @@ export function openingCoordinates() {
     ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null;
 }
 export function setFakeLocation(fix: Pick<Fix, "lat" | "lng"> | null) {
-  if (!__DEV__) return;
-  if (!fix) { generation++; stop(); }
+  if (!__DEV__ && !testLocationEnabled) return;
+  stop();
   publish({ fake: !!fix, fix: fix ? { ...fix, accuracy: 10, at: Date.now() } : null, status: fix ? "granted" : state.status });
   if (!fix) void checkLocation();
+}
+export function setTestLocationForUser(userId: string | null) {
+  const wasEnabled = testLocationEnabled;
+  testLocationEnabled = isTestLocationUser(userId);
+  if (testLocationEnabled && !wasEnabled) setFakeLocation(TAIPEI_TEST_FIX);
+  else if (!testLocationEnabled && wasEnabled) {
+    stop();
+    publish({ fake: false, fix: null, status: "checking" });
+    void checkLocation();
+  }
 }
 export function useForegroundLocation(enabled = true) {
   const [snapshot, setSnapshot] = useState(state);

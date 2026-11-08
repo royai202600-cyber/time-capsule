@@ -14,6 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
 import { invites, profiles, Profile } from "./data";
+import { setTestLocationForUser } from "../features/journey/location";
 WebBrowser.maybeCompleteAuthSession();
 export const redirectUri = () =>
   AuthSession.makeRedirectUri({ scheme: "timecapsule", path: "auth/callback" });
@@ -124,6 +125,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (version === refreshVersion.current) setLoading(false);
     }
   };
+  useEffect(() => {
+    setTestLocationForUser(session?.user.id ?? null);
+  }, [session?.user.id]);
   useEffect(() => {
     let alive = true;
     const process = async (url: string | null) => {

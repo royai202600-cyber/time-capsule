@@ -3,8 +3,8 @@
 // when no PMTiles URL is configured (development only).
 import { C } from "../../../theme";
 
-export const MAPLIBRE = "https://unpkg.com/maplibre-gl@5.6.0/dist";
-export const PMTILES = "https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js";
+export const MAPLIBRE = "https://unpkg.com/maplibre-gl@5.24.0/dist";
+export const PMTILES = "https://unpkg.com/pmtiles@4.5.0/dist/pmtiles.js";
 
 const palette = {
   water: "#BCD3E6", waterLine: "#9DBBD6", land: "#F3EFE6", park: "#DCE6CF", sand: "#EFE3C6",
@@ -50,13 +50,13 @@ export function mapHtml({ pmtiles, center }: { pmtiles: string | null; center: {
 html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hidden;-webkit-tap-highlight-color:transparent;font-family:-apple-system,"Noto Sans TC",sans-serif}
 #fog{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle var(--r,260px) at var(--x,50%) var(--y,60%),transparent 62%,rgba(246,248,251,.55) 86%,rgba(246,248,251,.86) 100%)}
 .maplibregl-ctrl-attrib{font-size:9px;background:rgba(246,248,251,.7)!important}
-.you{position:relative;width:52px;height:52px}
+.you{position:absolute;width:52px;height:52px}
 .you .pulse{position:absolute;left:-14px;top:-14px;width:80px;height:80px;border-radius:50%;background:${C.lightBlue}33;animation:pulse 2.6s ease-out infinite}
 .you .cone{position:absolute;left:6px;top:-30px;width:40px;height:40px;background:conic-gradient(from -25deg at 50% 100%,${C.lightBlue}88 0deg,transparent 50deg);border-radius:50% 50% 0 0;transform-origin:50% 100%}
 .face{position:absolute;inset:0;border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 3px 10px rgba(22,38,63,.3);background:${C.cream}}
 .face img{position:absolute;width:119.07%;height:119.07%;left:-8.72%;top:-11.16%}
 @keyframes pulse{0%{transform:scale(.55);opacity:.9}100%{transform:scale(1.25);opacity:0}}
-.pin{position:relative;width:80px;height:96px;cursor:pointer;transition:transform .25s ease,opacity .25s;transform-origin:50% 100%}
+.pin{position:absolute;width:80px;height:96px;cursor:pointer;transition:transform .25s ease,opacity .25s;transform-origin:50% 100%}
 .pin .disc{position:absolute;left:18px;bottom:0;width:44px;height:12px;border-radius:50%;background:radial-gradient(${C.ink}40,transparent 70%)}
 .pin .v{position:absolute;left:0;bottom:2px;width:80px;height:80px;object-fit:contain;animation:bob 3.6s ease-in-out infinite}
 .pin .who{position:absolute;right:2px;top:4px;width:28px;height:28px}
@@ -74,8 +74,13 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 <script>
 const send=m=>{const s=JSON.stringify(m);if(window.ReactNativeWebView)window.ReactNativeWebView.postMessage(s);else parent.postMessage({__tcmap:s},'*')};
 window.onerror=(e)=>send({type:'error',message:String(e)});
+async function init(){
+// MapLibre's CDN blob worker can silently fail inside an iframe/WebView.
+// Load its classic worker explicitly before creating the map.
+const workerCode=await fetch('${MAPLIBRE}/maplibre-gl-csp-worker.js').then(r=>{if(!r.ok)throw Error('map worker '+r.status);return r.text()});
+maplibregl.setWorkerUrl(URL.createObjectURL(new Blob([workerCode],{type:'text/javascript'})));
 ${pmtiles ? "const protocol=new pmtiles.Protocol();maplibregl.addProtocol('pmtiles',protocol.tile);" : ""}
-const map=new maplibregl.Map({container:'map',style:${JSON.stringify(style)},center:[${center.lng},${center.lat}],zoom:16.6,pitch:55,maxPitch:70,bearing:0,attributionControl:{compact:true},localIdeographFontFamily:'"PingFang TC","Noto Sans TC",sans-serif'});
+const map=new maplibregl.Map({container:'map',style:${JSON.stringify(style)},center:[${center.lng},${center.lat}],zoom:14.4,pitch:40,maxPitch:70,bearing:0,attributionControl:{compact:true},localIdeographFontFamily:'"PingFang TC","Noto Sans TC",sans-serif'});
 let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
@@ -98,6 +103,8 @@ function render(){
   }
   const want=new Set(state.pins.map(p=>p.id));
   for(const [id,m] of marks){if(!want.has(id)){m.marker.remove();marks.delete(id)}}
+  const grouped=new Map();
+  for(const p of state.pins){const key=p.lat.toFixed(6)+','+p.lng.toFixed(6);const group=grouped.get(key)||[];group.push(p.id);grouped.set(key,group)}
   for(const p of state.pins){
     const html='<div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'');
     const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'');
@@ -105,7 +112,9 @@ function render(){
     if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:p.id})});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
     const el=m.marker.getElement();
     if(m.html!==html){el.innerHTML=html;m.html=html}
-    if(m.cls!==cls){el.className=cls;m.cls=cls}
+    if(m.cls!==cls){if(m.cls)el.classList.remove(...m.cls.split(' '));el.classList.add(...cls.split(' '));m.cls=cls}
+    const group=grouped.get(p.lat.toFixed(6)+','+p.lng.toFixed(6));
+    m.marker.setOffset([(group.indexOf(p.id)-(group.length-1)/2)*52,0]);
     el.style.zIndex=p.selected?20:p.near?5:1;
     m.marker.setLngLat([p.lng,p.lat]);
   }
@@ -113,10 +122,12 @@ function render(){
 }
 function recv(m){
   if(m.type==='state'){const moved=!you||!m.you||Math.abs(you.lat-m.you.lat)+Math.abs(you.lng-m.you.lng)>1e-6;you=m.you;state=m;heading=m.heading||heading;render();if(follow&&you&&moved)map.easeTo({center:[you.lng,you.lat],duration:you?900:0,padding:{top:120,bottom:40}})}
-  if(m.type==='recenter'&&you){follow=true;map.easeTo({center:[you.lng,you.lat],zoom:16.6,pitch:55,bearing:0,duration:900,padding:{top:120,bottom:40}})}
+  if(m.type==='recenter'&&you){follow=true;map.easeTo({center:[you.lng,you.lat],zoom:14.4,pitch:40,bearing:0,duration:900,padding:{top:120,bottom:40}})}
   if(m.type==='focus'){follow=false;map.easeTo({center:[m.lng,m.lat],zoom:Math.max(map.getZoom(),16.2),duration:700})}
 }
 window.__tcmap=recv;
 window.addEventListener('message',e=>{if(e.data&&e.data.__tcin)recv(JSON.parse(e.data.__tcin))});
+}
+init().catch(e=>send({type:'error',message:String(e)}));
 </script></body></html>`;
 }
