@@ -146,7 +146,7 @@ export default function JourneyScreen() {
     portrait: portraitUri(profile?.avatar),
     // While throwing, the capsule is alone on the plain map.
     pins: throwing ? [] : [...items.map<LivePin>((i) => i.kind === "sea"
-      ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri(i.bottle.vessel), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
+      ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri("bottle"), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
       : { id: i.id, lat: i.lat, lng: i.lng, kind: "place", vessel: vesselUri(i.pin.vessel ?? "dome"), near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId, tag: language === "zh" ? i.pin.place.name_zh : i.pin.place.name_en }), ...gamePins],
   }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language, gamePins, !!throwing]);
 
@@ -354,7 +354,7 @@ function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections
   return <View style={{ gap: spacing.sm }}>
     <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
       <View>
-        <Vessel kind={b.vessel as VesselKind} size={52} idle />
+        <Vessel kind="bottle" size={52} idle />
         <View style={{ position: "absolute", right: -6, top: -4, borderRadius: 14, borderWidth: 2, borderColor: C.white }}><Avatar avatar={b.sender.avatar} size={24} /></View>
       </View>
       <View style={{ flex: 1 }}>

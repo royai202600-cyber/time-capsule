@@ -44,6 +44,9 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 - **Everyone nearby sees the same capsule and each catches their own copy.** Two friends walking together both get it.
 - **Real time and place decide what appears.** The firefly jar only after dark, the Mid-Autumn lantern only at Mid-Autumn, the bottle by the water. Common vessels can appear anywhere.
 
+## The map
+The default zoom makes the 100 m pickup circle span 75% of the screen width.
+
 ## Wayposts
 - **Common Waypost:** a small, very simplified building on the map, in one flat colour. Tap, spin, get balls, then a cooldown. Our own shape, and no photos of real places.
 - **Only capsules are detailed and colourful.** Wayposts and any other buildings stay plain and quiet, so nobody confuses a capsule with a building.
@@ -70,6 +73,7 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 ## Capsules from strangers
 Today's rules stay, under the new name:
 - Same Create flow, typed letters only, sender's profile visible.
+- **Always a bottle, all the same size on the map**, so it can never be mistaken for a Corrupted Capsule. Capsules to friends keep the vessel you chose.
 - Shown at a public Waypost, never the sender's real spot. Drift time of 1, 7, 30 or 365 days.
 - One finder within 100 m (server-checked). **You just pick it up: no throwing at a person's letter.**
 - No daily pick-up limit (Roy removed it on 2026-11-08).
