@@ -1,0 +1,56 @@
+{
+  "id": "hot-air-balloon",
+  "opening": "B",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "float",
+      "amount": 0.03
+    }
+  ],
+  "layers": [
+    {
+      "name": "basket",
+      "file": "vessel-hot-air-balloon-basket.png",
+      "role": "static"
+    },
+    {
+      "name": "balloon",
+      "file": "vessel-hot-air-balloon-balloon.png",
+      "role": "lift",
+      "pivot": {
+        "x": 512,
+        "y": 678
+      },
+      "open": [
+        {
+          "at": 0,
+          "y": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.5,
+          "y": -0.1,
+          "opacity": 0.85
+        },
+        {
+          "at": 1,
+          "y": -0.65,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 512,
+    "y": 719
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 407,
+    "y": 760
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

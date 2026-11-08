@@ -1,6 +1,6 @@
 {
-  "count": 264,
-  "passed": 264,
+  "count": 300,
+  "passed": 300,
   "failed": [],
   "assets": [
     {
@@ -1062,6 +1062,82 @@
       "pass": true
     },
     {
+      "path": "vessels/vessel-bento-box.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-bento-knot.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-bento-lid.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-bento.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
       "path": "vessels/vessel-bottle-body.png",
       "size": [
         1024,
@@ -1157,6 +1233,63 @@
       "pass": true
     },
     {
+      "path": "vessels/vessel-bubble-tea-cup.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-bubble-tea-lid.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-bubble-tea.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
       "path": "vessels/vessel-cake-box-box.png",
       "size": [
         1024,
@@ -1215,6 +1348,101 @@
     },
     {
       "path": "vessels/vessel-cake-box.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-camp-lantern-backing.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-camp-lantern-cap.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-camp-lantern-glow.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-camp-lantern-lantern.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-camp-lantern.png",
       "size": [
         1024,
         1024
@@ -1481,6 +1709,82 @@
     },
     {
       "path": "vessels/vessel-crystal-ball.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-dim-sum-steamer-lid.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-dim-sum-steamer-steam.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-dim-sum-steamer-steamer.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-dim-sum-steamer.png",
       "size": [
         1024,
         1024
@@ -2222,6 +2526,139 @@
     },
     {
       "path": "vessels/vessel-golden-roof.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-heart-locket-back.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-heart-locket-front.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-heart-locket-stand.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-heart-locket.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-hot-air-balloon-balloon.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-hot-air-balloon-basket.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-hot-air-balloon.png",
       "size": [
         1024,
         1024
@@ -3266,6 +3703,82 @@
       "pass": true
     },
     {
+      "path": "vessels/vessel-paper-cranes-glint.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-paper-cranes-jar.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-paper-cranes-lid.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-paper-cranes.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
       "path": "vessels/vessel-paper-plane-fold.png",
       "size": [
         1024,
@@ -3495,6 +4008,63 @@
     },
     {
       "path": "vessels/vessel-pocket-watch.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-postbox-box.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-postbox-door.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-postbox.png",
       "size": [
         1024,
         1024
@@ -4501,6 +5071,63 @@
       "pass": true
     },
     {
+      "path": "vessels/vessel-suitcase-case.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-suitcase-lid.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-suitcase.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
       "path": "vessels/vessel-tin-box.png",
       "size": [
         1024,
@@ -4597,6 +5224,63 @@
     },
     {
       "path": "vessels/vessel-torii-scroll.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-treasure-chest-chest.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-treasure-chest-lid.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-treasure-chest.png",
       "size": [
         1024,
         1024

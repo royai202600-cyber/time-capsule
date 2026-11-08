@@ -20,7 +20,7 @@ App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be o
 Match the attached style sheet exactly.
 ```
 
-Roy approved a palette exception for warm amber-orange pumpkin shells on 2026-11-07 (T10c-fix), and teal-green bamboo leaves matching the existing dome rose leaves. Keep the style block above unchanged in prompts; state the approved exception separately when applicable.
+Roy approved palette exceptions for warm amber-orange pumpkin shells (T10c-fix), teal-green bamboo leaves matching the existing dome rose leaves, and muted natural food colours—egg yellow, salmon, carrot orange, leafy green, rice white and tea brown—for food inside food vessels (bento, dim-sum steamer and bubble tea). Containers, lids and everything else remain in the palette. Warm brown wood is allowed for wooden objects as stated in the style block. Keep the style block above unchanged in prompts; state the approved exception separately when applicable.
 
 Roy approved style sheet **A** (`style-sheet.png`). `style-sheet-a/b/c.png` are kept for history only, so never use B or C as the reference.
 
