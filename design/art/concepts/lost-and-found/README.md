@@ -1,100 +1,45 @@
 # Time Capsule / 時光膠囊 — concept pictures
 
-Review concepts only. Corrupted Capsules / 破損膠囊 stay detailed and colourful. A Waypost is a muted solid object floating above the map on one thin straight stem ending in a soft shadow dot. The marker itself is what players spin. Common markers use dusty brass; Landmark markers use dusty plum, a larger shape and a thicker stem.
+Roy chose the purple gem as the Waypost. These remain review concepts. The common Waypost uses one purple gem on a stem; the Landmark Waypost keeps the small hovering gem above the large one and is 20% darker. Corrupted Capsules / 破損膠囊 remain the detailed illustrated objects. The marker itself is what players spin.
+
+This update is script only. No new image-generation calls were made.
 
 ## Roy to choose
 
 - Ball: A smooth, B poured or C pressed wax.
 - Gold treatment: solid brass-gold wax or branching brass-gold veins.
 - Crack style: Corrupted A (large branching cracks) or Corrupted B (fine crackle).
-- Waypost shape: gem, crystal or solid keyhole, with its matching Landmark version.
 - Portrait: bench or lamp.
 - Scene: bench or lamp.
 
-## Scope and preserved pictures
+## Exact source and derived markers
 
-Six floating-marker pictures replace every rejected `waypost/block-*` file. There are no building markers or separate spinning objects. Only these new pictures, `screens/map-capsule-and-wayposts.png`, `checks/wayposts-64.png`, `contact-sheet.png`, `make-review.py` and this README change. Everything else stays byte-identical to `816a358`, including catch/fight pictures and layers, backgrounds, capsule art, balls, crack overlays, portraits and scenes. PR #77 stays unchanged.
+Source: `waypost/landmark-a-gem.png`, byte-identical to `7e4f557`. Its alpha contains two separate occupied row bands: rows 103–251 for the small gem and 263–936 for the large gem, stem and shadow dot. Rows 252–262 are completely transparent, so the small gem is cleanly separate.
 
-## Separate layers and backgrounds
+- `waypost/waypost-gem-purple.png`: remove only the separate upper piece. Crop the lower piece by its exact alpha bounds and paste it at integer coordinates centred on a new transparent canvas of the same 1024 × 1024 size. No resampling or colour changes: every retained RGBA pixel of the large gem, stem and dot is unchanged.
+- `waypost/landmark-gem-deep-purple.png`: retain the full original stack and canvas. Multiply each RGB channel by 0.8, rounding to the nearest integer. Alpha is copied unchanged. This deepens/darkens all three facet tones while preserving their contrast and the complete shape.
+- Delete the five rejected common gem/crystal/keyhole and Landmark crystal/keyhole source files. Keep the original stacked purple gem as the reproducible source, without showing it as an extra choice.
 
-Map, shadow, capsule, ball and dust remain separate. Catch and Landmark fight share `screens/catch-background.png`; the overview uses `screens/map-plain.png`. Targets and capsule motion are supplied by app code. No drawn target or glow is added. Both backgrounds are invented and show no real place; the real-geography reference step does not apply.
+## Script and review outputs
 
-## Script processing
-
-Run from the repository root with Pillow in a temporary environment outside the repository:
+Run from the repository root using Pillow in a temporary environment outside the repository:
 
 ```sh
 /tmp/timecapsule-concept-venv/bin/python design/art/concepts/lost-and-found/make-review.py
 ```
 
-The script writes only inside this concept folder:
+The script writes only inside this concept folder. `derive_gems()` stops with an error if the alpha no longer separates the two source pieces cleanly.
 
-- `prepare_objects()` downscales the six new marker canvases to fit 1024 without upscaling. The tool returned genuine transparency; native alpha is retained with near-transparent specks below alpha 4 cleared. Each marker's object, stem and small soft shadow dot remain together as the review marker.
-- `screens/map-capsule-and-wayposts.png` starts with the exact kept plain map. The exact Corrupted hourglass stays 200 px tall at its previous position. Three common markers are uniformly resized to 56 px wide and three Landmark markers to 100 px wide. Each is anchored by its bottom shadow dot on a different street. The Landmark crystal is placed away from the common crystal to avoid overlap. No giant capsule is added.
-- `checks/wayposts-64.png` shows common markers at maximum visible dimensions 48 and 64 px, and Landmark markers at 64 and 96 px, on map land #F3EFE6. Each size includes the marker, stem and shadow.
-- `contact-sheet.png` stays 2200 px wide. Its sections are Balls → Crack effect → Throw and hit → Common Wayposts → Landmark Waypost → To whoever passes by. Building and separate spinner pictures are removed. Only this image contains text.
-- Catch/fight composites and their layers are not regenerated. They retain the shared catch background, independent shadow/capsule/ball/dust layers, 60% mending blend, and the existing giant Corrupted Senado fight preview.
-- The kept crack effects, restored master, ball checks, portrait circles, scene fades and their checks retain their pixels and previous processing.
+- `screens/map-capsule-and-wayposts.png`: exact kept plain map and exact Corrupted hourglass, still 200 px tall at its previous position. Place three common gems at 56 px wide and one Landmark gem at 110 px wide on different streets, anchored by their bottom shadow dots.
+- `checks/wayposts-64.png`: common gem at maximum visible dimensions 48 and 64 px; Landmark gem at 64 and 96 px; map land #F3EFE6. Each size includes its stem and dot.
+- `contact-sheet.png`: unchanged section order, showing only the two final Waypost markers with captions “Waypost: purple gem” and “Landmark Waypost: deep purple gem”. Width 2200 px. This is the only image containing text.
+- All other tracked files remain byte-identical to `7e4f557`, including the source gem, backgrounds, catch/fight previews, positioned layers, capsule/crack art, balls, portraits, scenes and other size checks. PR #77 stays unchanged.
 
-Visual review covers all six markers for the requested silhouettes, muted colour families, single stems, soft shadow dots, no platforms/rings/buildings/blue objects/writing, and readability in the size check and map preview. App/browser/device integration is outside this concept review.
+Map, shadow, capsule, ball and dust remain separate in the retained catch/fight art. The app supplies targets and movement. The backgrounds are invented, show no real place, and do not require a real-geography reference. No app/browser/device integration is claimed.
 
-## Exact final prompts for the six new pictures
+## Retained generation provenance
 
-Model: **gpt-image-2 through Codex's built-in image tool**. Every call uses the approved style sheet first and `screens/map-plain.png` second. The exact approved style block starts every prompt.
-
-### `waypost/marker-a-gem.png`
-
-Model: `gpt-image-2`
-
-References: `design/art/style-sheet.png`, `design/art/concepts/lost-and-found/screens/map-plain.png`
-
-```text
-App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
-- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
-- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
-- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
-- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
-Match the attached style sheet exactly.
-Override for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.
-One faceted gem shaped like two SHALLOW pyramids joined at their widest point. Wide low diamond silhouette, not a cube or box.
-Common Waypost marker. Muted dusty brass based on #C9A15A but greyer and softer, only one colour family, three calm flat facet tones. The hovering object is at the top, one thin straight stem supports it and ends at ONE small soft shadow dot, no platform. Readable at 48 px. No cube, blue object, flat plate, square under the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
-```
-
-### `waypost/marker-b-crystal.png`
-
-Model: `gpt-image-2`
-
-References: `design/art/style-sheet.png`, `design/art/concepts/lost-and-found/screens/map-plain.png`
-
-```text
-App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
-- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
-- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
-- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
-- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
-Match the attached style sheet exactly.
-Override for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.
-One SHORT six-sided crystal with a shallow point at each end. Short hexagonal prismatic crystal, plainly different from a cube.
-Common Waypost marker. Muted dusty brass based on #C9A15A but greyer and softer, only one colour family, three calm flat facet tones. The hovering object is at the top, one thin straight stem supports it and ends at ONE small soft shadow dot, no platform. Readable at 48 px. No cube, blue object, flat plate, square under the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
-```
-
-### `waypost/marker-c-keyhole.png`
-
-Model: `gpt-image-2`
-
-References: `design/art/style-sheet.png`, `design/art/concepts/lost-and-found/screens/map-plain.png`
-
-```text
-App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
-- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
-- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
-- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
-- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
-Match the attached style sheet exactly.
-Override for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.
-One SOLID keyhole-shaped object with real thickness, standing upright. The external silhouette is a round head merging into a short flared trapezoid foot; filled solid, NOT a hole cut into a plate. No plate behind it.
-Common Waypost marker. Muted dusty brass based on #C9A15A but greyer and softer, only one colour family, three calm flat facet tones. The hovering object is at the top, one thin straight stem supports it and ends at ONE small soft shadow dot, no platform. Readable at 48 px. No cube, blue object, flat plate, square under the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
-```
+No image was generated for this correction. The exact original prompt for the retained source gem appears first below, followed by the unchanged prompts for other kept pictures. They may contain older wording or file names. Deleted marker prompts are removed.
 
 ### `waypost/landmark-a-gem.png`
 
@@ -113,46 +58,6 @@ Override for this image only: this is one small, simple map marker made to sit o
 TWO shallow faceted gem shapes stacked: a large gem made from two shallow pyramids joined at their widest point, with a small matching gem HOVERING a short clear gap ABOVE it. The single straight stem supports the large lower gem. No connection or plate between the gems.
 Landmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
 ```
-
-### `waypost/landmark-b-crystal.png`
-
-Model: `gpt-image-2`
-
-References: `design/art/style-sheet.png`, `design/art/concepts/lost-and-found/screens/map-plain.png`
-
-```text
-App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
-- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
-- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
-- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
-- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
-Match the attached style sheet exactly.
-Override for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.
-ONE TALL SIX-SIDED crystal, about twice as tall as the common short crystal, with a shallow point at each end. One elongated faceted hexagonal prism; not a cube or tower.
-Landmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
-```
-
-### `waypost/landmark-c-keyhole.png`
-
-Model: `gpt-image-2`
-
-References: `design/art/style-sheet.png`, `design/art/concepts/lost-and-found/screens/map-plain.png`
-
-```text
-App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
-- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
-- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
-- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
-- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
-Match the attached style sheet exactly.
-Override for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.
-ONE LARGE SOLID keyhole-shaped object with real thickness, upright, with ONE small faceted gem HOVERING a short clear gap ABOVE it. The keyhole external silhouette is a round head merging into a short flared trapezoid foot, filled solid, not a hole in a plate. A single straight stem supports the keyhole. No plate behind it.
-Landmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
-```
-
-## Retained generation provenance
-
-Previously recorded prompts for kept pictures remain word for word; they may contain older wording or file names. Prompts for deleted buildings and separate spinners are removed.
 
 ### `screens/catch-background.png`
 

@@ -4,7 +4,7 @@ from PIL import Image, ImageOps, ImageDraw, ImageFilter, ImageFont
 P=Path(__file__).resolve().parent
 LAND=(243,239,230); NAVY=(22,38,63); BRASS=(201,161,90); PLUM=(110,43,63)
 SIZE=(1024,1536)
-NAMES=("marker-a-gem","marker-b-crystal","marker-c-keyhole")
+NAMES=("waypost-gem-purple",)
 def load(path): return Image.open(path).convert("RGBA")
 def box(im): return im.getchannel("A").point(lambda x:255 if x>=16 else 0).getbbox()
 def crop(im): return im.crop(box(im))
@@ -16,40 +16,49 @@ def fit(im,w,h):
 def layer(im,xy):
     out=Image.new("RGBA",SIZE);out.alpha_composite(im,xy);return out
 def export(name,im): im.save(P/name)
-LANDMARKS=("landmark-a-gem","landmark-b-crystal","landmark-c-keyhole")
-def prepare_objects():
-    for name in NAMES+LANDMARKS:
-        f=P/f"waypost/{name}.png";im=load(f)
-        if max(im.size)>1024:im.thumbnail((1024,1024),Image.Resampling.LANCZOS)
-        # Remove near-transparent specks while preserving opaque marker facets.
-        im.putalpha(im.getchannel("A").point(lambda v:0 if v<4 else v))
-        im.save(f)
+LANDMARKS=("landmark-gem-deep-purple",)
+def derive_gems():
+    source=load(P/"waypost/landmark-a-gem.png")
+    alpha=source.getchannel("A");w,h=source.size
+    bands=[]
+    for y in range(h):
+        if alpha.crop((0,y,w,y+1)).getextrema()[1]>0:
+            if not bands or y>bands[-1][1]+1:bands.append([y,y])
+            else:bands[-1][1]=y
+    if len(bands)!=2 or bands[1][0]-bands[0][1]<2:
+        raise RuntimeError("Small upper gem is not cleanly separate; stop for Roy.")
+    # Exactly delete the separate upper piece, then crop/centre without resampling.
+    lower=source.crop((0,bands[1][0],w,h))
+    piece=lower.crop(lower.getchannel("A").getbbox())
+    common=Image.new("RGBA",source.size)
+    common.paste(piece,((w-piece.width)//2,(h-piece.height)//2))
+    export("waypost/waypost-gem-purple.png",common)
+    r,g,b,a=source.split()
+    deeper=Image.merge("RGBA",tuple(ch.point(lambda v:round(v*.8)) for ch in (r,g,b))+(a,))
+    export("waypost/landmark-gem-deep-purple.png",deeper)
 def overview():
     out=load(P/"screens/map-plain.png")
     hero=resized(crop(load(P/"cracks/hourglass-corrupted-a.png")),height=200)
     out.alpha_composite(hero,((1024-hero.width)//2,500))
-    for name,(cx,cy) in zip(NAMES[:3],((170,650),(850,740),(610,1130))):
+    for cx,cy in ((170,650),(850,740),(610,1130)):
+        name=NAMES[0]
         im=resized(crop(load(P/f"waypost/{name}.png")),width=56)
         out.alpha_composite(im,(cx-im.width//2,cy-im.height))
-    for name,(cx,cy) in zip(LANDMARKS,((380,290),(880,1120),(340,1340))):
-        im=resized(crop(load(P/f"waypost/{name}.png")),width=100)
+    for name,(cx,cy) in zip(LANDMARKS,((380,290),)):
+        im=resized(crop(load(P/f"waypost/{name}.png")),width=110)
         out.alpha_composite(im,(cx-im.width//2,cy-im.height))
     export("screens/map-capsule-and-wayposts.png",out.convert("RGB"))
 def small_check():
-    out=Image.new("RGBA",(1000,500),LAND+(255,))
-    for i,name in enumerate(NAMES):
-        for row,size in enumerate((48,64)):
+    out=Image.new("RGBA",(500,300),LAND+(255,))
+    for name,cx,sizes in ((NAMES[0],150,(48,64)),(LANDMARKS[0],350,(64,96))):
+        for row,size in enumerate(sizes):
             im=fit(crop(load(P/f"waypost/{name}.png")),size,size)
-            out.alpha_composite(im,(i*330+(330-im.width)//2,15+row*125+(80-im.height)//2))
-    for i,name in enumerate(LANDMARKS):
-        for row,size in enumerate((64,96)):
-            im=fit(crop(load(P/f"waypost/{name}.png")),size,size)
-            out.alpha_composite(im,(115+i*330+(100-im.width)//2,280+row*110))
+            out.alpha_composite(im,(cx-im.width//2,25+row*135))
     export("checks/wayposts-64.png",out)
 def sheet():
     font=ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf",24)
     title=ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf",32)
-    names=("Waypost A: floating gem","Waypost B: short crystal","Waypost C: solid keyhole")
+    names=("Waypost: purple gem",)
     rows=[
       ("1 Balls",[(str(f.relative_to(P)),f.stem.replace("ball-","Ball ").replace("-"," ")) for f in sorted((P/"ball").glob("*.png"))],400),
       ("",[("checks/balls-64.png","All five balls at 64 px: map land / white road")],220),
@@ -60,8 +69,8 @@ def sheet():
       ("",[("screens/catch-background.png","Shared catch and Landmark fight background")],650),
       ("",[("screens/hit-dust.png","Separate wax-red dust effect")],220),
       ("4 Common Wayposts",[(f"waypost/{n}.png",label) for n,label in zip(NAMES,names)],320),
-      ("",[("checks/wayposts-64.png","Common markers: 48/64 px; Landmark markers: 64/96 px")],500),
-      ("5 Landmark Waypost",[("waypost/landmark-a-gem.png","Landmark Waypost A: stacked gems"),("waypost/landmark-b-crystal.png","Landmark Waypost B: tall crystal"),("waypost/landmark-c-keyhole.png","Landmark Waypost C: keyhole and gem")],400),
+      ("",[("checks/wayposts-64.png","Common gem: 48/64 px; Landmark gem: 64/96 px")],500),
+      ("5 Landmark Waypost",[("waypost/landmark-gem-deep-purple.png","Landmark Waypost: deep purple gem")],400),
       ("",[("screens/map-capsule-and-wayposts.png","Map: floating common and Landmark markers"),("screens/screen-landmark-fight.png","Landmark fight: giant Corrupted Capsule")],650),
       ("6 To whoever passes by",[("whoever/portrait-a-bench.png","Portrait A: waiting envelope on bench"),("whoever/portrait-b-lamp.png","Portrait B: envelope tied to lamp")],380),
       ("",[("whoever/scene-a-bench.png","Scene A: envelope waiting on bench"),("whoever/scene-b-lamp.png","Scene B: envelope tied to lamp")],450),
@@ -79,4 +88,4 @@ def sheet():
         y+=h+36
     export("contact-sheet.png",out.convert("RGB"))
 if __name__=="__main__":
-    prepare_objects();overview();small_check();sheet()
+    derive_gems();overview();small_check();sheet()
