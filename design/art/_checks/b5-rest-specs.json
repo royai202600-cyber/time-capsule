@@ -139,25 +139,6 @@
         "role": "static"
       },
       {
-        "name": "knot",
-        "file": "vessel-bento-knot.png",
-        "role": "fade",
-        "open": [
-          {
-            "at": 0,
-            "opacity": 1
-          },
-          {
-            "at": 0.35,
-            "opacity": 0
-          },
-          {
-            "at": 1,
-            "opacity": 0
-          }
-        ]
-      },
-      {
         "name": "lid",
         "file": "vessel-bento-lid.png",
         "role": "lift",
@@ -179,6 +160,25 @@
           {
             "at": 1,
             "y": -0.48,
+            "opacity": 0
+          }
+        ]
+      },
+      {
+        "name": "knot",
+        "file": "vessel-bento-knot.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.35,
+            "opacity": 0
+          },
+          {
+            "at": 1,
             "opacity": 0
           }
         ]
@@ -260,21 +260,27 @@
     "id": "heart-locket",
     "opening": "J",
     "idleMs": 4000,
-    "idle": [
-      {
-        "type": "sway",
-        "deg": 4,
-        "pivot": {
-          "x": 584,
-          "y": 197
-        }
-      }
-    ],
+    "idle": [],
     "layers": [
+      {
+        "name": "stand",
+        "file": "vessel-heart-locket-stand.png",
+        "role": "static"
+      },
       {
         "name": "back",
         "file": "vessel-heart-locket-back.png",
-        "role": "static"
+        "role": "static",
+        "idle": [
+          {
+            "type": "sway",
+            "deg": 4,
+            "pivot": {
+              "x": 584,
+              "y": 204
+            }
+          }
+        ]
       },
       {
         "name": "front",
@@ -293,6 +299,16 @@
             "at": 1,
             "scaleX": 0.03
           }
+        ],
+        "idle": [
+          {
+            "type": "sway",
+            "deg": 4,
+            "pivot": {
+              "x": 584,
+              "y": 204
+            }
+          }
         ]
       }
     ],
@@ -302,8 +318,8 @@
     },
     "baseY": 899,
     "sparkle": {
-      "x": 730,
-      "y": 512
+      "x": 341,
+      "y": 220
     },
     "glint": null,
     "openGlow": null,
@@ -421,6 +437,11 @@
     "idle": [],
     "layers": [
       {
+        "name": "backing",
+        "file": "vessel-camp-lantern-backing.png",
+        "role": "static"
+      },
+      {
         "name": "glow",
         "file": "vessel-camp-lantern-glow.png",
         "role": "fade",
@@ -437,9 +458,9 @@
         "idle": [
           {
             "type": "glow",
-            "base": 0.9,
-            "range": 0.07,
-            "flicker": 0.025
+            "base": 0.65,
+            "range": 0.3,
+            "flicker": 0.06
           }
         ]
       },

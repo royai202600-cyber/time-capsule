@@ -36,24 +36,32 @@ def native(id):
  if id=='dim-sum-steamer':
   steam=fit(load('dim-sum-steam'),(230,170,995,520));a=steam.getchannel('A').filter(ImageFilter.GaussianBlur(5)).point(lambda x:round(x*.48));steam=Image.new('RGBA',steam.size,(220,232,242,0));steam.putalpha(a)
   return {'steamer':load('dim-sum-steamer-reveal'),'steam':steam,'lid':fit(load('dim-sum-steamer-cover'),(235,340,995,780))}
- if id=='bento':return {'box':load('bento-food-reveal'),'knot':fit(load('bento-knot'),(355,450,880,1110)),'lid':fit(load('bento-cover'),(160,530,1075,919))}
+ if id=='bento':return {'box':load('bento-food-reveal'),'lid':fit(load('bento-cover'),(160,530,1075,919)),'knot':fit(load('bento-knot'),(355,450,880,1110))}
  if id=='paper-cranes':
   jar=blend([fit(load('cranes-contents'),(320,472,920,1050)),glass('cranes-glass',(292,308,953,1100))]);return {'jar':jar,'lid':fit(load('paper-cranes-cover'),(370,235,878,445))}
- if id=='heart-locket':return {'back':load('heart-locket-reveal'),'front':fit(load('heart-locket-cover'),(500,433,935,920))}
+ if id=='heart-locket':
+  back=load('heart-locket-reveal');mask=Image.new('L',back.size)
+  ImageDraw.Draw(mask).polygon([(0,0),(1254,0),(1254,250),(640,250),(600,370),(475,450),(475,920),(1254,920),(1254,1254),(0,1254)],fill=255)
+  blank=Image.new('RGBA',back.size)
+  return {'stand':Image.composite(back,blank,mask),'back':Image.composite(blank,back,mask),'front':fit(load('heart-locket-cover'),(500,433,935,920))}
  if id=='suitcase':return {'case':load('suitcase-reveal'),'lid':fit(load('suitcase-cover'),(120,365,1124,830))}
  if id=='postbox':return {'box':load('postbox-reveal'),'door':fit(load('postbox-cover'),(445,565,810,956))}
  if id=='treasure-chest':return {'chest':load('treasure-chest-reveal'),'lid':fit(load('treasure-chest-cover'),(180,305,1055,710))}
  if id=='camp-lantern':
-  # Leave the generated flame and dark backdrop intact. Isolate the soft glow
-  # into a separate layer using the original dark/flame pixels, with no holes.
-  lantern=load('lantern-body'); overlay=glass('lantern-glass',(400,475,835,900));lantern=Image.alpha_composite(lantern,overlay)
-  glow=Image.new('RGBA',lantern.size);lp=lantern.load();gp=glow.load()
-  for y in range(510,850):
-   for x in range(480,770):
-    r,g,b,a=lp[x,y]
-    if a and r>g*1.10 and r>b*1.20 and r>105 and ((x-625)/140)**2+((y-690)/180)**2<1:
-     gp[x,y]=(r,g,b,a);lp[x,y]=(0,0,0,0)
-  return {'glow':glow,'lantern':lantern,'cap':fit(load('camp-lantern-cover'),(430,208,810,485))}
+  # A still navy backing keeps contrast while only the soft halo flickers.
+  # The generated flame core and all metal remain fully visible in lantern.
+  lantern=blend([load('lantern-body'),glass('lantern-glass',(400,475,835,900))])
+  # An intact still copy underneath the inner window keeps every flame/core
+  # pixel present. The translucent upper window admits only the soft halo.
+  backing=Image.new('RGBA',lantern.size);backing.paste(lantern.crop((465,490,770,880)),(465,490))
+  window=Image.new('L',lantern.size);ImageDraw.Draw(window).ellipse((495,535,740,845),fill=165)
+  window=window.filter(ImageFilter.GaussianBlur(10));data=bytearray(lantern.tobytes());weights=window.tobytes()
+  for i,w in enumerate(weights):
+   if w:data[4*i+3]=round(data[4*i+3]*(1-w/255))
+  lantern=Image.frombytes('RGBA',lantern.size,bytes(data))
+  halo=Image.new('L',lantern.size);ImageDraw.Draw(halo).ellipse((535,570,705,825),fill=150)
+  halo=halo.filter(ImageFilter.GaussianBlur(35));glow=Image.new('RGBA',lantern.size,(201,161,90,0));glow.putalpha(halo)
+  return {'backing':backing,'glow':glow,'lantern':lantern,'cap':fit(load('camp-lantern-cover'),(430,208,810,485))}
  raise KeyError(id)
 def spec_for(id,point,base):
  P=lambda x,y:dict(zip(('x','y'),point(x,y)))
@@ -65,14 +73,16 @@ def spec_for(id,point,base):
  if id=='dim-sum-steamer':
   steam=li(id,'steam','fade',open=[{'at':0,'opacity':1},{'at':1,'opacity':0}],idle=[{'type':'drift','amount':.03}]);s.update(idle=[{'type':'breathe','amount':.025}],layers=[li(id,'steamer'),steam,lift('lid',(625,620))],mouth=P(625,570),sparkle=P(810,730))
  if id=='bento':
-  knot=li(id,'knot','fade',open=[{'at':0,'opacity':1},{'at':.35,'opacity':0},{'at':1,'opacity':0}]);lid=lift('lid',(625,670));lid['open']=[{'at':0,'y':0,'opacity':1},{'at':.35,'y':0,'opacity':1},{'at':1,'y':-.48,'opacity':0}];s.update(idle=[{'type':'breathe','amount':.025}],layers=[li(id,'box'),knot,lid],mouth=P(625,675),sparkle=P(990,870))
+  knot=li(id,'knot','fade',open=[{'at':0,'opacity':1},{'at':.35,'opacity':0},{'at':1,'opacity':0}]);lid=lift('lid',(625,670));lid['open']=[{'at':0,'y':0,'opacity':1},{'at':.35,'y':0,'opacity':1},{'at':1,'y':-.48,'opacity':0}];s.update(idle=[{'type':'breathe','amount':.025}],layers=[li(id,'box'),lid,knot],mouth=P(625,675),sparkle=P(990,870))
  if id=='paper-cranes':
   lid=li(id,'lid','twist',pivot=P(625,400),open=[{'at':0,'rotate':0,'y':0,'opacity':1},{'at':.3,'rotate':-12,'y':0,'opacity':1},{'at':1,'rotate':-12,'y':-.4,'opacity':0}]);s.update(opening='G',idle=[{'type':'breathe','amount':.025}],layers=[li(id,'jar'),lid],mouth=P(625,390),sparkle=P(340,520),glint=f'vessel-{id}-glint.png')
- if id=='heart-locket':s.update(opening='J',idle=[{'type':'sway','deg':4,'pivot':P(720,240)}],layers=[li(id,'back'),door('front',(500,700))],mouth=P(720,580),sparkle=P(910,650))
+ if id=='heart-locket':
+  sway=[{'type':'sway','deg':4,'pivot':P(720,250)}];back=li(id,'back',idle=sway);front=door('front',(500,700));front['idle']=sway
+  s.update(opening='J',layers=[li(id,'stand'),back,front],mouth=P(720,580),sparkle=P(405,270))
  if id=='suitcase':s.update(opening='A',idle=[{'type':'bob','amount':.025}],layers=[li(id,'case'),hinge('lid',(630,430))],mouth=P(630,590),sparkle=P(1020,495))
  if id=='postbox':s.update(opening='J',idle=[{'type':'breathe','amount':.025}],layers=[li(id,'box'),door('door',(800,750))],mouth=P(620,490),sparkle=P(460,465))
  if id=='camp-lantern':
-  glow=li(id,'glow','fade',open=[{'at':0,'opacity':1},{'at':1,'opacity':1}],idle=[{'type':'glow','base':.9,'range':.07,'flicker':.025}]);s.update(opening='C',layers=[glow,li(id,'lantern'),lift('cap',(625,400))],mouth=P(625,475),sparkle=P(430,870))
+  glow=li(id,'glow','fade',open=[{'at':0,'opacity':1},{'at':1,'opacity':1}],idle=[{'type':'glow','base':.65,'range':.3,'flicker':.06}]);s.update(opening='C',layers=[li(id,'backing'),glow,li(id,'lantern'),lift('cap',(625,400))],mouth=P(625,475),sparkle=P(430,870))
  if id=='treasure-chest':s.update(opening='A',idle=[{'type':'breathe','amount':.025}],layers=[li(id,'chest'),hinge('lid',(625,445))],mouth=P(625,550),sparkle=P(745,625))
  return s
 def main():
