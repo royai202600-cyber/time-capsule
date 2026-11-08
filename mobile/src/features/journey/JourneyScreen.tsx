@@ -9,7 +9,6 @@ import { distanceMeters } from "../../services/data";
 import { useLanguage } from "../../i18n";
 import { haptics } from "../../components/haptics";
 import { ArtIcon } from "../../components/ArtIcon";
-import { AlbumIcon, PassportIcon } from "../../components/DockIcons";
 import { Avatar } from "../../components/Avatar";
 import { Vessel, type VesselKind } from "../../components/Vessel";
 import { portraits, vesselParts } from "../../art/manifest";
@@ -273,7 +272,7 @@ export default function JourneyScreen() {
           </Pressable>)}
         {!selected && !gameCard && <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <Pressable accessibilityRole="button" accessibilityLabel={s("passport")} onPress={() => { void haptics.tap(); setPassport(true); }} style={{ width: 62, alignItems: "center" }}>
-          <PassportIcon size={58} />
+          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="passport" size={27} color={C.blue} /></View>
         </Pressable>
         {SEA_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
           onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: "sea" } }); }}
@@ -282,7 +281,7 @@ export default function JourneyScreen() {
           <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("throwCta")}</Text>
         </Pressable> : null}
         {GAME_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={g("album")} onPress={() => { void haptics.tap(); router.push("/album"); }} style={{ width: 62, alignItems: "center" }}>
-          <AlbumIcon size={58} />
+          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="album" size={25} color={C.blue} /></View>
         </Pressable> : <View style={{ width: 62 }} />}
         </View>}
       </View>

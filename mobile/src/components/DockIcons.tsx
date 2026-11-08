@@ -39,42 +39,6 @@ export function CabinetIcon({ size = 30 }: { size?: number }) {
   </Svg>;
 }
 
-/** Passport: a navy booklet with a brass-embossed globe and a wax-red ribbon. The white edge lifts it off the map. */
-export function PassportIcon({ size = 58 }: { size?: number }) {
-  return <Svg width={size} height={size} viewBox="0 0 48 48" fill="none">
-    <Rect x={9} y={4} width={30} height={39} rx={4} fill="#fff" stroke="#fff" strokeWidth={4} />
-    <Path d="M31 41h4.6v6l-2.3-1.9L31 47Z" fill={C.wax} stroke="#fff" strokeWidth={1.2} strokeLinejoin="round" />
-    <Rect x={35} y={6.5} width={3} height={34} rx={1} fill={PAPER} stroke={INK} strokeWidth={.8} />
-    <Rect x={9} y={4} width={27.5} height={39} rx={3.5} fill={C.ink} />
-    <Rect x={9} y={4} width={5} height={39} rx={2.5} fill="#0E1A2E" />
-    <Rect x={16.5} y={7} width={17.5} height={33} rx={1.6} stroke={BRASS} strokeOpacity={.55} strokeWidth={.8} />
-    <G stroke={BRASS} strokeWidth={1.5} strokeLinecap="round">
-      <Circle cx={25.2} cy={20} r={7.2} />
-      <Path d="M18 20h14.4M25.2 12.8c-5 4.4-5 10 0 14.4 5-4.4 5-10 0-14.4Z" strokeWidth={1.1} />
-      <Path d="M20.4 33h9.6M22 36.4h6.4" strokeWidth={1.4} />
-    </G>
-  </Svg>;
-}
-
-/** Capsule Album: three fanned cards, the front one showing a little glass dome and a brass star. */
-export function AlbumIcon({ size = 58 }: { size?: number }) {
-  const card = { x: 14, y: 6, width: 20, height: 32, rx: 3.2 };
-  const left = 'rotate(-17 24 42)', right = 'rotate(17 24 42)';
-  return <Svg width={size} height={size} viewBox="0 0 48 48" fill="none">
-    <G stroke="#fff" strokeWidth={4.4} fill="#fff" strokeLinejoin="round">
-      <Rect {...card} transform={left} /><Rect {...card} transform={right} /><Rect {...card} />
-    </G>
-    <Rect {...card} transform={left} fill={C.blue} stroke={INK} strokeWidth={1.3} />
-    <Rect {...card} transform={right} fill={BRASS} stroke={INK} strokeWidth={1.3} />
-    <Rect {...card} fill={PAPER} stroke={INK} strokeWidth={1.5} />
-    <Rect x={17} y={9} width={14} height={17} rx={1.6} fill={GLASS} stroke={INK} strokeWidth={.9} />
-    <Path d="M20.3 23.6v-5.2a3.7 3.7 0 0 1 7.4 0v5.2Z" fill="#F7FAFD" stroke={C.blue} strokeWidth={1} />
-    <Circle cx={24} cy={19.6} r={1.5} fill={C.wax} />
-    <Rect x={19.2} y={23.4} width={9.6} height={1.8} rx={.7} fill={BRASS} stroke={INK} strokeWidth={.6} />
-    <Path d="m24 28.6 1.2 2.5 2.7.4-2 1.9.5 2.7-2.4-1.3-2.4 1.3.5-2.7-2-1.9 2.7-.4Z" fill={BRASS} stroke={INK} strokeWidth={.7} strokeLinejoin="round" />
-  </Svg>;
-}
-
 // Wax-seal outline: a circle with soft, uneven bumps like poured wax.
 export const SEAL = (() => {
   const cx = 34, cy = 34, n = 11, pts: string[] = [];
