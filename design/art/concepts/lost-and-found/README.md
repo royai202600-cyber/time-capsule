@@ -1,27 +1,23 @@
 # Time Capsule / 時光膠囊 — concept pictures
 
-Concept review only. Corrupted Capsules / 破損膠囊 remain the detailed illustrated objects. Common Wayposts, Landmark Wayposts and spinning objects use quiet, simple solid forms that match the live map's gentle elevated angle. Common roofs are soft brass; Landmark roofs are muted plum. Their walls stay pale map cream.
+Review concepts only. Corrupted Capsules / 破損膠囊 stay detailed and colourful. A Waypost is a muted solid object floating above the map on one thin straight stem ending in a soft shadow dot. The marker itself is what players spin. Common markers use dusty brass; Landmark markers use dusty plum, a larger shape and a thicker stem.
 
 ## Roy to choose
 
 - Ball: A smooth, B poured or C pressed wax.
 - Gold treatment: solid brass-gold wax or branching brass-gold veins.
 - Crack style: Corrupted A (large branching cracks) or Corrupted B (fine crackle).
-- Common Waypost shape: small house, low wide hut or narrow kiosk.
-- Landmark Waypost shape: wide hall or two-storey building.
-- Spinning object: pinwheel or four-envelope windmill.
+- Waypost shape: gem, crystal or solid keyhole, with its matching Landmark version.
 - Portrait: bench or lamp.
 - Scene: bench or lamp.
 
 ## Scope and preserved pictures
 
-This correction replaces the rejected flat Waypost, Landmark building and spinner files with seven `waypost/block-*.png` concepts. The overview, size check, contact sheet, script and this README are updated. Every other file remains byte-identical to `b3f9a4f`, including all catch/fight pictures, backgrounds, capsule layers, balls, crack art, portraits and scenes. PR #77 is unchanged.
+Six floating-marker pictures replace every rejected `waypost/block-*` file. There are no building markers or separate spinning objects. Only these new pictures, `screens/map-capsule-and-wayposts.png`, `checks/wayposts-64.png`, `contact-sheet.png`, `make-review.py` and this README change. Everything else stays byte-identical to `816a358`, including catch/fight pictures and layers, backgrounds, capsule art, balls, crack overlays, portraits and scenes. PR #77 stays unchanged.
 
 ## Separate layers and backgrounds
 
-Map, shadow, capsule, ball and dust remain separate. Catch and Landmark fight share `screens/catch-background.png`. The live-map preview uses `screens/map-plain.png`.
-
-Positioned layers remain under `screens/layers/`: shadow, Corrupted capsule, mending capsule, Ball A, dust, Landmark shadow and Landmark capsule. They contain no target artwork. The app supplies targets and movement. Both backgrounds are invented and show no real place; the real-geography reference step does not apply.
+Map, shadow, capsule, ball and dust remain separate. Catch and Landmark fight share `screens/catch-background.png`; the overview uses `screens/map-plain.png`. Targets and capsule motion are supplied by app code. No drawn target or glow is added. Both backgrounds are invented and show no real place; the real-geography reference step does not apply.
 
 ## Script processing
 
@@ -33,20 +29,20 @@ Run from the repository root with Pillow in a temporary environment outside the 
 
 The script writes only inside this concept folder:
 
-- `prepare_objects()` downscales only the seven new object pictures to fit 1024 without upscaling. The tool returned genuine transparency, so native alpha is preserved apart from clearing near-transparent specks below alpha 4. Pale cream walls are not colour-keyed away. It does not add outlines, a ground, base or ground shadow.
-- `screens/map-capsule-and-wayposts.png` starts from the exact kept live-map background. The exact Corrupted hourglass stays 200 px tall at the same position. The three new common Wayposts are 80 px wide at the former marker centres, and the two new Landmark Wayposts are 140 px wide at the former Landmark centres. No giant capsule is added to this map.
-- `checks/wayposts-64.png` shows the three common buildings and two spinners at maximum visible dimensions 48 and 64 px, and the two Landmark buildings at 64 and 96 px, on map land #F3EFE6.
-- `contact-sheet.png` stays 2200 px wide. Its sections are Balls → Crack effect → Throw and hit → Common Wayposts with spinners → Landmark Waypost → To whoever passes by. Captions identify brass roofs and plum roofs. Only this image contains text.
-- The script no longer regenerates catch/fight composites or modifies their layers. Those retained previews use the shared catch background, separate shadow, exact capsule pixels, Ball A or dust as appropriate. The mending capsule remains 60% blended toward the restored source. The fight keeps its 717 px Corrupted Senado capsule, enlarged soft shadow and existing bottom-centre ball.
-- Kept crack effects, restored master, ball checks, circular portraits, scene fades and their checks retain their pixels and previous processing.
+- `prepare_objects()` downscales the six new marker canvases to fit 1024 without upscaling. The tool returned genuine transparency; native alpha is retained with near-transparent specks below alpha 4 cleared. Each marker's object, stem and small soft shadow dot remain together as the review marker.
+- `screens/map-capsule-and-wayposts.png` starts with the exact kept plain map. The exact Corrupted hourglass stays 200 px tall at its previous position. Three common markers are uniformly resized to 56 px wide and three Landmark markers to 100 px wide. Each is anchored by its bottom shadow dot on a different street. The Landmark crystal is placed away from the common crystal to avoid overlap. No giant capsule is added.
+- `checks/wayposts-64.png` shows common markers at maximum visible dimensions 48 and 64 px, and Landmark markers at 64 and 96 px, on map land #F3EFE6. Each size includes the marker, stem and shadow.
+- `contact-sheet.png` stays 2200 px wide. Its sections are Balls → Crack effect → Throw and hit → Common Wayposts → Landmark Waypost → To whoever passes by. Building and separate spinner pictures are removed. Only this image contains text.
+- Catch/fight composites and their layers are not regenerated. They retain the shared catch background, independent shadow/capsule/ball/dust layers, 60% mending blend, and the existing giant Corrupted Senado fight preview.
+- The kept crack effects, restored master, ball checks, portrait circles, scene fades and their checks retain their pixels and previous processing.
 
-Visual review checks all seven objects for simple matte solid forms, recesses rather than decorative detail, no writing, transparent backgrounds, no ground shadows and small-size readability. App/browser/device integration is outside this concept review.
+Visual review covers all six markers for the requested silhouettes, muted colour families, single stems, soft shadow dots, no platforms/rings/buildings/blue objects/writing, and readability in the size check and map preview. App/browser/device integration is outside this concept review.
 
-## Exact final prompts for the seven new pictures
+## Exact final prompts for the six new pictures
 
-Model: **gpt-image-2 through Codex's built-in image tool**. Each call supplies `design/art/style-sheet.png` first and the kept plain live map second. The unchanged style block begins every prompt.
+Model: **gpt-image-2 through Codex's built-in image tool**. Every call uses the approved style sheet first and `screens/map-plain.png` second. The exact approved style block starts every prompt.
 
-### `waypost/block-waypost-a-house.png`
+### `waypost/marker-a-gem.png`
 
 Model: `gpt-image-2`
 
@@ -59,12 +55,12 @@ App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be o
 - Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
 - Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
 Match the attached style sheet exactly.
-Override for this image only: this is one simple solid object made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. It looks three-dimensional like the low blocks on that map: seen from above at the same gentle angle, built from a few simple solid forms, with matte surfaces, no outlines and three soft flat tones (lit top, mid side, shaded side), with light from the top-left. It is not glossy, plastic, realistic or a detailed 3D render. No shadow on the ground, no ground, base, disc, ring, beam or glow. Transparent background, object centred.
-A small house with a plain pitched roof and one door.
-Walls in map cream #EEE9DE and #E6E0D3, with soft darker tones of the same cream for shaded sides. The door or window is one plain darker recess. Roof in soft brass #C9A15A with lighter and darker brass tones. Read as a small building at 64 px. Never a pole, sign, tall tower, arena, cube or floating shape. Keep extremely simple, quiet and low detail. No ground shadow, outlines, decorative detail, text, letters, numbers, labels, logos or writing-like marks.
+Override for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.
+One faceted gem shaped like two SHALLOW pyramids joined at their widest point. Wide low diamond silhouette, not a cube or box.
+Common Waypost marker. Muted dusty brass based on #C9A15A but greyer and softer, only one colour family, three calm flat facet tones. The hovering object is at the top, one thin straight stem supports it and ends at ONE small soft shadow dot, no platform. Readable at 48 px. No cube, blue object, flat plate, square under the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
 ```
 
-### `waypost/block-waypost-b-hut.png`
+### `waypost/marker-b-crystal.png`
 
 Model: `gpt-image-2`
 
@@ -77,12 +73,12 @@ App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be o
 - Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
 - Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
 Match the attached style sheet exactly.
-Override for this image only: this is one simple solid object made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. It looks three-dimensional like the low blocks on that map: seen from above at the same gentle angle, built from a few simple solid forms, with matte surfaces, no outlines and three soft flat tones (lit top, mid side, shaded side), with light from the top-left. It is not glossy, plastic, realistic or a detailed 3D render. No shadow on the ground, no ground, base, disc, ring, beam or glow. Transparent background, object centred.
-A low, wide hut with a plain overhanging roof and one small window.
-Walls in map cream #EEE9DE and #E6E0D3, with soft darker tones of the same cream for shaded sides. The door or window is one plain darker recess. Roof in soft brass #C9A15A with lighter and darker brass tones. Read as a small building at 64 px. Never a pole, sign, tall tower, arena, cube or floating shape. Keep extremely simple, quiet and low detail. No ground shadow, outlines, decorative detail, text, letters, numbers, labels, logos or writing-like marks.
+Override for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.
+One SHORT six-sided crystal with a shallow point at each end. Short hexagonal prismatic crystal, plainly different from a cube.
+Common Waypost marker. Muted dusty brass based on #C9A15A but greyer and softer, only one colour family, three calm flat facet tones. The hovering object is at the top, one thin straight stem supports it and ends at ONE small soft shadow dot, no platform. Readable at 48 px. No cube, blue object, flat plate, square under the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
 ```
 
-### `waypost/block-waypost-c-kiosk.png`
+### `waypost/marker-c-keyhole.png`
 
 Model: `gpt-image-2`
 
@@ -95,12 +91,12 @@ App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be o
 - Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
 - Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
 Match the attached style sheet exactly.
-Override for this image only: this is one simple solid object made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. It looks three-dimensional like the low blocks on that map: seen from above at the same gentle angle, built from a few simple solid forms, with matte surfaces, no outlines and three soft flat tones (lit top, mid side, shaded side), with light from the top-left. It is not glossy, plastic, realistic or a detailed 3D render. No shadow on the ground, no ground, base, disc, ring, beam or glow. Transparent background, object centred.
-A tiny narrow kiosk with a small pointed roof and one service window.
-Walls in map cream #EEE9DE and #E6E0D3, with soft darker tones of the same cream for shaded sides. The door or window is one plain darker recess. Roof in soft brass #C9A15A with lighter and darker brass tones. Read as a small building at 64 px. Never a pole, sign, tall tower, arena, cube or floating shape. Keep extremely simple, quiet and low detail. No ground shadow, outlines, decorative detail, text, letters, numbers, labels, logos or writing-like marks.
+Override for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.
+One SOLID keyhole-shaped object with real thickness, standing upright. The external silhouette is a round head merging into a short flared trapezoid foot; filled solid, NOT a hole cut into a plate. No plate behind it.
+Common Waypost marker. Muted dusty brass based on #C9A15A but greyer and softer, only one colour family, three calm flat facet tones. The hovering object is at the top, one thin straight stem supports it and ends at ONE small soft shadow dot, no platform. Readable at 48 px. No cube, blue object, flat plate, square under the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
 ```
 
-### `waypost/block-landmark-a-hall.png`
+### `waypost/landmark-a-gem.png`
 
 Model: `gpt-image-2`
 
@@ -113,13 +109,12 @@ App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be o
 - Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
 - Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
 Match the attached style sheet exactly.
-Override for this image only: this is one simple solid object made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. It looks three-dimensional like the low blocks on that map: seen from above at the same gentle angle, built from a few simple solid forms, with matte surfaces, no outlines and three soft flat tones (lit top, mid side, shaded side), with light from the top-left. It is not glossy, plastic, realistic or a detailed 3D render. No shadow on the ground, no ground, base, disc, ring, beam or glow. Transparent background, object centred.
-A wide plain hall with one long low roof and three arched doors.
-Walls in map cream #EEE9DE and #E6E0D3 with soft darker tones of the same cream on shaded sides; doors are plain darker recesses. Roof in muted plum #6E2B3F with lighter and darker plum tones. Clearly larger and more important than a common Waypost. Nothing like a capsule, vessel, jar, box or fountain. Not a tower, arena, temple or real building.
-Keep very simple and quiet: a few solid forms, no detailed decoration, no ground shadow, no outlines, no base or ground. No text, letters, numbers, labels, logos or writing-like marks.
+Override for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.
+TWO shallow faceted gem shapes stacked: a large gem made from two shallow pyramids joined at their widest point, with a small matching gem HOVERING a short clear gap ABOVE it. The single straight stem supports the large lower gem. No connection or plate between the gems.
+Landmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
 ```
 
-### `waypost/block-landmark-b-steps.png`
+### `waypost/landmark-b-crystal.png`
 
 Model: `gpt-image-2`
 
@@ -132,13 +127,12 @@ App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be o
 - Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
 - Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
 Match the attached style sheet exactly.
-Override for this image only: this is one simple solid object made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. It looks three-dimensional like the low blocks on that map: seen from above at the same gentle angle, built from a few simple solid forms, with matte surfaces, no outlines and three soft flat tones (lit top, mid side, shaded side), with light from the top-left. It is not glossy, plastic, realistic or a detailed 3D render. No shadow on the ground, no ground, base, disc, ring, beam or glow. Transparent background, object centred.
-A wide two-storey building, with a smaller upper storey sitting on a larger lower storey, plain roofs and one central arched door. No windows or extra detail.
-Walls in map cream #EEE9DE and #E6E0D3 with soft darker tones of the same cream on shaded sides; doors are plain darker recesses. Roof in muted plum #6E2B3F with lighter and darker plum tones. Clearly larger and more important than a common Waypost. Nothing like a capsule, vessel, jar, box or fountain. Not a tower, arena, temple or real building.
-Keep very simple and quiet: a few solid forms, no detailed decoration, no ground shadow, no outlines, no base or ground. No text, letters, numbers, labels, logos or writing-like marks.
+Override for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.
+ONE TALL SIX-SIDED crystal, about twice as tall as the common short crystal, with a shallow point at each end. One elongated faceted hexagonal prism; not a cube or tower.
+Landmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
 ```
 
-### `waypost/block-spinner-a-pinwheel.png`
+### `waypost/landmark-c-keyhole.png`
 
 Model: `gpt-image-2`
 
@@ -151,32 +145,14 @@ App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be o
 - Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
 - Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
 Match the attached style sheet exactly.
-Override for this image only: this is one simple solid object made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. It looks three-dimensional like the low blocks on that map: seen from above at the same gentle angle, built from a few simple solid forms, with matte surfaces, no outlines and three soft flat tones (lit top, mid side, shaded side), with light from the top-left. It is not glossy, plastic, realistic or a detailed 3D render. No shadow on the ground, no ground, base, disc, ring, beam or glow. Transparent background, object centred.
-A plain chunky FOUR-BLADE pinwheel on a short stick. Soft brass #C9A15A and cream #F3E2BB tones. Distinct thick folded vanes, plainly something a finger can spin. Never a solid disc, ring or picture.
-Keep very simple and quiet: a few solid forms, no detailed decoration, no ground shadow, no outlines, no base or ground. No text, letters, numbers, labels, logos or writing-like marks.
-```
-
-### `waypost/block-spinner-b-envelopes.png`
-
-Model: `gpt-image-2`
-
-References: `design/art/style-sheet.png`, `design/art/concepts/lost-and-found/screens/map-plain.png`
-
-```text
-App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
-- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
-- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
-- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
-- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
-Match the attached style sheet exactly.
-Override for this image only: this is one simple solid object made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. It looks three-dimensional like the low blocks on that map: seen from above at the same gentle angle, built from a few simple solid forms, with matte surfaces, no outlines and three soft flat tones (lit top, mid side, shaded side), with light from the top-left. It is not glossy, plastic, realistic or a detailed 3D render. No shadow on the ground, no ground, base, disc, ring, beam or glow. Transparent background, object centred.
-FOUR plain chunky cream envelopes joined at a small brass centre hub, like a little windmill. Soft brass #C9A15A and cream #F3E2BB tones. Plain embossed flap forms, no seals or emblems. Clearly something a finger can spin. Never a solid disc, ring or picture.
-Keep very simple and quiet: a few solid forms, no detailed decoration, no ground shadow, no outlines, no base or ground. No text, letters, numbers, labels, logos or writing-like marks.
+Override for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.
+ONE LARGE SOLID keyhole-shaped object with real thickness, upright, with ONE small faceted gem HOVERING a short clear gap ABOVE it. The keyhole external silhouette is a round head merging into a short flared trapezoid foot, filled solid, not a hole in a plate. A single straight stem supports the keyhole. No plate behind it.
+Landmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.
 ```
 
 ## Retained generation provenance
 
-These previously recorded prompts remain word for word and may contain older wording or file names. Prompts for the deleted flat shapes are removed.
+Previously recorded prompts for kept pictures remain word for word; they may contain older wording or file names. Prompts for deleted buildings and separate spinners are removed.
 
 ### `screens/catch-background.png`
 
