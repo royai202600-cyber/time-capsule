@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Animated, Easing, PanResponder, Platform, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Svg, { Polygon } from "react-native-svg";
+import Svg, { Circle, Ellipse, Path, Rect } from "react-native-svg";
 import { ArtIcon } from "../../components/ArtIcon";
 import { haptics } from "../../components/haptics";
 import { game, GameError, type GameState, type Waypost } from "../../services/game";
@@ -10,31 +10,23 @@ import { errorKey, useGameText } from "./strings";
 import { ThrowBackground, WaxBall } from "./ThrowScreen";
 
 const NATIVE = Platform.OS !== "web";
-const GEM = 230;
-const SIDES = 6;
-const SPIN_MS = 1500;
+const DISC = 250;
 const STAGGER = .09;
 
-const mix = (a: number[], b: number[], t: number) => `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(",")})`;
-const LIGHT = [186, 148, 166], MID = [120, 80, 100], DARK = [74, 44, 60];
-
-/** The Waypost gem as a real six-sided shape, so a swipe genuinely turns it. */
-function Gem({ angle, size }: { angle: number; size: number }) {
-  const step = (Math.PI * 2) / SIDES;
-  const cx = size / 2, cy = size * .46, radius = size * .44, top = size * .40, bottom = size * .50;
-  const faces = Array.from({ length: SIDES }, (_, i) => {
-    const a0 = angle + i * step, a1 = a0 + step, mid = (a0 + a1) / 2;
-    return { x0: cx + radius * Math.sin(a0), x1: cx + radius * Math.sin(a1), facing: Math.cos(mid), side: Math.sin(mid) };
-  }).filter((face) => face.facing > 0);
-  return <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-    {faces.map((face, i) => {
-      const light = Math.max(0, Math.min(1, face.facing * .75 - face.side * .4));
-      return <React.Fragment key={i}>
-        <Polygon points={`${cx},${cy - top} ${face.x0},${cy} ${face.x1},${cy}`} fill={mix(MID, LIGHT, light)} />
-        <Polygon points={`${face.x0},${cy} ${face.x1},${cy} ${cx},${cy + bottom}`} fill={mix(DARK, MID, light)} />
-      </React.Fragment>;
-    })}
-  </Svg>;
+/** Stand-in until the illustrated place scenes arrive: a round picture of the Waypost in a brass rim. */
+function PlacePicture() {
+  return <View style={{ width: DISC, height: DISC, borderRadius: DISC / 2, overflow: "hidden", borderWidth: 8, borderColor: C.brass, backgroundColor: C.glass }}>
+    <Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+      <Rect width={100} height={46} fill={C.glass} />
+      <Rect x={12} y={28} width={12} height={20} fill="#E6E0D3" /><Rect x={70} y={22} width={14} height={26} fill="#E6E0D3" />
+      <Rect y={44} width={100} height={56} fill="#DCE6CF" />
+      <Path d="M58 100C50 80 66 66 56 46h4c10 18-4 34 8 54Z" fill="#EFE3C6" />
+      <Ellipse cx={22} cy={70} rx={20} ry={6} fill="#BCD3E6" />
+      <Rect x={75} y={58} width={3} height={14} fill="#B8A88C" />
+      <Circle cx={76.5} cy={52} r={12} fill="#B4C7A3" />
+      <Circle cx={36} cy={44} r={7} fill="#C5D5B5" />
+    </Svg>
+  </View>;
 }
 
 export function SpinScreen({ waypost, language, onState, onClose }: {
@@ -43,34 +35,18 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
   const insets = useSafeAreaInsets();
   const s = useGameText();
   const cooling = !!waypost.cooldown_until && new Date(waypost.cooldown_until).getTime() > Date.now();
-  const [angle, setAngle] = useState(.35);
   const [reward, setReward] = useState<{ wax: number; gold: number } | null>(null);
   const [note, setNote] = useState(cooling ? s("cooldown") : "");
   const [spent, setSpent] = useState(cooling);
   const rise = useRef(new Animated.Value(0)).current;
   const tally = useRef(new Animated.Value(0)).current;
-  const current = useRef(.35);
+  const rotation = useRef(new Animated.Value(0)).current;
+  const turned = useRef(0);
   const busy = useRef(cooling);
-  const frame = useRef<number | null>(null);
-
-  useEffect(() => () => { if (frame.current !== null) cancelAnimationFrame(frame.current); }, []);
-
-  const turn = (direction: number) => {
-    const from = current.current, to = from + direction * Math.PI * 6, start = Date.now();
-    const tick = () => {
-      const t = Math.min(1, (Date.now() - start) / SPIN_MS);
-      const next = from + (to - from) * (1 - Math.pow(1 - t, 3));
-      current.current = next;
-      setAngle(next);
-      if (t < 1) frame.current = requestAnimationFrame(tick);
-    };
-    frame.current = requestAnimationFrame(tick);
-  };
-
   const spin = async (direction: number) => {
     busy.current = true;
     void haptics.tap();
-    turn(direction);
+    Animated.timing(rotation, { toValue: turned.current + direction * 1440, duration: 1500, easing: Easing.out(Easing.cubic), useNativeDriver: NATIVE }).start();
     try {
       const out = await game.spin(waypost.id);
       onState(out.state);
@@ -94,11 +70,12 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
   const pan = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => !busy.current,
     onMoveShouldSetPanResponder: () => !busy.current,
-    onPanResponderMove: (_, g) => { const next = .35 + g.dx * .014; current.current = next; setAngle(next); },
+    onPanResponderMove: (_, g) => { turned.current = g.dx * .9; rotation.setValue(turned.current); },
     onPanResponderRelease: (_, g) => {
       if (Math.abs(g.dx) > 50 || Math.abs(g.vx) > .4) void spinRef.current(g.dx < 0 ? -1 : 1);
+      else { turned.current = 0; Animated.spring(rotation, { toValue: 0, useNativeDriver: NATIVE }).start(); }
     },
-  }), []);
+  }), [rotation]);
 
   const name = language === "zh" ? waypost.name_zh : waypost.name_en;
   const balls: ("wax" | "gold")[] = reward ? [...Array<"wax">(reward.wax).fill("wax"), ...Array<"gold">(reward.gold).fill("gold")] : [];
@@ -126,14 +103,15 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
     </View>
 
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.lg }}>
-      <View style={{ width: GEM, height: GEM, alignItems: "center", justifyContent: "center" }}>
-        <View {...pan.panHandlers} accessibilityRole="adjustable" accessibilityLabel={s("spinHint")}
+      <View style={{ width: DISC, height: DISC, alignItems: "center", justifyContent: "center" }}>
+        <Animated.View {...pan.panHandlers} accessibilityRole="adjustable" accessibilityLabel={s("spinHint")}
           style={{
-            width: GEM, height: GEM, opacity: spent && !reward ? .5 : 1,
+            width: DISC, height: DISC, opacity: spent && !reward ? .5 : 1,
+            transform: [{ perspective: 900 }, { rotateY: rotation.interpolate({ inputRange: [-3600, 3600], outputRange: ["-3600deg", "3600deg"] }) }],
             ...(Platform.OS === "web" ? ({ touchAction: "none", cursor: "grab", userSelect: "none" } as object) : {}),
           }}>
-          <Gem angle={angle} size={GEM} />
-        </View>
+          <PlacePicture />
+        </Animated.View>
         {balls.map((kind, i) => {
           const start = Math.min(.5, i * STAGGER);
           const end = Math.min(1, start + .55);

@@ -142,6 +142,7 @@ export default function JourneyScreen() {
     ...nearby.wayposts.map<LivePin>((w) => ({
       id: `way-${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: "",
       done: !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now(),
+      near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
     })),
   ], [nearby, throwing?.id, you?.lat, you?.lng]);
 

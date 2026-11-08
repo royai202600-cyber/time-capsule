@@ -49,7 +49,7 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 The default zoom makes the 100 m pickup circle span 75% of the screen width.
 
 ## Wayposts
-- **Common Waypost:** a small floating purple gem on the map, with no pole. Tap it and the same gem appears large; swipe to turn it. Balls rise and fade, with a tally such as +4 at the top right, then a cooldown. No photos of real places.
+- **Common Waypost:** a small floating purple gem on the map, with no pole. It brightens when you are in range. Tap it and a round picture of the place appears in a brass rim; swipe to spin it. Balls rise and fade, with a tally such as +4 at the top right, then a cooldown. The pictures are illustrated scenes by place type (park, garden, waterfront, square, public art), plus one unique scene per Landmark, not photos or AI imitations of photos. Player photos can replace them later.
 - **Only capsules are detailed illustrated objects.** Wayposts stay simple, so nobody confuses one with a capsule.
 - **Landmark Waypost:** on the map it is a larger, deeper purple gem, and never a capsule. The giant, badly cracked Corrupted Capsule only appears once you start the fight. Throw balls to close the cracks before time runs out.
   - **Beatable alone for now.** Friends making it easier comes later.

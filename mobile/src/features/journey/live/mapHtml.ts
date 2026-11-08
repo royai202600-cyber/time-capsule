@@ -78,6 +78,8 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.waypost .disc{left:6px;width:28px;height:8px}
 .pin.waypost .post{position:absolute;left:4px;bottom:9px;width:32px;height:40px;animation:bob 3.6s ease-in-out infinite}
 .pin.waypost.done{opacity:.45}
+.pin.waypost.near .post,.pin.landmark.near .post{filter:drop-shadow(0 0 6px #D7B7E6) brightness(1.18)}
+.pin.waypost.near .disc,.pin.landmark.near .disc{background:radial-gradient(#D7B7E6CC,transparent 70%)}
 .pin.landmark{width:64px;height:88px}
 .pin.landmark .disc{left:12px;width:40px;height:10px}
 .pin.landmark .post{position:absolute;left:6px;bottom:12px;width:52px;height:65px;animation:bob 3.6s ease-in-out infinite}
