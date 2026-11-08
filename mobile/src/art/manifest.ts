@@ -1979,7 +1979,6 @@ export const cabinetTiles = {
   base: require('../../../public/art/cabinet/cabinet-base.webp'),
 };
 export const shelf = require('../../../public/art/shelf.webp');
-export const mapAsia = require('../../../public/art/map-asia.webp');
 // Display coordinates on the 1254 px stylised map, reviewed in art PR #12.
 export const mapPins: Record<string, { x: number; y: number }> = {
   senado: { x: 501, y: 583 }, 'tst-clock': { x: 525, y: 578 },
