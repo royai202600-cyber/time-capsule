@@ -41,6 +41,7 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 - **The server decides, never the phone.**
 - **Fixed spots** from public map data: parks, squares, waterfronts. Never roads, schools, places of worship or private property.
 - **Waves:** new capsules about every hour, staying 30–60 minutes (to tune).
+- **You only see Corrupted Capsules inside your pickup circle**, so they never crowd the map. Wayposts and bottles still show further out.
 - **Everyone nearby sees the same capsule and each catches their own copy.** Two friends walking together both get it.
 - **Real time and place decide what appears.** The firefly jar only after dark, the Mid-Autumn lantern only at Mid-Autumn, the bottle by the water. Common vessels can appear anywhere.
 

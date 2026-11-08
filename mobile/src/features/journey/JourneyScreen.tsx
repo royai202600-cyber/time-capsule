@@ -9,6 +9,7 @@ import { distanceMeters } from "../../services/data";
 import { useLanguage } from "../../i18n";
 import { haptics } from "../../components/haptics";
 import { ArtIcon } from "../../components/ArtIcon";
+import { AlbumIcon, PassportIcon } from "../../components/DockIcons";
 import { Avatar } from "../../components/Avatar";
 import { Vessel, type VesselKind } from "../../components/Vessel";
 import { portraits, vesselParts } from "../../art/manifest";
@@ -68,7 +69,7 @@ export default function JourneyScreen() {
   const [devLetter, setDevLetter] = useState<DevLetter | null>(null);
   const [fight, setFight] = useState<LandmarkAttempt | null>(null);
   const [spinning, setSpinning] = useState<Waypost | null>(null);
-  const [gameCard, setGameCard] = useState<{ kind: "corrupted"; capsule: CorruptedCapsule; meters: number } | { kind: "waypost"; waypost: Waypost; meters: number } | null>(null);
+  const [gameCard, setGameCard] = useState<{ waypost: Waypost; meters: number } | null>(null);
   const last = useRef<{ lat: number; lng: number } | null>(null);
   // Heading from movement: the cone points the way you walked.
   useEffect(() => {
@@ -133,10 +134,10 @@ export default function JourneyScreen() {
 
   const metersTo = (lat: number, lng: number) => you ? distanceMeters(you.lat, you.lng, lat, lng) : Infinity;
   const gamePins = useMemo<LivePin[]>(() => [
-    ...nearby.corrupted.filter((c) => c.id !== throwing?.id).map<LivePin>((c) => {
-      const m = metersTo(c.lat, c.lng);
-      return { id: `corrupted-${c.id}`, lat: c.lat, lng: c.lng, kind: "corrupted", vessel: vesselUri(c.vessel), rarity: c.rarity, near: m <= GAME_ACTION_RADIUS_M, far: m > 600, tag: m <= GAME_ACTION_RADIUS_M ? undefined : distanceText(m) };
-    }),
+    // Only what's inside the pickup circle shows, so capsules never crowd the map.
+    ...nearby.corrupted.filter((c) => c.id !== throwing?.id && metersTo(c.lat, c.lng) <= GAME_ACTION_RADIUS_M).map<LivePin>((c) => (
+      { id: `corrupted-${c.id}`, lat: c.lat, lng: c.lng, kind: "corrupted", vessel: vesselUri(c.vessel), rarity: c.rarity, near: true }
+    )),
     ...nearby.wayposts.map<LivePin>((w) => ({
       id: `way-${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: "",
       done: !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now(),
@@ -191,10 +192,8 @@ export default function JourneyScreen() {
     if (id.startsWith("corrupted-")) {
       const capsule = nearby.corrupted.find((c) => `corrupted-${c.id}` === id);
       if (!capsule) return;
-      const meters = metersTo(capsule.lat, capsule.lng);
-      setSelectedId(null); void haptics.tick();
-      if (meters <= GAME_ACTION_RADIUS_M) { setGameCard(null); map.current?.focus(capsule.lat, capsule.lng); setThrowing(capsule); }
-      else setGameCard({ kind: "corrupted", capsule, meters });
+      setSelectedId(null); setGameCard(null); void haptics.tick();
+      map.current?.focus(capsule.lat, capsule.lng); setThrowing(capsule);
       return;
     }
     if (id.startsWith("way-")) {
@@ -203,7 +202,7 @@ export default function JourneyScreen() {
       setSelectedId(null); void haptics.tick();
       const meters = metersTo(waypost.lat, waypost.lng);
       if (waypost.kind === "common" && meters <= GAME_ACTION_RADIUS_M) { setGameCard(null); setSpinning(waypost); }
-      else setGameCard({ kind: "waypost", waypost, meters });
+      else setGameCard({ waypost, meters });
       return;
     }
     setGameCard(null);
@@ -273,9 +272,8 @@ export default function JourneyScreen() {
             <Text style={{ fontFamily: sans, fontSize: 11, fontWeight: "700", letterSpacing: 1.2, color: C.blue }}>{s("kicker")}</Text>
           </Pressable>)}
         {!selected && !gameCard && <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <Pressable accessibilityRole="button" accessibilityLabel={s("passport")} onPress={() => { void haptics.tap(); setPassport(true); }} style={{ width: 62, alignItems: "center", gap: 3 }}>
-          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="passport" size={27} color={C.blue} /></View>
-          <Text style={{ fontFamily: sans, fontSize: 11, color: C.ink }}>{s("passport")}</Text>
+        <Pressable accessibilityRole="button" accessibilityLabel={s("passport")} onPress={() => { void haptics.tap(); setPassport(true); }} style={{ width: 62, alignItems: "center" }}>
+          <PassportIcon size={58} />
         </Pressable>
         {SEA_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
           onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: "sea" } }); }}
@@ -283,9 +281,8 @@ export default function JourneyScreen() {
           <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}><Vessel kind="hourglass" size={26} /></View>
           <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("throwCta")}</Text>
         </Pressable> : null}
-        {GAME_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={g("album")} onPress={() => { void haptics.tap(); router.push("/album"); }} style={{ width: 62, alignItems: "center", gap: 3 }}>
-          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="album" size={25} color={C.blue} /></View>
-          <Text style={{ fontFamily: sans, fontSize: 11, color: C.ink }}>{g("albumShort")}</Text>
+        {GAME_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={g("album")} onPress={() => { void haptics.tap(); router.push("/album"); }} style={{ width: 62, alignItems: "center" }}>
+          <AlbumIcon size={58} />
         </Pressable> : <View style={{ width: 62 }} />}
         </View>}
       </View>
@@ -308,19 +305,19 @@ export default function JourneyScreen() {
   </JourneyViewport>;
 }
 
-type GameCardValue = { kind: "corrupted"; capsule: CorruptedCapsule; meters: number } | { kind: "waypost"; waypost: Waypost; meters: number };
+type GameCardValue = { waypost: Waypost; meters: number };
 function GameCard({ card, busy, g, language, onChallenge }: {
   card: GameCardValue; busy: boolean; g: ReturnType<typeof useGameText>; language: "zh" | "en"; onChallenge: (w: Waypost) => void;
 }) {
   const near = card.meters <= GAME_ACTION_RADIUS_M;
   const left = distanceText(Math.max(0, card.meters - GAME_ACTION_RADIUS_M));
-  const landmark = card.kind === "waypost" && card.waypost.kind === "landmark";
-  const title = card.kind === "corrupted" ? g("corruptedCapsule") : language === "zh" ? card.waypost.name_zh : card.waypost.name_en;
-  const note = card.kind === "corrupted" ? g("walkCloser", left) : near ? "" : landmark ? g("challengeWalkCloser", left) : g("spinWalkCloser", left);
+  const landmark = card.waypost.kind === "landmark";
+  const title = language === "zh" ? card.waypost.name_zh : card.waypost.name_en;
+  const note = near ? "" : landmark ? g("challengeWalkCloser", left) : g("spinWalkCloser", left);
   return <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", gap: spacing.sm, backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
     <Text style={{ fontFamily: serif, fontSize: 18, color: C.ink }}>{title}</Text>
     {!!note && <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{note}</Text>}
-    {card.kind === "waypost" && landmark && near && <Pressable accessibilityRole="button" disabled={busy} onPress={() => onChallenge(card.waypost)} style={{ alignItems: "center", backgroundColor: C.plum, borderRadius: radii.pill, paddingVertical: 11, opacity: busy ? .6 : 1 }}>
+    {landmark && near && <Pressable accessibilityRole="button" disabled={busy} onPress={() => onChallenge(card.waypost)} style={{ alignItems: "center", backgroundColor: C.plum, borderRadius: radii.pill, paddingVertical: 11, opacity: busy ? .6 : 1 }}>
       <Text style={{ fontFamily: serif, fontSize: 15, color: C.white }}>{g("challenge")}</Text>
     </Pressable>}
   </View>;

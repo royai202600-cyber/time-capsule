@@ -7,6 +7,7 @@ import { router, useFocusEffect } from "expo-router";
 import { goBack } from "../../navigation";
 import { DeviceMotion } from "expo-sensors";
 import { Vessel, type VesselKind } from "../../components/Vessel";
+import { AlbumIcon } from "../../components/DockIcons";
 import { Heading, Bar, BackButton } from "../../components/Screen";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
@@ -290,7 +291,7 @@ export function CabinetView({ items, notice, error }: { items: CabinetItem[]; no
         contentContainerStyle={{ paddingBottom: 32 }}
         ListHeaderComponent={<View style={{ width, alignSelf: "center" }} onLayout={event => setHeaderHeight(event.nativeEvent.layout.height)}>
           <View style={{ paddingTop: 24, paddingBottom: 12, gap: 16, paddingHorizontal: viewportWidth < 700 ? 12 : 0 }}>
-            <Bar><BackButton label={t("back")} onPress={goBack} /><Heading>{t("cabinet.title")}</Heading>{GAME_ENABLED && <Pressable accessibilityRole="button" onPress={() => { void haptics.tap(); router.push("/album"); }} style={{ marginLeft: "auto", minHeight: 44, justifyContent: "center" }}><Text style={{ fontFamily: sans, fontSize: 14, color: C.blue }}>{g("albumShort")}</Text></Pressable>}</Bar>
+            <Bar><BackButton label={t("back")} onPress={goBack} /><Heading>{t("cabinet.title")}</Heading>{GAME_ENABLED && <Pressable accessibilityRole="button" accessibilityLabel={g("album")} onPress={() => { void haptics.tap(); router.push("/album"); }} style={{ marginLeft: "auto", minHeight: 44, justifyContent: "center" }}><AlbumIcon size={44} /></Pressable>}</Bar>
             <Text style={{ fontFamily: sans, color: C.muted }}>{t("cabinet.hint")}</Text>
             {!!notice && <Text style={{ fontFamily: sans, color: C.muted }}>{notice}</Text>}
           </View>
