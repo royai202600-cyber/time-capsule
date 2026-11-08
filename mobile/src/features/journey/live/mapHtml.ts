@@ -6,7 +6,7 @@ import { C } from "../../../theme";
 export const MAPLIBRE = "https://unpkg.com/maplibre-gl@5.24.0/dist";
 export const PMTILES = "https://unpkg.com/pmtiles@4.5.0/dist/pmtiles.js";
 
-const palette = {
+export const mapPalette = {
   water: "#BCD3E6", waterLine: "#9DBBD6", land: "#F3EFE6", park: "#DCE6CF", sand: "#EFE3C6",
   building: "#E6E0D3", buildingTop: "#EEE9DE", road: "#FFFFFF", roadCase: "#D5DDE7", major: "#F1E2BF", label: C.blue, halo: "#F6F8FB",
 };
@@ -17,16 +17,16 @@ function vectorStyle(pmtiles: string) {
     glyphs: "https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf",
     sources: { base: { type: "vector", url: `pmtiles://${pmtiles}`, attribution: "© OpenStreetMap · Protomaps" } },
     layers: [
-      { id: "bg", type: "background", paint: { "background-color": palette.water } },
-      { id: "earth", type: "fill", source: "base", "source-layer": "earth", paint: { "fill-color": palette.land } },
-      { id: "parks", type: "fill", source: "base", "source-layer": "landuse", filter: ["in", ["get", "kind"], ["literal", ["park", "garden", "grass", "wood", "forest", "recreation_ground", "nature_reserve", "playground", "cemetery"]]], paint: { "fill-color": palette.park } },
-      { id: "beach", type: "fill", source: "base", "source-layer": "landuse", filter: ["in", ["get", "kind"], ["literal", ["beach", "sand"]]], paint: { "fill-color": palette.sand } },
-      { id: "water", type: "fill", source: "base", "source-layer": "water", paint: { "fill-color": palette.water } },
-      { id: "shore", type: "line", source: "base", "source-layer": "water", paint: { "line-color": palette.waterLine, "line-width": 1.2 } },
-      { id: "road-case", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": palette.roadCase, "line-width": ["interpolate", ["linear"], ["zoom"], 13, 2, 17, 12, 19, 22] } },
-      { id: "roads", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road", "path"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "kind"], ["highway", "major_road"], palette.major, palette.road], "line-width": ["interpolate", ["linear"], ["zoom"], 13, 1, 17, ["match", ["get", "kind"], "path", 2, 9], 19, ["match", ["get", "kind"], "path", 4, 18]] } },
-      { id: "buildings", type: "fill-extrusion", source: "base", "source-layer": "buildings", minzoom: 15, paint: { "fill-extrusion-color": palette.building, "fill-extrusion-height": ["coalesce", ["get", "height"], 9], "fill-extrusion-opacity": .82 } },
-      { id: "places", type: "symbol", source: "base", "source-layer": "places", filter: ["in", ["get", "kind"], ["literal", ["neighbourhood", "locality", "macrohood"]]], layout: { "text-field": ["coalesce", ["get", "name:zh-Hant"], ["get", "name"]], "text-font": ["Noto Sans Regular"], "text-size": 12, "text-letter-spacing": .08 }, paint: { "text-color": palette.label, "text-halo-color": palette.halo, "text-halo-width": 1.6 } },
+      { id: "bg", type: "background", paint: { "background-color": mapPalette.water } },
+      { id: "earth", type: "fill", source: "base", "source-layer": "earth", paint: { "fill-color": mapPalette.land } },
+      { id: "parks", type: "fill", source: "base", "source-layer": "landuse", filter: ["in", ["get", "kind"], ["literal", ["park", "garden", "grass", "wood", "forest", "recreation_ground", "nature_reserve", "playground", "cemetery"]]], paint: { "fill-color": mapPalette.park } },
+      { id: "beach", type: "fill", source: "base", "source-layer": "landuse", filter: ["in", ["get", "kind"], ["literal", ["beach", "sand"]]], paint: { "fill-color": mapPalette.sand } },
+      { id: "water", type: "fill", source: "base", "source-layer": "water", paint: { "fill-color": mapPalette.water } },
+      { id: "shore", type: "line", source: "base", "source-layer": "water", paint: { "line-color": mapPalette.waterLine, "line-width": 1.2 } },
+      { id: "road-case", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": mapPalette.roadCase, "line-width": ["interpolate", ["linear"], ["zoom"], 13, 2, 17, 12, 19, 22] } },
+      { id: "roads", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road", "path"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "kind"], ["highway", "major_road"], mapPalette.major, mapPalette.road], "line-width": ["interpolate", ["linear"], ["zoom"], 13, 1, 17, ["match", ["get", "kind"], "path", 2, 9], 19, ["match", ["get", "kind"], "path", 4, 18]] } },
+      { id: "buildings", type: "fill-extrusion", source: "base", "source-layer": "buildings", minzoom: 15, paint: { "fill-extrusion-color": mapPalette.building, "fill-extrusion-height": ["coalesce", ["get", "height"], 9], "fill-extrusion-opacity": .82 } },
+      { id: "places", type: "symbol", source: "base", "source-layer": "places", filter: ["in", ["get", "kind"], ["literal", ["neighbourhood", "locality", "macrohood"]]], layout: { "text-field": ["coalesce", ["get", "name:zh-Hant"], ["get", "name"]], "text-font": ["Noto Sans Regular"], "text-size": 12, "text-letter-spacing": .08 }, paint: { "text-color": mapPalette.label, "text-halo-color": mapPalette.halo, "text-halo-width": 1.6 } },
     ],
   };
 }
@@ -70,16 +70,16 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.sel .v{filter:drop-shadow(0 0 8px ${C.brass})}
 .pin.sealed .v{filter:grayscale(.2)}
 .pin .crack{position:absolute;left:0;bottom:2px;width:80px;height:80px;animation:bob 3.6s ease-in-out infinite}
-.pin.lost .v,.pin.landmark .v{filter:saturate(.55) brightness(.84)}
-.pin.lost.rare .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
-.pin.lost.uncommon .disc{background:radial-gradient(${C.lightBlue}99,transparent 70%)}
+.pin.corrupted .v{filter:saturate(.55) brightness(.84)}
+.pin.corrupted.rare .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
+.pin.corrupted.uncommon .disc{background:radial-gradient(${C.lightBlue}99,transparent 70%)}
 .pin.waypost{width:40px;height:50px}
 .pin.waypost .disc{left:6px;width:28px;height:8px}
 .pin.waypost .post{position:absolute;left:6px;bottom:3px;width:28px;height:34px}
 .pin.waypost.done{opacity:.45}
-.pin.landmark{width:128px;height:146px}
-.pin.landmark .disc{left:24px;width:80px;height:18px}
-.pin.landmark .v,.pin.landmark .crack{width:128px;height:128px}
+.pin.landmark{width:60px;height:78px}
+.pin.landmark .disc{left:10px;width:40px;height:10px}
+.pin.landmark .post{position:absolute;left:8px;bottom:3px;width:44px;height:68px}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media (prefers-reduced-motion: reduce){.pin .v,.pin .crack,.you .pulse{animation:none}}
 </style></head><body><div id="map"></div>
@@ -100,6 +100,7 @@ let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 const crack='<svg class="crack" viewBox="0 0 100 100"><circle cx="50" cy="52" r="38" fill="${C.ink}" opacity=".14"/><path d="M30 22l9 15-6 9 11 12-4 12 8 12M70 26l-8 13 7 10-12 9 5 13-7 9M18 54l13-2 7 7M84 50l-12 3-6 8" stroke="${C.ink}" stroke-opacity=".72" stroke-width="1.8" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg>';
 // Wayposts stay one flat colour and small, so only capsules read as objects to go after.
 const post='<svg class="post" viewBox="0 0 28 34"><path d="M14 1 27 12v3H1v-3Z" fill="${C.blue}"/><path d="M4 15h20v18H4Z" fill="${C.blue}"/><path d="M11 22h6v11h-6Z" fill="${C.paper}"/></svg>';
+const tower='<svg class="post" viewBox="0 0 44 68"><path d="M22 1v8" stroke="${C.plum}" stroke-width="2"/><path d="M22 2l9 3-9 3Z" fill="${C.plum}"/><path d="M22 9 35 21v3H9v-3Z" fill="${C.plum}"/><path d="M13 24h18v8H13Z" fill="${C.plum}"/><path d="M9 32h26v8H9Z" fill="${C.plum}"/><path d="M5 40h34v27H5Z" fill="${C.plum}"/><path d="M18 50h8v17h-8Z" fill="${C.paper}"/></svg>';
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
 map.on('load',()=>{
@@ -121,7 +122,7 @@ function render(){
   const want=new Set(state.pins.map(p=>p.id));
   for(const [id,m] of marks){if(!want.has(id)){m.marker.remove();marks.delete(id)}}
   for(const p of state.pins){
-    const html=p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+post+'</div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='lost'||p.kind==='landmark'?crack:'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
+    const html=p.kind==='waypost'||p.kind==='landmark'?'<div class="pin-body"><div class="disc"></div>'+(p.kind==='landmark'?tower:post)+'</div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'?crack:'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
     const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'');
     let m=marks.get(p.id);
     if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:p.id})});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}

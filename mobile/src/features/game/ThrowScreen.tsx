@@ -1,13 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Easing, Image, PanResponder, Platform, Pressable, Text, View, type LayoutChangeEvent } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Svg, { Circle, Defs, Path, RadialGradient, Stop } from "react-native-svg";
+import Svg, { Circle, Defs, Ellipse, Path, Polygon, RadialGradient, Stop } from "react-native-svg";
 import { vesselParts } from "../../art/manifest";
 import { ArtIcon } from "../../components/ArtIcon";
 import { haptics } from "../../components/haptics";
 import type { VesselKind } from "../../components/Vessel";
 import { useLanguage } from "../../i18n";
-import { game, GameError, type BallKind, type GameState, type LostCapsule, type Rarity, type ThrowResult } from "../../services/game";
+import { game, GameError, type BallKind, type GameState, type CorruptedCapsule, type Rarity, type ThrowResult } from "../../services/game";
+import { mapPalette } from "../journey/live/mapHtml";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
 import { useGameText } from "./strings";
@@ -19,6 +20,8 @@ const BALL = 92;
 const MIN_RING = .24;
 const HIT_HALF_WIDTH = 74;
 const STRONG_FLICK = -.7;
+const MOUSE = Platform.OS === "web";
+const MOUSE_DRAG = -120; // A mouse drag often ends almost still, so distance also counts as a throw.
 const RING_HALF_MS: Record<Rarity, number> = { common: 1200, uncommon: 900, rare: 650 };
 const RING_COLOR: Record<Rarity, string> = { common: C.brass, uncommon: C.blue, rare: C.wax };
 const DUST = Array.from({ length: 14 }, (_, i) => ({
@@ -38,6 +41,28 @@ function WaxBall({ kind, size }: { kind: BallKind; size: number }) {
   </Svg>;
 }
 
+const BLOCKS: [number, number, number][] = [[-10, 62, 86], [58, 46, 118], [108, 58, 64], [172, 44, 104], [222, 64, 74], [292, 52, 126], [348, 44, 82]];
+/** A generic street scene in the live map's colours and flat style, not a real place. */
+function ThrowBackground() {
+  const p = mapPalette;
+  return <Svg style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }} width="100%" height="100%" viewBox="0 0 375 812" preserveAspectRatio="xMidYMid slice">
+    <Polygon points="0,0 375,0 375,172 0,172" fill={C.glass} />
+    <Polygon points="0,172 375,172 375,812 0,812" fill={p.land} />
+    <Polygon points="0,172 158,172 66,412 0,412" fill={p.park} />
+    <Polygon points="238,172 375,172 375,412 322,412" fill={p.water} stroke={p.waterLine} strokeWidth={1.5} />
+    <Polygon points="0,470 96,470 -40,812 0,812" fill={p.park} />
+    <Polygon points="290,470 375,470 375,812 410,812" fill={p.sand} />
+    <Polygon points="150,172 226,172 452,812 -78,812" fill={p.roadCase} />
+    <Polygon points="158,172 218,172 420,812 -46,812" fill={p.road} />
+    <Polygon points="0,412 375,412 375,470 0,470" fill={p.roadCase} />
+    <Polygon points="0,420 375,420 375,462 0,462" fill={p.major} />
+    {BLOCKS.map(([x, w, h]) => <React.Fragment key={x}>
+      <Polygon points={`${x},172 ${x + w},172 ${x + w},${172 - h} ${x},${172 - h}`} fill={p.building} />
+      <Polygon points={`${x},${172 - h} ${x + w},${172 - h} ${x + w - 6},${160 - h} ${x + 6},${160 - h}`} fill={p.buildingTop} />
+    </React.Fragment>)}
+  </Svg>;
+}
+
 /** Stand-in for the shared cracked look until the chosen art arrives. */
 function Cracks({ size }: { size: number }) {
   return <Svg width={size} height={size} viewBox="0 0 100 100">
@@ -47,7 +72,7 @@ function Cracks({ size }: { size: number }) {
 }
 
 export function ThrowScreen({ capsule, state, onState, onClose }: {
-  capsule: LostCapsule; state: GameState; onState: (s: GameState) => void; onClose: (caught: boolean) => void;
+  capsule: CorruptedCapsule; state: GameState; onState: (s: GameState) => void; onClose: (caught: boolean) => void;
 }) {
   const insets = useSafeAreaInsets();
   const { t } = useLanguage();
@@ -161,7 +186,7 @@ export function ThrowScreen({ capsule, state, onState, onClose }: {
     }
   };
 
-  const release = (dx: number, vx: number, vy: number) => {
+  const release = (dx: number, vx: number, vy: number, dy: number) => {
     const { height: h, kind: ballKind, state: st } = latest.current;
     if ((ballKind === "gold" ? st.gold_balls : st.wax_balls) <= 0) {
       flash(s("noBalls"));
@@ -171,7 +196,7 @@ export function ThrowScreen({ capsule, state, onState, onClose }: {
     void haptics.tap();
     setMessage("");
     const travel = capsuleY(h) - ballY(h, insets.bottom);
-    const strong = vy < STRONG_FLICK;
+    const strong = vy < STRONG_FLICK || (MOUSE && dy < MOUSE_DRAG);
     const landX = Math.max(-220, Math.min(220, dx + vx * 170));
     const landY = strong ? travel : travel * .62;
     Animated.parallel([
@@ -191,7 +216,7 @@ export function ThrowScreen({ capsule, state, onState, onClose }: {
     onPanResponderGrant: () => { busy.current = true; },
     onPanResponderMove: (_, g) => ball.setValue({ x: g.dx, y: g.dy }),
     onPanResponderRelease: (_, g) => {
-      if (g.dy < -50 && g.vy < -.3) releaseRef.current(g.dx, g.vx, g.vy);
+      if ((g.dy < -50 && g.vy < -.3) || (MOUSE && g.dy < MOUSE_DRAG)) releaseRef.current(g.dx, g.vx, g.vy, g.dy);
       else Animated.spring(ball, { toValue: { x: 0, y: 0 }, useNativeDriver: NATIVE }).start(() => { busy.current = false; });
     },
     onPanResponderTerminate: () => { ball.setValue({ x: 0, y: 0 }); busy.current = false; },
@@ -203,11 +228,13 @@ export function ThrowScreen({ capsule, state, onState, onClose }: {
   const ringScale = ringPhase.interpolate({ inputRange: [0, 1], outputRange: [MIN_RING, 1] });
 
   return <View onLayout={(e: LayoutChangeEvent) => setHeight(e.nativeEvent.layout.height)}
-    style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 40, backgroundColor: "rgba(246,248,251,.14)" }}>
+    style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 40, backgroundColor: mapPalette.land }}>
+    <ThrowBackground />
     {height > 0 && <>
+      <Svg pointerEvents="none" style={{ position: "absolute", left: "50%", marginLeft: -80, top: capsuleY(height) + VESSEL / 2 - 26 }} width={160} height={44}><Ellipse cx={80} cy={22} rx={78} ry={20} fill={C.ink} opacity={.14} /></Svg>
       <View pointerEvents="none" style={{ position: "absolute", left: 0, right: 0, top: capsuleY(height) - VESSEL / 2, height: VESSEL, alignItems: "center" }}>
         <Animated.View style={{ width: VESSEL, height: VESSEL, alignItems: "center", justifyContent: "center", transform: [{ translateY: hop }, { translateX: shake }] }}>
-          {source ? <Image source={source} style={{ width: VESSEL, height: VESSEL }} resizeMode="contain" accessibilityLabel={s("lostCapsule")} /> : null}
+          {source ? <Image source={source} style={{ width: VESSEL, height: VESSEL }} resizeMode="contain" accessibilityLabel={s("corruptedCapsule")} /> : null}
           <Animated.View style={{ position: "absolute", opacity: crack }}><Cracks size={VESSEL} /></Animated.View>
           {!result && <View style={{ position: "absolute", width: RING, height: RING, borderRadius: RING / 2, borderWidth: 2, borderColor: "rgba(255,255,255,.95)" }} />}
           {!result && <Animated.View style={{ position: "absolute", width: RING, height: RING, borderRadius: RING / 2, borderWidth: 4, borderColor: RING_COLOR[capsule.rarity], transform: [{ scale: ringScale }] }} />}
@@ -247,7 +274,7 @@ export function ThrowScreen({ capsule, state, onState, onClose }: {
 
     {!result && <View pointerEvents="box-none" style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" }}>
       <Text style={{ flex: 1, fontFamily: sans, fontSize: 12, color: C.ink }}>{count > 0 ? s("balls", state.wax_balls) : s("noBalls")}</Text>
-      <Text style={{ flex: 1, textAlign: "center", fontFamily: sans, fontSize: 12, color: C.ink }}>{s("flick")}</Text>
+      <Text style={{ flex: 1, textAlign: "center", fontFamily: sans, fontSize: 12, color: C.ink }}>{s(MOUSE ? "flickMouse" : "flick")}</Text>
       <View style={{ flex: 1, alignItems: "flex-end" }}>
         <Pressable accessibilityRole="button" accessibilityLabel={s(kind === "wax" ? "gold" : "wax")} accessibilityState={{ selected: kind === "gold" }}
           disabled={kind === "wax" && state.gold_balls <= 0} onPress={() => { void haptics.tick(); setKind(kind === "wax" ? "gold" : "wax"); }}

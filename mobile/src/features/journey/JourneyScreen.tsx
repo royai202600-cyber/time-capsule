@@ -23,7 +23,7 @@ import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
 import type { Tables } from "../../services/database.types";
 import { MAP_PMTILES_URL, sea, SeaError, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
 import { daysSince, distanceText, useSeaText } from "../sea/strings";
-import { game, GameError, GAME_ACTION_RADIUS_M, GAME_ENABLED, type GameState, type LostCapsule, type Nearby, type Waypost } from "../../services/game";
+import { game, GameError, GAME_ACTION_RADIUS_M, GAME_ENABLED, type GameState, type CorruptedCapsule, type DevLetter, type Nearby, type Waypost } from "../../services/game";
 import { ThrowScreen } from "../game/ThrowScreen";
 import { useGameText } from "../game/strings";
 
@@ -62,9 +62,10 @@ export default function JourneyScreen() {
   const [mapPlace, setMapPlace] = useState<Extract<Item, { kind: "place" }> | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
   const [gameState, setGameState] = useState<GameState | null>(null);
-  const [nearby, setNearby] = useState<Nearby>({ lost: [], wayposts: [] });
-  const [throwing, setThrowing] = useState<LostCapsule | null>(null);
-  const [gameCard, setGameCard] = useState<{ kind: "lost"; capsule: LostCapsule; meters: number } | { kind: "waypost"; waypost: Waypost; meters: number } | null>(null);
+  const [nearby, setNearby] = useState<Nearby>({ corrupted: [], wayposts: [] });
+  const [throwing, setThrowing] = useState<CorruptedCapsule | null>(null);
+  const [devLetter, setDevLetter] = useState<DevLetter | null>(null);
+  const [gameCard, setGameCard] = useState<{ kind: "corrupted"; capsule: CorruptedCapsule; meters: number } | { kind: "waypost"; waypost: Waypost; meters: number } | null>(null);
   const last = useRef<{ lat: number; lng: number } | null>(null);
   // Heading from movement: the cone points the way you walked.
   useEffect(() => {
@@ -80,8 +81,10 @@ export default function JourneyScreen() {
   const cell = you ? `${you.lat.toFixed(3)},${you.lng.toFixed(3)}` : "";
   const loadSea = useCallback(async () => {
     if (!SEA_ENABLED || !you) return;
+    const test = GAME_ENABLED ? game.devBottles(you) : [];
+    setBottles(test);
     try {
-      setBottles(await sea.nearby(fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null));
+      setBottles([...test, ...await sea.nearby(fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null)]);
     } catch { /* the map still works without the sea */ }
   }, [cell]);
   const loadGame = useCallback(async () => {
@@ -127,12 +130,12 @@ export default function JourneyScreen() {
 
   const metersTo = (lat: number, lng: number) => you ? distanceMeters(you.lat, you.lng, lat, lng) : Infinity;
   const gamePins = useMemo<LivePin[]>(() => [
-    ...nearby.lost.filter((c) => c.id !== throwing?.id).map<LivePin>((c) => {
+    ...nearby.corrupted.filter((c) => c.id !== throwing?.id).map<LivePin>((c) => {
       const m = metersTo(c.lat, c.lng);
-      return { id: `lost-${c.id}`, lat: c.lat, lng: c.lng, kind: "lost", vessel: vesselUri(c.vessel), rarity: c.rarity, near: m <= GAME_ACTION_RADIUS_M, far: m > 600, tag: m <= GAME_ACTION_RADIUS_M ? undefined : distanceText(m) };
+      return { id: `corrupted-${c.id}`, lat: c.lat, lng: c.lng, kind: "corrupted", vessel: vesselUri(c.vessel), rarity: c.rarity, near: m <= GAME_ACTION_RADIUS_M, far: m > 600, tag: m <= GAME_ACTION_RADIUS_M ? undefined : distanceText(m) };
     }),
     ...nearby.wayposts.map<LivePin>((w) => ({
-      id: `way-${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: w.kind === "landmark" ? vesselUri("hourglass") : "",
+      id: `way-${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: "",
       done: !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now(),
     })),
   ], [nearby, throwing?.id, you?.lat, you?.lng]);
@@ -160,6 +163,13 @@ export default function JourneyScreen() {
   };
   const pickUp = async (item: Extract<Item, { kind: "sea" }>) => {
     if (busy) return;
+    if (item.id.startsWith("dev-bottle-")) {
+      const letter = game.devPickUp(item.id);
+      void haptics.success();
+      setSelectedId(null); setDevLetter(letter);
+      void loadSea();
+      return;
+    }
     setBusy(true);
     try {
       const capsuleId = await sea.pickUp(item.id, fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null);
@@ -175,13 +185,13 @@ export default function JourneyScreen() {
     } finally { setBusy(false); }
   };
   const onPin = (id: string) => {
-    if (id.startsWith("lost-")) {
-      const capsule = nearby.lost.find((c) => `lost-${c.id}` === id);
+    if (id.startsWith("corrupted-")) {
+      const capsule = nearby.corrupted.find((c) => `corrupted-${c.id}` === id);
       if (!capsule) return;
       const meters = metersTo(capsule.lat, capsule.lng);
       setSelectedId(null); void haptics.tick();
       if (meters <= GAME_ACTION_RADIUS_M) { setGameCard(null); map.current?.focus(capsule.lat, capsule.lng); setThrowing(capsule); }
-      else setGameCard({ kind: "lost", capsule, meters });
+      else setGameCard({ kind: "corrupted", capsule, meters });
       return;
     }
     if (id.startsWith("way-")) {
@@ -275,21 +285,31 @@ export default function JourneyScreen() {
       </View>
     </SafeAreaView>
 
+    {devLetter && <View style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, zIndex: 35, gap: spacing.sm, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.lg, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+        <Avatar avatar={devLetter.bottle.sender.avatar} size={36} />
+        <Text style={{ flex: 1, fontFamily: sans, fontSize: 12, color: C.brass }}>{s("seaBottle", devLetter.bottle.sender.name)}</Text>
+      </View>
+      <Text style={{ fontFamily: serif, fontSize: 17, lineHeight: 26, color: C.ink }}>{devLetter.message}</Text>
+      <Pressable accessibilityRole="button" onPress={() => setDevLetter(null)} style={{ alignItems: "center", backgroundColor: C.blue, borderRadius: radii.pill, paddingVertical: 11 }}>
+        <Text style={{ fontFamily: serif, fontSize: 15, color: C.white }}>{g("close")}</Text>
+      </Pressable>
+    </View>}
     {throwing && gameState && <ThrowScreen capsule={throwing} state={gameState} onState={setGameState}
       onClose={() => { setThrowing(null); map.current?.recenter(); void loadGame(); }} />}
     <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows} />
   </JourneyViewport>;
 }
 
-type GameCardValue = { kind: "lost"; capsule: LostCapsule; meters: number } | { kind: "waypost"; waypost: Waypost; meters: number };
+type GameCardValue = { kind: "corrupted"; capsule: CorruptedCapsule; meters: number } | { kind: "waypost"; waypost: Waypost; meters: number };
 function GameCard({ card, busy, g, language, onSpin, onSoon }: {
   card: GameCardValue; busy: boolean; g: ReturnType<typeof useGameText>; language: "zh" | "en"; onSpin: (w: Waypost) => void; onSoon: () => void;
 }) {
   const near = card.meters <= GAME_ACTION_RADIUS_M;
   const left = distanceText(Math.max(0, card.meters - GAME_ACTION_RADIUS_M));
   const landmark = card.kind === "waypost" && card.waypost.kind === "landmark";
-  const title = card.kind === "lost" ? g("lostCapsule") : language === "zh" ? card.waypost.name_zh : card.waypost.name_en;
-  const note = card.kind === "lost" ? g("walkCloser", left) : landmark ? g("landmarkSoon") : near ? "" : g("spinWalkCloser", left);
+  const title = card.kind === "corrupted" ? g("corruptedCapsule") : language === "zh" ? card.waypost.name_zh : card.waypost.name_en;
+  const note = card.kind === "corrupted" ? g("walkCloser", left) : landmark ? g("landmarkSoon") : near ? "" : g("spinWalkCloser", left);
   return <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", gap: spacing.sm, backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
     <Text style={{ fontFamily: serif, fontSize: 18, color: C.ink }}>{title}</Text>
     {!!note && <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{note}</Text>}
