@@ -10,6 +10,9 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 
 ## Rules and checks
 
+- T10f B6: ten original magic and milestone vessels have measured opening and 40/120 px sheets. The spellbook glow fix is approved; the remaining nine are presented for final batch review. Layer order, motion and anchors are proposed in the manifest; screen wiring and catalogue changes are separate. The lamp uses a cylindrical brass burner and short straight spout to avoid the well-known animated lamp silhouette. [B6 contact sheet](_checks/b6-contact-sheet.png).
+
+
 - T10f B6 spellbook test: closed navy leather book with brass corners/clasp and an abstract star-and-rose motif, complete blank page and rolled letter beneath the front cover. The clasp fades before the cover swings from its measured left-spine pivot. Page-edge glow persists through opening; a 0.025 breathe and glow pulse animate at rest. Exact CLOSED stack, transparent corners, 40/120 px silhouettes, in-canvas open letter and [B6 contact sheet](_checks/b6-contact-sheet.png) were reviewed by Roy. Roy approved the spellbook with brighter golden page-edge and open-page light; glow remains on through opening. No recognizable fantasy-franchise marks were used. The other nine are in progress.
 
 - T10c B3: ten original festival/keepsake vessels, complete reveal edits, exact CLOSED keyframes, measured 40/120 px and opening sheets. Lucky-cat test approved by Roy; its full drawer pulls straight forward with a rolled letter, while approved cat/paw/base/closed bytes remain unchanged. Separate dark interior layers support the pumpkin/river glows; the stocking stand stays fixed while sock/letter sway. Only river water is ground. PR #56 approved and merged as 4309b55. Roy approved T10c-fix PR #61 for merge.
@@ -233,6 +236,40 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `vessels/vessel-senado-fountain-box.png` | Wave-Tile Fountain Box — box layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-senado-fountain-lid.png` | Wave-Tile Fountain Box — lid layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-senado-fountain.png` | Assembled wave-tile fountain box vessel | 1024×1024 | processed; see manifest |
+| `vessels/vessel-escape-pod-glow.png` | escape-pod-glow | 1024×1024 | processed; see manifest |
+| `vessels/vessel-escape-pod-hatch.png` | escape-pod-hatch | 1024×1024 | processed; see manifest |
+| `vessels/vessel-escape-pod-pod.png` | escape-pod-pod | 1024×1024 | processed; see manifest |
+| `vessels/vessel-escape-pod.png` | escape-pod | 1024×1024 | processed; see manifest |
+| `vessels/vessel-crystal-ball-ball.png` | crystal-ball-ball | 1024×1024 | processed; see manifest |
+| `vessels/vessel-crystal-ball-mist.png` | crystal-ball-mist | 1024×1024 | processed; see manifest |
+| `vessels/vessel-crystal-ball-stand.png` | crystal-ball-stand | 1024×1024 | processed; see manifest |
+| `vessels/vessel-crystal-ball.png` | crystal-ball | 1024×1024 | processed; see manifest |
+| `vessels/vessel-wishing-lamp-lamp.png` | wishing-lamp-lamp | 1024×1024 | processed; see manifest |
+| `vessels/vessel-wishing-lamp-lid.png` | wishing-lamp-lid | 1024×1024 | processed; see manifest |
+| `vessels/vessel-wishing-lamp-smoke.png` | wishing-lamp-smoke | 1024×1024 | processed; see manifest |
+| `vessels/vessel-wishing-lamp.png` | wishing-lamp | 1024×1024 | processed; see manifest |
+| `vessels/vessel-potion-bubbles.png` | potion-bubbles | 1024×1024 | processed; see manifest |
+| `vessels/vessel-potion-cork.png` | potion-cork | 1024×1024 | processed; see manifest |
+| `vessels/vessel-potion-flask.png` | potion-flask | 1024×1024 | processed; see manifest |
+| `vessels/vessel-potion.png` | potion | 1024×1024 | processed; see manifest |
+| `vessels/vessel-pocket-watch-cover.png` | pocket-watch-cover | 1024×1024 | processed; see manifest |
+| `vessels/vessel-pocket-watch-watch.png` | pocket-watch-watch | 1024×1024 | processed; see manifest |
+| `vessels/vessel-pocket-watch.png` | pocket-watch | 1024×1024 | processed; see manifest |
+| `vessels/vessel-diploma-tube-cap.png` | diploma-tube-cap | 1024×1024 | processed; see manifest |
+| `vessels/vessel-diploma-tube-diploma.png` | diploma-tube-diploma | 1024×1024 | processed; see manifest |
+| `vessels/vessel-diploma-tube-tube.png` | diploma-tube-tube | 1024×1024 | processed; see manifest |
+| `vessels/vessel-diploma-tube.png` | diploma-tube | 1024×1024 | processed; see manifest |
+| `vessels/vessel-baby-shoes-box.png` | baby-shoes-box | 1024×1024 | processed; see manifest |
+| `vessels/vessel-baby-shoes-lid.png` | baby-shoes-lid | 1024×1024 | processed; see manifest |
+| `vessels/vessel-baby-shoes.png` | baby-shoes | 1024×1024 | processed; see manifest |
+| `vessels/vessel-memorial-candle-glow.png` | memorial-candle-glow | 1024×1024 | processed; see manifest |
+| `vessels/vessel-memorial-candle-jar.png` | memorial-candle-jar | 1024×1024 | processed; see manifest |
+| `vessels/vessel-memorial-candle-lid.png` | memorial-candle-lid | 1024×1024 | processed; see manifest |
+| `vessels/vessel-memorial-candle.png` | memorial-candle | 1024×1024 | processed; see manifest |
+| `vessels/vessel-rocket-tin-cone.png` | rocket-tin-cone | 1024×1024 | processed; see manifest |
+| `vessels/vessel-rocket-tin-flame.png` | rocket-tin-flame | 1024×1024 | processed; see manifest |
+| `vessels/vessel-rocket-tin-rocket.png` | rocket-tin-rocket | 1024×1024 | processed; see manifest |
+| `vessels/vessel-rocket-tin.png` | rocket-tin | 1024×1024 | processed; see manifest |
 | `vessels/vessel-snow-globe-base.png` | Winter Scene Snow Globe — base layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-snow-globe-glint.png` | Winter Scene Snow Globe — glint layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-snow-globe-globe.png` | Winter Scene Snow Globe — globe layer | 1024×1024 | processed; see manifest |

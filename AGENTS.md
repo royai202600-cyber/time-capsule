@@ -73,6 +73,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-08: Roy approved the stronger spellbook glow and instructed Codex to complete the other nine B6 vessels without further sample stops. Routine draft failures are to be corrected without asking; stop only for a decision such as IP, a palette exception or a design choice.
 - 2026-11-08: Roy approved the B6 spellbook with a stronger warm page-edge glow; it remains lit throughout opening. Continue the other nine without further sample stops unless a check fails.
 - 2026-11-08: T10f B6 is art only in its own `codex/vessels-b6` worktree. The spellbook is the required first-vessel review gate: finish its layers, proposed metadata, exports and checks and push before Roy’s OK; the other nine wait for that approval. Final PR merge also requires Roy’s approval. Art tools use an isolated temporary environment; no demo source or app dependencies are needed.
 - 2026-11-08: Roy approved both Public Sea images in PR #68 as-is: `portrait-sea.png` and `scene-sea-sealed.png`. Preserve the approved masters and WebP exports from `5c9af06` byte-for-byte. Approval authorizes marking the PR ready and owner-account squash merge after green CI. Art and documentation only; no app code, deployment or migration. App registration and screen wiring remain the screens team's follow-up.

@@ -1,56 +1,114 @@
 {
-  "exact_closed_rgba": true,
-  "closed_diff_bbox": null,
-  "canvas": [
-    1024,
-    1024
-  ],
-  "parts": [
+  "style_reference": "design/art/style-sheet.png",
+  "layer_order": [
     "book",
     "glow",
     "cover",
     "clasp"
   ],
-  "corners": {
-    "assembled": [
-      0,
-      0,
-      0,
-      0
-    ],
-    "book": [
-      0,
-      0,
-      0,
-      0
-    ],
-    "glow": [
-      0,
-      0,
-      0,
-      0
-    ],
-    "cover": [
-      0,
-      0,
-      0,
-      0
-    ],
-    "clasp": [
-      0,
-      0,
-      0,
-      0
-    ]
-  },
-  "bbox_alpha_gt_20": [
-    202,
-    197,
-    839,
-    899
-  ],
-  "baseY": 898,
-  "gift_visible_at_open": true,
-  "open_glow_opacity": 1,
-  "ip_review": "Generic navy leather book with original abstract star-and-rose motif; no text, character, crest, house, owl, logo or brand shape."
+  "assembled_vs_stack_mae_rgb_on_paper_0_to_255": 0.0,
+  "exact_pixel_match": true,
+  "all_corners_alpha_zero": true,
+  "layer_checks": {
+    "assembled": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 255,
+      "visible_bbox_alpha_gt_20": [
+        202,
+        197,
+        839,
+        899
+      ]
+    },
+    "book": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 253,
+      "visible_bbox_alpha_gt_20": [
+        202,
+        204,
+        788,
+        899
+      ]
+    },
+    "glow": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 55,
+      "visible_bbox_alpha_gt_20": [
+        210,
+        197,
+        834,
+        887
+      ]
+    },
+    "cover": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 253,
+      "visible_bbox_alpha_gt_20": [
+        305,
+        262,
+        789,
+        894
+      ]
+    },
+    "clasp": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        649,
+        517,
+        838,
+        632
+      ]
+    }
+  }
 }

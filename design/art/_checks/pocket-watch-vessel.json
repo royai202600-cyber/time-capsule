@@ -1,0 +1,54 @@
+{
+  "id": "pocket-watch",
+  "opening": "A",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "sway",
+      "deg": 4,
+      "pivot": {
+        "x": 461,
+        "y": 175
+      }
+    }
+  ],
+  "layers": [
+    {
+      "name": "watch",
+      "file": "vessel-pocket-watch-watch.png",
+      "role": "static"
+    },
+    {
+      "name": "cover",
+      "file": "vessel-pocket-watch-cover.png",
+      "role": "hinge",
+      "pivot": {
+        "x": 651,
+        "y": 598
+      },
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "scaleX": 0.03,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 429,
+    "y": 811
+  },
+  "baseY": 890,
+  "sparkle": {
+    "x": 291,
+    "y": 441
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

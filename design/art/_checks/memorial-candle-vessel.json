@@ -1,0 +1,74 @@
+{
+  "id": "memorial-candle",
+  "opening": "C",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "breathe",
+      "amount": 0.025
+    }
+  ],
+  "layers": [
+    {
+      "name": "glow",
+      "file": "vessel-memorial-candle-glow.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "opacity": 1
+        }
+      ],
+      "idle": [
+        {
+          "type": "glow",
+          "base": 0.8,
+          "range": 0.2,
+          "flicker": 0.1
+        }
+      ]
+    },
+    {
+      "name": "jar",
+      "file": "vessel-memorial-candle-jar.png",
+      "role": "static"
+    },
+    {
+      "name": "lid",
+      "file": "vessel-memorial-candle-lid.png",
+      "role": "lift",
+      "pivot": {
+        "x": 220,
+        "y": 150
+      },
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "y": -0.36,
+          "rotate": 0,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 512,
+    "y": 395
+  },
+  "baseY": 899,
+  "sparkle": {
+    "x": 300,
+    "y": 341
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

@@ -1,0 +1,50 @@
+{
+  "id": "baby-shoes",
+  "opening": "B",
+  "idleMs": 4000,
+  "idle": [
+    {
+      "type": "breathe",
+      "amount": 0.025
+    }
+  ],
+  "layers": [
+    {
+      "name": "box",
+      "file": "vessel-baby-shoes-box.png",
+      "role": "static"
+    },
+    {
+      "name": "lid",
+      "file": "vessel-baby-shoes-lid.png",
+      "role": "lift",
+      "pivot": {
+        "x": 512,
+        "y": 224
+      },
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "y": -0.4,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 512,
+    "y": 590
+  },
+  "baseY": 889,
+  "sparkle": {
+    "x": 436,
+    "y": 384
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

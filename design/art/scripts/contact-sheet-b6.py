@@ -1,16 +1,6 @@
 from pathlib import Path
 from PIL import Image,ImageDraw
-p=Path(__file__).resolve().parents[1]; paper=(246,248,251)
-assembled=Image.open(p/'vessels/vessel-spellbook.png').convert('RGBA')
-small=Image.new('RGBA',(1024,1024),paper+(255,));small=Image.alpha_composite(small,assembled).convert('RGB')
-motion=Image.open(p/'_checks/spellbook-motion.png').convert('RGB')
-out=Image.new('RGB',(1320,1050),paper);d=ImageDraw.Draw(out)
-d.text((30,20),'B6 MAGIC + MILESTONES | TEST 1/10: SPELLBOOK',fill=(22,38,63))
-out.paste(small.resize((380,380),Image.Resampling.LANCZOS),(30,70))
-d.text((30,465),'Closed at 380 px',fill=(22,38,63))
-out.paste(small.resize((120,120),Image.Resampling.LANCZOS),(440,170))
-d.text((440,310),'Card: 120 px',fill=(22,38,63))
-out.paste(small.resize((40,40),Image.Resampling.LANCZOS),(600,210))
-d.text((600,310),'Chip: 40 px',fill=(22,38,63))
-out.paste(motion.resize((1260,525),Image.Resampling.LANCZOS),(30,500))
-out.save(p/'_checks/b6-contact-sheet.png',optimize=True)
+A=Path(__file__).resolve().parents[1];ids=['spellbook','escape-pod','crystal-ball','wishing-lamp','potion','pocket-watch','diploma-tube','baby-shoes','memorial-candle','rocket-tin'];paper=(246,248,251);out=Image.new('RGB',(1200,900),paper);d=ImageDraw.Draw(out)
+for i,id in enumerate(ids):
+ im=Image.open(A/'vessels'/f'vessel-{id}.png').convert('RGBA');bg=Image.new('RGBA',im.size,paper+(255,));bg.alpha_composite(im);x=i%5*240;y=i//5*450;out.paste(bg.convert('RGB').resize((240,240),Image.Resampling.LANCZOS),(x,y));d.text((x+12,y+240),id,fill=(22,38,63));preview=Image.open(A/'_checks'/f'{id}-motion.png').convert('RGB');preview=preview.crop((880,40,1320,480)).resize((180,180),Image.Resampling.LANCZOS);out.paste(preview,(x+30,y+265));d.text((x+12,y+425),'open',fill=(22,38,63))
+out.save(A/'_checks/b6-contact-sheet.png',optimize=True)
