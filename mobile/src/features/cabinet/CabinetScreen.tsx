@@ -13,7 +13,7 @@ import { useLanguage } from "../../i18n";
 import { useAuth } from "../../services/auth";
 import { game, GAME_ENABLED } from "../../services/game";
 import { useGameText } from "../game/strings";
-import { canUseVessel } from "../../services/vesselAccess";
+import { isCollected } from "../../services/vesselAccess";
 import { capsules, vessels } from "../../services/data";
 import { VESSELS } from "../../i18n/webStrings";
 import { useReducedMotion } from "../../useReducedMotion";
@@ -377,9 +377,9 @@ export default function CabinetScreen() {
     return [...all].sort((a, b) => a.sort - b.sort).flatMap((v, index): CabinetItem[] => {
       if (!isVessel(v.id)) return [];
       const own = owned.find(o => o.vessel === v.id);
-      if (!canUseVessel(v, !!own) && !collected[v.id]) return [];
+      if (!isCollected(v, !!own || !!collected[v.id], GAME_ENABLED)) return [];
       return [{
-        key: v.id, kind: v.id, owned: canUseVessel(v, !!own) || !!collected[v.id], no: index + 1, stars: collected[v.id]?.stars,
+        key: v.id, kind: v.id, owned: true, no: index + 1, stars: collected[v.id]?.stars,
         editionNo: own?.edition_no, editionTotal: v.edition_total, acquiredAt: own?.acquired_at, used: usage[v.id] ?? 0,
       }];
     });

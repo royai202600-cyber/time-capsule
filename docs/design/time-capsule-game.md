@@ -68,7 +68,7 @@ The default zoom makes the 100 m pickup circle span 75% of the screen width.
 
 ## Shop and sending
 - **Collecting is the main way to get vessels.** The Shop sells only what can't be found: brand and numbered editions. It stays free while testing.
-- **You can send what you've collected, plus free starter vessels** every new player gets.
+- **You can send what you've collected, plus the four starter vessels** every new player gets: blue rose dome, bottle, wax-sealed letter and tin. Other free vessels have to be found too.
 - Writing to someone never costs balls. The game must never block a letter.
 
 ## Capsules from strangers
@@ -120,9 +120,8 @@ Art, screens and backend can run in parallel once this doc is confirmed.
 1. How the Waypost building and its spinning object look (art to show Roy).
 2. The final red wax ball design, and whether the Gold Wax Ball is a colour change or a new look.
 3. What replaces the sea portrait and sea sealed scene.
-4. Which vessels are the free starters.
-5. What happens to vessels testers already took for free from the Shop.
-6. Numbers to tune: spawn rate, balls per spin, Waypost cooldown, Landmark time limit, XP curve, duplicates per star.
-7. Whether a daily pick-up limit should return once strangers are real users.
+4. What happens to vessels testers already took for free from the Shop.
+5. Numbers to tune: spawn rate, balls per spin, Waypost cooldown, Landmark time limit, XP curve, duplicates per star.
+6. Whether a daily pick-up limit should return once strangers are real users.
 
 Still needed before real users, from earlier: a domain and email provider, moving map tiles off the pilot `r2.dev` address, in-app account deletion, and removing the test location and the ten test bottles.

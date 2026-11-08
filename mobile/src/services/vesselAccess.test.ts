@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canUseVessel, showVesselInShop } from './vesselAccess';
+import { canUseVessel, isCollected, showVesselInShop } from './vesselAccess';
 describe('earned vessel access across Shop, Create and Cabinet', () => {
   const reward = { price_mop: 0, earned_place: 'tst-clock' };
   it('keeps a zero-price landmark hidden and unusable before ownership', () => {
@@ -17,5 +17,18 @@ describe('earned vessel access across Shop, Create and Cabinet', () => {
       expect(canUseVessel({ price_mop: 22, earned_place }, false)).toBe(false);
       expect(canUseVessel({ price_mop: 22, earned_place }, true)).toBe(true);
     }
+  });
+});
+
+describe('isCollected', () => {
+  const free = { id: 'hourglass', price_mop: 0, earned_place: null };
+  const starter = { id: 'tin', price_mop: 0, earned_place: null };
+  it('counts only starters and owned vessels once the game is on', () => {
+    expect(isCollected(starter, false, true)).toBe(true);
+    expect(isCollected(free, false, true)).toBe(false);
+    expect(isCollected(free, true, true)).toBe(true);
+  });
+  it('keeps every free vessel until the game ships', () => {
+    expect(isCollected(free, false, false)).toBe(true);
   });
 });

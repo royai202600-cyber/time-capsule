@@ -10,7 +10,7 @@ import { goBack } from "../../navigation";
 import { useAuth } from "../../services/auth";
 import { vessels } from "../../services/data";
 import { game, GAME_ENABLED } from "../../services/game";
-import { canUseVessel } from "../../services/vesselAccess";
+import { isCollected } from "../../services/vesselAccess";
 import { C, sans, serif, spacing } from "../../theme";
 import { useGameText } from "../game/strings";
 
@@ -62,7 +62,7 @@ export default function AlbumScreen() {
   const cards = useMemo(() => {
     const caught = GAME_ENABLED ? game.devCollection() : {};
     return [...all].sort((a, b) => a.sort - b.sort).flatMap((v, index): Card[] => isVessel(v.id)
-      ? [{ id: v.id, no: index + 1, collected: canUseVessel(v, owned.includes(v.id)) || !!caught[v.id], stars: caught[v.id]?.stars ?? 0 }]
+      ? [{ id: v.id, no: index + 1, collected: isCollected(v, owned.includes(v.id) || !!caught[v.id], GAME_ENABLED), stars: caught[v.id]?.stars ?? 0 }]
       : []);
   }, [all, owned]);
 

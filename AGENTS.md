@@ -73,6 +73,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-09: Roy set the starters: new players begin with only the blue rose dome, bottle, wax-sealed letter and tin. All other vessels, including other free ones, must be collected. It applies in the Cabinet and Capsule Album under the game flag; the server-side Shop and sending rules change when the game ships.
 - 2026-11-09: Roy separated the two collection views. Cabinet shows only collected vessels. A separate Capsule Album (膠囊圖鑑) lists every vessel in number order, with a plain number card for each uncollected one, and opens from the bottom right of Journey and from Cabinet.
 - 2026-11-09: Roy decided every capsule dropped in public uses the bottle and shows at one equal size on the map, so it can't be confused with system Corrupted Capsules; private capsules keep the chosen vessel. Journey's default zoom makes the 100 m pickup circle 75% of the screen width.
 - 2026-11-09: Roy tried the first game screens and set: system capsules are called **Corrupted Capsules** (破損膠囊), because Lost sounded like the capsule had just lost its way. The throw has its own generic background in the live map's colours and flat style, rather than sitting on the live map. A Landmark Waypost is a plain building on the map, never a capsule; the giant capsule only appears in the fight.
