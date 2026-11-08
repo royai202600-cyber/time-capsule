@@ -94,7 +94,7 @@ export default function CapsuleScreen() {
   const { fix } = usePlaceDistance(pl);
   const v = c ? bundle.vessels[c.vessel] : undefined;
   const sender = c ? bundle.people[c.sender] : undefined;
-  const receiver = c ? bundle.people[c.recipient] : undefined;
+  const receiver = c?.recipient ? bundle.people[c.recipient] : undefined;
   const name = side === "sent" && c && isSeaCapsule(c) && !c.recipient ? seaText(language)("toTheSea") : side === "sent" && c?.recipient === session?.user.id ? t("home.future") : (side === "sent" ? receiver?.name : sender?.name) ?? t("home.future");
   const placeName = pl ? pl[language === "zh" ? "name_zh" : "name_en"] : "";
   const state = c ? status(c, side, pl && fix ? openingCoordinates() : null, pl, now) : "time";

@@ -9,7 +9,7 @@ export type Profile = {
 export type Capsule = {
   id: string;
   sender: string;
-  recipient: string;
+  recipient: string | null;
   open_at: string;
   opened_at: string | null;
   place: string | null;
