@@ -1,0 +1,72 @@
+{
+  "style_reference": "design/art/style-sheet.png",
+  "layer_order": [
+    "box",
+    "lid"
+  ],
+  "assembled_vs_stack_mae_rgb_on_paper_0_to_255": 0.0,
+  "exact_pixel_match": true,
+  "all_corners_alpha_zero": true,
+  "layer_checks": {
+    "assembled": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 255,
+      "visible_bbox_alpha_gt_20": [
+        163,
+        235,
+        862,
+        890
+      ]
+    },
+    "box": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 253,
+      "visible_bbox_alpha_gt_20": [
+        164,
+        309,
+        834,
+        890
+      ]
+    },
+    "lid": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 254,
+      "visible_bbox_alpha_gt_20": [
+        163,
+        235,
+        862,
+        705
+      ]
+    }
+  }
+}

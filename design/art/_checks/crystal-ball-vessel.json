@@ -1,0 +1,69 @@
+{
+  "id": "crystal-ball",
+  "opening": "B",
+  "idleMs": 4200,
+  "idle": [
+    {
+      "type": "breathe",
+      "amount": 0.025
+    }
+  ],
+  "layers": [
+    {
+      "name": "stand",
+      "file": "vessel-crystal-ball-stand.png",
+      "role": "static"
+    },
+    {
+      "name": "mist",
+      "file": "vessel-crystal-ball-mist.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "opacity": 0
+        }
+      ],
+      "idle": [
+        {
+          "type": "glow",
+          "base": 0.75,
+          "range": 0.25
+        }
+      ]
+    },
+    {
+      "name": "ball",
+      "file": "vessel-crystal-ball-ball.png",
+      "role": "lift",
+      "open": [
+        {
+          "at": 0,
+          "y": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "y": -0.45,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 512,
+    "y": 647
+  },
+  "baseY": 900,
+  "sparkle": {
+    "x": 283,
+    "y": 251
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}

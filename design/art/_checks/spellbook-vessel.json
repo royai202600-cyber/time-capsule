@@ -1,0 +1,93 @@
+{
+  "id": "spellbook",
+  "opening": "J",
+  "idleMs": 3900,
+  "idle": [
+    {
+      "type": "breathe",
+      "amount": 0.025
+    }
+  ],
+  "layers": [
+    {
+      "name": "book",
+      "file": "vessel-spellbook-book.png",
+      "role": "static"
+    },
+    {
+      "name": "glow",
+      "file": "vessel-spellbook-glow.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "opacity": 1
+        }
+      ],
+      "idle": [
+        {
+          "type": "glow",
+          "base": 0.85,
+          "range": 0.15
+        }
+      ]
+    },
+    {
+      "name": "cover",
+      "file": "vessel-spellbook-cover.png",
+      "role": "hinge",
+      "pivot": {
+        "x": 312,
+        "y": 587
+      },
+      "open": [
+        {
+          "at": 0,
+          "scaleX": 1,
+          "opacity": 1
+        },
+        {
+          "at": 0.5,
+          "scaleX": 0.55,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "scaleX": 0.04,
+          "opacity": 0
+        }
+      ]
+    },
+    {
+      "name": "clasp",
+      "file": "vessel-spellbook-clasp.png",
+      "role": "fade",
+      "open": [
+        {
+          "at": 0,
+          "opacity": 1
+        },
+        {
+          "at": 0.25,
+          "opacity": 0
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 551,
+    "y": 518
+  },
+  "baseY": 898,
+  "sparkle": {
+    "x": 735,
+    "y": 283
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}
