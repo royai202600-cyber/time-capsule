@@ -73,7 +73,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
-- 2026-11-09: Roy replaced the Waypost wheel and building with his chosen purple gem. It floats without a pole; a Landmark Waypost is a larger, deeper purple gem. After a spin, balls rise in soft bubbles and fade while a vertical tally such as +4 appears at the top right.
+- 2026-11-09: Roy replaced the Waypost wheel and building with his chosen purple gem. It stands on a pole (Roy's decision); a Landmark Waypost is a larger, deeper purple gem on a pole. After a spin, balls rise in soft bubbles and fade while a vertical tally such as +4 appears at the top right.
 - 2026-11-09: Roy decided Corrupted Capsules appear only inside the pickup circle, so they never crowd the map. Passport and Capsule Album on Journey stay as the simple round line icons, with no text beneath; Roy rejected a more illustrated redraw.
 - 2026-11-09: Roy set the starters: new players begin with only the blue rose dome, bottle, wax-sealed letter and tin. All other vessels, including other free ones, must be collected. It applies in the Cabinet and Capsule Album under the game flag; the server-side Shop and sending rules change when the game ships.
 - 2026-11-09: Roy separated the two collection views. Cabinet shows only collected vessels. A separate Capsule Album (膠囊圖鑑) lists every vessel in number order, with a plain number card for each uncollected one, and opens from the bottom right of Journey and from Cabinet.
