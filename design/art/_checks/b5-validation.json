@@ -1,0 +1,188 @@
+{
+  "vessels": {
+    "bento": {
+      "closed_stack_exact": true,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "bbox_alpha_gt_25": [
+        139,
+        323,
+        886,
+        900
+      ],
+      "baseY": 899,
+      "all_static_gifts_inside_canvas": true,
+      "covers_clear_at_end": true,
+      "export_count": 4,
+      "ip_review": "Original generic object; no logo, characters, text, real flag or brand shape."
+    },
+    "bubble-tea": {
+      "closed_stack_exact": true,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "bbox_alpha_gt_25": [
+        301,
+        125,
+        722,
+        900
+      ],
+      "baseY": 899,
+      "all_static_gifts_inside_canvas": true,
+      "covers_clear_at_end": true,
+      "export_count": 3,
+      "ip_review": "Original generic object; no logo, characters, text, real flag or brand shape."
+    },
+    "camp-lantern": {
+      "closed_stack_exact": true,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "bbox_alpha_gt_25": [
+        323,
+        125,
+        701,
+        900
+      ],
+      "baseY": 899,
+      "all_static_gifts_inside_canvas": true,
+      "covers_clear_at_end": true,
+      "export_count": 5,
+      "ip_review": "Original generic object; no logo, characters, text, real flag or brand shape."
+    },
+    "dim-sum-steamer": {
+      "closed_stack_exact": true,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "bbox_alpha_gt_25": [
+        198,
+        155,
+        827,
+        899
+      ],
+      "baseY": 898,
+      "all_static_gifts_inside_canvas": true,
+      "covers_clear_at_end": true,
+      "export_count": 4,
+      "ip_review": "Original generic object; no logo, characters, text, real flag or brand shape."
+    },
+    "heart-locket": {
+      "closed_stack_exact": true,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "bbox_alpha_gt_25": [
+        275,
+        125,
+        749,
+        900
+      ],
+      "baseY": 899,
+      "all_static_gifts_inside_canvas": true,
+      "covers_clear_at_end": true,
+      "export_count": 4,
+      "ip_review": "Original generic object; no logo, characters, text, real flag or brand shape."
+    },
+    "hot-air-balloon": {
+      "closed_stack_exact": true,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "bbox_alpha_gt_25": [
+        270,
+        120,
+        755,
+        900
+      ],
+      "baseY": 899,
+      "all_static_gifts_inside_canvas": true,
+      "covers_clear_at_end": true,
+      "export_count": 3,
+      "ip_review": "Original generic object; no logo, characters, text, real flag or brand shape."
+    },
+    "paper-cranes": {
+      "closed_stack_exact": true,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "bbox_alpha_gt_25": [
+        242,
+        195,
+        781,
+        901
+      ],
+      "baseY": 900,
+      "all_static_gifts_inside_canvas": true,
+      "covers_clear_at_end": true,
+      "export_count": 4,
+      "ip_review": "Original generic object; no logo, characters, text, real flag or brand shape."
+    },
+    "postbox": {
+      "closed_stack_exact": true,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "bbox_alpha_gt_25": [
+        310,
+        126,
+        715,
+        901
+      ],
+      "baseY": 900,
+      "all_static_gifts_inside_canvas": true,
+      "covers_clear_at_end": true,
+      "export_count": 3,
+      "ip_review": "Original generic object; no logo, characters, text, real flag or brand shape."
+    },
+    "suitcase": {
+      "closed_stack_exact": true,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "bbox_alpha_gt_25": [
+        135,
+        350,
+        890,
+        900
+      ],
+      "baseY": 899,
+      "all_static_gifts_inside_canvas": true,
+      "covers_clear_at_end": true,
+      "export_count": 3,
+      "ip_review": "Original generic object; no logo, characters, text, real flag or brand shape."
+    },
+    "treasure-chest": {
+      "closed_stack_exact": true,
+      "canvas": [
+        1024,
+        1024
+      ],
+      "bbox_alpha_gt_25": [
+        138,
+        330,
+        885,
+        900
+      ],
+      "baseY": 899,
+      "all_static_gifts_inside_canvas": true,
+      "covers_clear_at_end": true,
+      "export_count": 3,
+      "ip_review": "Original generic object; no logo, characters, text, real flag or brand shape."
+    }
+  },
+  "masters_and_exports": 36,
+  "existing_art_hash_checks": 452,
+  "other_batch_metadata_preserved": true,
+  "art_only_scope": true
+}

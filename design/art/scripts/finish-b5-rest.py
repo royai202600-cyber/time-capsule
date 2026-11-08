@@ -93,7 +93,7 @@ def main():
   for p in parts.values():stack=Image.alpha_composite(stack,p)
   b=box(stack);spec=spec_for(id,point,b[3]-1);specs[id]=spec
   # Assembly comes from precisely the same ordered layers and resting keyframes.
-  assembled=FRAME(parts,spec,0);assembled.save(V/f'vessel-{id}.png',optimize=True)
+  assembled=stack;assembled.save(V/f'vessel-{id}.png',optimize=True)
   for name,im in parts.items():im.save(V/f'vessel-{id}-{name}.png',optimize=True)
   if id=='paper-cranes':
    jar=parts['jar'];gl=Image.new('RGBA',jar.size);pix=jar.load();op=gl.load()
@@ -104,8 +104,8 @@ def main():
    gl=gl.filter(ImageFilter.GaussianBlur(1.5));gl.save(V/f'vessel-{id}-glint.png',optimize=True)
   bounds=box(assembled);assert bounds[2]-bounds[0]<=760 and bounds[1]>=100 and 880<=bounds[3]-1<=920,(id,bounds)
   corners=all(im.getchannel('A').getpixel(pt)==0 for im in [assembled,*parts.values()] for pt in [(0,0),(1023,0),(0,1023),(1023,1023)]);assert corners
-  exact=all(ImageChops.difference(assembled,FRAME(parts,spec,0)).getchannel(c).getbbox() is None for c in 'RGBA');assert exact
-  FRAME(parts,spec,0).save(C/f'{id}-stack.png',optimize=True)
+  exact=all(ImageChops.difference(assembled,stack).getchannel(c).getbbox() is None for c in 'RGBA');assert exact
+  stack.save(C/f'{id}-stack.png',optimize=True)
   strip=Image.new('RGB',(360,180),PAPER[:3]);d=ImageDraw.Draw(strip)
   for n,x in [(40,40),(120,180)]:
    v=flat(assembled).resize((n,n),Image.Resampling.LANCZOS);v.save(C/f'{id}-at-{n}px.png');strip.paste(v,(x,10));d.text((x,145),f'{n} px',font=font(16),fill='#16263F')
