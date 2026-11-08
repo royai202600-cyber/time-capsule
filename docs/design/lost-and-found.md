@@ -1,13 +1,13 @@
-# 拾光 / Lost & Found: the collecting game
+# Time Capsule: the collecting game
 
 Status: direction agreed with Roy on 2026-11-09. Nothing is built yet. Numbers marked "to tune" get set by playing it.
 
 This replaces the name "Public Sea" and extends [public-sea.md](public-sea.md). Where the two disagree, this doc wins.
 
 ## The idea
-Time Capsule now has two sides that share the same vessels, map and opening.
+The game and the app are one thing, called **時光膠囊 / Time Capsule**, with no separate name for the game. It has two sides that share the same vessels, map and opening.
 
-- **The public game (拾光 / Lost & Found):** walk around, find cracked Lost Capsules on the map, throw a ball to restore them, and fill your Cabinet.
+- **The public game:** walk around, find cracked Lost Capsules on the map, throw a ball to restore them, and fill your Cabinet.
 - **The private side:** sealed capsules to friends or your future self, as they work today.
 
 **What joins them:** the game gives you the rare vessels, and the private side is where they mean something. You send the vessel you found to someone you love.
@@ -19,7 +19,6 @@ Time Capsule now has two sides that share the same vessels, map and opening.
 ## Names
 | Thing | 中文 | English |
 |---|---|---|
-| The game side | 拾光 | Lost & Found |
 | System capsule | 失落膠囊 | Lost Capsule |
 | Common stop | 驛站 | Waypost |
 | Landmark stop | 地標驛站 | Landmark Waypost |
