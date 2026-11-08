@@ -54,6 +54,13 @@ select city_en,count(*) from public.sea_shores
   group by city_en order by city_en;
 select city,count(*) from public.corrupted_spots group by city order by city;
 
+select pg_temp.require_ok((select count(*)=54 from public.sea_shores where game_enabled and city_en='Taipei'), 'Taipei dense Wayposts');
+select pg_temp.require_ok((select count(*)=77 from public.corrupted_spots where city='Taipei'), 'Taipei dense spots');
+select pg_temp.require_ok((select count(*)=42 from public.sea_shores where game_enabled and city_en='Singapore'), 'Singapore dense Wayposts');
+select pg_temp.require_ok((select count(*)=58 from public.corrupted_spots where city='Singapore'), 'Singapore dense spots');
+select pg_temp.require_ok((select count(*)=33 from public.sea_shores where game_enabled and city_en='Macau'), 'Macau dense Wayposts');
+select pg_temp.require_ok((select count(*)=36 from public.corrupted_spots where city='Macau'), 'Macau dense spots');
+
 -- Stable release for behavioral checks, with every probability forced to a bound.
 update private.game_config set spawn_chance=1,visible_min_minutes=60,visible_max_minutes=60,
   restore_common=1,restore_uncommon=1,restore_rare=1;
@@ -85,6 +92,21 @@ select pg_temp.expect_error(
   'select public.corrupted_nearby(25.037,121.563,201)','too_far');
 select pg_temp.expect_error(
   'select public.corrupted_nearby(91,121.563,10)','too_far');
+select pg_temp.expect_error(
+  'select public.corrupted_nearby(1.2868,103.8543,10)','too_fast');
+reset role;
+
+-- Flights after the comparison window and small GPS jitter must be accepted.
+update public.player_game set last_position_at=clock_timestamp()-interval '1801 seconds'
+  where user_id='087e002a-3aee-4cb4-a1ad-a6d001dbbad1';
+set local role authenticated;
+select public.corrupted_nearby(1.2868,103.8543,10);
+reset role;
+update public.player_game set last_lat=25.037,last_lng=121.563,
+  last_position_at=clock_timestamp()
+  where user_id='087e002a-3aee-4cb4-a1ad-a6d001dbbad1';
+set local role authenticated;
+select public.corrupted_nearby(25.038,121.563,10);
 select pg_temp.expect_error(
   'select public.corrupted_nearby(1.2868,103.8543,10)','too_fast');
 reset role;
@@ -326,6 +348,30 @@ select pg_temp.require_ok(
   (select how_earned='capsule' from public.my_passport() where place='tst-clock'),
   'Passport capsule stamp');
 reset role;
+
+-- Optional game writes must never prevent delivery or the original place reward.
+savepoint optional_reward_failure;
+insert into public.capsules(id,sender,recipient,vessel,hint,sealed_at,open_at,place)
+values('087e002a-3aee-4cb4-a1ad-a6d001dbbad6',
+ '087e002a-3aee-4cb4-a1ad-a6d001dbbad1','087e002a-3aee-4cb4-a1ad-a6d001dbbad2',
+ 'dome','reward failure',now()-interval '3 days',now()-interval '1 hour','senado');
+insert into public.capsule_contents(capsule_id,message)
+values('087e002a-3aee-4cb4-a1ad-a6d001dbbad6','delivered despite game failure');
+create function pg_temp.fail_game_xp() returns trigger language plpgsql as $$
+begin raise exception 'forced optional game failure'; end $$;
+create trigger force_game_xp_failure before insert on public.xp_events
+for each row execute function pg_temp.fail_game_xp();
+set local role authenticated;
+select pg_temp.require_ok((select message='delivered despite game failure' and opened_at is not null
+ from public.open_capsule('087e002a-3aee-4cb4-a1ad-a6d001dbbad6',22.19383,113.53999,10)),
+ 'game failure still delivers content');
+select pg_temp.require_ok((select copies=1 from public.my_collection()
+ where vessel='senado-fountain'),'original place vessel reward survives');
+reset role;
+select pg_temp.require_ok(not exists(select 1 from public.passport_stamps
+ where user_id='087e002a-3aee-4cb4-a1ad-a6d001dbbad2' and place='senado'),
+ 'optional block rolled back independently');
+rollback to optional_reward_failure;
 
 -- Private rules: daytime fireflies and off-season festivals cannot be selected.
 savepoint season_checks;

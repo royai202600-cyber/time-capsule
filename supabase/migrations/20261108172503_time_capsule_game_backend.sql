@@ -43,6 +43,8 @@ create table private.game_config (
   xp_level_factor integer not null,
   max_level integer not null,
   max_speed_mps double precision not null,
+  speed_window_seconds integer not null check (speed_window_seconds>0),
+  speed_ignore_m integer not null check (speed_ignore_m>=0),
   rarity_common_weight integer not null,
   rarity_uncommon_weight integer not null,
   rarity_rare_weight integer not null,
@@ -76,7 +78,7 @@ create table private.game_config (
 );
 insert into private.game_config values
   (true,500,100,200,60,0.35,30,60,3,30,2,3,5,0.05,1,300,12,180,0.8,1,2,
-   100,500,20,300,2000,100,20,1,365,array[1,3,6,10,15],500,30,40,
+   100,500,20,300,2000,100,20,1,365,array[1,3,6,10,15],500,30,40,1800,300,
    60,30,10,0.50,0.30,0.12,0.25,0.25);
 create table private.game_secret (
   singleton boolean primary key default true check (singleton),
@@ -132,8 +134,9 @@ insert into public.sea_shores(name_zh,name_en,city_zh,city_en,lat,lng,game_enabl
   ('區華利前地','Jorge Álvares Square','澳門','Macau',22.191303,113.539935,true,'osm:way/346900281'),
   ('何賢公園圖書館','Ho Yin Garden Library','澳門','Macau',22.192512,113.548978,true,'osm:way/402151732'),
   ('昆明街休憩區','Kunming Street Garden','澳門','Macau',22.193240,113.549930,true,'osm:way/640169194'),
-  ('大炮台公園','Mount Fortress Park','澳門','Macau',22.197031,113.541867,true,'osm:way/488185729'),
-  ('崗頂前地','St Augustine Square','澳門','Macau',22.192246,113.538109,true,'osm:way/823303474');
+  ('大炮台公園','Mount Fortress Park','澳門','Macau',22.197031,113.541867,true,'osm:way/488185729');
+  -- Religious-site vicinity excluded from the new game seed.
+
 
 -- Landmark actions are on public outdoor spots, linked to the existing places.
 insert into public.sea_shores
@@ -191,6 +194,236 @@ insert into public.corrupted_spots(city,timezone,lat,lng,habitat,source_ref)
   from public.sea_shores
   where city_en in ('Taipei','Singapore','Macau') and kind = 'common'
     and game_enabled and source_ref is not null;
+
+-- Dense public park-path seed. OSM API extracts, 2026-11-09; ODbL.
+-- Reproduce with scripts/seed-game-public-paths.py; source_ref records path, offset and park.
+-- extract tc-osm-taipei.xml SHA256 0e655b3b234e70adec2c38c9e65a00288a057072d3c146214e79fe1a8adad024
+-- extract tc-osm-taipei-west.xml SHA256 acb4f8138634c8972ddc705ea7b7cc25bcb872438eaaae57fef08da73f330124
+-- extract tc-osm-taipei-east.xml SHA256 8d8553805577ae3406c3f8b002733ed3f81b53f883fd41e1deefa9b5ae768696
+-- extract tc-osm-daan.xml SHA256 0ae22c900d7b80dce1ba06a9b2657316bffc505a605d195ba0dc1b4288ca578c
+-- extract tc-osm-taipei-peace.xml SHA256 ef8c8c1afaef9620b39b79442e86e75ddc1a864099c4056cef80d7fb1cb314d6
+-- extract tc-osm-taipei-riverside.xml SHA256 1299a0065b9da61f465b47e63c8c8c2e4c3242deab82650fa73e83c95c0a1554
+-- extract tc-osm-singapore.xml SHA256 8371ccd0c55cd7ccd60e847aa1f93500c66d5eef3a2395d88f4caf7264949bee
+-- extract tc-osm-singapore-gardens.xml SHA256 92be245f38770b750e69f9fef1d0ff506b42e2461656244a4fa370bb78d5fb70
+-- extract tc-osm-singapore-fort.xml SHA256 f6a4f9e10a67fcac7579f9311c53c3809b74e2e08ed8f5bd8c9a485bc05925d4
+-- extract tc-osm-singapore-botanic.xml SHA256 bb4c15d65ebc5a900ecf44b858fa02364c60cedcad079c485b581ba1dd962873
+-- extract tc-osm-singapore-kallang.xml SHA256 af067d9b5920042b8a4f0e967a6b208dfb9700c14d1a1984bb4d13a705c56114
+-- extract tc-osm-macau.xml SHA256 5f60d1b5b736886abea051422ace5a6995e6d04c8d980c12c3463c0cc891ea7e
+-- extract tc-osm-macau-north.xml SHA256 32603eb45002142ce40b6ff2ed7943272ae20d7000c4ccfe2896b59ee879ea63
+-- extract tc-osm-macau-taipa.xml SHA256 52a33f2462e40c41194226d9b31f60194bafd16c976120f41d08855aabbe58c3
+insert into public.sea_shores(name_zh,name_en,city_zh,city_en,lat,lng,game_enabled,source_ref) values
+('Zhongshan Park','Zhongshan Park','台北','Taipei',25.0380703,121.557978,true,'osm:way/49153748@25m;park/relation/4727715'),
+('Zhongshan Park','Zhongshan Park','台北','Taipei',25.037903,121.5606899,true,'osm:way/49153748@300m;park/relation/4727715'),
+('Da-an Forest Park','Da-an Forest Park','台北','Taipei',25.0312408,121.536494,true,'osm:way/49195976@100m;park/way/1227733215'),
+('Da-an Forest Park','Da-an Forest Park','台北','Taipei',25.0266856,121.5363286,true,'osm:way/49195990@75m;park/way/1227733215'),
+('Da-an Forest Park','Da-an Forest Park','台北','Taipei',25.0290651,121.5352519,true,'osm:way/49695623@0m;park/way/1227733215'),
+('台北世貿廣場','台北世貿廣場','台北','Taipei',25.0347109,121.5619098,true,'osm:way/136814868@125m;park/way/555117276'),
+('Da-an Forest Park','Da-an Forest Park','台北','Taipei',25.0326152,121.5342165,true,'osm:way/192030076@50m;park/way/1227733215'),
+('Sōngshòu Square Park','Sōngshòu Square Park','台北','Taipei',25.0374756,121.5663993,true,'osm:way/280707092@25m;park/way/233666147'),
+('Xiangshan Park','Xiangshan Park','台北','Taipei',25.0301894,121.5702748,true,'osm:way/319526552@300m;park/way/27244215'),
+('Dajia Park','Dajia Park','台北','Taipei',25.0757169,121.5331829,true,'osm:way/354318668@25m;park/relation/11791159'),
+('Dajia Park','Dajia Park','台北','Taipei',25.0740859,121.5393132,true,'osm:way/356780466@25m;park/relation/11791159'),
+('Dajia Park','Dajia Park','台北','Taipei',25.0740293,121.5428258,true,'osm:way/356780468@75m;park/relation/11791159'),
+('Meiti Riverside Park','Meiti Riverside Park','台北','Taipei',25.0768656,121.5513732,true,'osm:way/360057684@0m;park/way/385941046'),
+('Xinyi Square','Xinyi Square','台北','Taipei',25.0336519,121.5658998,true,'osm:way/462045632@0m;park/way/261647304'),
+('Dajia Park','Dajia Park','台北','Taipei',25.0748067,121.5369262,true,'osm:way/484308801@75m;park/relation/11791159'),
+('Dajia Park','Dajia Park','台北','Taipei',25.0752298,121.5305865,true,'osm:way/484323776@0m;park/relation/11791159'),
+('Zhongzheng Memorial Park','Zhongzheng Memorial Park','台北','Taipei',25.0336684,121.5217503,true,'osm:way/590069828@50m;park/relation/1506269'),
+('228 Peace Park','228 Peace Park','台北','Taipei',25.0430687,121.5141308,true,'osm:way/784696787@25m;park/relation/4638980'),
+('圓山河濱公園','圓山河濱公園','台北','Taipei',25.0742386,121.5257318,true,'osm:way/860377072@0m;park/way/596361020'),
+('Democracy Boulevard','Democracy Boulevard','台北','Taipei',25.0357073,121.5206551,true,'osm:way/1053359171@75m;park/way/1053396976'),
+('Yingfeng Riverside Park','Yingfeng Riverside Park','台北','Taipei',25.0753848,121.5478678,true,'osm:way/1068999026@0m;park/way/385941045'),
+('Yingfeng Riverside Park','Yingfeng Riverside Park','台北','Taipei',25.0754008,121.5448351,true,'osm:way/1068999084@0m;park/way/385941045'),
+('Yingfeng Riverside Park','Yingfeng Riverside Park','台北','Taipei',25.0749677,121.5528895,true,'osm:way/1068999086@375m;park/way/385941045'),
+('Yingfeng Riverside Park','Yingfeng Riverside Park','台北','Taipei',25.0744153,121.5555413,true,'osm:way/1068999086@650m;park/way/385941045'),
+('Yingfeng Riverside Park','Yingfeng Riverside Park','台北','Taipei',25.0734384,121.5580391,true,'osm:way/1068999086@925m;park/way/385941045'),
+('Yingfeng Riverside Park','Yingfeng Riverside Park','台北','Taipei',25.0721587,121.5603675,true,'osm:way/1068999086@1200m;park/way/385941045'),
+('Yingfeng Riverside Park','Yingfeng Riverside Park','台北','Taipei',25.0717836,121.562998,true,'osm:way/1068999086@1475m;park/way/385941045'),
+('Yingfeng Riverside Park','Yingfeng Riverside Park','台北','Taipei',25.0728734,121.5654144,true,'osm:way/1068999086@1750m;park/way/385941045'),
+('Yingfeng Riverside Park','Yingfeng Riverside Park','台北','Taipei',25.0743015,121.5676391,true,'osm:way/1068999086@2025m;park/way/385941045'),
+('Yingfeng Riverside Park','Yingfeng Riverside Park','台北','Taipei',25.0744998,121.5701717,true,'osm:way/1068999086@2325m;park/way/385941045'),
+('Yingfeng Riverside Park','Yingfeng Riverside Park','台北','Taipei',25.072198,121.5711178,true,'osm:way/1068999086@2600m;park/way/385941045'),
+('Zhongshan Park','Zhongshan Park','台北','Taipei',25.0407946,121.5612369,true,'osm:way/1334831345@25m;park/relation/4727715'),
+('Taipei Civic Square','Taipei Civic Square','台北','Taipei',25.0371958,121.5631259,true,'osm:way/1336506663@0m;park/way/309157011'),
+('信義351號綠地','信義351號綠地','台北','Taipei',25.0393308,121.5679972,true,'osm:way/1339865616@25m;park/relation/18386549'),
+('Yongchunggang Park','Yongchunggang Park','台北','Taipei',25.0312531,121.5768601,true,'osm:way/1341564303@0m;park/way/218489810'),
+('Singapore Botanic Gardens','Singapore Botanic Gardens','新加坡','Singapore',1.3167101,103.8164878,true,'osm:way/47257415@0m;park/way/47257476'),
+('Singapore Botanic Gardens','Singapore Botanic Gardens','新加坡','Singapore',1.3196874,103.8157658,true,'osm:way/47257473@0m;park/way/47257476'),
+('Public park','Public park','新加坡','Singapore',1.2866377,103.8515502,true,'osm:way/106086895@0m;park/way/106086903'),
+('Singapore Botanic Gardens','Singapore Botanic Gardens','新加坡','Singapore',1.3068301,103.8168019,true,'osm:way/142598070@0m;park/way/47257476'),
+('Singapore Botanic Gardens','Singapore Botanic Gardens','新加坡','Singapore',1.3093257,103.814978,true,'osm:way/142709443@0m;park/way/47257476'),
+('Merlion Park','Merlion Park','新加坡','Singapore',1.2867843,103.8541549,true,'osm:way/164881350@0m;park/way/687917300'),
+('Esplanade Park','Esplanade Park','新加坡','Singapore',1.2893564,103.8539374,true,'osm:way/166554014@0m;park/relation/9976848'),
+('Public park','Public park','新加坡','Singapore',1.3052969,103.8658985,true,'osm:way/170967529@25m;park/way/1387617423'),
+('Gardens by the Bay','Gardens by the Bay','新加坡','Singapore',1.2825557,103.8620098,true,'osm:way/171142596@0m;park/relation/10231144'),
+('Raffles Place Park','Raffles Place Park','新加坡','Singapore',1.2832423,103.851456,true,'osm:way/172263096@0m;park/way/106193383'),
+('Gardens by the Bay','Gardens by the Bay','新加坡','Singapore',1.2824228,103.8643581,true,'osm:way/172297168@25m;park/relation/10231144'),
+('Gardens by the Bay','Gardens by the Bay','新加坡','Singapore',1.2791079,103.8621966,true,'osm:way/172297177@0m;park/relation/10231144'),
+('Gardens by the Bay','Gardens by the Bay','新加坡','Singapore',1.2826278,103.8669942,true,'osm:way/172297193@0m;park/relation/10231144'),
+('Gardens by the Bay','Gardens by the Bay','新加坡','Singapore',1.2855268,103.8630601,true,'osm:way/172297202@0m;park/relation/10231144'),
+('Fort Canning Park','Fort Canning Park','新加坡','Singapore',1.2955151,103.8471314,true,'osm:way/172409565@75m;park/way/16892550'),
+('Singapore Botanic Gardens','Singapore Botanic Gardens','新加坡','Singapore',1.3220701,103.8157775,true,'osm:way/173623386@0m;park/way/47257476'),
+('Fort Canning Park','Fort Canning Park','新加坡','Singapore',1.2923223,103.8462215,true,'osm:way/252086126@0m;park/way/16892550'),
+('Youth Olympic Park','Youth Olympic Park','新加坡','Singapore',1.2889288,103.8603163,true,'osm:way/395120469@0m;park/way/395120471'),
+('The Lawn@Marina Bay','The Lawn@Marina Bay','新加坡','Singapore',1.2796985,103.8529318,true,'osm:way/462914029@50m;park/way/116905791'),
+('Temasek Shophouse Garden','Temasek Shophouse Garden','新加坡','Singapore',1.2992051,103.8471415,true,'osm:way/474323150@50m;park/way/475183080'),
+('Public park','Public park','新加坡','Singapore',1.3039529,103.86369,true,'osm:way/481965624@25m;park/way/481965622'),
+('Singapore Botanic Gardens','Singapore Botanic Gardens','新加坡','Singapore',1.3139193,103.8165682,true,'osm:way/528905435@25m;park/way/47257476'),
+('Public park','Public park','新加坡','Singapore',1.3035585,103.8681142,true,'osm:way/532056050@25m;park/way/1387617423'),
+('Kallang Riverside Park North','Kallang Riverside Park North','新加坡','Singapore',1.3065711,103.8677728,true,'osm:way/534638599@0m;park/way/329862529'),
+('Kallang Riverside Park East','Kallang Riverside Park East','新加坡','Singapore',1.3080121,103.8709863,true,'osm:way/546225150@0m;park/way/329863911'),
+('Fort Canning Park','Fort Canning Park','新加坡','Singapore',1.2941551,103.8446453,true,'osm:way/702901686@50m;park/way/16892550'),
+('Singapore Botanic Gardens Gallop Extension','Singapore Botanic Gardens Gallop Extension','新加坡','Singapore',1.3124743,103.8114012,true,'osm:way/742058829@150m;park/way/736934929'),
+('Gardens by the Bay','Gardens by the Bay','新加坡','Singapore',1.2800513,103.8698409,true,'osm:way/884590174@25m;park/relation/10231144'),
+('Public park','Public park','澳門','Macau',22.1839853,113.5468405,true,'osm:way/240933853@25m;park/way/960068373'),
+('Public park','Public park','澳門','Macau',22.1862725,113.5458321,true,'osm:way/240933853@300m;park/way/960068373'),
+('Public park','Public park','澳門','Macau',22.154021,113.5599958,true,'osm:way/240933889@25m;park/way/1279798979'),
+('綠楊花園休憩區 Zona de Lazer do Edf. Lok Yeong Fa Yuen','綠楊花園休憩區 Zona de Lazer do Edf. Lok Yeong Fa Yuen','澳門','Macau',22.2066553,113.5414214,true,'osm:way/257493768@100m;park/way/639869043'),
+('Dr. Carlos D''Assumpcao Park','Dr. Carlos D''Assumpcao Park','澳門','Macau',22.1871564,113.5516223,true,'osm:way/297728677@25m;park/relation/11551012'),
+('Commander Ho Yin Park;Ho Yin Park','Commander Ho Yin Park;Ho Yin Park','澳門','Macau',22.1919562,113.54943,true,'osm:way/297728809@25m;park/relation/11551068'),
+('海景花園休憩區 Zona de Lazer da Praceta de Miramar','海景花園休憩區 Zona de Lazer da Praceta de Miramar','澳門','Macau',22.1925511,113.5523378,true,'osm:way/307047222@150m;park/way/640169193'),
+('回歸公園 Jardim da Rua de Malaca','回歸公園 Jardim da Rua de Malaca','澳門','Macau',22.1957905,113.5535612,true,'osm:way/330914462@0m;park/way/305387668'),
+('Taipa Central Park','Taipa Central Park','澳門','Macau',22.1599268,113.553758,true,'osm:way/389337670@175m;park/way/240650346'),
+('華士古達嘉馬花園 Jardim Vasco da Gama','華士古達嘉馬花園 Jardim Vasco da Gama','澳門','Macau',22.1961562,113.5467043,true,'osm:way/405411416@0m;park/way/183840226'),
+('Dr. Carlos D''Assumpcao Park','Dr. Carlos D''Assumpcao Park','澳門','Macau',22.1892972,113.5505538,true,'osm:way/405596065@25m;park/relation/11551012'),
+('Luis de Camoes Park','Luis de Camoes Park','澳門','Macau',22.2007222,113.5392103,true,'osm:way/406123269@0m;park/relation/9905638'),
+('區華利前地 Lazer de Praça de Jorge Álvares','區華利前地 Lazer de Praça de Jorge Álvares','澳門','Macau',22.1914296,113.5399593,true,'osm:way/422643353@100m;park/way/346900281'),
+('Public park','Public park','澳門','Macau',22.2060405,113.5377584,true,'osm:way/679384115@100m;park/way/1313399517'),
+('大炮台公園 Parque da Fortaleza do Monte','大炮台公園 Parque da Fortaleza do Monte','澳門','Macau',22.1973906,113.5423988,true,'osm:way/710432483@0m;park/way/488185729'),
+('Lou Lim Ioc Park','Lou Lim Ioc Park','澳門','Macau',22.2000596,113.5477651,true,'osm:way/764201171@0m;park/way/265433531'),
+('觀音像海濱休憩區 Zona de Lazer da Marginal da Estátua de Kun Iam','觀音像海濱休憩區 Zona de Lazer da Marginal da Estátua de Kun Iam','澳門','Macau',22.1876407,113.5554204,true,'osm:way/770557470@25m;park/way/192180025'),
+('Leisure Area of Edif. Wang Hoi & Wang Kin','Leisure Area of Edif. Wang Hoi & Wang Kin','澳門','Macau',22.2084336,113.5429669,true,'osm:way/781185958@50m;park/way/445896931'),
+('船廠街休憩區 Zona de Lazer da Rua dos Estaleiros','船廠街休憩區 Zona de Lazer da Rua dos Estaleiros','澳門','Macau',22.2060392,113.5445607,true,'osm:way/984829433@25m;park/way/639880756')
+on conflict (source_ref) where source_ref is not null do nothing;
+insert into public.corrupted_spots(city,timezone,lat,lng,habitat,source_ref) values
+('Taipei','Asia/Taipei',25.0380703,121.557978,'park','osm:way/49153748@25m;park/relation/4727715'),
+('Taipei','Asia/Taipei',25.0379312,121.5596988,'park','osm:way/49153748@200m;park/relation/4727715'),
+('Taipei','Asia/Taipei',25.0312408,121.536494,'park','osm:way/49195976@100m;park/way/1227733215'),
+('Taipei','Asia/Taipei',25.0309129,121.5348526,'park','osm:way/49195976@275m;park/way/1227733215'),
+('Taipei','Asia/Taipei',25.0266856,121.5363286,'park','osm:way/49195990@75m;park/way/1227733215'),
+('Taipei','Asia/Taipei',25.0282319,121.5360565,'park','osm:way/49195990@250m;park/way/1227733215'),
+('Taipei','Asia/Taipei',25.0297612,121.5359421,'park','osm:way/49195990@425m;park/way/1227733215'),
+('Taipei','Asia/Taipei',25.0324282,121.5350311,'park','osm:way/49195990@750m;park/way/1227733215'),
+('Taipei','Asia/Taipei',25.0347109,121.5619098,'park','osm:way/136814868@125m;park/way/555117276'),
+('Taipei','Asia/Taipei',25.0374756,121.5663993,'park','osm:way/280707092@25m;park/way/233666147'),
+('Taipei','Asia/Taipei',25.0301894,121.5702748,'park','osm:way/319526552@300m;park/way/27244215'),
+('Taipei','Asia/Taipei',25.0286971,121.5700382,'park','osm:way/319526552@475m;park/way/27244215'),
+('Taipei','Asia/Taipei',25.0757169,121.5331829,'park','osm:way/354318668@25m;park/relation/11791159'),
+('Taipei','Asia/Taipei',25.0740859,121.5393132,'park','osm:way/356780466@25m;park/relation/11791159'),
+('Taipei','Asia/Taipei',25.0740293,121.5428258,'park','osm:way/356780468@75m;park/relation/11791159'),
+('Taipei','Asia/Taipei',25.0768656,121.5513732,'park','osm:way/360057684@0m;park/way/385941046'),
+('Taipei','Asia/Taipei',25.038764,121.5658097,'park','osm:way/373793930@25m;park/relation/18367478'),
+('Taipei','Asia/Taipei',25.0360696,121.5657502,'park','osm:way/373793930@325m;park/relation/18367478'),
+('Taipei','Asia/Taipei',25.0393398,121.5674604,'park','osm:way/379324246@25m;park/relation/18386549'),
+('Taipei','Asia/Taipei',25.0336519,121.5658998,'park','osm:way/462045632@0m;park/way/261647304'),
+('Taipei','Asia/Taipei',25.0743931,121.540912,'park','osm:way/484308118@150m;park/relation/11791159'),
+('Taipei','Asia/Taipei',25.0756587,121.5417363,'park','osm:way/484308192@0m;park/relation/11791159'),
+('Taipei','Asia/Taipei',25.0749876,121.5380885,'park','osm:way/484308672@0m;park/relation/11791159'),
+('Taipei','Asia/Taipei',25.075248,121.5317061,'park','osm:way/484323774@25m;park/relation/11791159'),
+('Taipei','Asia/Taipei',25.0753989,121.5346843,'park','osm:way/484565828@125m;park/relation/11791159'),
+('Taipei','Asia/Taipei',25.0756281,121.5396113,'park','osm:way/484640959@0m;park/relation/11791159'),
+('Taipei','Asia/Taipei',25.0336684,121.5217503,'park','osm:way/590069828@50m;park/relation/1506269'),
+('Taipei','Asia/Taipei',25.0341813,121.5202405,'park','osm:way/590103577@25m;park/relation/1506269'),
+('Taipei','Asia/Taipei',25.0430687,121.5141308,'park','osm:way/784696787@25m;park/relation/4638980'),
+('Taipei','Asia/Taipei',25.0742386,121.5257318,'park','osm:way/860377072@0m;park/way/596361020'),
+('Taipei','Asia/Taipei',25.0747826,121.5300847,'park','osm:way/863482723@75m;park/relation/11791159'),
+('Taipei','Asia/Taipei',25.0758396,121.536354,'park','osm:way/863533477@0m;park/relation/11791159'),
+('Taipei','Asia/Taipei',25.0353875,121.5213096,'park','osm:way/1053359171@0m;park/relation/1506269'),
+('Taipei','Asia/Taipei',25.0349749,121.522906,'park','osm:way/1053359189@225m;park/relation/1506269'),
+('Taipei','Asia/Taipei',25.0753848,121.5478678,'park','osm:way/1068999026@0m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0753454,121.5497746,'park','osm:way/1068999040@0m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0754008,121.5448351,'park','osm:way/1068999084@0m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0751463,121.5514154,'park','osm:way/1068999086@225m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0749379,121.5531352,'park','osm:way/1068999086@400m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0746113,121.55483,'park','osm:way/1068999086@575m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0741107,121.5564706,'park','osm:way/1068999086@750m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0734384,121.5580391,'park','osm:way/1068999086@925m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0726158,121.559517,'park','osm:way/1068999086@1100m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0718795,121.5610442,'park','osm:way/1068999086@1275m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0717572,121.5627518,'park','osm:way/1068999086@1450m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0722559,121.5643795,'park','osm:way/1068999086@1625m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0731283,121.5658226,'park','osm:way/1068999086@1800m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0740416,121.5672349,'park','osm:way/1068999086@1975m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0749199,121.5686733,'park','osm:way/1068999086@2150m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0744998,121.5701717,'park','osm:way/1068999086@2325m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0730695,121.5708803,'park','osm:way/1068999086@2500m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0715298,121.5712026,'park','osm:way/1068999086@2675m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0755905,121.5463524,'park','osm:way/1069183305@150m;park/way/385941045'),
+('Taipei','Asia/Taipei',25.0397273,121.5612081,'park','osm:way/1334831344@25m;park/relation/4727715'),
+('Taipei','Asia/Taipei',25.0381723,121.561294,'park','osm:way/1334831345@325m;park/relation/4727715'),
+('Taipei','Asia/Taipei',25.0409807,121.560142,'park','osm:way/1334973953@25m;park/relation/4727715'),
+('Taipei','Asia/Taipei',25.0371958,121.5631259,'park','osm:way/1336506663@0m;park/way/309157011'),
+('Taipei','Asia/Taipei',25.0348369,121.5645854,'park','osm:way/1339499092@0m;park/way/1341042550'),
+('Taipei','Asia/Taipei',25.0312531,121.5768601,'park','osm:way/1341564303@0m;park/way/218489810'),
+('Singapore','Asia/Singapore',1.3167101,103.8164878,'park','osm:way/47257415@0m;park/way/47257476'),
+('Singapore','Asia/Singapore',1.3196874,103.8157658,'park','osm:way/47257473@0m;park/way/47257476'),
+('Singapore','Asia/Singapore',1.2866377,103.8515502,'park','osm:way/106086895@0m;park/way/106086903'),
+('Singapore','Asia/Singapore',1.3068301,103.8168019,'park','osm:way/142598070@0m;park/way/47257476'),
+('Singapore','Asia/Singapore',1.3093257,103.814978,'park','osm:way/142709443@0m;park/way/47257476'),
+('Singapore','Asia/Singapore',1.3210463,103.8150451,'park','osm:way/164777846@150m;park/way/47257476'),
+('Singapore','Asia/Singapore',1.2867843,103.8541549,'park','osm:way/164881350@0m;park/way/687917300'),
+('Singapore','Asia/Singapore',1.2893564,103.8539374,'park','osm:way/166554014@0m;park/relation/9976848'),
+('Singapore','Asia/Singapore',1.3052969,103.8658985,'park','osm:way/170967529@25m;park/way/1387617423'),
+('Singapore','Asia/Singapore',1.2825557,103.8620098,'park','osm:way/171142596@0m;park/relation/10231144'),
+('Singapore','Asia/Singapore',1.2832423,103.851456,'park','osm:way/172263096@0m;park/way/106193383'),
+('Singapore','Asia/Singapore',1.284751,103.8515133,'park','osm:way/172263107@50m;park/way/106193383'),
+('Singapore','Asia/Singapore',1.2843883,103.862677,'park','osm:way/172288967@25m;park/relation/10231144'),
+('Singapore','Asia/Singapore',1.2825281,103.8638693,'park','osm:way/172297165@0m;park/relation/10231144'),
+('Singapore','Asia/Singapore',1.280946,103.8627437,'park','osm:way/172297166@0m;park/relation/10231144'),
+('Singapore','Asia/Singapore',1.2791079,103.8621966,'park','osm:way/172297177@0m;park/relation/10231144'),
+('Singapore','Asia/Singapore',1.2826278,103.8669942,'park','osm:way/172297193@0m;park/relation/10231144'),
+('Singapore','Asia/Singapore',1.2839906,103.8640006,'park','osm:way/172297202@250m;park/relation/10231144'),
+('Singapore','Asia/Singapore',1.2808381,103.8670827,'park','osm:way/172297295@0m;park/relation/10231144'),
+('Singapore','Asia/Singapore',1.2955151,103.8471314,'park','osm:way/172409565@75m;park/way/16892550'),
+('Singapore','Asia/Singapore',1.3221978,103.8160807,'park','osm:way/173623399@575m;park/way/47257476'),
+('Singapore','Asia/Singapore',1.2849875,103.8538662,'park','osm:way/184297026@0m;park/way/687917300'),
+('Singapore','Asia/Singapore',1.2923223,103.8462215,'park','osm:way/252086126@0m;park/way/16892550'),
+('Singapore','Asia/Singapore',1.2935943,103.8453661,'park','osm:way/252086126@175m;park/way/16892550'),
+('Singapore','Asia/Singapore',1.2910725,103.8542497,'park','osm:way/256153662@0m;park/relation/9976848'),
+('Singapore','Asia/Singapore',1.2911361,103.8477035,'park','osm:way/302447783@100m;park/way/16892550'),
+('Singapore','Asia/Singapore',1.2932083,103.8479152,'park','osm:way/314515951@150m;park/way/16892550'),
+('Singapore','Asia/Singapore',1.2948821,103.8458977,'park','osm:way/314515952@25m;park/way/16892550'),
+('Singapore','Asia/Singapore',1.2889288,103.8603163,'park','osm:way/395120469@0m;park/way/395120471'),
+('Singapore','Asia/Singapore',1.2796985,103.8529318,'park','osm:way/462914029@50m;park/way/116905791'),
+('Singapore','Asia/Singapore',1.2992051,103.8471415,'park','osm:way/474323150@50m;park/way/475183080'),
+('Singapore','Asia/Singapore',1.3039529,103.86369,'park','osm:way/481965624@25m;park/way/481965622'),
+('Singapore','Asia/Singapore',1.3079428,103.8146198,'park','osm:way/485669231@50m;park/way/47257476'),
+('Singapore','Asia/Singapore',1.2797038,103.8608978,'park','osm:way/527984607@0m;park/relation/10231144'),
+('Singapore','Asia/Singapore',1.3139193,103.8165682,'park','osm:way/528905435@25m;park/way/47257476'),
+('Singapore','Asia/Singapore',1.3035585,103.8681142,'park','osm:way/532056050@25m;park/way/1387617423'),
+('Singapore','Asia/Singapore',1.3065711,103.8677728,'park','osm:way/534638599@0m;park/way/329862529'),
+('Singapore','Asia/Singapore',1.3080121,103.8709863,'park','osm:way/546225150@0m;park/way/329863911'),
+('Singapore','Asia/Singapore',1.3163005,103.8179539,'park','osm:way/664184140@50m;park/way/47257476'),
+('Singapore','Asia/Singapore',1.3124743,103.8114012,'park','osm:way/742058829@150m;park/way/736934929'),
+('Singapore','Asia/Singapore',1.2800513,103.8698409,'park','osm:way/884590174@25m;park/relation/10231144'),
+('Singapore','Asia/Singapore',1.2812029,103.8612578,'park','osm:way/922501081@0m;park/relation/10231144'),
+('Singapore','Asia/Singapore',1.3097584,103.8704491,'park','osm:way/1215501267@0m;park/way/329863911'),
+('Singapore','Asia/Singapore',1.3053958,103.8688201,'park','osm:way/1229250918@0m;park/way/329863911'),
+('Singapore','Asia/Singapore',1.3086226,103.8696978,'park','osm:way/1535166328@50m;park/way/329862529'),
+('Macau','Asia/Macau',22.1839853,113.5468405,'park','osm:way/240933853@25m;park/way/960068373'),
+('Macau','Asia/Macau',22.1854408,113.5461988,'park','osm:way/240933853@200m;park/way/960068373'),
+('Macau','Asia/Macau',22.1868962,113.5455571,'park','osm:way/240933853@375m;park/way/960068373'),
+('Macau','Asia/Macau',22.154021,113.5599958,'park','osm:way/240933889@25m;park/way/1279798979'),
+('Macau','Asia/Macau',22.2066553,113.5414214,'park','osm:way/257493768@100m;park/way/639869043'),
+('Macau','Asia/Macau',22.1871564,113.5516223,'park','osm:way/297728677@25m;park/relation/11551012'),
+('Macau','Asia/Macau',22.1919562,113.54943,'park','osm:way/297728809@25m;park/relation/11551068'),
+('Macau','Asia/Macau',22.1925511,113.5523378,'park','osm:way/307047222@150m;park/way/640169193'),
+('Macau','Asia/Macau',22.1957905,113.5535612,'park','osm:way/330914462@0m;park/way/305387668'),
+('Macau','Asia/Macau',22.1599268,113.553758,'park','osm:way/389337670@175m;park/way/240650346'),
+('Macau','Asia/Macau',22.1590569,113.5549579,'park','osm:way/389337670@375m;park/way/240650346'),
+('Macau','Asia/Macau',22.1961562,113.5467043,'park','osm:way/405411416@0m;park/way/183840226'),
+('Macau','Asia/Macau',22.1890411,113.5507121,'park','osm:way/405596060@0m;park/relation/11551012'),
+('Macau','Asia/Macau',22.2007222,113.5392103,'park','osm:way/406123269@0m;park/relation/9905638'),
+('Macau','Asia/Macau',22.1914296,113.5399593,'park','osm:way/422643353@100m;park/way/346900281'),
+('Macau','Asia/Macau',22.2060405,113.5377584,'park','osm:way/679384115@100m;park/way/1313399517'),
+('Macau','Asia/Macau',22.1973906,113.5423988,'park','osm:way/710432483@0m;park/way/488185729'),
+('Macau','Asia/Macau',22.2000596,113.5477651,'park','osm:way/764201171@0m;park/way/265433531'),
+('Macau','Asia/Macau',22.1876407,113.5554204,'park','osm:way/770557470@25m;park/way/192180025'),
+('Macau','Asia/Macau',22.186986,113.553669,'park','osm:way/770557470@225m;park/way/192180025'),
+('Macau','Asia/Macau',22.2084336,113.5429669,'park','osm:way/781185958@50m;park/way/445896931'),
+('Macau','Asia/Macau',22.1943147,113.5534442,'park','osm:way/942508485@75m;park/way/192179907'),
+('Macau','Asia/Macau',22.2060392,113.5445607,'park','osm:way/984829433@25m;park/way/639880756')
+on conflict(source_ref) do nothing;
 
 create table private.vessel_spawn_rules (
   vessel text primary key references public.vessels(id),
@@ -330,6 +563,8 @@ begin
   perform private.ensure_player(auth.uid());
   select * into pg from public.player_game where user_id = auth.uid() for update;
   if pg.last_position_at is not null
+    and pg.last_position_at > clock_timestamp()-make_interval(secs=>cfg.speed_window_seconds)
+    and public.distance_m(pg.last_lat,pg.last_lng,p_lat,p_lng)>=cfg.speed_ignore_m
     and not exists (select 1 from private.game_speed_allowlist where user_id = auth.uid()) then
     elapsed := greatest(extract(epoch from clock_timestamp() - pg.last_position_at),0.001);
     if public.distance_m(pg.last_lat,pg.last_lng,p_lat,p_lng) / elapsed > cfg.max_speed_mps
@@ -744,10 +979,13 @@ begin
       insert into public.owned_vessels (user_id, vessel)
         select c.recipient, v.id from public.vessels v where v.earned_place = c.place
         on conflict (user_id, vessel) do nothing;
+    end if;
+    begin
+      if c.place is not null then
       insert into public.passport_stamps(user_id,place,first_at,how_earned)
         values(c.recipient,c.place,c.opened_at,'capsule')
         on conflict (user_id,place) do nothing;
-    end if;
+      end if;
     select * into cfg from private.game_config where singleton;
     waited_days:=least(cfg.xp_open_day_cap,
       floor(extract(epoch from c.opened_at-c.sealed_at)/86400)::integer);
@@ -756,6 +994,9 @@ begin
       perform private.award_xp(c.recipient,'capsule_open',c.id::text,
         cfg.xp_open_base+cfg.xp_open_per_day*waited_days);
     end if;
+    exception when others then
+      raise warning 'Time Capsule game rewards failed for capsule %: %',c.id,sqlerrm;
+    end;
   end if;
   return query select cc.message, cc.drawing, cc.photo, c.opened_at, c.gift_code, cc.voice_path, cc.voice_ms, cc.prediction, c.verdict
     from public.capsule_contents cc where cc.capsule_id = p_id;
