@@ -45,7 +45,7 @@ try {
   ];
   let spawn;
   for (const [p_lat, p_lng] of positions) {
-    const nearby = ok(await rpc('lost_nearby', { p_lat, p_lng, p_accuracy: 10 }));
+    const nearby = ok(await rpc('corrupted_nearby', { p_lat, p_lng, p_accuracy: 10 }));
     spawn = nearby.spawns.find(s => !s.already_caught && s.attempts_left > 0
       && new Date(s.expires_at).getTime() - Date.now() > 120000);
     if (spawn) break;
@@ -53,7 +53,7 @@ try {
   assert(spawn, 'no active spawn near the three launch centres in this wave');
   const p = { p_lat: spawn.lat, p_lng: spawn.lng, p_accuracy: 10 };
   const throws = await Promise.all(Array.from({ length: 5 }, () =>
-    rpc('lost_throw', {
+    rpc('corrupted_throw', {
       p_spawn: spawn.spawn_id, ...p, p_ball: 'gold', p_ring: 0, p_hit: false,
     })));
   assert.equal(throws.filter(r => !r.error && r.data[0].result === 'miss').length, 2,
@@ -64,7 +64,7 @@ try {
   assert.equal(afterThrows.gold_balls, 0);
   assert.equal(afterThrows.wax_balls, 30);
 
-  const nearby = ok(await rpc('lost_nearby', p));
+  const nearby = ok(await rpc('corrupted_nearby', p));
   const common = nearby.wayposts.find(w => w.kind === 'common'
     && Math.abs(w.lat - spawn.lat) < 0.00001
     && Math.abs(w.lng - spawn.lng) < 0.00001);

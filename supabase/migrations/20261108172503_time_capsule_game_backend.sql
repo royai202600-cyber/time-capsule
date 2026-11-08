@@ -145,7 +145,7 @@ insert into public.sea_shores
   ('議事亭前地','Senado Square','澳門','Macau',22.193830,113.539990,
    'landmark','senado',true,'osm:way/192573684');
 
-create table public.lost_spots (
+create table public.corrupted_spots (
   id uuid primary key default gen_random_uuid(),
   city text not null,
   timezone text not null,
@@ -154,8 +154,8 @@ create table public.lost_spots (
   habitat text not null check (habitat in ('park','water','square')),
   source_ref text not null unique
 );
-alter table public.lost_spots enable row level security;
-revoke all on public.lost_spots from public, anon, authenticated;
+alter table public.corrupted_spots enable row level security;
+revoke all on public.corrupted_spots from public, anon, authenticated;
 -- OSM source refs for the original safe shores, in the same order as their 2026-11-08 seed.
 with refs(city_en, name_en, source_ref) as (values
   ('Taipei','Taipei Civic Square','osm:way/309157011'),
@@ -179,7 +179,7 @@ with refs(city_en, name_en, source_ref) as (values
 )
 update public.sea_shores s set source_ref = r.source_ref
 from refs r where s.kind='common' and s.city_en = r.city_en and s.name_en = r.name_en;
-insert into public.lost_spots(city,timezone,lat,lng,habitat,source_ref)
+insert into public.corrupted_spots(city,timezone,lat,lng,habitat,source_ref)
   select city_en,
     case city_en when 'Taipei' then 'Asia/Taipei' when 'Singapore' then 'Asia/Singapore' else 'Asia/Macau' end,
     lat,lng,
@@ -250,7 +250,7 @@ create table public.player_game (
   last_lng double precision,
   last_position_at timestamptz
 );
-create table public.lost_catches (
+create table public.corrupted_catches (
   user_id uuid not null references public.profiles(id) on delete cascade,
   spawn_id text not null,
   attempts integer not null default 0 check (attempts >= 0),
@@ -295,12 +295,12 @@ create table public.passport_stamps (
 );
 alter table public.owned_vessels add column copies integer not null default 1 check (copies >= 1);
 alter table public.player_game enable row level security;
-alter table public.lost_catches enable row level security;
+alter table public.corrupted_catches enable row level security;
 alter table public.waypost_spins enable row level security;
 alter table public.landmark_attempts enable row level security;
 alter table public.xp_events enable row level security;
 alter table public.passport_stamps enable row level security;
-revoke all on public.player_game,public.lost_catches,public.waypost_spins,
+revoke all on public.player_game,public.corrupted_catches,public.waypost_spins,
   public.landmark_attempts,public.xp_events,public.passport_stamps
   from public, anon, authenticated;
 
@@ -369,11 +369,11 @@ end $$;
 create function private.resolve_spawn(p_spot uuid,p_wave bigint)
 returns table(spawn_id text,vessel text,rarity text,expires_at timestamptz)
 language plpgsql stable security definer set search_path = '' as $$
-declare spot public.lost_spots; cfg private.game_config; wave_at timestamptz;
+declare spot public.corrupted_spots; cfg private.game_config; wave_at timestamptz;
   local_hour integer; local_md text; chosen_rarity text; picked text;
   rarity_roll double precision; total_weight integer; visible_minutes integer;
 begin
-  select * into spot from public.lost_spots where id=p_spot;
+  select * into spot from public.corrupted_spots where id=p_spot;
   if spot.id is null then return; end if;
   select * into cfg from private.game_config where singleton;
   wave_at := to_timestamp(p_wave * cfg.wave_minutes * 60);
@@ -434,7 +434,7 @@ begin
   return next;
 end $$;
 
-create function public.lost_nearby(
+create function public.corrupted_nearby(
   p_lat double precision,p_lng double precision,p_accuracy double precision
 ) returns jsonb
 language plpgsql security definer set search_path = '' as $$
@@ -449,10 +449,10 @@ begin
     'attempts_left',greatest(0,cfg.max_attempts-coalesce(c.attempts,0)),
     'already_caught',coalesce(c.result='caught',false))
     order by s.expires_at), '[]'::jsonb) into result_spawns
-  from public.lost_spots p
+  from public.corrupted_spots p
   cross join lateral generate_series(wave-1,wave) w(n)
   cross join lateral private.resolve_spawn(p.id,w.n) s
-  left join public.lost_catches c on c.user_id=auth.uid() and c.spawn_id=s.spawn_id
+  left join public.corrupted_catches c on c.user_id=auth.uid() and c.spawn_id=s.spawn_id
   where public.distance_m(p_lat,p_lng,p.lat,p.lng)<=cfg.nearby_radius_m
     and s.expires_at>now()
     and to_timestamp(w.n*cfg.wave_minutes*60)<=now();
@@ -470,14 +470,14 @@ begin
   return jsonb_build_object('spawns',result_spawns,'wayposts',result_wayposts);
 end $$;
 
-create function public.lost_throw(
+create function public.corrupted_throw(
   p_spawn text,p_lat double precision,p_lng double precision,p_accuracy double precision,
   p_ball text,p_ring double precision,p_hit boolean
 ) returns table(result text,vessel text,copies integer,stars integer,is_new boolean,
   xp_gained integer,wax_balls integer,gold_balls integer,attempts_left integer)
 language plpgsql security definer set search_path = '' as $$
-declare pg public.player_game; cfg private.game_config; spot public.lost_spots;
-  released record; caught public.lost_catches; wave bigint; current_wave bigint;
+declare pg public.player_game; cfg private.game_config; spot public.corrupted_spots;
+  released record; caught public.corrupted_catches; wave bigint; current_wave bigint;
   chance double precision; did_catch boolean;
 begin
   if p_spawn is null or p_spawn !~
@@ -490,14 +490,14 @@ begin
   wave := split_part(p_spawn,':',2)::bigint;
   current_wave := floor(extract(epoch from now())/(cfg.wave_minutes*60))::bigint;
   if wave not between current_wave-1 and current_wave then raise exception 'expired'; end if;
-  select * into spot from public.lost_spots where id=split_part(p_spawn,':',1)::uuid;
+  select * into spot from public.corrupted_spots where id=split_part(p_spawn,':',1)::uuid;
   if spot.id is null then raise exception 'expired'; end if;
   select * into released from private.resolve_spawn(spot.id,wave);
   if released.spawn_id is null or released.spawn_id<>p_spawn or released.expires_at<=now()
     then raise exception 'expired'; end if;
   if public.distance_m(p_lat,p_lng,spot.lat,spot.lng)>cfg.action_radius_m
     then raise exception 'too_far'; end if;
-  select * into caught from public.lost_catches
+  select * into caught from public.corrupted_catches
     where user_id=auth.uid() and spawn_id=p_spawn for update;
   if caught.result='caught' then raise exception 'already_caught'; end if;
   if coalesce(caught.attempts,0)>=cfg.max_attempts then raise exception 'no_attempts'; end if;
@@ -511,10 +511,10 @@ begin
   is_new := false; xp_gained := 0;
   attempts_left := cfg.max_attempts-coalesce(caught.attempts,0);
   if p_hit then
-    insert into public.lost_catches(user_id,spawn_id,attempts,result,vessel)
+    insert into public.corrupted_catches(user_id,spawn_id,attempts,result,vessel)
       values(auth.uid(),p_spawn,1,'pending',vessel)
       on conflict (user_id,spawn_id) do update
-      set attempts=public.lost_catches.attempts+1
+      set attempts=public.corrupted_catches.attempts+1
       returning * into caught;
     attempts_left := greatest(0,cfg.max_attempts-caught.attempts);
     chance := case released.rarity when 'common' then cfg.restore_common
@@ -523,10 +523,10 @@ begin
       +case when p_ball='gold' then cfg.restore_gold_bonus else 0 end);
     did_catch := random()<chance;
     if did_catch then
-      update public.lost_catches set result='caught',caught_at=now()
+      update public.corrupted_catches set result='caught',caught_at=now()
         where user_id=auth.uid() and spawn_id=p_spawn;
       is_new := not exists (select 1 from public.owned_vessels
-        where user_id=auth.uid() and public.owned_vessels.vessel=lost_throw.vessel);
+        where user_id=auth.uid() and public.owned_vessels.vessel=corrupted_throw.vessel);
       insert into public.owned_vessels(user_id,vessel,copies)
         values(auth.uid(),vessel,1)
         on conflict on constraint owned_vessels_pkey do update
@@ -541,7 +541,7 @@ begin
         (now() at time zone 'UTC')::date::text,cfg.xp_first_daily_catch);
       result := 'restored';
     else
-      update public.lost_catches set result=case when attempts>=cfg.max_attempts
+      update public.corrupted_catches set result=case when attempts>=cfg.max_attempts
         then 'failed' else 'pending' end
         where user_id=auth.uid() and spawn_id=p_spawn;
       result := 'not_restored';
@@ -762,8 +762,8 @@ begin
 end $function$;
 
 revoke all on function public.game_state(),
-  public.lost_nearby(double precision,double precision,double precision),
-  public.lost_throw(text,double precision,double precision,double precision,text,double precision,boolean),
+  public.corrupted_nearby(double precision,double precision,double precision),
+  public.corrupted_throw(text,double precision,double precision,double precision,text,double precision,boolean),
   public.waypost_spin(uuid,double precision,double precision,double precision),
   public.landmark_start(uuid,double precision,double precision,double precision),
   public.landmark_hit(uuid,double precision,double precision,double precision,text,double precision),
@@ -771,8 +771,8 @@ revoke all on function public.game_state(),
   public.open_capsule(uuid,double precision,double precision,double precision)
   from public,anon,authenticated;
 grant execute on function public.game_state(),
-  public.lost_nearby(double precision,double precision,double precision),
-  public.lost_throw(text,double precision,double precision,double precision,text,double precision,boolean),
+  public.corrupted_nearby(double precision,double precision,double precision),
+  public.corrupted_throw(text,double precision,double precision,double precision,text,double precision,boolean),
   public.waypost_spin(uuid,double precision,double precision,double precision),
   public.landmark_start(uuid,double precision,double precision,double precision),
   public.landmark_hit(uuid,double precision,double precision,double precision,text,double precision),

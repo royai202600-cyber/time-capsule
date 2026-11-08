@@ -7,26 +7,26 @@ This replaces the name "Public Sea" and extends [public-sea.md](public-sea.md). 
 ## The idea
 The game and the app are one thing, called **時光膠囊 / Time Capsule**, with no separate name for the game. It has two sides that share the same vessels, map and opening.
 
-- **The public game:** walk around, find cracked Lost Capsules on the map, throw a ball to restore them, and fill your Cabinet.
+- **The public game:** walk around, find cracked Corrupted Capsules on the map, throw a ball to restore them, and fill your Cabinet.
 - **The private side:** sealed capsules to friends or your future self, as they work today.
 
 **What joins them:** the game gives you the rare vessels, and the private side is where they mean something. You send the vessel you found to someone you love.
 
-**The loop:** walk → spin a Waypost for balls → throw at a Lost Capsule → it joins your Cabinet → send your best ones.
+**The loop:** walk → spin a Waypost for balls → throw at a Corrupted Capsule → it joins your Cabinet → send your best ones.
 
 **"Precious in the AI age" still holds:** being somewhere and real time passing can't be faked. AI never writes anything here.
 
 ## Names
 | Thing | 中文 | English |
 |---|---|---|
-| System capsule | 失落膠囊 | Lost Capsule |
+| System capsule | 破損膠囊 | Corrupted Capsule |
 | Common stop | 驛站 | Waypost |
 | Landmark stop | 地標驛站 | Landmark Waypost |
 | Sending to a stranger (Create step 1) | 給路過的人 | To whoever passes by |
 
 Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording goes.
 
-## Lost Capsules
+## Corrupted Capsules
 - They come from the system and hold **only the vessel**. No letter, no note, so there is nothing to write and no AI involved. Letters only ever come from real people.
 - They look cracked, clouded and tarnished. This is **one shared effect** over the existing vessel art, not 67 redraws.
 
@@ -37,7 +37,7 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 - **It happens on the map.** The background is the same live Journey map you were just on, kept simple and in our palette. No separate painted scenes and no camera view.
 - **Two items only:** Wax Ball, and Gold Wax Ball (makes a hit easier). Nothing else: no berries, keys, charms, shards or crafting.
 
-## How Lost Capsules are released
+## How Corrupted Capsules are released
 - **The server decides, never the phone.**
 - **Fixed spots** from public map data: parks, squares, waterfronts. Never roads, schools, places of worship or private property.
 - **Waves:** new capsules about every hour, staying 30–60 minutes (to tune).
@@ -46,7 +46,7 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 
 ## Wayposts
 - **Common Waypost:** a small, simple building on the map. Tap, spin, get balls, then a cooldown. Our own building and our own spinning object. No photos of real places.
-- **Landmark Waypost:** a giant, badly cracked Lost Capsule. Throw balls to close the cracks before time runs out.
+- **Landmark Waypost:** a giant, badly cracked Corrupted Capsule. Throw balls to close the cracks before time runs out.
   - **Beatable alone for now.** Friends making it easier comes later.
   - **No lucky final catch.** Clear the cracks and the landmark vessel and Passport stamp are yours.
   - Opening a capsule at a landmark **also** still earns its vessel, as it does today.

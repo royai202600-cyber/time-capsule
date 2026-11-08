@@ -45,14 +45,14 @@ select pg_temp.require_ok(
 select pg_temp.require_ok(
   not has_function_privilege('anon','public.game_state()','execute')
     and not has_function_privilege('anon',
-      'public.lost_throw(text,double precision,double precision,double precision,text,double precision,boolean)','execute')
+      'public.corrupted_throw(text,double precision,double precision,double precision,text,double precision,boolean)','execute')
     and not has_function_privilege('anon',
       'public.open_capsule(uuid,double precision,double precision,double precision)','execute'),
   'anonymous RPC execution denied');
 select city_en,count(*) from public.sea_shores
   where game_enabled and city_en in ('Taipei','Singapore','Macau')
   group by city_en order by city_en;
-select city,count(*) from public.lost_spots group by city order by city;
+select city,count(*) from public.corrupted_spots group by city order by city;
 
 -- Stable release for behavioral checks, with every probability forced to a bound.
 update private.game_config set spawn_chance=1,visible_min_minutes=60,visible_max_minutes=60,
@@ -60,7 +60,7 @@ update private.game_config set spawn_chance=1,visible_min_minutes=60,visible_max
 create temp table game_spawns on commit drop as
   select row_number() over(order by p.source_ref) as n,
     s.spawn_id,s.vessel,p.lat,p.lng,p.id as spot_id
-  from public.lost_spots p
+  from public.corrupted_spots p
   cross join lateral private.resolve_spawn(
     p.id,floor(extract(epoch from now())/3600)::bigint) s
   where p.city='Taipei' order by p.source_ref limit 3;
@@ -76,54 +76,54 @@ set local role authenticated;
 select pg_temp.require_ok((select wax_balls=30 and gold_balls=2 and level=1
   from public.game_state()),'starting balls and level');
 select pg_temp.expect_error('select * from private.vessel_spawn_rules','permission denied');
-select pg_temp.expect_error('select * from public.lost_spots','permission denied');
+select pg_temp.expect_error('select * from public.corrupted_spots','permission denied');
 select pg_temp.expect_error('select * from public.capsule_contents','permission denied');
 select pg_temp.require_ok(
-  (select jsonb_array_length(public.lost_nearby(lat,lng,10)->'spawns')>0
+  (select jsonb_array_length(public.corrupted_nearby(lat,lng,10)->'spawns')>0
    from game_spawns where n=1),'shared release visible nearby');
 select pg_temp.expect_error(
-  'select public.lost_nearby(25.037,121.563,201)','too_far');
+  'select public.corrupted_nearby(25.037,121.563,201)','too_far');
 select pg_temp.expect_error(
-  'select public.lost_nearby(91,121.563,10)','too_far');
+  'select public.corrupted_nearby(91,121.563,10)','too_far');
 select pg_temp.expect_error(
-  'select public.lost_nearby(1.2868,103.8543,10)','too_fast');
+  'select public.corrupted_nearby(1.2868,103.8543,10)','too_fast');
 reset role;
 
 -- The allow-list skips speed only; distance and accuracy checks still apply.
 insert into private.game_speed_allowlist(user_id) values
  ('087e002a-3aee-4cb4-a1ad-a6d001dbbad1');
 set local role authenticated;
-select public.lost_nearby(1.2868,103.8543,10);
+select public.corrupted_nearby(1.2868,103.8543,10);
 select pg_temp.expect_error(
   'select public.waypost_spin(id,0,0,10) from public.sea_shores where place=''taipei101''',
   'too_far');
 select pg_temp.expect_error(
-  'select public.lost_throw(spawn_id,0,0,10,''wax'',0.5,true) from game_spawns where n=1',
+  'select public.corrupted_throw(spawn_id,0,0,10,''wax'',0.5,true) from game_spawns where n=1',
   'too_far');
 select pg_temp.expect_error(
-  'select public.lost_throw(spawn_id,lat,lng,201,''wax'',0.5,true) from game_spawns where n=1',
+  'select public.corrupted_throw(spawn_id,lat,lng,201,''wax'',0.5,true) from game_spawns where n=1',
   'too_far');
 select pg_temp.expect_error(
-  'select public.lost_throw(''00000000-0000-0000-0000-000000000000:0'',25,121,10,''wax'',0.5,true)',
+  'select public.corrupted_throw(''00000000-0000-0000-0000-000000000000:0'',25,121,10,''wax'',0.5,true)',
   'expired');
 select pg_temp.expect_error(
-  'select public.lost_throw(spawn_id||''9'',lat,lng,10,''wax'',0.5,true) from game_spawns where n=1',
+  'select public.corrupted_throw(spawn_id||''9'',lat,lng,10,''wax'',0.5,true) from game_spawns where n=1',
   'expired');
 
 -- A miss spends one ball but no restoring attempt. A guaranteed hit catches once.
 select pg_temp.require_ok(
   (select result='miss' and wax_balls=29 and attempts_left=3
    from game_spawns s cross join lateral
-   public.lost_throw(s.spawn_id,s.lat,s.lng,10,'wax',0.5,false) t where s.n=1),
+   public.corrupted_throw(s.spawn_id,s.lat,s.lng,10,'wax',0.5,false) t where s.n=1),
   'miss spends ball only');
 select pg_temp.require_ok(
   (select result='restored' and copies=1 and stars=1 and is_new
      and xp_gained=900 and attempts_left=2
    from game_spawns s cross join lateral
-   public.lost_throw(s.spawn_id,s.lat,s.lng,10,'wax',0.5,true) t where s.n=1),
+   public.corrupted_throw(s.spawn_id,s.lat,s.lng,10,'wax',0.5,true) t where s.n=1),
   'first catch, new vessel and daily XP');
 select pg_temp.expect_error(
-  'select public.lost_throw(spawn_id,lat,lng,10,''wax'',1,true) from game_spawns where n=1',
+  'select public.corrupted_throw(spawn_id,lat,lng,10,''wax'',1,true) from game_spawns where n=1',
   'already_caught');
 reset role;
 select pg_temp.require_ok((select count(*)=3 from public.xp_events
@@ -139,11 +139,11 @@ declare s record; i integer; t record;
 begin
   select * into s from game_spawns where n=2;
   for i in 1..3 loop
-    select * into t from public.lost_throw(s.spawn_id,s.lat,s.lng,10,'wax',0,true);
+    select * into t from public.corrupted_throw(s.spawn_id,s.lat,s.lng,10,'wax',0,true);
     perform pg_temp.require_ok(t.result='not_restored' and t.attempts_left=3-i,'failed hit count');
   end loop;
   perform pg_temp.expect_error(
-    format('select public.lost_throw(%L,%s,%s,10,''wax'',0,true)',s.spawn_id,s.lat,s.lng),
+    format('select public.corrupted_throw(%L,%s,%s,10,''wax'',0,true)',s.spawn_id,s.lat,s.lng),
     'no_attempts');
 end $$;
 reset role;
@@ -241,7 +241,7 @@ update public.player_game set wax_balls=0,gold_balls=0
   where user_id='087e002a-3aee-4cb4-a1ad-a6d001dbbad1';
 set local role authenticated;
 select pg_temp.expect_error(
-  'select public.lost_throw(spawn_id,lat,lng,10,''wax'',0,true) from game_spawns where n=3',
+  'select public.corrupted_throw(spawn_id,lat,lng,10,''wax'',0,true) from game_spawns where n=3',
   'no_balls');
 select pg_temp.expect_error(
   'select public.landmark_hit(a.attempt_id,s.lat,s.lng,10,''wax'',0) from public.sea_shores s cross join lateral public.landmark_start(s.id,s.lat,s.lng,10) a where s.place=''merlion''',
@@ -334,12 +334,12 @@ update private.vessel_spawn_rules set rarity='common' where vessel='firefly-jar'
 update private.game_config set rarity_common_weight=100,rarity_uncommon_weight=0,
   rarity_rare_weight=0;
 select pg_temp.require_ok(
-  (select count(*)=0 from public.lost_spots p cross join lateral
+  (select count(*)=0 from public.corrupted_spots p cross join lateral
    private.resolve_spawn(p.id,
      floor(extract(epoch from timestamptz '2026-11-09 13:00:00+08')/3600)::bigint) s
    where p.city='Taipei'),'fireflies absent by day');
 select pg_temp.require_ok(
-  (select count(*)>0 from public.lost_spots p cross join lateral
+  (select count(*)>0 from public.corrupted_spots p cross join lateral
    private.resolve_spawn(p.id,
      floor(extract(epoch from timestamptz '2026-11-09 20:00:00+08')/3600)::bigint) s
    where p.city='Taipei'),'fireflies present after dark');
@@ -350,12 +350,12 @@ update private.vessel_spawn_rules set rarity='common' where vessel='stocking';
 update private.game_config set rarity_common_weight=100,rarity_uncommon_weight=0,
   rarity_rare_weight=0;
 select pg_temp.require_ok(
-  (select count(*)=0 from public.lost_spots p cross join lateral
+  (select count(*)=0 from public.corrupted_spots p cross join lateral
    private.resolve_spawn(p.id,
      floor(extract(epoch from timestamptz '2026-11-09 20:00:00+08')/3600)::bigint) s
    where p.city='Taipei'),'festival vessel absent off season');
 select pg_temp.require_ok(
-  (select count(*)>0 from public.lost_spots p cross join lateral
+  (select count(*)>0 from public.corrupted_spots p cross join lateral
    private.resolve_spawn(p.id,
      floor(extract(epoch from timestamptz '2026-12-25 20:00:00+08')/3600)::bigint) s
    where p.city='Taipei'),'festival vessel present in season');
