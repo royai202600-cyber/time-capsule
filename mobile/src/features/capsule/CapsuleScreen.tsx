@@ -27,6 +27,9 @@ import { CapsuleMapPage } from "../journey/CapsuleMapPage";
 import { openingCoordinates, usePlaceDistance } from "../journey/location";
 import { GiftQr } from "./GiftQr";
 import { LightBurst } from "./LightBurst";
+import { isSeaCapsule } from "../../services/sea";
+import { SeaLetterActions } from "../sea/SeaLetterActions";
+import { seaText } from "../sea/strings";
 import { RitualHold } from "./RitualHold";
 import { SealedLines } from "./SealedLines";
 import { useAlarmText } from "../alarm/strings";
@@ -91,8 +94,8 @@ export default function CapsuleScreen() {
   const { fix } = usePlaceDistance(pl);
   const v = c ? bundle.vessels[c.vessel] : undefined;
   const sender = c ? bundle.people[c.sender] : undefined;
-  const receiver = c ? bundle.people[c.recipient] : undefined;
-  const name = side === "sent" && c?.recipient === session?.user.id ? t("home.future") : (side === "sent" ? receiver?.name : sender?.name) ?? t("home.future");
+  const receiver = c?.recipient ? bundle.people[c.recipient] : undefined;
+  const name = side === "sent" && c && isSeaCapsule(c) && !c.recipient ? seaText(language)("toTheSea") : side === "sent" && c?.recipient === session?.user.id ? t("home.future") : (side === "sent" ? receiver?.name : sender?.name) ?? t("home.future");
   const placeName = pl ? pl[language === "zh" ? "name_zh" : "name_en"] : "";
   const state = c ? status(c, side, pl && fix ? openingCoordinates() : null, pl, now) : "time";
   const waitMs = c ? Math.max(0, new Date(c.open_at).getTime() - now) : 0;
@@ -253,7 +256,7 @@ function LetterView({ c, content, name, placeName, self, language, t }: { c: Row
     {!!content.photo && <Image source={{ uri: content.photo }} resizeMode="contain" style={{ width: "100%", height: 230, marginTop: 20, borderRadius: 4 }} />}
     <Text style={{ color: C.plum, fontFamily: handwriting, fontSize: 19, textAlign: "right", marginTop: 25 }}>{self ? t("capsule.pastMe") : name}</Text><Text style={{ color: C.muted, fontSize: 12, textAlign: "right" }}>{t("capsule.sealedOn", formatDate(c.sealed_at, language, true))}</Text>
   </View>{!!content.gift_code && <View style={{ backgroundColor: C.ink, borderRadius: 16, padding: 22, alignItems: "center", gap: 12 }}><Text style={{ color: C.cream, fontFamily: serif, fontSize: 19, textAlign: "center" }}>{t("capsule.giftHead", brand)}</Text><Text style={{ color: C.white }}>{t("capsule.giftItem")}</Text><Text style={{ color: C.cream, fontFamily: serif, fontSize: 23 }}>{content.gift_code}</Text><GiftQr value={content.gift_code} label={t("capsule.qr")} /><Text style={{ color: C.white, textAlign: "center" }}>{t("capsule.giftNote")}</Text></View>}
-    <Text style={{ color: C.blue, fontFamily: serif, textAlign: "center", marginTop: 8 }}>{t("capsule.record", formatDate(content.opened_at, language, true), placeName)}</Text><Action ghost title={self ? t("capsule.replySelf") : t("capsule.reply", name)} onPress={() => router.push({ pathname: "/create", params: { recipient: self ? "future" : c.sender } })} />
+    <Text style={{ color: C.blue, fontFamily: serif, textAlign: "center", marginTop: 8 }}>{t("capsule.record", formatDate(content.opened_at, language, true), placeName)}</Text>{isSeaCapsule(c) && !self ? <SeaLetterActions capsuleId={c.id} /> : <Action ghost title={self ? t("capsule.replySelf") : t("capsule.reply", name)} onPress={() => router.push({ pathname: "/create", params: { recipient: self ? "future" : c.sender } })} />}
     <WakeMe c={c} name={name} self={self} />
   </View>;
 }

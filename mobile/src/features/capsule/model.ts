@@ -28,7 +28,7 @@ export async function loadBundle(userId: string): Promise<Bundle> {
   if (placeResult.error) throw placeResult.error;
   if (vesselResult.error) throw vesselResult.error;
   const rows = all.data ?? [];
-  const ids = [...new Set(rows.flatMap((c) => [c.sender, c.recipient]))];
+  const ids = [...new Set(rows.flatMap((c) => [c.sender, c.recipient]).filter((id): id is string => id !== null))];
   const peopleResult = ids.length
     ? await supabase.from("profiles").select("id,name,avatar").in("id", ids)
     : { data: [], error: null };

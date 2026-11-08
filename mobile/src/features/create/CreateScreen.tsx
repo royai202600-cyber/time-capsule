@@ -28,6 +28,9 @@ import { stubAttachVoice, uploadVoice, VOICE_BACKEND, VOICE_ENABLED, type VoiceC
 import { PREDICTION_ENABLED, predictionSendArgs, type CapsuleKind } from '../../services/prediction';
 import { KindChoice, PredictionInput } from '../prediction/PredictionParts';
 import { usePredictionText } from '../prediction/strings';
+import { DRIFT_CHOICES, sea, SeaError, SEA_BACKEND, SEA_ENABLED, SEA_MESSAGE_MAX, SEA_RECIPIENT, type DriftDays, type ThrowResult } from '../../services/sea';
+import { shortDate, useSeaText } from '../sea/strings';
+import { openingCoordinates } from '../journey/location';
 
 type Quick = 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
 const quickDate = (q: Quick) => { const d = new Date(); if (q === 'm1') d.setMonth(d.getMonth() + 1); if (q === 'm6') d.setMonth(d.getMonth() + 6); if (q === 'y1') d.setFullYear(d.getFullYear() + 1); if (q === 'y5') d.setFullYear(d.getFullYear() + 5); if (q === 'dev') d.setMinutes(d.getMinutes() + 2); return d; };
@@ -75,6 +78,7 @@ export default function CreateScreen() {
   const { session, profile, loading: authLoading } = useAuth();
   const params = useLocalSearchParams<{ to?: string; recipient?: string; kind?: string }>();
   const p = usePredictionText();
+  const st = useSeaText();
   // A prediction is a special kind of capsule: same four steps, but its main content is one prediction line.
   const [kind, setKind] = useState<CapsuleKind>(PREDICTION_ENABLED && params.kind === 'prediction' ? 'prediction' : 'letter'), [prediction, setPrediction] = useState('');
   const predicting = kind === 'prediction';
@@ -87,6 +91,7 @@ export default function CreateScreen() {
   const voicePath = useRef<{ uri: string; path: string } | null>(null);
   const [vessel, setVessel] = useState<VesselKind | null>(null), [place, setPlace] = useState<string | null>(null);
   const [quick, setQuick] = useState<Quick>('m1'), [dateText, setDateText] = useState(dateValue(quickDate('m1')));
+  const [driftDays, setDriftDays] = useState<DriftDays>(7), [seaResult, setSeaResult] = useState<ThrowResult | null>(null);
   const [error, setError] = useState(''), [busy, setBusy] = useState(false), [phase, setPhase] = useState<'steps' | 'seal' | 'sealed'>('steps'), [sealedAt, setSealedAt] = useState<Date | null>(null), [stamped, setStamped] = useState(false);
   const drawing = useRef<DrawingHandle>(null);
   const sentOnce = useRef(false);
@@ -148,13 +153,17 @@ export default function CreateScreen() {
   const canUseVessel = (v: { id: string; price_mop: number }) => canAccessVessel(v, ownsVessel(v.id));
   const selectedPlace = places.data?.find(p => p.id === place);
   const recipientRow = friends.data?.find(f => f.friend_id === recipient);
-  const recipientName = recipient === id ? t('create.self') : ((recipientRow as any)?.profiles?.name ?? '');
-  const openAt = quick === 'custom' ? customDate(dateText) : quickDate(quick);
+  // A sea bottle is an ordinary capsule addressed to the sea: typed only, washes up after its drift time.
+  const toSea = SEA_ENABLED && recipient === SEA_RECIPIENT;
+  const recipientName = toSea ? st('toSea') : recipient === id ? t('create.self') : ((recipientRow as any)?.profiles?.name ?? '');
+  const openAt = toSea ? new Date(Date.now() + driftDays * 86_400_000) : quick === 'custom' ? customDate(dateText) : quickDate(quick);
   const formatted = (sealedAt ?? openAt)?.toLocaleDateString(language === 'zh' ? 'zh-Hant' : 'en', { year: 'numeric', month: 'long', day: 'numeric', hour: quick === 'dev' ? 'numeric' : undefined, minute: quick === 'dev' ? '2-digit' : undefined }) ?? dateText;
   const placeName = selectedPlace ? (language === 'zh' ? selectedPlace.name_zh : selectedPlace.name_en) : '';
   const validate = () => {
     if (!recipient) return t('create.needRecipient');
     if (step >= 2 && predicting && !prediction.trim()) return p('need');
+    if (step >= 2 && toSea && !message.trim()) return t('create.needMessage');
+    if (step >= 4 && toSea && SEA_BACKEND && !openingCoordinates()) return st('needLocation');
     if (step >= 2 && !predicting && (mode === 'type' ? !message.trim() : step === 2 ? !drawing.current?.hasInk() : !drawingData)) return t('create.needMessage');
     if (step >= 3 && !vessel) return t('create.chooseFirst');
     if (step >= 3 && chosenVessel && !canUseVessel(chosenVessel)) return t('create.notOwned');
@@ -220,6 +229,16 @@ export default function CreateScreen() {
       ]),
     ]); contactMotion.start(() => resolve()); });
     try {
+      if (toSea) {
+        const thrown = await sea.throwBottle({ message, hint: hint.trim() || t('create.hintDefault'), vessel, driftDays, at: openingCoordinates() });
+        setSeaResult(thrown);
+        sentOnce.current = true;
+        setSealedAt(new Date(thrown.washes_up_at));
+        await contact;
+        setStamped(true);
+        finishAnimation();
+        return;
+      }
       const ink = mode === 'hand' ? drawingData : null;
       if (mode === 'hand' && !ink && !predicting) throw new Error('empty drawing');
       // Upload once per recording; a retried send reuses the same pending path.
@@ -243,7 +262,8 @@ export default function CreateScreen() {
       contactMotion?.stop();
       wax.stopAnimation(); waxScale.stopAnimation();
       const msg = String((e as any)?.message ?? e).toLowerCase(), code = String((e as any)?.hint ?? '');
-      setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('open time must be in the future') ? t('create.badDate') : msg.includes('voice') ? t('voice.uploadError') : t('create.sendError'));
+      if (e instanceof SeaError) setError(e.code === 'rejected' ? st('errRejected') : e.code === 'no_shore' ? st('errNoShore') : t('create.sendError'));
+      else setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('open time must be in the future') ? t('create.badDate') : msg.includes('voice') ? t('voice.uploadError') : t('create.sendError'));
       if (reduced) wax.setValue({ x: 0, y: 0 });
       else Animated.parallel([
         Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }),
@@ -347,7 +367,7 @@ export default function CreateScreen() {
     </View>
     <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
   </Screen>;
-  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
+  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{toSea && seaResult ? st('sealedSea', language === 'zh' ? seaResult.shore_zh : seaResult.shore_en, shortDate(seaResult.washes_up_at, language)) : predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
   return <Screen scrollGesture={drawScrollGesture} footer={<View style={{ flexDirection: 'row', gap: 8, marginTop: 'auto' }}>{step > 1 && <View style={{ flex: 1 }}><Button title={t('create.back')} onPress={() => { Keyboard.dismiss(); setStep(step - 1); setError(''); void haptics.tap(); }} /></View>}<View style={{ flex: 1 }}><Button title={t(step === 4 ? 'create.sealSend' : 'create.next')} onPress={next} /></View></View>}>
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Pressable onPress={goBack} accessibilityRole='button' accessibilityLabel={t('create.close')} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="close" color={C.plum} /></Pressable><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('create.langSwitch')}</Text></Pressable></View>
     <Heading>{t('create.title')}</Heading><WaxSteps step={step} label={t('create.step', step)} labels={[t('create.stepName1'), t('create.stepName2'), t('create.stepName3'), t('create.stepName4')]} onBack={n => { Keyboard.dismiss(); setStep(n); setError(''); void haptics.tap(); }} />
@@ -356,15 +376,16 @@ export default function CreateScreen() {
     {step === 1 && <View style={{ gap: 12 }}><View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
       <Pressable accessibilityRole='button' accessibilityState={{ selected: recipient === id }} onPress={() => { setRecipient(id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === id ? C.blue : C.line, backgroundColor: recipient === id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={profile?.avatar} size={60} future /></View><Text style={[label, { marginTop: 8 }]}>{t('create.self')}</Text></Pressable>
       {(friends.data ?? []).map(f => <Pressable key={f.friend_id} accessibilityRole='button' accessibilityState={{ selected: recipient === f.friend_id }} onPress={() => { setRecipient(f.friend_id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === f.friend_id ? C.blue : C.line, backgroundColor: recipient === f.friend_id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={(f as any).profiles?.avatar} size={60} /></View><Text style={[label, { marginTop: 8 }]}>{(f as any).profiles?.name}</Text></Pressable>)}
+      {SEA_ENABLED && !predicting && <Pressable accessibilityRole='button' accessibilityState={{ selected: toSea }} onPress={() => { setRecipient(SEA_RECIPIENT); setMode('type'); setDrawingData(null); setPhoto(null); setVoice(null); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: toSea ? C.blue : C.line, backgroundColor: toSea ? C.cream : C.white }]}><View pointerEvents='none' style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: C.glass, alignItems: 'center', justifyContent: 'center' }}><Vessel kind='bottle' size={50} /></View><Text style={[label, { marginTop: 8 }]}>{st('toSea')}</Text><Text style={{ color: C.muted, fontSize: 11, textAlign: 'center' }}>{st('toSeaNote')}</Text></Pressable>}
       <Pressable onPress={() => router.push('/invite')} style={[card, { width: '46%', alignItems: 'center', justifyContent: 'center', minHeight: 116 }]}><ArtIcon name="plus" color={C.blue} /><Text style={{ color: C.blue }}>{t('create.invite')}</Text></Pressable>
     </View>{friends.loading && <SealLoader size={44} label={t('create.loading')} />}{!friends.loading && !friends.data?.length && <Body>{t('create.noFriends')}</Body>}</View>}
     {<View style={{ gap: 15, display: step === 2 ? 'flex' : 'none' }}>
       {predicting && <><PredictionInput value={prediction} onChange={setPrediction} /><Text style={label}>{p('letterOptional')}</Text></>}
-      <View style={{ flexDirection: 'row', gap: 8 }}>{(['type', 'hand'] as const).map(m => <Pressable key={m} onPress={() => { setMode(m); if (m === 'type') setDrawingData(null); void haptics.tick(); }} style={[card, { flex: 1, backgroundColor: mode === m ? C.cream : C.white }]}><Text style={{ textAlign: 'center', color: C.ink }}>{t(`create.${m}`)}</Text></Pressable>)}</View>
-      {mode === 'type' ? <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} maxLength={500} multiline textAlignVertical='top' style={[card, { minHeight: predicting ? 140 : 230, fontFamily: serif, fontSize: 18, color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{message.length} / 500</Text></> : <><DrawingPad scrollGesture={drawScrollGesture} ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
-      {VOICE_ENABLED && <VoiceRecorder value={voice} onChange={setVoice} active={step === 2 && phase === 'steps'} />}
-      {photo ? <Pressable onPress={() => setPhoto(null)} accessibilityLabel={t('create.removePhoto')} style={{ alignSelf: 'flex-start' }}><Image source={{ uri: photo }} style={{ width: 110, height: 110, borderRadius: 8 }} /><Text style={{ color: C.blue }}>{t('create.removePhoto')}</Text></Pressable> : <Pressable onPress={() => setPhotoChoices(!photoChoices)} style={[card, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}><ArtIcon name="camera" color={C.blue} size={20} /><Text style={{ color: C.blue }}>{t('create.photo')}</Text></Pressable>}
-      {photoChoices && <View style={{ flexDirection: 'row', gap: 8 }}><Button title={t('create.camera')} onPress={() => void choosePhoto('camera')} /><Button title={t('create.library')} onPress={() => void choosePhoto('library')} /></View>}
+      {toSea ? <Text style={{ color: C.muted, fontSize: 13, lineHeight: 20, backgroundColor: C.glass, borderRadius: 8, padding: 10 }}>{st('seaTypedOnly')}</Text> : <View style={{ flexDirection: 'row', gap: 8 }}>{(['type', 'hand'] as const).map(m => <Pressable key={m} onPress={() => { setMode(m); if (m === 'type') setDrawingData(null); void haptics.tick(); }} style={[card, { flex: 1, backgroundColor: mode === m ? C.cream : C.white }]}><Text style={{ textAlign: 'center', color: C.ink }}>{t(`create.${m}`)}</Text></Pressable>)}</View>}
+      {mode === 'type' ? <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} maxLength={toSea ? SEA_MESSAGE_MAX : 500} multiline textAlignVertical='top' style={[card, { minHeight: predicting ? 140 : 230, fontFamily: serif, fontSize: 18, color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{message.length} / {toSea ? SEA_MESSAGE_MAX : 500}</Text></> : <><DrawingPad scrollGesture={drawScrollGesture} ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
+      {VOICE_ENABLED && !toSea && <VoiceRecorder value={voice} onChange={setVoice} active={step === 2 && phase === 'steps'} />}
+      {toSea ? null : photo ? <Pressable onPress={() => setPhoto(null)} accessibilityLabel={t('create.removePhoto')} style={{ alignSelf: 'flex-start' }}><Image source={{ uri: photo }} style={{ width: 110, height: 110, borderRadius: 8 }} /><Text style={{ color: C.blue }}>{t('create.removePhoto')}</Text></Pressable> : <Pressable onPress={() => setPhotoChoices(!photoChoices)} style={[card, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}><ArtIcon name="camera" color={C.blue} size={20} /><Text style={{ color: C.blue }}>{t('create.photo')}</Text></Pressable>}
+      {photoChoices && !toSea && <View style={{ flexDirection: 'row', gap: 8 }}><Button title={t('create.camera')} onPress={() => void choosePhoto('camera')} /><Button title={t('create.library')} onPress={() => void choosePhoto('library')} /></View>}
       <Text style={label}>{t('create.hint')}</Text><TextInput value={hint} onChangeText={setHint} maxLength={40} placeholder={t('create.hintPlaceholder')} style={[card, { color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{hint.length} / 40</Text>
     </View>}
     {step === 3 && <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
@@ -372,7 +393,13 @@ export default function CreateScreen() {
       {catalog.loading && <SealLoader size={44} label={t('create.loading')} />}
       {catalog.error && <Button title={t('create.retry')} onPress={() => void catalog.refresh()} />}
     </View>}
-    {step === 4 && <View style={{ gap: 15 }}>
+    {step === 4 && toSea && <View style={{ gap: 15 }}>
+      <Body>{st('driftLabel')}</Body>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{DRIFT_CHOICES.map(d => <Pressable key={d} accessibilityRole='button' accessibilityState={{ selected: driftDays === d }} onPress={() => { setDriftDays(d); void haptics.tick(); }} style={[card, { backgroundColor: driftDays === d ? C.cream : C.white, padding: 10 }]}><Text style={{ color: C.ink }}>{st('drift', d)}</Text></Pressable>)}</View>
+      <Text style={{ color: C.blue }}>{st('washesUp', formatted)}</Text>
+      <View style={[card, { backgroundColor: C.glass, borderColor: C.glass, gap: 8 }]}><Text style={{ color: C.ink, lineHeight: 21 }}>{st('shoreNote')}</Text><Text style={{ color: C.muted, fontSize: 13, lineHeight: 20 }}>{st('rules')}</Text></View>
+    </View>}
+    {step === 4 && !toSea && <View style={{ gap: 15 }}>
       <Body>{t('create.when')}</Body><View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{(['m1', 'm6', 'y1', 'y5', 'custom', ...(__DEV__ ? ['dev'] : [])] as Quick[]).map(q => <Pressable key={q} onPress={() => { setQuick(q); if (q !== 'custom') setDateText(dateValue(quickDate(q))); void haptics.tick(); }} style={[card, { backgroundColor: quick === q ? C.cream : C.white, padding: 10 }]}><Text style={{ color: C.ink }}>{t(`create.${q}`)}</Text></Pressable>)}</View>
       {quick === 'custom' && <TextInput value={dateText} onChangeText={setDateText} placeholder={t('create.dateHint')} keyboardType='numbers-and-punctuation' style={[card, { color: C.ink }]} />}
       <Text style={{ color: C.blue }}>{t('create.arrives', formatted)}</Text><View style={[card, { backgroundColor: C.cream }]}><Text style={{ fontFamily: serif, color: C.plum }}>{t('create.memoryTitle')}</Text><Text style={{ color: C.ink, marginTop: 6 }}>{t('create.memoryBody')}</Text></View>
