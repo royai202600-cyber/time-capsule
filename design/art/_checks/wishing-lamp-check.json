@@ -21,11 +21,11 @@
         0,
         0
       ],
-      "center_alpha": 255,
+      "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        201,
-        152,
-        823,
+        162,
+        494,
+        862,
         890
       ]
     },
@@ -41,11 +41,11 @@
         0,
         0
       ],
-      "center_alpha": 253,
+      "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        201,
-        421,
-        823,
+        162,
+        629,
+        862,
         890
       ]
     },
@@ -63,10 +63,10 @@
       ],
       "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        452,
-        152,
-        571,
-        423
+        162,
+        494,
+        232,
+        682
       ]
     },
     "lid": {
@@ -81,12 +81,12 @@
         0,
         0
       ],
-      "center_alpha": 253,
+      "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        302,
-        421,
-        674,
-        608
+        443,
+        611,
+        644,
+        712
       ]
     }
   }

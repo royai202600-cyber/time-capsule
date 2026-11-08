@@ -40,8 +40,8 @@
       "file": "vessel-wishing-lamp-lid.png",
       "role": "lift",
       "pivot": {
-        "x": 483,
-        "y": 423
+        "x": 542,
+        "y": 685
       },
       "open": [
         {
@@ -57,13 +57,13 @@
     }
   ],
   "mouth": {
-    "x": 483,
-    "y": 575
+    "x": 542,
+    "y": 685
   },
   "baseY": 889,
   "sparkle": {
-    "x": 346,
-    "y": 575
+    "x": 532,
+    "y": 662
   },
   "glint": null,
   "openGlow": null,
