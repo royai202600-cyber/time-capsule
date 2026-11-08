@@ -11,7 +11,7 @@ import { Heading, Bar, BackButton } from "../../components/Screen";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
 import { useAuth } from "../../services/auth";
-import { game, GAME_ENABLED, type GameState } from "../../services/game";
+import { game, GAME_ENABLED } from "../../services/game";
 import { useGameText } from "../game/strings";
 import { canUseVessel } from "../../services/vesselAccess";
 import { capsules, vessels } from "../../services/data";
@@ -157,7 +157,8 @@ function ShelfSlot({ item, name, selected, left, surface, size, face, slotWidth,
 }
 
 /** The scrolling cabinet itself. Rows are virtualised, so it holds a few vessels or thousands. */
-export function CabinetView({ items, notice, error, progress }: { items: CabinetItem[]; notice?: string; error?: string; progress?: string }) {
+export function CabinetView({ items, notice, error }: { items: CabinetItem[]; notice?: string; error?: string }) {
+  const g = useGameText();
   const { t, language } = useLanguage();
   const reduced = useReducedMotion();
   const [selected, setSelected] = useState<Selection | null>(null);
@@ -289,8 +290,7 @@ export function CabinetView({ items, notice, error, progress }: { items: Cabinet
         contentContainerStyle={{ paddingBottom: 32 }}
         ListHeaderComponent={<View style={{ width, alignSelf: "center" }} onLayout={event => setHeaderHeight(event.nativeEvent.layout.height)}>
           <View style={{ paddingTop: 24, paddingBottom: 12, gap: 16, paddingHorizontal: viewportWidth < 700 ? 12 : 0 }}>
-            <Bar><BackButton label={t("back")} onPress={goBack} /><Heading>{t("cabinet.title")}</Heading></Bar>
-            {!!progress && <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{progress}</Text>}
+            <Bar><BackButton label={t("back")} onPress={goBack} /><Heading>{t("cabinet.title")}</Heading>{GAME_ENABLED && <Pressable accessibilityRole="button" onPress={() => { void haptics.tap(); router.push("/album"); }} style={{ marginLeft: "auto", minHeight: 44, justifyContent: "center" }}><Text style={{ fontFamily: sans, fontSize: 14, color: C.blue }}>{g("albumShort")}</Text></Pressable>}</Bar>
             <Text style={{ fontFamily: sans, color: C.muted }}>{t("cabinet.hint")}</Text>
             {!!notice && <Text style={{ fontFamily: sans, color: C.muted }}>{notice}</Text>}
           </View>
@@ -302,7 +302,7 @@ export function CabinetView({ items, notice, error, progress }: { items: Cabinet
         </View>}
         renderItem={({ item: row }) => <View style={{ width, height: rowHeight, alignSelf: "center" }}>
           {piece(ART.row, rowHeight)}
-          {row.map((item, column) => <ShelfSlot key={item.key} item={item} name={!item.no ? label(item.kind).name[language] : item.owned ? `${String(item.no).padStart(3, "0")} ${label(item.kind).name[language]}` : `No.${String(item.no).padStart(3, "0")}`}
+          {row.map((item, column) => <ShelfSlot key={item.key} item={item} name={label(item.kind).name[language]}
             selected={selected?.item.key === item.key}
             left={(ART.inset + ART.slot * (column + .5)) * scale}
             surface={ART.surface * sy} size={slotWidth * (item.kind === "lantern" ? .78 : .92)}
@@ -349,12 +349,9 @@ export default function CabinetScreen() {
   const [owned, setOwned] = useState<Owned[]>([]);
   const [usage, setUsage] = useState<Record<string, number>>({});
   const [error, setError] = useState("");
-  const [gameState, setGameState] = useState<GameState | null>(null);
-  const g = useGameText();
 
   useFocusEffect(useCallback(() => {
     let alive = true;
-    if (GAME_ENABLED) void game.state().then(next => { if (alive) setGameState(next); });
     if (!session) {
       if (__DEV__) setAll(Object.keys(VESSELS).map((id, sort) => {
         const meta = VESSELS[id as VesselKind] as { price: number; edition?: number };
@@ -376,17 +373,17 @@ export default function CabinetScreen() {
   }, [session?.user.id]));
   const items = useMemo(() => {
     const collected = GAME_ENABLED ? game.devCollection() : {};
-    // The collection is one numbered list, in catalogue order.
+    // The Cabinet only ever shows what you have; the Capsule Album is where the gaps are.
     return [...all].sort((a, b) => a.sort - b.sort).flatMap((v, index): CabinetItem[] => {
       if (!isVessel(v.id)) return [];
       const own = owned.find(o => o.vessel === v.id);
+      if (!canUseVessel(v, !!own) && !collected[v.id]) return [];
       return [{
         key: v.id, kind: v.id, owned: canUseVessel(v, !!own) || !!collected[v.id], no: index + 1, stars: collected[v.id]?.stars,
         editionNo: own?.edition_no, editionTotal: v.edition_total, acquiredAt: own?.acquired_at, used: usage[v.id] ?? 0,
       }];
     });
   }, [all, owned, usage]);
-  const owns = items.filter(item => item.owned).length;
-  return <CabinetView items={items} error={error} progress={GAME_ENABLED && items.length ? [gameState ? g("level", gameState.level) : null, g("collected", owns, items.length)].filter(Boolean).join(" · ") : undefined}
+  return <CabinetView items={items} error={error}
     notice={session ? undefined : t(__DEV__ ? "cabinet.preview" : "cabinet.signIn")} />;
 }

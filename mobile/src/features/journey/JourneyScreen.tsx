@@ -283,7 +283,10 @@ export default function JourneyScreen() {
           <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}><Vessel kind="hourglass" size={26} /></View>
           <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("throwCta")}</Text>
         </Pressable> : null}
-        <View style={{ width: 62 }} />
+        {GAME_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={g("album")} onPress={() => { void haptics.tap(); router.push("/album"); }} style={{ width: 62, alignItems: "center", gap: 3 }}>
+          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="album" size={25} color={C.blue} /></View>
+          <Text style={{ fontFamily: sans, fontSize: 11, color: C.ink }}>{g("albumShort")}</Text>
+        </Pressable> : <View style={{ width: 62 }} />}
         </View>}
       </View>
     </SafeAreaView>
