@@ -3,6 +3,7 @@
 
 import json
 import runpy
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -224,7 +225,53 @@ def main() -> None:
     print("manifest and README:", len(entries), "masters", len(prompts), "prompts")
 
 
+def register_public_sea() -> None:
+    """Register just this pair while preserving all approved batch records."""
+    from PIL import Image
+    manifest_path = ROOT / "manifest.json"
+    entries = json.loads(manifest_path.read_text())
+    prompts = json.loads((CHECKS / "prompts-public-sea.json").read_text())
+    descriptions = {
+        "portraits/portrait-sea.png": "Sea recipient profile picture: message bottle on a dusk sea",
+        "scenes/scene-sea-sealed.png": "Sea bottle sent: drifting away toward a quiet dusk shore",
+    }
+    records = {entry["path"]: entry for entry in entries}
+    for rel, prompt in prompts.items():
+        im = Image.open(ROOT / rel).convert("RGBA")
+        record = {
+            "path": "design/art/" + rel, "what": descriptions[rel],
+            "size_px": list(im.size), "transparent": True,
+            "prompt": prompt, "model": "gpt-image-2",
+            "web_export": "public/art/" + rel.removesuffix(".png") + ".webp",
+            "postprocess": ("Downscaled from native 1254 square, translated 6px right/down, then identical circle center (505,526), radius 430, pale sea-glass ground (205,222,236), by mask-portraits.py. Existing portraits skipped unchanged." if rel.startswith("portraits/") else "Native 1536x1024 RGBA, original generated feathered vignette and transparent corners retained; no upscale."),
+        }
+        records[record["path"]] = record
+    manifest_path.write_text(json.dumps(sorted(records.values(), key=lambda e:e["path"]), ensure_ascii=False, indent=2) + "\n")
+    readme_path = ROOT / "README.md"
+    readme = readme_path.read_text()
+    prefix, rest = readme.split("## Masters\n", 1)
+    table, review = rest.split("## Review\n", 1)
+    prefix = prefix.replace("All nine portraits are the main profile pictures", "All ten portraits are profile pictures (nine people/future presets plus the sea recipient)")
+    prefix = prefix.replace("shows 24 px and 40 px tests", "shows 24/40/60 px tests with full-canvas and exact 860 px app-disc crops")
+    note = "- Public Sea art: `portrait-sea.png` is a non-person recipient picture with the shared circle mask; `scene-sea-sealed.png` is a transparent dusk-sea vignette. Existing master/export hashes are preserved. Exact prompts are in `_checks/prompts-public-sea.json`. Read `docs/design/public-sea.md` from PR #67 (`claude/public-sea`) because it was not yet on main. App registration/wiring is the screens team's follow-up.\n"
+    if "- Public Sea art:" not in prefix:
+        prefix += note + "\n"
+    rows = [line for line in table.splitlines() if line.startswith("| `") and not any("`"+rel+"`" in line for rel in prompts)]
+    for rel in prompts:
+        e=records["design/art/"+rel]
+        rows.append(f"| `{rel}` | {e['what']} | {e['size_px'][0]}×{e['size_px'][1]} | processed; see manifest |")
+    table = "\n| File | What | Size | Notes |\n|---|---|---:|---|\n" + "\n".join(sorted(rows)) + "\n\n"
+    links = "[Sea portrait crop review](_checks/portrait-sea-review.png) · [Sea sealed scene comparison](_checks/scene-sea-sealed-review.png)"
+    if links not in review:
+        review += "\n" + links + "\n"
+    readme_path.write_text(prefix + "## Masters\n" + table + "## Review\n" + review)
+    print("Public Sea: registered 2 assets; retained", len(entries), "existing manifest records")
+
+
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--public-sea"]:
+        register_public_sea()
+        raise SystemExit(0)
     main()
     if (CHECKS / "t10b-batch-prompts.json").exists():
         runpy.run_path(str(Path(__file__).with_name("register-b2.py")), run_name="__main__")

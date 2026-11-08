@@ -348,6 +348,19 @@
     "web_export": "public/art/portraits/portrait-future.webp"
   },
   {
+    "path": "design/art/portraits/portrait-sea.png",
+    "what": "Sea recipient profile picture: message bottle on a dusk sea",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nAsset-specific notes: portrait-sea.png, the profile picture for recipient “The sea”, NOT a person. Image 1 is design/art/style-sheet.png, the exact style reference. Image 2 is design/art/vessels/vessel-bottle.png, the exact bottle design reference (clear glass blue, cork, rolled cream letter tied with wax-red ribbon). Image 3 is design/art/portraits/portrait-01.png, ONLY the exact framing and line-thickness guide; do not copy the person.\nThe block’s “object fills about 70% / generous padding” framing is OVERRIDDEN by this portrait framing: square 1024×1024, circular background disc center (505,526), radius 430, exactly the same disc size/position as Image 3, transparent outside. A pale sea-glass-blue disc around RGB (205,222,236) with a soft cream-to-glass-blue dusk sky band and gentle ink-blue sea in its lower portion. ONE large central message-in-a-bottle floating at a slight tilt, cork towards upper right, filling the disc the way a head and shoulders fill Image 3. The bottle silhouette must be unmistakable at 24px: simple broad shapes, slightly thicker clean plum/navy outline than vessel art, very minimal hatching, clear white glass highlight, visible rolled cream letter. Only two or three simple wave lines in ink blue/light blue. Calm, tender and hopeful. No people, faces, hands, text, letters, numbers, logos or brands. Do not make a map or flag.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/portraits/portrait-sea.webp",
+    "postprocess": "Downscaled from native 1254 square, translated 6px right/down, then identical circle center (505,526), radius 430, pale sea-glass ground (205,222,236), by mask-portraits.py. Existing portraits skipped unchanged."
+  },
+  {
     "path": "design/art/scenes/scene-empty-inbox.png",
     "what": "Empty inbox: open shelf space and waiting bird",
     "size_px": [
@@ -370,6 +383,19 @@
     "prompt": "ONE SCENE on a writing desk: ONE blank cream letter sheet, ONE simple dark-ink fountain pen, and ONE small unpressed wax seal ready beside it. Quiet potential before sending. No vessels, bottles, domes, lanterns, boxes, hands, or other objects. Use Image 1 ONLY for line weight, palette, paper texture and hand-inked storybook style. DO NOT copy the lineup of vessels or its composition. Landscape 1536x1024. Genuine transparent background with soft feathered vignette edges, so only the central illustration remains visible and all four corners have alpha zero. Calm, nostalgic, tender. No text, letters, logos, numbers, watermark or black/gray border. ",
     "model": "gpt-image-2",
     "web_export": "public/art/scenes/scene-empty-sent.webp"
+  },
+  {
+    "path": "design/art/scenes/scene-sea-sealed.png",
+    "what": "Sea bottle sent: drifting away toward a quiet dusk shore",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nAsset-specific notes: scene-sea-sealed.png, the scene after a sea bottle is sent. Image 1 is design/art/style-sheet.png, used ONLY for line weight, palette, paper texture and hand-inked storybook style, NOT its lineup or composition. Image 2 is design/art/vessels/vessel-bottle.png, the bottle design reference: glass blue, corked, rolled cream letter tied with wax-red ribbon clearly inside. Image 3 is design/art/scenes/scene-sealed.png, ONLY for the landscape vignette and softly feathered alpha-edge treatment; do not copy the hands, letter scene or composition.\nThe block’s square canvas and “object fills about 70% / generous padding” are OVERRIDDEN by these LANDSCAPE SCENE rules: 1536×1024 landscape; genuine transparent background with soft feathered vignette edges, only the central illustration visible, all four corners alpha 0. One corked message-in-a-bottle drifts away on a calm dusk sea, bottle modest in the middle distance (about one quarter of illustration width), at a slight tilt with cork toward upper right. A few small ripples trail behind it. Low far shore: a soft anonymous headland/line of dunes along the distant horizon, not a recognizable location or map. Warm brass/cream dusk glow low in the sky, ink-blue/light-blue water. Optionally two tiny distant gull marks. Mood is letting go: calm, tender, hopeful, a little lonely. Simple elegant composition with open breathing space; light hatching, flat colour plus one soft shading tone and a little paper grain. No people, faces, hands, boats, other vessels, text, letters, numbers, logos, brands or watermark. No opaque rectangular paper background, no dark/gray border.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/scenes/scene-sea-sealed.webp",
+    "postprocess": "Native 1536x1024 RGBA, original generated feathered vignette and transparent corners retained; no upscale."
   },
   {
     "path": "design/art/scenes/scene-sealed.png",

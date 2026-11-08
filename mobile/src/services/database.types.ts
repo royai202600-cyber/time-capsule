@@ -67,10 +67,13 @@ export type Database = {
           opened_lat: number | null
           opened_lng: number | null
           place: string | null
-          recipient: string
+          recipient: string | null
+          sea: boolean
+          sea_returns: number
           sealed_at: string
           seen_at: string | null
           sender: string
+          shore: string | null
           verdict: boolean | null
           verdict_at: string | null
           vessel: string
@@ -89,10 +92,13 @@ export type Database = {
           opened_lat?: number | null
           opened_lng?: number | null
           place?: string | null
-          recipient: string
+          recipient?: string | null
+          sea?: boolean
+          sea_returns?: number
           sealed_at?: string
           seen_at?: string | null
           sender: string
+          shore?: string | null
           verdict?: boolean | null
           verdict_at?: string | null
           vessel: string
@@ -111,10 +117,13 @@ export type Database = {
           opened_lat?: number | null
           opened_lng?: number | null
           place?: string | null
-          recipient?: string
+          recipient?: string | null
+          sea?: boolean
+          sea_returns?: number
           sealed_at?: string
           seen_at?: string | null
           sender?: string
+          shore?: string | null
           verdict?: boolean | null
           verdict_at?: string | null
           vessel?: string
@@ -139,6 +148,13 @@ export type Database = {
             columns: ["sender"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "capsules_shore_fkey"
+            columns: ["shore"]
+            isOneToOne: false
+            referencedRelation: "sea_shores"
             referencedColumns: ["id"]
           },
         ]
@@ -321,6 +337,54 @@ export type Database = {
         }
         Relationships: []
       }
+      sea_pickups: {
+        Row: { capsule_id: string; finder: string; picked_at: string }
+        Insert: { capsule_id: string; finder: string; picked_at?: string }
+        Update: { capsule_id?: string; finder?: string; picked_at?: string }
+        Relationships: [
+          {
+            foreignKeyName: "sea_pickups_capsule_id_fkey"
+            columns: ["capsule_id"]
+            isOneToOne: false
+            referencedRelation: "capsules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sea_pickups_finder_fkey"
+            columns: ["finder"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sea_reports: {
+        Row: { capsule_id: string; reason: string; reported_at: string; reporter: string }
+        Insert: { capsule_id: string; reason: string; reported_at?: string; reporter: string }
+        Update: { capsule_id?: string; reason?: string; reported_at?: string; reporter?: string }
+        Relationships: [
+          {
+            foreignKeyName: "sea_reports_capsule_id_fkey"
+            columns: ["capsule_id"]
+            isOneToOne: false
+            referencedRelation: "capsules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sea_reports_reporter_fkey"
+            columns: ["reporter"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sea_shores: {
+        Row: { id: string; name_zh: string; name_en: string; city_zh: string; city_en: string; lat: number; lng: number }
+        Insert: { id?: string; name_zh: string; name_en: string; city_zh: string; city_en: string; lat: number; lng: number }
+        Update: { id?: string; name_zh?: string; name_en?: string; city_zh?: string; city_en?: string; lat?: number; lng?: number }
+        Relationships: []
+      }
       vessels: {
         Row: {
           brand: string | null
@@ -431,6 +495,18 @@ export type Database = {
         }
         Returns: string
       }
+      sea_nearby: {
+        Args: { p_lat: number; p_lng: number; p_accuracy: number }
+        Returns: { id: string; hint: string; vessel: string; lat: number; lng: number; shore_zh: string; shore_en: string; sealed_at: string; washed_up_at: string; returns: number; sender: Json }[]
+      }
+      sea_pick_up: { Args: { p_id: string; p_lat: number; p_lng: number; p_accuracy: number }; Returns: undefined }
+      sea_return: { Args: { p_id: string }; Returns: undefined }
+      sea_throw: {
+        Args: { p_message: string; p_hint: string; p_vessel: string; p_drift_days: number; p_lat: number; p_lng: number; p_accuracy: number }
+        Returns: { id: string; shore_zh: string; shore_en: string; washes_up_at: string }[]
+      }
+      sea_report: { Args: { p_id: string; p_reason: string }; Returns: undefined }
+      sea_pickups_left: { Args: never; Returns: number }
       set_prediction_verdict: {
         Args: { p_id: string; p_verdict: boolean }
         Returns: undefined
