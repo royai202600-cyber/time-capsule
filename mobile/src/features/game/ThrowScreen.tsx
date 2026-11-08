@@ -41,33 +41,49 @@ function WaxBall({ kind, size }: { kind: BallKind; size: number }) {
   </Svg>;
 }
 
-const BLOCKS: [number, number, number][] = [[-10, 62, 86], [58, 46, 118], [108, 58, 64], [172, 44, 104], [222, 64, 74], [292, 52, 126], [348, 44, 82]];
-/** A generic street scene in the live map's colours and flat style, not a real place. */
+const BLOCKS: [number, number, number][] = [[-8, 60, 54], [66, 44, 82], [122, 54, 44], [196, 46, 70], [254, 60, 50], [326, 58, 88]];
+const CANOPY = "#C5D5B5";
+const CANOPY_DARK = "#B4C7A3";
+const CLEARING = "#E7ECD9";
+const TRUNK = "#B8A88C";
+const HEDGE: [number, number, number][] = [[6, 196, 26], [44, 188, 30], [86, 196, 22], [122, 190, 28], [160, 197, 20], [204, 190, 26], [244, 196, 22], [286, 188, 30], [330, 195, 26], [370, 190, 28]];
+const TREES: [number, number, number][] = [[338, 300, 1], [30, 372, .95], [352, 520, 1.25]];
+const BUSHES: [number, number, number][] = [[-6, 790, 58], [48, 812, 46], [386, 796, 62], [330, 816, 44], [-10, 560, 38], [24, 580, 26]];
+
+function Tree({ x, y, k }: { x: number; y: number; k: number }) {
+  return <>
+    <Ellipse cx={x} cy={y + 46 * k} rx={34 * k} ry={9 * k} fill={C.ink} opacity={.08} />
+    <Polygon points={`${x - 4 * k},${y + 46 * k} ${x + 4 * k},${y + 46 * k} ${x + 3 * k},${y} ${x - 3 * k},${y}`} fill={TRUNK} />
+    <Circle cx={x - 15 * k} cy={y - 2 * k} r={22 * k} fill={CANOPY_DARK} />
+    <Circle cx={x + 16 * k} cy={y} r={21 * k} fill={CANOPY_DARK} />
+    <Circle cx={x} cy={y - 16 * k} r={26 * k} fill={CANOPY} />
+  </>;
+}
+
+/** A generic park clearing in the live map's colours and flat style, not a real place. */
 function ThrowBackground() {
   const p = mapPalette;
   return <Svg style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }} width="100%" height="100%" viewBox="0 0 375 812" preserveAspectRatio="xMidYMid slice">
-    <Polygon points="0,0 375,0 375,172 0,172" fill={C.glass} />
-    <Polygon points="0,172 375,172 375,812 0,812" fill={p.land} />
-    <Polygon points="0,172 158,172 66,412 0,412" fill={p.park} />
-    <Polygon points="238,172 375,172 375,412 322,412" fill={p.water} stroke={p.waterLine} strokeWidth={1.5} />
-    <Polygon points="0,470 96,470 -40,812 0,812" fill={p.park} />
-    <Polygon points="290,470 375,470 375,812 410,812" fill={p.sand} />
-    <Polygon points="150,172 226,172 452,812 -78,812" fill={p.roadCase} />
-    <Polygon points="158,172 218,172 420,812 -46,812" fill={p.road} />
-    <Polygon points="0,412 375,412 375,470 0,470" fill={p.roadCase} />
-    <Polygon points="0,420 375,420 375,462 0,462" fill={p.major} />
+    <Polygon points="0,0 375,0 375,204 0,204" fill={C.glass} />
     {BLOCKS.map(([x, w, h]) => <React.Fragment key={x}>
-      <Polygon points={`${x},172 ${x + w},172 ${x + w},${172 - h} ${x},${172 - h}`} fill={p.building} />
-      <Polygon points={`${x},${172 - h} ${x + w},${172 - h} ${x + w - 6},${160 - h} ${x + 6},${160 - h}`} fill={p.buildingTop} />
+      <Polygon points={`${x},200 ${x + w},200 ${x + w},${200 - h} ${x},${200 - h}`} fill={p.building} />
+      <Polygon points={`${x},${200 - h} ${x + w},${200 - h} ${x + w - 5},${191 - h} ${x + 5},${191 - h}`} fill={p.buildingTop} />
     </React.Fragment>)}
+    {HEDGE.map(([x, y, r]) => <Circle key={x} cx={x} cy={y} r={r} fill={CANOPY} />)}
+    <Polygon points="0,200 375,200 375,812 0,812" fill={p.park} />
+    <Path d="M-20 262C20 236 118 234 150 256 176 274 112 296 44 294-4 292-40 276-20 262Z" fill={p.water} stroke={p.waterLine} strokeWidth={1.5} />
+    <Path d="M292 200C312 236 276 268 300 302 316 326 372 344 395 352V384C352 372 290 350 270 316 248 278 280 238 268 200Z" fill={p.sand} />
+    <Ellipse cx={187} cy={402} rx={176} ry={66} fill={CLEARING} />
+    <Ellipse cx={187} cy={700} rx={250} ry={96} fill={CLEARING} opacity={.55} />
+    {TREES.map(([x, y, k]) => <Tree key={x} x={x} y={y} k={k} />)}
+    {BUSHES.map(([x, y, r]) => <Circle key={`${x}-${y}`} cx={x} cy={y} r={r} fill={CANOPY_DARK} />)}
   </Svg>;
 }
 
 /** Stand-in for the shared cracked look until the chosen art arrives. */
 function Cracks({ size }: { size: number }) {
   return <Svg width={size} height={size} viewBox="0 0 100 100">
-    <Circle cx={50} cy={52} r={38} fill={C.ink} opacity={.14} />
-    <Path d="M30 22l9 15-6 9 11 12-4 12 8 12M70 26l-8 13 7 10-12 9 5 13-7 9M18 54l13-2 7 7M84 50l-12 3-6 8" stroke={C.ink} strokeOpacity={.72} strokeWidth={1.6} fill="none" strokeLinejoin="round" strokeLinecap="round" />
+    <Path d="M38 26l5 11-5 8 8 10-3 9M66 34l-6 9 5 7-8 7M30 62l9-2 5 5" stroke={C.ink} strokeOpacity={.5} strokeWidth={.9} fill="none" strokeLinejoin="round" strokeLinecap="round" />
   </Svg>;
 }
 
