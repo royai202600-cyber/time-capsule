@@ -120,7 +120,6 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   const ballOpacity = useRef(new Animated.Value(1)).current;
   const crack = useRef(new Animated.Value(1)).current;
   const dust = useRef(new Animated.Value(0)).current;
-  const throb = useRef(new Animated.Value(1)).current;
 
   const ringStart = useRef(Date.now());
   const busy = useRef(false);
@@ -149,15 +148,6 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
 
   useEffect(() => () => { alive.current = false; }, []);
 
-  useEffect(() => {
-    if (reduced) return;
-    const loop = Animated.loop(Animated.sequence([
-      Animated.timing(throb, { toValue: 1.16, duration: 320, easing: Easing.out(Easing.quad), useNativeDriver: NATIVE }),
-      Animated.timing(throb, { toValue: 1, duration: 420, easing: Easing.in(Easing.quad), useNativeDriver: NATIVE }),
-    ]));
-    loop.start();
-    return () => loop.stop();
-  }, [reduced, throb]);
 
   useEffect(() => {
     if (!landmark || result) return;
@@ -324,7 +314,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
           {source ? <Image source={source} style={[{ width: vesselSize, height: vesselSize }, WEB_DARKEN && !result ? ({ filter: "saturate(.55) brightness(.8)" } as object) : null]} resizeMode="contain" accessibilityLabel={s("corruptedCapsule")} /> : null}
           <Animated.View pointerEvents="none" style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize, opacity: crack }}>
             {source && !WEB_DARKEN ? <Image source={source} style={{ width: vesselSize, height: vesselSize, opacity: .3, tintColor: C.ink }} resizeMode="contain" /> : null}
-            <Animated.View style={{ position: "absolute", top: vesselSize * .3, left: vesselSize * .53, transform: [{ scale: throb }] }}><AngerMark size={vesselSize * .19} /></Animated.View>
+            <View style={{ position: "absolute", top: vesselSize * .3, left: vesselSize * .53 }}><AngerMark size={vesselSize * .19} /></View>
           </Animated.View>
           {!result && <View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 2, borderColor: "rgba(255,255,255,.95)" }} />}
           {!result && <Animated.View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 4, borderColor: RING_COLOR[capsule.rarity], transform: [{ scale: ringScale }] }} />}

@@ -70,8 +70,7 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.sel .pin-body{transform:scale(1.18)}
 .pin.sel .v{filter:drop-shadow(0 0 8px ${C.brass})}
 .pin.sealed .v{filter:grayscale(.2)}
-.pin .crack{position:absolute;left:42px;bottom:41px;width:17px;height:17px;animation:throb .8s ease-in-out infinite}
-@keyframes throb{0%,100%{transform:scale(1)}40%{transform:scale(1.18)}}
+.pin .crack{position:absolute;left:42px;bottom:41px;width:17px;height:17px;animation:bob 3.6s ease-in-out infinite}
 .pin.corrupted .v{filter:saturate(.55) brightness(.84)}
 .pin.corrupted.rare .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
 .pin.corrupted.uncommon .disc{background:radial-gradient(${C.lightBlue}99,transparent 70%)}
