@@ -1,0 +1,11 @@
+Use case: illustration-story
+Asset type: Time Capsule vessel master, closed resting pose, 1024 square canvas.
+Primary request: Original hot-air balloon vessel. A large, simple striped balloon envelope in ink blue, light blue, cream and plum, with a small brass-rimmed wicker basket underneath. The basket holds one clearly visible rolled cream paper letter tied with wax-red cord. Thin suspension ropes connect the envelope to the basket. Draw the balloon and basket as one complete closed assembled object. No extra objects or ground shadow. Keep broad, distinct color regions and a clean silhouette readable at 40 px.
+Composition: centered horizontally, full object within x 132–892, top at or below y 100, basket base at y 900 on a 1024×1024 transparent canvas. Front three-quarter view. The envelope is a separable upper layer that can rise straight up and fade, while the basket and letter remain fully drawn underneath.
+Constraints: original design, no logos, no brand names or brand shapes, no characters, no text. Real transparent background and transparent corners. The final image should show a complete balloon; no cut-off edges.
+App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
+- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
+- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
+- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
+- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
+Match the attached style sheet exactly.

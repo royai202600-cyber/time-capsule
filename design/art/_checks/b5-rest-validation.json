@@ -1,0 +1,101 @@
+{
+  "bubble-tea": {
+    "bbox": [
+      301,
+      125,
+      722,
+      900
+    ],
+    "corners": true,
+    "closed_stack_exact": true,
+    "ip": "Original generic design; no text, logo, character or brand shape."
+  },
+  "dim-sum-steamer": {
+    "bbox": [
+      198,
+      155,
+      827,
+      899
+    ],
+    "corners": true,
+    "closed_stack_exact": true,
+    "ip": "Original generic design; no text, logo, character or brand shape."
+  },
+  "bento": {
+    "bbox": [
+      139,
+      323,
+      886,
+      900
+    ],
+    "corners": true,
+    "closed_stack_exact": true,
+    "ip": "Original generic design; no text, logo, character or brand shape."
+  },
+  "paper-cranes": {
+    "bbox": [
+      242,
+      195,
+      781,
+      901
+    ],
+    "corners": true,
+    "closed_stack_exact": true,
+    "ip": "Original generic design; no text, logo, character or brand shape."
+  },
+  "heart-locket": {
+    "bbox": [
+      275,
+      125,
+      749,
+      900
+    ],
+    "corners": true,
+    "closed_stack_exact": true,
+    "ip": "Original generic design; no text, logo, character or brand shape."
+  },
+  "suitcase": {
+    "bbox": [
+      135,
+      350,
+      890,
+      900
+    ],
+    "corners": true,
+    "closed_stack_exact": true,
+    "ip": "Original generic design; no text, logo, character or brand shape."
+  },
+  "postbox": {
+    "bbox": [
+      310,
+      126,
+      715,
+      901
+    ],
+    "corners": true,
+    "closed_stack_exact": true,
+    "ip": "Original generic design; no text, logo, character or brand shape."
+  },
+  "camp-lantern": {
+    "bbox": [
+      323,
+      125,
+      701,
+      900
+    ],
+    "corners": true,
+    "closed_stack_exact": true,
+    "ip": "Original generic design; no text, logo, character or brand shape."
+  },
+  "treasure-chest": {
+    "bbox": [
+      138,
+      330,
+      885,
+      900
+    ],
+    "corners": true,
+    "closed_stack_exact": true,
+    "ip": "Original generic design; no text, logo, character or brand shape."
+  }
+}
