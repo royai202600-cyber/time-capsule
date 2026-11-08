@@ -1,6 +1,6 @@
 {
-  "count": 223,
-  "passed": 223,
+  "count": 225,
+  "passed": 225,
   "failed": [],
   "assets": [
     {
@@ -384,6 +384,25 @@
       "pass": true
     },
     {
+      "path": "portraits/portrait-sea.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
       "path": "scenes/scene-empty-inbox.png",
       "size": [
         1536,
@@ -404,6 +423,25 @@
     },
     {
       "path": "scenes/scene-empty-sent.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "scenes/scene-sea-sealed.png",
       "size": [
         1536,
         1024

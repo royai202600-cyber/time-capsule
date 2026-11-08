@@ -15,7 +15,7 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 - T10c B3: ten original festival/keepsake vessels, complete reveal edits, exact CLOSED keyframes, measured 40/120 px and opening sheets. Lucky-cat test approved by Roy; its full drawer pulls straight forward with a rolled letter, while approved cat/paw/base/closed bytes remain unchanged. Separate dark interior layers support the pumpkin/river glows; the stocking stand stays fixed while sock/letter sway. Only river water is ground. Final batch approval remains pending.
 - Music box and ring box assembled views are closed. Their lids are separate complete parts. Vessel part order and 120 px comparisons are in `_checks/`; lid, flap and cork pivots are in `manifest.json` and `_checks/pivots.json`.
 - Dome stack: base → rose → glass. Bottle stack: waves → letter → body → cork. Glass interior alpha below 200 was scaled to 37.5% so contents stay visible.
-- All nine portraits are the main profile pictures, with an identical 860 px diameter disc centered at (505, 526). `_checks/portraits-small.png` shows 24 px and 40 px tests.
+- All ten portraits are profile pictures (nine people/future presets plus the sea recipient), with an identical 860 px diameter disc centered at (505, 526). `_checks/portraits-small.png` shows 24/40/60 px tests with full-canvas and exact 860 px app-disc crops.
 - Passport stamps use one ink color each. Paper textures are opaque and seamlessly tile at all edges. Scene edges fade to transparency.
 - A2 idle effects: `vessels/vessel-dome-glint.png` overlays the existing dome glass without changing vessel art; `fx/fx-glint.png` catches on wax seals and brass edges. Roy approved both after `_checks/idle-glint-review.png` showed the dome at 120/240 px and the sparkle at 16/24 px on envelope and tin. `finish-idle-glints.py` downscaled and refined the generated layers.
 - T10d B4 full batch: Ten original retro and love vessels have measured closed / half / open sheets (`_checks/<id>-motion.png`), exact resting stacks, 40/120 px strips, transparent PNG masters and WebP exports. Opening ends with each revealed gift visible. [B4 contact sheet](_checks/b4-contact-sheet.png). The screens team will wire their manifest entries separately.
@@ -33,6 +33,8 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: crown 1024×256, repeatable row 1024×384, base 1024×192. They were cut from one generated source; Roy approved `_checks/cabinet-tiles-review.png` at `7b1f646`. The manifest preserves the exact A3 prompts and measured geometry.
 
 - T10b B2: ten original landmark souvenir vessels with complete revealed interiors, exact at=0 stacks, measured motion sheets and 40/120 px silhouettes. Roy requested a tall slender clock tower with a high clock-face door and a 6-degree hands tick; the other nine follow the same silhouette-first review. The clock shape was compared with an [RTHK reference photograph](https://newsstatic.rthk.hk/images/mfile_1832413_1_20251119192432.jpg). Trademarked landmark forms remain loose interpretations; sacred-site vessels use architecture only. `finish-b2.py` prepares layers and `register-b2.py` merges B2 records while preserving other batches. B2 was approved and merged in PR #57. T10b-fix redraws twin-towers as tapered stepped architecture with pointed spires and a lower sky bridge, adding breathe 0.025 to the bridge glow pulse; follow-up approval is pending. The silhouette was inspected against an [Architectural Digest photograph](https://www.architecturaldigest.com/gallery/skyscrapers-you-must-visit-before-you-die) and the [official design reference](https://www.petronastwintowers.com.my/the-towers/design-structure/).
+
+- Public Sea art: `portrait-sea.png` is a non-person recipient picture with the shared circle mask; `scene-sea-sealed.png` is a transparent dusk-sea vignette. Existing master/export hashes are preserved. Exact prompts are in `_checks/prompts-public-sea.json`. Read `docs/design/public-sea.md` from PR #67 (`claude/public-sea`) because it was not yet on main. App registration/wiring is the screens team's follow-up.
 
 ## Masters
 
@@ -58,8 +60,10 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 | `portraits/portrait-07.png` | Main profile picture preset 07 | 1024×1024 | processed; see manifest |
 | `portraits/portrait-08.png` | Main profile picture preset 08 | 1024×1024 | processed; see manifest |
 | `portraits/portrait-future.png` | Main profile picture: future self | 1024×1024 | processed; see manifest |
+| `portraits/portrait-sea.png` | Sea recipient profile picture: message bottle on a dusk sea | 1024×1024 | processed; see manifest |
 | `scenes/scene-empty-inbox.png` | Empty inbox: open shelf space and waiting bird | 1536×1024 |  |
 | `scenes/scene-empty-sent.png` | Empty sent: blank letter, pen and wax | 1536×1024 |  |
+| `scenes/scene-sea-sealed.png` | Sea bottle sent: drifting away toward a quiet dusk shore | 1536×1024 | processed; see manifest |
 | `scenes/scene-sealed.png` | Letter being sealed with warm glow | 1536×1024 |  |
 | `scenes/scene-welcome.png` | Welcome: hands, sealed letter and dome rose | 1536×1024 |  |
 | `seal-wax.png` | Large rose-imprinted wax seal | 1024×1024 |  |
@@ -267,3 +271,5 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 [Twin-towers redraw](_checks/twin-towers-redraw-review.png) · [Twin-towers motion](_checks/twin-towers-motion.png) · [B2 contact sheet](_checks/b2-contact-sheet.png) · [Clock-tower motion](_checks/clock-tower-motion.png) · [Clock-tower 40/120 px](_checks/clock-tower-silhouette.png) · [Full contact sheet](_checks/contact-sheet.png) · [Snow globe motion](_checks/snow-globe-motion.png) · [Snow globe 40/120 px](_checks/snow-globe-silhouette.png) · [Vessel 120 px checks](_checks/vessels-at-120px.png) · [Portrait 24/40 px strip](_checks/portraits-small.png) · [Map pin overlay](_checks/map-pins.png) · [Idle glint review](_checks/idle-glint-review.png) · [Cabinet tile review](_checks/cabinet-tiles-review.png)
 
 [B3 motion index](_checks/b3-review.md)
+
+[Sea portrait crop review](_checks/portrait-sea-review.png) · [Sea sealed scene comparison](_checks/scene-sea-sealed-review.png)

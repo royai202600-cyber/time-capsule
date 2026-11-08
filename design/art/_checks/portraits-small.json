@@ -22,7 +22,19 @@
       96,
       936,
       957
-    ]
+    ],
+    "tested_px": [
+      24,
+      40,
+      60
+    ],
+    "app_crop": [
+      75,
+      96,
+      935,
+      956
+    ],
+    "exact_shared_mask": true
   },
   {
     "file": "portraits/portrait-02.png",
@@ -47,7 +59,19 @@
       96,
       936,
       957
-    ]
+    ],
+    "tested_px": [
+      24,
+      40,
+      60
+    ],
+    "app_crop": [
+      75,
+      96,
+      935,
+      956
+    ],
+    "exact_shared_mask": true
   },
   {
     "file": "portraits/portrait-03.png",
@@ -72,7 +96,19 @@
       96,
       936,
       957
-    ]
+    ],
+    "tested_px": [
+      24,
+      40,
+      60
+    ],
+    "app_crop": [
+      75,
+      96,
+      935,
+      956
+    ],
+    "exact_shared_mask": true
   },
   {
     "file": "portraits/portrait-04.png",
@@ -97,7 +133,19 @@
       96,
       936,
       957
-    ]
+    ],
+    "tested_px": [
+      24,
+      40,
+      60
+    ],
+    "app_crop": [
+      75,
+      96,
+      935,
+      956
+    ],
+    "exact_shared_mask": true
   },
   {
     "file": "portraits/portrait-05.png",
@@ -122,7 +170,19 @@
       96,
       936,
       957
-    ]
+    ],
+    "tested_px": [
+      24,
+      40,
+      60
+    ],
+    "app_crop": [
+      75,
+      96,
+      935,
+      956
+    ],
+    "exact_shared_mask": true
   },
   {
     "file": "portraits/portrait-06.png",
@@ -147,7 +207,19 @@
       96,
       936,
       957
-    ]
+    ],
+    "tested_px": [
+      24,
+      40,
+      60
+    ],
+    "app_crop": [
+      75,
+      96,
+      935,
+      956
+    ],
+    "exact_shared_mask": true
   },
   {
     "file": "portraits/portrait-07.png",
@@ -172,7 +244,19 @@
       96,
       936,
       957
-    ]
+    ],
+    "tested_px": [
+      24,
+      40,
+      60
+    ],
+    "app_crop": [
+      75,
+      96,
+      935,
+      956
+    ],
+    "exact_shared_mask": true
   },
   {
     "file": "portraits/portrait-08.png",
@@ -197,7 +281,19 @@
       96,
       936,
       957
-    ]
+    ],
+    "tested_px": [
+      24,
+      40,
+      60
+    ],
+    "app_crop": [
+      75,
+      96,
+      935,
+      956
+    ],
+    "exact_shared_mask": true
   },
   {
     "file": "portraits/portrait-future.png",
@@ -222,6 +318,55 @@
       96,
       936,
       957
-    ]
+    ],
+    "tested_px": [
+      24,
+      40,
+      60
+    ],
+    "app_crop": [
+      75,
+      96,
+      935,
+      956
+    ],
+    "exact_shared_mask": true
+  },
+  {
+    "file": "portraits/portrait-sea.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "circle_center": [
+      505,
+      526
+    ],
+    "circle_radius": 430,
+    "visible_bbox": [
+      75,
+      96,
+      936,
+      957
+    ],
+    "tested_px": [
+      24,
+      40,
+      60
+    ],
+    "app_crop": [
+      75,
+      96,
+      935,
+      956
+    ],
+    "exact_shared_mask": true
   }
 ]
