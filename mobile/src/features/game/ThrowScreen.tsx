@@ -83,12 +83,14 @@ export function ThrowBackground() {
   </Svg>;
 }
 
+// A vessel-shaped dark layer: the same picture turned solid.
+const DARKEN = (Platform.OS === "web" ? { filter: "brightness(0)" } : { tintColor: C.ink }) as object;
 const ANGER = "M40 12C40 30 30 40 12 40M60 12C60 30 70 40 88 40M12 60C30 60 40 70 40 88M88 60C70 60 60 70 60 88";
 /** The comic anger mark that shows a capsule is corrupted, at its upper right. */
 function AngerMark({ size }: { size: number }) {
   return <Svg width={size} height={size} viewBox="0 0 100 100">
     <Path d={ANGER} stroke="#fff" strokeWidth={18} fill="none" strokeLinecap="round" />
-    <Path d={ANGER} stroke={C.wax} strokeWidth={10} fill="none" strokeLinecap="round" />
+    <Path d={ANGER} stroke={C.ink} strokeWidth={10} fill="none" strokeLinecap="round" />
   </Svg>;
 }
 
@@ -321,8 +323,8 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
         <Animated.View style={{ width: vesselSize, height: vesselSize, alignItems: "center", justifyContent: "center", transform: [{ translateY: hop }, { translateX: shake }] }}>
           {source ? <Image source={source} style={{ width: vesselSize, height: vesselSize }} resizeMode="contain" accessibilityLabel={s("corruptedCapsule")} /> : null}
           <Animated.View pointerEvents="none" style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize, opacity: crack }}>
-            {source ? <Image source={source} style={{ width: vesselSize, height: vesselSize, tintColor: C.ink, opacity: .3 }} resizeMode="contain" /> : null}
-            <Animated.View style={{ position: "absolute", top: vesselSize * .02, right: vesselSize * .04, transform: [{ scale: throb }] }}><AngerMark size={vesselSize * .34} /></Animated.View>
+            {source ? <Image source={source} style={[{ width: vesselSize, height: vesselSize, opacity: .3 }, DARKEN]} resizeMode="contain" /> : null}
+            <Animated.View style={{ position: "absolute", top: vesselSize * .08, right: vesselSize * .1, transform: [{ scale: throb }] }}><AngerMark size={vesselSize * .19} /></Animated.View>
           </Animated.View>
           {!result && <View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 2, borderColor: "rgba(255,255,255,.95)" }} />}
           {!result && <Animated.View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 4, borderColor: RING_COLOR[capsule.rarity], transform: [{ scale: ringScale }] }} />}

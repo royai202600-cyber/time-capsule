@@ -73,7 +73,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
-- 2026-11-09: For now, a Corrupted Capsule is shown with the dark layer plus a wax-red comic anger mark at its upper right instead of crack lines, at Roy's request.
+- 2026-11-09: For now, a Corrupted Capsule is shown with the dark layer plus a small navy comic anger mark at its upper right instead of crack lines, at Roy's request.
 - 2026-11-09: Roy chose illustrated scenes for the Waypost picture wheel: about five by place type plus one per Landmark, with the real Waypost name shown above. AI imitation photos of real places are ruled out; player photos may replace these later. In range, a gem brightens with a soft glow.
 - 2026-11-09: Roy replaced the Waypost wheel and building with his chosen purple gem. It floats with no pole (Roy's final decision); a Landmark Waypost is a larger, deeper purple gem. After a spin, balls rise in soft bubbles and fade while a vertical tally such as +4 appears at the top right.
 - 2026-11-09: Roy decided Corrupted Capsules appear only inside the pickup circle, so they never crowd the map. Passport and Capsule Album on Journey stay as the simple round line icons, with no text beneath; Roy rejected a more illustrated redraw.
