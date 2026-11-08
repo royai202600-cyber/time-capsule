@@ -1,65 +1,120 @@
 # Time Capsule / 時光膠囊 — concept pictures
 
-Concept review only. Catching uses the plain live map. The app draws the target and animates the capsule in code; neither is baked into these pictures. Ball A is a stand-in until Roy chooses a ball.
+Review concepts only. System vessels are **Corrupted Capsules / 破損膠囊**. A common Waypost is a quiet flat building; a Landmark Waypost is a larger flat navy building. The giant Corrupted Capsule appears inside the Landmark fight preview, not as its map marker.
 
 ## Roy to choose
 
-- Ball: A smooth, B poured, or C pressed wax.
+- Ball: A smooth, B poured or C pressed wax.
 - Gold treatment: solid brass-gold wax or branching brass-gold veins.
-- Crack style: A large branching cracks or B fine crackle.
-- Waypost shape: A small house, B low wide hut, or C narrow kiosk.
-- Waypost colour: flat brass or flat plum.
-- Spinning object: four-blade pinwheel or four-envelope windmill.
+- Crack style: Corrupted A (large branching cracks) or Corrupted B (fine crackle).
+- Common Waypost shape: small house, low wide hut or narrow kiosk.
+- Common Waypost colour: flat brass or flat plum.
+- Landmark Waypost shape: wide hall or two-storey building.
+- Spinning object: pinwheel or four-envelope windmill.
 - Portrait: bench or lamp.
 - Scene: bench or lamp.
 
-## Kept art
+## Preserved art and file renames
 
-Everything under `ball/`, `cracks/` and `whoever/`, plus `screens/screen-landmark.png`, stays byte-identical to commit `15930fd2b182bbd9b5810416a3a2ab45a80e6d3d`. The six detailed Waypost/spinner pictures are deleted.
+Everything in `ball/` and `whoever/`, `screens/map-plain.png`, `screens/hit-dust.png`, and all common `waypost/simple-*` files from commit `8f6100e` stays byte-identical.
 
-The maps are invented generic streets and show no real place. The real-geography reference step does not apply. The existing landmark illustration is retained unchanged.
+The four renamed capsule pictures are also byte-identical to their source blobs in that commit:
+- `cracks/hourglass-corrupted-a.png`
+- `cracks/hourglass-corrupted-b.png`
+- `cracks/senado-corrupted-heavy.png`
+- `screens/layers/capsule-corrupted.png`
 
-## Independent layers
+They were renamed with `git mv`. The older Landmark screen is deleted.
 
-The app can move these separately:
+## Independent app layers
 
-- Map: `screens/map-plain.png`.
-- Shadow: `screens/layers/shadow.png`.
-- Capsule: `screens/layers/capsule-lost.png` or `capsule-mending.png`.
-- Ball: `screens/layers/ball-a.png`.
-- Dust: `screens/hit-dust.png` as the standalone effect, or `screens/layers/dust.png` as a positioned preview layer.
+Map, shadow, capsule, ball and dust remain separate. For catch/fight, the background is `screens/catch-background.png`; `screens/map-plain.png` is the live-map concept background.
 
-The positioned layers all use a transparent 1024 × 1536 canvas. Capsule layers contain no shadow, ball, dust or target. The throw/hit composites are review previews; the app should use the separate layers for motion.
+Existing positioned 1024 × 1536 layers stay separate: `screens/layers/shadow.png`, `capsule-corrupted.png`, `capsule-mending.png`, `ball-a.png`, and `dust.png`. The fight adds independent `landmark-shadow.png` and `landmark-capsule.png` layers. No target, dial, ring or glow is drawn around a capsule. The app supplies the target and movement.
+
+Both backgrounds are invented and show no real place, so the real-geography reference step does not apply. The catch background uses larger, calmer flat shapes than the live map.
 
 ## Script processing
 
-Run from the repository root with Pillow in a temporary environment outside the repository:
+Run from the repository root using Pillow in a temporary environment outside the repository:
 
 ```sh
 /tmp/timecapsule-concept-venv/bin/python design/art/concepts/lost-and-found/make-review.py
 ```
 
-`make-review.py` writes only inside this concept folder. It never re-saves the kept art.
+The script writes only inside this concept folder. It does not re-save protected art or the renamed capsule pictures.
 
-- The five `waypost/simple-*-raw.png` sources are downscaled without upscaling, with any nonsquare output padded to a white 1024 square. White becomes transparent using darkness as alpha, normalised to navy ink density. Near-white paper noise is discarded. Each mask gets constant RGB #C9A15A brass or #6E2B3F plum. No blue derivative versions are made.
-- The normal ball is the exact `ball/ball-a-smooth.png` artwork cropped by alpha and uniformly resized to 180 px wide.
-- The lost capsule is the exact `cracks/hourglass-lost-a.png`, cropped by alpha and uniformly resized to 340 px wide. It starts at y=260 on the 1024 × 1536 preview canvas.
-- The mending capsule blends the full lost and restored hourglass source pixels 60% toward the restored source, then uses the exact same crop, scale and position.
-- The shadow is a small low-opacity navy ellipse blurred by 12 px, exported on its own canvas.
-- `screens/screen-throw.png` composites map → shadow → lost capsule → normal ball. No motion marks, glow or target.
-- `screens/screen-hit.png` composites map → same shadow → mending capsule → dust centred over the capsule at 620 px wide. No ball or target.
-- `screens/map-capsule-and-wayposts.png` uses the map, an exact lost hourglass at 200 px tall, and the three brass buildings at 64 px wide on different streets.
-- `checks/wayposts-64.png` shows each shape in brass and plum, top row at maximum dimension 48 px, bottom at 64 px, on map land #F3EFE6.
-- `contact-sheet.png` groups the kept balls, cracks, landmark and envelope portraits/scenes with the revised map, catch previews, Wayposts, spinners and checks. Width is 2200 px. Only this image contains captions.
-- Existing ball/hourglass/portrait checks stay unchanged. The original kept crack overlays use darkness as alpha with a thin offset pale edge; lost vessels use 50% saturation, a light cool mist and cracks stretched to the alpha bounding box and clipped to original alpha. The restored hourglass is an untouched master copy. Existing portrait circles and scene edge fades are preserved.
+- The two new Landmark raw images are downscaled to 1024 without upscaling and padded to a white square if needed. White becomes transparent using darkness as alpha, normalised to navy ink density. Near-white noise is removed; RGB is constant navy #16263F.
+- Common Waypost/spinner brass and plum masks remain unchanged. They were made from the existing raw shapes using the same darkness-to-alpha method.
+- The Corrupted hourglass layer retains its exact 340 px width, y=260 position and artwork. Ball A remains the 180 px stand-in at its previous bottom-centre position.
+- `screens/screen-throw.png` and `screen-hit.png` retain the exact positioned layers, sizes and order from `8f6100e`; only their background changes to the shared catch background.
+- The mending layer is retained: full source pixels blended 60% toward the restored hourglass, then uniformly cropped/scaled like the Corrupted layer.
+- `screens/screen-landmark-fight.png` composites catch background → enlarged existing soft shadow → the kept heavy Corrupted Senado capsule at 717 px wide, y=240 → the exact existing ball layer. The shadow's full alpha bounds preserve its soft edges. The separate fight capsule and shadow layers are exported.
+- `screens/map-capsule-and-wayposts.png` keeps the previous live-map background, 200 px Corrupted hourglass and three 64 px brass Wayposts at their previous positions. It adds both navy Landmark buildings at 120 px wide on separate streets. No giant capsule is placed on this map.
+- `checks/wayposts-64.png` preserves the common shape/colour comparison at 48 and 64 px and adds the two navy Landmark buildings at 64 and 96 px, all on map land #F3EFE6.
+- `contact-sheet.png` is 2200 px wide, with sections Balls → Crack effect → Throw and hit → Common Wayposts → Landmark Waypost → To whoever passes by. It is the only image containing text.
+- The kept crack overlays, Corrupted vessel effects, restored master, ball checks, portrait circles, scene fades and their checks retain the previously documented processing and pixels. Original crack effects reduce saturation by half, add cool mist, stretch the cracks to the vessel alpha bounding box and clip to the original alpha.
 
-## Review
+Visual review covers no writing/logos, no target artwork, the shared simple background, flat Landmark building silhouettes, independent layers and small-size readability. The two-storey raw source was regenerated once to remove unrequested windows. No app/browser/device integration is claimed.
 
-Visual checks cover no writing/logos, no targets/rings, empty plain map, distinct flat silhouettes, no painted catch background, separate layers and small-size readability. Kept-art hashes are checked against the previous commit. This remains concept art; no app or browser integration is claimed.
+## Exact final prompts for the three new pictures
 
-## Exact generation prompts
+Model: **gpt-image-2 through Codex's built-in image tool**. The approved style sheet is the first reference on every call.
 
-All generated pictures use **gpt-image-2 through Codex's built-in image tool**. The first reference is always the approved style sheet. The seven new prompts below start with the unchanged style block, followed by the required override and notes.
+### `screens/catch-background.png`
+
+Model: `gpt-image-2`
+
+References: `design/art/style-sheet.png`
+
+```text
+App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
+- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
+- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
+- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
+- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
+Match the attached style sheet exactly.
+Override for this image only: this is an empty full-bleed portrait phone-screen background, about 1024×1536, not an object on a transparent square. Ignore the style block's lines about ink line art, hatching, view, transparent background, centring, padding, square format and palette. Do not copy the objects or detail of the style sheet. Every pixel is filled using only: water #BCD3E6, land #F3EFE6, park #DCE6CF, sand #EFE3C6, building #E6E0D3, building top #EEE9DE, road #FFFFFF, road edge #D5DDE7, main road #F1E2BF, paper #F6F8FB.
+A simple made-up backdrop built from large flat shapes: open pale land, one wide park shape, one curved road, a little water and only a few simple pale blocks near the edges. It is calmer and has bigger shapes than a street map, and is not a real place. The middle of the picture is open plain land. The top edge fades softly into paper #F6F8FB. Flat colour only, not painted. No outlines, labels, pins, trees, grass, cars, people, sky, clouds, phone frame, status bar, buttons, icons or circles.
+```
+
+### `waypost/simple-landmark-a-hall-raw.png`
+
+Model: `gpt-image-2`
+
+References: `design/art/style-sheet.png`
+
+```text
+App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
+- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
+- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
+- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
+- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
+Match the attached style sheet exactly.
+Override for this image only: this is one very simple flat silhouette, not an illustration. Ignore the style block's lines about ink line art, shading, paper grain, hatching, three-quarter view, palette and transparent background. Do not copy the objects or detail of the style sheet. Pure white background, one single flat navy #16263F shape seen straight from the front, about 70% of the canvas, with no outline, shading, texture, gradient or second colour. Any detail is a simple white cut-out. It is clearly a larger, more important building and looks nothing like a capsule, vessel, jar, box or fountain. Not a tower, arena, temple or real building, and no disc, ring, base circle, beam or glow.
+A wide plain hall with one long low roof and three arched door cut-outs. No text, letters, numbers, logos or writing-like marks.
+```
+
+### `waypost/simple-landmark-b-steps-raw.png`
+
+Model: `gpt-image-2`
+
+References: `design/art/style-sheet.png`
+
+```text
+App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
+- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
+- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
+- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
+- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
+Match the attached style sheet exactly.
+Override for this image only: this is one very simple flat silhouette, not an illustration. Ignore the style block's lines about ink line art, shading, paper grain, hatching, three-quarter view, palette and transparent background. Do not copy the objects or detail of the style sheet. Pure white background, one single flat navy #16263F shape seen straight from the front, about 70% of the canvas, with no outline, shading, texture, gradient or second colour. Any detail is a simple white cut-out. It is clearly a larger, more important building and looks nothing like a capsule, vessel, jar, box or fountain. Not a tower, arena, temple or real building, and no disc, ring, base circle, beam or glow.
+A wide two-storey building, with a smaller upper storey sitting on a larger lower storey, plain flat roofs and ONE central arched door cut-out. Absolutely no windows, decorative panels, columns or other details. The central door is the ONLY white cut-out in an otherwise solid stepped silhouette. No text, letters, numbers, logos or writing-like marks.
+```
+
+## Retained generation provenance
+
+Prompts already recorded for kept pictures remain word for word; they may contain older wording or file names. The obsolete Landmark screen prompt has been removed.
 
 ### `screens/map-plain.png`
 
@@ -186,10 +241,6 @@ FOUR plain envelope silhouettes joined at a small centre hub, like a little wind
 No pole-like building, sign, tall tower, arena, cube, floating shape, disc, ring, base circle, beam or glow. No text, letters, numbers, labels, logos or marks resembling writing. Do not add any details beyond the requested cut-out.
 ```
 
-## Retained generation provenance
-
-These exact original prompts document the kept generated files. Their outputs are unchanged.
-
 ### `ball/ball-a-smooth.png`
 
 Model: `gpt-image-2`
@@ -309,24 +360,6 @@ Match the attached style sheet exactly.
 Override for this image only: this is a crack-pattern layer, not an object. Ignore the style block's lines about view, transparent background, centring, padding and palette. Pure white background, navy #16263F ink lines only, no shading and no object. The pattern fills the whole square from edge to edge.
 Fine crackle like old porcelain, denser on the right side and sparse on the left. Continuous branching network across the whole square to edges. No border.
 No text, letters, numbers, logos or marks resembling writing. No extra objects.
-```
-
-### `screens/screen-landmark.png`
-
-Model: `gpt-image-2`
-
-References: `design/art/style-sheet.png`, `design/art/concepts/lost-and-found/cracks/senado-lost-heavy.png`
-
-```text
-App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
-- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
-- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
-- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
-- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
-Match the attached style sheet exactly.
-Override for this image only: this is a full-bleed portrait phone screen, about 1024×1536, not one object on a transparent square. Ignore the style block's lines about transparent background, centring, padding and square format. Every pixel is filled. The map may also use these app map colours: water #BCD3E6, land #F3EFE6, park #DCE6CF, sand #EFE3C6, building #E6E0D3, building top #EEE9DE, road #FFFFFF, road edge #D5DDE7, main road #F1E2BF. The map has no ink outlines or hatching, so the hand-inked objects stand out. Inked objects still follow the style block.
-The background is an invented street map seen from above at a gentle tilt, like a calm navigation map: flat pale land, a few white streets, one main road, low pale building blocks, one flat pale park shape and a little water. It is simple and quiet, with no labels, pins, trees, grass, cars, people, sky or clouds. The top edge fades softly into paper #F6F8FB. It is not a painted park or a separate scene, and not a camera view. Do not draw a phone frame, status bar, buttons, icons, counters or any other interface.
-ONE giant badly cracked Senado-fountain vessel from reference 2 stands directly on the map. Keep the exact low circular fountain-container design, wavy dark-and-cream side motif, circular water basin and central water spout from the reference. Towering over several low pale building blocks and clearly much larger than an ordinary map marker. Dulled colour, heavy navy cracks across it. No ring and no ball. No photo, real geography, text, letters, numbers, labels, writing-like marks, UI, creatures or characters.
 ```
 
 ### `whoever/portrait-a-bench.png`

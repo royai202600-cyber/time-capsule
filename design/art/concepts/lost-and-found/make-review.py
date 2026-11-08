@@ -16,8 +16,9 @@ def fit(im,w,h):
 def layer(im,xy):
     out=Image.new("RGBA",SIZE);out.alpha_composite(im,xy);return out
 def export(name,im): im.save(P/name)
+LANDMARKS=("simple-landmark-a-hall","simple-landmark-b-steps")
 def shapes():
-    for name in NAMES:
+    for name in LANDMARKS:
         f=P/f"waypost/{name}-raw.png";im=load(f)
         if max(im.size)>1024:im.thumbnail((1024,1024),Image.Resampling.LANCZOS)
         # Pad to a white square; preserve geometry and never upscale.
@@ -28,48 +29,54 @@ def shapes():
         alpha=gray.point(lambda v:max(0,min(255,round((255-v)*255/218))))
         # Remove near-white paper noise; retain antialiased boundaries.
         alpha=alpha.point(lambda v:0 if v<8 else v)
-        for colour,rgb in (("brass",BRASS),("plum",PLUM)):
+        for colour,rgb in (("navy",NAVY),):
             out=Image.new("RGBA",im.size,rgb+(0,));out.putalpha(alpha)
             export(f"waypost/{name}-{colour}.png",out)
 def compositions():
-    folder=P/"screens/layers";folder.mkdir(exist_ok=True)
-    background=load(P/"screens/map-plain.png")
+    background=load(P/"screens/catch-background.png")
     assert background.size==SIZE
-    lost=load(P/"cracks/hourglass-lost-a.png")
-    restored=load(P/"cracks/hourglass-restored.png")
-    bounds=box(lost)
-    capsule=resized(lost.crop(bounds),width=340)
-    mended=resized(Image.blend(lost,restored,.6).crop(bounds),width=340)
-    x=(1024-capsule.width)//2;y=260
-    shadow=Image.new("RGBA",SIZE);d=ImageDraw.Draw(shadow)
-    d.ellipse((x+35,y+capsule.height-8,x+capsule.width-35,y+capsule.height+25),fill=NAVY+(48,))
-    shadow=shadow.filter(ImageFilter.GaussianBlur(12))
-    ball=resized(crop(load(P/"ball/ball-a-smooth.png")),width=180)
-    ball_layer=layer(ball,((1024-ball.width)//2,1270))
-    capsule_layer=layer(capsule,(x,y));mending_layer=layer(mended,(x,y))
-    dust=resized(crop(load(P/"screens/hit-dust.png")),width=620)
-    dust_layer=layer(dust,((1024-dust.width)//2,y+(capsule.height-dust.height)//2))
-    for name,im in (("shadow",shadow),("capsule-lost",capsule_layer),("capsule-mending",mending_layer),("ball-a",ball_layer),("dust",dust_layer)):
-        export(f"screens/layers/{name}.png",im)
+    shadow=load(P/"screens/layers/shadow.png")
+    capsule=load(P/"screens/layers/capsule-corrupted.png")
+    mending=load(P/"screens/layers/capsule-mending.png")
+    ball=load(P/"screens/layers/ball-a.png")
+    dust=load(P/"screens/layers/dust.png")
     throw=background.copy()
-    for im in (shadow,capsule_layer,ball_layer):throw=Image.alpha_composite(throw,im)
+    for im in (shadow,capsule,ball):throw=Image.alpha_composite(throw,im)
     export("screens/screen-throw.png",throw.convert("RGB"))
     hit=background.copy()
-    for im in (shadow,mending_layer,dust_layer):hit=Image.alpha_composite(hit,im)
+    for im in (shadow,mending,dust):hit=Image.alpha_composite(hit,im)
     export("screens/screen-hit.png",hit.convert("RGB"))
-    overview=background.copy()
-    hero=resized(crop(lost),height=200);overview.alpha_composite(hero,((1024-hero.width)//2,500))
+    fountain=resized(crop(load(P/"cracks/senado-corrupted-heavy.png")),width=717)
+    fx=(1024-fountain.width)//2;fy=240
+    large_shadow=resized(shadow.crop(shadow.getchannel("A").getbbox()),width=620)
+    fight_shadow=layer(large_shadow,((1024-large_shadow.width)//2,fy+fountain.height-8))
+    fight_capsule=layer(fountain,(fx,fy))
+    export("screens/layers/landmark-shadow.png",fight_shadow)
+    export("screens/layers/landmark-capsule.png",fight_capsule)
+    fight=background.copy()
+    for im in (fight_shadow,fight_capsule,ball):fight=Image.alpha_composite(fight,im)
+    export("screens/screen-landmark-fight.png",fight.convert("RGB"))
+    overview=load(P/"screens/map-plain.png")
+    hero=resized(crop(load(P/"cracks/hourglass-corrupted-a.png")),height=200)
+    overview.alpha_composite(hero,((1024-hero.width)//2,500))
     for name,(cx,cy) in zip(NAMES[:3],((170,650),(850,740),(610,1130))):
         im=resized(crop(load(P/f"waypost/{name}-brass.png")),width=64)
         overview.alpha_composite(im,(cx-im.width//2,cy-im.height//2))
+    for name,(cx,cy) in zip(LANDMARKS,((380,290),(830,1040))):
+        im=resized(crop(load(P/f"waypost/{name}-navy.png")),width=120)
+        overview.alpha_composite(im,(cx-im.width//2,cy-im.height//2))
     export("screens/map-capsule-and-wayposts.png",overview.convert("RGB"))
 def small_check():
-    out=Image.new("RGBA",(1000,260),LAND+(255,))
+    out=Image.new("RGBA",(1000,500),LAND+(255,))
     for i,name in enumerate(NAMES):
         for j,colour in enumerate(("brass","plum")):
             for row,size in enumerate((48,64)):
                 im=fit(crop(load(P/f"waypost/{name}-{colour}.png")),size,size)
                 out.alpha_composite(im,(i*200+j*90+(90-im.width)//2,15+row*125+(80-im.height)//2))
+    for i,name in enumerate(LANDMARKS):
+        for row,size in enumerate((64,96)):
+            im=fit(crop(load(P/f"waypost/{name}-navy.png")),size,size)
+            out.alpha_composite(im,(350+i*200+(100-im.width)//2,280+row*110))
     export("checks/wayposts-64.png",out)
 def sheet():
     font=ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf",24)
@@ -78,16 +85,17 @@ def sheet():
     rows=[
       ("1 Balls",[(str(f.relative_to(P)),f.stem.replace("ball-","Ball ").replace("-"," ")) for f in sorted((P/"ball").glob("*.png"))],400),
       ("",[("checks/balls-64.png","All five balls at 64 px: map land / white road")],220),
-      ("2 Shared crack effect",[(f"cracks/crack-{k}{s}.png",f"Crack {k[0].upper()}: "+("raw ink" if s else "transparent + pale edge")) for k in ("a-large","b-fine") for s in ("-raw","")],400),
-      ("",[(f"cracks/hourglass-{k}.png",label) for k,label in (("lost-a","Hourglass: large cracks"),("lost-b","Hourglass: fine cracks"),("restored","Hourglass: untouched master"))]+[("cracks/other-vessels-proof.png","Shared effect on three other vessels")],450),
-      ("",[("checks/hourglasses-120-64.png","Lost A / Lost B / restored at 120 and 64 px")],260),
-      ("3 Catch on the plain map",[("screens/screen-throw.png","Throw on the plain map, the app draws the circle"),("screens/screen-hit.png","Hit: separate dust and mending capsule")],700),
-      ("",[("screens/map-plain.png","Plain map: no objects or interface"),("screens/map-capsule-and-wayposts.png","Detailed capsule, quiet brass buildings")],650),
+      ("2 Crack effect",[(f"cracks/crack-{k}{s}.png",f"Crack {k[0].upper()}: "+("raw ink" if s else "transparent + pale edge")) for k in ("a-large","b-fine") for s in ("-raw","")],400),
+      ("",[(f"cracks/hourglass-{k}.png",label) for k,label in (("corrupted-a","Corrupted A"),("corrupted-b","Corrupted B"),("restored","Restored"))]+[("cracks/other-vessels-proof.png","Shared effect on three other vessels")],450),
+      ("",[("checks/hourglasses-120-64.png","Corrupted A / Corrupted B / Restored at 120 and 64 px")],260),
+      ("3 Throw and hit",[("screens/screen-throw.png","Throw: shared catch background, no target artwork"),("screens/screen-hit.png","Hit: separate dust and mending capsule")],700),
+      ("",[("screens/catch-background.png","Shared catch and Landmark fight background")],650),
       ("",[("screens/hit-dust.png","Separate wax-red dust effect")],220),
-      ("4 Quiet Wayposts",[(f"waypost/{n}-brass.png",label+", brass") for n,label in zip(NAMES,names)],320),
+      ("4 Common Wayposts",[(f"waypost/{n}-brass.png",label+", brass") for n,label in zip(NAMES,names)],320),
       ("",[(f"waypost/{n}-plum.png",label+", plum") for n,label in zip(NAMES,names)],320),
-      ("",[("checks/wayposts-64.png","Each pair: brass / plum; top 48 px, bottom 64 px")],300),
-      ("5 Landmark Waypost",[("cracks/senado-lost-heavy.png","Senado vessel: heavy shared crack effect"),("screens/screen-landmark.png","Giant cracked fountain on invented map")],650),
+      ("",[("checks/wayposts-64.png","Common: brass/plum at 48/64 px; Landmark: navy at 64/96 px")],500),
+      ("5 Landmark Waypost",[("waypost/simple-landmark-a-hall-navy.png","Landmark A: wide hall, navy"),("waypost/simple-landmark-b-steps-navy.png","Landmark B: two-storey building, navy")],300),
+      ("",[("screens/map-capsule-and-wayposts.png","Map: common and Landmark buildings"),("screens/screen-landmark-fight.png","Landmark fight: giant Corrupted Capsule")],650),
       ("6 To whoever passes by",[("whoever/portrait-a-bench.png","Portrait A: waiting envelope on bench"),("whoever/portrait-b-lamp.png","Portrait B: envelope tied to lamp")],380),
       ("",[("whoever/scene-a-bench.png","Scene A: envelope waiting on bench"),("whoever/scene-b-lamp.png","Scene B: envelope tied to lamp")],450),
       ("",[("checks/portraits-24-40.png","Both portraits at actual 24 and 40 px")],150)
