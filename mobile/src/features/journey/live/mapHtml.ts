@@ -76,13 +76,13 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.corrupted.uncommon .disc{background:radial-gradient(${C.lightBlue}99,transparent 70%)}
 .pin.waypost{width:40px;height:50px}
 .pin.waypost .disc{left:6px;width:28px;height:8px}
-.pin.waypost .post{position:absolute;left:6px;bottom:3px;width:28px;height:34px}
+.pin.waypost .post{position:absolute;left:4px;bottom:9px;width:32px;height:40px;animation:bob 3.6s ease-in-out infinite}
 .pin.waypost.done{opacity:.45}
-.pin.landmark{width:60px;height:78px}
-.pin.landmark .disc{left:10px;width:40px;height:10px}
-.pin.landmark .post{position:absolute;left:8px;bottom:3px;width:44px;height:68px}
+.pin.landmark{width:64px;height:88px}
+.pin.landmark .disc{left:12px;width:40px;height:10px}
+.pin.landmark .post{position:absolute;left:6px;bottom:12px;width:52px;height:65px;animation:bob 3.6s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@media (prefers-reduced-motion: reduce){.pin .v,.pin .crack,.you .pulse{animation:none}}
+@media (prefers-reduced-motion: reduce){.pin .v,.pin .crack,.pin .post,.you .pulse{animation:none}}
 </style></head><body><div id="map"></div>
 <script>
 const send=m=>{const s=JSON.stringify(m);if(window.ReactNativeWebView)window.ReactNativeWebView.postMessage(s);else parent.postMessage({__tcmap:s},'*')};
@@ -99,9 +99,9 @@ const cameraPadding={top:80,bottom:160,left:0,right:0};
 const map=new maplibregl.Map({container:'map',style:${JSON.stringify(style)},center:[${center.lng},${center.lat}],zoom:pickupZoom(${center.lat}),padding:cameraPadding,pitch:40,maxPitch:70,bearing:0,attributionControl:{compact:true},localIdeographFontFamily:'"PingFang TC","Noto Sans TC",sans-serif'});
 let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 const crack='<svg class="crack" viewBox="0 0 100 100"><path d="M38 26l5 11-5 8 8 10-3 9M66 34l-6 9 5 7-8 7M30 62l9-2 5 5" stroke="${C.ink}" stroke-opacity=".5" stroke-width="1" fill="none" stroke-linejoin="round" stroke-linecap="round"/></svg>';
-// Wayposts stay one flat colour and small, so only capsules read as objects to go after.
-const post='<svg class="post" viewBox="0 0 28 34"><path d="M14 1 27 12v3H1v-3Z" fill="${C.blue}"/><path d="M4 15h20v18H4Z" fill="${C.blue}"/><path d="M11 22h6v11h-6Z" fill="${C.paper}"/></svg>';
-const tower='<svg class="post" viewBox="0 0 44 68"><path d="M22 1v8" stroke="${C.plum}" stroke-width="2"/><path d="M22 2l9 3-9 3Z" fill="${C.plum}"/><path d="M22 9 35 21v3H9v-3Z" fill="${C.plum}"/><path d="M13 24h18v8H13Z" fill="${C.plum}"/><path d="M9 32h26v8H9Z" fill="${C.plum}"/><path d="M5 40h34v27H5Z" fill="${C.plum}"/><path d="M18 50h8v17h-8Z" fill="${C.paper}"/></svg>';
+// Wayposts are floating gems, clearly not buildings and clearly not capsules.
+const post='<svg class="post" viewBox="0 0 32 40"><path d="M16 1 1 17h8Z" fill="#B48EA2"/><path d="M16 1 9 17h14Z" fill="#9C7285"/><path d="M16 1l7 16h8Z" fill="#8A6175"/><path d="M1 17h8l7 22Z" fill="#8A6175"/><path d="M9 17h14l-7 22Z" fill="#6F4759"/><path d="M23 17h8L16 39Z" fill="#5C3949"/></svg>';
+const tower='<svg class="post" viewBox="0 0 32 40"><path d="M16 1 1 17h8Z" fill="#8C5A80"/><path d="M16 1 9 17h14Z" fill="#754567"/><path d="M16 1l7 16h8Z" fill="#613757"/><path d="M1 17h8l7 22Z" fill="#613757"/><path d="M9 17h14l-7 22Z" fill="#4A2743"/><path d="M23 17h8L16 39Z" fill="#3A1D35"/></svg>';
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
 map.on('load',()=>{

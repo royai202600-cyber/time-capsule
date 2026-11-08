@@ -1,27 +1,39 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Easing, PanResponder, Platform, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Svg, { Circle, Line, Path } from "react-native-svg";
+import Svg, { Polygon } from "react-native-svg";
 import { ArtIcon } from "../../components/ArtIcon";
 import { haptics } from "../../components/haptics";
 import { game, GameError, type GameState, type Waypost } from "../../services/game";
-import { C, radii, sans, serif, shadows, spacing } from "../../theme";
+import { C, radii, serif, shadows, spacing } from "../../theme";
 import { errorKey, useGameText } from "./strings";
 import { ThrowBackground, WaxBall } from "./ThrowScreen";
 
 const NATIVE = Platform.OS !== "web";
-const WHEEL = 244;
-const SPOKES = Array.from({ length: 8 }, (_, i) => (i / 8) * Math.PI * 2);
+const GEM = 230;
+const SIDES = 6;
+const SPIN_MS = 1500;
+const STAGGER = .09;
 
-/** A plain waypost wheel: one flat colour and a little building, so it never competes with capsules. */
-function Wheel({ color }: { color: string }) {
-  return <Svg width={WHEEL} height={WHEEL} viewBox="0 0 100 100">
-    <Circle cx={50} cy={50} r={47} fill={C.paper} stroke={color} strokeWidth={3} />
-    <Circle cx={50} cy={50} r={38} fill="none" stroke={color} strokeOpacity={.35} strokeWidth={1} />
-    {SPOKES.map((a) => <Line key={a} x1={50 + Math.cos(a) * 20} y1={50 + Math.sin(a) * 20} x2={50 + Math.cos(a) * 44} y2={50 + Math.sin(a) * 44} stroke={color} strokeWidth={2} strokeLinecap="round" />)}
-    <Circle cx={50} cy={50} r={17} fill={color} />
-    <Path d="M50 40 60 49v2H40v-2Z" fill={C.paper} />
-    <Path d="M43 51h14v9H43Z" fill={C.paper} />
+const mix = (a: number[], b: number[], t: number) => `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(",")})`;
+const LIGHT = [186, 148, 166], MID = [120, 80, 100], DARK = [74, 44, 60];
+
+/** The Waypost gem as a real six-sided shape, so a swipe genuinely turns it. */
+function Gem({ angle, size }: { angle: number; size: number }) {
+  const step = (Math.PI * 2) / SIDES;
+  const cx = size / 2, cy = size * .46, radius = size * .44, top = size * .40, bottom = size * .50;
+  const faces = Array.from({ length: SIDES }, (_, i) => {
+    const a0 = angle + i * step, a1 = a0 + step, mid = (a0 + a1) / 2;
+    return { x0: cx + radius * Math.sin(a0), x1: cx + radius * Math.sin(a1), facing: Math.cos(mid), side: Math.sin(mid) };
+  }).filter((face) => face.facing > 0);
+  return <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+    {faces.map((face, i) => {
+      const light = Math.max(0, Math.min(1, face.facing * .75 - face.side * .4));
+      return <React.Fragment key={i}>
+        <Polygon points={`${cx},${cy - top} ${face.x0},${cy} ${face.x1},${cy}`} fill={mix(MID, LIGHT, light)} />
+        <Polygon points={`${face.x0},${cy} ${face.x1},${cy} ${cx},${cy + bottom}`} fill={mix(DARK, MID, light)} />
+      </React.Fragment>;
+    })}
   </Svg>;
 }
 
@@ -31,28 +43,45 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
   const insets = useSafeAreaInsets();
   const s = useGameText();
   const cooling = !!waypost.cooldown_until && new Date(waypost.cooldown_until).getTime() > Date.now();
+  const [angle, setAngle] = useState(.35);
   const [reward, setReward] = useState<{ wax: number; gold: number } | null>(null);
   const [note, setNote] = useState(cooling ? s("cooldown") : "");
   const [spent, setSpent] = useState(cooling);
-  const rotation = useRef(new Animated.Value(0)).current;
-  const pop = useRef(new Animated.Value(0)).current;
-  const turned = useRef(0);
+  const rise = useRef(new Animated.Value(0)).current;
+  const tally = useRef(new Animated.Value(0)).current;
+  const current = useRef(.35);
   const busy = useRef(cooling);
+  const frame = useRef<number | null>(null);
+
+  useEffect(() => () => { if (frame.current !== null) cancelAnimationFrame(frame.current); }, []);
+
+  const turn = (direction: number) => {
+    const from = current.current, to = from + direction * Math.PI * 6, start = Date.now();
+    const tick = () => {
+      const t = Math.min(1, (Date.now() - start) / SPIN_MS);
+      const next = from + (to - from) * (1 - Math.pow(1 - t, 3));
+      current.current = next;
+      setAngle(next);
+      if (t < 1) frame.current = requestAnimationFrame(tick);
+    };
+    frame.current = requestAnimationFrame(tick);
+  };
 
   const spin = async (direction: number) => {
     busy.current = true;
     void haptics.tap();
-    Animated.timing(rotation, { toValue: turned.current + direction * 1080, duration: 1400, easing: Easing.out(Easing.cubic), useNativeDriver: NATIVE }).start();
+    turn(direction);
     try {
       const out = await game.spin(waypost.id);
       onState(out.state);
       setTimeout(() => {
         void haptics.success();
         setReward({ wax: out.wax, gold: out.gold });
-        setNote(s("spun", out.wax, out.gold));
         setSpent(true);
-        Animated.spring(pop, { toValue: 1, useNativeDriver: NATIVE }).start();
-      }, 900);
+        rise.setValue(0); tally.setValue(0);
+        Animated.timing(rise, { toValue: 1, duration: 1500, easing: Easing.out(Easing.quad), useNativeDriver: NATIVE }).start();
+        Animated.timing(tally, { toValue: 1, duration: 2800, easing: Easing.linear, useNativeDriver: NATIVE }).start();
+      }, 700);
     } catch (e) {
       void haptics.warn();
       setNote(s(errorKey(e instanceof GameError ? e.code : "unknown")));
@@ -65,14 +94,16 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
   const pan = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => !busy.current,
     onMoveShouldSetPanResponder: () => !busy.current,
-    onPanResponderMove: (_, g) => rotation.setValue(g.dx * .9),
+    onPanResponderMove: (_, g) => { const next = .35 + g.dx * .014; current.current = next; setAngle(next); },
     onPanResponderRelease: (_, g) => {
-      if (Math.abs(g.dx) > 50 || Math.abs(g.vx) > .4) { turned.current = g.dx * .9; void spinRef.current(g.dx < 0 ? -1 : 1); }
-      else Animated.spring(rotation, { toValue: 0, useNativeDriver: NATIVE }).start();
+      if (Math.abs(g.dx) > 50 || Math.abs(g.vx) > .4) void spinRef.current(g.dx < 0 ? -1 : 1);
     },
-  }), [rotation]);
+  }), []);
 
   const name = language === "zh" ? waypost.name_zh : waypost.name_en;
+  const balls: ("wax" | "gold")[] = reward ? [...Array<"wax">(reward.wax).fill("wax"), ...Array<"gold">(reward.gold).fill("gold")] : [];
+  const lines = reward ? [{ kind: "wax" as const, count: reward.wax }, ...(reward.gold ? [{ kind: "gold" as const, count: reward.gold }] : [])] : [];
+
   return <View style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 40 }}>
     <ThrowBackground />
     <View pointerEvents="box-none" style={{ position: "absolute", top: insets.top + spacing.sm, left: spacing.md, right: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
@@ -83,20 +114,42 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
       <Text numberOfLines={1} style={{ flex: 1, fontFamily: serif, fontSize: 20, color: C.ink }}>{name}</Text>
     </View>
 
+    <View pointerEvents="none" style={{ position: "absolute", top: insets.top + 68, right: spacing.md, alignItems: "flex-end", gap: 8 }}>
+      {lines.map((line, i) => <Animated.View key={line.kind} style={{
+        flexDirection: "row", alignItems: "center", gap: 6,
+        opacity: tally.interpolate({ inputRange: [0, .08 + i * .06, .8, 1], outputRange: [0, 1, 1, 0] }),
+        transform: [{ translateX: tally.interpolate({ inputRange: [0, .08 + i * .06, 1], outputRange: [28, 0, 0] }) }],
+      }}>
+        <Text style={{ fontFamily: serif, fontSize: 20, color: C.ink }}>+{line.count}</Text>
+        <WaxBall kind={line.kind} size={30} />
+      </Animated.View>)}
+    </View>
+
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.lg }}>
-      <Animated.View {...pan.panHandlers} accessibilityRole="adjustable" accessibilityLabel={s("spinHint")}
-        style={{
-          width: WHEEL, height: WHEEL, opacity: spent && !reward ? .55 : 1,
-          transform: [{ rotate: rotation.interpolate({ inputRange: [-3600, 3600], outputRange: ["-3600deg", "3600deg"] }) }],
-          ...(Platform.OS === "web" ? ({ touchAction: "none", cursor: "grab", userSelect: "none" } as object) : {}),
-        }}>
-        <Wheel color={C.blue} />
-      </Animated.View>
-      {reward && <Animated.View style={{ flexDirection: "row", gap: 6, opacity: pop, transform: [{ scale: pop }] }}>
-        {Array.from({ length: reward.wax }, (_, i) => <WaxBall key={i} kind="wax" size={34} />)}
-        {reward.gold > 0 && <WaxBall kind="gold" size={34} />}
-      </Animated.View>}
-      <Text style={{ fontFamily: sans, fontSize: 14, color: C.ink, backgroundColor: "rgba(246,248,251,.86)", paddingHorizontal: 14, paddingVertical: 8, borderRadius: radii.pill, overflow: "hidden" }}>{note || s("spinHint")}</Text>
+      <View style={{ width: GEM, height: GEM, alignItems: "center", justifyContent: "center" }}>
+        <View {...pan.panHandlers} accessibilityRole="adjustable" accessibilityLabel={s("spinHint")}
+          style={{
+            width: GEM, height: GEM, opacity: spent && !reward ? .5 : 1,
+            ...(Platform.OS === "web" ? ({ touchAction: "none", cursor: "grab", userSelect: "none" } as object) : {}),
+          }}>
+          <Gem angle={angle} size={GEM} />
+        </View>
+        {balls.map((kind, i) => {
+          const start = Math.min(.5, i * STAGGER);
+          const end = Math.min(1, start + .55);
+          const drift = (i % 2 ? 1 : -1) * (24 + (i % 3) * 22);
+          return <Animated.View key={i} pointerEvents="none" style={{
+            position: "absolute", width: 56, height: 56, borderRadius: 28, alignItems: "center", justifyContent: "center",
+            backgroundColor: "rgba(255,255,255,.34)", borderWidth: 1, borderColor: "rgba(255,255,255,.75)",
+            opacity: rise.interpolate({ inputRange: [start, start + .08, end - .15, end], outputRange: [0, 1, 1, 0], extrapolate: "clamp" }),
+            transform: [
+              { translateX: rise.interpolate({ inputRange: [start, end], outputRange: [0, drift], extrapolate: "clamp" }) },
+              { translateY: rise.interpolate({ inputRange: [start, end], outputRange: [20, -190], extrapolate: "clamp" }) },
+            ],
+          }}><WaxBall kind={kind} size={38} /></Animated.View>;
+        })}
+      </View>
+      {!reward && <Text style={{ fontSize: 14, color: C.ink, backgroundColor: "rgba(246,248,251,.86)", paddingHorizontal: 14, paddingVertical: 8, borderRadius: radii.pill, overflow: "hidden" }}>{note || s("spinHint")}</Text>}
     </View>
 
     {spent && <Pressable accessibilityRole="button" onPress={onClose} style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, alignItems: "center", backgroundColor: C.blue, borderRadius: radii.pill, paddingVertical: 13 }}>
