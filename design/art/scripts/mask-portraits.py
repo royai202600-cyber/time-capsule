@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1] / "portraits"
 CENTER = (505, 526)
 RADIUS = 430
 TARGETS = {
+    "portrait-sea.png": (205, 222, 236),  # pale sea-glass blue
     "portrait-06.png": (214, 208, 223),  # mist plum
     "portrait-07.png": (193, 224, 231),  # blue mint
     "portrait-08.png": (232, 216, 228),  # pale mauve
@@ -37,7 +38,13 @@ def main() -> None:
     )
     for path in sorted(ROOT.glob("portrait-*.png")):
         portrait = Image.open(path).convert("RGBA")
+        # Approved canonical portraits are immutable; only normalize new inputs.
+        if portrait.size == (1024, 1024) and ImageChops.difference(portrait.getchannel("A"), disc_mask).getbbox() is None:
+            print(path.name, "already has the shared mask; unchanged")
+            continue
         if portrait.size != (1024, 1024):
+            if portrait.width < 1024 or portrait.height < 1024:
+                raise ValueError(f"{path.name}: never upscale a portrait")
             portrait = portrait.resize((1024, 1024), Image.Resampling.LANCZOS)
         target = TARGETS.get(path.name, portrait.getpixel((512, 100))[:3])
         portrait = recolor_disc(portrait, target)

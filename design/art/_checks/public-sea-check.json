@@ -1,0 +1,78 @@
+{
+  "baseline_main_commit": "d04fb02fe1b5b7f6c73d3bf6f0342dddea89f93f",
+  "existing_master_export_images_checked": 446,
+  "existing_images_changed": [],
+  "nine_existing_portraits_unchanged": true,
+  "existing_manifest_records_unchanged": 223,
+  "assets": [
+    {
+      "path": "design/art/portraits/portrait-sea.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "intermediate_alpha_pixels": 0
+    },
+    {
+      "path": "design/art/scenes/scene-sea-sealed.png",
+      "size": [
+        1536,
+        1024
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "intermediate_alpha_pixels": 1161222
+    },
+    {
+      "path": "public/art/portraits/portrait-sea.webp",
+      "size": [
+        512,
+        512
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "intermediate_alpha_pixels": 4587
+    },
+    {
+      "path": "public/art/scenes/scene-sea-sealed.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "intermediate_alpha_pixels": 1161222
+    }
+  ],
+  "review_scene_display_width_px": 390,
+  "app_portrait_crop": [
+    75,
+    96,
+    935,
+    956
+  ],
+  "portrait_display_px": [
+    24,
+    40,
+    60
+  ],
+  "draft_review_requires_Roy_OK": true
+}
