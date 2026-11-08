@@ -1,45 +1,67 @@
-# Time Capsule / 時光膠囊 — concept pictures
+# Time Capsule / 時光膠囊 — Roy's chosen concept set
 
-Roy chose the purple gem as the Waypost. These remain review concepts. The common Waypost uses one purple gem on a stem; the Landmark Waypost keeps the small hovering gem above the large one and is 20% darker. Corrupted Capsules / 破損膠囊 remain the detailed illustrated objects. The marker itself is what players spin.
+These remain concept pictures, not production assets. The contact sheet shows only Roy's final choices. Unchosen options remain in the folder for reference; no option artwork is deleted in this update.
 
-This update is script only. No new image-generation calls were made.
+## Roy's choices
 
-## Roy to choose
+- Ball: red wax ball with the embossed keyhole from PR #77.
+- Gold ball: branching brass-gold veins redrawn onto that keyhole ball, avoiding the keyhole.
+- Cracks: Crack A, the large branching cracks.
+- To whoever passes by: portrait A and scene A, the envelope on a bench.
+- Waypost: purple gem; Landmark Waypost: deep purple stacked gem.
 
-- Ball: A smooth, B poured or C pressed wax.
-- Gold treatment: solid brass-gold wax or branching brass-gold veins.
-- Crack style: Corrupted A (large branching cracks) or Corrupted B (fine crackle).
-- Portrait: bench or lamp.
-- Scene: bench or lamp.
+## Keyhole ball source and exact extraction
 
-## Exact source and derived markers
+`ball/ball-keyhole.png` comes from `design/art/concepts/magic-ball/wax-hero.png` in `origin/codex/magic-ball-concepts`, commit `86d882b`. The source is read directly from Git by the script; no source file or PR #77 change is made.
 
-Source: `waypost/landmark-a-gem.png`, byte-identical to `7e4f557`. Its alpha contains two separate occupied row bands: rows 103–251 for the small gem and 263–936 for the large gem, stem and shadow dot. Rows 252–262 are completely transparent, so the small gem is cleanly separate.
+The normal LEFT ball is selected by the largest connected nonzero-alpha component in the left half of the 1024 × 1024 source canvas. Its exact crop bounds are (102,348)–(431,683), end exclusive: **329 × 335 px**. That original RGBA rectangle is pasted at integer offset (3,0) on a **335 × 335 px** transparent square canvas. There is no resampling, upscaling, filtering, recolouring or alpha adjustment. The right-hand premium ball and its halo are excluded.
 
-- `waypost/waypost-gem-purple.png`: remove only the separate upper piece. Crop the lower piece by its exact alpha bounds and paste it at integer coordinates centred on a new transparent canvas of the same 1024 × 1024 size. No resampling or colour changes: every retained RGBA pixel of the large gem, stem and dot is unchanged.
-- `waypost/landmark-gem-deep-purple.png`: retain the full original stack and canvas. Multiply each RGB channel by 0.8, rounding to the nearest integer. Alpha is copied unchanged. This deepens/darkens all three facet tones while preserving their contrast and the complete shape.
-- Delete the five rejected common gem/crystal/keyhole and Landmark crystal/keyhole source files. Keep the original stacked purple gem as the reproducible source, without showing it as an extra choice.
+`ball/ball-keyhole-gold.png` is the only new generated picture. Its exact final prompt and ordered references are below. The output is downscaled to fit 1024 without upscaling; native transparency is retained.
 
-## Script and review outputs
+## Script processing and separate layers
 
-Run from the repository root using Pillow in a temporary environment outside the repository:
+Run from the repository root with Pillow in a temporary environment outside the repository:
 
 ```sh
 /tmp/timecapsule-concept-venv/bin/python design/art/concepts/lost-and-found/make-review.py
 ```
 
-The script writes only inside this concept folder. `derive_gems()` stops with an error if the alpha no longer separates the two source pieces cleanly.
+The script writes only inside this concept folder. Its current main path extracts the keyhole ball, updates the named ball previews/checks, and builds the chosen-set contact sheet. Retained gem/overview helper recipes are not rerun.
 
-- `screens/map-capsule-and-wayposts.png`: exact kept plain map and exact Corrupted hourglass, still 200 px tall at its previous position. Place three common gems at 56 px wide and one Landmark gem at 110 px wide on different streets, anchored by their bottom shadow dots.
-- `checks/wayposts-64.png`: common gem at maximum visible dimensions 48 and 64 px; Landmark gem at 64 and 96 px; map land #F3EFE6. Each size includes its stem and dot.
-- `contact-sheet.png`: unchanged section order, showing only the two final Waypost markers with captions “Waypost: purple gem” and “Landmark Waypost: deep purple gem”. Width 2200 px. This is the only image containing text.
-- All other tracked files remain byte-identical to `7e4f557`, including the source gem, backgrounds, catch/fight previews, positioned layers, capsule/crack art, balls, portraits, scenes and other size checks. PR #77 stays unchanged.
+- `screens/layers/ball-keyhole.png` replaces `screens/layers/ball-a.png`: exact normal keyhole ball artwork cropped by alpha and uniformly resized to 180 px wide, bottom-centred at the same x centre 512 and y=1270 as before.
+- `screens/screen-throw.png` and `screen-landmark-fight.png`: same background, shadow and capsule layers, with only the ball layer swapped. No other pixel outside the old/new ball region changes.
+- `checks/balls-64.png`: normal and gold keyhole balls at maximum visible dimension 64 px, on map land #F3EFE6 and white road.
+- `checks/bench-portrait-24-40.png`: only the chosen bench portrait at actual 24 and 40 px on paper. The older two-portrait check stays unchanged.
+- `contact-sheet.png`: 2200 px wide, in the requested order: keyhole balls/check → Crack A Corrupted/restored hourglass and three other vessels → throw/hit/background → chosen gem Wayposts/map → Landmark fight → bench portrait/check/scene. Only this image contains text. Ball gallery previews are cropped for comparable visible sizes without upscaling the normal source.
+- The source purple gem, both derived gems, overview, Corrupted Capsule art, Crack A proofs, restored master, hit picture, backgrounds and all other layers remain byte-identical. The common gem is the exact lower piece of its source centred unchanged; the Landmark retains the stack at 80% RGB with unchanged alpha.
+- Existing crack effects, unchosen ball options, Crack B, lamp portrait/scene, their checks and their recorded provenance remain in the folder unchanged.
 
-Map, shadow, capsule, ball and dust remain separate in the retained catch/fight art. The app supplies targets and movement. The backgrounds are invented, show no real place, and do not require a real-geography reference. No app/browser/device integration is claimed.
+Map, shadow, capsule, ball and dust remain separate. Targets and capsule motion are supplied by the app. Backgrounds are invented and show no real place, so the real-geography reference step does not apply. No app/browser/device integration is claimed.
+
+Visual checks cover transparency, no writing/logos, no glow/halo on the chosen balls, irregular gold veins avoiding the keyhole, 64 px distinction, and the chosen-set contact sheet. The normal ball's 335 × 335 canvas is intentionally retained at its source resolution.
+
+## Exact final gold keyhole ball prompt
+
+### `ball/ball-keyhole-gold.png`
+
+Model: `gpt-image-2`
+
+References: `design/art/style-sheet.png`, `design/art/concepts/lost-and-found/ball/ball-keyhole.png`, `design/art/concepts/lost-and-found/ball/ball-gold-2-veins.png`
+
+```text
+App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
+- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
+- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
+- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
+- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
+Match the attached style sheet exactly.
+Redraw the exact wax-red ball with the embossed keyhole from the second reference, with the same shape, wax texture, keyhole and lighting. Add a few bold, irregular, branching brass-gold veins across its surface, like the third reference, thick enough to show at 64 px. The veins go around the keyhole and do not cross it. The inside edge of the keyhole has a little rubbed brass. The veins must never form a straight line, band or two halves. One ball only. No glow, halo, sparkle, button, clasp, seam or opening.
+No text, letters, numbers, labels, logos or writing-like marks.
+```
 
 ## Retained generation provenance
 
-No image was generated for this correction. The exact original prompt for the retained source gem appears first below, followed by the unchanged prompts for other kept pictures. They may contain older wording or file names. Deleted marker prompts are removed.
+Previously recorded prompts remain word for word for source and reference options. They may contain older wording or file names. Unchosen images remain for reference and are not displayed on the chosen-set contact sheet.
 
 ### `waypost/landmark-a-gem.png`
 

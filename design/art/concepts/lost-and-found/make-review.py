@@ -1,5 +1,8 @@
 """Time Capsule concept processing; writes only inside this concept folder."""
 from pathlib import Path
+from collections import deque
+from io import BytesIO
+import subprocess
 from PIL import Image, ImageOps, ImageDraw, ImageFilter, ImageFont
 P=Path(__file__).resolve().parent
 LAND=(243,239,230); NAVY=(22,38,63); BRASS=(201,161,90); PLUM=(110,43,63)
@@ -17,6 +20,26 @@ def layer(im,xy):
     out=Image.new("RGBA",SIZE);out.alpha_composite(im,xy);return out
 def export(name,im): im.save(P/name)
 LANDMARKS=("landmark-gem-deep-purple",)
+def extract_keyhole_ball():
+    raw=subprocess.check_output(["git","show","86d882b:design/art/concepts/magic-ball/wax-hero.png"])
+    source=Image.open(BytesIO(raw)).convert("RGBA")
+    alpha=source.getchannel("A");w,h=source.size;seen=set();components=[]
+    for y in range(h):
+        for x in range(w//2):
+            if alpha.getpixel((x,y))==0 or (x,y) in seen:continue
+            queue=deque([(x,y)]);seen.add((x,y));xs=[];ys=[]
+            while queue:
+                xx,yy=queue.popleft();xs.append(xx);ys.append(yy)
+                for dx,dy in ((1,0),(-1,0),(0,1),(0,-1)):
+                    nx,ny=xx+dx,yy+dy
+                    if 0<=nx<w//2 and 0<=ny<h and (nx,ny) not in seen and alpha.getpixel((nx,ny))>0:
+                        seen.add((nx,ny));queue.append((nx,ny))
+            components.append((len(xs),(min(xs),min(ys),max(xs)+1,max(ys)+1)))
+    bounds=max(components)[1]
+    piece=source.crop(bounds);edge=max(piece.size)
+    ball=Image.new("RGBA",(edge,edge))
+    ball.paste(piece,((edge-piece.width)//2,(edge-piece.height)//2))
+    export("ball/ball-keyhole.png",ball)
 def derive_gems():
     source=load(P/"waypost/landmark-a-gem.png")
     alpha=source.getchannel("A");w,h=source.size
@@ -55,26 +78,44 @@ def small_check():
             im=fit(crop(load(P/f"waypost/{name}.png")),size,size)
             out.alpha_composite(im,(cx-im.width//2,25+row*135))
     export("checks/wayposts-64.png",out)
+def chosen_ball_previews():
+    gold_path=P/"ball/ball-keyhole-gold.png"
+    gold=load(gold_path)
+    if max(gold.size)>1024:gold.thumbnail((1024,1024),Image.Resampling.LANCZOS)
+    gold.save(gold_path)
+    ball=load(P/"ball/ball-keyhole.png")
+    ball=resized(ball.crop(ball.getchannel("A").getbbox()),width=180)
+    ball_layer=layer(ball,((1024-ball.width)//2,1270))
+    export("screens/layers/ball-keyhole.png",ball_layer)
+    for target,shadow,capsule in (("screen-throw.png","shadow.png","capsule-corrupted.png"),("screen-landmark-fight.png","landmark-shadow.png","landmark-capsule.png")):
+        out=load(P/"screens/catch-background.png")
+        for im in (load(P/"screens/layers"/shadow),load(P/"screens/layers"/capsule),ball_layer):
+            out=Image.alpha_composite(out,im)
+        export("screens/"+target,out.convert("RGB"))
+    check=Image.new("RGBA",(400,200),LAND+(255,));ImageDraw.Draw(check).rectangle((0,100,400,200),fill="white")
+    for name,cx in (("ball-keyhole.png",100),("ball-keyhole-gold.png",300)):
+        im=fit(crop(load(P/"ball"/name)),64,64)
+        for y in (18,118):check.alpha_composite(im,(cx-im.width//2,y))
+    export("checks/balls-64.png",check)
+    portrait=load(P/"whoever/portrait-a-bench.png")
+    check=Image.new("RGBA",(120,90),(246,248,251,255))
+    for x,size in ((15,24),(65,40)):
+        check.alpha_composite(portrait.resize((size,size),Image.Resampling.LANCZOS),(x,25))
+    export("checks/bench-portrait-24-40.png",check)
 def sheet():
     font=ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf",24)
     title=ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf",32)
-    names=("Waypost: purple gem",)
     rows=[
-      ("1 Balls",[(str(f.relative_to(P)),f.stem.replace("ball-","Ball ").replace("-"," ")) for f in sorted((P/"ball").glob("*.png"))],400),
-      ("",[("checks/balls-64.png","All five balls at 64 px: map land / white road")],220),
-      ("2 Crack effect",[(f"cracks/crack-{k}{s}.png",f"Crack {k[0].upper()}: "+("raw ink" if s else "transparent + pale edge")) for k in ("a-large","b-fine") for s in ("-raw","")],400),
-      ("",[(f"cracks/hourglass-{k}.png",label) for k,label in (("corrupted-a","Corrupted A"),("corrupted-b","Corrupted B"),("restored","Restored"))]+[("cracks/other-vessels-proof.png","Shared effect on three other vessels")],450),
-      ("",[("checks/hourglasses-120-64.png","Corrupted A / Corrupted B / Restored at 120 and 64 px")],260),
-      ("3 Throw and hit",[("screens/screen-throw.png","Throw: shared catch background, no target artwork"),("screens/screen-hit.png","Hit: separate dust and mending capsule")],700),
+      ("1 Keyhole ball",[("ball/ball-keyhole.png","Chosen keyhole wax ball"),("ball/ball-keyhole-gold.png","Gold veins on the keyhole ball")],400),
+      ("",[("checks/balls-64.png","Normal / gold at 64 px on land and road")],220),
+      ("2 Crack A",[("cracks/hourglass-corrupted-a.png","Corrupted hourglass: Crack A"),("cracks/hourglass-restored.png","Restored hourglass")],450),
+      ("",[("cracks/other-vessels-proof.png","Crack A on the dome, envelope and Maison vessels")],450),
+      ("3 Throw and hit",[("screens/screen-throw.png","Throw: keyhole ball, separate layers"),("screens/screen-hit.png","Hit: mending Corrupted Capsule")],700),
       ("",[("screens/catch-background.png","Shared catch and Landmark fight background")],650),
-      ("",[("screens/hit-dust.png","Separate wax-red dust effect")],220),
-      ("4 Common Wayposts",[(f"waypost/{n}.png",label) for n,label in zip(NAMES,names)],320),
-      ("",[("checks/wayposts-64.png","Common gem: 48/64 px; Landmark gem: 64/96 px")],500),
-      ("5 Landmark Waypost",[("waypost/landmark-gem-deep-purple.png","Landmark Waypost: deep purple gem")],400),
-      ("",[("screens/map-capsule-and-wayposts.png","Map: floating common and Landmark markers"),("screens/screen-landmark-fight.png","Landmark fight: giant Corrupted Capsule")],650),
-      ("6 To whoever passes by",[("whoever/portrait-a-bench.png","Portrait A: waiting envelope on bench"),("whoever/portrait-b-lamp.png","Portrait B: envelope tied to lamp")],380),
-      ("",[("whoever/scene-a-bench.png","Scene A: envelope waiting on bench"),("whoever/scene-b-lamp.png","Scene B: envelope tied to lamp")],450),
-      ("",[("checks/portraits-24-40.png","Both portraits at actual 24 and 40 px")],150)
+      ("4 Waypost",[("waypost/waypost-gem-purple.png","Waypost: purple gem"),("waypost/landmark-gem-deep-purple.png","Landmark Waypost: deep purple gem"),("screens/map-capsule-and-wayposts.png","Chosen Wayposts on the map")],550),
+      ("5 Landmark fight",[("screens/screen-landmark-fight.png","Landmark fight: chosen keyhole ball")],700),
+      ("6 To whoever passes by",[("whoever/portrait-a-bench.png","Bench portrait"),("checks/bench-portrait-24-40.png","Bench portrait at actual 24 and 40 px")],380),
+      ("",[("whoever/scene-a-bench.png","Bench scene: an envelope waiting")],450)
     ]
     height=sum(h+80 for _,_,h in rows)
     out=Image.new("RGBA",(2200,height),(246,248,251,255));d=ImageDraw.Draw(out);y=0
@@ -82,10 +123,12 @@ def sheet():
         if heading:d.text((24,y+4),heading,font=title,fill=NAVY)
         y+=44;cw=2200//len(items)
         for i,(path,label) in enumerate(items):
-            im=fit(load(P/path),cw-32,h-42)
+            picture=load(P/path)
+            if path in ("ball/ball-keyhole.png","ball/ball-keyhole-gold.png"):picture=crop(picture)
+            im=fit(picture,cw-32,h-42)
             out.alpha_composite(im,(i*cw+(cw-im.width)//2,y+(h-42-im.height)//2))
             d.text((i*cw+16,y+h-35),label,font=font,fill=NAVY)
         y+=h+36
     export("contact-sheet.png",out.convert("RGB"))
 if __name__=="__main__":
-    derive_gems();overview();small_check();sheet()
+    extract_keyhole_ball();chosen_ball_previews();sheet()
