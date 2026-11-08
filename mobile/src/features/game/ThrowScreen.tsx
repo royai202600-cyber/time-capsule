@@ -86,7 +86,7 @@ export function ThrowBackground() {
 // The dark layer: the web can dull the picture directly, as the map does; phones lay a vessel-shaped tint on top.
 const WEB_DARKEN = Platform.OS === "web";
 const ANGER = "M40 12C40 30 30 40 12 40M60 12C60 30 70 40 88 40M12 60C30 60 40 70 40 88M88 60C70 60 60 70 60 88";
-/** The comic anger mark that shows a capsule is corrupted, in the middle of the vessel. */
+/** The comic anger mark that shows a capsule is corrupted, inside the top right of the vessel. */
 function AngerMark({ size }: { size: number }) {
   return <Svg width={size} height={size} viewBox="0 0 100 100">
     <Path d={ANGER} stroke="#fff" strokeWidth={18} fill="none" strokeLinecap="round" />
@@ -324,7 +324,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
           {source ? <Image source={source} style={[{ width: vesselSize, height: vesselSize }, WEB_DARKEN && !result ? ({ filter: "saturate(.55) brightness(.8)" } as object) : null]} resizeMode="contain" accessibilityLabel={s("corruptedCapsule")} /> : null}
           <Animated.View pointerEvents="none" style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize, opacity: crack }}>
             {source && !WEB_DARKEN ? <Image source={source} style={{ width: vesselSize, height: vesselSize, opacity: .3, tintColor: C.ink }} resizeMode="contain" /> : null}
-            <Animated.View style={{ position: "absolute", top: vesselSize * .405, left: vesselSize * .405, transform: [{ scale: throb }] }}><AngerMark size={vesselSize * .19} /></Animated.View>
+            <Animated.View style={{ position: "absolute", top: vesselSize * .3, left: vesselSize * .53, transform: [{ scale: throb }] }}><AngerMark size={vesselSize * .19} /></Animated.View>
           </Animated.View>
           {!result && <View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 2, borderColor: "rgba(255,255,255,.95)" }} />}
           {!result && <Animated.View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 4, borderColor: RING_COLOR[capsule.rarity], transform: [{ scale: ringScale }] }} />}
