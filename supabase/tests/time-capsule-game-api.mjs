@@ -64,11 +64,16 @@ try {
   assert.equal(afterThrows.gold_balls, 0);
   assert.equal(afterThrows.wax_balls, 30);
 
-  const nearby = ok(await rpc('corrupted_nearby', p));
-  const common = nearby.wayposts.find(w => w.kind === 'common'
-    && Math.abs(w.lat - spawn.lat) < 0.00001
-    && Math.abs(w.lng - spawn.lng) < 0.00001);
-  assert(common, 'spawn spot should also be a common Waypost');
+  // Discover the Waypost independently: its spacing differs from spawn spots.
+  // The allow-listed fixture moves to each target using that target's coordinates.
+  let common;
+  for (const [p_lat, p_lng] of positions) {
+    const nearby = ok(await rpc('corrupted_nearby', { p_lat, p_lng, p_accuracy: 10 }));
+    common = nearby.wayposts.find(w => w.kind === 'common'
+      && (!w.cooldown_end || new Date(w.cooldown_end).getTime() <= Date.now()));
+    if (common) break;
+  }
+  assert(common, 'no available common Waypost near the launch centres');
   const spinArgs = { p_id: common.id, p_lat: common.lat,
     p_lng: common.lng, p_accuracy: 10 };
   const spins = await Promise.all([
