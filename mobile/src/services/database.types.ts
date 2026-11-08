@@ -159,6 +159,78 @@ export type Database = {
           },
         ]
       }
+      corrupted_catches: {
+        Row: {
+          attempts: number
+          caught_at: string | null
+          result: string
+          spawn_id: string
+          user_id: string
+          vessel: string
+        }
+        Insert: {
+          attempts?: number
+          caught_at?: string | null
+          result?: string
+          spawn_id: string
+          user_id: string
+          vessel: string
+        }
+        Update: {
+          attempts?: number
+          caught_at?: string | null
+          result?: string
+          spawn_id?: string
+          user_id?: string
+          vessel?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "corrupted_catches_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "corrupted_catches_vessel_fkey"
+            columns: ["vessel"]
+            isOneToOne: false
+            referencedRelation: "vessels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      corrupted_spots: {
+        Row: {
+          city: string
+          habitat: string
+          id: string
+          lat: number
+          lng: number
+          source_ref: string
+          timezone: string
+        }
+        Insert: {
+          city: string
+          habitat: string
+          id?: string
+          lat: number
+          lng: number
+          source_ref: string
+          timezone: string
+        }
+        Update: {
+          city?: string
+          habitat?: string
+          id?: string
+          lat?: number
+          lng?: number
+          source_ref?: string
+          timezone?: string
+        }
+        Relationships: []
+      }
       friendships: {
         Row: {
           created_at: string
@@ -218,21 +290,69 @@ export type Database = {
           },
         ]
       }
+      landmark_attempts: {
+        Row: {
+          cracks_left: number
+          expires_at: string
+          id: string
+          started_at: string
+          user_id: string
+          waypost_id: string
+          won_at: string | null
+        }
+        Insert: {
+          cracks_left: number
+          expires_at: string
+          id?: string
+          started_at?: string
+          user_id: string
+          waypost_id: string
+          won_at?: string | null
+        }
+        Update: {
+          cracks_left?: number
+          expires_at?: string
+          id?: string
+          started_at?: string
+          user_id?: string
+          waypost_id?: string
+          won_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "landmark_attempts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "landmark_attempts_waypost_id_fkey"
+            columns: ["waypost_id"]
+            isOneToOne: false
+            referencedRelation: "sea_shores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       owned_vessels: {
         Row: {
           acquired_at: string
+          copies: number
           edition_no: number | null
           user_id: string
           vessel: string
         }
         Insert: {
           acquired_at?: string
+          copies?: number
           edition_no?: number | null
           user_id: string
           vessel: string
         }
         Update: {
           acquired_at?: string
+          copies?: number
           edition_no?: number | null
           user_id?: string
           vessel?: string
@@ -250,6 +370,42 @@ export type Database = {
             columns: ["vessel"]
             isOneToOne: false
             referencedRelation: "vessels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      passport_stamps: {
+        Row: {
+          first_at: string
+          how_earned: string
+          place: string
+          user_id: string
+        }
+        Insert: {
+          first_at: string
+          how_earned: string
+          place: string
+          user_id: string
+        }
+        Update: {
+          first_at?: string
+          how_earned?: string
+          place?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "passport_stamps_place_fkey"
+            columns: ["place"]
+            isOneToOne: false
+            referencedRelation: "places"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "passport_stamps_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -303,6 +459,44 @@ export type Database = {
             columns: ["brand_vessel"]
             isOneToOne: false
             referencedRelation: "vessels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      player_game: {
+        Row: {
+          gold_balls: number
+          last_lat: number | null
+          last_lng: number | null
+          last_position_at: string | null
+          user_id: string
+          wax_balls: number
+          xp: number
+        }
+        Insert: {
+          gold_balls: number
+          last_lat?: number | null
+          last_lng?: number | null
+          last_position_at?: string | null
+          user_id: string
+          wax_balls: number
+          xp?: number
+        }
+        Update: {
+          gold_balls?: number
+          last_lat?: number | null
+          last_lng?: number | null
+          last_position_at?: string | null
+          user_id?: string
+          wax_balls?: number
+          xp?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_game_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -410,31 +604,51 @@ export type Database = {
         Row: {
           city_en: string
           city_zh: string
+          game_enabled: boolean
           id: string
+          kind: string
           lat: number
           lng: number
           name_en: string
           name_zh: string
+          place: string | null
+          source_ref: string | null
         }
         Insert: {
           city_en: string
           city_zh: string
+          game_enabled?: boolean
           id?: string
+          kind?: string
           lat: number
           lng: number
           name_en: string
           name_zh: string
+          place?: string | null
+          source_ref?: string | null
         }
         Update: {
           city_en?: string
           city_zh?: string
+          game_enabled?: boolean
           id?: string
+          kind?: string
           lat?: number
           lng?: number
           name_en?: string
           name_zh?: string
+          place?: string | null
+          source_ref?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sea_shores_place_fkey"
+            columns: ["place"]
+            isOneToOne: false
+            referencedRelation: "places"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       vessels: {
         Row: {
@@ -471,6 +685,80 @@ export type Database = {
           },
         ]
       }
+      waypost_spins: {
+        Row: {
+          gold_awarded: number
+          id: string
+          spun_at: string
+          user_id: string
+          wax_awarded: number
+          waypost_id: string
+        }
+        Insert: {
+          gold_awarded: number
+          id?: string
+          spun_at?: string
+          user_id: string
+          wax_awarded: number
+          waypost_id: string
+        }
+        Update: {
+          gold_awarded?: number
+          id?: string
+          spun_at?: string
+          user_id?: string
+          wax_awarded?: number
+          waypost_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waypost_spins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waypost_spins_waypost_id_fkey"
+            columns: ["waypost_id"]
+            isOneToOne: false
+            referencedRelation: "sea_shores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      xp_events: {
+        Row: {
+          amount: number
+          awarded_at: string
+          reference: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          awarded_at?: string
+          reference: string
+          source: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          awarded_at?: string
+          reference?: string
+          source?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "xp_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -478,9 +766,46 @@ export type Database = {
     Functions: {
       accept_invite: { Args: { p_code: string }; Returns: string }
       acquire_vessel: { Args: { p_vessel: string }; Returns: number }
+      corrupted_nearby: {
+        Args: { p_accuracy: number; p_lat: number; p_lng: number }
+        Returns: Json
+      }
+      corrupted_throw: {
+        Args: {
+          p_accuracy: number
+          p_ball: string
+          p_hit: boolean
+          p_lat: number
+          p_lng: number
+          p_ring: number
+          p_spawn: string
+        }
+        Returns: {
+          attempts_left: number
+          copies: number
+          gold_balls: number
+          is_new: boolean
+          result: string
+          stars: number
+          vessel: string
+          wax_balls: number
+          xp_gained: number
+        }[]
+      }
       distance_m: {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
+      }
+      game_state: {
+        Args: never
+        Returns: {
+          first_catch_bonus_available: boolean
+          gold_balls: number
+          level: number
+          wax_balls: number
+          xp: number
+          xp_to_next: number
+        }[]
       }
       invite_info: {
         Args: { p_code: string }
@@ -489,7 +814,64 @@ export type Database = {
           name: string
         }[]
       }
+      landmark_hit: {
+        Args: {
+          p_accuracy: number
+          p_attempt: string
+          p_ball: string
+          p_lat: number
+          p_lng: number
+          p_ring: number
+        }
+        Returns: {
+          copies: number
+          cracks: number
+          expires_at: string
+          gold_balls: number
+          is_new: boolean
+          result: string
+          stars: number
+          vessel: string
+          wax_balls: number
+          xp_gained: number
+        }[]
+      }
+      landmark_start: {
+        Args: {
+          p_accuracy: number
+          p_lat: number
+          p_lng: number
+          p_waypost: string
+        }
+        Returns: {
+          attempt_id: string
+          cracks: number
+          expires_at: string
+        }[]
+      }
       mark_seen: { Args: { p_id: string }; Returns: undefined }
+      my_collection: {
+        Args: never
+        Returns: {
+          acquired_at: string
+          copies: number
+          edition_no: number
+          stars: number
+          vessel: string
+        }[]
+      }
+      my_passport: {
+        Args: never
+        Returns: {
+          city_en: string
+          city_zh: string
+          first_at: string
+          how_earned: string
+          name_en: string
+          name_zh: string
+          place: string
+        }[]
+      }
       open_capsule: {
         Args: {
           p_accuracy?: number
@@ -598,6 +980,17 @@ export type Database = {
         Returns: {
           remaining: number
           vessel: string
+        }[]
+      }
+      waypost_spin: {
+        Args: { p_accuracy: number; p_id: string; p_lat: number; p_lng: number }
+        Returns: {
+          cooldown_end: string
+          gold_awarded: number
+          gold_balls: number
+          wax_awarded: number
+          wax_balls: number
+          xp_gained: number
         }[]
       }
     }
