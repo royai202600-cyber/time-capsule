@@ -10,7 +10,9 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 
 ## Rules and checks
 
-- T10f B6: ten original magic and milestone vessels have measured opening and 40/120 px sheets. The spellbook glow fix is approved; the remaining nine are presented for final batch review. Layer order, motion and anchors are proposed in the manifest; screen wiring and catalogue changes are separate. The lamp uses a cylindrical brass burner and short straight spout to avoid the well-known animated lamp silhouette. [B6 contact sheet](_checks/b6-contact-sheet.png).
+- T10f-fix: wishing-lamp is redrawn as a traditional antique brass oil lamp with low oval body, long tapering spout, soft smoke at the tip, curled handle and domed lid. Same four filenames and lamp → smoke → lid stack on a 1024 canvas. Measured mouth/pivot 542,685; sparkle 532,662; baseY 889. Lid lifts y −0.40 and fades; smoke drifts up. All other vessel master/export bytes are preserved. Await Roy’s visual approval.
+
+- T10f B6: ten original magic and milestone vessels have measured opening and 40/120 px sheets. Roy approved the full batch; PR #71 merged as a8cc451. Layer order, motion and anchors are proposed in the manifest; screen wiring and catalogue changes are separate. The original cylindrical lamp is superseded by T10f-fix below. [B6 contact sheet](_checks/b6-contact-sheet.png).
 
 
 - T10f B6 spellbook test: closed navy leather book with brass corners/clasp and an abstract star-and-rose motif, complete blank page and rolled letter beneath the front cover. The clasp fades before the cover swings from its measured left-spine pivot. Page-edge glow persists through opening; a 0.025 breathe and glow pulse animate at rest. Exact CLOSED stack, transparent corners, 40/120 px silhouettes, in-canvas open letter and [B6 contact sheet](_checks/b6-contact-sheet.png) were reviewed by Roy. Roy approved the spellbook with brighter golden page-edge and open-page light; glow remains on through opening. No recognizable fantasy-franchise marks were used. The other nine are in progress.
