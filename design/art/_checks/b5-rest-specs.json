@@ -1,0 +1,542 @@
+{
+  "bubble-tea": {
+    "id": "bubble-tea",
+    "opening": "C",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "cup",
+        "file": "vessel-bubble-tea-cup.png",
+        "role": "static"
+      },
+      {
+        "name": "lid",
+        "file": "vessel-bubble-tea-lid.png",
+        "role": "lift",
+        "pivot": {
+          "x": 513,
+          "y": 391
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.45,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 513,
+      "y": 395
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 321,
+      "y": 462
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "dim-sum-steamer": {
+    "id": "dim-sum-steamer",
+    "opening": "B",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "steamer",
+        "file": "vessel-dim-sum-steamer-steamer.png",
+        "role": "static"
+      },
+      {
+        "name": "steam",
+        "file": "vessel-dim-sum-steamer-steam.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ],
+        "idle": [
+          {
+            "type": "drift",
+            "amount": 0.03
+          }
+        ]
+      },
+      {
+        "name": "lid",
+        "file": "vessel-dim-sum-steamer-lid.png",
+        "role": "lift",
+        "pivot": {
+          "x": 522,
+          "y": 519
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.45,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 522,
+      "y": 478
+    },
+    "baseY": 898,
+    "sparkle": {
+      "x": 673,
+      "y": 608
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "bento": {
+    "id": "bento",
+    "opening": "B",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "box",
+        "file": "vessel-bento-box.png",
+        "role": "static"
+      },
+      {
+        "name": "knot",
+        "file": "vessel-bento-knot.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.35,
+            "opacity": 0
+          },
+          {
+            "at": 1,
+            "opacity": 0
+          }
+        ]
+      },
+      {
+        "name": "lid",
+        "file": "vessel-bento-lid.png",
+        "role": "lift",
+        "pivot": {
+          "x": 518,
+          "y": 503
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.35,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.48,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 518,
+      "y": 507
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 816,
+      "y": 666
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "paper-cranes": {
+    "id": "paper-cranes",
+    "opening": "G",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "jar",
+        "file": "vessel-paper-cranes-jar.png",
+        "role": "static"
+      },
+      {
+        "name": "lid",
+        "file": "vessel-paper-cranes-lid.png",
+        "role": "twist",
+        "pivot": {
+          "x": 514,
+          "y": 329
+        },
+        "open": [
+          {
+            "at": 0,
+            "rotate": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.3,
+            "rotate": -12,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "rotate": -12,
+            "y": -0.4,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 514,
+      "y": 321
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 281,
+      "y": 427
+    },
+    "glint": "vessel-paper-cranes-glint.png",
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "heart-locket": {
+    "id": "heart-locket",
+    "opening": "J",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "sway",
+        "deg": 4,
+        "pivot": {
+          "x": 584,
+          "y": 197
+        }
+      }
+    ],
+    "layers": [
+      {
+        "name": "back",
+        "file": "vessel-heart-locket-back.png",
+        "role": "static"
+      },
+      {
+        "name": "front",
+        "file": "vessel-heart-locket-front.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 414,
+          "y": 550
+        },
+        "open": [
+          {
+            "at": 0,
+            "scaleX": 1
+          },
+          {
+            "at": 1,
+            "scaleX": 0.03
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 584,
+      "y": 458
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 730,
+      "y": 512
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "suitcase": {
+    "id": "suitcase",
+    "opening": "A",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "bob",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "case",
+        "file": "vessel-suitcase-case.png",
+        "role": "static"
+      },
+      {
+        "name": "lid",
+        "file": "vessel-suitcase-lid.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 507,
+          "y": 397
+        },
+        "open": [
+          {
+            "at": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.5,
+            "rotate": -30,
+            "opacity": 0.8
+          },
+          {
+            "at": 1,
+            "rotate": -65,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 507,
+      "y": 514
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 792,
+      "y": 445
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "postbox": {
+    "id": "postbox",
+    "opening": "J",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "box",
+        "file": "vessel-postbox-box.png",
+        "role": "static"
+      },
+      {
+        "name": "door",
+        "file": "vessel-postbox-door.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 635,
+          "y": 602
+        },
+        "open": [
+          {
+            "at": 0,
+            "scaleX": 1
+          },
+          {
+            "at": 1,
+            "scaleX": 0.03
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 508,
+      "y": 417
+    },
+    "baseY": 900,
+    "sparkle": {
+      "x": 394,
+      "y": 400
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "camp-lantern": {
+    "id": "camp-lantern",
+    "opening": "C",
+    "idleMs": 4000,
+    "idle": [],
+    "layers": [
+      {
+        "name": "glow",
+        "file": "vessel-camp-lantern-glow.png",
+        "role": "fade",
+        "open": [
+          {
+            "at": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "opacity": 1
+          }
+        ],
+        "idle": [
+          {
+            "type": "glow",
+            "base": 0.9,
+            "range": 0.07,
+            "flicker": 0.025
+          }
+        ]
+      },
+      {
+        "name": "lantern",
+        "file": "vessel-camp-lantern-lantern.png",
+        "role": "static"
+      },
+      {
+        "name": "cap",
+        "file": "vessel-camp-lantern-cap.png",
+        "role": "lift",
+        "pivot": {
+          "x": 518,
+          "y": 357
+        },
+        "open": [
+          {
+            "at": 0,
+            "y": 0,
+            "opacity": 1
+          },
+          {
+            "at": 1,
+            "y": -0.45,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 518,
+      "y": 407
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 388,
+      "y": 672
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  },
+  "treasure-chest": {
+    "id": "treasure-chest",
+    "opening": "A",
+    "idleMs": 4000,
+    "idle": [
+      {
+        "type": "breathe",
+        "amount": 0.025
+      }
+    ],
+    "layers": [
+      {
+        "name": "chest",
+        "file": "vessel-treasure-chest-chest.png",
+        "role": "static"
+      },
+      {
+        "name": "lid",
+        "file": "vessel-treasure-chest-lid.png",
+        "role": "hinge",
+        "pivot": {
+          "x": 502,
+          "y": 444
+        },
+        "open": [
+          {
+            "at": 0,
+            "rotate": 0,
+            "opacity": 1
+          },
+          {
+            "at": 0.5,
+            "rotate": -30,
+            "opacity": 0.8
+          },
+          {
+            "at": 1,
+            "rotate": -65,
+            "opacity": 0
+          }
+        ]
+      }
+    ],
+    "mouth": {
+      "x": 502,
+      "y": 530
+    },
+    "baseY": 899,
+    "sparkle": {
+      "x": 600,
+      "y": 591
+    },
+    "glint": null,
+    "openGlow": null,
+    "readyPulse": null
+  }
+}
