@@ -2,8 +2,9 @@ import React from 'react';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { C } from '../theme';
 
-export type IconName = 'pin' | 'back' | 'close' | 'plus' | 'lock' | 'check' | 'shop' | 'user' | 'map' | 'cabinet' | 'share' | 'camera' | 'pen' | 'mic' | 'alarm' | 'up' | 'down';
+export type IconName = 'pin' | 'back' | 'close' | 'plus' | 'lock' | 'check' | 'shop' | 'user' | 'map' | 'cabinet' | 'share' | 'camera' | 'pen' | 'mic' | 'alarm' | 'up' | 'down' | 'locate';
 const lines: Record<IconName, string> = {
+  locate: 'M12 5a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM12 2v3m0 14v3M2 12h3m14 0h3',
   pin: 'M12 22C8 17 4 13.5 4 9a8 8 0 0 1 16 0c0 4.5-4 8-8 13Z',
   back: 'M19 12H5m7-7-7 7 7 7',
   close: 'M5 5l14 14M19 5 5 19',
@@ -25,6 +26,7 @@ const lines: Record<IconName, string> = {
 export function ArtIcon({ name, size = 24, color = C.ink }: { name: IconName; size?: number; color?: string }) {
   return <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path d={lines[name]} stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+    {name === 'locate' && <Circle cx={12} cy={12} r={2} fill={color} />}
     {name === 'pin' && <Circle cx={12} cy={9} r={2.5} stroke={color} strokeWidth={1.8} />}
   </Svg>;
 }

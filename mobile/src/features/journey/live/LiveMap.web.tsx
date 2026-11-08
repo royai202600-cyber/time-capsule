@@ -23,7 +23,7 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(function LiveMap(
     return () => window.removeEventListener("message", listen);
   }, []);
   useEffect(() => { if (ready) post({ type: "state", ...state }); }, [ready, state]);
-  return <View style={{ flex: 1 }}>
-    <iframe ref={frame} title="map" srcDoc={html} style={{ border: 0, width: "100%", height: "100%" }} />
+  return <View style={{ flex: 1, position: "relative", minHeight: 0 }}>
+    <iframe ref={frame} title="map" srcDoc={html} style={{ position: "absolute", inset: 0, border: 0, width: "100%", height: "100%" }} />
   </View>;
 });

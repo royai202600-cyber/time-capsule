@@ -9,7 +9,6 @@ export const SEA_AVATAR = { set: "illus", id: "sea" } as const;
 export const SEA_MESSAGE_MAX = 280;
 export const SEA_PICKUP_RADIUS_M = 100;
 export const SEA_VISIBLE_RADIUS_M = 5000;
-export const SEA_DAILY_PICKUPS = 3;
 export const DRIFT_CHOICES = [1, 7, 30, 365] as const;
 export type DriftDays = (typeof DRIFT_CHOICES)[number];
 export const MAP_PMTILES_URL: string | null = process.env.EXPO_PUBLIC_MAP_PMTILES_URL || null;
@@ -22,9 +21,9 @@ export type SeaBottle = {
   returns: number; sender: SeaSender;
 };
 export type ThrowResult = { id: string; shore_zh: string; shore_en: string; washes_up_at: string };
-export type SeaErrorCode = "too_far" | "taken" | "daily_limit" | "no_shore" | "rejected" | "own_bottle" | "unknown";
+export type SeaErrorCode = "too_far" | "taken" | "no_shore" | "rejected" | "own_bottle" | "unknown";
 export class SeaError extends Error { constructor(public code: SeaErrorCode) { super(code); } }
-const CODES: SeaErrorCode[] = ["too_far", "taken", "daily_limit", "no_shore", "rejected", "own_bottle"];
+const CODES: SeaErrorCode[] = ["too_far", "taken", "no_shore", "rejected", "own_bottle"];
 const fail = (error: { message?: string } | null) => {
   if (error) throw new SeaError(CODES.find((c) => error.message?.includes(c)) ?? "unknown");
 };
@@ -60,11 +59,6 @@ export const sea = {
   async report(id: string, reason: "unkind" | "personal" | "spam" | "other"): Promise<void> {
     const { error } = await supabase.rpc("sea_report", { p_id: id, p_reason: reason });
     fail(error);
-  },
-  async pickupsLeft(): Promise<number> {
-    const { data, error } = await supabase.rpc("sea_pickups_left");
-    fail(error);
-    return Number(data ?? 0);
   },
 };
 

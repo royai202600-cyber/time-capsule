@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Linking, Modal, Platform, Pressable, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useFocusEffect } from "expo-router";
 import { goBack } from "../../navigation";
 import { useAuth } from "../../services/auth";
@@ -18,6 +18,7 @@ import { JourneyMap, type JourneyPin } from "./JourneyMap";
 import { Passport } from "./Passport";
 import { CapsuleMapPage } from "./CapsuleMapPage";
 import { LiveMap } from "./live/LiveMap";
+import { JourneyViewport } from "./JourneyViewport";
 import { mapHtml } from "./live/mapHtml";
 import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
 import { MAP_PMTILES_URL, sea, SeaError, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
@@ -35,6 +36,7 @@ const portraitUri = (avatar: unknown) => {
 const vesselUri = (kind: string) => assetUri(vesselParts[kind as VesselKind]?.assembled ?? vesselParts.bottle.assembled) ?? "";
 
 export default function JourneyScreen() {
+  const insets = useSafeAreaInsets();
   const { session, profile } = useAuth();
   const userId = session?.user.id ?? "";
   const { t, language } = useLanguage();
@@ -46,15 +48,13 @@ export default function JourneyScreen() {
   const you = fix ? { lat: fix.lat, lng: fix.lng } : null;
   const map = useRef<LiveMapHandle>(null);
   const [bottles, setBottles] = useState<SeaBottle[]>([]);
-  const [pickupsLeft, setPickupsLeft] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [following, setFollowing] = useState(true);
   const [walkTo, setWalkTo] = useState<{ lat: number; lng: number } | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
   const [asia, setAsia] = useState(false);
   const [passport, setPassport] = useState(false);
-  const [mapPlace, setMapPlace] = useState<JourneyPin | null>(null);
+  const [mapPlace, setMapPlace] = useState<Extract<Item, { kind: "place" }> | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
   const last = useRef<{ lat: number; lng: number } | null>(null);
   // Heading from movement: the cone points the way you walked.
@@ -72,8 +72,7 @@ export default function JourneyScreen() {
   const loadSea = useCallback(async () => {
     if (!SEA_ENABLED || !you) return;
     try {
-      const [near, left] = await Promise.all([sea.nearby(fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null), sea.pickupsLeft()]);
-      setBottles(near); setPickupsLeft(left);
+      setBottles(await sea.nearby(fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null));
     } catch { /* the map still works without the sea */ }
   }, [cell]);
   useFocusEffect(useCallback(() => {
@@ -97,27 +96,27 @@ export default function JourneyScreen() {
   const earned = stampRows.filter((row) => row.openedAt && !row.place.brand_vessel).length;
   const total = places.filter((place) => !place.brand_vessel).length;
 
-  // One list for everything near you: sea bottles and your own capsules waiting at a place.
+  // Nearby Sea bottles and every received place capsule, including distant/opened ones.
   const items = useMemo<Item[]>(() => {
     if (!you) return [];
     const m = (lat: number, lng: number) => distanceMeters(you.lat, you.lng, lat, lng);
     const seaItems: Item[] = bottles.map((b) => ({ kind: "sea", id: b.id, lat: b.lat, lng: b.lng, meters: m(b.lat, b.lng), bottle: b }));
-    const placeItems: Item[] = pins.filter((p) => p.waiting).flatMap((p) => {
-      const capsule = capsules.find((c) => c.place === p.place.id && !c.opened_at);
-      return capsule ? [{ kind: "place" as const, id: `place-${p.place.id}`, lat: p.place.lat, lng: p.place.lng, meters: m(p.place.lat, p.place.lng), pin: p, capsuleId: capsule.id }] : [];
+    const placeItems: Item[] = capsules.flatMap((capsule) => {
+      const pin = pins.find((p) => p.place.id === capsule.place);
+      return pin ? [{ kind: "place" as const, id: `place-${capsule.id}`, lat: pin.place.lat, lng: pin.place.lng,
+        meters: m(pin.place.lat, pin.place.lng), pin: { ...pin, vessel: capsule.vessel }, capsuleId: capsule.id }] : [];
     });
     return [...seaItems, ...placeItems].sort((a, b) => a.meters - b.meters);
   }, [bottles, pins, capsules, you?.lat, you?.lng]);
   const selected = items.find((i) => i.id === selectedId) ?? null;
-  const nearbyCount = items.filter((i) => i.meters <= 5000).length;
 
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: you ?? FALLBACK }), [!!you]);
   const mapState = useMemo(() => ({
     you, heading, reach: SEA_PICKUP_RADIUS_M,
     portrait: portraitUri(profile?.avatar),
-    pins: items.filter((i) => i.meters <= 6000).map<LivePin>((i) => i.kind === "sea"
-      ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri(i.bottle.vessel), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? s("canPick") : distanceText(i.meters) }
-      : { id: i.id, lat: i.lat, lng: i.lng, kind: "place", vessel: vesselUri(i.pin.vessel ?? "dome"), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: language === "zh" ? i.pin.place.name_zh : i.pin.place.name_en }),
+    pins: items.map<LivePin>((i) => i.kind === "sea"
+      ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri(i.bottle.vessel), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
+      : { id: i.id, lat: i.lat, lng: i.lng, kind: "place", vessel: vesselUri(i.pin.vessel ?? "dome"), near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId, tag: language === "zh" ? i.pin.place.name_zh : i.pin.place.name_en }),
   }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language]);
 
   const select = (id: string | null) => {
@@ -143,7 +142,7 @@ export default function JourneyScreen() {
     } catch (e) {
       void haptics.warn();
       const code = e instanceof SeaError ? e.code : "unknown";
-      setToast(code === "too_far" ? s("errTooFar") : code === "taken" ? s("errTaken") : code === "daily_limit" ? s("errDaily") : code === "own_bottle" ? s("errOwn") : s("errUnknown"));
+      setToast(code === "too_far" ? s("errTooFar") : code === "taken" ? s("errTaken") : code === "own_bottle" ? s("errOwn") : s("errUnknown"));
       if (code === "taken") void loadSea();
     } finally { setBusy(false); }
   };
@@ -153,54 +152,51 @@ export default function JourneyScreen() {
   };
 
   if (mapPlace) {
-    const mapCapsule = capsules.find((capsule) => capsule.place === mapPlace.place.id && !capsule.opened_at);
+    const mapCapsule = capsules.find((capsule) => capsule.id === mapPlace.capsuleId);
     return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}>
       <Pressable accessibilityRole="button" accessibilityLabel={t("back")} onPress={() => setMapPlace(null)} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><ArtIcon name="back" size={25} /></Pressable>
-      <CapsuleMapPage place={mapPlace.place} vessel={(mapCapsule?.vessel ?? "dome") as VesselKind} onGoOpen={() => { if (mapCapsule) router.push({ pathname: "/capsule/[id]", params: { id: mapCapsule.id } }); }} />
+      <CapsuleMapPage place={mapPlace.pin.place} vessel={(mapCapsule?.vessel ?? "dome") as VesselKind} onGoOpen={() => { if (mapCapsule) router.push({ pathname: "/capsule/[id]", params: { id: mapCapsule.id } }); }} />
     </SafeAreaView>;
   }
 
-  return <View style={{ flex: 1, backgroundColor: C.paper }}>
+  return <JourneyViewport>
+    <View style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, zIndex: 0 }}>
     {you
-      ? <LiveMap ref={map} html={html} state={mapState} onSelect={select} onFollowChange={setFollowing}
+      ? <LiveMap ref={map} html={html} state={mapState} onSelect={select}
         onTap={(lat, lng) => { if (selectedId) setSelectedId(null); else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
       : <LocationGate status={status} onAllow={() => void location.request()} onSettings={() => void location.openSettings()} />}
+    </View>
 
-    <SafeAreaView pointerEvents="box-none" style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
+    <SafeAreaView edges={["top", "left", "right"]} pointerEvents="box-none" style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 30 }}>
       <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.sm }}>
         <Chip onPress={goBack} label={t("back")}><ArtIcon name="back" size={22} /></Chip>
-        <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 8, alignSelf: "center", backgroundColor: "rgba(246,248,251,.92)", borderRadius: radii.pill, paddingHorizontal: 14, paddingVertical: 7, ...shadows.card }}>
-          <Text numberOfLines={1} style={{ flexShrink: 0, fontFamily: serif, fontSize: 18, color: C.ink }}>{t("journey.title")}</Text>
-          {pickupsLeft !== null && <Text numberOfLines={1} style={{ flexShrink: 1, fontFamily: sans, fontSize: 11, color: C.blue }}>{s("pickupsLeft", pickupsLeft)}</Text>}
-        </View>
+        <View style={{ flex: 1 }} pointerEvents="none" />
         <Chip onPress={() => { void haptics.tap(); setAsia(true); }} label={s("asia")}><ArtIcon name="map" size={22} color={C.blue} /></Chip>
         <Chip onPress={() => { void haptics.tap(); setPassport(true); }} label={s("passport")}><Text style={{ fontFamily: serif, fontSize: 12, color: C.brass }}>{earned}/{total}</Text></Chip>
       </View>
     </SafeAreaView>
 
-    <SafeAreaView edges={["bottom"]} pointerEvents="box-none" style={{ position: "absolute", left: 0, right: 0, bottom: 0 }}>
-      <View pointerEvents="box-none" style={{ width: "100%", maxWidth: 560, alignSelf: "center", paddingHorizontal: spacing.md, paddingBottom: spacing.sm, gap: spacing.sm }}>
+    <SafeAreaView edges={["bottom", "left", "right"]} pointerEvents="box-none" style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 20 }}>
+      <View pointerEvents="box-none" style={{ width: "100%", alignSelf: "center", paddingHorizontal: spacing.md, paddingBottom: spacing.md, gap: spacing.sm }}>
         <View pointerEvents="box-none" style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
           {walkTo ? <Pill onPress={() => { setFakeLocation(walkTo); setWalkTo(null); void haptics.tick(); }} label={s("devWalk")} /> : <View />}
-          {you && !following && <Pill onPress={() => { map.current?.recenter(); setFollowing(true); void haptics.tick(); }} label={s("recenter")} />}
+          {you && <Chip onPress={() => { setSelectedId(null); setWalkTo(null); map.current?.recenter(); void haptics.tick(); }} label={s("recenter")} translucent><ArtIcon name="locate" size={24} color={C.blue} /></Chip>}
         </View>
         {!!toast && <Text accessibilityRole="alert" style={{ alignSelf: "center", backgroundColor: C.ink, color: C.white, fontFamily: sans, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, overflow: "hidden" }}>{toast}</Text>}
-        {you && <View style={{ backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, gap: spacing.sm, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
-          {selected ? <SelectedCard item={selected} busy={busy} onPickUp={pickUp} onDirections={directions}
-            onView={(item) => router.push({ pathname: "/capsule/[id]", params: { id: item.capsuleId } })}
-            onMap={(item) => setMapPlace(item.pin)} onStep={step} count={items.length} index={items.findIndex((i) => i.id === selected.id)} />
-            : <>
-              <Text style={{ fontFamily: sans, fontSize: 11, letterSpacing: 1.2, color: C.brass }}>{s("kicker")}</Text>
-              <Text style={{ fontFamily: serif, fontSize: 18, color: C.ink }}>{s("nearbyCount", nearbyCount)}</Text>
-              {items.length ? <Pressable accessibilityRole="button" onPress={() => select(items[0].id)} style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-                <Vessel kind={(items[0].kind === "sea" ? items[0].bottle.vessel : items[0].pin.vessel ?? "dome") as VesselKind} size={36} />
-                <Text numberOfLines={1} style={{ flex: 1, fontFamily: sans, color: C.blue }}>「{items[0].kind === "sea" ? items[0].bottle.hint : language === "zh" ? items[0].pin.place.name_zh : items[0].pin.place.name_en}」 · {items[0].meters <= SEA_PICKUP_RADIUS_M ? s("here") : distanceText(items[0].meters)}</Text>
-                <ArtIcon name="up" size={18} color={C.muted} />
-              </Pressable> : <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{s("nearbyEmpty")}</Text>}
-            </>}
-        </View>}
-        {SEA_ENABLED && !selected && <Pressable accessibilityRole="button" onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: "sea" } }); }}
-          style={({ pressed }) => ({ alignSelf: "center", flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: C.wax, borderRadius: radii.pill, paddingLeft: 8, paddingRight: 20, paddingVertical: 7, opacity: pressed ? .9 : 1, ...shadows.card })}>
+        {you && (selected
+          ? <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
+            <SelectedCard item={selected} busy={busy} onPickUp={pickUp} onDirections={directions}
+              onView={(item) => router.push({ pathname: "/capsule/[id]", params: { id: item.capsuleId } })}
+              onMap={setMapPlace} onStep={step} count={items.length} index={items.findIndex((i) => i.id === selected.id)} />
+          </View>
+          : <Pressable accessibilityRole="button" accessibilityLabel={s("kicker")} disabled={!items.length}
+              onPress={() => select(items[0].id)}
+              style={{ alignSelf: "flex-end", marginRight: -spacing.md - insets.right, backgroundColor: "rgba(255,255,255,.9)", borderTopLeftRadius: 12, borderBottomLeftRadius: 12, padding: 12, paddingRight: 12 + insets.right, borderWidth: 1, borderRightWidth: 0, borderColor: C.line, ...shadows.card }}>
+            <Text style={{ fontFamily: sans, fontSize: 11, fontWeight: "700", letterSpacing: 1.2, color: C.blue }}>{s("kicker")}</Text>
+          </Pressable>)}
+        {SEA_ENABLED && !selected && <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
+          onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: "sea" } }); }}
+          style={({ pressed }) => ({ alignSelf: "center", flexShrink: 0, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: C.wax, borderRadius: radii.pill, paddingLeft: 8, paddingRight: 20, paddingVertical: 7, opacity: pressed ? .9 : 1, ...shadows.card })}>
           <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}><Vessel kind="bottle" size={26} /></View>
           <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("throwCta")}</Text>
         </Pressable>}
@@ -213,11 +209,11 @@ export default function JourneyScreen() {
           <Chip onPress={() => setAsia(false)} label={t("back")}><ArtIcon name="close" size={22} /></Chip>
           <Text style={{ fontFamily: serif, fontSize: 24, color: C.ink }}>{t("journey.title")} · {s("asia")}</Text>
         </View>
-        <JourneyMap pins={pins} fix={fix} onSelect={(pin) => { void haptics.tick(); setAsia(false); if (pin.waiting) setMapPlace(pin); }} />
+        <JourneyMap pins={pins} fix={fix} onSelect={(pin) => { void haptics.tick(); setAsia(false); const item = items.find((i) => i.kind === "place" && i.pin.place.id === pin.place.id); if (item?.kind === "place") { select(item.id); } }} />
       </SafeAreaView>
     </Modal>
     <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows} />
-  </View>;
+  </JourneyViewport>;
 }
 
 function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections, onView, onMap }: {
@@ -286,9 +282,9 @@ function LocationGate({ status, onAllow, onSettings }: { status: string; onAllow
   </SafeAreaView>;
 }
 
-function Chip({ children, onPress, label }: { children: React.ReactNode; onPress: () => void; label: string }) {
+function Chip({ children, onPress, label, translucent = false }: { children: React.ReactNode; onPress: () => void; label: string; translucent?: boolean }) {
   return <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
-    style={{ minWidth: 44, height: 44, paddingHorizontal: 8, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}>{children}</Pressable>;
+    style={{ minWidth: 44, height: 44, paddingHorizontal: 8, borderRadius: 22, backgroundColor: translucent ? "rgba(246,248,251,.9)" : "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}>{children}</Pressable>;
 }
 function Pill({ onPress, label }: { onPress: () => void; label: string }) {
   return <Pressable accessibilityRole="button" onPress={onPress} style={{ backgroundColor: C.ink, borderRadius: radii.pill, paddingHorizontal: 14, paddingVertical: 9, ...shadows.card }}>
