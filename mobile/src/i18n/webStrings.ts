@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { f2Strings } from "./f2Strings";
 // Ported from the web app; HTML in legacy values is presentation markup.
 export const STR = {
   zh: {
@@ -788,6 +789,27 @@ export const VESSELS = {
     desc: { zh: "一對，永遠並肩。", en: "A pair, always side by side." },
     price: 0,
   },
+  "hot-air-balloon": { name: { zh: f2Strings.zh["shop.vessel.hot-air-balloon"], en: f2Strings.en["shop.vessel.hot-air-balloon"] }, desc: { zh: f2Strings.zh["shop.desc.hot-air-balloon"], en: f2Strings.en["shop.desc.hot-air-balloon"] }, price: 22 },
+  "bubble-tea": { name: { zh: f2Strings.zh["shop.vessel.bubble-tea"], en: f2Strings.en["shop.vessel.bubble-tea"] }, desc: { zh: f2Strings.zh["shop.desc.bubble-tea"], en: f2Strings.en["shop.desc.bubble-tea"] }, price: 12 },
+  "dim-sum-steamer": { name: { zh: f2Strings.zh["shop.vessel.dim-sum-steamer"], en: f2Strings.en["shop.vessel.dim-sum-steamer"] }, desc: { zh: f2Strings.zh["shop.desc.dim-sum-steamer"], en: f2Strings.en["shop.desc.dim-sum-steamer"] }, price: 16 },
+  "bento": { name: { zh: f2Strings.zh["shop.vessel.bento"], en: f2Strings.en["shop.vessel.bento"] }, desc: { zh: f2Strings.zh["shop.desc.bento"], en: f2Strings.en["shop.desc.bento"] }, price: 18 },
+  "paper-cranes": { name: { zh: f2Strings.zh["shop.vessel.paper-cranes"], en: f2Strings.en["shop.vessel.paper-cranes"] }, desc: { zh: f2Strings.zh["shop.desc.paper-cranes"], en: f2Strings.en["shop.desc.paper-cranes"] }, price: 18 },
+  "heart-locket": { name: { zh: f2Strings.zh["shop.vessel.heart-locket"], en: f2Strings.en["shop.vessel.heart-locket"] }, desc: { zh: f2Strings.zh["shop.desc.heart-locket"], en: f2Strings.en["shop.desc.heart-locket"] }, price: 22 },
+  "suitcase": { name: { zh: f2Strings.zh["shop.vessel.suitcase"], en: f2Strings.en["shop.vessel.suitcase"] }, desc: { zh: f2Strings.zh["shop.desc.suitcase"], en: f2Strings.en["shop.desc.suitcase"] }, price: 20 },
+  "postbox": { name: { zh: f2Strings.zh["shop.vessel.postbox"], en: f2Strings.en["shop.vessel.postbox"] }, desc: { zh: f2Strings.zh["shop.desc.postbox"], en: f2Strings.en["shop.desc.postbox"] }, price: 16 },
+  "camp-lantern": { name: { zh: f2Strings.zh["shop.vessel.camp-lantern"], en: f2Strings.en["shop.vessel.camp-lantern"] }, desc: { zh: f2Strings.zh["shop.desc.camp-lantern"], en: f2Strings.en["shop.desc.camp-lantern"] }, price: 18 },
+  "treasure-chest": { name: { zh: f2Strings.zh["shop.vessel.treasure-chest"], en: f2Strings.en["shop.vessel.treasure-chest"] }, desc: { zh: f2Strings.zh["shop.desc.treasure-chest"], en: f2Strings.en["shop.desc.treasure-chest"] }, price: 24 },
+  "spellbook": { name: { zh: f2Strings.zh["shop.vessel.spellbook"], en: f2Strings.en["shop.vessel.spellbook"] }, desc: { zh: f2Strings.zh["shop.desc.spellbook"], en: f2Strings.en["shop.desc.spellbook"] }, price: 24 },
+  "escape-pod": { name: { zh: f2Strings.zh["shop.vessel.escape-pod"], en: f2Strings.en["shop.vessel.escape-pod"] }, desc: { zh: f2Strings.zh["shop.desc.escape-pod"], en: f2Strings.en["shop.desc.escape-pod"] }, price: 26 },
+  "crystal-ball": { name: { zh: f2Strings.zh["shop.vessel.crystal-ball"], en: f2Strings.en["shop.vessel.crystal-ball"] }, desc: { zh: f2Strings.zh["shop.desc.crystal-ball"], en: f2Strings.en["shop.desc.crystal-ball"] }, price: 22 },
+  "wishing-lamp": { name: { zh: f2Strings.zh["shop.vessel.wishing-lamp"], en: f2Strings.en["shop.vessel.wishing-lamp"] }, desc: { zh: f2Strings.zh["shop.desc.wishing-lamp"], en: f2Strings.en["shop.desc.wishing-lamp"] }, price: 22 },
+  "potion": { name: { zh: f2Strings.zh["shop.vessel.potion"], en: f2Strings.en["shop.vessel.potion"] }, desc: { zh: f2Strings.zh["shop.desc.potion"], en: f2Strings.en["shop.desc.potion"] }, price: 16 },
+  "pocket-watch": { name: { zh: f2Strings.zh["shop.vessel.pocket-watch"], en: f2Strings.en["shop.vessel.pocket-watch"] }, desc: { zh: f2Strings.zh["shop.desc.pocket-watch"], en: f2Strings.en["shop.desc.pocket-watch"] }, price: 26 },
+  "diploma-tube": { name: { zh: f2Strings.zh["shop.vessel.diploma-tube"], en: f2Strings.en["shop.vessel.diploma-tube"] }, desc: { zh: f2Strings.zh["shop.desc.diploma-tube"], en: f2Strings.en["shop.desc.diploma-tube"] }, price: 18 },
+  "baby-shoes": { name: { zh: f2Strings.zh["shop.vessel.baby-shoes"], en: f2Strings.en["shop.vessel.baby-shoes"] }, desc: { zh: f2Strings.zh["shop.desc.baby-shoes"], en: f2Strings.en["shop.desc.baby-shoes"] }, price: 18 },
+  "memorial-candle": { name: { zh: f2Strings.zh["shop.vessel.memorial-candle"], en: f2Strings.en["shop.vessel.memorial-candle"] }, desc: { zh: f2Strings.zh["shop.desc.memorial-candle"], en: f2Strings.en["shop.desc.memorial-candle"] }, price: 0 },
+  "rocket-tin": { name: { zh: f2Strings.zh["shop.vessel.rocket-tin"], en: f2Strings.en["shop.vessel.rocket-tin"] }, desc: { zh: f2Strings.zh["shop.desc.rocket-tin"], en: f2Strings.en["shop.desc.rocket-tin"] }, price: 20 },
+
 };
 
 // F4 screen copy. Keys are namespaced to keep parallel screen work independent.
