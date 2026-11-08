@@ -18,6 +18,8 @@ export type ThrowResult = {
   vessel: string; copies: number; stars: number; is_new: boolean; xp_gained: number;
   attempts_left: number; state: GameState;
 };
+export type LandmarkAttempt = { id: string; waypost: string; vessel: string; cracks: number; expires_at: string };
+export type LandmarkHit = { result: "hit" | "won"; cracks: number; vessel: string; copies: number; stars: number; is_new: boolean; xp_gained: number; state: GameState };
 export type DevLetter = { bottle: SeaBottle; message: string };
 export type GameErrorCode = "no_balls" | "expired" | "no_attempts" | "too_far" | "cooldown" | "unknown";
 export class GameError extends Error { constructor(public code: GameErrorCode) { super(code); } }
@@ -30,6 +32,7 @@ const THROW_CHANCE: Record<Rarity, number> = { common: .55, uncommon: .35, rare:
 const dev = {
   xp: 0, wax: 30, gold: 2, seeded: false,
   corrupted: [] as CorruptedCapsule[], wayposts: [] as Waypost[], copies: new Map<string, number>(), bottles: [] as DevLetter[],
+  attempts: new Map<string, { attempt: LandmarkAttempt; cracks: number }>(),
 };
 const stateNow = (): GameState => ({
   xp: dev.xp, level: Math.floor(dev.xp / XP_PER_LEVEL) + 1,
@@ -51,7 +54,7 @@ function seed(at: Coords) {
   dev.wayposts = [
     { id: "dev-a", kind: "common", name_zh: "公園驛站", name_en: "Park Waypost", ...offset(at, -70, 25), cooldown_until: null },
     { id: "dev-b", kind: "common", name_zh: "廣場驛站", name_en: "Square Waypost", ...offset(at, 130, 80), cooldown_until: null },
-    { id: "dev-c", kind: "landmark", name_zh: "地標驛站", name_en: "Landmark Waypost", ...offset(at, 240, -60), cooldown_until: null },
+    { id: "dev-c", kind: "landmark", name_zh: "地標驛站", name_en: "Landmark Waypost", ...offset(at, 78, -52), cooldown_until: null },
   ];
   const sealed = new Date(Date.now() - 9 * 86_400_000).toISOString();
   const bottles: [string, string, string, string, string, number, number][] = [
@@ -91,6 +94,28 @@ export const game = {
     dev.xp += xp_gained;
     capsule.attempts_left = 0;
     return { vessel: capsule.vessel, result: "restored", copies, stars: starsFor(copies), is_new, xp_gained, attempts_left: 0, state: stateNow() };
+  },
+  async landmarkStart(waypost: string): Promise<LandmarkAttempt> {
+    const attempt: LandmarkAttempt = { id: `dev-fight-${Date.now()}`, waypost, vessel: "bamboo-tower", cracks: 12, expires_at: new Date(Date.now() + 180_000).toISOString() };
+    dev.attempts.set(attempt.id, { attempt, cracks: attempt.cracks });
+    return attempt;
+  },
+  async landmarkHit(args: { attempt: string; ball: BallKind; ring: number }): Promise<LandmarkHit> {
+    const live = dev.attempts.get(args.attempt);
+    if (!live || new Date(live.attempt.expires_at).getTime() <= Date.now()) throw new GameError("expired");
+    if (args.ball === "gold" ? dev.gold <= 0 : dev.wax <= 0) throw new GameError("no_balls");
+    if (args.ball === "gold") dev.gold -= 1; else dev.wax -= 1;
+    live.cracks = Math.max(0, live.cracks - (args.ball === "gold" || args.ring >= .8 ? 2 : 1));
+    const vessel = live.attempt.vessel;
+    if (live.cracks > 0) return { result: "hit", cracks: live.cracks, vessel, copies: 0, stars: 0, is_new: false, xp_gained: 0, state: stateNow() };
+    const copies = (dev.copies.get(vessel) ?? 0) + 1;
+    dev.copies.set(vessel, copies);
+    dev.xp += 2000;
+    dev.attempts.delete(args.attempt);
+    return { result: "won", cracks: 0, vessel, copies, stars: starsFor(copies), is_new: copies === 1, xp_gained: 2000, state: stateNow() };
+  },
+  devCollection(): Record<string, { copies: number; stars: number }> {
+    return Object.fromEntries([...dev.copies].map(([id, copies]) => [id, { copies, stars: starsFor(copies) }]));
   },
   /** Development only: capsules from other people, so the pickup can be tried anywhere. */
   devBottles(at: Coords): SeaBottle[] { seed(at); return dev.bottles.map((b) => b.bottle); },

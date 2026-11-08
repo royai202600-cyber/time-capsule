@@ -62,7 +62,7 @@ The default zoom makes the 100 m pickup circle span 75% of the screen width.
 - **Vessels:** 1–5 stars, raised by collecting duplicates.
 
 ## Collection
-- **Cabinet is the collection book:** numbered No.001–067, with faint outlines for what you don't have yet.
+- **Cabinet is the collection book:** one numbered list, No.001–067, in catalogue order. What you don't have yet is a faint outline with only its number, no name.
 - **Passport stays**, and landmark stamps go in it. On Journey it is a recognisable icon at the bottom of the screen, not a bare count.
 
 ## Shop and sending
