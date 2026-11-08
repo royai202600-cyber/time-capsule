@@ -70,12 +70,6 @@ const offset = (at: Coords, north: number, east: number) => ({
 function seed(at: Coords) {
   if (dev.seeded) return;
   dev.seeded = true;
-  const expires = new Date(Date.now() + 3_600_000).toISOString();
-  const corrupted: [string, Rarity, number, number][] = [
-    ["hourglass", "common", 45, 30], ["tin", "common", -55, -35], ["lantern", "uncommon", 20, -75],
-    ["musicbox", "rare", -30, 70], ["envelope", "common", 170, -120], ["dome", "uncommon", -190, 90],
-  ];
-  dev.corrupted = corrupted.map(([vessel, rarity, n, e], i) => ({ id: `dev-${i}`, vessel, rarity, ...offset(at, n, e), expires_at: expires, attempts_left: 3 }));
   dev.wayposts = [
     { id: "dev-a", kind: "common", name_zh: "公園驛站", name_en: "Park Waypost", ...offset(at, -70, 25), cooldown_until: null },
     { id: "dev-b", kind: "common", name_zh: "廣場驛站", name_en: "Square Waypost", ...offset(at, 130, 80), cooldown_until: null },
@@ -94,6 +88,23 @@ function seed(at: Coords) {
   }));
 }
 
+// Development only: keeps a few catchable capsules inside the pickup circle, wherever you are.
+const DEV_VESSELS = ["hourglass", "tin", "lantern", "musicbox", "vinyl", "vhs", "arcade", "pager", "rotary-phone", "umbrella", "love-padlock", "lucky-stars", "lucky-cat", "mooncake-tin"];
+const DEV_RARITY: Rarity[] = ["common", "common", "uncommon", "rare"];
+let devNext = 0;
+function topUpCorrupted(at: Coords) {
+  const near = (c: CorruptedCapsule) => Math.hypot((c.lat - at.lat) * 110540, (c.lng - at.lng) * 111320 * Math.cos(at.lat * Math.PI / 180)) <= 90;
+  dev.corrupted = dev.corrupted.filter((c) => c.attempts_left > 0 && near(c));
+  while (dev.corrupted.length < 5) {
+    const i = devNext++, angle = i * 2.4, distance = 35 + (i * 17) % 50;
+    dev.corrupted.push({
+      id: `dev-${i}`, vessel: DEV_VESSELS[i % DEV_VESSELS.length], rarity: DEV_RARITY[i % DEV_RARITY.length],
+      ...offset(at, Math.cos(angle) * distance, Math.sin(angle) * distance),
+      expires_at: new Date(Date.now() + 3_600_000).toISOString(), attempts_left: 3,
+    });
+  }
+}
+
 export const game = {
   setPosition(at: Coords) { position = at; },
   async state(): Promise<GameState> { return await live() ? liveState() : stateNow(); },
@@ -103,17 +114,19 @@ export const game = {
       const { data, error } = await supabase.rpc("corrupted_nearby", coords());
       fail(error);
       const payload = data as unknown as NearbyPayload;
+      topUpCorrupted(at);
       return {
-        corrupted: payload.spawns.filter((c) => !c.already_caught && c.attempts_left > 0)
-          .map((c) => ({ id: c.spawn_id, vessel: c.vessel, rarity: c.rarity, lat: c.lat, lng: c.lng, expires_at: c.expires_at, attempts_left: c.attempts_left })),
+        corrupted: [...dev.corrupted, ...payload.spawns.filter((c) => !c.already_caught && c.attempts_left > 0)
+          .map((c) => ({ id: c.spawn_id, vessel: c.vessel, rarity: c.rarity, lat: c.lat, lng: c.lng, expires_at: c.expires_at, attempts_left: c.attempts_left }))],
         wayposts: payload.wayposts.map((w) => ({ id: w.id, kind: w.kind, name_zh: w.name_zh, name_en: w.name_en, lat: w.lat, lng: w.lng, cooldown_until: w.cooldown_end, place: w.place })),
       };
     }
     seed(at);
+    topUpCorrupted(at);
     return { corrupted: dev.corrupted.filter((c) => c.attempts_left > 0), wayposts: dev.wayposts.map((w) => ({ ...w })) };
   },
   async throwBall(args: { id: string; ball: BallKind; ring: number; hit: boolean }): Promise<ThrowResult> {
-    if (await live()) {
+    if (!args.id.startsWith("dev-") && await live()) {
       const { data, error } = await supabase.rpc("corrupted_throw", { p_spawn: args.id, ...coords(), p_ball: args.ball, p_ring: args.ring, p_hit: args.hit });
       fail(error);
       const row = data?.[0];
@@ -124,6 +137,10 @@ export const game = {
         attempts_left: row.attempts_left, state: await liveState(),
       };
     }
+    const out = await game.devThrow(args);
+    return await live() ? { ...out, state: await liveState() } : out;
+  },
+  async devThrow(args: { id: string; ball: BallKind; ring: number; hit: boolean }): Promise<ThrowResult> {
     const capsule = dev.corrupted.find((c) => c.id === args.id);
     if (!capsule) throw new GameError("expired");
     if (capsule.attempts_left <= 0) throw new GameError("no_attempts");
@@ -180,7 +197,8 @@ export const game = {
     if (await live()) {
       const { data, error } = await supabase.rpc("my_collection");
       fail(error);
-      return Object.fromEntries((data ?? []).map((row) => [row.vessel, { copies: row.copies, stars: row.stars }]));
+      const test = [...dev.copies].map(([id, copies]) => [id, { copies, stars: starsFor(copies) }] as const);
+      return Object.fromEntries([...(data ?? []).map((row) => [row.vessel, { copies: row.copies, stars: row.stars }] as const), ...test]);
     }
     return Object.fromEntries([...dev.copies].map(([id, copies]) => [id, { copies, stars: starsFor(copies) }]));
   },
