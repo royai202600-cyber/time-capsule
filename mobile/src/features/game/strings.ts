@@ -35,6 +35,7 @@ const strings = {
     timeUp: "時間到了，下次再來",
     spinHint: "左右滑動，轉動它",
     done: "完成",
+    leave: "離開",
     collected: (n: number, total: number) => `已收集 ${n} / ${total}`,
   },
   en: {
@@ -70,6 +71,7 @@ const strings = {
     timeUp: "Time's up. Come back and try again",
     spinHint: "Swipe sideways to spin",
     done: "Done",
+    leave: "Leave",
     collected: (n: number, total: number) => `${n} of ${total} collected`,
   },
 } as const;

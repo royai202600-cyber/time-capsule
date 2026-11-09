@@ -1,11 +1,11 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Easing, PanResponder, Platform, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, Ellipse, Path, Rect } from "react-native-svg";
-import { ArtIcon } from "../../components/ArtIcon";
 import { haptics } from "../../components/haptics";
 import { game, GameError, type GameState, type Waypost } from "../../services/game";
 import { C, radii, serif, shadows, spacing } from "../../theme";
+import { useReducedMotion } from "../../useReducedMotion";
 import { errorKey, useGameText } from "./strings";
 import { ThrowBackground, WaxBall } from "./ThrowScreen";
 
@@ -29,15 +29,32 @@ function PlacePicture() {
   </View>;
 }
 
+/** Points the way to swipe; brightens and slides out as the picture sways toward it. */
+function SwipeArrow({ side, nudge }: { side: -1 | 1; nudge: Animated.Value }) {
+  return <Animated.View pointerEvents="none" style={{
+    position: "absolute", top: DISC / 2 - 16, [side < 0 ? "left" : "right"]: -40,
+    opacity: nudge.interpolate({ inputRange: [-1, 0, 1], outputRange: side < 0 ? [1, .6, .3] : [.3, .6, 1] }),
+    transform: [{ translateX: nudge.interpolate({ inputRange: [-1, 1], outputRange: [-6, 6] }) }],
+  }}>
+    <Svg width={32} height={32} viewBox="0 0 32 32" fill="none" stroke={C.ink} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+      <Path d={side < 0 ? "M15 7l-9 9 9 9M25 7l-9 9 9 9" : "M17 7l9 9-9 9M7 7l9 9-9 9"} />
+    </Svg>
+  </Animated.View>;
+}
+
 export function SpinScreen({ waypost, language, onState, onClose }: {
   waypost: Waypost; language: "zh" | "en"; onState: (s: GameState) => void; onClose: () => void;
 }) {
   const insets = useSafeAreaInsets();
   const s = useGameText();
+  const reduced = useReducedMotion();
   const cooling = !!waypost.cooldown_until && new Date(waypost.cooldown_until).getTime() > Date.now();
   const [reward, setReward] = useState<{ wax: number; gold: number } | null>(null);
   const [note, setNote] = useState(cooling ? s("cooldown") : "");
   const [spent, setSpent] = useState(cooling);
+  const [touched, setTouched] = useState(false);
+  const hinting = !touched && !spent;
+  const nudge = useRef(new Animated.Value(0)).current;
   const rise = useRef(new Animated.Value(0)).current;
   const tally = useRef(new Animated.Value(0)).current;
   const rotation = useRef(new Animated.Value(0)).current;
@@ -64,16 +81,25 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
       setSpent(true);
     }
   };
+  useEffect(() => {
+    if (!hinting || reduced) return;
+    const step = (toValue: number, duration: number) => Animated.timing(nudge, { toValue, duration, easing: Easing.inOut(Easing.quad), useNativeDriver: NATIVE });
+    const loop = Animated.loop(Animated.sequence([step(1, 420), step(-1, 720), step(0, 420), Animated.delay(800)]));
+    loop.start();
+    return () => { loop.stop(); nudge.setValue(0); };
+  }, [hinting, reduced, nudge]);
+
   const spinRef = useRef(spin);
   spinRef.current = spin;
 
   const pan = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => !busy.current,
     onMoveShouldSetPanResponder: () => !busy.current,
+    onPanResponderGrant: () => setTouched(true),
     onPanResponderMove: (_, g) => { turned.current = g.dx * .9; rotation.setValue(turned.current); },
     onPanResponderRelease: (_, g) => {
       if (Math.abs(g.dx) > 50 || Math.abs(g.vx) > .4) void spinRef.current(g.dx < 0 ? -1 : 1);
-      else { turned.current = 0; Animated.spring(rotation, { toValue: 0, useNativeDriver: NATIVE }).start(); }
+      else { turned.current = 0; setTouched(false); Animated.spring(rotation, { toValue: 0, useNativeDriver: NATIVE }).start(); }
     },
   }), [rotation]);
 
@@ -83,13 +109,7 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
 
   return <View style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 40 }}>
     <ThrowBackground />
-    <View pointerEvents="box-none" style={{ position: "absolute", top: insets.top + spacing.sm, left: spacing.md, right: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-      <Pressable accessibilityRole="button" accessibilityLabel={s("close")} onPress={onClose}
-        style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}>
-        <ArtIcon name="close" size={22} />
-      </Pressable>
-      <Text numberOfLines={1} style={{ flex: 1, fontFamily: serif, fontSize: 20, color: C.ink }}>{name}</Text>
-    </View>
+    <Text numberOfLines={1} style={{ position: "absolute", top: insets.top + spacing.md, left: spacing.lg, right: spacing.lg, textAlign: "center", fontFamily: serif, fontSize: 20, color: C.ink }}>{name}</Text>
 
     <View pointerEvents="none" style={{ position: "absolute", top: insets.top + 68, right: spacing.md, alignItems: "flex-end", gap: 8 }}>
       {lines.map((line, i) => <Animated.View key={line.kind} style={{
@@ -104,6 +124,9 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
 
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: spacing.lg }}>
       <View style={{ width: DISC, height: DISC, alignItems: "center", justifyContent: "center" }}>
+        {hinting && <SwipeArrow side={-1} nudge={nudge} />}
+        {hinting && <SwipeArrow side={1} nudge={nudge} />}
+        <Animated.View style={{ transform: [{ perspective: 900 }, { rotateY: nudge.interpolate({ inputRange: [-1, 1], outputRange: ["-18deg", "18deg"] }) }] }}>
         <Animated.View {...pan.panHandlers} accessibilityRole="adjustable" accessibilityLabel={s("spinHint")}
           style={{
             width: DISC, height: DISC, opacity: spent && !reward ? .5 : 1,
@@ -111,6 +134,7 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
             ...(Platform.OS === "web" ? ({ touchAction: "none", cursor: "grab", userSelect: "none" } as object) : {}),
           }}>
           <PlacePicture />
+        </Animated.View>
         </Animated.View>
         {balls.map((kind, i) => {
           const start = Math.min(.5, i * STAGGER);
@@ -130,8 +154,8 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
       {!reward && <Text style={{ fontSize: 14, color: C.ink, backgroundColor: "rgba(246,248,251,.86)", paddingHorizontal: 14, paddingVertical: 8, borderRadius: radii.pill, overflow: "hidden" }}>{note || s("spinHint")}</Text>}
     </View>
 
-    {spent && <Pressable accessibilityRole="button" onPress={onClose} style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, alignItems: "center", backgroundColor: C.blue, borderRadius: radii.pill, paddingVertical: 13 }}>
-      <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("done")}</Text>
-    </Pressable>}
+    <Pressable accessibilityRole="button" onPress={onClose} style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, alignItems: "center", backgroundColor: reward ? C.blue : "rgba(246,248,251,.94)", borderRadius: radii.pill, paddingVertical: 13, ...shadows.card }}>
+      <Text style={{ fontFamily: serif, fontSize: 16, color: reward ? C.white : C.ink }}>{s(reward ? "done" : "leave")}</Text>
+    </Pressable>
   </View>;
 }
