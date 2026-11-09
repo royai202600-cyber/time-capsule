@@ -10,7 +10,7 @@ import { useLanguage } from "../../i18n";
 import { game, GameError, type BallKind, type GameState, type CorruptedCapsule, type LandmarkAttempt, type Rarity, type ThrowResult } from "../../services/game";
 import { mapPalette } from "../journey/live/mapHtml";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
-import { gameArt } from "../../art/manifest";
+import { fxGlint, gameArt, lightBurst } from "../../art/manifest";
 import { crackOverlays } from "../../art/crackOverlays";
 import { ANGER_MARK, CORRUPTED_MARK } from "./corruptedLook";
 import { useReducedMotion } from "../../useReducedMotion";
@@ -81,12 +81,21 @@ export function ThrowBackground() {
 const WEB_DARKEN = Platform.OS === "web";
 const ANGER = "M40 12C40 30 30 40 12 40M60 12C60 30 70 40 88 40M12 60C30 60 40 70 40 88M88 60C70 60 60 70 60 88";
 /** The comic anger mark that shows a capsule is corrupted, inside the top right of the vessel. */
+const GLINTS = Array.from({ length: 8 }, (_, i) => ({ angle: (i / 8) * Math.PI * 2 + .3, reach: 104 + (i % 3) * 34, size: 24 + (i % 3) * 10 }));
+type Praise = "praiseGood" | "praiseLovely" | "praisePerfect";
+const PRAISE_COLOR: Record<Praise, string> = { praiseGood: C.blue, praiseLovely: "#9A7430", praisePerfect: C.wax };
+/** `ring` is 1 at the ring's tightest. */
+const praiseFor = (ring: number): Praise => ring >= .8 ? "praisePerfect" : ring >= .45 ? "praiseLovely" : "praiseGood";
+const finished = (animation: Animated.CompositeAnimation) => new Promise<void>((done) => animation.start(() => done()));
+
 function AngerMark({ size }: { size: number }) {
   return <Svg width={size} height={size} viewBox="0 0 100 100">
     <Path d={ANGER} stroke="#fff" strokeWidth={18} fill="none" strokeLinecap="round" />
     <Path d={ANGER} stroke="#000" strokeWidth={10} fill="none" strokeLinecap="round" />
   </Svg>;
 }
+
+type Restored = Pick<ThrowResult, "vessel" | "copies" | "stars" | "is_new" | "xp_gained">;
 
 export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   capsule: CorruptedCapsule; landmark?: LandmarkAttempt; state: GameState; onState: (s: GameState) => void; onClose: (caught: boolean) => void;
@@ -102,8 +111,10 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   const [kind, setKind] = useState<BallKind>("wax");
   const [attempts, setAttempts] = useState(capsule.attempts_left);
   const [message, setMessage] = useState("");
-  const [result, setResult] = useState<Pick<ThrowResult, "vessel" | "copies" | "stars" | "is_new" | "xp_gained"> | null>(null);
+  const [result, setResult] = useState<Restored | null>(null);
   const [cracks, setCracks] = useState(landmark?.cracks ?? 0);
+  const [praise, setPraise] = useState<Praise | null>(null);
+  const [celebrating, setCelebrating] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(landmark ? Math.ceil((new Date(landmark.expires_at).getTime() - Date.now()) / 1000) : 0);
 
   const ringPhase = useRef(new Animated.Value(1)).current;
@@ -114,6 +125,15 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   const ballOpacity = useRef(new Animated.Value(1)).current;
   const crack = useRef(new Animated.Value(1)).current;
   const dust = useRef(new Animated.Value(0)).current;
+  const ballSpin = useRef(new Animated.Value(0)).current;
+  const praiseShow = useRef(new Animated.Value(0)).current;
+  const rock = useRef(new Animated.Value(0)).current;
+  const pop = useRef(new Animated.Value(1)).current;
+  const burst = useRef(new Animated.Value(0)).current;
+  const wave = useRef(new Animated.Value(0)).current;
+  const sparkle = useRef(new Animated.Value(0)).current;
+  const dim = useRef(new Animated.Value(0)).current;
+  const settling = useRef(false);
 
   const ringStart = useRef(Date.now());
   const busy = useRef(false);
@@ -155,10 +175,11 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
 
   // The capsule sometimes jumps, and a ball thrown mid-jump passes underneath it.
   useEffect(() => {
-    if (reduced || result || landmark) return;
+    if (reduced || result || landmark || celebrating) return;
     let timer: ReturnType<typeof setTimeout>;
     const schedule = () => {
       timer = setTimeout(() => {
+        if (settling.current) { schedule(); return; }
         jumping.current = true;
         Animated.sequence([
           Animated.timing(hop, { toValue: -74, duration: 230, easing: Easing.out(Easing.quad), useNativeDriver: NATIVE }),
@@ -168,76 +189,136 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     };
     schedule();
     return () => clearTimeout(timer);
-  }, [hop, reduced, result]);
+  }, [hop, reduced, result, celebrating]);
 
   const flash = (text: string) => setMessage(text);
   const reset = () => {
     if (!alive.current) return;
+    settling.current = false;
     ball.setValue({ x: 0, y: 0 });
     ballScale.setValue(1);
+    ballSpin.setValue(0);
     Animated.timing(ballOpacity, { toValue: 1, duration: 160, useNativeDriver: NATIVE }).start(() => { busy.current = false; });
   };
   const nudge = () => Animated.sequence([-14, 14, -8, 8, 0].map((toValue) =>
     Animated.timing(shake, { toValue, duration: 70, useNativeDriver: NATIVE }))).start();
 
-  const settleLandmark = async (hit: boolean, ring: number) => {
+  const timing = (value: Animated.Value, toValue: number, duration: number, easing?: (n: number) => number) =>
+    Animated.timing(value, { toValue, duration, easing, useNativeDriver: NATIVE });
+
+  /** The ball glances off the capsule the moment it lands, without waiting for the server. */
+  const bounceOff = (x: number, y: number) => {
+    if (reduced) return finished(timing(ballOpacity, 0, 200));
+    const side = x === 0 ? (Math.random() < .5 ? -1 : 1) : Math.sign(x);
+    const ground = y + vesselSize * .55;
+    return finished(Animated.parallel([
+      timing(ball.x, x + side * 96, 640, Easing.linear),
+      Animated.sequence([timing(ball.y, y - 76, 210, Easing.out(Easing.quad)), timing(ball.y, ground, 430, Easing.bounce)]),
+      timing(ballSpin, side, 640, Easing.linear),
+      Animated.sequence([Animated.delay(520), timing(ballOpacity, 0, 140)]),
+    ]));
+  };
+  /** A ball that missed keeps going and drops to the ground. */
+  const dropAway = (x: number, y: number) => {
+    if (reduced) return finished(timing(ballOpacity, 0, 200));
+    return finished(Animated.parallel([
+      timing(ball.x, x * 1.12, 460, Easing.linear),
+      timing(ball.y, y + 92, 460, Easing.bounce),
+      timing(ballSpin, x < 0 ? -.6 : .6, 460, Easing.linear),
+      Animated.sequence([Animated.delay(340), timing(ballOpacity, 0, 120)]),
+    ]));
+  };
+  /** Everything the player feels at the moment of a hit. */
+  const impact = (ring: number, x: number, y: number) => {
+    void haptics.tap();
+    setPraise(praiseFor(ring));
+    praiseShow.setValue(0);
+    timing(praiseShow, 1, 1050, Easing.linear).start();
+    if (!reduced) {
+      dust.setValue(0);
+      timing(dust, 1, 620, Easing.out(Easing.cubic)).start();
+      Animated.sequence([timing(pop, 1.07, 70), timing(pop, 1, 130)]).start();
+    }
+    return bounceOff(x, y);
+  };
+
+  /** The capsule struggles, gathers, and bursts back into its true colours. */
+  const restore = async (out: Restored) => {
+    setMessage("");
+    setCelebrating(true);
+    if (reduced) {
+      void haptics.success();
+      await finished(timing(crack, 0, 420));
+      if (alive.current) setResult(out);
+      return;
+    }
+    timing(dim, .58, 620, Easing.inOut(Easing.quad)).start();
+    await finished(Animated.sequence([-1, 1, -.75, .75, -.45, .45, 0].map((toValue) => timing(rock, toValue, 105, Easing.inOut(Easing.quad)))));
+    if (!alive.current) return;
+    await finished(Animated.parallel([timing(pop, .88, 240, Easing.in(Easing.quad)), timing(burst, .12, 240)]));
+    if (!alive.current) return;
+    void haptics.success();
+    dust.setValue(0);
+    await finished(Animated.parallel([
+      timing(crack, 0, 240),
+      Animated.sequence([timing(pop, 1.22, 170, Easing.out(Easing.back(2))), timing(pop, 1, 320, Easing.inOut(Easing.quad))]),
+      timing(burst, 1, 1150, Easing.linear),
+      Animated.sequence([Animated.delay(640), timing(dim, 0, 510, Easing.inOut(Easing.quad))]),
+      timing(wave, 1, 720, Easing.out(Easing.cubic)),
+      timing(sparkle, 1, 1050, Easing.out(Easing.quad)),
+      timing(dust, 1, 760, Easing.out(Easing.cubic)),
+    ]));
+    if (alive.current) setResult(out);
+  };
+
+  const settleLandmark = async (hit: boolean, ring: number, x: number, y: number) => {
     if (!landmark) return;
     if (!hit) {
       void haptics.warn();
       flash(s("miss"));
-      Animated.timing(ballOpacity, { toValue: 0, duration: 200, useNativeDriver: NATIVE }).start(reset);
+      await dropAway(x, y);
+      reset();
       return;
     }
+    const bounced = impact(ring, x, y);
     try {
       const out = await game.landmarkHit({ attempt: landmark.id, ball: latest.current.kind, ring });
       if (!alive.current) return;
       onState(out.state);
       setCracks(out.cracks);
-      ballOpacity.setValue(0);
-      dust.setValue(0);
-      Animated.timing(dust, { toValue: 1, duration: 520, easing: Easing.out(Easing.cubic), useNativeDriver: NATIVE }).start();
-      Animated.timing(crack, { toValue: out.cracks / landmark.cracks, duration: 320, useNativeDriver: NATIVE }).start();
-      if (out.result === "won") {
-        void haptics.success();
-        setMessage("");
-        setTimeout(() => { if (alive.current) setResult(out); }, 520);
-        return;
-      }
-      void haptics.tap();
-      nudge();
+      timing(crack, out.cracks / landmark.cracks, 320).start();
+      await bounced;
+      if (!alive.current) return;
+      if (out.result === "won") { await restore(out); return; }
       setMessage("");
-      setTimeout(reset, 320);
+      reset();
     } catch (e) {
       if (!alive.current) return;
       const code = e instanceof GameError ? e.code : "unknown";
       flash(code === "expired" ? s("timeUp") : s(errorKey(code)));
+      await bounced;
       reset();
     }
   };
 
-  const settle = async (hit: boolean, ring: number) => {
-    if (landmark) return settleLandmark(hit, ring);
+  const settle = async (hit: boolean, ring: number, x: number, y: number) => {
+    if (landmark) return settleLandmark(hit, ring, x, y);
     const ballKind = latest.current.kind;
+    const moved = hit ? impact(ring, x, y) : dropAway(x, y);
     try {
       const out = await game.throwBall({ id: capsule.id, ball: ballKind, ring, hit });
       if (!alive.current) return;
       onState(out.state);
       setAttempts(out.attempts_left);
+      if (out.result === "miss") void haptics.warn();
+      await moved;
+      if (!alive.current) return;
       if (out.result === "miss") {
-        void haptics.warn();
         flash(s("miss"));
-        Animated.timing(ballOpacity, { toValue: 0, duration: 260, useNativeDriver: NATIVE }).start(reset);
+        reset();
         return;
       }
-      ballOpacity.setValue(0);
-      dust.setValue(0);
-      Animated.timing(dust, { toValue: 1, duration: 620, easing: Easing.out(Easing.cubic), useNativeDriver: NATIVE }).start();
-      if (out.result === "restored") {
-        void haptics.success();
-        setMessage("");
-        Animated.timing(crack, { toValue: 0, duration: 620, useNativeDriver: NATIVE }).start(() => { if (alive.current) setResult(out); });
-        return;
-      }
+      if (out.result === "restored") { await restore(out); return; }
       void haptics.warn();
       nudge();
       if (out.attempts_left <= 0) {
@@ -251,6 +332,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
       if (!alive.current) return;
       const code = e instanceof GameError ? e.code : "unknown";
       flash(s(errorKey(code)));
+      await moved;
       reset();
     }
   };
@@ -264,6 +346,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     }
     void haptics.tap();
     setMessage("");
+    settling.current = true;
     const travel = capsuleY(h) - ballY(h, insets.bottom);
     const strong = vy < STRONG_FLICK || (MOUSE && dy < MOUSE_DRAG);
     const landX = Math.max(-220, Math.min(220, dx + vx * 170));
@@ -273,7 +356,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
       Animated.timing(ballScale, { toValue: .42, duration: 460, useNativeDriver: NATIVE }),
     ]).start(() => {
       if (!alive.current) return;
-      void settle(strong && Math.abs(landX) < hitHalfWidth && !jumping.current, ringNow());
+      void settle(strong && Math.abs(landX) < hitHalfWidth && !jumping.current, ringNow(), landX, landY);
     });
   };
   const releaseRef = useRef(release);
@@ -301,18 +384,28 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   return <View onLayout={(e: LayoutChangeEvent) => setHeight(e.nativeEvent.layout.height)}
     style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 40, backgroundColor: mapPalette.land }}>
     <ThrowBackground />
+    <Animated.View pointerEvents="none" style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, backgroundColor: C.ink, opacity: dim }} />
     {height > 0 && <>
       <Svg pointerEvents="none" style={{ position: "absolute", left: "50%", marginLeft: -80, top: capsuleY(height) + vesselSize / 2 - 26 }} width={160} height={44}><Ellipse cx={80} cy={22} rx={78} ry={20} fill={C.ink} opacity={.14} /></Svg>
       <View pointerEvents="none" style={{ position: "absolute", left: 0, right: 0, top: capsuleY(height) - vesselSize / 2, height: vesselSize, alignItems: "center" }}>
-        <Animated.View style={{ width: vesselSize, height: vesselSize, alignItems: "center", justifyContent: "center", transform: [{ translateY: hop }, { translateX: shake }] }}>
-          {source ? <Image source={source} style={[{ width: vesselSize, height: vesselSize }, WEB_DARKEN && !result ? ({ filter: "saturate(.55) brightness(.8)" } as object) : null]} resizeMode="contain" accessibilityLabel={s("corruptedCapsule")} /> : null}
+        <Animated.Image source={lightBurst} resizeMode="contain" style={{
+          position: "absolute", left: "50%", marginLeft: -vesselSize * 1.4, top: -vesselSize * .9, width: vesselSize * 2.8, height: vesselSize * 2.8,
+          opacity: burst.interpolate({ inputRange: [0, .12, .3, .75, 1], outputRange: [0, .35, 1, .75, .38] }),
+          transform: [
+            { scale: burst.interpolate({ inputRange: [0, .12, .4, 1], outputRange: [.3, .45, 1, 1.08] }) },
+            { rotate: burst.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "38deg"] }) },
+          ],
+        }} />
+        <Animated.View style={{ width: vesselSize, height: vesselSize, alignItems: "center", justifyContent: "center", transform: [{ translateY: hop }, { translateX: shake }, { rotate: rock.interpolate({ inputRange: [-1, 1], outputRange: ["-10deg", "10deg"] }) }, { scale: pop }] }}>
+          {source ? <Image source={source} style={{ width: vesselSize, height: vesselSize }} resizeMode="contain" accessibilityLabel={s("corruptedCapsule")} /> : null}
           <Animated.View pointerEvents="none" style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize, opacity: crack }}>
+            {source && WEB_DARKEN ? <Image source={source} style={[{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize }, { filter: "saturate(.55) brightness(.8)" } as object]} resizeMode="contain" /> : null}
             {source && !WEB_DARKEN ? <Image source={source} style={{ width: vesselSize, height: vesselSize, opacity: .3, tintColor: C.ink }} resizeMode="contain" /> : null}
             {CORRUPTED_MARK === "cracks" && crackOverlays[capsule.vessel] ? <Image source={crackOverlays[capsule.vessel]} style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize }} resizeMode="contain" /> : null}
             {CORRUPTED_MARK === "anger" && <View style={{ position: "absolute", top: vesselSize * ANGER_MARK.throw.top, left: vesselSize * ANGER_MARK.throw.left }}><AngerMark size={vesselSize * ANGER_MARK.throw.size} /></View>}
           </Animated.View>
-          {!result && <View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 2, borderColor: "rgba(255,255,255,.95)" }} />}
-          {!result && <Animated.View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 4, borderColor: RING_COLOR[capsule.rarity], transform: [{ scale: ringScale }] }} />}
+          {!result && !celebrating && <View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 2, borderColor: "rgba(255,255,255,.95)" }} />}
+          {!result && !celebrating && <Animated.View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 4, borderColor: RING_COLOR[capsule.rarity], transform: [{ scale: ringScale }] }} />}
           {DUST.map((d, i) => <Animated.Image key={i} source={gameArt.hitDust} resizeMode="contain" style={{
             position: "absolute", width: d.size, height: d.size,
             opacity: dust.interpolate({ inputRange: [0, .05, 1], outputRange: [0, 1, 0] }),
@@ -322,13 +415,37 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
               { rotate: d.turn },
             ],
           }} />)}
+          <Animated.View style={{
+            position: "absolute", width: vesselSize, height: vesselSize, borderRadius: vesselSize / 2, borderWidth: 5, borderColor: C.brass,
+            opacity: wave.interpolate({ inputRange: [0, .05, 1], outputRange: [0, .9, 0] }),
+            transform: [{ scale: wave.interpolate({ inputRange: [0, 1], outputRange: [.4, 2.3] }) }],
+          }} />
+          {GLINTS.map((g, i) => <Animated.Image key={i} source={fxGlint} resizeMode="contain" style={{
+            position: "absolute", width: g.size, height: g.size,
+            opacity: sparkle.interpolate({ inputRange: [0, .1, .65, 1], outputRange: [0, 1, 1, 0] }),
+            transform: [
+              { translateX: sparkle.interpolate({ inputRange: [0, 1], outputRange: [0, Math.cos(g.angle) * g.reach] }) },
+              { translateY: sparkle.interpolate({ inputRange: [0, 1], outputRange: [0, Math.sin(g.angle) * g.reach] }) },
+              { scale: sparkle.interpolate({ inputRange: [0, .25, 1], outputRange: [.3, 1.25, .7] }) },
+            ],
+          }} />)}
         </Animated.View>
       </View>
+      {praise && <Animated.Text pointerEvents="none" style={{
+        position: "absolute", left: 0, right: 0, top: capsuleY(height) - vesselSize / 2 - 46, textAlign: "center",
+        fontFamily: serif, fontSize: praise === "praisePerfect" ? 38 : 32, color: PRAISE_COLOR[praise],
+        textShadowColor: "rgba(255,255,255,.95)", textShadowRadius: 8, textShadowOffset: { width: 0, height: 1 },
+        opacity: praiseShow.interpolate({ inputRange: [0, .08, .75, 1], outputRange: [0, 1, 1, 0] }),
+        transform: reduced ? [] : [
+          { translateY: praiseShow.interpolate({ inputRange: [0, 1], outputRange: [14, -22] }) },
+          { scale: praiseShow.interpolate({ inputRange: [0, .1, .2, 1], outputRange: [.5, 1.2, 1, 1] }) },
+        ],
+      }}>{s(praise)}</Animated.Text>}
 
-      {!result && <Animated.View {...pan.panHandlers} accessibilityRole="adjustable" accessibilityLabel={s("flick")}
+      {!result && !celebrating && <Animated.View {...pan.panHandlers} accessibilityRole="adjustable" accessibilityLabel={s("flick")}
         style={{
           position: "absolute", left: "50%", marginLeft: -BALL / 2, top: ballY(height, insets.bottom) - BALL / 2, width: BALL, height: BALL,
-          opacity: ballOpacity, transform: [{ translateX: ball.x }, { translateY: ball.y }, { scale: ballScale }],
+          opacity: ballOpacity, transform: [{ translateX: ball.x }, { translateY: ball.y }, { scale: ballScale }, { rotate: ballSpin.interpolate({ inputRange: [-1, 1], outputRange: ["-540deg", "540deg"] }) }],
           ...(Platform.OS === "web" ? ({ touchAction: "none", cursor: "grab", userSelect: "none" } as object) : {}),
         }}>
         <WaxBall kind={kind} size={BALL} />
@@ -355,7 +472,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
       </Pressable>
     </View>}
 
-    {!result && !timedOut && <View pointerEvents="box-none" style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" }}>
+    {!result && !celebrating && !timedOut && <View pointerEvents="box-none" style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" }}>
       <Text style={{ flex: 1, fontFamily: sans, fontSize: 12, color: C.ink }}>{count > 0 ? s("balls", state.wax_balls) : s("noBalls")}</Text>
       <Text style={{ flex: 1, textAlign: "center", fontFamily: sans, fontSize: 12, color: C.ink }}>{s(MOUSE ? "flickMouse" : "flick")}</Text>
       <View style={{ flex: 1, alignItems: "flex-end" }}>
