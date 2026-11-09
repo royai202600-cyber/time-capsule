@@ -1968,6 +1968,7 @@ export const scenes = {
 export const gameArt = {
   ball: { wax: require('../../../public/art/game/ball-wax.webp'), gold: require('../../../public/art/game/ball-gold.webp') },
   hitDust: require('../../../public/art/game/hit-dust.webp'),
+  catchBackground: require('../../../public/art/game/catch-background.webp'),
   waypostGem: require('../../../public/art/game/waypost-gem.webp'),
   landmarkGem: require('../../../public/art/game/landmark-gem.webp'),
   wheel: {
