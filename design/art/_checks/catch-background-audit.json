@@ -1,0 +1,50 @@
+{
+  "base_commit": "0357ba6ba7e298251be05084e9da2a62757a55f2",
+  "reference_commit": "b5f584d7e04681af8eaf613cdc55aa7fd8350dad",
+  "reference_sha256": {
+    "design/art/reference/catch-background/fight-scene-now.jpg": "1c3afc26ea155e9b6d9cbba978964118e77531d827b200d7f4b21e2d7b38ce48",
+    "design/art/reference/catch-background/map-now.jpg": "c83b4194de0fda36dab9d78490c22226eeec969754577138fda1b84a9e4664cf"
+  },
+  "model": "gpt-image-2",
+  "assets": [
+    {
+      "path": "design/art/game/catch-background-options/option-1.png",
+      "size_px": [
+        1024,
+        1536
+      ],
+      "opaque": true,
+      "sha256": "1ca20bd16dac75402408ee2b067acae0d93b115c76e91dacf7cecefc93a6fdcb"
+    },
+    {
+      "path": "design/art/game/catch-background-options/option-2.png",
+      "size_px": [
+        1024,
+        1536
+      ],
+      "opaque": true,
+      "sha256": "f38dfc4cad278ac193d59ca12fb3516a11732ac74f0971c16e56cb81466c45b0"
+    },
+    {
+      "path": "design/art/game/catch-background-options/option-3.png",
+      "size_px": [
+        1024,
+        1536
+      ],
+      "opaque": true,
+      "sha256": "6843fad4e8eb67f99392dfb567646ba5299a6b73368e7dab8733ba7df3d13588"
+    }
+  ],
+  "phone_crop_px": [
+    375,
+    812
+  ],
+  "crop_source_x_approx": [
+    157.32,
+    866.68
+  ],
+  "all_existing_files_byte_identical": 1678,
+  "production_export_created": false,
+  "roy_pick": null,
+  "design_review": "Left to Roy and Claude Code. Original first-batch outputs retained; later review-driven revisions excluded."
+}
