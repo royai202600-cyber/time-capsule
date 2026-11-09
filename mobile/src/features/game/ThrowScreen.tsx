@@ -10,11 +10,13 @@ import { useLanguage } from "../../i18n";
 import { game, GameError, type BallKind, type GameState, type CorruptedCapsule, type LandmarkAttempt, type Rarity, type ThrowResult } from "../../services/game";
 import { mapPalette } from "../journey/live/mapHtml";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
+import Reanimated, { cancelAnimation, Easing as Curve, runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { fxGlint, gameArt, lightBurst } from "../../art/manifest";
 import { crackOverlays } from "../../art/crackOverlays";
 import { ANGER_MARK, CORRUPTED_MARK } from "./corruptedLook";
 import { useReducedMotion } from "../../useReducedMotion";
 import { errorKey, useGameText } from "./strings";
+import { FRAME_FIELDS, FRAMES_PER_SECOND, simulateThrow } from "./throwPhysics";
 
 const NATIVE = Platform.OS !== "web";
 const RING = 196;
@@ -25,7 +27,6 @@ const HIT_HALF_WIDTH = 74;
 const GIANT_VESSEL = 250;
 const GIANT_RING = 290;
 const GIANT_HIT_HALF_WIDTH = 120;
-const STRONG_FLICK = -.7;
 const MOUSE = Platform.OS === "web";
 const MOUSE_DRAG = -120; // A mouse drag often ends almost still, so distance also counts as a throw.
 const RING_HALF_MS: Record<Rarity, number> = { common: 1200, uncommon: 900, rare: 650 };
@@ -120,12 +121,14 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   const ringPhase = useRef(new Animated.Value(1)).current;
   const hop = useRef(new Animated.Value(0)).current;
   const shake = useRef(new Animated.Value(0)).current;
-  const ball = useRef(new Animated.ValueXY()).current;
-  const ballScale = useRef(new Animated.Value(1)).current;
-  const ballOpacity = useRef(new Animated.Value(1)).current;
+  // The ball runs on Reanimated: dragged by the finger until released (progress -1), then played along its path.
+  const progress = useSharedValue(-1);
+  const path = useSharedValue<number[]>([]);
+  const dragX = useSharedValue(0);
+  const dragY = useSharedValue(0);
+  const ballFade = useSharedValue(1);
   const crack = useRef(new Animated.Value(1)).current;
   const dust = useRef(new Animated.Value(0)).current;
-  const ballSpin = useRef(new Animated.Value(0)).current;
   const praiseShow = useRef(new Animated.Value(0)).current;
   const rock = useRef(new Animated.Value(0)).current;
   const pop = useRef(new Animated.Value(1)).current;
@@ -192,13 +195,20 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   }, [hop, reduced, result, celebrating]);
 
   const flash = (text: string) => setMessage(text);
+  const unlock = () => { busy.current = false; };
   const reset = () => {
     if (!alive.current) return;
     settling.current = false;
-    ball.setValue({ x: 0, y: 0 });
-    ballScale.setValue(1);
-    ballSpin.setValue(0);
-    Animated.timing(ballOpacity, { toValue: 1, duration: 160, useNativeDriver: NATIVE }).start(() => { busy.current = false; });
+    cancelAnimation(progress);
+    progress.value = -1;
+    dragX.value = 0;
+    dragY.value = 0;
+    ballFade.value = 0;
+    ballFade.value = withTiming(1, { duration: 160 }, (done) => { if (done) runOnJS(unlock)(); });
+  };
+  const springBack = () => {
+    dragX.value = withSpring(0);
+    dragY.value = withSpring(0, undefined, (done) => { if (done) runOnJS(unlock)(); });
   };
   const nudge = () => Animated.sequence([-14, 14, -8, 8, 0].map((toValue) =>
     Animated.timing(shake, { toValue, duration: 70, useNativeDriver: NATIVE }))).start();
@@ -206,30 +216,8 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   const timing = (value: Animated.Value, toValue: number, duration: number, easing?: (n: number) => number) =>
     Animated.timing(value, { toValue, duration, easing, useNativeDriver: NATIVE });
 
-  /** The ball glances off the capsule the moment it lands, without waiting for the server. */
-  const bounceOff = (x: number, y: number) => {
-    if (reduced) return finished(timing(ballOpacity, 0, 200));
-    const side = x === 0 ? (Math.random() < .5 ? -1 : 1) : Math.sign(x);
-    const ground = y + vesselSize * .55;
-    return finished(Animated.parallel([
-      timing(ball.x, x + side * 96, 640, Easing.linear),
-      Animated.sequence([timing(ball.y, y - 76, 210, Easing.out(Easing.quad)), timing(ball.y, ground, 430, Easing.bounce)]),
-      timing(ballSpin, side, 640, Easing.linear),
-      Animated.sequence([Animated.delay(520), timing(ballOpacity, 0, 140)]),
-    ]));
-  };
-  /** A ball that missed keeps going and drops to the ground. */
-  const dropAway = (x: number, y: number) => {
-    if (reduced) return finished(timing(ballOpacity, 0, 200));
-    return finished(Animated.parallel([
-      timing(ball.x, x * 1.12, 460, Easing.linear),
-      timing(ball.y, y + 92, 460, Easing.bounce),
-      timing(ballSpin, x < 0 ? -.6 : .6, 460, Easing.linear),
-      Animated.sequence([Animated.delay(340), timing(ballOpacity, 0, 120)]),
-    ]));
-  };
   /** Everything the player feels at the moment of a hit. */
-  const impact = (ring: number, x: number, y: number) => {
+  const impact = (ring: number) => {
     void haptics.tap();
     setPraise(praiseFor(ring));
     praiseShow.setValue(0);
@@ -239,7 +227,6 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
       timing(dust, 1, 620, Easing.out(Easing.cubic)).start();
       Animated.sequence([timing(pop, 1.07, 70), timing(pop, 1, 130)]).start();
     }
-    return bounceOff(x, y);
   };
 
   /** The capsule struggles, gathers, and bursts back into its true colours. */
@@ -271,23 +258,23 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     if (alive.current) setResult(out);
   };
 
-  const settleLandmark = async (hit: boolean, ring: number, x: number, y: number) => {
+  const settleLandmark = async (hit: boolean, ring: number, moved: Promise<void>) => {
     if (!landmark) return;
     if (!hit) {
       void haptics.warn();
       flash(s("miss"));
-      await dropAway(x, y);
+      await moved;
       reset();
       return;
     }
-    const bounced = impact(ring, x, y);
+    impact(ring);
     try {
       const out = await game.landmarkHit({ attempt: landmark.id, ball: latest.current.kind, ring });
       if (!alive.current) return;
       onState(out.state);
       setCracks(out.cracks);
       timing(crack, out.cracks / landmark.cracks, 320).start();
-      await bounced;
+      await moved;
       if (!alive.current) return;
       if (out.result === "won") { await restore(out); return; }
       setMessage("");
@@ -296,15 +283,15 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
       if (!alive.current) return;
       const code = e instanceof GameError ? e.code : "unknown";
       flash(code === "expired" ? s("timeUp") : s(errorKey(code)));
-      await bounced;
+      await moved;
       reset();
     }
   };
 
-  const settle = async (hit: boolean, ring: number, x: number, y: number) => {
-    if (landmark) return settleLandmark(hit, ring, x, y);
+  const settle = async (hit: boolean, ring: number, moved: Promise<void>) => {
+    if (landmark) return settleLandmark(hit, ring, moved);
     const ballKind = latest.current.kind;
-    const moved = hit ? impact(ring, x, y) : dropAway(x, y);
+    if (hit) impact(ring);
     try {
       const out = await game.throwBall({ id: capsule.id, ball: ballKind, ring, hit });
       if (!alive.current) return;
@@ -341,23 +328,29 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     const { height: h, kind: ballKind, state: st } = latest.current;
     if ((ballKind === "gold" ? st.gold_balls : st.wax_balls) <= 0) {
       flash(s("noBalls"));
-      Animated.spring(ball, { toValue: { x: 0, y: 0 }, useNativeDriver: NATIVE }).start(() => { busy.current = false; });
+      springBack();
       return;
     }
     void haptics.tap();
     setMessage("");
     settling.current = true;
-    const travel = capsuleY(h) - ballY(h, insets.bottom);
-    const strong = vy < STRONG_FLICK || (MOUSE && dy < MOUSE_DRAG);
-    const landX = Math.max(-220, Math.min(220, dx + vx * 170));
-    const landY = strong ? travel : travel * .62;
-    Animated.parallel([
-      Animated.timing(ball, { toValue: { x: landX, y: landY }, duration: 460, easing: Easing.out(Easing.quad), useNativeDriver: NATIVE }),
-      Animated.timing(ballScale, { toValue: .42, duration: 460, useNativeDriver: NATIVE }),
-    ]).start(() => {
+    const flight = simulateThrow({ dx, dy, vx, vy }, { travel: capsuleY(h) - ballY(h, insets.bottom), vessel: vesselSize, hitHalfWidth, mouse: MOUSE, still: reduced });
+    const linear = (ms: number) => ({ duration: ms, easing: Curve.linear });
+    const whenItArrives = () => {
       if (!alive.current) return;
-      void settle(strong && Math.abs(landX) < hitHalfWidth && !jumping.current, ringNow(), landX, landY);
-    });
+      const hit = flight.outcome === "hit" && !jumping.current; // A capsule mid-jump lets the ball pass underneath.
+      const route = hit ? flight.hitPath : flight.missPath;
+      path.value = route;
+      const end = (route.length / FRAME_FIELDS - 1) / FRAMES_PER_SECOND;
+      const moved = new Promise<void>((settled) => {
+        const finish = () => settled();
+        progress.value = withTiming(end, linear((end - flight.resolveAt) * 1000), () => { runOnJS(finish)(); });
+      });
+      void settle(hit, ringNow(), moved);
+    };
+    path.value = flight.hitPath;
+    progress.value = 0;
+    progress.value = withTiming(flight.resolveAt, linear(flight.resolveAt * 1000), (done) => { if (done) runOnJS(whenItArrives)(); });
   };
   const releaseRef = useRef(release);
   releaseRef.current = release;
@@ -366,13 +359,27 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     onStartShouldSetPanResponder: () => !busy.current,
     onMoveShouldSetPanResponder: () => !busy.current,
     onPanResponderGrant: () => { busy.current = true; },
-    onPanResponderMove: (_, g) => ball.setValue({ x: g.dx, y: g.dy }),
+    onPanResponderMove: (_, g) => { dragX.value = g.dx; dragY.value = g.dy; },
     onPanResponderRelease: (_, g) => {
       if ((g.dy < -50 && g.vy < -.3) || (MOUSE && g.dy < MOUSE_DRAG)) releaseRef.current(g.dx, g.vx, g.vy, g.dy);
-      else Animated.spring(ball, { toValue: { x: 0, y: 0 }, useNativeDriver: NATIVE }).start(() => { busy.current = false; });
+      else springBack();
     },
-    onPanResponderTerminate: () => { ball.setValue({ x: 0, y: 0 }); busy.current = false; },
-  }), [ball]);
+    onPanResponderTerminate: () => { dragX.value = 0; dragY.value = 0; busy.current = false; },
+  }), [dragX, dragY]);
+
+  const ballStyle = useAnimatedStyle(() => {
+    if (progress.value < 0) return { opacity: ballFade.value, transform: [{ translateX: dragX.value }, { translateY: dragY.value }, { scale: 1 }, { rotate: "0deg" }] };
+    const frames = path.value;
+    const last = frames.length / FRAME_FIELDS - 1;
+    const at = Math.min(progress.value * FRAMES_PER_SECOND, last);
+    const whole = Math.min(Math.floor(at), last - 1);
+    const part = at - whole;
+    const read = (field: number) => {
+      const from = frames[whole * FRAME_FIELDS + field];
+      return from + (frames[(whole + 1) * FRAME_FIELDS + field] - from) * part;
+    };
+    return { opacity: read(4), transform: [{ translateX: read(0) }, { translateY: read(1) }, { scale: read(2) }, { rotate: `${read(3)}deg` }] };
+  });
 
   const count = kind === "gold" ? state.gold_balls : state.wax_balls;
   const source = vesselParts[capsule.vessel as VesselKind]?.assembled;
@@ -442,14 +449,13 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
         ],
       }}>{s(praise)}</Animated.Text>}
 
-      {!result && !celebrating && <Animated.View {...pan.panHandlers} accessibilityRole="adjustable" accessibilityLabel={s("flick")}
-        style={{
+      {!result && !celebrating && <Reanimated.View {...pan.panHandlers} accessibilityRole="adjustable" accessibilityLabel={s("flick")}
+        style={[{
           position: "absolute", left: "50%", marginLeft: -BALL / 2, top: ballY(height, insets.bottom) - BALL / 2, width: BALL, height: BALL,
-          opacity: ballOpacity, transform: [{ translateX: ball.x }, { translateY: ball.y }, { scale: ballScale }, { rotate: ballSpin.interpolate({ inputRange: [-1, 1], outputRange: ["-540deg", "540deg"] }) }],
           ...(Platform.OS === "web" ? ({ touchAction: "none", cursor: "grab", userSelect: "none" } as object) : {}),
-        }}>
+        }, ballStyle]}>
         <WaxBall kind={kind} size={BALL} />
-      </Animated.View>}
+      </Reanimated.View>}
     </>}
 
     <View pointerEvents="box-none" style={{ position: "absolute", top: insets.top + spacing.sm, left: spacing.md, right: spacing.md, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>

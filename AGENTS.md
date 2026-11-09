@@ -73,6 +73,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-09: After reviewing Matter.js, cannon-es and Rapier, Roy chose a small custom ball simulation played on the already-installed Reanimated, with no new dependency (`mobile/src/features/game/throwPhysics.ts`). Flick speed sets the arc; tuning should happen on a real phone.
 - 2026-11-09: After trying both, Roy chose Crack A over the black anger mark for Corrupted Capsules, on top of the dark layer. The mark and its exact placement stay in `mobile/src/features/game/corruptedLook.ts`, restorable with one word. He asked Codex to redraw the catch-screen background so it matches the live map, keeping the existing layout.
 - 2026-11-09: For now, a Corrupted Capsule is shown with the dark layer plus a small black comic anger mark inside the top right of the vessel instead of crack lines, at Roy's request.
 - 2026-11-09: Roy chose illustrated scenes for the Waypost picture wheel: about five by place type plus one per Landmark, with the real Waypost name shown above. AI imitation photos of real places are ruled out; player photos may replace these later. In range, a gem brightens with a soft glow.
