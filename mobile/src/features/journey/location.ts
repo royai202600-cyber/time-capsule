@@ -14,6 +14,18 @@ let fixTimer: ReturnType<typeof setTimeout> | null = null;
 let generation = 0;
 let requesting = false;
 let appStateSubscription: ReturnType<typeof AppState.addEventListener> | null = null;
+const WEB_LOCATION_CHOICE = "time-capsule.location-approved.v1";
+function browserLocationApproved() {
+  try { return typeof localStorage !== "undefined" && localStorage.getItem(WEB_LOCATION_CHOICE) === "1"; }
+  catch { return false; }
+}
+function rememberBrowserLocation(approved: boolean) {
+  try {
+    if (typeof localStorage === "undefined") return;
+    if (approved) localStorage.setItem(WEB_LOCATION_CHOICE, "1");
+    else localStorage.removeItem(WEB_LOCATION_CHOICE);
+  } catch { /* Storage may be unavailable; the browser still controls permission. */ }
+}
 // Roy's dedicated test account can explore Taipei shores in production.
 // This is a client-side test fix; all Sea RPCs still perform their distance checks.
 const TAIPEI_TEST_USER_ID = "1ca3f9b3-c405-4daa-a05a-22cbc3689774";
@@ -54,6 +66,7 @@ function watchWeb() {
   const id = navigator.geolocation.watchPosition((fix) => { if (run === generation) receive(fix); }, (error) => {
     if (run !== generation) return;
     stop();
+    if (error.code === 1) rememberBrowserLocation(false);
     publish({ status: error.code === 1 ? "denied" : "unavailable", fix: null, error: error.message });
   }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 });
   subscription = { remove: () => navigator.geolocation.clearWatch(id) };
@@ -99,7 +112,7 @@ async function watchNative() {
   return starting;
 }
 
-/** Checks a prior grant; never triggers the system permission dialog. */
+/** Reads saved permission; Safari resumes a watch only after a prior in-app choice. */
 export async function checkLocation() {
   if (state.fake || requesting) return;
   const run = generation;
@@ -113,8 +126,8 @@ export async function checkLocation() {
       let permission: PermissionState | "unknown" = "unknown";
       try { if (navigator.permissions?.query) permission = (await navigator.permissions.query({ name: "geolocation" })).state; } catch { /* ask on tap */ }
       if (run !== generation || requesting) return;
-      if (permission === "granted") watchWeb();
-      else if (permission === "denied") { stop(); publish({ status: "denied", fix: null }); }
+      if (permission === "granted" || (permission === "unknown" && browserLocationApproved())) watchWeb();
+      else if (permission === "denied") { rememberBrowserLocation(false); stop(); publish({ status: "denied", fix: null }); }
       else if (!subscription) publish({ status: "explain", fix: null });
       return;
     }
@@ -133,7 +146,7 @@ export async function requestLocation() {
   stop();
   requesting = true;
   try {
-    if (Platform.OS === "web") { watchWeb(); return; }
+    if (Platform.OS === "web") { rememberBrowserLocation(true); watchWeb(); return; }
     const permission = await Location.requestForegroundPermissionsAsync();
     if (!permission.granted) { stop(); publish({ status: "denied", fix: null }); return; }
     publish({ status: "granted", error: null });

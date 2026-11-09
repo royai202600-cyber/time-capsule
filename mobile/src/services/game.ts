@@ -88,19 +88,25 @@ function seed(at: Coords) {
   }));
 }
 
-// Development only: keeps a few catchable capsules inside the pickup circle, wherever you are.
-const DEV_VESSELS = ["hourglass", "tin", "lantern", "musicbox", "vinyl", "vhs", "arcade", "pager", "rotary-phone", "umbrella", "love-padlock", "lucky-stars", "lucky-cat", "mooncake-tin"];
-const DEV_RARITY: Rarity[] = ["common", "common", "uncommon", "rare"];
+// Signed-out development fallback: one finite batch, replaced at the next ten-minute boundary.
+const DEV_VESSELS = ["bubble-tea", "bento", "hot-air-balloon"];
+const DEV_RARITY: Rarity[] = ["common", "uncommon", "rare"];
 let devNext = 0;
-function topUpCorrupted(at: Coords) {
-  const near = (c: CorruptedCapsule) => Math.hypot((c.lat - at.lat) * 110540, (c.lng - at.lng) * 111320 * Math.cos(at.lat * Math.PI / 180)) <= 90;
-  dev.corrupted = dev.corrupted.filter((c) => c.attempts_left > 0 && near(c));
-  while (dev.corrupted.length < 5) {
-    const i = devNext++, angle = i * 2.4, distance = 35 + (i * 17) % 50;
+let devWave = -1;
+let devAnchor: Coords | null = null;
+function refreshDevWave(at: Coords) {
+  const wave = Math.floor(Date.now() / 600_000);
+  const meters = (a: Coords, b: Coords) => Math.hypot((a.lat - b.lat) * 110540, (a.lng - b.lng) * 111320 * Math.cos(at.lat * Math.PI / 180));
+  if (wave === devWave && devAnchor && meters(at, devAnchor) <= 100) return;
+  devWave = wave; devAnchor = { ...at }; dev.corrupted = [];
+  for (let tries = 0; tries < 2000 && dev.corrupted.length < 6; tries++) {
+    const angle = Math.random() * Math.PI * 2, distance = 35 + Math.random() * 50;
+    const point = offset(at, Math.cos(angle) * distance, Math.sin(angle) * distance);
+    if (dev.corrupted.some((c) => meters(c, point) < 28)) continue;
+    const i = devNext++, kind = i % DEV_VESSELS.length;
     dev.corrupted.push({
-      id: `dev-${i}`, vessel: DEV_VESSELS[i % DEV_VESSELS.length], rarity: DEV_RARITY[i % DEV_RARITY.length],
-      ...offset(at, Math.cos(angle) * distance, Math.sin(angle) * distance),
-      expires_at: new Date(Date.now() + 3_600_000).toISOString(), attempts_left: 3,
+      id: `dev-${wave}-${i}`, vessel: DEV_VESSELS[kind], rarity: DEV_RARITY[kind], ...point,
+      expires_at: new Date((wave + 1) * 600_000).toISOString(), attempts_left: 3,
     });
   }
 }
@@ -114,16 +120,15 @@ export const game = {
       const { data, error } = await supabase.rpc("corrupted_nearby", coords());
       fail(error);
       const payload = data as unknown as NearbyPayload;
-      if (__DEV__) topUpCorrupted(at); // Test capsules are for local builds only; players see real ones.
       return {
-        corrupted: [...(__DEV__ ? dev.corrupted : []), ...payload.spawns.filter((c) => !c.already_caught && c.attempts_left > 0)
-          .map((c) => ({ id: c.spawn_id, vessel: c.vessel, rarity: c.rarity, lat: c.lat, lng: c.lng, expires_at: c.expires_at, attempts_left: c.attempts_left }))],
+        corrupted: payload.spawns.filter((c) => !c.already_caught && c.attempts_left > 0)
+          .map((c) => ({ id: c.spawn_id, vessel: c.vessel, rarity: c.rarity, lat: c.lat, lng: c.lng, expires_at: c.expires_at, attempts_left: c.attempts_left })),
         wayposts: payload.wayposts.map((w) => ({ id: w.id, kind: w.kind, name_zh: w.name_zh, name_en: w.name_en, lat: w.lat, lng: w.lng, cooldown_until: w.cooldown_end, place: w.place, scene: w.scene })),
       };
     }
     if (!__DEV__) return { corrupted: [], wayposts: [] };
     seed(at);
-    topUpCorrupted(at);
+    refreshDevWave(at);
     return { corrupted: dev.corrupted.filter((c) => c.attempts_left > 0), wayposts: dev.wayposts.map((w) => ({ ...w })) };
   },
   async throwBall(args: { id: string; ball: BallKind; ring: number; hit: boolean }): Promise<ThrowResult> {

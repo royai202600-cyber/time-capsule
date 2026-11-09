@@ -55,6 +55,8 @@ export default function JourneyScreen() {
   const capsuleData = useCapsules(userId, "inbox");
   const location = useForegroundLocation();
   const { fix, status } = location;
+  const latestFix = useRef(fix);
+  latestFix.current = fix;
   const you = fix ? { lat: fix.lat, lng: fix.lng } : null;
   const map = useRef<LiveMapHandle>(null);
   const [bottles, setBottles] = useState<SeaBottle[]>([]);
@@ -95,13 +97,27 @@ export default function JourneyScreen() {
     } catch { /* the map still works without the sea */ }
   }, [cell]);
   const loadGame = useCallback(async () => {
-    if (!GAME_ENABLED || !you) return;
+    const at = latestFix.current;
+    if (!GAME_ENABLED || !at) return;
     try {
-      const [state, around, stamps] = await Promise.all([game.state(), game.nearby({ lat: you.lat, lng: you.lng, accuracy: fix?.accuracy }), game.passport()]);
+      const [state, around, stamps] = await Promise.all([game.state(), game.nearby({ lat: at.lat, lng: at.lng, accuracy: at.accuracy }), game.passport()]);
       setGameState(state); setNearby(around); setPassportStamps(stamps);
     } catch { /* the map still works without the game */ }
   }, [cell]);
-  useEffect(() => { void loadGame(); }, [loadGame]);
+  useFocusEffect(useCallback(() => {
+    void loadGame();
+    const timer = setInterval(() => { void loadGame(); }, 30_000);
+    return () => clearInterval(timer);
+  }, [loadGame]));
+  useEffect(() => {
+    if (!nearby.corrupted.length) return;
+    const next = Math.min(...nearby.corrupted.map((c) => new Date(c.expires_at).getTime()));
+    const timer = setTimeout(() => {
+      setNearby((previous) => ({ ...previous, corrupted: previous.corrupted.filter((c) => new Date(c.expires_at).getTime() > Date.now()) }));
+      void loadGame();
+    }, Math.max(0, next - Date.now() + 25));
+    return () => clearTimeout(timer);
+  }, [nearby.corrupted, loadGame]);
   useEffect(() => { if (fix) game.setPosition({ lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy }); }, [fix?.lat, fix?.lng, fix?.accuracy]);
   useFocusEffect(useCallback(() => {
     if (userId) { void placeData.refresh(); void capsuleData.refresh(); }

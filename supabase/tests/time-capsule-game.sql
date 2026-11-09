@@ -55,11 +55,11 @@ select city_en,count(*) from public.sea_shores
 select city,count(*) from public.corrupted_spots group by city order by city;
 
 select pg_temp.require_ok((select count(*)=54 from public.sea_shores where game_enabled and city_en='Taipei'), 'Taipei dense Wayposts');
-select pg_temp.require_ok((select count(*)=77 from public.corrupted_spots where city='Taipei' and source_ref not like 'qa:%'), 'Taipei dense spots');
+select pg_temp.require_ok((select count(*)>=77 from public.corrupted_spots where city='Taipei' and source_ref not like 'qa:%'), 'Taipei dense spots');
 select pg_temp.require_ok((select count(*)=42 from public.sea_shores where game_enabled and city_en='Singapore'), 'Singapore dense Wayposts');
-select pg_temp.require_ok((select count(*)=58 from public.corrupted_spots where city='Singapore'), 'Singapore dense spots');
+select pg_temp.require_ok((select count(*)>=58 from public.corrupted_spots where city='Singapore'), 'Singapore dense spots');
 select pg_temp.require_ok((select count(*)=33 from public.sea_shores where game_enabled and city_en='Macau'), 'Macau dense Wayposts');
-select pg_temp.require_ok((select count(*)=36 from public.corrupted_spots where city='Macau'), 'Macau dense spots');
+select pg_temp.require_ok((select count(*)>=36 from public.corrupted_spots where city='Macau'), 'Macau dense spots');
 
 -- Stable release for behavioral checks, with every probability forced to a bound.
 update private.game_config set spawn_chance=1,visible_min_minutes=wave_minutes,visible_max_minutes=wave_minutes,

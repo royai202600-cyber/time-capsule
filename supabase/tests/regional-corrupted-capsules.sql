@@ -15,7 +15,7 @@ do $$ declare region text; spot uuid; seen integer; now_wave bigint; begin
   end loop;
   if exists(select 1 from public.sea_shores where game_enabled and kind='common' and scene not in ('park','garden','waterfront','square','publicArt')) then raise exception 'bad scene';end if;
   if (select count(*) from public.corrupted_spots where city='Hong Kong')<10 then raise exception 'missing HK spots';end if;
-  if (select count(*) from public.corrupted_spots where source_ref like 'qa:roy-taipei-game:%')<>5 then raise exception 'missing temporary batch';end if;
+  if exists(select 1 from public.corrupted_spots where source_ref like 'qa:roy-taipei-game:%') then raise exception 'superseded temporary batch';end if;
 end $$;
 select 'PASS: ten-minute waves, fixed expiry, 12 allowed vessels, three rarities/types per region across 600 waves each, safe HK seeds and QA batch' as result;
 rollback;

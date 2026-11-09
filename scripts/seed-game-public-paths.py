@@ -13,14 +13,17 @@ from shapely.geometry import Point, Polygon, LineString
 from shapely.ops import unary_union, polygonize
 args=argparse.ArgumentParser()
 args.add_argument('prefix');args.add_argument('out');args.add_argument('--city')
+args.add_argument('--all',action='store_true');args.add_argument('--spots-only',action='store_true')
+args.add_argument('--spot-spacing',type=float,default=150);args.add_argument('--path-step',type=int,default=25)
 options=args.parse_args();prefix,out=options.prefix,options.out
+assert options.spot_spacing>0 and options.path_step>0
 cities={'Taipei':(['taipei','taipei-west','taipei-east','daan','taipei-peace','taipei-riverside'],25.04,'台北','Asia/Taipei'),
 'Singapore':(['singapore','singapore-gardens','singapore-fort','singapore-botanic','singapore-kallang'],1.29,'新加坡','Asia/Singapore'),
 'Macau':(['macau','macau-north','macau-taipa'],22.2,'澳門','Asia/Macau'),
 'Hong Kong':(['hong-kong-kowloon','hong-kong-west','hong-kong-waterfront'],22.3,'香港','Asia/Hong_Kong')}
 if options.city:
  cities={options.city:cities[options.city]}
-else:
+elif not options.all:
  cities={k:v for k,v in cities.items() if k!='Hong Kong'}
 posts=[];spots=[];report={}
 for city,(files,lat0,zh,tz) in cities.items():
@@ -64,23 +67,26 @@ for city,(files,lat0,zh,tz) in cities.items():
  blocked=unary_union(excluded+roads); allowed=unary_union([p[0] for p in safe]).difference(blocked)
  candidates=[]
  for path,pid in sorted(paths,key=lambda x:int(x[1])):
-  for d in range(0,int(path.length)+1,25):
+  for d in range(0,int(path.length)+1,options.path_step):
    point=path.interpolate(d)
    if not allowed.contains(point):continue
    park=next((p for p in safe if p[0].contains(point)),None)
    if park:candidates.append((point,pid,d,park[1],park[2]))
  def sample(spacing):
-  selected=[]
+  selected=[];buckets={}
   for c in candidates:
-   if all(c[0].distance(p[0])>=spacing for p in selected):selected.append(c)
+   bx,by=math.floor(c[0].x/spacing),math.floor(c[0].y/spacing)
+   nearby=[p for dx in (-1,0,1) for dy in (-1,0,1) for p in buckets.get((bx+dx,by+dy),[])]
+   if all(c[0].distance(p[0])>=spacing for p in nearby):
+    selected.append(c);buckets.setdefault((bx,by),[]).append(c)
   return selected
- ps=sample(250);ss=sample(150)
+ ps=sample(250);ss=sample(options.spot_spacing)
  tile=json.loads(Path("docs/design/public-sea-cities.geojson").read_text())
  tile_area=unary_union([Polygon(p[0]) for p in tile["coordinates"]])
  for point,*_ in ps+ss:
   assert tile_area.covers(Point(point.x/sx,point.y/sy)), "outside existing map tiles"
   assert allowed.contains(point), "unsafe point"
- for spacing,selected in ((250,ps),(150,ss)):
+ for spacing,selected in ((250,ps),(options.spot_spacing,ss)):
   assert all(min(c[0].distance(p[0]) for p in selected)<spacing for c in candidates)
  def row(c,kind):
   p,pid,d,name,park=c
@@ -93,8 +99,9 @@ for files,*_ in cities.values():
  for f in files:
   fp=Path(prefix+'-'+f+'.xml')
   sql+='-- extract '+fp.name+' SHA256 '+hashlib.sha256(fp.read_bytes()).hexdigest()+'\n'
-sql+='insert into public.sea_shores(name_zh,name_en,city_zh,city_en,lat,lng,game_enabled,source_ref,scene) values\n'
-sql+=',\n'.join('('+','.join([q(name),q(name),q(zh),q(city),str(lat),str(lng),'true',q(ref),q('park')])+')' for city,zh,tz,lat,lng,name,ref in posts)+'\non conflict (source_ref) where source_ref is not null do nothing;\n'
+if not options.spots_only:
+ sql+='insert into public.sea_shores(name_zh,name_en,city_zh,city_en,lat,lng,game_enabled,source_ref,scene) values\n'
+ sql+=',\n'.join('('+','.join([q(name),q(name),q(zh),q(city),str(lat),str(lng),'true',q(ref),q('park')])+')' for city,zh,tz,lat,lng,name,ref in posts)+'\non conflict (source_ref) where source_ref is not null do nothing;\n'
 sql+='insert into public.corrupted_spots(city,timezone,lat,lng,habitat,source_ref) values\n'
 sql+=',\n'.join('('+','.join([q(city),q(tz),str(lat),str(lng),q('park'),q(ref)])+')' for city,zh,tz,lat,lng,name,ref in spots)+'\non conflict(source_ref) do nothing;\n'
 Path(out).write_text(sql);print(json.dumps(report,indent=2))
