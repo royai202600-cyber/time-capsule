@@ -1,0 +1,130 @@
+[
+  {
+    "path": "public/art/game/ball-wax.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/ball-gold.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/waypost-gem.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/landmark-gem.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/crack-overlay.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/hit-dust.webp",
+    "size": [
+      512,
+      341
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/portraits/portrait-passerby.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/scenes/scene-passerby-sealed.webp",
+    "size": [
+      1536,
+      1024
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/wheel/scene-park.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/wheel/scene-garden.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/wheel/scene-waterfront.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/wheel/scene-square.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/wheel/scene-public-art.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/wheel/scene-landmark-taipei.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/wheel/scene-landmark-singapore.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  },
+  {
+    "path": "public/art/game/wheel/scene-landmark-macau.webp",
+    "size": [
+      512,
+      512
+    ],
+    "alpha_exact": true
+  }
+]

@@ -1,0 +1,95 @@
+{
+  "source_commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+  "base_commit": "b146b94c1199aba787d5de9edb3cb0c6f880e2f3",
+  "copied_masters_exact": [
+    "game/ball-gold.png",
+    "game/waypost-gem.png",
+    "game/landmark-gem.png",
+    "game/crack-overlay.png",
+    "game/hit-dust.png",
+    "portraits/portrait-passerby.png",
+    "scenes/scene-passerby-sealed.png",
+    "game/wheel/scene-park.png",
+    "game/wheel/scene-garden.png",
+    "game/wheel/scene-waterfront.png",
+    "game/wheel/scene-public-art.png",
+    "game/wheel/scene-landmark-singapore.png",
+    "game/wheel/scene-landmark-macau.png"
+  ],
+  "opaque_wheel_scenes": [
+    "game/wheel/scene-park.png",
+    "game/wheel/scene-garden.png",
+    "game/wheel/scene-waterfront.png",
+    "game/wheel/scene-square.png",
+    "game/wheel/scene-public-art.png",
+    "game/wheel/scene-landmark-taipei.png",
+    "game/wheel/scene-landmark-singapore.png",
+    "game/wheel/scene-landmark-macau.png"
+  ],
+  "corners_alpha": {
+    "game/ball-wax.png": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "game/ball-gold.png": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "game/waypost-gem.png": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "game/landmark-gem.png": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "game/crack-overlay.png": [
+      238,
+      0,
+      0,
+      0
+    ],
+    "game/hit-dust.png": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "existing_manifest_entries_unchanged": true,
+  "scene_pixels_outside_edit_masks_unchanged": true,
+  "gem_bounding_boxes": {
+    "design/art/game/waypost-gem.png": [
+      403,
+      339,
+      621,
+      685
+    ],
+    "design/art/game/landmark-gem.png": [
+      403,
+      103,
+      621,
+      609
+    ]
+  },
+  "issues": [
+    {
+      "path": "game/crack-overlay.png",
+      "issue": "Inherited nontransparent corner in required exact source copy.",
+      "corners_alpha": [
+        238,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

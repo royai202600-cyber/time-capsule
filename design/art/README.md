@@ -45,10 +45,60 @@ A3 cabinet tiles retain their approved full-width 1024 px exports and geometry: 
 
 - Public Sea art: `portrait-sea.png` is a non-person recipient picture with the shared circle mask; `scene-sea-sealed.png` is a transparent dusk-sea vignette. Existing master/export hashes are preserved. Exact prompts are in `_checks/prompts-public-sea.json`. Read `docs/design/public-sea.md` from PR #67 (`claude/public-sea`) because it was not yet on main. App registration/wiring is the screens team's follow-up.
 
+## Time Capsule game final art
+
+Sixteen final masters are registered below, with matching WebP exports. Thirteen masters are exact byte copies of Roy's approved concept set at commit `8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d`; the concept branch is read with `git show` and is not merged. The only newly generated pictures are `game/ball-wax.png`, `game/wheel/scene-landmark-taipei.png` and `game/wheel/scene-square.png`. All use Codex's built-in `gpt-image-2`, with the approved style sheet first and the unchanged STYLE section 2 block at the start of every prompt. Exact prompts, ordered references, source commits/hashes and processing are recorded in the new manifest entries; the three new prompt records are also in [_checks/game-final-generation.json](_checks/game-final-generation.json).
+
+- Wax ball: the larger redraw keeps the chosen shallow keyhole, wax-red material, outline and top-left light without gold. Its generated visible alpha crop is downsampled to the gold ball's visible bounds, (152,141)–(871,876), on a transparent 1024 square. The approved 335 px normal source is shown on the left of [_checks/game-final-ball-comparison.png](_checks/game-final-ball-comparison.png), with the larger final master reduced to the same review size on the right. The source is never upscaled.
+- Tower scene: only the low city buildings at its foot are replaced with plain modern East Asian buildings and trees. The tower remains a loose interpretation. Square scene: side cottages are replaced with two-storey East Asian shophouses and arched ground floors. Generated scene pixels are downscaled to 1024 and composited only within documented building edit polygons (1.5 px feather). Original pixels outside those masks, including the complete tower/lamp, the distant sky and ground/paving, are retained exactly. No decorative rims, text or frames are baked into the opaque wheel scene masters.
+- Common gem alpha bounding box on its 1024 square: **(403,339)–(621,685)**, end exclusive; centre **(512,512)**. Landmark gem stack: **(403,103)–(621,609)**; centre **(512,356)**. Floating markers have no pole, dot or asset shadow. These exact copied canvases are not recentered or re-saved.
+- **Inherited check issue:** the approved `cracks/crack-a-large.png` has top-left alpha **238**, with the other three corner pixels zero. Its required exact copy, `game/crack-overlay.png`, retains that pixel. Clearing it would violate the byte-copy requirement. All other required transparent-corner masters pass. Roy should decide whether a later corner cleanup is allowed; the audit reports the failure explicitly.
+- Every wheel scene is opaque 1024 × 1024. Six are copied unchanged; only the two requested scenes are edited. The app draws the wheel crop/rim. The special passerby portrait is copied exactly, keeping its approved circle; no portrait remasking or app registration is included. The bench scene is also copied exactly.
+
+### Final art checks and exports
+
+[Final contact sheet](_checks/game-final-contact-sheet.png) shows every final file; the shared contact sheet is unchanged. [Actual-size checks](_checks/game-final-sizes.png) show, from left to right: row 1 normal/gold balls at 64 px, common gem at 48/64 px, Landmark stack at 48/64 px; rows 2–3 the eight wheels in the master-table order at 96 px with script-drawn brass rims; bottom row the passerby portrait at 24/40 px. Gem/ball checks use map land #F3EFE6. [Audit](_checks/game-final-audit.json) records source equality, corners, opacity, preserved scene regions and gem bounds.
+
+Run with Pillow and sharp installed outside the repository:
+
+```sh
+/tmp/timecapsule-concept-venv/bin/python design/art/scripts/build-game-final-review.py
+SHARP_MODULE_DIR=/tmp/timecapsule-game-final-tools/node_modules/sharp node design/art/scripts/export-webp.cjs --only game/ball-wax.png game/ball-gold.png game/waypost-gem.png game/landmark-gem.png game/crack-overlay.png game/hit-dust.png game/wheel/scene-park.png game/wheel/scene-garden.png game/wheel/scene-waterfront.png game/wheel/scene-square.png game/wheel/scene-public-art.png game/wheel/scene-landmark-taipei.png game/wheel/scene-landmark-singapore.png game/wheel/scene-landmark-macau.png portraits/portrait-passerby.png scenes/scene-passerby-sealed.png
+```
+
+The exporter now includes `^game/` in its 512 px rule. Only those sixteen new paths are exported, at quality 85 with alpha retained; the wide bench scene follows the existing scene rule. [WebP audit](_checks/game-final-webp-audit.json) confirms all sixteen export sizes and alpha channels match the sharp resize recipe. [Preservation audit](_checks/game-final-preservation.json) confirms all 1,635 protected tracked files and all 300 existing manifest entries are unchanged. No app code, screen wiring, mobile portrait registration, database change or deployment is part of this work. PR merge waits for Roy's OK.
+
+### Landmark photograph sources and licences
+
+| Scene | Source photo and author | Licence |
+| --- | --- | --- |
+| Taipei | [Taipei 101 - Taiwan — Ludovic Lubeigt](https://commons.wikimedia.org/wiki/File:Taipei_101_-_Taiwan.jpg) | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) |
+| Singapore | [Merlion of Singapore — Kistara](https://commons.wikimedia.org/wiki/File:Merlion_of_Singapore.jpg) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| Macau | [Senado Square Macao — Georgio](https://commons.wikimedia.org/wiki/File:Senado_Square_Macao.jpg) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+
+These licences describe the inspected photos. No photo pixels are included in the concepts.
+
+
 ## Masters
 
 | File | What | Size | Notes |
 |---|---|---:|---|
+| `game/ball-wax.png` | Wax keyhole ball | 1024×1024 | requested redraw/edit |
+| `game/ball-gold.png` | Gold-veined keyhole ball | 1024×1024 | exact approved copy |
+| `game/waypost-gem.png` | Floating purple Waypost | 1024×1024 | exact approved copy |
+| `game/landmark-gem.png` | Floating Landmark Waypost | 1024×1024 | exact approved copy |
+| `game/crack-overlay.png` | Crack A overlay | 1024×1024 | exact approved copy; top-left alpha 238 retained |
+| `game/hit-dust.png` | Wax and brass hit dust | 1536×1024 | exact approved copy |
+| `portraits/portrait-passerby.png` | Passerby: envelope on a bench | 1024×1024 | exact approved copy |
+| `scenes/scene-passerby-sealed.png` | Passerby: sealed bench scene | 1536×1024 | exact approved copy |
+| `game/wheel/scene-park.png` | Park | 1024×1024 | exact approved copy |
+| `game/wheel/scene-garden.png` | Garden | 1024×1024 | exact approved copy |
+| `game/wheel/scene-waterfront.png` | Waterfront | 1024×1024 | exact approved copy |
+| `game/wheel/scene-square.png` | Square: shophouses | 1024×1024 | requested redraw/edit |
+| `game/wheel/scene-public-art.png` | Public art | 1024×1024 | exact approved copy |
+| `game/wheel/scene-landmark-taipei.png` | Landmark: Taipei | 1024×1024 | requested redraw/edit |
+| `game/wheel/scene-landmark-singapore.png` | Landmark: Singapore | 1024×1024 | exact approved copy |
+| `game/wheel/scene-landmark-macau.png` | Landmark: Macau | 1024×1024 | exact approved copy |
 | `app-icon.png` | Blue rose dome app icon master | 1024×1024 | opaque |
 | `cabinet/cabinet-base.png` | Tiling cabinet base with brass feet | 1024×192 | processed; see manifest |
 | `cabinet/cabinet-crown.png` | Tiling cabinet crown with brass finials | 1024×256 | processed; see manifest |
