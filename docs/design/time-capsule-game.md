@@ -1,6 +1,6 @@
 # Time Capsule: the collecting game
 
-Status: direction agreed with Roy on 2026-11-09. Nothing is built yet. Numbers marked "to tune" get set by playing it.
+Status: game released on 2026-11-09; follow-up crack coverage awaits Claude's review. Numbers marked "to tune" get set by playing it.
 
 This replaces the name "Public Sea" and extends [public-sea.md](public-sea.md). Where the two disagree, this doc wins.
 
@@ -29,7 +29,7 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 ## Corrupted Capsules
 - They come from the system and hold **only the vessel**. No letter, no note, so there is nothing to write and no AI involved. Letters only ever come from real people.
 - They look cracked, clouded and tarnished. This is **one shared effect** over the existing vessel art, not 67 redraws.
-- **Chosen (2026-11-09):** Crack A on top of the dark layer. The black anger mark stays restorable: set `CORRUPTED_MARK` to `"anger"` in `mobile/src/features/game/corruptedLook.ts`, where its placement is saved (inside the vessel's top right, at top .3, left .53, size .19 on the catch screen; left 42, bottom 41, 17 px on the map).
+- **Chosen (2026-11-09):** the existing approved Crack A overlay on top of the dark layer, for all 67 vessels on both map and fight screen. Cracks only; remove the angry-mark fallback.
 
 ## Catching
 - **The ball is a red wax ball**, starting point, can change later. Solid wax red, never red and white, never two halves, no band or button.
@@ -41,7 +41,7 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 ## How Corrupted Capsules are released
 - **The server decides, never the phone.**
 - **Fixed spots** from public map data: parks, squares, waterfronts. Never roads, schools, places of worship or private property.
-- **Waves:** new capsules about every hour, staying 30–60 minutes (to tune).
+- **Waves (Roy, 2026-11-09):** new releases every ten minutes, expiring at the next wave so uncaught releases do not accumulate. Each supported region has only three vessel types: Taiwan — bubble tea, bento, hot-air balloon; Hong Kong — dim-sum steamer, postbox, phone booth; Singapore — lucky stars, mixtape, instant camera; Macau — candy box, music box, pocket watch. Each set has one common, uncommon and rare type. These pools do not change owned vessels, free starters or earned Landmark rewards. Taiwan currently uses the existing Taipei map/seed coverage.
 - **You only see Corrupted Capsules inside your pickup circle**, so they never crowd the map. Wayposts and bottles still show further out.
 - **Everyone nearby sees the same capsule and each catches their own copy.** Two friends walking together both get it.
 - **Real time and place decide what appears.** The firefly jar only after dark, the Mid-Autumn lantern only at Mid-Autumn, the bottle by the water. Common vessels can appear anywhere.
@@ -83,7 +83,7 @@ Today's rules stay, under the new name:
 - Report hides it at once; 2 reports hide it from everyone until reviewed.
 
 ## Where it launches
-**Taipei, Singapore and Macau**, all already in our map tiles. One Landmark Waypost each to start: Taipei 101, the Merlion, Senado Square. Taipei 101 and the Merlion are trademarks, so their vessels stay loosely inspired and are earned, never sold.
+**Taipei (Taiwan), Hong Kong, Singapore and Macau**, all already in our map tiles. Hong Kong's added spots use the same public park-path safety exclusions; no new Landmark is added. One Landmark Waypost in each original city: Taipei 101, the Merlion, Senado Square. Taipei 101 and the Merlion are trademarks, so their vessels stay loosely inspired and are earned, never sold.
 
 The 6 or so shores per city are too few, so we add Wayposts from public map data until busy areas have one every few minutes' walk.
 

@@ -7,14 +7,21 @@ motor roads have a 20 m exclusion. A maximal spaced sample covers qualifying
 path samples within 150 m for spots and 250 m for Wayposts. No road grid points.
 Source: https://api.openstreetmap.org/api/0.6/map, OSM contributors, ODbL, 2026-11-09.
 """
-import sys, math, json, hashlib, xml.etree.ElementTree as ET
+import sys, math, json, hashlib, argparse, xml.etree.ElementTree as ET
 from pathlib import Path
 from shapely.geometry import Point, Polygon, LineString
 from shapely.ops import unary_union, polygonize
-prefix,out=sys.argv[1:]
+args=argparse.ArgumentParser()
+args.add_argument('prefix');args.add_argument('out');args.add_argument('--city')
+options=args.parse_args();prefix,out=options.prefix,options.out
 cities={'Taipei':(['taipei','taipei-west','taipei-east','daan','taipei-peace','taipei-riverside'],25.04,'台北','Asia/Taipei'),
 'Singapore':(['singapore','singapore-gardens','singapore-fort','singapore-botanic','singapore-kallang'],1.29,'新加坡','Asia/Singapore'),
-'Macau':(['macau','macau-north','macau-taipa'],22.2,'澳門','Asia/Macau')}
+'Macau':(['macau','macau-north','macau-taipa'],22.2,'澳門','Asia/Macau'),
+'Hong Kong':(['hong-kong-kowloon','hong-kong-west','hong-kong-waterfront'],22.3,'香港','Asia/Hong_Kong')}
+if options.city:
+ cities={options.city:cities[options.city]}
+else:
+ cities={k:v for k,v in cities.items() if k!='Hong Kong'}
 posts=[];spots=[];report={}
 for city,(files,lat0,zh,tz) in cities.items():
  nodes={}; ways={}; relations={}
@@ -86,8 +93,8 @@ for files,*_ in cities.values():
  for f in files:
   fp=Path(prefix+'-'+f+'.xml')
   sql+='-- extract '+fp.name+' SHA256 '+hashlib.sha256(fp.read_bytes()).hexdigest()+'\n'
-sql+='insert into public.sea_shores(name_zh,name_en,city_zh,city_en,lat,lng,game_enabled,source_ref) values\n'
-sql+=',\n'.join('('+','.join([q(name),q(name),q(zh),q(city),str(lat),str(lng),'true',q(ref)])+')' for city,zh,tz,lat,lng,name,ref in posts)+'\non conflict (source_ref) where source_ref is not null do nothing;\n'
+sql+='insert into public.sea_shores(name_zh,name_en,city_zh,city_en,lat,lng,game_enabled,source_ref,scene) values\n'
+sql+=',\n'.join('('+','.join([q(name),q(name),q(zh),q(city),str(lat),str(lng),'true',q(ref),q('park')])+')' for city,zh,tz,lat,lng,name,ref in posts)+'\non conflict (source_ref) where source_ref is not null do nothing;\n'
 sql+='insert into public.corrupted_spots(city,timezone,lat,lng,habitat,source_ref) values\n'
 sql+=',\n'.join('('+','.join([q(city),q(tz),str(lat),str(lng),q('park'),q(ref)])+')' for city,zh,tz,lat,lng,name,ref in spots)+'\non conflict(source_ref) do nothing;\n'
 Path(out).write_text(sql);print(json.dumps(report,indent=2))

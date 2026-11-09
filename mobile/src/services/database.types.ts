@@ -612,6 +612,7 @@ export type Database = {
           name_en: string
           name_zh: string
           place: string | null
+          scene: string | null
           source_ref: string | null
         }
         Insert: {
@@ -625,6 +626,7 @@ export type Database = {
           name_en: string
           name_zh: string
           place?: string | null
+          scene?: string | null
           source_ref?: string | null
         }
         Update: {
@@ -638,6 +640,7 @@ export type Database = {
           name_en?: string
           name_zh?: string
           place?: string | null
+          scene?: string | null
           source_ref?: string | null
         }
         Relationships: [
