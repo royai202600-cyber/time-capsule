@@ -26,7 +26,6 @@ import { daysSince, distanceText, useSeaText } from "../sea/strings";
 import { game, GameError, GAME_ACTION_RADIUS_M, GAME_ENABLED, type GameState, type CorruptedCapsule, type DevLetter, type LandmarkAttempt, type Nearby, type Waypost } from "../../services/game";
 import { gameArt } from "../../art/manifest";
 import { crackOverlays } from "../../art/crackOverlays";
-import { CORRUPTED_MARK } from "../game/corruptedLook";
 import { SpinScreen } from "../game/SpinScreen";
 import { sceneKey } from "../game/waypostScene";
 import { ThrowScreen } from "../game/ThrowScreen";
@@ -157,7 +156,7 @@ export default function JourneyScreen() {
   const gamePins = useMemo<LivePin[]>(() => [
     // Only what's inside the pickup circle shows, so capsules never crowd the map.
     ...nearby.corrupted.filter((c) => c.id !== throwing?.id && metersTo(c.lat, c.lng) <= GAME_ACTION_RADIUS_M).map<LivePin>((c) => (
-      { id: `corrupted-${c.id}`, lat: c.lat, lng: c.lng, kind: "corrupted", vessel: vesselUri(c.vessel), cracks: CORRUPTED_MARK === "cracks" ? assetUri(crackOverlays[c.vessel]) ?? undefined : undefined, rarity: c.rarity, near: true }
+      { id: `corrupted-${c.id}`, lat: c.lat, lng: c.lng, kind: "corrupted", vessel: vesselUri(c.vessel), cracks: assetUri(crackOverlays[c.vessel]) ?? undefined, rarity: c.rarity, near: true }
     )),
     ...nearby.wayposts.map<LivePin>((w) => ({
       id: `way-${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: assetUri(w.kind === "landmark" ? gameArt.landmarkGem : gameArt.waypostGem) ?? "",

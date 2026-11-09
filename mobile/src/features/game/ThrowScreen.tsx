@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Easing, Image, PanResponder, Platform, Pressable, Text, View, type LayoutChangeEvent } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Svg, { Ellipse, Path } from "react-native-svg";
+import Svg, { Ellipse } from "react-native-svg";
 import { vesselParts } from "../../art/manifest";
 import { ArtIcon } from "../../components/ArtIcon";
 import { haptics } from "../../components/haptics";
@@ -13,7 +13,6 @@ import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import Reanimated, { cancelAnimation, Easing as Curve, runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { fxGlint, gameArt, lightBurst } from "../../art/manifest";
 import { crackOverlays } from "../../art/crackOverlays";
-import { ANGER_MARK, CORRUPTED_MARK } from "./corruptedLook";
 import { useReducedMotion } from "../../useReducedMotion";
 import { errorKey, useGameText } from "./strings";
 import { FRAME_FIELDS, FRAMES_PER_SECOND, simulateThrow } from "./throwPhysics";
@@ -46,21 +45,12 @@ export function ThrowBackground() {
 
 // The dark layer: the web can dull the picture directly, as the map does; phones lay a vessel-shaped tint on top.
 const WEB_DARKEN = Platform.OS === "web";
-const ANGER = "M40 12C40 30 30 40 12 40M60 12C60 30 70 40 88 40M12 60C30 60 40 70 40 88M88 60C70 60 60 70 60 88";
-/** The comic anger mark that shows a capsule is corrupted, inside the top right of the vessel. */
 const GLINTS = Array.from({ length: 8 }, (_, i) => ({ angle: (i / 8) * Math.PI * 2 + .3, reach: 104 + (i % 3) * 34, size: 24 + (i % 3) * 10 }));
 type Praise = "praiseGood" | "praiseLovely" | "praisePerfect";
 const PRAISE_COLOR: Record<Praise, string> = { praiseGood: C.blue, praiseLovely: "#9A7430", praisePerfect: C.wax };
 /** `ring` is 1 at the ring's tightest. */
 const praiseFor = (ring: number): Praise => ring >= .8 ? "praisePerfect" : ring >= .45 ? "praiseLovely" : "praiseGood";
 const finished = (animation: Animated.CompositeAnimation) => new Promise<void>((done) => animation.start(() => done()));
-
-function AngerMark({ size }: { size: number }) {
-  return <Svg width={size} height={size} viewBox="0 0 100 100">
-    <Path d={ANGER} stroke="#fff" strokeWidth={18} fill="none" strokeLinecap="round" />
-    <Path d={ANGER} stroke="#000" strokeWidth={10} fill="none" strokeLinecap="round" />
-  </Svg>;
-}
 
 type Restored = Pick<ThrowResult, "vessel" | "copies" | "stars" | "is_new" | "xp_gained">;
 
@@ -375,8 +365,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
           <Animated.View pointerEvents="none" style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize, opacity: crack }}>
             {source && WEB_DARKEN ? <Image source={source} style={[{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize }, { filter: "saturate(.55) brightness(.8)" } as object]} resizeMode="contain" /> : null}
             {source && !WEB_DARKEN ? <Image source={source} style={{ width: vesselSize, height: vesselSize, opacity: .3, tintColor: C.ink }} resizeMode="contain" /> : null}
-            {CORRUPTED_MARK === "cracks" && crackOverlays[capsule.vessel] ? <Image source={crackOverlays[capsule.vessel]} style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize }} resizeMode="contain" /> : null}
-            {CORRUPTED_MARK === "anger" && <View style={{ position: "absolute", top: vesselSize * ANGER_MARK.throw.top, left: vesselSize * ANGER_MARK.throw.left }}><AngerMark size={vesselSize * ANGER_MARK.throw.size} /></View>}
+            {crackOverlays[capsule.vessel] ? <Image source={crackOverlays[capsule.vessel]} style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize }} resizeMode="contain" /> : null}
           </Animated.View>
           {!result && !celebrating && <View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 2, borderColor: "rgba(255,255,255,.95)" }} />}
           {!result && !celebrating && <Animated.View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 4, borderColor: RING_COLOR[capsule.rarity], transform: [{ scale: ringScale }] }} />}
