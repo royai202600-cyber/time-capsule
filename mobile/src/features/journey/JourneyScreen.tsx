@@ -89,7 +89,7 @@ export default function JourneyScreen() {
   const cell = you ? `${you.lat.toFixed(3)},${you.lng.toFixed(3)}` : "";
   const loadSea = useCallback(async () => {
     if (!SEA_ENABLED || !you) return;
-    const test = GAME_ENABLED ? game.devBottles(you) : [];
+    const test = __DEV__ && GAME_ENABLED ? game.devBottles(you) : [];
     setBottles(test);
     try {
       setBottles([...test, ...await sea.nearby(fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null)]);

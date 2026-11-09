@@ -82,6 +82,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   const [cracks, setCracks] = useState(landmark?.cracks ?? 0);
   const [praise, setPraise] = useState<Praise | null>(null);
   const [celebrating, setCelebrating] = useState(false);
+  const [inFlight, setInFlight] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(landmark ? Math.ceil((new Date(landmark.expires_at).getTime() - Date.now()) / 1000) : 0);
 
   const ringPhase = useRef(new Animated.Value(1)).current;
@@ -161,7 +162,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   }, [hop, reduced, result, celebrating]);
 
   const flash = (text: string) => setMessage(text);
-  const unlock = () => { busy.current = false; };
+  const unlock = () => { busy.current = false; setInFlight(false); };
   const reset = () => {
     if (!alive.current) return;
     settling.current = false;
@@ -224,7 +225,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     if (alive.current) setResult(out);
   };
 
-  const settleLandmark = async (hit: boolean, ring: number, moved: Promise<void>) => {
+  const settleLandmark = async (hit: boolean, ring: number, moved: Promise<void>, ballKind: BallKind) => {
     if (!landmark) return;
     if (!hit) {
       void haptics.warn();
@@ -235,7 +236,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     }
     impact(ring);
     try {
-      const out = await game.landmarkHit({ attempt: landmark.id, ball: latest.current.kind, ring });
+      const out = await game.landmarkHit({ attempt: landmark.id, ball: ballKind, ring });
       if (!alive.current) return;
       onState(out.state);
       setCracks(out.cracks);
@@ -254,9 +255,8 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     }
   };
 
-  const settle = async (hit: boolean, ring: number, moved: Promise<void>) => {
-    if (landmark) return settleLandmark(hit, ring, moved);
-    const ballKind = latest.current.kind;
+  const settle = async (hit: boolean, ring: number, moved: Promise<void>, ballKind: BallKind) => {
+    if (landmark) return settleLandmark(hit, ring, moved, ballKind);
     if (hit) impact(ring);
     try {
       const out = await game.throwBall({ id: capsule.id, ball: ballKind, ring, hit });
@@ -300,6 +300,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     void haptics.tap();
     setMessage("");
     settling.current = true;
+    setInFlight(true);
     const flight = simulateThrow({ dx, dy, vx, vy }, { travel: capsuleY(h) - ballY(h, insets.bottom), vessel: vesselSize, hitHalfWidth, mouse: MOUSE, still: reduced });
     const linear = (ms: number) => ({ duration: ms, easing: Curve.linear });
     const whenItArrives = () => {
@@ -312,7 +313,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
         const finish = () => settled();
         progress.value = withTiming(end, linear((end - flight.resolveAt) * 1000), () => { runOnJS(finish)(); });
       });
-      void settle(hit, ringNow(), moved);
+      void settle(hit, ringNow(), moved, ballKind);
     };
     path.value = flight.hitPath;
     progress.value = 0;
@@ -449,7 +450,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
       <Text style={{ flex: 1, textAlign: "center", fontFamily: sans, fontSize: 12, color: C.ink }}>{s(MOUSE ? "flickMouse" : "flick")}</Text>
       <View style={{ flex: 1, alignItems: "flex-end" }}>
         <Pressable accessibilityRole="button" accessibilityLabel={s(kind === "wax" ? "gold" : "wax")} accessibilityState={{ selected: kind === "gold" }}
-          disabled={kind === "wax" && state.gold_balls <= 0} onPress={() => { void haptics.tick(); setKind(kind === "wax" ? "gold" : "wax"); }}
+          disabled={inFlight || (kind === "wax" && state.gold_balls <= 0)} onPress={() => { void haptics.tick(); setKind(kind === "wax" ? "gold" : "wax"); }}
           style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 10, height: 44, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", opacity: kind === "wax" && state.gold_balls <= 0 ? .5 : 1, ...shadows.card }}>
           <WaxBall kind={kind === "wax" ? "gold" : "wax"} size={26} />
           <Text style={{ fontFamily: serif, fontSize: 14, color: C.ink }}>{kind === "wax" ? state.gold_balls : state.wax_balls}</Text>

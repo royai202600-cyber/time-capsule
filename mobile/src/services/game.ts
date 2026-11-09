@@ -204,7 +204,7 @@ export const game = {
     return Object.fromEntries([...dev.copies].map(([id, copies]) => [id, { copies, stars: starsFor(copies) }]));
   },
   /** Development only: capsules from other people, so the pickup can be tried anywhere. */
-  devBottles(at: Coords): SeaBottle[] { seed(at); return dev.bottles.map((b) => b.bottle); },
+  devBottles(at: Coords): SeaBottle[] { if (!__DEV__) return []; seed(at); return dev.bottles.map((b) => b.bottle); },
   devPickUp(id: string): DevLetter | null {
     const found = dev.bottles.find((b) => b.bottle.id === id) ?? null;
     dev.bottles = dev.bottles.filter((b) => b.bottle.id !== id);
