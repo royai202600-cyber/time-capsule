@@ -1,0 +1,8 @@
+{
+  "base_commit": "b146b94c1199aba787d5de9edb3cb0c6f880e2f3",
+  "protected_tracked_files_byte_identical": 1635,
+  "existing_manifest_entries_unchanged": 300,
+  "new_manifest_entries": 16,
+  "review_recipe_byte_idempotent": true,
+  "scope": "design/art/ and public/art/ only"
+}

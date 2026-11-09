@@ -8153,5 +8153,464 @@
       "openGlow": null,
       "readyPulse": null
     }
+  },
+  {
+    "path": "design/art/game/ball-wax.png",
+    "what": "Wax keyhole ball",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/ball-wax.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nRedraw the exact wax-red ball with the embossed keyhole from the second reference, at the same size, position, shape and lighting as the ball in the third reference, but with no gold anywhere. One colour of wax red. The keyhole is a shallow engraving. No seam, band, button, clasp, glow or halo.\nOne ball only. Preserve the approved normal ball identity and make it sharper at larger resolution. No text, letters, numbers, logos or writing-like marks.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/concepts/lost-and-found/ball/ball-keyhole.png",
+      "design/art/concepts/lost-and-found/ball/ball-keyhole-gold.png"
+    ],
+    "source_commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+    "postprocess": "Generated 1254 square. Crop at alpha >=16 and downsample to the gold ball visible bounds (152,141)-(871,876), then paste on a transparent 1024 square. No upscaling. Native alpha retained inside the crop."
+  },
+  {
+    "path": "design/art/game/ball-gold.png",
+    "what": "Gold-veined keyhole ball",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/ball-gold.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nRedraw the exact wax-red ball with the embossed keyhole from the second reference, with the same shape, wax texture, keyhole and lighting. Add a few bold, irregular, branching brass-gold veins across its surface, like the third reference, thick enough to show at 64 px. The veins go around the keyhole and do not cross it. The inside edge of the keyhole has a little rubbed brass. The veins must never form a straight line, band or two halves. One ball only. No glow, halo, sparkle, button, clasp, seam or opening.\nNo text, letters, numbers, labels, logos or writing-like marks.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/concepts/lost-and-found/ball/ball-keyhole.png",
+      "design/art/concepts/lost-and-found/ball/ball-gold-2-veins.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/ball/ball-keyhole-gold.png",
+      "sha256": "35402be462c1a10b30e78cb0b7b5569f0b3336f80a601cf81a655c3b94a38318"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
+  },
+  {
+    "path": "design/art/game/waypost-gem.png",
+    "what": "Floating purple Waypost",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/waypost-gem.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.\nTWO shallow faceted gem shapes stacked: a large gem made from two shallow pyramids joined at their widest point, with a small matching gem HOVERING a short clear gap ABOVE it. The single straight stem supports the large lower gem. No connection or plate between the gems.\nLandmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/concepts/lost-and-found/screens/map-plain.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/waypost/waypost-gem-purple.png",
+      "sha256": "24cd6775ce8d9e44b9abc614ab1210223c032bf0bd72dcf9d00688d63dba6da2"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing.",
+    "source_processing": "Approved source derivation: remove pole/dot at clean facet point, compress each gem to 50% width at unchanged height; Landmark RGB multiplied by 0.8. No pole or shadow.",
+    "alpha_bbox_px": [
+      403,
+      339,
+      621,
+      685
+    ]
+  },
+  {
+    "path": "design/art/game/landmark-gem.png",
+    "what": "Floating Landmark Waypost",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/landmark-gem.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.\nTWO shallow faceted gem shapes stacked: a large gem made from two shallow pyramids joined at their widest point, with a small matching gem HOVERING a short clear gap ABOVE it. The single straight stem supports the large lower gem. No connection or plate between the gems.\nLandmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/concepts/lost-and-found/screens/map-plain.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/waypost/landmark-gem-deep-purple.png",
+      "sha256": "d44657f07723537904c6780529a21dcbee0e197fef26b1a422282f1572aefbb5"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing.",
+    "source_processing": "Approved source derivation: remove pole/dot at clean facet point, compress each gem to 50% width at unchanged height; Landmark RGB multiplied by 0.8. No pole or shadow.",
+    "alpha_bbox_px": [
+      403,
+      103,
+      621,
+      609
+    ]
+  },
+  {
+    "path": "design/art/game/crack-overlay.png",
+    "what": "Crack A overlay",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/crack-overlay.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is a crack-pattern layer, not an object. Ignore the style block's lines about view, transparent background, centring, padding and palette. Pure white background, navy #16263F ink lines only, no shading and no object. The pattern fills the whole square from edge to edge.\nA few long, bold, branching hand-inked cracks, distributed across the whole square, with generous white areas. Crack ends reach canvas edges. No border.\nNo text, letters, numbers, logos or marks resembling writing. No extra objects.",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/cracks/crack-a-large.png",
+      "sha256": "c13ed97e71d784b978ccab2550ab41bda7afd359b669be931b7327dce55288be"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing.",
+    "source_processing": "Approved navy crack pattern converted to a transparent overlay; inherited top-left alpha is 238. Preserved exactly as requested."
+  },
+  {
+    "path": "design/art/game/hit-dust.png",
+    "what": "Wax and brass hit dust",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/hit-dust.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is a soft effect, not an inked object. Ignore the style block's lines about ink line art, hatching, view and object size. Do not copy the objects of the style sheet.\nOne irregular, soft puff of fine wax-red #A3364F dust with a few tiny brass #C9A15A specks, transparent background. No outline, no glow, no shape inside it. It must not form a ring, circle, sunburst or rays.\nNo text, letters, numbers, logos or marks that resemble writing.",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/screens/hit-dust.png",
+      "sha256": "f75b40f44fd59f24a74bdcfc5f608dabca426e9c1c1c6db9df93c3476632f0b9"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
+  },
+  {
+    "path": "design/art/portraits/portrait-passerby.png",
+    "what": "Passerby: envelope on a bench",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "web_export": "public/art/portraits/portrait-passerby.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: the object fills a circular background disc, centred at (505,526) with radius 430 on a 1024 square, the same disc as the framing reference, transparent outside it.\nAn empty wooden bench with ONE small sealed cream envelope resting on it, on a pale cream circular background disc.\nReference 2 is ONLY for circular framing and line thickness; do not copy the person. Reference 3 is the sealed envelope design. Thicker outline, broad shapes, almost no hatching, legible at 24 px and 40 px. No sea, bottles, people, faces, creatures, lettering, numbers, logos, text or writing-like marks. Simple calm object portrait.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/portraits/portrait-01.png",
+      "design/art/vessels/vessel-envelope.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/whoever/portrait-a-bench.png",
+      "sha256": "2100fc206d6bc0e17135b6a729468988fa203dce3b1a78f96be965bf67be3284"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
+  },
+  {
+    "path": "design/art/scenes/scene-passerby-sealed.png",
+    "what": "Passerby: sealed bench scene",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "web_export": "public/art/scenes/scene-passerby-sealed.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is a wide illustrated scene, about 1536×1024, not one object on a square. Ignore the centring, padding and square lines. Only the edges will fade to transparent.\nA quiet footpath at soft blue-and-cream dusk, with an EMPTY wooden bench under a lit old street lamp and ONE small sealed cream envelope waiting on the bench. Calm, tender, nobody there.\nReference 2 is the envelope design. Wide 1536x1024 composition. No sea, bottle, people, faces, creatures, text, letters, numbers, logos or marks resembling writing. Keep blue-and-cream dusk inside the approved palette. Edges softly fade to transparent.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-envelope.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/whoever/scene-a-bench.png",
+      "sha256": "62020be9746fd505e372d5ef3caf7a6fd0703774ef93e9b819a19c8cb197f0f0"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
+  },
+  {
+    "path": "design/art/game/wheel/scene-park.png",
+    "what": "Park",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/wheel/scene-park.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size. It will be cropped to a circle, so one clear subject sits in the centre, all important detail stays within the middle 70%, and the corners hold only simple background. Hand-inked storybook illustration, never photorealistic. Foliage uses ink blue and the muted teal-green of the rose leaves in the style sheet. Calm, simple shapes that read when small. No people, text, signs, logos, circles, rims or frames.\nOne big shady tree over a curving footpath and a wooden bench. Generic invented park, never a real spot.\nThe whole tree including its canopy, the bench and the curve of path must fit inside x=15–85% and y=15–85% of the square. Smaller central composition, surrounded by plain soft background. No isolated curved or circular vignette boundary. No flowers in the foreground. First reference is style only, copy no objects from it.",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/wheel/scene-park.png",
+      "sha256": "9ecc82e3d1ad6f09a824b40c45dfb268de639ec1a2faabe655f67212716edfa5"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
+  },
+  {
+    "path": "design/art/game/wheel/scene-garden.png",
+    "what": "Garden",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/wheel/scene-garden.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size. It will be cropped to a circle, so one clear subject sits in the centre, all important detail stays within the middle 70%, and the corners hold only simple background. Hand-inked storybook illustration, never photorealistic. Foliage uses ink blue and the muted teal-green of the rose leaves in the style sheet. Calm, simple shapes that read when small. No people, text, signs, logos, circles, rims or frames.\nA small arched wooden footbridge among flowering shrubs. Generic invented garden, never a real spot.",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/wheel/scene-garden.png",
+      "sha256": "71b9c6955dbb6a1861babd3a8892f3e725565492ddbf08f073999b46bdcc04d6"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
+  },
+  {
+    "path": "design/art/game/wheel/scene-waterfront.png",
+    "what": "Waterfront",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/wheel/scene-waterfront.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size. It will be cropped to a circle, so one clear subject sits in the centre, all important detail stays within the middle 70%, and the corners hold only simple background. Hand-inked storybook illustration, never photorealistic. Foliage uses ink blue and the muted teal-green of the rose leaves in the style sheet. Calm, simple shapes that read when small. No people, text, signs, logos, circles, rims or frames.\nA short wooden pier reaching into calm water at soft dusk. Generic invented waterfront, never a real spot.\nUse the first reference only for line, colour and texture. Do not copy any of its objects. One EMPTY short wooden pier pointing toward the centre of a calm bay. No vessels, bottles, rose domes, lanterns, boxes, letters, jewellery, loose objects, sun or moon disc. Keep the entire pier inside the middle 70%.",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/wheel/scene-waterfront.png",
+      "sha256": "9c8cbeeb81963f4e80c3663542c92b951373120a9ee1277e6098fe96d2d67399"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
+  },
+  {
+    "path": "design/art/game/wheel/scene-square.png",
+    "what": "Square: shophouses",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/wheel/scene-square.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size.\nKeep the street lamp, paving, sky, framing and style exactly the same. Replace only the cottages at the sides with low, plain two-storey East Asian shophouses with arched ground floors. No European cottages. No people, text, signs, logos, circles or frames.\nThe second reference is the edit target; the first reference is style only. Do not copy any vessels or loose objects.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/concepts/lost-and-found/wheel/scene-square.png"
+    ],
+    "source_commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+    "postprocess": "Generated 1254 square downsampled to 1024. Composite only building edit regions over the approved concept, retaining all pixels outside the masks, including original tower/lamp and ground/paving. Polygon edges feathered by 1.5 px.",
+    "edit_polygons_px": [
+      [
+        [
+          0,
+          250
+        ],
+        [
+          170,
+          250
+        ],
+        [
+          170,
+          330
+        ],
+        [
+          250,
+          360
+        ],
+        [
+          350,
+          360
+        ],
+        [
+          390,
+          600
+        ],
+        [
+          390,
+          745
+        ],
+        [
+          0,
+          745
+        ]
+      ],
+      [
+        [
+          625,
+          745
+        ],
+        [
+          625,
+          570
+        ],
+        [
+          700,
+          500
+        ],
+        [
+          710,
+          400
+        ],
+        [
+          840,
+          320
+        ],
+        [
+          930,
+          280
+        ],
+        [
+          1023,
+          280
+        ],
+        [
+          1023,
+          745
+        ]
+      ]
+    ]
+  },
+  {
+    "path": "design/art/game/wheel/scene-public-art.png",
+    "what": "Public art",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/wheel/scene-public-art.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size. It will be cropped to a circle, so one clear subject sits in the centre, all important detail stays within the middle 70%, and the corners hold only simple background. Hand-inked storybook illustration, never photorealistic. Foliage uses ink blue and the muted teal-green of the rose leaves in the style sheet. Calm, simple shapes that read when small. No people, text, signs, logos, circles, rims or frames.\nOne abstract curved sculpture on a low plinth. Generic invented place, never a real spot.\nUse the first reference only for line, colour and texture. Do not copy its vessels, bottles, rose domes, lanterns, boxes, letters or jewellery. No sun or moon disc.",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/wheel/scene-public-art.png",
+      "sha256": "2b498b20e5033c19f73781facaa65956eccfcdc648e5425211a6040f1b50f57c"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
+  },
+  {
+    "path": "design/art/game/wheel/scene-landmark-taipei.png",
+    "what": "Landmark: Taipei",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/wheel/scene-landmark-taipei.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size.\nKeep the tower, sky, ground, framing and style exactly the same. Replace only the small domed houses at its foot with low, plain modern East Asian city buildings and a few trees. No domes and no European houses. No people, text, signs, logos, circles or frames.\nThe tower stays loosely inspired, not an exact likeness. The second reference is the edit target; the first reference is style only. Do not copy any vessels or loose objects.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/concepts/lost-and-found/wheel/scene-landmark-taipei.png"
+    ],
+    "source_commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+    "postprocess": "Generated 1254 square downsampled to 1024. Composite only building edit regions over the approved concept, retaining all pixels outside the masks, including original tower/lamp and ground/paving. Polygon edges feathered by 1.5 px.",
+    "edit_polygons_px": [
+      [
+        [
+          0,
+          678
+        ],
+        [
+          425,
+          678
+        ],
+        [
+          428,
+          867
+        ],
+        [
+          0,
+          867
+        ]
+      ],
+      [
+        [
+          607,
+          678
+        ],
+        [
+          1023,
+          678
+        ],
+        [
+          1023,
+          867
+        ],
+        [
+          600,
+          867
+        ]
+      ]
+    ]
+  },
+  {
+    "path": "design/art/game/wheel/scene-landmark-singapore.png",
+    "what": "Landmark: Singapore",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/wheel/scene-landmark-singapore.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size. It will be cropped to a circle, so one clear subject sits in the centre, all important detail stays within the middle 70%, and the corners hold only simple background. Hand-inked storybook illustration, never photorealistic. Foliage uses ink blue and the muted teal-green of the rose leaves in the style sheet. Calm, simple shapes that read when small. No people, text, signs, logos, circles, rims or frames.\nOne pale stone fountain figure, part lion and part fish, sending an arc of water into a calm bay. Loosely inspired only, not an exact likeness. The second reference shows how loose and simplified the form should be; draw a scene, not a vessel.\nUse the first reference only for line, colour and texture. Do not copy its vessels, bottles, rose domes, lanterns, boxes, letters or jewellery. No sun or moon disc.\nMake the fountain figure and the water arc together a single centred group, entirely within x=18–82% and y=20–80% of the square. The figure is smaller and closer to the centre. Plain calm bay around it. No foreground flowers, branches or detailed corner objects.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-lionfish-fountain.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/wheel/scene-landmark-singapore.png",
+      "sha256": "1c1450d9eec9fa265e57c497736f770127ab64ebb37259f66f5860700ea6d0be"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
+  },
+  {
+    "path": "design/art/game/wheel/scene-landmark-macau.png",
+    "what": "Landmark: Macau",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "web_export": "public/art/game/wheel/scene-landmark-macau.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size. It will be cropped to a circle, so one clear subject sits in the centre, all important detail stays within the middle 70%, and the corners hold only simple background. Hand-inked storybook illustration, never photorealistic. Foliage uses ink blue and the muted teal-green of the rose leaves in the style sheet. Calm, simple shapes that read when small. No people, text, signs, logos, circles, rims or frames.\nA sunny old public square with black-and-cream wave-patterned paving, a small round fountain at the centre, and pale pastel colonial buildings behind it. The fountain is a small architectural basin, not a decorative frame around the picture. No lettering on buildings.\nUse the first reference only for line, colour and texture. Do not copy its vessels, bottles, rose domes, lanterns, boxes, letters or jewellery. No sun or moon disc.\nSimplify this to large calm shapes that read at 96 px. The complete small fountain and the few main building shapes fit in the middle 70%. The corners hold only simple plain sky, building wall or broad paving waves, with no flowers, leaves, branches, window detail or other decorative foreground. No foreground tree. Use broad charcoal-navy and cream paving waves with very little tile detail.",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "source": {
+      "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
+      "path": "design/art/concepts/lost-and-found/wheel/scene-landmark-macau.png",
+      "sha256": "672a95f49ae43c3111cc669bfc0e9ce1c848309552cf6cfa07965bf1f55edcf4"
+    },
+    "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
   }
 ]
