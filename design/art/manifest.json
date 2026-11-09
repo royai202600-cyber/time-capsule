@@ -8167,8 +8167,8 @@
     "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nRedraw the exact wax-red ball with the embossed keyhole from the second reference, at the same size, position, shape and lighting as the ball in the third reference, but with no gold anywhere. One colour of wax red. The keyhole is a shallow engraving. No seam, band, button, clasp, glow or halo.\nOne ball only. Preserve the approved normal ball identity and make it sharper at larger resolution. No text, letters, numbers, logos or writing-like marks.",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/concepts/lost-and-found/ball/ball-keyhole.png",
-      "design/art/concepts/lost-and-found/ball/ball-keyhole-gold.png"
+      "design/art/concepts/time-capsule-game/ball/ball-keyhole.png",
+      "design/art/concepts/time-capsule-game/ball/ball-keyhole-gold.png"
     ],
     "source_commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
     "postprocess": "Generated 1254 square. Crop at alpha >=16 and downsample to the gold ball visible bounds (152,141)-(871,876), then paste on a transparent 1024 square. No upscaling. Native alpha retained inside the crop."
@@ -8186,12 +8186,12 @@
     "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nRedraw the exact wax-red ball with the embossed keyhole from the second reference, with the same shape, wax texture, keyhole and lighting. Add a few bold, irregular, branching brass-gold veins across its surface, like the third reference, thick enough to show at 64 px. The veins go around the keyhole and do not cross it. The inside edge of the keyhole has a little rubbed brass. The veins must never form a straight line, band or two halves. One ball only. No glow, halo, sparkle, button, clasp, seam or opening.\nNo text, letters, numbers, labels, logos or writing-like marks.",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/concepts/lost-and-found/ball/ball-keyhole.png",
-      "design/art/concepts/lost-and-found/ball/ball-gold-2-veins.png"
+      "design/art/concepts/time-capsule-game/ball/ball-keyhole.png",
+      "design/art/concepts/time-capsule-game/ball/ball-gold-2-veins.png"
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/ball/ball-keyhole-gold.png",
+      "path": "design/art/concepts/time-capsule-game/ball/ball-keyhole-gold.png",
       "sha256": "35402be462c1a10b30e78cb0b7b5569f0b3336f80a601cf81a655c3b94a38318"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
@@ -8209,11 +8209,11 @@
     "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.\nTWO shallow faceted gem shapes stacked: a large gem made from two shallow pyramids joined at their widest point, with a small matching gem HOVERING a short clear gap ABOVE it. The single straight stem supports the large lower gem. No connection or plate between the gems.\nLandmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/concepts/lost-and-found/screens/map-plain.png"
+      "design/art/concepts/time-capsule-game/screens/map-plain.png"
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/waypost/waypost-gem-purple.png",
+      "path": "design/art/concepts/time-capsule-game/waypost/waypost-gem-purple.png",
       "sha256": "24cd6775ce8d9e44b9abc614ab1210223c032bf0bd72dcf9d00688d63dba6da2"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing.",
@@ -8238,11 +8238,11 @@
     "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.\nTWO shallow faceted gem shapes stacked: a large gem made from two shallow pyramids joined at their widest point, with a small matching gem HOVERING a short clear gap ABOVE it. The single straight stem supports the large lower gem. No connection or plate between the gems.\nLandmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/concepts/lost-and-found/screens/map-plain.png"
+      "design/art/concepts/time-capsule-game/screens/map-plain.png"
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/waypost/landmark-gem-deep-purple.png",
+      "path": "design/art/concepts/time-capsule-game/waypost/landmark-gem-deep-purple.png",
       "sha256": "d44657f07723537904c6780529a21dcbee0e197fef26b1a422282f1572aefbb5"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing.",
@@ -8270,7 +8270,7 @@
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/cracks/crack-a-large.png",
+      "path": "design/art/concepts/time-capsule-game/cracks/crack-a-large.png",
       "sha256": "c13ed97e71d784b978ccab2550ab41bda7afd359b669be931b7327dce55288be"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing.",
@@ -8292,7 +8292,7 @@
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/screens/hit-dust.png",
+      "path": "design/art/concepts/time-capsule-game/screens/hit-dust.png",
       "sha256": "f75b40f44fd59f24a74bdcfc5f608dabca426e9c1c1c6db9df93c3476632f0b9"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
@@ -8315,7 +8315,7 @@
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/whoever/portrait-a-bench.png",
+      "path": "design/art/concepts/time-capsule-game/whoever/portrait-a-bench.png",
       "sha256": "2100fc206d6bc0e17135b6a729468988fa203dce3b1a78f96be965bf67be3284"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
@@ -8337,7 +8337,7 @@
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/whoever/scene-a-bench.png",
+      "path": "design/art/concepts/time-capsule-game/whoever/scene-a-bench.png",
       "sha256": "62020be9746fd505e372d5ef3caf7a6fd0703774ef93e9b819a19c8cb197f0f0"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
@@ -8358,7 +8358,7 @@
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/wheel/scene-park.png",
+      "path": "design/art/concepts/time-capsule-game/wheel/scene-park.png",
       "sha256": "9ecc82e3d1ad6f09a824b40c45dfb268de639ec1a2faabe655f67212716edfa5"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
@@ -8379,7 +8379,7 @@
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/wheel/scene-garden.png",
+      "path": "design/art/concepts/time-capsule-game/wheel/scene-garden.png",
       "sha256": "71b9c6955dbb6a1861babd3a8892f3e725565492ddbf08f073999b46bdcc04d6"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
@@ -8400,7 +8400,7 @@
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/wheel/scene-waterfront.png",
+      "path": "design/art/concepts/time-capsule-game/wheel/scene-waterfront.png",
       "sha256": "9c8cbeeb81963f4e80c3663542c92b951373120a9ee1277e6098fe96d2d67399"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
@@ -8418,7 +8418,7 @@
     "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size.\nKeep the street lamp, paving, sky, framing and style exactly the same. Replace only the cottages at the sides with low, plain two-storey East Asian shophouses with arched ground floors. No European cottages. No people, text, signs, logos, circles or frames.\nThe second reference is the edit target; the first reference is style only. Do not copy any vessels or loose objects.",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/concepts/lost-and-found/wheel/scene-square.png"
+      "design/art/concepts/time-capsule-game/wheel/scene-square.png"
     ],
     "source_commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
     "postprocess": "Generated 1254 square downsampled to 1024. Composite only building edit regions over the approved concept, retaining all pixels outside the masks, including original tower/lamp and ground/paving. Polygon edges feathered by 1.5 px.",
@@ -8509,7 +8509,7 @@
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/wheel/scene-public-art.png",
+      "path": "design/art/concepts/time-capsule-game/wheel/scene-public-art.png",
       "sha256": "2b498b20e5033c19f73781facaa65956eccfcdc648e5425211a6040f1b50f57c"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
@@ -8527,7 +8527,7 @@
     "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size.\nKeep the tower, sky, ground, framing and style exactly the same. Replace only the small domed houses at its foot with low, plain modern East Asian city buildings and a few trees. No domes and no European houses. No people, text, signs, logos, circles or frames.\nThe tower stays loosely inspired, not an exact likeness. The second reference is the edit target; the first reference is style only. Do not copy any vessels or loose objects.",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/concepts/lost-and-found/wheel/scene-landmark-taipei.png"
+      "design/art/concepts/time-capsule-game/wheel/scene-landmark-taipei.png"
     ],
     "source_commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
     "postprocess": "Generated 1254 square downsampled to 1024. Composite only building edit regions over the approved concept, retaining all pixels outside the masks, including original tower/lamp and ground/paving. Polygon edges feathered by 1.5 px.",
@@ -8587,7 +8587,7 @@
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/wheel/scene-landmark-singapore.png",
+      "path": "design/art/concepts/time-capsule-game/wheel/scene-landmark-singapore.png",
       "sha256": "1c1450d9eec9fa265e57c497736f770127ab64ebb37259f66f5860700ea6d0be"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."
@@ -8608,7 +8608,7 @@
     ],
     "source": {
       "commit": "8ad4ed94f59ecd72b7dc8071ee4a965bb580af1d",
-      "path": "design/art/concepts/lost-and-found/wheel/scene-landmark-macau.png",
+      "path": "design/art/concepts/time-capsule-game/wheel/scene-landmark-macau.png",
       "sha256": "672a95f49ae43c3111cc669bfc0e9ce1c848309552cf6cfa07965bf1f55edcf4"
     },
     "postprocess": "Exact byte copy of Roy-approved concept master; no redraw, resave or new processing."

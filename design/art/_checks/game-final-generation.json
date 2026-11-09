@@ -5,8 +5,8 @@
     "model": "gpt-image-2",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/concepts/lost-and-found/ball/ball-keyhole.png",
-      "design/art/concepts/lost-and-found/ball/ball-keyhole-gold.png"
+      "design/art/concepts/time-capsule-game/ball/ball-keyhole.png",
+      "design/art/concepts/time-capsule-game/ball/ball-keyhole-gold.png"
     ]
   },
   {
@@ -15,7 +15,7 @@
     "model": "gpt-image-2",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/concepts/lost-and-found/wheel/scene-landmark-taipei.png"
+      "design/art/concepts/time-capsule-game/wheel/scene-landmark-taipei.png"
     ]
   },
   {
@@ -24,7 +24,7 @@
     "model": "gpt-image-2",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/concepts/lost-and-found/wheel/scene-square.png"
+      "design/art/concepts/time-capsule-game/wheel/scene-square.png"
     ]
   }
 ]
