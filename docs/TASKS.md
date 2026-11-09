@@ -4,6 +4,10 @@ Owner per task: **Claude** (UI, design, planning) or **Codex** (backend, merging
 Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move a task by editing this file in the same PR as the work.
 
 ## Doing
+
+| ID | Task | Owner | Done when |
+|---|---|---|---|
+| G2 crack release | Approved PR #87 release | Codex / Roy | CI 42555435554 green on `17748bd`; no review blockers; owner squash `bf8046f`. Owner-authored deployment release follows, then confirm a newest-batch vessel has cracks on the production map and fight with no angry mark. No migration/database change. #86 crack code is superseded; refresh/expiry/GPS/Safari work stays separate in #88 and art metadata in #86. |
 | ID | Task | Owner | Done when |
 |---|---|---|---|
 | G2 crack overlays | All 67 Corrupted Capsules use Crack A, angry mark removed | Claude / Codex | In review on `claude/corrupted-crack-overlays`. Frontend and art export only: no migration or deployment. Audit in `design/art/_checks/crack-overlay-audit.json`; screenshots in `docs/review/crack-overlays/`. |
