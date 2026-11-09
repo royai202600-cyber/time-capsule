@@ -1,0 +1,26 @@
+{
+  "count": 1,
+  "passed": 1,
+  "failed": [],
+  "assets": [
+    {
+      "path": "game/catch-background.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    }
+  ]
+}
