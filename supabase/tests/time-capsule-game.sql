@@ -32,7 +32,7 @@ select pg_temp.require_ok(
 select pg_temp.require_ok(
   (select count(*)=3 from public.sea_shores where kind='landmark'),'three landmark Wayposts');
 select pg_temp.require_ok(
-  (select count(*)=2 from private.game_speed_allowlist),'existing test accounts allowlisted');
+  (select count(*)=2 from private.game_speed_allowlist a join auth.users u on u.id=a.user_id where u.email in ('expo-test-a138d8@timecapsule.test','sea-s1-demo-3844bd@timecapsule.test')),'existing test accounts allowlisted');
 select pg_temp.require_ok(
   has_schema_privilege('authenticated','private','usage')
     and has_function_privilege('authenticated','private.can_read_capsule_voice(text)','execute'),
@@ -55,22 +55,22 @@ select city_en,count(*) from public.sea_shores
 select city,count(*) from public.corrupted_spots group by city order by city;
 
 select pg_temp.require_ok((select count(*)=54 from public.sea_shores where game_enabled and city_en='Taipei'), 'Taipei dense Wayposts');
-select pg_temp.require_ok((select count(*)=77 from public.corrupted_spots where city='Taipei'), 'Taipei dense spots');
+select pg_temp.require_ok((select count(*)=77 from public.corrupted_spots where city='Taipei' and source_ref not like 'qa:%'), 'Taipei dense spots');
 select pg_temp.require_ok((select count(*)=42 from public.sea_shores where game_enabled and city_en='Singapore'), 'Singapore dense Wayposts');
 select pg_temp.require_ok((select count(*)=58 from public.corrupted_spots where city='Singapore'), 'Singapore dense spots');
 select pg_temp.require_ok((select count(*)=33 from public.sea_shores where game_enabled and city_en='Macau'), 'Macau dense Wayposts');
 select pg_temp.require_ok((select count(*)=36 from public.corrupted_spots where city='Macau'), 'Macau dense spots');
 
 -- Stable release for behavioral checks, with every probability forced to a bound.
-update private.game_config set spawn_chance=1,visible_min_minutes=60,visible_max_minutes=60,
+update private.game_config set spawn_chance=1,visible_min_minutes=wave_minutes,visible_max_minutes=wave_minutes,
   restore_common=1,restore_uncommon=1,restore_rare=1;
 create temp table game_spawns on commit drop as
   select row_number() over(order by p.source_ref) as n,
     s.spawn_id,s.vessel,p.lat,p.lng,p.id as spot_id
   from public.corrupted_spots p
   cross join lateral private.resolve_spawn(
-    p.id,floor(extract(epoch from now())/3600)::bigint) s
-  where p.city='Taipei' order by p.source_ref limit 3;
+    p.id,floor(extract(epoch from now())/((select wave_minutes from private.game_config where singleton)*60))::bigint) s
+  where p.city='Taipei' and p.source_ref not like 'qa:%' order by p.source_ref limit 3;
 grant select on game_spawns to authenticated;
 select pg_temp.require_ok((select count(*)=3 from game_spawns),'three active test spawns');
 
@@ -222,7 +222,7 @@ begin
 end $$;
 reset role;
 select pg_temp.require_ok((select count(*)=1 from public.xp_events
-  where source='landmark_win' and reference='taipei101'),'landmark XP unique');
+  where user_id='087e002a-3aee-4cb4-a1ad-a6d001dbbad1' and source='landmark_win' and reference='taipei101'),'landmark XP unique');
 select pg_temp.require_ok((select count(*)=1 from public.passport_stamps
   where place='taipei101' and user_id='087e002a-3aee-4cb4-a1ad-a6d001dbbad1'),
   'Passport stamp unique');
@@ -276,7 +276,7 @@ set local role authenticated;
 select pg_temp.require_ok(
   public.send_capsule(auth.uid(),'dome','self letter','hint',now()+interval '1 hour') is not null,
   'existing free send');
-select pg_temp.require_ok(public.acquire_vessel('vinyl') is null,'ordinary Shop acquisition');
+select pg_temp.expect_error('select public.acquire_vessel(''vinyl'')','vessel must be collected');
 select pg_temp.require_ok(
   (select count(*)=1 from public.sea_throw('Hello from the test','hint','dome',1,
     25.037546,121.562754,10)),'existing stranger send');
@@ -376,34 +376,34 @@ rollback to optional_reward_failure;
 -- Private rules: daytime fireflies and off-season festivals cannot be selected.
 savepoint season_checks;
 delete from private.vessel_spawn_rules where vessel<>'firefly-jar';
-update private.vessel_spawn_rules set rarity='common' where vessel='firefly-jar';
+update private.vessel_spawn_rules set rarity='common',regions=array['Taiwan'] where vessel='firefly-jar';
 update private.game_config set rarity_common_weight=100,rarity_uncommon_weight=0,
   rarity_rare_weight=0;
 select pg_temp.require_ok(
   (select count(*)=0 from public.corrupted_spots p cross join lateral
    private.resolve_spawn(p.id,
-     floor(extract(epoch from timestamptz '2026-11-09 13:00:00+08')/3600)::bigint) s
+     floor(extract(epoch from timestamptz '2026-11-09 13:00:00+08')/((select wave_minutes from private.game_config where singleton)*60))::bigint) s
    where p.city='Taipei'),'fireflies absent by day');
 select pg_temp.require_ok(
   (select count(*)>0 from public.corrupted_spots p cross join lateral
    private.resolve_spawn(p.id,
-     floor(extract(epoch from timestamptz '2026-11-09 20:00:00+08')/3600)::bigint) s
+     floor(extract(epoch from timestamptz '2026-11-09 20:00:00+08')/((select wave_minutes from private.game_config where singleton)*60))::bigint) s
    where p.city='Taipei'),'fireflies present after dark');
 rollback to season_checks;
 savepoint festival_checks;
 delete from private.vessel_spawn_rules where vessel<>'stocking';
-update private.vessel_spawn_rules set rarity='common' where vessel='stocking';
+update private.vessel_spawn_rules set rarity='common',regions=array['Taiwan'] where vessel='stocking';
 update private.game_config set rarity_common_weight=100,rarity_uncommon_weight=0,
   rarity_rare_weight=0;
 select pg_temp.require_ok(
   (select count(*)=0 from public.corrupted_spots p cross join lateral
    private.resolve_spawn(p.id,
-     floor(extract(epoch from timestamptz '2026-11-09 20:00:00+08')/3600)::bigint) s
+     floor(extract(epoch from timestamptz '2026-11-09 20:00:00+08')/((select wave_minutes from private.game_config where singleton)*60))::bigint) s
    where p.city='Taipei'),'festival vessel absent off season');
 select pg_temp.require_ok(
   (select count(*)>0 from public.corrupted_spots p cross join lateral
    private.resolve_spawn(p.id,
-     floor(extract(epoch from timestamptz '2026-12-25 20:00:00+08')/3600)::bigint) s
+     floor(extract(epoch from timestamptz '2026-12-25 20:00:00+08')/((select wave_minutes from private.game_config where singleton)*60))::bigint) s
    where p.city='Taipei'),'festival vessel present in season');
 rollback to festival_checks;
 
