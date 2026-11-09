@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   platform: { OS: "web" }, settings: vi.fn(),
+  storage: { getItem: vi.fn(), setItem: vi.fn(), removeItem: vi.fn() },
   getPermission: vi.fn(), requestPermission: vi.fn(), services: vi.fn(), cached: vi.fn(), current: vi.fn(), watch: vi.fn(),
 }));
 vi.mock("react-native", () => ({ Platform: mocks.platform, Linking: { openSettings: mocks.settings }, AppState: { addEventListener: vi.fn() } }));
@@ -17,9 +18,34 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.stubGlobal("__DEV__", true);
   mocks.platform.OS = "web";
+  mocks.storage.getItem.mockReturnValue(null);
+  vi.stubGlobal("localStorage", mocks.storage);
 });
 
 describe("foreground location", () => {
+  it("restores a known browser grant on startup", async () => {
+    const watchPosition = vi.fn(() => 1);
+    vi.stubGlobal("navigator", { geolocation: { watchPosition }, permissions: { query: vi.fn(async () => ({ state: "granted" })) } });
+    const location = await import("./location");
+    await location.checkLocation();
+    expect(watchPosition).toHaveBeenCalledOnce();
+  });
+  it("resumes Safari after a reload when its permissions API is unavailable and the user already opted in", async () => {
+    mocks.storage.getItem.mockReturnValue("1");
+    const watchPosition = vi.fn(() => 1);
+    vi.stubGlobal("navigator", { geolocation: { watchPosition }, permissions: { query: vi.fn(async () => { throw new Error("not supported"); }) } });
+    const location = await import("./location");
+    await location.checkLocation();
+    expect(watchPosition).toHaveBeenCalledOnce();
+  });
+  it("respects an explicit browser prompt state even after a previous in-app choice", async () => {
+    mocks.storage.getItem.mockReturnValue("1");
+    const watchPosition = vi.fn(() => 1);
+    vi.stubGlobal("navigator", { geolocation: { watchPosition }, permissions: { query: vi.fn(async () => ({ state: "prompt" })) } });
+    const location = await import("./location");
+    await location.checkLocation();
+    expect(watchPosition).not.toHaveBeenCalled();
+  });
   it("checks browser permission without calling the native settings API", async () => {
     vi.stubGlobal("navigator", { geolocation: {}, permissions: { query: vi.fn(async () => ({ state: "denied" })) } });
     const location = await import("./location");
@@ -40,6 +66,7 @@ describe("foreground location", () => {
     await location.checkLocation();
     expect(watchPosition).not.toHaveBeenCalled();
     await location.requestLocation();
+    expect(mocks.storage.setItem).toHaveBeenCalledWith("time-capsule.location-approved.v1", "1");
     receive({ coords: { latitude: 22, longitude: 114, accuracy: 20 }, timestamp: Date.now() } as GeolocationPosition);
     expect(location.currentFix()).toMatchObject({ lat: 22, lng: 114, accuracy: 20 });
   });
@@ -52,6 +79,7 @@ describe("foreground location", () => {
     await location.requestLocation();
     fail({ code: 1, message: "denied" } as GeolocationPositionError);
     expect(clearWatch).toHaveBeenCalledWith(8);
+    expect(mocks.storage.removeItem).toHaveBeenCalledWith("time-capsule.location-approved.v1");
     expect(location.currentFix()).toBeNull();
   });
 
