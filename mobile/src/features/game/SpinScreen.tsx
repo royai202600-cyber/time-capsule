@@ -1,31 +1,24 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Easing, PanResponder, Platform, Pressable, Text, View } from "react-native";
+import { Animated, Easing, Image, PanResponder, Platform, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Svg, { Circle, Ellipse, Path, Rect } from "react-native-svg";
+import Svg, { Path } from "react-native-svg";
+import { gameArt } from "../../art/manifest";
 import { haptics } from "../../components/haptics";
 import { game, GameError, type GameState, type Waypost } from "../../services/game";
 import { C, radii, serif, shadows, spacing } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
 import { errorKey, useGameText } from "./strings";
+import { sceneKey } from "./waypostScene";
 import { ThrowBackground, WaxBall } from "./ThrowScreen";
 
 const NATIVE = Platform.OS !== "web";
 const DISC = 250;
 const STAGGER = .09;
 
-/** Stand-in until the illustrated place scenes arrive: a round picture of the Waypost in a brass rim. */
-function PlacePicture() {
-  return <View style={{ width: DISC, height: DISC, borderRadius: DISC / 2, overflow: "hidden", borderWidth: 8, borderColor: C.brass, backgroundColor: C.glass }}>
-    <Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
-      <Rect width={100} height={46} fill={C.glass} />
-      <Rect x={12} y={28} width={12} height={20} fill="#E6E0D3" /><Rect x={70} y={22} width={14} height={26} fill="#E6E0D3" />
-      <Rect y={44} width={100} height={56} fill="#DCE6CF" />
-      <Path d="M58 100C50 80 66 66 56 46h4c10 18-4 34 8 54Z" fill="#EFE3C6" />
-      <Ellipse cx={22} cy={70} rx={20} ry={6} fill="#BCD3E6" />
-      <Rect x={75} y={58} width={3} height={14} fill="#B8A88C" />
-      <Circle cx={76.5} cy={52} r={12} fill="#B4C7A3" />
-      <Circle cx={36} cy={44} r={7} fill="#C5D5B5" />
-    </Svg>
+/** The round picture of the Waypost's kind of place, in a brass rim. */
+function PlacePicture({ waypost }: { waypost: Waypost }) {
+  return <View style={{ width: DISC, height: DISC, borderRadius: DISC / 2, overflow: "hidden", borderWidth: 8, borderColor: C.brass, backgroundColor: C.paper }}>
+    <Image source={gameArt.wheel[sceneKey(waypost)]} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
   </View>;
 }
 
@@ -133,7 +126,7 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
             transform: [{ perspective: 900 }, { rotateY: rotation.interpolate({ inputRange: [-3600, 3600], outputRange: ["-3600deg", "3600deg"] }) }],
             ...(Platform.OS === "web" ? ({ touchAction: "none", cursor: "grab", userSelect: "none" } as object) : {}),
           }}>
-          <PlacePicture />
+          <PlacePicture waypost={waypost} />
         </Animated.View>
         </Animated.View>
         {balls.map((kind, i) => {

@@ -2,6 +2,7 @@
 // MapLibre GL + Protomaps vector tiles in the app's palette; falls back to tinted OSM raster tiles
 // when no PMTiles URL is configured (development only).
 import { C } from "../../../theme";
+import { ANGER_MARK } from "../../game/corruptedLook";
 
 export const MAPLIBRE = "https://unpkg.com/maplibre-gl@5.24.0/dist";
 export const PMTILES = "https://unpkg.com/pmtiles@4.5.0/dist/pmtiles.js";
@@ -70,19 +71,20 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.sel .pin-body{transform:scale(1.18)}
 .pin.sel .v{filter:drop-shadow(0 0 8px ${C.brass})}
 .pin.sealed .v{filter:grayscale(.2)}
-.pin .crack{position:absolute;left:42px;bottom:41px;width:17px;height:17px;animation:bob 3.6s ease-in-out infinite}
-.pin.corrupted .v{filter:saturate(.55) brightness(.84)}
+.pin .crack{position:absolute;left:${ANGER_MARK.map.left}px;bottom:${ANGER_MARK.map.bottom}px;width:${ANGER_MARK.map.size}px;height:${ANGER_MARK.map.size}px;animation:bob 3.6s ease-in-out infinite}
+.pin .cracks{pointer-events:none}
+.pin.corrupted .v:not(.cracks){filter:saturate(.55) brightness(.84)}
 .pin.corrupted.rare .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
 .pin.corrupted.uncommon .disc{background:radial-gradient(${C.lightBlue}99,transparent 70%)}
 .pin.waypost{width:40px;height:50px}
 .pin.waypost .disc{left:6px;width:28px;height:8px}
-.pin.waypost .post{position:absolute;left:4px;bottom:9px;width:32px;height:40px;animation:bob 3.6s ease-in-out infinite}
+.pin.waypost .post{position:absolute;left:7px;bottom:9px;width:26px;height:41px;background-size:122px;background-position:center;background-repeat:no-repeat;animation:bob 3.6s ease-in-out infinite}
 .pin.waypost.done{opacity:.45}
 .pin.waypost.near .post,.pin.landmark.near .post{filter:drop-shadow(0 0 6px #D7B7E6) brightness(1.18)}
 .pin.waypost.near .disc,.pin.landmark.near .disc{background:radial-gradient(#D7B7E6CC,transparent 70%)}
 .pin.landmark{width:64px;height:88px}
 .pin.landmark .disc{left:12px;width:40px;height:10px}
-.pin.landmark .post{position:absolute;left:6px;bottom:12px;width:52px;height:65px;animation:bob 3.6s ease-in-out infinite}
+.pin.landmark .post{position:absolute;left:15px;bottom:12px;width:33px;height:76px;background-size:154px;background-position:-61px -15px;background-repeat:no-repeat;animation:bob 3.6s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media (prefers-reduced-motion: reduce){.pin .v,.pin .crack,.pin .post,.you .pulse{animation:none}}
 </style></head><body><div id="map"></div>
@@ -102,8 +104,6 @@ const map=new maplibregl.Map({container:'map',style:${JSON.stringify(style)},cen
 let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 const crack='<svg class="crack" viewBox="0 0 100 100"><path d="M40 12C40 30 30 40 12 40M60 12C60 30 70 40 88 40M12 60C30 60 40 70 40 88M88 60C70 60 60 70 60 88" stroke="#fff" stroke-width="18" fill="none" stroke-linecap="round"/><path d="M40 12C40 30 30 40 12 40M60 12C60 30 70 40 88 40M12 60C30 60 40 70 40 88M88 60C70 60 60 70 60 88" stroke="#000" stroke-width="10" fill="none" stroke-linecap="round"/></svg>';
 // Wayposts are floating gems, clearly not buildings and clearly not capsules.
-const post='<svg class="post" viewBox="0 0 32 40"><path d="M16 1 1 17h8Z" fill="#B48EA2"/><path d="M16 1 9 17h14Z" fill="#9C7285"/><path d="M16 1l7 16h8Z" fill="#8A6175"/><path d="M1 17h8l7 22Z" fill="#8A6175"/><path d="M9 17h14l-7 22Z" fill="#6F4759"/><path d="M23 17h8L16 39Z" fill="#5C3949"/></svg>';
-const tower='<svg class="post" viewBox="0 0 32 40"><path d="M16 1 1 17h8Z" fill="#8C5A80"/><path d="M16 1 9 17h14Z" fill="#754567"/><path d="M16 1l7 16h8Z" fill="#613757"/><path d="M1 17h8l7 22Z" fill="#613757"/><path d="M9 17h14l-7 22Z" fill="#4A2743"/><path d="M23 17h8L16 39Z" fill="#3A1D35"/></svg>';
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
 map.on('load',()=>{
@@ -125,7 +125,7 @@ function render(){
   const want=new Set(state.pins.map(p=>p.id));
   for(const [id,m] of marks){if(!want.has(id)){m.marker.remove();marks.delete(id)}}
   for(const p of state.pins){
-    const html=p.kind==='waypost'||p.kind==='landmark'?'<div class="pin-body"><div class="disc"></div>'+(p.kind==='landmark'?tower:post)+'</div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'?crack:'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
+    const html=p.kind==='waypost'||p.kind==='landmark'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'?(p.cracks?'<img class="v cracks" src="'+p.cracks+'">':crack):'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
     const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'');
     let m=marks.get(p.id);
     if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:p.id})});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}

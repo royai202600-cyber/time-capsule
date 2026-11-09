@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Easing, Image, PanResponder, Platform, Pressable, Text, View, type LayoutChangeEvent } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Svg, { Circle, Defs, Ellipse, Path, Polygon, RadialGradient, Stop } from "react-native-svg";
+import Svg, { Circle, Ellipse, Path, Polygon } from "react-native-svg";
 import { vesselParts } from "../../art/manifest";
 import { ArtIcon } from "../../components/ArtIcon";
 import { haptics } from "../../components/haptics";
@@ -10,6 +10,9 @@ import { useLanguage } from "../../i18n";
 import { game, GameError, type BallKind, type GameState, type CorruptedCapsule, type LandmarkAttempt, type Rarity, type ThrowResult } from "../../services/game";
 import { mapPalette } from "../journey/live/mapHtml";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
+import { gameArt } from "../../art/manifest";
+import { crackOverlays } from "../../art/crackOverlays";
+import { ANGER_MARK, CORRUPTED_MARK } from "./corruptedLook";
 import { useReducedMotion } from "../../useReducedMotion";
 import { errorKey, useGameText } from "./strings";
 
@@ -27,21 +30,12 @@ const MOUSE = Platform.OS === "web";
 const MOUSE_DRAG = -120; // A mouse drag often ends almost still, so distance also counts as a throw.
 const RING_HALF_MS: Record<Rarity, number> = { common: 1200, uncommon: 900, rare: 650 };
 const RING_COLOR: Record<Rarity, string> = { common: C.brass, uncommon: C.blue, rare: C.wax };
-const DUST = Array.from({ length: 14 }, (_, i) => ({
-  angle: (i / 14) * Math.PI * 2, reach: 70 + (i % 3) * 26, size: 5 + (i % 4) * 2, gold: i % 2 === 0,
+const DUST = Array.from({ length: 8 }, (_, i) => ({
+  angle: (i / 8) * Math.PI * 2, reach: 64 + (i % 3) * 26, size: 56 + (i % 3) * 16, turn: `${i * 47}deg`,
 }));
 
-/** Stand-in until the chosen ball art arrives: a solid wax ball, never two-tone. */
 export function WaxBall({ kind, size }: { kind: BallKind; size: number }) {
-  const [light, mid, dark] = kind === "gold" ? ["#EBD08F", C.brass, "#8E6E33"] : ["#C9607A", C.wax, "#74233A"];
-  return <Svg width={size} height={size} viewBox="0 0 100 100">
-    <Defs><RadialGradient id={`ball-${kind}`} cx="38%" cy="32%" r="72%">
-      <Stop offset="0" stopColor={light} /><Stop offset=".55" stopColor={mid} /><Stop offset="1" stopColor={dark} />
-    </RadialGradient></Defs>
-    <Circle cx={50} cy={50} r={46} fill={`url(#ball-${kind})`} />
-    <Path d="M22 62c6 8 12 4 15 11 3 6 10 7 14 2 4-6 12-2 17-8" stroke={dark} strokeOpacity={.35} strokeWidth={3} fill="none" strokeLinecap="round" />
-    <Circle cx={36} cy={32} r={7} fill="#fff" opacity={.45} />
-  </Svg>;
+  return <Image source={gameArt.ball[kind]} style={{ width: size, height: size }} resizeMode="contain" />;
 }
 
 const BLOCKS: [number, number, number][] = [[-8, 60, 54], [66, 44, 82], [122, 54, 44], [196, 46, 70], [254, 60, 50], [326, 58, 88]];
@@ -314,16 +308,18 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
           {source ? <Image source={source} style={[{ width: vesselSize, height: vesselSize }, WEB_DARKEN && !result ? ({ filter: "saturate(.55) brightness(.8)" } as object) : null]} resizeMode="contain" accessibilityLabel={s("corruptedCapsule")} /> : null}
           <Animated.View pointerEvents="none" style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize, opacity: crack }}>
             {source && !WEB_DARKEN ? <Image source={source} style={{ width: vesselSize, height: vesselSize, opacity: .3, tintColor: C.ink }} resizeMode="contain" /> : null}
-            <View style={{ position: "absolute", top: vesselSize * .3, left: vesselSize * .53 }}><AngerMark size={vesselSize * .19} /></View>
+            {CORRUPTED_MARK === "cracks" && crackOverlays[capsule.vessel] ? <Image source={crackOverlays[capsule.vessel]} style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize }} resizeMode="contain" /> : null}
+            {CORRUPTED_MARK === "anger" && <View style={{ position: "absolute", top: vesselSize * ANGER_MARK.throw.top, left: vesselSize * ANGER_MARK.throw.left }}><AngerMark size={vesselSize * ANGER_MARK.throw.size} /></View>}
           </Animated.View>
           {!result && <View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 2, borderColor: "rgba(255,255,255,.95)" }} />}
           {!result && <Animated.View style={{ position: "absolute", width: ringSize, height: ringSize, borderRadius: ringSize / 2, borderWidth: 4, borderColor: RING_COLOR[capsule.rarity], transform: [{ scale: ringScale }] }} />}
-          {DUST.map((d, i) => <Animated.View key={i} style={{
-            position: "absolute", width: d.size, height: d.size, borderRadius: d.size / 2, backgroundColor: d.gold ? C.brass : C.wax,
+          {DUST.map((d, i) => <Animated.Image key={i} source={gameArt.hitDust} resizeMode="contain" style={{
+            position: "absolute", width: d.size, height: d.size,
             opacity: dust.interpolate({ inputRange: [0, .05, 1], outputRange: [0, 1, 0] }),
             transform: [
               { translateX: dust.interpolate({ inputRange: [0, 1], outputRange: [0, Math.cos(d.angle) * d.reach] }) },
               { translateY: dust.interpolate({ inputRange: [0, 1], outputRange: [0, Math.sin(d.angle) * d.reach] }) },
+              { rotate: d.turn },
             ],
           }} />)}
         </Animated.View>

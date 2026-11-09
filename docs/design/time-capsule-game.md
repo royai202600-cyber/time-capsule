@@ -29,6 +29,7 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 ## Corrupted Capsules
 - They come from the system and hold **only the vessel**. No letter, no note, so there is nothing to write and no AI involved. Letters only ever come from real people.
 - They look cracked, clouded and tarnished. This is **one shared effect** over the existing vessel art, not 67 redraws.
+- **Trying (2026-11-09):** Crack A on top of the dark layer, in place of the black anger mark. Roy likes the mark, so it must stay restorable: set `CORRUPTED_MARK` to `"anger"` in `mobile/src/features/game/corruptedLook.ts`. Its placement is saved there: inside the vessel's top right, at top .3, left .53, size .19 on the catch screen, and left 42, bottom 41, 17 px on the map.
 
 ## Catching
 - **The ball is a red wax ball**, starting point, can change later. Solid wax red, never red and white, never two halves, no band or button.

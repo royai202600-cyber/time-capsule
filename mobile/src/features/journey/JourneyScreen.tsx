@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Linking, Platform, Pressable, Text, View } from "react-native";
+import { Image, Linking, Platform, Pressable, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useFocusEffect } from "expo-router";
 import { goBack } from "../../navigation";
@@ -24,7 +24,11 @@ import type { Tables } from "../../services/database.types";
 import { MAP_PMTILES_URL, sea, SeaError, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
 import { daysSince, distanceText, useSeaText } from "../sea/strings";
 import { game, GameError, GAME_ACTION_RADIUS_M, GAME_ENABLED, type GameState, type CorruptedCapsule, type DevLetter, type LandmarkAttempt, type Nearby, type Waypost } from "../../services/game";
+import { gameArt } from "../../art/manifest";
+import { crackOverlays } from "../../art/crackOverlays";
+import { CORRUPTED_MARK } from "../game/corruptedLook";
 import { SpinScreen } from "../game/SpinScreen";
+import { sceneKey } from "../game/waypostScene";
 import { ThrowScreen } from "../game/ThrowScreen";
 import { errorKey, useGameText } from "../game/strings";
 
@@ -137,10 +141,10 @@ export default function JourneyScreen() {
   const gamePins = useMemo<LivePin[]>(() => [
     // Only what's inside the pickup circle shows, so capsules never crowd the map.
     ...nearby.corrupted.filter((c) => c.id !== throwing?.id && metersTo(c.lat, c.lng) <= GAME_ACTION_RADIUS_M).map<LivePin>((c) => (
-      { id: `corrupted-${c.id}`, lat: c.lat, lng: c.lng, kind: "corrupted", vessel: vesselUri(c.vessel), rarity: c.rarity, near: true }
+      { id: `corrupted-${c.id}`, lat: c.lat, lng: c.lng, kind: "corrupted", vessel: vesselUri(c.vessel), cracks: CORRUPTED_MARK === "cracks" ? assetUri(crackOverlays[c.vessel]) ?? undefined : undefined, rarity: c.rarity, near: true }
     )),
     ...nearby.wayposts.map<LivePin>((w) => ({
-      id: `way-${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: "",
+      id: `way-${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: assetUri(w.kind === "landmark" ? gameArt.landmarkGem : gameArt.waypostGem) ?? "",
       done: !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now(),
       near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
     })),
@@ -317,7 +321,8 @@ function GameCard({ card, busy, g, language, onChallenge }: {
   const title = language === "zh" ? card.waypost.name_zh : card.waypost.name_en;
   const note = near ? "" : landmark ? g("challengeWalkCloser", left) : g("spinWalkCloser", left);
   return <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", gap: spacing.sm, backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
-    <Text style={{ fontFamily: serif, fontSize: 18, color: C.ink }}>{title}</Text>
+    {landmark && <Image source={gameArt.wheel[sceneKey(card.waypost)]} resizeMode="cover" style={{ width: 112, height: 112, borderRadius: 56, borderWidth: 4, borderColor: C.brass, alignSelf: "center" }} />}
+    <Text style={{ fontFamily: serif, fontSize: 18, color: C.ink, textAlign: landmark ? "center" : "left" }}>{title}</Text>
     {!!note && <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{note}</Text>}
     {landmark && near && <Pressable accessibilityRole="button" disabled={busy} onPress={() => onChallenge(card.waypost)} style={{ alignItems: "center", backgroundColor: C.plum, borderRadius: radii.pill, paddingVertical: 11, opacity: busy ? .6 : 1 }}>
       <Text style={{ fontFamily: serif, fontSize: 15, color: C.white }}>{g("challenge")}</Text>
