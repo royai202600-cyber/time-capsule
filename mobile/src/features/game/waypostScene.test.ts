@@ -10,5 +10,9 @@ describe("sceneKey", () => {
     expect(sceneKey(w("Botanic Gardens"))).toBe("garden");
     expect(sceneKey(w("", "碧潭河濱"))).toBe("waterfront");
   });
+  it("prefers the saved scene, and ignores an unknown one", () => {
+    expect(sceneKey({ ...w("Taipei Civic Square"), scene: "garden" })).toBe("garden");
+    expect(sceneKey({ ...w("Taipei Civic Square"), scene: "moon" })).toBe("square");
+  });
   it("falls back to the park", () => expect(sceneKey(w("Somewhere"))).toBe("park"));
 });

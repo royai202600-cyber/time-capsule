@@ -4,7 +4,7 @@ import type { SeaBottle } from "./sea";
 import { supabase } from "./supabase";
 
 export const GAME_BACKEND = true;
-export const GAME_ENABLED = __DEV__;
+export const GAME_ENABLED = true;
 export const GAME_ACTION_RADIUS_M = 100;
 
 export type Rarity = "common" | "uncommon" | "rare";
@@ -12,7 +12,7 @@ export type BallKind = "wax" | "gold";
 export type Coords = { lat: number; lng: number; accuracy?: number };
 export type GameState = { xp: number; level: number; xp_to_next: number; wax_balls: number; gold_balls: number };
 export type CorruptedCapsule = { id: string; vessel: string; rarity: Rarity; lat: number; lng: number; expires_at: string; attempts_left: number };
-export type Waypost = { id: string; kind: "common" | "landmark"; name_zh: string; name_en: string; lat: number; lng: number; cooldown_until: string | null; place?: string | null };
+export type Waypost = { id: string; kind: "common" | "landmark"; name_zh: string; name_en: string; lat: number; lng: number; cooldown_until: string | null; place?: string | null; scene?: string | null };
 export type Nearby = { corrupted: CorruptedCapsule[]; wayposts: Waypost[] };
 export type ThrowResult = {
   result: "restored" | "broke_free" | "miss";
@@ -46,7 +46,7 @@ async function liveState(): Promise<GameState> {
 }
 type NearbyPayload = {
   spawns: { spawn_id: string; vessel: string; rarity: Rarity; lat: number; lng: number; expires_at: string; attempts_left: number; already_caught: boolean }[];
-  wayposts: { id: string; kind: "common" | "landmark"; name_zh: string; name_en: string; place: string | null; lat: number; lng: number; cooldown_end: string | null }[];
+  wayposts: { id: string; kind: "common" | "landmark"; name_zh: string; name_en: string; place: string | null; scene?: string | null; lat: number; lng: number; cooldown_end: string | null }[];
 };
 
 const STAR_COPIES = [1, 3, 6, 10, 15];
@@ -114,13 +114,14 @@ export const game = {
       const { data, error } = await supabase.rpc("corrupted_nearby", coords());
       fail(error);
       const payload = data as unknown as NearbyPayload;
-      topUpCorrupted(at);
+      if (__DEV__) topUpCorrupted(at); // Test capsules are for local builds only; players see real ones.
       return {
-        corrupted: [...dev.corrupted, ...payload.spawns.filter((c) => !c.already_caught && c.attempts_left > 0)
+        corrupted: [...(__DEV__ ? dev.corrupted : []), ...payload.spawns.filter((c) => !c.already_caught && c.attempts_left > 0)
           .map((c) => ({ id: c.spawn_id, vessel: c.vessel, rarity: c.rarity, lat: c.lat, lng: c.lng, expires_at: c.expires_at, attempts_left: c.attempts_left }))],
-        wayposts: payload.wayposts.map((w) => ({ id: w.id, kind: w.kind, name_zh: w.name_zh, name_en: w.name_en, lat: w.lat, lng: w.lng, cooldown_until: w.cooldown_end, place: w.place })),
+        wayposts: payload.wayposts.map((w) => ({ id: w.id, kind: w.kind, name_zh: w.name_zh, name_en: w.name_en, lat: w.lat, lng: w.lng, cooldown_until: w.cooldown_end, place: w.place, scene: w.scene })),
       };
     }
+    if (!__DEV__) return { corrupted: [], wayposts: [] };
     seed(at);
     topUpCorrupted(at);
     return { corrupted: dev.corrupted.filter((c) => c.attempts_left > 0), wayposts: dev.wayposts.map((w) => ({ ...w })) };

@@ -32,3 +32,14 @@ describe('isCollected', () => {
     expect(isCollected(free, false, false)).toBe(true);
   });
 });
+
+describe('Shop once the game is on', () => {
+  it('sells only brand and numbered editions', () => {
+    expect(showVesselInShop({ price_mop: 12 }, false, true)).toBe(false);
+    expect(showVesselInShop({ price_mop: 0, brand: 'Maison' }, false, true)).toBe(true);
+    expect(showVesselInShop({ price_mop: 30, edition_total: 300 }, false, true)).toBe(true);
+  });
+  it('never sells an earned vessel, even a numbered one', () => {
+    expect(showVesselInShop({ price_mop: 0, earned_place: 'merlion', edition_total: 10 }, false, true)).toBe(false);
+  });
+});

@@ -1,3 +1,4 @@
+import { GAME_ENABLED } from "../../services/game";
 import { showVesselInShop } from "../../services/vesselAccess";
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Modal, Pressable, Text, View } from 'react-native';
@@ -25,7 +26,7 @@ export default function ShopScreen() {
   const [sheet, setSheet] = useState<string | null>(null), [busy, setBusy] = useState(false), [error, setError] = useState(''), [notice, setNotice] = useState('');
   const flight = useRef(new Animated.Value(0)).current;
   const featured = catalog.data?.find(v => v.id === 'maison');
-  const focused = catalog.data?.find(v => v.id === params.focus && showVesselInShop(v, !!owned.data?.some(o => o.vessel === v.id)));
+  const focused = catalog.data?.find(v => v.id === params.focus && showVesselInShop(v, !!owned.data?.some(o => o.vessel === v.id), GAME_ENABLED));
   const selected = catalog.data?.find(v => v.id === sheet);
   const own = (id: string) => owned.data?.find(o => o.vessel === id);
   const remainder = stock.data?.find(s => s.vessel === 'maison')?.remaining;
@@ -58,7 +59,7 @@ export default function ShopScreen() {
       {!own('maison') && <Button title={remainder === 0 ? t('shop.soldOut') : t('shop.get')} disabled={remainder === 0} onPress={() => openSheet('maison')} />}
     </View>}
     {focused && <View style={[card, { borderColor: C.brass }]}><Text style={{ color: C.plum, fontFamily: serif }}>{name(focused.id)}</Text><Body>{t(`shop.desc.${focused.id}`)}</Body>{!own(focused.id) && focused.price_mop > 0 && <Button title={focused.id === 'maison' && remainder === 0 ? t('shop.soldOut') : t('shop.get')} disabled={focused.id === 'maison' && remainder === 0} onPress={() => openSheet(focused.id)} />}</View>}
-    <Heading>{t('shop.all')}</Heading>{catalog.loading && <SealLoader size={44} label={t('shop.loading')} />}<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>{(catalog.data ?? []).filter(v => showVesselInShop(v, !!own(v.id))).map(vesselCard)}</View><Body>{t('shop.testing')}</Body>
+    <Heading>{t('shop.all')}</Heading>{catalog.loading && <SealLoader size={44} label={t('shop.loading')} />}<View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>{(catalog.data ?? []).filter(v => showVesselInShop(v, !!own(v.id), GAME_ENABLED)).map(vesselCard)}</View><Body>{t('shop.testing')}</Body>
     {(catalog.error || owned.error || stock.error) && <Button title={t('shop.retry')} onPress={() => { void catalog.refresh(); void owned.refresh(); void stock.refresh(); }} />}
     <Toast message={notice || (catalog.error || owned.error || stock.error ? t('shop.error') : '')} />
     <Pressable onPress={() => router.push('/cabinet')} style={{ alignSelf: 'flex-end', backgroundColor: C.cream, borderRadius: 20, padding: 12 }}><Text style={{ color: C.plum }}>{t('shop.cabinet')} →</Text></Pressable>

@@ -1,4 +1,5 @@
-import { canUseVessel as canAccessVessel, showVesselInShop } from "../../services/vesselAccess";
+import { GAME_ENABLED } from "../../services/game";
+import { canUseVessel as canAccessVessel, isCollected, showVesselInShop } from "../../services/vesselAccess";
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Image, PanResponder, Keyboard, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { GestureDetector, useNativeGesture, usePanGesture } from 'react-native-gesture-handler';
@@ -150,7 +151,8 @@ export default function CreateScreen() {
   const chosenVessel = catalog.data?.find(v => v.id === vessel);
   // Earned (landmark) vessels are only usable once earned by opening a capsule at their place.
   const ownsVessel = (id: string) => !!owned.data?.some(o => o.vessel === id);
-  const canUseVessel = (v: { id: string; price_mop: number }) => canAccessVessel(v, ownsVessel(v.id));
+  // Once the game is on, you send what you've collected plus the four starters.
+  const canUseVessel = (v: { id: string; price_mop: number }) => GAME_ENABLED ? isCollected(v, ownsVessel(v.id), true) : canAccessVessel(v, ownsVessel(v.id));
   const selectedPlace = places.data?.find(p => p.id === place);
   const recipientRow = friends.data?.find(f => f.friend_id === recipient);
   // A sea bottle is an ordinary capsule addressed to the sea: typed only, washes up after its drift time.
@@ -397,7 +399,7 @@ export default function CreateScreen() {
     </View>}
     {step === 3 && toSea && <View style={{ alignItems: 'center', gap: 12, paddingVertical: 24 }}><Vessel kind="bottle" size={150} idle /><Text style={{ color: C.muted, fontSize: 13, lineHeight: 20, textAlign: 'center' }}>{st('bottleOnly')}</Text></View>}
     {step === 3 && !toSea && <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-      {(catalog.data ?? []).filter(v => showVesselInShop(v, ownsVessel(v.id))).map(v => { const usable = canUseVessel(v); return <Pressable key={v.id} onPress={() => { setVessel(v.id as VesselKind); if (selectedPlace?.brand_vessel && selectedPlace.brand_vessel !== v.id) setPlace(null); if (usable) void haptics.tick(); else router.push({ pathname: '/shop', params: { focus: v.id, returnTo: 'create' } }); }} style={[card, { width: '46%', alignItems: 'center', borderColor: vessel === v.id ? C.blue : C.line, opacity: usable ? 1 : .68 }]}><Vessel kind={v.id as VesselKind} size={105} idle={vessel === v.id} /><Text style={{ fontFamily: serif, color: C.ink, textAlign: 'center' }}>{t(`shop.vessel.${v.id}`)}</Text><Text style={{ color: usable ? C.blue : C.plum, fontSize: 12 }}>{t(usable ? 'create.owned' : 'create.getShop')}</Text></Pressable>; })}
+      {(catalog.data ?? []).filter(v => GAME_ENABLED ? canUseVessel(v) : showVesselInShop(v, ownsVessel(v.id))).map(v => { const usable = canUseVessel(v); return <Pressable key={v.id} onPress={() => { setVessel(v.id as VesselKind); if (selectedPlace?.brand_vessel && selectedPlace.brand_vessel !== v.id) setPlace(null); if (usable) void haptics.tick(); else router.push({ pathname: '/shop', params: { focus: v.id, returnTo: 'create' } }); }} style={[card, { width: '46%', alignItems: 'center', borderColor: vessel === v.id ? C.blue : C.line, opacity: usable ? 1 : .68 }]}><Vessel kind={v.id as VesselKind} size={105} idle={vessel === v.id} /><Text style={{ fontFamily: serif, color: C.ink, textAlign: 'center' }}>{t(`shop.vessel.${v.id}`)}</Text><Text style={{ color: usable ? C.blue : C.plum, fontSize: 12 }}>{t(usable ? 'create.owned' : 'create.getShop')}</Text></Pressable>; })}
       {catalog.loading && <SealLoader size={44} label={t('create.loading')} />}
       {catalog.error && <Button title={t('create.retry')} onPress={() => void catalog.refresh()} />}
     </View>}
