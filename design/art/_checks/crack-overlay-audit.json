@@ -1,0 +1,542 @@
+{
+  "vessels": 67,
+  "withOverlay": 67,
+  "rows": [
+    {
+      "vessel": "dome",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/dome.webp",
+      "bytes": 13972,
+      "coveragePct": 4.55,
+      "contrast": 62.4
+    },
+    {
+      "vessel": "bottle",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/bottle.webp",
+      "bytes": 11964,
+      "coveragePct": 5.5,
+      "contrast": 66.2
+    },
+    {
+      "vessel": "envelope",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/envelope.webp",
+      "bytes": 17932,
+      "coveragePct": 5.07,
+      "contrast": 86.7
+    },
+    {
+      "vessel": "tin",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/tin.webp",
+      "bytes": 13134,
+      "coveragePct": 4.83,
+      "contrast": 55.6
+    },
+    {
+      "vessel": "lantern",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/lantern.webp",
+      "bytes": 15228,
+      "coveragePct": 4.83,
+      "contrast": 79.1
+    },
+    {
+      "vessel": "musicbox",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/musicbox.webp",
+      "bytes": 16794,
+      "coveragePct": 5.22,
+      "contrast": 40.7
+    },
+    {
+      "vessel": "maison",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/maison.webp",
+      "bytes": 12258,
+      "coveragePct": 4.81,
+      "contrast": -9.7
+    },
+    {
+      "vessel": "mixtape",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/mixtape.webp",
+      "bytes": 16972,
+      "coveragePct": 4.58,
+      "contrast": 53.1
+    },
+    {
+      "vessel": "instant-camera",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/instant-camera.webp",
+      "bytes": 14078,
+      "coveragePct": 4.79,
+      "contrast": 56.9
+    },
+    {
+      "vessel": "ramen",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/ramen.webp",
+      "bytes": 9768,
+      "coveragePct": 4.75,
+      "contrast": 68
+    },
+    {
+      "vessel": "fortune-cookie",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/fortune-cookie.webp",
+      "bytes": 13916,
+      "coveragePct": 5.37,
+      "contrast": 66.2
+    },
+    {
+      "vessel": "red-packet",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/red-packet.webp",
+      "bytes": 16056,
+      "coveragePct": 4.71,
+      "contrast": 2.6
+    },
+    {
+      "vessel": "snow-globe",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/snow-globe.webp",
+      "bytes": 14916,
+      "coveragePct": 5.06,
+      "contrast": 59.3
+    },
+    {
+      "vessel": "phone-booth",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/phone-booth.webp",
+      "bytes": 12014,
+      "coveragePct": 4.15,
+      "contrast": 24.5
+    },
+    {
+      "vessel": "firefly-jar",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/firefly-jar.webp",
+      "bytes": 15496,
+      "coveragePct": 4.56,
+      "contrast": 38.5
+    },
+    {
+      "vessel": "hourglass",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/hourglass.webp",
+      "bytes": 10488,
+      "coveragePct": 3.83,
+      "contrast": 54.3
+    },
+    {
+      "vessel": "gashapon",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/gashapon.webp",
+      "bytes": 12804,
+      "coveragePct": 4.72,
+      "contrast": 68.1
+    },
+    {
+      "vessel": "vinyl",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/vinyl.webp",
+      "bytes": 16932,
+      "coveragePct": 4.3,
+      "contrast": 55.4
+    },
+    {
+      "vessel": "vhs",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/vhs.webp",
+      "bytes": 17148,
+      "coveragePct": 4.87,
+      "contrast": 64.8
+    },
+    {
+      "vessel": "photo-strip",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/photo-strip.webp",
+      "bytes": 7686,
+      "coveragePct": 5.43,
+      "contrast": 86.4
+    },
+    {
+      "vessel": "arcade",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/arcade.webp",
+      "bytes": 14570,
+      "coveragePct": 4.11,
+      "contrast": 20.4
+    },
+    {
+      "vessel": "pager",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/pager.webp",
+      "bytes": 14156,
+      "coveragePct": 4.65,
+      "contrast": 22.4
+    },
+    {
+      "vessel": "rotary-phone",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/rotary-phone.webp",
+      "bytes": 16622,
+      "coveragePct": 4.58,
+      "contrast": 28.6
+    },
+    {
+      "vessel": "umbrella",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/umbrella.webp",
+      "bytes": 4158,
+      "coveragePct": 3.52,
+      "contrast": 26.4
+    },
+    {
+      "vessel": "love-padlock",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/love-padlock.webp",
+      "bytes": 12982,
+      "coveragePct": 4.76,
+      "contrast": 74.3
+    },
+    {
+      "vessel": "lucky-stars",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/lucky-stars.webp",
+      "bytes": 16632,
+      "coveragePct": 4.16,
+      "contrast": 64.3
+    },
+    {
+      "vessel": "paper-plane",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/paper-plane.webp",
+      "bytes": 6154,
+      "coveragePct": 3.47,
+      "contrast": 86.8
+    },
+    {
+      "vessel": "lucky-cat",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/lucky-cat.webp",
+      "bytes": 13056,
+      "coveragePct": 4.41,
+      "contrast": 68.4
+    },
+    {
+      "vessel": "mooncake-tin",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/mooncake-tin.webp",
+      "bytes": 16974,
+      "coveragePct": 4.76,
+      "contrast": 30.4
+    },
+    {
+      "vessel": "cake-box",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/cake-box.webp",
+      "bytes": 18924,
+      "coveragePct": 4.64,
+      "contrast": 56.1
+    },
+    {
+      "vessel": "candy-box",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/candy-box.webp",
+      "bytes": 18070,
+      "coveragePct": 4.75,
+      "contrast": 17.5
+    },
+    {
+      "vessel": "chocolate-heart",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/chocolate-heart.webp",
+      "bytes": 16662,
+      "coveragePct": 5.14,
+      "contrast": 18.3
+    },
+    {
+      "vessel": "stocking",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/stocking.webp",
+      "bytes": 8002,
+      "coveragePct": 4.06,
+      "contrast": 30.3
+    },
+    {
+      "vessel": "pumpkin",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/pumpkin.webp",
+      "bytes": 13788,
+      "coveragePct": 4.68,
+      "contrast": 36.1
+    },
+    {
+      "vessel": "rice-dumpling",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/rice-dumpling.webp",
+      "bytes": 12228,
+      "coveragePct": 4.58,
+      "contrast": 29.9
+    },
+    {
+      "vessel": "wish-tag",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/wish-tag.webp",
+      "bytes": 8408,
+      "coveragePct": 4.74,
+      "contrast": 56
+    },
+    {
+      "vessel": "river-lantern",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/river-lantern.webp",
+      "bytes": 12176,
+      "coveragePct": 4.55,
+      "contrast": 39.8
+    },
+    {
+      "vessel": "clock-tower",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/clock-tower.webp",
+      "bytes": 6816,
+      "coveragePct": 5.11,
+      "contrast": 41.6
+    },
+    {
+      "vessel": "senado-fountain",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/senado-fountain.webp",
+      "bytes": 13856,
+      "coveragePct": 4.67,
+      "contrast": 53.4
+    },
+    {
+      "vessel": "bamboo-tower",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/bamboo-tower.webp",
+      "bytes": 6034,
+      "coveragePct": 4.74,
+      "contrast": 31.2
+    },
+    {
+      "vessel": "gate-lantern",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/gate-lantern.webp",
+      "bytes": 13620,
+      "coveragePct": 4.62,
+      "contrast": 2
+    },
+    {
+      "vessel": "torii-scroll",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/torii-scroll.webp",
+      "bytes": 12354,
+      "coveragePct": 5.04,
+      "contrast": 18.8
+    },
+    {
+      "vessel": "palace-pavilion",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/palace-pavilion.webp",
+      "bytes": 11050,
+      "coveragePct": 4.65,
+      "contrast": 22
+    },
+    {
+      "vessel": "lionfish-fountain",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/lionfish-fountain.webp",
+      "bytes": 10876,
+      "coveragePct": 4.44,
+      "contrast": 77.6
+    },
+    {
+      "vessel": "golden-roof",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/golden-roof.webp",
+      "bytes": 12706,
+      "coveragePct": 4.52,
+      "contrast": 41.9
+    },
+    {
+      "vessel": "gate-lacquer",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/gate-lacquer.webp",
+      "bytes": 14542,
+      "coveragePct": 4.56,
+      "contrast": 24.4
+    },
+    {
+      "vessel": "twin-towers",
+      "format": "original",
+      "overlayFile": "public/art/game/cracks/twin-towers.webp",
+      "bytes": 7768,
+      "coveragePct": 4.16,
+      "contrast": 61.7
+    },
+    {
+      "vessel": "hot-air-balloon",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/hot-air-balloon.webp",
+      "bytes": 12390,
+      "coveragePct": 5.4,
+      "contrast": 21.8
+    },
+    {
+      "vessel": "bubble-tea",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/bubble-tea.webp",
+      "bytes": 10112,
+      "coveragePct": 5.38,
+      "contrast": 67.9
+    },
+    {
+      "vessel": "dim-sum-steamer",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/dim-sum-steamer.webp",
+      "bytes": 16806,
+      "coveragePct": 4.72,
+      "contrast": 68.5
+    },
+    {
+      "vessel": "bento",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/bento.webp",
+      "bytes": 15964,
+      "coveragePct": 4.9,
+      "contrast": 36
+    },
+    {
+      "vessel": "paper-cranes",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/paper-cranes.webp",
+      "bytes": 14284,
+      "coveragePct": 4.35,
+      "contrast": 74.3
+    },
+    {
+      "vessel": "heart-locket",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/heart-locket.webp",
+      "bytes": 9914,
+      "coveragePct": 4.76,
+      "contrast": 48.5
+    },
+    {
+      "vessel": "suitcase",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/suitcase.webp",
+      "bytes": 14694,
+      "coveragePct": 4.81,
+      "contrast": 30.3
+    },
+    {
+      "vessel": "postbox",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/postbox.webp",
+      "bytes": 10358,
+      "coveragePct": 4.31,
+      "contrast": 17.5
+    },
+    {
+      "vessel": "camp-lantern",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/camp-lantern.webp",
+      "bytes": 9736,
+      "coveragePct": 4.74,
+      "contrast": 30.5
+    },
+    {
+      "vessel": "treasure-chest",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/treasure-chest.webp",
+      "bytes": 15992,
+      "coveragePct": 4.9,
+      "contrast": 40.4
+    },
+    {
+      "vessel": "spellbook",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/spellbook.webp",
+      "bytes": 19618,
+      "coveragePct": 4.7,
+      "contrast": 4.5
+    },
+    {
+      "vessel": "escape-pod",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/escape-pod.webp",
+      "bytes": 12274,
+      "coveragePct": 4.4,
+      "contrast": 50.6
+    },
+    {
+      "vessel": "crystal-ball",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/crystal-ball.webp",
+      "bytes": 12848,
+      "coveragePct": 5.36,
+      "contrast": 69.5
+    },
+    {
+      "vessel": "wishing-lamp",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/wishing-lamp.webp",
+      "bytes": 6680,
+      "coveragePct": 6.15,
+      "contrast": 41
+    },
+    {
+      "vessel": "potion",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/potion.webp",
+      "bytes": 10588,
+      "coveragePct": 4.44,
+      "contrast": 48.7
+    },
+    {
+      "vessel": "pocket-watch",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/pocket-watch.webp",
+      "bytes": 13946,
+      "coveragePct": 5.14,
+      "contrast": 55
+    },
+    {
+      "vessel": "diploma-tube",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/diploma-tube.webp",
+      "bytes": 8920,
+      "coveragePct": 4.39,
+      "contrast": -13.6
+    },
+    {
+      "vessel": "baby-shoes",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/baby-shoes.webp",
+      "bytes": 15612,
+      "coveragePct": 4.62,
+      "contrast": 46.8
+    },
+    {
+      "vessel": "memorial-candle",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/memorial-candle.webp",
+      "bytes": 17252,
+      "coveragePct": 4.79,
+      "contrast": 53.6
+    },
+    {
+      "vessel": "rocket-tin",
+      "format": "newest (quoted)",
+      "overlayFile": "public/art/game/cracks/rocket-tin.webp",
+      "bytes": 9160,
+      "coveragePct": 5.04,
+      "contrast": 50.2
+    }
+  ]
+}
