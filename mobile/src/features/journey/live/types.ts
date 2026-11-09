@@ -1,6 +1,6 @@
 import { Image, type ImageSourcePropType } from "react-native";
 
-export type LivePin = { id: string; lat: number; lng: number; vessel: string; portrait?: string | null; tag?: string; kind: "sea" | "place"; near?: boolean; far?: boolean; selected?: boolean; sealed?: boolean };
+export type LivePin = { id: string; lat: number; lng: number; vessel: string; cracks?: string; portrait?: string | null; tag?: string; kind: "sea" | "place" | "corrupted" | "waypost" | "landmark"; rarity?: "common" | "uncommon" | "rare"; done?: boolean; near?: boolean; far?: boolean; selected?: boolean; sealed?: boolean };
 export type LiveState = { you: { lat: number; lng: number } | null; heading?: number | null; portrait?: string | null; reach: number; pins: LivePin[] };
 export type LiveMapHandle = { recenter: () => void; focus: (lat: number, lng: number) => void };
 export type LiveMapProps = {

@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-  platform: { OS: "web" },
+  platform: { OS: "web" }, settings: vi.fn(),
   getPermission: vi.fn(), requestPermission: vi.fn(), services: vi.fn(), cached: vi.fn(), current: vi.fn(), watch: vi.fn(),
 }));
-vi.mock("react-native", () => ({ Platform: mocks.platform, Linking: { openSettings: vi.fn() }, AppState: { addEventListener: vi.fn() } }));
+vi.mock("react-native", () => ({ Platform: mocks.platform, Linking: { openSettings: mocks.settings }, AppState: { addEventListener: vi.fn() } }));
 vi.mock("expo-location", () => ({
   Accuracy: { Balanced: 3, High: 5 }, getForegroundPermissionsAsync: mocks.getPermission,
   requestForegroundPermissionsAsync: mocks.requestPermission, hasServicesEnabledAsync: mocks.services,
@@ -20,6 +20,18 @@ beforeEach(() => {
 });
 
 describe("foreground location", () => {
+  it("checks browser permission without calling the native settings API", async () => {
+    vi.stubGlobal("navigator", { geolocation: {}, permissions: { query: vi.fn(async () => ({ state: "denied" })) } });
+    const location = await import("./location");
+    await location.openLocationSettings();
+    expect(mocks.settings).not.toHaveBeenCalled();
+  });
+  it("keeps the native settings action on phones", async () => {
+    mocks.platform.OS = "ios";
+    const location = await import("./location");
+    await location.openLocationSettings();
+    expect(mocks.settings).toHaveBeenCalledOnce();
+  });
   it("requests a browser watch without requiring the Safari permissions API and receives a fix", async () => {
     let receive!: PositionCallback;
     const watchPosition = vi.fn((success: PositionCallback) => { receive = success; return 7; });

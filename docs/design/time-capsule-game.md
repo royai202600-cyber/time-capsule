@@ -29,24 +29,30 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 ## Corrupted Capsules
 - They come from the system and hold **only the vessel**. No letter, no note, so there is nothing to write and no AI involved. Letters only ever come from real people.
 - They look cracked, clouded and tarnished. This is **one shared effect** over the existing vessel art, not 67 redraws.
+- **Chosen (2026-11-09):** Crack A on top of the dark layer. The black anger mark stays restorable: set `CORRUPTED_MARK` to `"anger"` in `mobile/src/features/game/corruptedLook.ts`, where its placement is saved (inside the vessel's top right, at top .3, left .53, size .19 on the catch screen; left 42, bottom 41, 17 px on the map).
 
 ## Catching
 - **The ball is a red wax ball**, starting point, can change later. Solid wax red, never red and white, never two halves, no band or button.
-- You flick the ball up from the bottom of the screen. A thin hand-inked brass ring tightens around the capsule; the tighter the ring when you hit, the better the result.
+- You flick the ball up from the bottom of the screen. **The app draws the target in code, not as artwork:** a fixed white circle with an inner ring that grows and shrinks inside it. The smaller the ring when you hit, the better the result. The capsule sometimes jumps, and a ball thrown mid-jump misses.
 - On a hit the ball bursts into dust, the cracks close, and the clean vessel returns. **The capsule is never pulled inside the ball.**
-- **It happens on the map.** The background is the same live Journey map you were just on, kept simple and in our palette. No separate painted scenes and no camera view.
+- **It has its own simple background:** a generic street scene in the live map's colours and flat style, not a real place. No painted scenes and no camera view.
 - **Two items only:** Wax Ball, and Gold Wax Ball (makes a hit easier). Nothing else: no berries, keys, charms, shards or crafting.
 
 ## How Corrupted Capsules are released
 - **The server decides, never the phone.**
 - **Fixed spots** from public map data: parks, squares, waterfronts. Never roads, schools, places of worship or private property.
 - **Waves:** new capsules about every hour, staying 30–60 minutes (to tune).
+- **You only see Corrupted Capsules inside your pickup circle**, so they never crowd the map. Wayposts and bottles still show further out.
 - **Everyone nearby sees the same capsule and each catches their own copy.** Two friends walking together both get it.
 - **Real time and place decide what appears.** The firefly jar only after dark, the Mid-Autumn lantern only at Mid-Autumn, the bottle by the water. Common vessels can appear anywhere.
 
+## The map
+The default zoom makes the 100 m pickup circle span 75% of the screen width.
+
 ## Wayposts
-- **Common Waypost:** a small, simple building on the map. Tap, spin, get balls, then a cooldown. Our own building and our own spinning object. No photos of real places.
-- **Landmark Waypost:** a giant, badly cracked Corrupted Capsule. Throw balls to close the cracks before time runs out.
+- **Common Waypost:** a small floating purple gem on the map, with no pole. It brightens when you are in range. Tap it and a round picture of the place appears in a brass rim; swipe to spin it. Balls rise and fade, with a tally such as +4 at the top right, then a cooldown. The pictures are illustrated scenes by place type (park, garden, waterfront, square, public art), plus one unique scene per Landmark, not photos or AI imitations of photos. Player photos can replace them later.
+- **Only capsules are detailed illustrated objects.** Wayposts stay simple, so nobody confuses one with a capsule.
+- **Landmark Waypost:** on the map it is a larger, deeper purple gem, and never a capsule. The giant, badly cracked Corrupted Capsule only appears once you start the fight. Throw balls to close the cracks before time runs out.
   - **Beatable alone for now.** Friends making it easier comes later.
   - **No lucky final catch.** Clear the cracks and the landmark vessel and Passport stamp are yours.
   - Opening a capsule at a landmark **also** still earns its vessel, as it does today.
@@ -58,17 +64,19 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 - **Vessels:** 1–5 stars, raised by collecting duplicates.
 
 ## Collection
-- **Cabinet is the collection book:** numbered No.001–067, with faint outlines for what you don't have yet.
-- **Passport stays**, and landmark stamps go in it.
+- **Cabinet shows only what you have.** No outlines of anything missing.
+- **Capsule Album (膠囊圖鑑) is the collection book:** a separate page listing every vessel in number order. Collected ones show their picture, number and name; uncollected ones are a plain number card. Open it from the bottom right of Journey or from the Cabinet.
+- **Passport stays**, and landmark stamps go in it. On Journey it is a recognisable icon at the bottom of the screen, not a bare count.
 
 ## Shop and sending
 - **Collecting is the main way to get vessels.** The Shop sells only what can't be found: brand and numbered editions. It stays free while testing.
-- **You can send what you've collected, plus free starter vessels** every new player gets.
+- **You can send what you've collected, plus the four starter vessels** every new player gets: blue rose dome, bottle, wax-sealed letter and tin. Other free vessels have to be found too.
 - Writing to someone never costs balls. The game must never block a letter.
 
 ## Capsules from strangers
 Today's rules stay, under the new name:
 - Same Create flow, typed letters only, sender's profile visible.
+- **Always a bottle, all the same size on the map**, so it can never be mistaken for a Corrupted Capsule. Capsules to friends keep the vessel you chose.
 - Shown at a public Waypost, never the sender's real spot. Drift time of 1, 7, 30 or 365 days.
 - One finder within 100 m (server-checked). **You just pick it up: no throwing at a person's letter.**
 - No daily pick-up limit (Roy removed it on 2026-11-08).
@@ -114,9 +122,8 @@ Art, screens and backend can run in parallel once this doc is confirmed.
 1. How the Waypost building and its spinning object look (art to show Roy).
 2. The final red wax ball design, and whether the Gold Wax Ball is a colour change or a new look.
 3. What replaces the sea portrait and sea sealed scene.
-4. Which vessels are the free starters.
-5. What happens to vessels testers already took for free from the Shop.
-6. Numbers to tune: spawn rate, balls per spin, Waypost cooldown, Landmark time limit, XP curve, duplicates per star.
-7. Whether a daily pick-up limit should return once strangers are real users.
+4. What happens to vessels testers already took for free from the Shop.
+5. Numbers to tune: spawn rate, balls per spin, Waypost cooldown, Landmark time limit, XP curve, duplicates per star.
+6. Whether a daily pick-up limit should return once strangers are real users.
 
 Still needed before real users, from earlier: a domain and email provider, moving map tiles off the pilot `r2.dev` address, in-app account deletion, and removing the test location and the ten test bottles.

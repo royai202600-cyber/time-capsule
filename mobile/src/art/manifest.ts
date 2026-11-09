@@ -1955,15 +1955,32 @@ export const portraits: Record<string, ImageSourcePropType> = {
   '05': require('../../../public/art/portraits/portrait-05.webp'), '06': require('../../../public/art/portraits/portrait-06.webp'),
   '07': require('../../../public/art/portraits/portrait-07.webp'), '08': require('../../../public/art/portraits/portrait-08.webp'),
   future: require('../../../public/art/portraits/portrait-future.webp'),
-  // Public Sea recipient (art PR #68): not a person preset, so the profile picker never lists it.
-  sea: require('../../../public/art/portraits/portrait-sea.webp'),
+  // "To whoever passes by" recipient: not a person preset, so the profile picker never lists it.
+  sea: require('../../../public/art/portraits/portrait-passerby.webp'),
 };
 export const scenes = {
   welcome: require('../../../public/art/scenes/scene-welcome.webp'),
   emptyInbox: require('../../../public/art/scenes/scene-empty-inbox.webp'),
   emptySent: require('../../../public/art/scenes/scene-empty-sent.webp'),
   sealed: require('../../../public/art/scenes/scene-sealed.webp'),
-  seaSealed: require('../../../public/art/scenes/scene-sea-sealed.webp'),
+  seaSealed: require('../../../public/art/scenes/scene-passerby-sealed.webp'),
+};
+export const gameArt = {
+  ball: { wax: require('../../../public/art/game/ball-wax.webp'), gold: require('../../../public/art/game/ball-gold.webp') },
+  hitDust: require('../../../public/art/game/hit-dust.webp'),
+  catchBackground: require('../../../public/art/game/catch-background.webp'),
+  waypostGem: require('../../../public/art/game/waypost-gem.webp'),
+  landmarkGem: require('../../../public/art/game/landmark-gem.webp'),
+  wheel: {
+    park: require('../../../public/art/game/wheel/scene-park.webp'),
+    garden: require('../../../public/art/game/wheel/scene-garden.webp'),
+    waterfront: require('../../../public/art/game/wheel/scene-waterfront.webp'),
+    square: require('../../../public/art/game/wheel/scene-square.webp'),
+    publicArt: require('../../../public/art/game/wheel/scene-public-art.webp'),
+    taipei101: require('../../../public/art/game/wheel/scene-landmark-taipei.webp'),
+    merlion: require('../../../public/art/game/wheel/scene-landmark-singapore.webp'),
+    senado: require('../../../public/art/game/wheel/scene-landmark-macau.webp'),
+  },
 };
 export const sealWax = require('../../../public/art/seal-wax.webp');
 export const lightBurst = require('../../../public/art/fx/fx-light-burst.webp');

@@ -1,4 +1,5 @@
-import { canUseVessel as canAccessVessel, showVesselInShop } from "../../services/vesselAccess";
+import { GAME_ENABLED } from "../../services/game";
+import { canUseVessel as canAccessVessel, isCollected, showVesselInShop } from "../../services/vesselAccess";
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Image, PanResponder, Keyboard, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { GestureDetector, useNativeGesture, usePanGesture } from 'react-native-gesture-handler';
@@ -150,11 +151,19 @@ export default function CreateScreen() {
   const chosenVessel = catalog.data?.find(v => v.id === vessel);
   // Earned (landmark) vessels are only usable once earned by opening a capsule at their place.
   const ownsVessel = (id: string) => !!owned.data?.some(o => o.vessel === id);
-  const canUseVessel = (v: { id: string; price_mop: number }) => canAccessVessel(v, ownsVessel(v.id));
+  // Once the game is on, you send what you've collected plus the four starters.
+  const canUseVessel = (v: { id: string; price_mop: number }) => GAME_ENABLED ? isCollected(v, ownsVessel(v.id), true) : canAccessVessel(v, ownsVessel(v.id));
   const selectedPlace = places.data?.find(p => p.id === place);
   const recipientRow = friends.data?.find(f => f.friend_id === recipient);
   // A sea bottle is an ordinary capsule addressed to the sea: typed only, washes up after its drift time.
   const toSea = SEA_ENABLED && recipient === SEA_RECIPIENT;
+  // Everything left in public is a bottle, so it can't be mistaken for a Corrupted Capsule.
+  const wasToSea = useRef(toSea);
+  useEffect(() => {
+    if (toSea) setVessel('bottle');
+    else if (wasToSea.current) setVessel(null);
+    wasToSea.current = toSea;
+  }, [toSea]);
   const recipientName = toSea ? st('toSea') : recipient === id ? t('create.self') : ((recipientRow as any)?.profiles?.name ?? '');
   const openAt = toSea ? new Date(Date.now() + driftDays * 86_400_000) : quick === 'custom' ? customDate(dateText) : quickDate(quick);
   const formatted = (sealedAt ?? openAt)?.toLocaleDateString(language === 'zh' ? 'zh-Hant' : 'en', { year: 'numeric', month: 'long', day: 'numeric', hour: quick === 'dev' ? 'numeric' : undefined, minute: quick === 'dev' ? '2-digit' : undefined }) ?? dateText;
@@ -388,8 +397,9 @@ export default function CreateScreen() {
       {photoChoices && !toSea && <View style={{ flexDirection: 'row', gap: 8 }}><Button title={t('create.camera')} onPress={() => void choosePhoto('camera')} /><Button title={t('create.library')} onPress={() => void choosePhoto('library')} /></View>}
       <Text style={label}>{t('create.hint')}</Text><TextInput value={hint} onChangeText={setHint} maxLength={40} placeholder={t('create.hintPlaceholder')} style={[card, { color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{hint.length} / 40</Text>
     </View>}
-    {step === 3 && <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-      {(catalog.data ?? []).filter(v => showVesselInShop(v, ownsVessel(v.id))).map(v => { const usable = canUseVessel(v); return <Pressable key={v.id} onPress={() => { setVessel(v.id as VesselKind); if (selectedPlace?.brand_vessel && selectedPlace.brand_vessel !== v.id) setPlace(null); if (usable) void haptics.tick(); else router.push({ pathname: '/shop', params: { focus: v.id, returnTo: 'create' } }); }} style={[card, { width: '46%', alignItems: 'center', borderColor: vessel === v.id ? C.blue : C.line, opacity: usable ? 1 : .68 }]}><Vessel kind={v.id as VesselKind} size={105} idle={vessel === v.id} /><Text style={{ fontFamily: serif, color: C.ink, textAlign: 'center' }}>{t(`shop.vessel.${v.id}`)}</Text><Text style={{ color: usable ? C.blue : C.plum, fontSize: 12 }}>{t(usable ? 'create.owned' : 'create.getShop')}</Text></Pressable>; })}
+    {step === 3 && toSea && <View style={{ alignItems: 'center', gap: 12, paddingVertical: 24 }}><Vessel kind="bottle" size={150} idle /><Text style={{ color: C.muted, fontSize: 13, lineHeight: 20, textAlign: 'center' }}>{st('bottleOnly')}</Text></View>}
+    {step === 3 && !toSea && <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+      {(catalog.data ?? []).filter(v => GAME_ENABLED ? canUseVessel(v) : showVesselInShop(v, ownsVessel(v.id))).map(v => { const usable = canUseVessel(v); return <Pressable key={v.id} onPress={() => { setVessel(v.id as VesselKind); if (selectedPlace?.brand_vessel && selectedPlace.brand_vessel !== v.id) setPlace(null); if (usable) void haptics.tick(); else router.push({ pathname: '/shop', params: { focus: v.id, returnTo: 'create' } }); }} style={[card, { width: '46%', alignItems: 'center', borderColor: vessel === v.id ? C.blue : C.line, opacity: usable ? 1 : .68 }]}><Vessel kind={v.id as VesselKind} size={105} idle={vessel === v.id} /><Text style={{ fontFamily: serif, color: C.ink, textAlign: 'center' }}>{t(`shop.vessel.${v.id}`)}</Text><Text style={{ color: usable ? C.blue : C.plum, fontSize: 12 }}>{t(usable ? 'create.owned' : 'create.getShop')}</Text></Pressable>; })}
       {catalog.loading && <SealLoader size={44} label={t('create.loading')} />}
       {catalog.error && <Button title={t('create.retry')} onPress={() => void catalog.refresh()} />}
     </View>}

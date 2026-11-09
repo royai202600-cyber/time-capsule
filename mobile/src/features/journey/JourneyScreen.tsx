@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Linking, Platform, Pressable, Text, View } from "react-native";
+import { Image, Linking, Platform, Pressable, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useFocusEffect } from "expo-router";
 import { goBack } from "../../navigation";
@@ -23,6 +23,14 @@ import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
 import type { Tables } from "../../services/database.types";
 import { MAP_PMTILES_URL, sea, SeaError, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
 import { daysSince, distanceText, useSeaText } from "../sea/strings";
+import { game, GameError, GAME_ACTION_RADIUS_M, GAME_ENABLED, type GameState, type CorruptedCapsule, type DevLetter, type LandmarkAttempt, type Nearby, type Waypost } from "../../services/game";
+import { gameArt } from "../../art/manifest";
+import { crackOverlays } from "../../art/crackOverlays";
+import { CORRUPTED_MARK } from "../game/corruptedLook";
+import { SpinScreen } from "../game/SpinScreen";
+import { sceneKey } from "../game/waypostScene";
+import { ThrowScreen } from "../game/ThrowScreen";
+import { errorKey, useGameText } from "../game/strings";
 
 type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string; waiting?: boolean };
 
@@ -43,6 +51,7 @@ export default function JourneyScreen() {
   const userId = session?.user.id ?? "";
   const { t, language } = useLanguage();
   const s = useSeaText();
+  const g = useGameText();
   const placeData = usePlaces();
   const capsuleData = useCapsules(userId, "inbox");
   const location = useForegroundLocation();
@@ -57,6 +66,14 @@ export default function JourneyScreen() {
   const [passport, setPassport] = useState(false);
   const [mapPlace, setMapPlace] = useState<Extract<Item, { kind: "place" }> | null>(null);
   const [heading, setHeading] = useState<number | null>(null);
+  const [gameState, setGameState] = useState<GameState | null>(null);
+  const [nearby, setNearby] = useState<Nearby>({ corrupted: [], wayposts: [] });
+  const [throwing, setThrowing] = useState<CorruptedCapsule | null>(null);
+  const [devLetter, setDevLetter] = useState<DevLetter | null>(null);
+  const [fight, setFight] = useState<LandmarkAttempt | null>(null);
+  const [passportStamps, setPassportStamps] = useState<Record<string, string>>({});
+  const [spinning, setSpinning] = useState<Waypost | null>(null);
+  const [gameCard, setGameCard] = useState<{ waypost: Waypost; meters: number } | null>(null);
   const last = useRef<{ lat: number; lng: number } | null>(null);
   // Heading from movement: the cone points the way you walked.
   useEffect(() => {
@@ -72,10 +89,21 @@ export default function JourneyScreen() {
   const cell = you ? `${you.lat.toFixed(3)},${you.lng.toFixed(3)}` : "";
   const loadSea = useCallback(async () => {
     if (!SEA_ENABLED || !you) return;
+    const test = __DEV__ && GAME_ENABLED ? game.devBottles(you) : [];
+    setBottles(test);
     try {
-      setBottles(await sea.nearby(fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null));
+      setBottles([...test, ...await sea.nearby(fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null)]);
     } catch { /* the map still works without the sea */ }
   }, [cell]);
+  const loadGame = useCallback(async () => {
+    if (!GAME_ENABLED || !you) return;
+    try {
+      const [state, around, stamps] = await Promise.all([game.state(), game.nearby({ lat: you.lat, lng: you.lng, accuracy: fix?.accuracy }), game.passport()]);
+      setGameState(state); setNearby(around); setPassportStamps(stamps);
+    } catch { /* the map still works without the game */ }
+  }, [cell]);
+  useEffect(() => { void loadGame(); }, [loadGame]);
+  useEffect(() => { if (fix) game.setPosition({ lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy }); }, [fix?.lat, fix?.lng, fix?.accuracy]);
   useFocusEffect(useCallback(() => {
     if (userId) { void placeData.refresh(); void capsuleData.refresh(); }
     void loadSea();
@@ -91,11 +119,9 @@ export default function JourneyScreen() {
     return { place, kind: visited ? "visited" : waiting ? "waiting" : "other", vessel: waiting?.vessel, waiting: !!waiting };
   }), [places, capsules]);
   const stampRows = useMemo(() => places.map((place) => {
-    const openedAt = capsules.filter((capsule) => capsule.place === place.id && capsule.opened_at).map((capsule) => capsule.opened_at!).sort().at(-1) ?? null;
+    const openedAt = capsules.filter((capsule) => capsule.place === place.id && capsule.opened_at).map((capsule) => capsule.opened_at!).sort().at(-1) ?? passportStamps[place.id] ?? null;
     return { place, openedAt };
-  }), [places, capsules]);
-  const earned = stampRows.filter((row) => row.openedAt && !row.place.brand_vessel).length;
-  const total = places.filter((place) => !place.brand_vessel).length;
+  }), [places, capsules, passportStamps]);
 
   // Nearby Sea bottles and every received place capsule, including distant/opened ones.
   const items = useMemo<Item[]>(() => {
@@ -111,14 +137,28 @@ export default function JourneyScreen() {
   }, [bottles, pins, capsules, you?.lat, you?.lng]);
   const selected = items.find((i) => i.id === selectedId) ?? null;
 
+  const metersTo = (lat: number, lng: number) => you ? distanceMeters(you.lat, you.lng, lat, lng) : Infinity;
+  const gamePins = useMemo<LivePin[]>(() => [
+    // Only what's inside the pickup circle shows, so capsules never crowd the map.
+    ...nearby.corrupted.filter((c) => c.id !== throwing?.id && metersTo(c.lat, c.lng) <= GAME_ACTION_RADIUS_M).map<LivePin>((c) => (
+      { id: `corrupted-${c.id}`, lat: c.lat, lng: c.lng, kind: "corrupted", vessel: vesselUri(c.vessel), cracks: CORRUPTED_MARK === "cracks" ? assetUri(crackOverlays[c.vessel]) ?? undefined : undefined, rarity: c.rarity, near: true }
+    )),
+    ...nearby.wayposts.map<LivePin>((w) => ({
+      id: `way-${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: assetUri(w.kind === "landmark" ? gameArt.landmarkGem : gameArt.waypostGem) ?? "",
+      done: !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now(),
+      near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
+    })),
+  ], [nearby, throwing?.id, you?.lat, you?.lng]);
+
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: you ?? FALLBACK }), [!!you]);
   const mapState = useMemo(() => ({
     you, heading, reach: SEA_PICKUP_RADIUS_M,
     portrait: portraitUri(profile?.avatar),
-    pins: items.map<LivePin>((i) => i.kind === "sea"
-      ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri(i.bottle.vessel), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
-      : { id: i.id, lat: i.lat, lng: i.lng, kind: "place", vessel: vesselUri(i.pin.vessel ?? "dome"), near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId, tag: language === "zh" ? i.pin.place.name_zh : i.pin.place.name_en }),
-  }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language]);
+    // While throwing, the capsule is alone on the plain map.
+    pins: throwing ? [] : [...items.map<LivePin>((i) => i.kind === "sea"
+      ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri("bottle"), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
+      : { id: i.id, lat: i.lat, lng: i.lng, kind: "place", vessel: vesselUri(i.pin.vessel ?? "dome"), near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId, tag: language === "zh" ? i.pin.place.name_zh : i.pin.place.name_en }), ...gamePins],
+  }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language, gamePins, !!throwing]);
 
   const select = (id: string | null) => {
     setWalkTo(null);
@@ -133,6 +173,13 @@ export default function JourneyScreen() {
   };
   const pickUp = async (item: Extract<Item, { kind: "sea" }>) => {
     if (busy) return;
+    if (item.id.startsWith("dev-bottle-")) {
+      const letter = game.devPickUp(item.id);
+      void haptics.success();
+      setSelectedId(null); setDevLetter(letter);
+      void loadSea();
+      return;
+    }
     setBusy(true);
     try {
       const capsuleId = await sea.pickUp(item.id, fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null);
@@ -145,6 +192,39 @@ export default function JourneyScreen() {
       const code = e instanceof SeaError ? e.code : "unknown";
       setToast(code === "too_far" ? s("errTooFar") : code === "taken" ? s("errTaken") : code === "own_bottle" ? s("errOwn") : s("errUnknown"));
       if (code === "taken") void loadSea();
+    } finally { setBusy(false); }
+  };
+  const onPin = (id: string) => {
+    if (id.startsWith("corrupted-")) {
+      const capsule = nearby.corrupted.find((c) => `corrupted-${c.id}` === id);
+      if (!capsule) return;
+      setSelectedId(null); setGameCard(null); void haptics.tick();
+      map.current?.focus(capsule.lat, capsule.lng); setThrowing(capsule);
+      return;
+    }
+    if (id.startsWith("way-")) {
+      const waypost = nearby.wayposts.find((w) => `way-${w.id}` === id);
+      if (!waypost) return;
+      setSelectedId(null); void haptics.tick();
+      const meters = metersTo(waypost.lat, waypost.lng);
+      if (waypost.kind === "common" && meters <= GAME_ACTION_RADIUS_M) { setGameCard(null); setSpinning(waypost); }
+      else setGameCard({ waypost, meters });
+      return;
+    }
+    setGameCard(null);
+    select(id);
+  };
+  const startLandmark = async (waypost: Waypost) => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const attempt = await game.landmarkStart(waypost);
+      void haptics.tap();
+      setGameCard(null); setFight(attempt);
+      setThrowing({ id: attempt.id, vessel: attempt.vessel, rarity: "uncommon", lat: waypost.lat, lng: waypost.lng, expires_at: attempt.expires_at, attempts_left: 0 });
+    } catch (e) {
+      void haptics.warn();
+      setToast(g(errorKey(e instanceof GameError ? e.code : "unknown")));
     } finally { setBusy(false); }
   };
   const directions = (lat: number, lng: number) => {
@@ -163,27 +243,30 @@ export default function JourneyScreen() {
   return <JourneyViewport>
     <View style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, zIndex: 0 }}>
     {you
-      ? <LiveMap ref={map} html={html} state={mapState} onSelect={select}
-        onTap={(lat, lng) => { if (selectedId) setSelectedId(null); else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
+      ? <LiveMap ref={map} html={html} state={mapState} onSelect={onPin}
+        onTap={(lat, lng) => { if (gameCard) setGameCard(null); else if (selectedId) setSelectedId(null); else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
       : <LocationGate status={status} onAllow={() => void location.request()} onSettings={() => void location.openSettings()} />}
     </View>
 
-    <SafeAreaView edges={["top", "left", "right"]} pointerEvents="box-none" style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 30 }}>
+    <SafeAreaView edges={["top", "left", "right"]} pointerEvents="box-none" style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 30, display: throwing ? "none" : "flex" }}>
       <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.sm }}>
         <Chip onPress={goBack} label={t("back")}><ArtIcon name="back" size={22} /></Chip>
         <View style={{ flex: 1 }} pointerEvents="none" />
-        <Chip onPress={() => { void haptics.tap(); setPassport(true); }} label={s("passport")}><Text style={{ fontFamily: serif, fontSize: 12, color: C.brass }}>{earned}/{total}</Text></Chip>
+        {GAME_ENABLED && gameState && <View accessibilityRole="text" style={{ height: 44, paddingHorizontal: 14, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", justifyContent: "center", ...shadows.card }}>
+          <Text style={{ fontFamily: sans, fontSize: 12, color: C.ink }}>{g("level", gameState.level)} · {g("balls", gameState.wax_balls)}</Text>
+        </View>}
       </View>
     </SafeAreaView>
 
-    <SafeAreaView edges={["bottom", "left", "right"]} pointerEvents="box-none" style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 20 }}>
+    <SafeAreaView edges={["bottom", "left", "right"]} pointerEvents="box-none" style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 20, display: throwing ? "none" : "flex" }}>
       <View pointerEvents="box-none" style={{ width: "100%", alignSelf: "center", paddingHorizontal: spacing.md, paddingBottom: spacing.md, gap: spacing.sm }}>
         <View pointerEvents="box-none" style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
           {walkTo ? <Pill onPress={() => { setFakeLocation(walkTo); setWalkTo(null); void haptics.tick(); }} label={s("devWalk")} /> : <View />}
           {you && <Chip onPress={() => { setSelectedId(null); setWalkTo(null); map.current?.recenter(); void haptics.tick(); }} label={s("recenter")} translucent><ArtIcon name="locate" size={24} color={C.blue} /></Chip>}
         </View>
         {!!toast && <Text accessibilityRole="alert" style={{ alignSelf: "center", backgroundColor: C.ink, color: C.white, fontFamily: sans, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, overflow: "hidden" }}>{toast}</Text>}
-        {you && (selected
+        {you && !selected && gameCard && <GameCard card={gameCard} busy={busy} g={g} language={language} onChallenge={startLandmark} />}
+        {you && !gameCard && (selected
           ? <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
             <SelectedCard item={selected} busy={busy} onPickUp={pickUp} onDirections={directions}
               onView={(item) => router.push({ pathname: "/capsule/[id]", params: { id: item.capsuleId } })}
@@ -194,17 +277,57 @@ export default function JourneyScreen() {
               style={{ alignSelf: "flex-end", marginRight: -spacing.md - insets.right, backgroundColor: "rgba(255,255,255,.9)", borderTopLeftRadius: 12, borderBottomLeftRadius: 12, padding: 12, paddingRight: 12 + insets.right, borderWidth: 1, borderRightWidth: 0, borderColor: C.line, ...shadows.card }}>
             <Text style={{ fontFamily: sans, fontSize: 11, fontWeight: "700", letterSpacing: 1.2, color: C.blue }}>{s("kicker")}</Text>
           </Pressable>)}
-        {SEA_ENABLED && !selected && <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
+        {!selected && !gameCard && <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <Pressable accessibilityRole="button" accessibilityLabel={s("passport")} onPress={() => { void haptics.tap(); setPassport(true); }} style={{ width: 62, alignItems: "center" }}>
+          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="passport" size={27} color={C.blue} /></View>
+        </Pressable>
+        {SEA_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
           onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: "sea" } }); }}
           style={({ pressed }) => ({ alignSelf: "center", flexShrink: 0, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: C.wax, borderRadius: radii.pill, paddingLeft: 8, paddingRight: 20, paddingVertical: 7, opacity: pressed ? .9 : 1, ...shadows.card })}>
           <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}><Vessel kind="hourglass" size={26} /></View>
           <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("throwCta")}</Text>
-        </Pressable>}
+        </Pressable> : null}
+        {GAME_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={g("album")} onPress={() => { void haptics.tap(); router.push("/album"); }} style={{ width: 62, alignItems: "center" }}>
+          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="album" size={25} color={C.blue} /></View>
+        </Pressable> : <View style={{ width: 62 }} />}
+        </View>}
       </View>
     </SafeAreaView>
 
+    {devLetter && <View style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, zIndex: 35, gap: spacing.sm, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.lg, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+        <Avatar avatar={devLetter.bottle.sender.avatar} size={36} />
+        <Text style={{ flex: 1, fontFamily: sans, fontSize: 12, color: C.brass }}>{s("seaBottle", devLetter.bottle.sender.name)}</Text>
+      </View>
+      <Text style={{ fontFamily: serif, fontSize: 17, lineHeight: 26, color: C.ink }}>{devLetter.message}</Text>
+      <Pressable accessibilityRole="button" onPress={() => setDevLetter(null)} style={{ alignItems: "center", backgroundColor: C.blue, borderRadius: radii.pill, paddingVertical: 11 }}>
+        <Text style={{ fontFamily: serif, fontSize: 15, color: C.white }}>{g("close")}</Text>
+      </Pressable>
+    </View>}
+    {spinning && <SpinScreen waypost={spinning} language={language} onState={setGameState} onClose={() => { setSpinning(null); void loadGame(); }} />}
+    {throwing && gameState && <ThrowScreen capsule={throwing} landmark={fight ?? undefined} state={gameState} onState={setGameState}
+      onClose={() => { setThrowing(null); setFight(null); map.current?.recenter(); void loadGame(); }} />}
     <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows} />
   </JourneyViewport>;
+}
+
+type GameCardValue = { waypost: Waypost; meters: number };
+function GameCard({ card, busy, g, language, onChallenge }: {
+  card: GameCardValue; busy: boolean; g: ReturnType<typeof useGameText>; language: "zh" | "en"; onChallenge: (w: Waypost) => void;
+}) {
+  const near = card.meters <= GAME_ACTION_RADIUS_M;
+  const left = distanceText(Math.max(0, card.meters - GAME_ACTION_RADIUS_M));
+  const landmark = card.waypost.kind === "landmark";
+  const title = language === "zh" ? card.waypost.name_zh : card.waypost.name_en;
+  const note = near ? "" : landmark ? g("challengeWalkCloser", left) : g("spinWalkCloser", left);
+  return <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", gap: spacing.sm, backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
+    {landmark && <Image source={gameArt.wheel[sceneKey(card.waypost)]} resizeMode="cover" style={{ width: 112, height: 112, borderRadius: 56, borderWidth: 4, borderColor: C.brass, alignSelf: "center" }} />}
+    <Text style={{ fontFamily: serif, fontSize: 18, color: C.ink, textAlign: landmark ? "center" : "left" }}>{title}</Text>
+    {!!note && <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{note}</Text>}
+    {landmark && near && <Pressable accessibilityRole="button" disabled={busy} onPress={() => onChallenge(card.waypost)} style={{ alignItems: "center", backgroundColor: C.plum, borderRadius: radii.pill, paddingVertical: 11, opacity: busy ? .6 : 1 }}>
+      <Text style={{ fontFamily: serif, fontSize: 15, color: C.white }}>{g("challenge")}</Text>
+    </Pressable>}
+  </View>;
 }
 
 function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections, onView, onMap }: {
@@ -242,7 +365,7 @@ function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections
   return <View style={{ gap: spacing.sm }}>
     <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
       <View>
-        <Vessel kind={b.vessel as VesselKind} size={52} idle />
+        <Vessel kind="bottle" size={52} idle />
         <View style={{ position: "absolute", right: -6, top: -4, borderRadius: 14, borderWidth: 2, borderColor: C.white }}><Avatar avatar={b.sender.avatar} size={24} /></View>
       </View>
       <View style={{ flex: 1 }}>
@@ -265,10 +388,11 @@ function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections
 
 function LocationGate({ status, onAllow, onSettings }: { status: string; onAllow: () => void; onSettings: () => void }) {
   const s = useSeaText();
+  const { t } = useLanguage();
   return <SafeAreaView style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.lg, gap: spacing.md, backgroundColor: C.glass }}>
     <Vessel kind="hourglass" size={130} idle />
-    <Text style={{ fontFamily: sans, color: C.ink, textAlign: "center", lineHeight: 22, maxWidth: 360 }}>{status === "denied" ? s("locationDenied") : status === "checking" || status === "granted" ? s("locationWaiting") : s("locationAsk")}</Text>
-    {status === "denied" && <Btn title={s("openSettings")} onPress={onSettings} />}
+    <Text style={{ fontFamily: sans, color: C.ink, textAlign: "center", lineHeight: 22, maxWidth: 360 }}>{status === "denied" ? (Platform.OS === "web" ? t("journey.locationDeniedWeb") : s("locationDenied")) : status === "checking" || status === "granted" ? s("locationWaiting") : s("locationAsk")}</Text>
+    {status === "denied" && <Btn title={Platform.OS === "web" ? t("retry") : s("openSettings")} onPress={Platform.OS === "web" ? onAllow : onSettings} />}
     {(status === "explain" || status === "unavailable") && <Btn title={s("locationAllow")} onPress={onAllow} />}
   </SafeAreaView>;
 }

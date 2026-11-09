@@ -35,6 +35,7 @@ const strings = {
     // Create
     toSea: "給路過的人",
     toSeaNote: "一位你不認識的人會撿到它",
+    bottleOnly: "公開放下的膠囊都會用瓶子，大家一眼就知道這是別人留下的。",
     seaTypedOnly: "給路過的人的信只能打字（不能手寫、附照片或錄音），放下前會做安全檢查。",
     driftLabel: "要等多久才出現？",
     washesUp: (d: string) => `將於 ${d} 出現`,
@@ -96,6 +97,7 @@ const strings = {
     errUnknown: "No answer just now. Please try again.",
     toSea: "To whoever passes by",
     toSeaNote: "A stranger will find it",
+    bottleOnly: "Capsules left in public always use a bottle, so everyone can tell a person left them.",
     seaTypedOnly: "Letters to whoever passes by are typed only (no handwriting, photos or voice) and safety-checked before they're left.",
     driftLabel: "How long before it appears?",
     washesUp: (d: string) => `Appears on ${d}`,

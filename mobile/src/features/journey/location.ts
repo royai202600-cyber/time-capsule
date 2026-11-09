@@ -142,7 +142,7 @@ export async function requestLocation() {
     publish({ status: "unavailable", fix: null, error: String(error) });
   } finally { requesting = false; }
 }
-export const openLocationSettings = () => Linking.openSettings();
+export const openLocationSettings = () => Platform.OS === "web" ? checkLocation() : Linking.openSettings();
 export const currentFix = () => state.fix;
 export function openingCoordinates() {
   const fix = state.fix;
