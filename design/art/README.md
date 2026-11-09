@@ -79,10 +79,46 @@ The exporter now includes `^game/` in its 512 px rule. Only those sixteen new pa
 These licences describe the inspected photos. No photo pixels are included in the concepts.
 
 
+## Approved Time Capsule catch background
+
+Roy chose **Option 3 from PR #84 as it is**, with no more trees and no redraw. `game/catch-background.png` is a byte-for-byte copy of `game/catch-background-options/option-3.png` at commit `6acd9e32a391b0c35a3b0730f15e40be42a425fe`. Its SHA-256 is `6843fad4e8eb67f99392dfb567646ba5299a6b73368e7dab8733ba7df3d13588`. No pixels, encoding or native 1024×1536 size changed. The two unchosen option files are removed; the chosen source remains for provenance.
+
+`public/art/game/catch-background.webp` is exported at the full **1024×1536**, quality 85. A single exact-path exception in `export-webp.cjs` bypasses the `game/` 512 px limit for this file only. Run `SHARP_MODULE_DIR=/tmp/timecapsule-game-final-tools/node_modules/sharp node design/art/scripts/export-webp.cjs --only game/catch-background.png`. No other export changes. The app integration is separate; no app code, database, settings or deployment changes are included.
+
+Model: `gpt-image-2` through Codex's built-in image tool. Exact selected prompt verified against generation `6a778803-827a-486a-89e9-609d949837b7`; no generation is performed in Step 2. Ordered references:
+
+1. `design/art/style-sheet.png` at `0357ba6ba7e298251be05084e9da2a62757a55f2`.
+2. `design/art/reference/catch-background/fight-scene-now.jpg`.
+3. `design/art/reference/catch-background/map-now.jpg`.
+
+The two screenshots are read from `claude/time-capsule-game-journey`, commit `b5f584d7e04681af8eaf613cdc55aa7fd8350dad`; they are not recommitted. The park is invented, not a real place or a map. The opaque portrait layout and map palette are Roy's explicit overrides to STYLE.md. Technical checks are recorded in [_checks/catch-background-audit.json](_checks/catch-background-audit.json); [comparison sheet](_checks/catch-background-options.png) shows the current reference and Roy's chosen option at 375×812. Design assessment is Roy's approval; the selected image is not altered following any further visual review.
+
+Exact generation prompt:
+
+```text
+App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, "precious in the AI age". Hand-inked storybook, not glossy 3D.
+- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.
+- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.
+- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.
+- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.
+Match the attached style sheet exactly.
+Override for this image only: replace the style block's transparent, square, object-centred and palette lines with an opaque full-bleed portrait scene, final size exactly 1024×1536. Generate at 1024×1536 or larger at the same aspect ratio; never upscale. This is a quiet background, not an object illustration.
+Use the map's colours: land #F3EFE6, park green #DCE6CF, water #BCD3E6, shoreline #9DBBD6, sand path #EFE3C6, buildings #E6E0D3, building tops #EEE9DE, sky glass blue #DCE8F2. Slightly deeper sage greens are allowed for trees and bushes.
+Keep the app's hand-drawn storybook quality, with thin soft low-contrast lines and a little paper grain. It must stay quieter and paler than the vessels placed on top of it. Large calm flat shapes, one very soft shading tone, almost no hatching. No dark outlines or strong cast shadows.
+Reference 1 is style quality only: do not copy its objects. Reference 2 is the current fight screen: keep its background layout and improve only the drawing, removing every game object and interface. Reference 3 is the live map: match its colours and calm, pale, flat feeling. Draw an original generic city park clearing at ground level, not a real place and not a map. No road through it.
+Exact composition on the final 1024×1536 canvas:
+Soft simple sky at the top. A row of simple pale low city buildings behind a rounded treeline where the park begins, around y=380. No landmark silhouettes. A small quiet pond is on the left around y=540, reaching in from the left edge, with only a thin soft shoreline. A winding sand footpath on the far right leads from the treeline down to the right edge.
+A wide open lighter patch of ground occupies the middle around y=640–880, ready for the app's capsule. The patch is softly irregular, never a precisely outlined oval or circle. A few trees and bushes sit only around the outer edges, as in the current screen: one edge tree on each side near the middle distance, a farther-forward right edge tree and low corner bushes. Gentle lighter ground fills the lower foreground.
+Phones crop the sides: keep everything important within x=160–864. Keep x=250–774, y=380–880 calm, open and unobstructed, with no trees, bushes, building edges or path crossing that zone. Pond water may softly touch the far-left margin of this zone but has no decorative detail. Keep x=330–694, y=1180–1440 plain and light for the app's ball. The top 130 px and bottom 130 px are simple quiet background. Only expendable edge foliage may be cropped off the sides.
+Do not draw the capsule, wax ball, target rings, Waypost picture, shadows belonging to game objects, buttons, phone frame, interface, labels or any UI from the screenshots. No people, animals or creatures; no text, letters, numbers, logos or brands; no real landmarks; no floating items. This must be original and must not imitate the look of any existing game.
+Option variation: Calm bright overcast light, airy broad slightly irregular tree canopies and softly layered dusty sage bushes. Keep the specified palette and exact layout; no rain, fog, fallen leaves or extra objects.
+```
+
 ## Masters
 
 | File | What | Size | Notes |
 |---|---|---:|---|
+| `game/catch-background.png` | Fight-screen park background | 1024×1536 | Roy-approved Option 3; exact source copy; opaque; full-resolution WebP |
 | `game/ball-wax.png` | Wax keyhole ball | 1024×1024 | requested redraw/edit |
 | `game/ball-gold.png` | Gold-veined keyhole ball | 1024×1024 | exact approved copy |
 | `game/waypost-gem.png` | Floating purple Waypost | 1024×1024 | exact approved copy |

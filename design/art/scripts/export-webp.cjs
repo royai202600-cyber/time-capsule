@@ -9,6 +9,7 @@ const repoRoot = path.resolve(artRoot, '..', '..');
 const manifest = JSON.parse(fs.readFileSync(path.join(artRoot, 'manifest.json'), 'utf8'));
 
 function maxEdge(relativePath) {
+  if (relativePath === 'game/catch-background.png') return null;
   if (/^(vessels|stamps|portraits|game)\//.test(relativePath) || relativePath === 'seal-wax.png') return 512;
   if (relativePath === 'fx/fx-glint.png') return 512;
   if (relativePath === 'map-asia.png') return 1600;
