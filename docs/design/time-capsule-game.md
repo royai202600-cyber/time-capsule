@@ -29,7 +29,7 @@ Journey stays the name of the map tab. "Public Sea", 大海 and "bottle" wording
 ## Corrupted Capsules
 - They come from the system and hold **only the vessel**. No letter, no note, so there is nothing to write and no AI involved. Letters only ever come from real people.
 - They look cracked, clouded and tarnished. This is **one shared effect** over the existing vessel art, not 67 redraws.
-- **Chosen (2026-11-09):** the existing approved Crack A overlay on top of the dark layer, for all 67 vessels on both map and fight screen. Cracks only; remove the angry-mark fallback.
+- **Final (2026-11-09):** Crack A, trimmed to each vessel's shape, on top of the dark layer. The angry mark is never shown and its code is gone. For the record, it sat inside the vessel's top right: top .3, left .53, size .19 on the fight screen; left 42, bottom 41, 17 px on the map (black stroke 10 over white stroke 18 in a 100 box). The last commit that had it is `76a157a`.
 
 ## Catching
 - **The ball is a red wax ball**, starting point, can change later. Solid wax red, never red and white, never two halves, no band or button.

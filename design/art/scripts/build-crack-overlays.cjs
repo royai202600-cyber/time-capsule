@@ -9,12 +9,13 @@ const sharp = require('sharp');
 const SIZE = 512;
 const GLASS_BOOST = 3; // Clear glass is mostly transparent; cracks still need to show on it.
 const manifest = fs.readFileSync('mobile/src/art/manifest.ts', 'utf8');
-const vessels = [...manifest.matchAll(/['"]?([\w-]+)['"]?: \{\s*assembled: require\('[^']*\/(vessel-[\w-]+)\.webp'\)/g)].map((m) => ({ kind: m[1], file: m[2] }));
+const vessels = [...manifest.matchAll(/['"]?([\w-]+)['"]?: \{\s*['"]?assembled['"]?: require\('[^']*\/(vessel-[\w-]+)\.webp'\)/g)].map((m) => ({ kind: m[1], file: m[2] }));
 
 (async () => {
   const crack = await sharp('design/art/game/crack-overlay.png').resize(SIZE, SIZE).ensureAlpha().raw().toBuffer();
   fs.mkdirSync('public/art/game/cracks', { recursive: true });
   for (const { file } of vessels) {
+    if (process.argv.includes('--missing') && fs.existsSync(path.join('public/art/game/cracks', `${file.replace('vessel-', '')}.webp`))) continue;
     const alpha = await sharp(`public/art/vessels/${file}.webp`).resize(SIZE, SIZE).ensureAlpha().extractChannel('alpha').raw().toBuffer();
     const out = Buffer.from(crack);
     for (let i = 0; i < alpha.length; i++) out[i * 4 + 3] = Math.round(crack[i * 4 + 3] * Math.min(1, (alpha[i] / 255) * GLASS_BOOST));
