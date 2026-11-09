@@ -1,0 +1,30 @@
+[
+  {
+    "path": "design/art/game/ball-wax.png",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nRedraw the exact wax-red ball with the embossed keyhole from the second reference, at the same size, position, shape and lighting as the ball in the third reference, but with no gold anywhere. One colour of wax red. The keyhole is a shallow engraving. No seam, band, button, clasp, glow or halo.\nOne ball only. Preserve the approved normal ball identity and make it sharper at larger resolution. No text, letters, numbers, logos or writing-like marks.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/concepts/lost-and-found/ball/ball-keyhole.png",
+      "design/art/concepts/lost-and-found/ball/ball-keyhole-gold.png"
+    ]
+  },
+  {
+    "path": "design/art/game/wheel/scene-landmark-taipei.png",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size.\nKeep the tower, sky, ground, framing and style exactly the same. Replace only the small domed houses at its foot with low, plain modern East Asian city buildings and a few trees. No domes and no European houses. No people, text, signs, logos, circles or frames.\nThe tower stays loosely inspired, not an exact likeness. The second reference is the edit target; the first reference is style only. Do not copy any vessels or loose objects.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/concepts/lost-and-found/wheel/scene-landmark-taipei.png"
+    ]
+  },
+  {
+    "path": "design/art/game/wheel/scene-square.png",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is an illustrated scene on an opaque square, 1024×1024, not an object on a transparent background. Ignore the style block's lines about transparent background and object size.\nKeep the street lamp, paving, sky, framing and style exactly the same. Replace only the cottages at the sides with low, plain two-storey East Asian shophouses with arched ground floors. No European cottages. No people, text, signs, logos, circles or frames.\nThe second reference is the edit target; the first reference is style only. Do not copy any vessels or loose objects.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/concepts/lost-and-found/wheel/scene-square.png"
+    ]
+  }
+]
