@@ -1,10 +1,30 @@
 {
-  "count": 1,
-  "passed": 1,
+  "count": 2,
+  "passed": 2,
   "failed": [],
   "assets": [
     {
       "path": "stamps/stamp-hkust.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true,
+        "one_ink_color": true
+      },
+      "pass": true
+    },
+    {
+      "path": "stamps/stamp-hunt-hkust-2026-11.png",
       "size": [
         1024,
         1024

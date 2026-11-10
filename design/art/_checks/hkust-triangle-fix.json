@@ -1,0 +1,33 @@
+{
+  "source": "design/art/_checks/hkust-stamp-before-triangle.png",
+  "source_sha256": "9ad2b2bb16df0f7dcd60dd14a11ad884c8a91d282e7cc3b820fcaf94ec2760d2",
+  "output_sha256": "b46e1c2337254a155697b6c63402f2d3c8118cc5fea9df08b4ee70d21b60e60e",
+  "method": "8-connected alpha-positive component from seed(512,560); copy exact surrounding facade RGBA",
+  "triangle_bbox": [
+    488,
+    541,
+    543,
+    594
+  ],
+  "changed_pixel_count": 1467,
+  "facade_sample_xy": [
+    480,
+    560
+  ],
+  "facade_rgba": [
+    47,
+    93,
+    138,
+    0
+  ],
+  "all_pixels_outside_triangle_identical": true,
+  "rgb_planes_byte_identical": true,
+  "difference_bbox": [
+    488,
+    541,
+    543,
+    594
+  ],
+  "regenerated": false,
+  "pass": true
+}

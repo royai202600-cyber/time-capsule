@@ -9341,7 +9341,7 @@
     "https://commons.wikimedia.org/wiki/File:HKUST_campus_view_looking_from_above.jpg"
   ],
   "reference_notes": "PR99's official HKUST Piazza photo confirms the original concave academic frontage; helicopter aerial confirms its wrap around the open Entrance Piazza at Clear Water Bay. Building only; no Red Bird sculpture, university emblem or lettering.",
-  "postprocess": "normalize-stamps.py --only hkust: downscale native1254 square to1024, remap all visible ink to RGB47,93,138 and remove generated paper/white fill through alpha. Existing stamps untouched.",
+  "postprocess": "normalize-stamps.py --only hkust: downscale native1254 square to1024, remap all visible ink to RGB47,93,138 and remove generated paper/white fill through alpha. Existing stamps untouched. Roy review: remove-hkust-triangle.py replaces only the isolated inverted triangle (1467 pixels, bbox488,541,543,594) with exact surrounding facade RGBA(47,93,138,0); all other master pixels unchanged. No regeneration.",
   "native_source": "_checks/hkust-stamp-source.png",
   "ink_rgb": [
     47,
@@ -9355,5 +9355,41 @@
     983
   ],
   "web_export": "public/art/stamps/stamp-hkust.webp"
+},
+{
+  "path": "design/art/stamps/stamp-hunt-hkust-2026-11.png",
+  "what": "HKUST City Hunt stamp; double ring and curved academic building motif",
+  "size_px": [
+    1024,
+    1024
+  ],
+  "transparent": true,
+  "model": "gpt-image-2",
+  "prompt": "Use case: illustration-story. Asset: HKUST City Hunt event Passport stamp, stamp-hunt-hkust-2026-11.png, following City Hunt SOP step3.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nImage1 is required style-sheet A; match this style exactly. Image2 is the corrected HKUST PLACE stamp rendered on paper for transparency-safe reference: it depicts the curved academic building wrapping the Piazza and has NO inverted triangle above the entrance. Use its SAME building motif, window bands, broad concave facade, central rectangular entrance, stepped end blocks and curved paving. It is the identity/composition reference, not text. Image3 is the approved Xinyi CITY HUNT stamp on paper, DOUBLE-RING and INK-STAMP STYLE reference ONLY. Do not copy its tower, envelope, seal, trees or walking path.\nCreate one new round HKUST City Hunt stamp. Its focal motif is the SAME curved academic building from Image2, a broad shallow concave modern multi-storey academic frontage embracing an open rounded Piazza. Keep the building simple and readable at40px,64px,120px. Use simple thick rectangular window marks and horizontal bands, restrained hand-inked detail and slightly irregular stamped edges.\nEVENT BORDER: two clearly separated concentric circular rings, a DOUBLE RING like Image3. Rings slightly imperfect, generous clean transparent negative space. Fit the building and a few sweeping paving arcs comfortably inside the inner circle, keeping its recognizable curve. The double ring makes this the hunt stamp, distinct from Image2's single-ring place stamp.\nONE ink colour ONLY: #2F5D8A, RGB47,93,138. All ink lines, windows, rings and any shading use this one blue. No white paint or other ink; all negative space and outside fully transparent. The exact monochrome stamp rules supersede the generic multi-colour fills in the shared style block. No coloured rendering or filled paper disc.\nStrict exclusions: NO INVERTED TRIANGLE and no mark above the central entrance: that facade panel must remain plain empty negative space, like corrected Image2. No lettering, numerals, emblem, logo, signage, Red Bird, sundial, sculpture, phoenix, monogram, flag, crest, wax seal, letter/envelope, clock tower or dotted route. Do not introduce an icon for the hunt; the double ring is sufficient.\nOutput1024x1024 square RGBA, round design centred, transparent corners, generous outer margin, one complete stamp only. Slightly imperfect ink edges, clear building silhouette, original drawing.",
+  "references": [
+    "design/art/style-sheet.png",
+    "design/art/stamps/stamp-hkust.png",
+    "design/art/stamps/stamp-hunt-xinyi-2026-11.png"
+  ],
+  "tool_reference_renders": [
+    "design/art/style-sheet.png",
+    "design/art/_checks/hkust-stamp-paper.png",
+    "design/art/_checks/hkust-hunt-xinyi-reference.png"
+  ],
+  "reference_notes": "Exact paper-composited reference renders avoid invisible-RGB artefacts in transparent PNG viewing; the masters are the source references. Corrected HKUST building supplies identity/motif; Xinyi supplies only double-ring hunt-stamp style.",
+  "native_source": "_checks/hkust-hunt-stamp-source.png",
+  "postprocess": "normalize-stamps.py --only hunt-hkust-2026-11: downscale native1254 square to1024, remap all visible ink to RGB47,93,138; preserve transparent negative space. No other stamp normalized.",
+  "ink_rgb": [
+    47,
+    93,
+    138
+  ],
+  "alpha_bbox_px": [
+    48,
+    51,
+    972,
+    986
+  ],
+  "web_export": "public/art/stamps/stamp-hunt-hkust-2026-11.webp"
 }
 ]

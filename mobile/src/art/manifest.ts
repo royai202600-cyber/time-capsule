@@ -2050,4 +2050,5 @@ export const stamps: Record<string, ImageSourcePropType> = {
   petronas: require('../../../public/art/stamps/stamp-petronas.webp'),
   'aurele-cotai': require('../../../public/art/stamps/stamp-aurele-cotai.webp'),
   'hunt-xinyi-2026-11': require('../../../public/art/stamps/stamp-hunt-xinyi-2026-11.webp'),
+  'hunt-hkust-2026-11': require('../../../public/art/stamps/stamp-hunt-hkust-2026-11.webp'),
 };

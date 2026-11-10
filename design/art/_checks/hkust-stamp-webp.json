@@ -1,12 +1,26 @@
-{
-  "source": "design/art/stamps/stamp-hkust.png",
-  "file": "public/art/stamps/stamp-hkust.webp",
-  "size": [
-    512,
-    512
-  ],
-  "quality": 85,
-  "exact_resized_alpha": true,
-  "alpha_sha256": "309d45b34e4a38707e7946ad3e96a9a7025682c891af251f17f908863530e585",
-  "pass": true
-}
+[
+  {
+    "source": "design/art/stamps/stamp-hkust.png",
+    "file": "public/art/stamps/stamp-hkust.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "exact_resized_alpha": true,
+    "alpha_sha256": "bdda569d81753b0f15eefc6513e99935e34e394a93238b75c534ad729657fa9c",
+    "pass": true
+  },
+  {
+    "source": "design/art/stamps/stamp-hunt-hkust-2026-11.png",
+    "file": "public/art/stamps/stamp-hunt-hkust-2026-11.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "exact_resized_alpha": true,
+    "alpha_sha256": "5c41564430badd963bd6e5e3584b94acd73158662b1e5f2d4b2678ba8b359ca8",
+    "pass": true
+  }
+]
