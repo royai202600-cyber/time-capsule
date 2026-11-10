@@ -1,4 +1,8 @@
-# Full-body map character options
+# Brainstorm only: full-body map characters
+
+These are brainstorming sketches, not an approved design or implementation plan.
+No character, NPC role, outfit, profile-head technique or map integration has
+been selected or agreed. The labels are suggestions from Codex only.
 
 Roy requested three human NPC options and three player options in the approved
 Time Capsule style, generated with the built-in **GPT Image 2** tool. These are
@@ -17,10 +21,10 @@ complete standing map figures with visible bodies, two legs and both shoes.
 [120 px map comparison](_checks/map-size-review.png) uses unchanged pixels from
 the existing map screenshot as a static backdrop, not a new map or app wiring.
 
-The player faces are illustrative examples. The chosen design still needs a
-separate head/face asset and mask before arbitrary profile pictures can be
-swapped into it. The current PNGs are complete concept illustrations, not
-finished modular sprites or animation sheets.
+The player faces are illustrative examples. Separate head/face layers and masks
+were one possible technical direction suggested by Codex, not a decision by
+Roy or authorized follow-up work. The PNGs are brainstorming illustrations,
+not finished modular sprites or animation sheets.
 
 All six normalized masters are 1024×1024 RGBA with transparent corners and a
 common foot anchor at **(512, 900)**. Only scale and placement were normalized;
@@ -41,4 +45,5 @@ python design/art/scripts/prepare-map-character-options.py
 ```
 
 No app registration, map integration, migration or deployment is included.
-Selection and art approval remain with Roy.
+Keep this as brainstorming reference only. No selection, approval, merge or
+follow-up implementation is pending from this request.
