@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Audit every PNG master for size, alpha, stamp color, and paper seams."""
 
+import argparse
 import json
 from pathlib import Path
 from PIL import Image
@@ -28,11 +29,17 @@ def expected_size(rel: str) -> tuple[int, int]:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--only', nargs='+', help='Audit only these paths relative to design/art.')
+    parser.add_argument('--report', default='assets.json', help='Report filename under _checks/.')
+    args = parser.parse_args()
     results = []
     for path in sorted(ROOT.rglob("*.png")):
         if "_checks" in path.parts:
             continue
         rel = str(path.relative_to(ROOT))
+        if args.only and rel not in args.only:
+            continue
         image = Image.open(path).convert("RGBA")
         alpha = image.getchannel("A")
         corners = [alpha.getpixel(p) for p in ((0, 0), (image.width - 1, 0),
@@ -54,7 +61,9 @@ def main() -> None:
                         "corners_alpha": corners, "checks": checks, "pass": all(checks.values())})
     report = {"count": len(results), "passed": sum(item["pass"] for item in results),
               "failed": [item["path"] for item in results if not item["pass"]], "assets": results}
-    checks_path = ROOT / "_checks" / "assets.json"
+    if args.only and {item['path'] for item in results} != set(args.only):
+        raise ValueError('One or more --only assets were not found')
+    checks_path = ROOT / "_checks" / args.report
     checks_path.write_text(json.dumps(report, indent=2) + "\n")
     print(f"{report['passed']}/{report['count']} PNG masters pass", "failures:", report["failed"])
     if report["failed"]:

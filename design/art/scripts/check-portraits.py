@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Check the ten shared portrait discs at 24/40/60px, including app disc crops."""
+"""Check shared portrait discs at 24/40/60px, including the Keeper dialog crop."""
 import json
 from pathlib import Path
 from PIL import Image,ImageDraw,ImageFont,ImageChops
 ROOT=Path(__file__).resolve().parents[1];PORTRAITS=ROOT/'portraits';CHECKS=ROOT/'_checks';PAPER='#F6F8FB'
-NAMES=[f'portrait-{i:02}.png' for i in range(1,9)]+['portrait-future.png','portrait-sea.png']
+NAMES=[f'portrait-{i:02}.png' for i in range(1,9)]+['portrait-future.png','portrait-sea.png','portrait-keeper.png']
 CROP=(75,96,935,956)
 def font(n):
  p=Path('/System/Library/Fonts/Supplemental/Arial.ttf');return ImageFont.truetype(p,n) if p.exists() else ImageFont.load_default()

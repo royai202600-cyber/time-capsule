@@ -268,7 +268,83 @@ def register_public_sea() -> None:
     print("Public Sea: registered 2 assets; retained", len(entries), "existing manifest records")
 
 
+def register_city_hunt() -> None:
+    """Append City Hunt artwork, preserving all previously registered records."""
+    from PIL import Image
+    path = ROOT / 'manifest.json'
+    raw = path.read_text()
+    entries = json.loads(raw)
+    existing = {e['path']:e for e in entries}
+    specs = json.loads((CHECKS/'city-hunt-art.json').read_text())
+    added = []
+    batch = []
+    for spec in specs:
+        spec = dict(spec)
+        relative = spec.pop('relative_path')
+        im = Image.open(ROOT/relative).convert('RGBA')
+        record = {'path':'design/art/'+relative, 'what':spec.pop('what'),
+                  'size_px':list(im.size), 'transparent':True,
+                  'web_export':'public/art/'+relative.removesuffix('.png')+'.webp', **spec}
+        record['alpha_bbox_px'] = list(im.getchannel('A').getbbox())
+        if record['path'] in existing:
+            if existing[record['path']] != record:
+                raise ValueError('Existing City Hunt record differs: '+relative)
+        else:
+            added.append(record)
+        batch.append(record)
+    if added:
+        prefix = raw[:raw.rfind(']')].rstrip()
+        snippet = json.dumps(added,ensure_ascii=False,indent=2)[2:-2]
+        path.write_text(prefix+',\n'+snippet+'\n]\n')
+    # Keep all approved metadata records byte-for-byte before the new tail.
+    updated = json.loads(path.read_text())
+    assert all(old == new for old,new in zip(entries,updated))
+    readme_path = ROOT/'README.md'
+    readme = readme_path.read_text()
+    prefix,rest = readme.split('## Masters\n',1)
+    table,review = rest.split('## Review\n',1)
+    note = ('- City Hunt art: Letter Keeper from selected sketch A1, matching dialog portrait, '
+            'all eight player figures on the approved shared adult scale, RGB-only blue Waypost gems, '
+            'and the ink-blue double-ring Xinyi hunt stamp. Roy approved the first seven assets at '
+            '`9c247aa`; their PNGs and WebPs remain unchanged. The five remaining figures and stamp '
+            'await whole-PR approval. No app registration, deployment or merge. '
+            'Exact prompts, references, scale and preservation hashes are in `_checks/city-hunt-*.json`.\n\n')
+    if '- City Hunt art test batch:' in prefix:
+        start = prefix.index('- City Hunt art test batch:')
+        end = prefix.index('\n\n', start) + 2
+        prefix = prefix[:start] + note + prefix[end:]
+    elif '- City Hunt art:' not in prefix:
+        prefix += note
+    for e in batch:
+        rel = e['path'].removeprefix('design/art/')
+        if '| `'+rel+'` |' not in table:
+            table = table.rstrip()+'\n'+f"| `{rel}` | {e['what']} | 1024×1024 | awaiting whole-PR approval; see manifest |\n"
+    links = ('[City Hunt figures and anchor guides](_checks/city-hunt-figures.png) · '
+             '[Compact figure review](_checks/city-hunt-figures-review.png) · '
+             '[Keeper portrait at 24/40 px](_checks/portraits-small.png) · '
+             '[Blue/purple gem review](_checks/city-hunt-gems.png)')
+    if links not in review:
+        review += '\n'+links+'\n'
+    final_links = ('[All nine head-and-shoulder facing crops](_checks/city-hunt-facing.png) · '
+                   '[Xinyi event stamp versus Taipei 101 place stamp](_checks/city-hunt-stamp.png)')
+    if final_links not in review:
+        review += '\n'+final_links+'\n'
+    reference = ('- Xinyi hunt stamp silhouette reference: [TAIPEI 101 official sunrise photograph]'
+                 '(https://www.taipei-101.com.tw/asset/img/cover-sunrise.jpg), linked from the '
+                 '[official gallery](https://www.taipei-101.com.tw/tw/explore/photogallery), '
+                 'inspected 2026-11-10. Observed stacked upward-flared tiers and slim spire; '
+                 'used only to inform a smaller loose tower behind the focal letter. '
+                 'The photograph is not reproduced in the artwork or repository.\n')
+    if reference not in review:
+        review += '\n'+reference
+    readme_path.write_text(prefix+'## Masters\n'+table.rstrip()+'\n\n## Review\n'+review)
+    print('City Hunt: registered',len(batch),'assets; retained',len(entries),'existing records')
+
+
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--city-hunt"]:
+        register_city_hunt()
+        raise SystemExit(0)
     if sys.argv[1:] == ["--public-sea"]:
         register_public_sea()
         raise SystemExit(0)

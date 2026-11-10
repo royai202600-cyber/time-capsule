@@ -114,6 +114,8 @@ Do not draw the capsule, wax ball, target rings, Waypost picture, shadows belong
 Option variation: Calm bright overcast light, airy broad slightly irregular tree canopies and softly layered dusty sage bushes. Keep the specified palette and exact layout; no rain, fog, fallen leaves or extra objects.
 ```
 
+- City Hunt art: Letter Keeper from selected sketch A1, matching dialog portrait, all eight player figures on the approved shared adult scale, RGB-only blue Waypost gems, and the ink-blue double-ring Xinyi hunt stamp. Roy approved the first seven assets at `9c247aa`; their PNGs and WebPs remain unchanged. The five remaining figures and stamp await whole-PR approval. No app registration, deployment or merge. Exact prompts, references, scale and preservation hashes are in `_checks/city-hunt-*.json`.
+
 ## Masters
 
 | File | What | Size | Notes |
@@ -435,6 +437,19 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-wishing-lamp-lid.png` | wishing-lamp lid layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-wishing-lamp-smoke.png` | wishing-lamp smoke layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-wishing-lamp.png` | wishing-lamp assembled vessel | 1024×1024 | processed; see manifest |
+| `characters/keeper.png` | Letter Keeper map figure; faithful A1 identity | 1024×1024 | test batch; see manifest |
+| `characters/figure-01.png` | Player 01 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
+| `characters/figure-04.png` | Player 04 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
+| `characters/figure-06.png` | Player 06 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
+| `portraits/portrait-keeper.png` | Letter Keeper round dialog portrait with cap and pale brass-cream disc | 1024×1024 | test batch; see manifest |
+| `game/waypost-gem-blue.png` | Common blue Waypost gem (pre-spin colour) | 1024×1024 | test batch; see manifest |
+| `game/landmark-gem-blue.png` | Landmark blue Waypost gem (pre-spin colour) | 1024×1024 | test batch; see manifest |
+| `characters/figure-02.png` | Player map figure 02; identity matched to portrait-02 | 1024×1024 | awaiting whole-PR approval; see manifest |
+| `characters/figure-03.png` | Player map figure 03; identity matched to portrait-03 | 1024×1024 | awaiting whole-PR approval; see manifest |
+| `characters/figure-05.png` | Player map figure 05; identity matched to portrait-05 | 1024×1024 | awaiting whole-PR approval; see manifest |
+| `characters/figure-07.png` | Player map figure 07; identity matched to portrait-07 | 1024×1024 | awaiting whole-PR approval; see manifest |
+| `characters/figure-08.png` | Player map figure 08; identity matched to portrait-08 | 1024×1024 | awaiting whole-PR approval; see manifest |
+| `stamps/stamp-hunt-xinyi-2026-11.png` | Xinyi City Hunt event stamp; double ring, stepped tower left, focal sealed letter right and dotted walking path | 1024×1024 | awaiting whole-PR approval; see manifest |
 
 ## Review
 
@@ -443,3 +458,9 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 [B3 motion index](_checks/b3-review.md)
 
 [Sea portrait crop review](_checks/portrait-sea-review.png) · [Sea sealed scene comparison](_checks/scene-sea-sealed-review.png)
+
+[City Hunt figures and anchor guides](_checks/city-hunt-figures.png) · [Compact figure review](_checks/city-hunt-figures-review.png) · [Keeper portrait at 24/40 px](_checks/portraits-small.png) · [Blue/purple gem review](_checks/city-hunt-gems.png)
+
+[All nine head-and-shoulder facing crops](_checks/city-hunt-facing.png) · [Xinyi event stamp versus Taipei 101 place stamp](_checks/city-hunt-stamp.png)
+
+- Xinyi hunt stamp silhouette reference: [TAIPEI 101 official sunrise photograph](https://www.taipei-101.com.tw/asset/img/cover-sunrise.jpg), linked from the [official gallery](https://www.taipei-101.com.tw/tw/explore/photogallery), inspected 2026-11-10. Observed stacked upward-flared tiers and slim spire; used only to inform a smaller loose tower behind the focal letter. The photograph is not reproduced in the artwork or repository.

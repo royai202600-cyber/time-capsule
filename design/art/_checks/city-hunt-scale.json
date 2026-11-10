@@ -1,0 +1,50 @@
+{
+  "canonical_source_edge": 1254,
+  "shared_scale": 0.6715063520871143,
+  "reference_height_including_cap": 740,
+  "anchor": {
+    "x": 512,
+    "y": 900
+  },
+  "figures": {
+    "keeper": {
+      "source": "_checks/city-hunt-source-keeper.png",
+      "mirror_to_right": true
+    },
+    "figure-01": {
+      "source": "_checks/city-hunt-source-figure-01.png",
+      "mirror_to_right": false
+    },
+    "figure-04": {
+      "source": "_checks/city-hunt-source-figure-04.png",
+      "mirror_to_right": false
+    },
+    "figure-06": {
+      "source": "_checks/city-hunt-source-figure-06.png",
+      "mirror_to_right": false
+    },
+    "figure-02": {
+      "source": "_checks/city-hunt-source-figure-02.png",
+      "mirror_to_right": false
+    },
+    "figure-03": {
+      "source": "_checks/city-hunt-source-figure-03.png",
+      "mirror_to_right": false
+    },
+    "figure-05": {
+      "source": "_checks/city-hunt-source-figure-05.png",
+      "mirror_to_right": false
+    },
+    "figure-07": {
+      "source": "_checks/city-hunt-source-figure-07.png",
+      "mirror_to_right": false
+    },
+    "figure-08": {
+      "source": "_checks/city-hunt-source-figure-08.png",
+      "mirror_to_right": false
+    }
+  },
+  "clothing_rgb_adjustment": {
+    "figure-04": "Blue upper garment remapped to ink-blue family only; alpha, skin, hair and lower garments retained."
+  }
+}
