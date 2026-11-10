@@ -24,7 +24,8 @@ import type { Tables } from "../../services/database.types";
 import { MAP_PMTILES_URL, sea, SeaError, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
 import { daysSince, distanceText, useSeaText } from "../sea/strings";
 import { game, GameError, GAME_ACTION_RADIUS_M, GAME_ENABLED, type GameState, type CorruptedCapsule, type DevLetter, type LandmarkAttempt, type Nearby, type Waypost } from "../../services/game";
-import { gameArt } from "../../art/manifest";
+import { characters, gameArt } from "../../art/manifest";
+import { figureFor } from "../../components/Figure";
 import { crackOverlays } from "../../art/crackOverlays";
 import { SpinScreen } from "../game/SpinScreen";
 import { sceneKey } from "../game/waypostScene";
@@ -191,8 +192,9 @@ export default function JourneyScreen() {
   const questDot = !!activeHunt && (!activeHunt.joined_at || keeperMark(activeHunt) === "✓");
   const huntPins = useMemo<LivePin[]>(() => activeHunt && showKeeper ? [{
     id: `keeper-${activeHunt.id}`, lat: activeHunt.keeper.lat, lng: activeHunt.keeper.lng, kind: "keeper", vessel: "",
-    portrait: assetUri(keeperPortrait), mark: keeperMark(activeHunt),
+    portrait: assetUri(keeperPortrait), figure: assetUri(characters.keeper), mark: keeperMark(activeHunt),
   }] : [], [activeHunt, showKeeper]);
+  const cooling = (w: Waypost) => !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now();
   const gamePins = useMemo<LivePin[]>(() => [
     // Only what's inside the pickup circle shows, so capsules never crowd the map.
     ...nearby.corrupted.filter((c) => c.id !== throwing?.id && metersTo(c.lat, c.lng) <= GAME_ACTION_RADIUS_M).map<LivePin>((c) => (
@@ -202,8 +204,8 @@ export default function JourneyScreen() {
       // A Landmark with a monument is the building itself: its seal floats on top, at the real spot.
       const monument = w.kind === "landmark" ? MONUMENTS.find((m) => m.id === w.place) : undefined;
       return {
-      id: `way-${w.id}`, lat: monument?.lat ?? w.lat, lng: monument?.lng ?? w.lng, lift: monument ? monumentTop(monument) + 4 : undefined, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: assetUri(w.kind === "landmark" ? gameArt.landmarkGem : gameArt.waypostGem) ?? "",
-      done: !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now(),
+      id: `way-${w.id}`, lat: monument?.lat ?? w.lat, lng: monument?.lng ?? w.lng, lift: monument ? monumentTop(monument) + 4 : undefined, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: assetUri(w.kind === "landmark" ? gameArt.landmarkGem : cooling(w) ? gameArt.waypostGem : gameArt.waypostGemBlue) ?? "",
+      done: cooling(w),
       near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
     }; }),
   ], [nearby, throwing?.id, you?.lat, you?.lng]);
@@ -212,6 +214,7 @@ export default function JourneyScreen() {
   const mapState = useMemo(() => ({
     you, heading, reach: SEA_PICKUP_RADIUS_M,
     portrait: portraitUri(profile?.avatar),
+    figure: assetUri(figureFor(profile?.avatar)),
     youLabel: youLabel && !throwing ? h.thisIsYou : null,
     // While throwing, the capsule is alone on the plain map.
     pins: throwing ? [] : [...items.map<LivePin>((i) => i.kind === "sea"

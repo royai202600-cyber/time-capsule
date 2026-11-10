@@ -70,9 +70,9 @@ export function mapHtml({ pmtiles, center }: { pmtiles: string | null; center: {
 <link rel="stylesheet" href="${MAPLIBRE}/maplibre-gl.css">
 <script src="${MAPLIBRE}/maplibre-gl.js"></script>${pmtiles ? `<script src="${PMTILES}"></script>` : ""}
 <style>
-html,body,#map{--ready:hue-rotate(-130deg) saturate(1.5);margin:0;height:100%;width:100%;background:${C.paper};overflow:hidden;-webkit-tap-highlight-color:transparent;font-family:-apple-system,"Noto Sans TC",sans-serif}
+html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hidden;-webkit-tap-highlight-color:transparent;font-family:-apple-system,"Noto Sans TC",sans-serif}
 .maplibregl-ctrl-attrib{font-size:9px;background:rgba(246,248,251,.7)!important}
-.you{position:absolute;width:52px;height:52px}
+.you{position:absolute;width:52px;height:52px;z-index:9}
 .you .pulse{position:absolute;left:-14px;top:-14px;width:80px;height:80px;border-radius:50%;background:${C.lightBlue}33;animation:pulse 2.6s ease-out infinite}
 .you .cone{position:absolute;left:6px;top:-30px;width:40px;height:40px;background:conic-gradient(from -25deg at 50% 100%,${C.lightBlue}88 0deg,transparent 50deg);border-radius:50% 50% 0 0;transform-origin:50% 100%}
 .face{position:absolute;inset:0;border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 3px 10px rgba(22,38,63,.3);background:${C.cream}}
@@ -102,22 +102,23 @@ html,body,#map{--ready:hue-rotate(-130deg) saturate(1.5);margin:0;height:100%;wi
 .pin.waypost{width:40px;height:50px}
 .pin.waypost .disc{left:6px;width:28px;height:8px}
 .pin.waypost .post{position:absolute;left:7px;bottom:9px;width:26px;height:41px;background-size:122px;background-position:center;background-repeat:no-repeat;animation:bob 3.6s ease-in-out infinite}
-/* Ready to spin: ink blue (tinted until the blue gem art lands). Spun: the original purple. */
-.pin.waypost .post{filter:var(--ready)}
-.pin.waypost.done .post{filter:none}
-.pin.waypost.near:not(.done) .post{filter:var(--ready) drop-shadow(0 0 6px ${C.lightBlue}) brightness(1.12)}
+/* Ready to spin: the blue gem art. Spun: the purple one (the app swaps the file). */
+.pin.waypost.near:not(.done) .post{filter:drop-shadow(0 0 6px ${C.lightBlue}) brightness(1.08)}
 .pin.waypost.near:not(.done) .disc{background:radial-gradient(${C.lightBlue}AA,transparent 70%)}
 /* The Letter Keeper: a person, with a brass wax seal over his head (! or ✓). */
-.pin.keeper{width:56px;height:96px;z-index:6}
+.pin.keeper{width:56px;height:100px;z-index:6}
 .pin.keeper .disc{left:10px;width:36px;height:10px}
 .pin.keeper .fig{position:absolute;left:4px;bottom:6px;width:48px;height:48px}
 .pin.keeper .fig .face{border-color:${C.brass}}
-.pin.keeper .fig.full{left:-12px;bottom:2px;width:80px;height:80px;background-size:contain;background-position:center bottom;background-repeat:no-repeat}
+.pin.keeper .fig.full{left:-14px;bottom:-8px;width:84px;height:84px;background-size:contain;background-position:center;background-repeat:no-repeat;filter:drop-shadow(0 2px 3px rgba(22,38,63,.25))}
 .pin.keeper .seal{position:absolute;left:14px;top:0;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#E2C58A,${C.brass} 60%,#A9843F);box-shadow:0 2px 6px rgba(22,38,63,.35),inset 0 0 0 2px #E8D3A3;color:#fff;font:700 17px/28px Georgia,serif;text-align:center;animation:float 2.2s ease-in-out infinite}
 /* With full-body art the seal sits above his head. */
-.pin.keeper .fig.full+.seal{top:-22px}
+.pin.keeper .fig.full+.seal{top:4px}
 @keyframes labelIn{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translateX(-50%)}}
 @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.06)}}
+.you .me{position:absolute;left:-17px;top:-49px;width:86px;height:86px;background-size:contain;background-position:center;background-repeat:no-repeat;filter:drop-shadow(0 2px 3px rgba(22,38,63,.25));transition:transform .25s}
+.you .me.left{transform:scaleX(-1)}
+.you.fig .label{bottom:96px}
 .you .label{animation:labelIn .3s ease-out;position:absolute;left:50%;bottom:66px;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:12px;background:${C.ink};color:${C.brass};box-shadow:0 2px 8px rgba(22,38,63,.3);cursor:pointer}
 .you .label:after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:${C.ink}}
 /* Landmark: a floating seal badge with a four-point star, the same for every Landmark (on top of its monument when it has one), never a gem. Plum once beaten. */
@@ -170,11 +171,16 @@ const relift=()=>{for(const [,m] of marks){if(m.lift)m.marker.setOffset(liftOffs
 map.on('move',relift);map.on('resize',relift);
 function render(){
   if(you){
-    if(!youMark){const el=document.createElement('div');el.className='you';el.innerHTML='<div class="pulse"></div><div class="cone"></div>'+face(state.portrait);youMark=new maplibregl.Marker({element:el,rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([you.lng,you.lat]).addTo(map)}
+    if(!youMark){const el=document.createElement('div');el.className='you'+(state.figure?' fig':'');el.innerHTML='<div class="pulse"></div><div class="cone"></div>'+(state.figure?'<div class="me" style="background-image:url('+state.figure+')"></div>':face(state.portrait));youMark=new maplibregl.Marker({element:el,rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([you.lng,you.lat]).addTo(map)}
     else youMark.setLngLat([you.lng,you.lat]);
-    const yel=youMark.getElement();let lab=yel.querySelector('.label');
+    const yel=youMark.getElement();
+    // Swap face ↔ figure if the profile arrived after the map.
+    const want=state.figure||'';if((yel.dataset.fig||'')!==want){yel.dataset.fig=want;yel.classList.toggle('fig',!!want);const old=yel.querySelector('.me,.face');const n=document.createElement('div');n.innerHTML=want?'<div class="me" style="background-image:url('+want+')"></div>':face(state.portrait);old?old.replaceWith(n.firstChild):yel.appendChild(n.firstChild)}
+    let lab=yel.querySelector('.label');
     if(state.youLabel){if(!lab){lab=document.createElement('div');lab.className='label';lab.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:'you'})});yel.appendChild(lab)}lab.textContent=state.youLabel}else if(lab&&!lab.dataset.out){lab.dataset.out='1';lab.style.transition='opacity .4s';lab.style.opacity='0';setTimeout(()=>lab.remove(),420)}
     youMark.getElement().querySelector('.cone').style.transform='rotate('+((heading||0)-map.getBearing())+'deg)';
+    // The figure faces right in the art: mirror it when walking toward the left of the screen.
+    const me=yel.querySelector('.me');if(me)me.classList.toggle('left',Math.sin(((heading||0)-map.getBearing())*Math.PI/180)<-.2);
     map.getSource('reach')&&map.getSource('reach').setData({type:'FeatureCollection',features:[circle(you,state.reach||100)]});
   }
   const want=new Set(state.pins.map(p=>p.id));

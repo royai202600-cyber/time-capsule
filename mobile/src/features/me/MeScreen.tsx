@@ -4,6 +4,7 @@ import { useMusic } from "../../services/music";
 import { onSoundEffectsChange, playSound, setSoundEffects, soundEffectsOn } from "../../services/sfx";
 import { router, useFocusEffect } from "expo-router";
 import { goBack } from "../../navigation";
+import { Figure, figureFor } from "../../components/Figure";
 import { Avatar } from "../../components/Avatar";
 import { LegalLinks } from "../../components/LegalLinks";
 import { Screen, Heading, Button, Bar, BackButton } from "../../components/Screen";
@@ -61,7 +62,10 @@ export default function MeScreen() {
   return <Screen>
     <Bar><BackButton label={t("back")} onPress={goBack} /><Heading>{t("me.title")}</Heading></Bar>
     <View style={{ alignItems: "center", gap: 8, paddingVertical: 18 }}>
-      <Avatar avatar={profile?.avatar} size={112} />
+      <View style={{ flexDirection: "row", alignItems: "flex-end", gap: 18 }}>
+        <Avatar avatar={profile?.avatar} size={112} />
+        <Figure source={figureFor(profile?.avatar)} height={128} />
+      </View>
       <Text style={{ fontFamily: serif, color: C.ink, fontSize: 25 }}>{profile?.name}</Text>
       {!!profile?.city && <Text style={{ fontFamily: sans, color: C.muted }}>{profile.city}</Text>}
       <Pressable accessibilityRole="button" onPress={() => router.push("/profile")}><Text style={{ color: C.blue, fontFamily: sans }}>{t("me.edit")}</Text></Pressable>

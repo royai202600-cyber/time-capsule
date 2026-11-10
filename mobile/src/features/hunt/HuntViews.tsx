@@ -3,15 +3,15 @@ import { Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { ArtIcon } from "../../components/ArtIcon";
 import { useLanguage } from "../../i18n";
 import { useReducedMotion } from "../../useReducedMotion";
-import { portraits } from "../../art/manifest";
+import { characters } from "../../art/manifest";
 import { distanceText } from "../sea/strings";
 import { GAME_ACTION_RADIUS_M } from "../../services/game";
 import { huntStatus, KEEPER_SPOT, readyToReturn, type Hunt } from "../../services/hunt";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { timeUntil, useHuntText } from "./strings";
 
-/** The Letter Keeper's round portrait. Placeholder (an older man, unlike the default player face) until his own art lands (H1 art). */
-export const keeperPortrait = portraits["06"];
+/** The Letter Keeper's round dialog portrait (City Hunt art). */
+export const keeperPortrait = characters.keeperPortrait;
 
 const when = (h: Hunt, language: "zh" | "en", t: ReturnType<typeof useHuntText>) =>
   huntStatus(h) === "upcoming" ? t.opensIn(timeUntil(h.starts_at, language)) : t.endsIn(timeUntil(h.ends_at, language));

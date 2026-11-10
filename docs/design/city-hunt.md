@@ -99,9 +99,9 @@ Steps 2–4 can be done in any order, and only count **after** check-in and **be
 | Who sees it | Other people (letters, bottles, Friends) | Only you, on Journey |
 | What it is | Illustrated portrait now, your uploaded photo later | Always an illustrated full-body figure |
 
-- **Nine figures, one per existing portrait.** Picking portrait 03 gives you figure 03. The portrait picker shows each face with its figure, and Me shows your figure.
+- **Eight figures, one per pickable portrait (01–08; art in PR #92).** Picking portrait 03 gives you figure 03. The portrait picker shows each face with its figure, and Me shows your figure.
 - **Uploading a photo later changes only the profile picture.** You keep your figure. No AI cartoon of anyone's photo. People with an old SVG avatar get figure 01 until they choose a portrait.
-- **On the map:** your figure replaces the round face, standing at the centre on the existing pulse and heading cone. A gentle bob while you move, flipped to face left or right. Your level is a small brass badge at its feet.
+- **On the map:** your figure replaces the round face, standing at the centre on the existing pulse and heading cone. A gentle bob while you move, flipped to face left or right. (The level stays in the top chip; no badge at the feet, to keep the figure clean.)
 - **First visit to Journey:** a small label, 「這是你」 / "This is you", appears over your figure for about three seconds, fades by itself, and never shows again (Roy, 2026-11-10).
 - **Later, not now:** outfits as level rewards (Codex's B1 jacket, B2 hoodie and B3 coat fit).
 

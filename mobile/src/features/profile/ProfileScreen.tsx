@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { goBack } from "../../navigation";
 import { Screen, Heading, Body, Button, BackButton, Bar } from "../../components/Screen";
 import { Avatar, PORTRAITS } from "../../components/Avatar";
+import { Figure, figureFor } from "../../components/Figure";
 import { portraits } from "../../art/manifest";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
@@ -42,7 +43,7 @@ export default function ProfileScreen() {
   };
   return <Screen>
     <Bar>{!!profile && <BackButton label={t("back")} onPress={goBack} />}<Heading>{t(profile ? "profile.editTitle" : "profile.title")}</Heading></Bar>
-    <View style={{ alignItems: "center", marginVertical: 12 }}><Avatar avatar={selected} size={110} /></View>
+    <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "flex-end", gap: 18, marginVertical: 12 }}><Avatar avatar={selected} size={110} /><Figure source={figureFor(selected)} height={128} /></View>
     <Body>{t("nameLabel")}</Body>
     <TextInput accessibilityLabel={t("nameLabel")} value={name} onChangeText={setName} maxLength={40} style={{ borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 12, color: C.ink, backgroundColor: C.white }} />
     <Body>{t("cityLabel")}</Body>
