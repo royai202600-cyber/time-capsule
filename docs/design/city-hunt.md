@@ -85,7 +85,7 @@ Steps 2–4 can be done in any order, and only count **after** check-in and **be
   - Open, not joined: name, place, time left, the reward, and **Join**.
   - Joined: the five steps as a checklist with counts (2/3, 4/5), the time left, and **Show on map**.
   - Finished: the stamp and "Finished".
-- **On the map during a hunt** (for players who joined): the Letter Keeper with his marker, the five hunt Wayposts with a thin brass ring, and Taipei 101 as usual. Players who haven't joined still see him with **!** when they are nearby.
+- **On the map during a hunt** (for players who joined): the Letter Keeper with his marker and Taipei 101 as usual. Hunt Wayposts look like every other Waypost, with no ring (Roy, 2026-11-10). Players who haven't joined still see him with **!** when they are nearby.
 - **Wayposts by colour:** **ink blue `#2F5D8A`** when you can spin it, and **purple** (today's colour) during its cooldown after you spin. This replaces today's fading. Landmarks follow the same rule but stay larger.
 - **Passport:** a "City Hunts" section for hunt stamps, below the place stamps.
 - **Toy-scale city (Roy, 2026-11-10):** map buildings are drawn at 35% of their real height and never above 40 m, so tall towers never wall off the pickup circle.

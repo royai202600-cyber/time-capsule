@@ -114,9 +114,6 @@ html,body,#map{--ready:hue-rotate(-130deg) saturate(1.5);margin:0;height:100%;wi
 .pin.waypost.done .post{filter:none}
 .pin.waypost.near:not(.done) .post{filter:var(--ready) drop-shadow(0 0 6px ${C.lightBlue}) brightness(1.12)}
 .pin.waypost.near:not(.done) .disc{background:radial-gradient(${C.lightBlue}AA,transparent 70%)}
-/* A City Hunt stop: a thin brass ring on the ground. */
-.pin.hunt .disc{border:2px solid ${C.brass};box-sizing:border-box;background:radial-gradient(${C.brass}33,transparent 70%)}
-.pin.waypost.hunt .disc{left:2px;width:36px;height:12px;bottom:-2px}
 /* The Letter Keeper: a person, with a brass wax seal over his head (! or ✓). */
 .pin.keeper{width:56px;height:96px;z-index:6}
 .pin.keeper .disc{left:10px;width:36px;height:10px}
