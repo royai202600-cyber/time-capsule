@@ -7,7 +7,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| H2 HKUST | Register approved `red-bird` as the earned Landmark vessel | Codex → Roy | App wiring, bilingual names, earned catalogue row and real-JWT award check; app deploys before the migration. The HKUST map extract, permanent Landmark Waypost and City Hunt remain separate. |
 | H1 backend | City Hunt tables and RPCs, seed the Xinyi hunt (`docs/design/city-hunt.md`, backend contract) | Codex | `hunt_list/join/check_in/finish`, server-side progress from spin/catch/landmark win, Passport hunt stamps, Xinyi hunt open until 2026-11-30 23:59 Asia/Taipei; real-JWT checks pass and the test account can complete the route with the walk control. |
 | H1 art | Letter Keeper, nine player map figures, blue Waypost/Landmark gems, Xinyi hunt stamp (`gpt-image-2`) | Art session → Codex | Roy approves the three-figure test, then the full set; art-only PR merged. |
 | S1 | Public Sea: sea bottles as capsules + live MapLibre Journey (`docs/design/public-sea.md`) | Claude UI → Codex backend | UI/backend #67/#69 and map worker #73 released; 60 shores/six RPCs applied after app confirmation. Real-JWT sealed-content checks passed; disposable fixtures removed and dedicated Taipei demos retained. Roy confirmed physical Expo Go map/pickup, then reloaded and passed the follow-up pin/control fixes. Follow-up removes fog, duplicate pin pickup labels and screen offsets, adds a locate icon, and fixes safe-area/control layers plus Safari dynamic viewport. Browser compact/tall 375 px pan/control/Create checks pass; Roy approved creating and merging the final Journey controls PR after green CI; production confirmation follows. Later local changes add half-phone-width pickup-circle framing, all received place capsule pins across cities, compact bold locate-blue discovery badge 「附近有什麼」 / “what’s waiting” docked flush right with square right corners (badge and locate backgrounds at 90% opacity), and the restored red bottle pill labelled 「放下一個瓶子」 / “Drop a bottle.” Unlimited pickup migration `20261108105331` applied with Roy’s explicit approval after hosted rollback/security checks. |
@@ -53,6 +52,8 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+
+- HKUST Red Bird vessel: PR #100 passed CI 42803455037, owner-account squash-merged as `746040c`, and owner release `f553ce8` is live. Migration `20261110114000_hkust_red_bird_vessel` is applied. A disposable real-JWT HKUST Landmark win granted one vessel and Passport stamp; 375 px zh/en Shop, Cabinet, Album, idle, Reduce Motion and letter opening checks passed. Fixture was removed. Permanent HKUST map coverage, Landmark Waypost and hunt remain separate.
 
 - H2 Senado test hunt: daily-reset 800 m Senado Square hunt open every day with no planned end. PRs #95/#96/#97/#98 merged; three migrations applied; rollback and real-JWT full route/security checks, 375 px zh/en map and Quest checks passed; types regenerated; disposable fixtures removed. Passport uses the current generic hunt stamp until art lands.
 
