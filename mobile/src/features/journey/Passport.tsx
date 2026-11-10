@@ -12,11 +12,13 @@ import { C, motion, radii, sans, serif, shadows, spacing } from "../../theme";
 type Place = Tables<"places">;
 type Stamp = { place: Place; openedAt: string | null };
 const art = manifest as typeof manifest & { passportCover?: ImageSourcePropType; passportPage?: ImageSourcePropType; stamps?: Record<string, ImageSourcePropType> };
-export function Passport({ visible, onClose, userId, stamps }: {
+export function Passport({ visible, onClose, userId, stamps, hunts = [] }: {
   visible: boolean;
   onClose: () => void;
   userId: string;
   stamps: Stamp[];
+  /** City Hunt stamps, one per finished hunt. */
+  hunts?: { id: string; name_zh: string; name_en: string; at: string }[];
 }) {
   const { t, language } = useLanguage();
   const reduced = useReducedMotion();
@@ -51,6 +53,8 @@ export function Passport({ visible, onClose, userId, stamps }: {
         <ScrollView contentContainerStyle={{ padding: spacing.md, flexDirection: "row", flexWrap: "wrap", gap: spacing.md, backgroundColor: C.cream }}>
           <Image source={art.passportPage} resizeMode="stretch" pointerEvents="none" style={{ position: 'absolute', width: '100%', height: '100%' }} />
           {shown !== null && stamps.map((stamp) => <StampSlot key={stamp.place.id} stamp={stamp} language={language} animate={!!stamp.openedAt && !shown.includes(stamp.place.id)} reduced={reduced} onStamped={() => remember(stamp.place.id)} />)}
+          {shown !== null && hunts.length > 0 && <Text style={{ width: "100%", fontFamily: serif, fontSize: 17, color: C.plum, marginTop: spacing.sm }}>{t("journey.huntStamps")}</Text>}
+          {shown !== null && hunts.map((hunt) => <HuntStamp key={hunt.id} hunt={hunt} language={language} />)}
         </ScrollView>
       </View>
     </View>
@@ -94,5 +98,16 @@ function StampSlot({ stamp, language, animate, reduced, onStamped }: {
     <Text numberOfLines={2} style={{ fontFamily: serif, color: C.ink, textAlign: "center", marginTop: spacing.sm }}>{name}</Text>
     {stamp.openedAt && <Text style={{ fontFamily: sans, color: C.muted, fontSize: 11 }}>{new Date(stamp.openedAt).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US")}</Text>}
     {stamp.place.brand_vessel && <Text style={{ fontFamily: sans, color: C.brass, fontSize: 10 }}>{t("journey.brandStamp")}</Text>}
+  </View>;
+}
+
+function HuntStamp({ hunt, language }: { hunt: { id: string; name_zh: string; name_en: string; at: string }; language: "zh" | "en" }) {
+  const source = art.stamps?.[`hunt-${hunt.id}`];
+  return <View style={{ width: "47%", minHeight: 152, borderWidth: 1, borderColor: C.brass, borderStyle: "dashed", borderRadius: radii.md, padding: spacing.sm, alignItems: "center", justifyContent: "center", backgroundColor: "#FFF9EA", ...shadows.card }}>
+    <View style={{ width: 86, height: 86, borderRadius: 43, borderWidth: 3, borderColor: C.wax, justifyContent: "center", alignItems: "center", transform: [{ rotate: "-4deg" }] }}>
+      {source ? <Image source={source} style={{ width: 76, height: 76 }} resizeMode="contain" /> : <ArtIcon name="quest" color={C.wax} size={34} />}
+    </View>
+    <Text numberOfLines={2} style={{ fontFamily: serif, color: C.ink, textAlign: "center", marginTop: spacing.sm }}>{language === "zh" ? hunt.name_zh : hunt.name_en}</Text>
+    <Text style={{ fontFamily: sans, color: C.muted, fontSize: 11 }}>{new Date(hunt.at).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US")}</Text>
   </View>;
 }

@@ -1958,6 +1958,21 @@ export const portraits: Record<string, ImageSourcePropType> = {
   // "To whoever passes by" recipient: not a person preset, so the profile picker never lists it.
   sea: require('../../../public/art/portraits/portrait-passerby.webp'),
 };
+/** Full-body map figures (City Hunt art, PR #92): portrait NN → figure NN; old SVG avatars use 01.
+ * Square canvas, feet at (0.5, 0.879) of it, standing height ≈ 0.72 of its height; they face the viewer's right. */
+export const characters = {
+  figures: {
+    '01': require('../../../public/art/characters/figure-01.webp'), '02': require('../../../public/art/characters/figure-02.webp'),
+    '03': require('../../../public/art/characters/figure-03.webp'), '04': require('../../../public/art/characters/figure-04.webp'),
+    '05': require('../../../public/art/characters/figure-05.webp'), '06': require('../../../public/art/characters/figure-06.webp'),
+    '07': require('../../../public/art/characters/figure-07.webp'), '08': require('../../../public/art/characters/figure-08.webp'),
+  } as Record<string, ImageSourcePropType>,
+  keeper: require('../../../public/art/characters/keeper.webp'),
+  /** The Letter Keeper's round dialog portrait (standard portrait disc; not a profile choice). */
+  keeperPortrait: require('../../../public/art/portraits/portrait-keeper.webp'),
+  feetY: 0.879,
+  standing: 0.72,
+};
 export const scenes = {
   welcome: require('../../../public/art/scenes/scene-welcome.webp'),
   emptyInbox: require('../../../public/art/scenes/scene-empty-inbox.webp'),
@@ -1970,6 +1985,8 @@ export const gameArt = {
   hitDust: require('../../../public/art/game/hit-dust.webp'),
   catchBackground: require('../../../public/art/game/catch-background.webp'),
   waypostGem: require('../../../public/art/game/waypost-gem.webp'),
+  /** Ready to spin (ink blue); the purple file is the after-spin state. */
+  waypostGemBlue: require('../../../public/art/game/waypost-gem-blue.webp'),
   landmarkGem: require('../../../public/art/game/landmark-gem.webp'),
   wheel: {
     park: require('../../../public/art/game/wheel/scene-park.webp'),
@@ -2019,4 +2036,5 @@ export const stamps: Record<string, ImageSourcePropType> = {
   wumen: require('../../../public/art/stamps/stamp-wumen.webp'),
   petronas: require('../../../public/art/stamps/stamp-petronas.webp'),
   'aurele-cotai': require('../../../public/art/stamps/stamp-aurele-cotai.webp'),
+  'hunt-xinyi-2026-11': require('../../../public/art/stamps/stamp-hunt-xinyi-2026-11.webp'),
 };
