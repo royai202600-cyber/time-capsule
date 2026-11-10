@@ -4,7 +4,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase";
 import { distanceMeters } from "./data";
-import { GAME_ACTION_RADIUS_M, onGameEvent, type Coords, type GameState, type Waypost } from "./game";
+import { GAME_ACTION_RADIUS_M, onGameEvent, type Coords, type Waypost } from "./game";
 
 export type HuntStepKey = "checkin" | "spin" | "restore" | "landmark" | "return";
 export type HuntStep = { key: HuntStepKey; goal: number; count: number };
@@ -20,7 +20,7 @@ export type Hunt = {
   /** Counted on this device only, before the backend is live. */
   preview?: boolean;
 };
-export type HuntFinish = { hunt: Hunt; xp_gained: number; gold_gained: number; state: GameState | null };
+export type HuntFinish = { hunt: Hunt; xp_gained: number; gold_gained: number };
 
 /** Where each hunt's Letter Keeper stands, for his lines. Falls back to "the starting point". */
 export const KEEPER_SPOT: Record<string, { zh: string; en: string }> = {
@@ -43,7 +43,13 @@ const missing = (e: { message?: string; code?: string } | null) => !!e && (e.cod
 const CODES = ["too_far", "closed", "not_joined", "not_checked_in", "incomplete", "already_finished", "too_fast"] as const;
 export type HuntErrorCode = typeof CODES[number] | "unknown";
 export class HuntError extends Error { constructor(public code: HuntErrorCode) { super(code); } }
-const fail = (e: { message?: string } | null) => { if (e) throw new HuntError(CODES.find((c) => e.message?.includes(c)) ?? "unknown"); };
+// The server's messages ("join first", "check in first", "already finished") mapped to our codes.
+const ALIASES: [string, HuntErrorCode][] = [["join first", "not_joined"], ["check in first", "not_checked_in"], ["already finished", "already_finished"]];
+const fail = (e: { message?: string } | null) => {
+  if (!e) return;
+  const m = e.message ?? "";
+  throw new HuntError(ALIASES.find(([text]) => m.includes(text))?.[1] ?? CODES.find((c) => m.includes(c)) ?? "unknown");
+};
 const signedIn = async () => !!(await supabase.auth.getSession()).data.session;
 
 // ---------- preview (device-only) ----------
@@ -164,7 +170,7 @@ export const hunt = {
     if (!readyToReturn(h)) throw new HuntError("incomplete");
     progress.finished_at = new Date().toISOString(); save();
     // The preview grants nothing: rewards only ever come from the server.
-    return { hunt: withProgress(previewHunt!), xp_gained: 0, gold_gained: 0, state: null };
+    return { hunt: withProgress(previewHunt!), xp_gained: 0, gold_gained: 0 };
   },
   /** Hunt stamps finished in the preview, shown in the Passport alongside the server's. */
   previewStamps(): { id: string; name_zh: string; name_en: string; at: string }[] {
