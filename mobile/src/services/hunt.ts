@@ -38,7 +38,10 @@ export const keeperMark = (h: Hunt): "!" | "✓" | null =>
   h.finished_at ? null : readyToReturn(h) ? "✓" : !h.checked_in_at ? "!" : null;
 
 // ---------- live ----------
-const rpc = supabase.rpc as unknown as (fn: string, args?: Record<string, unknown>) => Promise<{ data: unknown; error: { message?: string; code?: string } | null }>;
+// Call through the client (never a detached supabase.rpc, which loses its `this`).
+type RpcResult = { data: unknown; error: { message?: string; code?: string } | null };
+const rpc = (fn: string, args?: Record<string, unknown>): Promise<RpcResult> =>
+  (supabase as unknown as { rpc: (f: string, a?: Record<string, unknown>) => Promise<RpcResult> }).rpc(fn, args);
 const missing = (e: { message?: string; code?: string } | null) => !!e && (e.code === "PGRST202" || /could not find the function|does not exist/i.test(e.message ?? ""));
 const CODES = ["too_far", "closed", "not_joined", "not_checked_in", "incomplete", "already_finished", "too_fast"] as const;
 export type HuntErrorCode = typeof CODES[number] | "unknown";

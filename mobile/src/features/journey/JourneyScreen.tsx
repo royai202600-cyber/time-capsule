@@ -74,6 +74,8 @@ export default function JourneyScreen() {
   const [heading, setHeading] = useState<number | null>(null);
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [nearby, setNearby] = useState<Nearby>({ corrupted: [], wayposts: [] });
+  const nearbyRef = useRef(nearby);
+  nearbyRef.current = nearby;
   const [throwing, setThrowing] = useState<CorruptedCapsule | null>(null);
   const [devLetter, setDevLetter] = useState<DevLetter | null>(null);
   const [fight, setFight] = useState<LandmarkAttempt | null>(null);
@@ -126,9 +128,11 @@ export default function JourneyScreen() {
     if (!GAME_ENABLED || !at) return;
     try {
       const [state, around, stamps] = await Promise.all([game.state(), game.nearby({ lat: at.lat, lng: at.lng, accuracy: at.accuracy }), game.passport()]);
-      setGameState(state); setNearby(around); setPassportStamps(stamps.places); setHuntStamps(stamps.hunts);
-      setHuntList(await hunts.list({ userId, at, known: around.wayposts, previewAllowed: __DEV__ || isTestLocationUser(userId) }));
+      setGameState(state); setNearby(around); nearbyRef.current = around; setPassportStamps(stamps.places); setHuntStamps(stamps.hunts);
     } catch { /* the map still works without the game */ }
+    try {
+      setHuntList(await hunts.list({ userId, at, known: nearbyRef.current.wayposts, previewAllowed: __DEV__ || isTestLocationUser(userId) }));
+    } catch (e) { if (__DEV__) console.warn("City Hunt list failed", e); }
   }, [cell]);
   useEffect(() => onHuntChange(() => { void loadGame(); }), [loadGame]);
   useFocusEffect(useCallback(() => {
