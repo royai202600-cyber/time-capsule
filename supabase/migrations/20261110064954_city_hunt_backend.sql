@@ -234,11 +234,11 @@ begin
 end $$;
 
 revoke all on function private.hunt_object(text,uuid),private.hunt_action(text,uuid,double precision,double precision)
-  from public,anon,authenticated;
+  from public,anon,authenticated,service_role;
 revoke all on function public.hunt_list(double precision,double precision),public.hunt_join(text),
   public.hunt_check_in(text,double precision,double precision,double precision),
   public.hunt_finish(text,double precision,double precision,double precision)
-  from public,anon,authenticated;
+  from public,anon,authenticated,service_role;
 grant execute on function public.hunt_list(double precision,double precision),public.hunt_join(text),
   public.hunt_check_in(text,double precision,double precision,double precision),
   public.hunt_finish(text,double precision,double precision,double precision)

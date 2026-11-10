@@ -21,6 +21,9 @@ select pg_temp.require_ok((select count(*)=5 from public.hunt_wayposts where hun
 select pg_temp.require_ok(not has_function_privilege('anon',
   'public.hunt_finish(text,double precision,double precision,double precision)','execute'),
   'anonymous hunt finish denied');
+select pg_temp.require_ok(not has_function_privilege('service_role',
+  'public.hunt_finish(text,double precision,double precision,double precision)','execute'),
+  'hunt RPC granted to authenticated only');
 select pg_temp.require_ok(not has_table_privilege('authenticated','public.hunt_progress','insert')
   and not has_table_privilege('authenticated','public.hunt_progress','update'),
   'direct progress writes denied');
