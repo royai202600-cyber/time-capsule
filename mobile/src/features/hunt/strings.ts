@@ -1,6 +1,11 @@
 import { useLanguage } from "../../i18n";
 import type { HuntErrorCode, HuntStepKey } from "../../services/hunt";
 
+const ZH = ["零", "一", "兩", "三", "四", "五", "六", "七", "八", "九", "十"];
+const EN = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+const zhCount = (n: number) => ZH[n] ?? String(n);
+const enCount = (n: number) => EN[n] ?? String(n);
+
 const strings = {
   zh: {
     quest: "任務",
@@ -27,7 +32,8 @@ const strings = {
     } as Record<HuntStepKey, string>,
     lineBefore: "我在這裡守著一些信。今天的城市裡有些膠囊破了，願意幫我走一趟嗎？",
     lineWaiting: (spot: string) => `我在${spot}等你。到了再跟我說一聲。`,
-    lineCheckIn: "好，路線在地圖上了。轉三座驛站、修好五個膠囊，最後去101。",
+    lineCheckIn: (spin: number, restore: number, landmark: string) => `好，路線在地圖上了。轉${zhCount(spin)}座驛站、修好${zhCount(restore)}個膠囊，最後去${landmark}。`,
+    theLandmark: "地標",
     lineDuring: "慢慢走，膠囊不會跑掉。",
     lineDone: "你都修好了。這枚印章是你的。",
     lineAfter: "謝謝你今天走這一趟。下次尋寶見。",
@@ -76,7 +82,8 @@ const strings = {
     } as Record<HuntStepKey, string>,
     lineBefore: "I look after letters here. Some capsules in the city cracked today. Will you walk a route for me?",
     lineWaiting: (spot: string) => `I'm waiting at ${spot}. Come and find me when you're here.`,
-    lineCheckIn: "Good, the route is on your map. Spin three Wayposts, mend five capsules, then go to 101.",
+    lineCheckIn: (spin: number, restore: number, landmark: string) => `Good, the route is on your map. Spin ${enCount(spin)} Wayposts, mend ${enCount(restore)} capsules, then go to ${landmark}.`,
+    theLandmark: "the Landmark",
     lineDuring: "Take your time. The capsules aren't going anywhere.",
     lineDone: "You mended them all. This stamp is yours.",
     lineAfter: "Thank you for walking with me today. See you at the next hunt.",

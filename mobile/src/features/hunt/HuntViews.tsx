@@ -6,7 +6,7 @@ import { useReducedMotion } from "../../useReducedMotion";
 import { characters } from "../../art/manifest";
 import { distanceText } from "../sea/strings";
 import { GAME_ACTION_RADIUS_M } from "../../services/game";
-import { huntStatus, KEEPER_SPOT, readyToReturn, type Hunt } from "../../services/hunt";
+import { huntStatus, keeperSpot, landmarkName, stepGoal, readyToReturn, type Hunt } from "../../services/hunt";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { timeUntil, useHuntText } from "./strings";
 
@@ -83,13 +83,13 @@ export function KeeperCard({ hunt, meters, busy, onJoin, onCheckIn, onFinish, on
   const t = useHuntText();
   const { language } = useLanguage();
   const near = meters <= GAME_ACTION_RADIUS_M;
-  const spot = KEEPER_SPOT[hunt.id]?.[language] ?? t.startSpot;
+  const spot = keeperSpot(hunt, language) ?? t.startSpot;
   const farNote = near ? "" : t.walkCloser(distanceText(meters - GAME_ACTION_RADIUS_M));
   let line = t.lineDuring, action: { title: string; run: () => void } | null = null, steps = false, note = "";
   if (hunt.finished_at) line = t.lineAfter;
   else if (!hunt.checked_in_at) {
     if (!hunt.joined_at) { line = t.lineBefore; action = { title: t.join, run: onJoin }; }
-    else if (near) { line = t.lineCheckIn; action = { title: t.go, run: onCheckIn }; }
+    else if (near) { line = t.lineCheckIn(stepGoal(hunt, "spin"), stepGoal(hunt, "restore"), landmarkName(hunt, language) ?? t.theLandmark); action = { title: t.go, run: onCheckIn }; }
     else { line = t.lineWaiting(spot); note = farNote; }
   } else if (readyToReturn(hunt) && near) { line = t.lineDone; action = { title: t.take, run: onFinish }; }
   else { steps = true; note = readyToReturn(hunt) ? farNote : ""; }

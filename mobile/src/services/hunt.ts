@@ -14,6 +14,9 @@ export type Hunt = {
   keeper: { lat: number; lng: number };
   area: { lat: number; lng: number; radius_m: number };
   landmark: string;
+  /** Where the Keeper stands and the Landmark's name, for his lines. Optional until the backend returns them. */
+  keeper_spot_zh?: string; keeper_spot_en?: string;
+  landmark_name_zh?: string; landmark_name_en?: string;
   reward: { xp: number; gold: number };
   steps: HuntStep[];
   joined_at: string | null; checked_in_at: string | null; finished_at: string | null;
@@ -22,10 +25,18 @@ export type Hunt = {
 };
 export type HuntFinish = { hunt: Hunt; xp_gained: number; gold_gained: number };
 
-/** Where each hunt's Letter Keeper stands, for his lines. Falls back to "the starting point". */
-export const KEEPER_SPOT: Record<string, { zh: string; en: string }> = {
-  "xinyi-2026-11": { zh: "市府廣場", en: "Civic Square" },
+/** Fallbacks for hunts whose server object doesn't carry the spot names yet. */
+const KNOWN_NAMES: Record<string, { spot: { zh: string; en: string }; landmark: { zh: string; en: string } }> = {
+  "xinyi-2026-11": { spot: { zh: "市府廣場", en: "Civic Square" }, landmark: { zh: "101", en: "101" } },
 };
+/** Where the Keeper stands, or null (his line then says "the starting point"). */
+export const keeperSpot = (h: Hunt, language: "zh" | "en") =>
+  (language === "zh" ? h.keeper_spot_zh : h.keeper_spot_en) || KNOWN_NAMES[h.id]?.spot[language] || null;
+/** The Landmark's name for his lines, or null (he then says "the Landmark"). */
+export const landmarkName = (h: Hunt, language: "zh" | "en") =>
+  (language === "zh" ? h.landmark_name_zh : h.landmark_name_en) || KNOWN_NAMES[h.id]?.landmark[language] || null;
+/** A step's goal, for his lines. */
+export const stepGoal = (h: Hunt, key: HuntStepKey) => h.steps.find((s) => s.key === key)?.goal ?? 0;
 
 export const huntStatus = (h: Hunt, now = Date.now()) =>
   now < new Date(h.starts_at).getTime() ? "upcoming" : now > new Date(h.ends_at).getTime() ? "closed" : "open";
