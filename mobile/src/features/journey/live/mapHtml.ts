@@ -154,6 +154,15 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 /* MapLibre owns the anchor transform: never animate or scale this element. */
 .pin{position:absolute;width:80px;height:96px;cursor:pointer;transition:opacity .25s}
 .pin-body{position:absolute;inset:0;transform-origin:50% 100%}
+/* Pins shrink with the map when you zoom out (--z, set from the zoom), like the buildings; only you and the
+   Keeper keep their size. Taps only land on what you can see, so a smaller pin has a smaller tap area.
+   A tapped stack fans out with --fx/--fy, kept separate from the scale so both can change smoothly. */
+.pin{pointer-events:none}.pin-body>*{pointer-events:auto}.pin .disc{pointer-events:none}
+.pin-body{scale:var(--z,1);translate:var(--fx,0) var(--fy,0);transition:translate .22s ease-out,opacity .25s}
+.pin.keeper .pin-body{scale:1}
+.pin.fanned{z-index:30!important}
+#map.tiny .pin:not(.keeper) .pin-body{opacity:0}#map.tiny .pin:not(.keeper) .pin-body>*{pointer-events:none}
+.fan-dot{width:8px;height:8px;border-radius:50%;background:${C.ink};border:2px solid #fff;box-shadow:0 1px 3px rgba(22,38,63,.3);pointer-events:none}
 .pin .disc{position:absolute;left:18px;bottom:0;width:44px;height:12px;border-radius:50%;background:radial-gradient(${C.ink}40,transparent 70%)}
 .pin .v{position:absolute;left:0;bottom:2px;width:80px;height:80px;object-fit:contain;animation:bob 3.6s ease-in-out infinite}
 .pin .who{position:absolute;right:2px;top:4px;width:28px;height:28px}
@@ -161,6 +170,16 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin .tag{position:absolute;left:50%;bottom:-20px;transform:translateX(-50%);white-space:nowrap;font-size:10px;letter-spacing:.04em;padding:2px 7px;border-radius:9px;background:rgba(255,255,255,.92);color:${C.blue};box-shadow:0 1px 4px rgba(22,38,63,.15)}
 .pin.near .tag{background:${C.brass};color:#fff}
 .pin.place .tag{background:${C.ink};color:${C.brass}}
+/* Private capsules: the sender's picture wears a plum ring and a small wax seal; public ones never do. */
+.pin.private .who .face{border-color:${C.plum}}
+.pin .who .lock{position:absolute;left:-4px;bottom:-4px;width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#C4526B,${C.wax} 62%,#7E2438);box-shadow:0 1px 2px rgba(22,38,63,.35)}
+.pin .who .lock:after{content:"";position:absolute;left:5px;top:3px;width:3px;height:3px;border-radius:50%;background:#F3D9DF;box-shadow:0 2px 0 -.5px #F3D9DF}
+.pin .tag.timer{bottom:-16px;display:flex;align-items:center;gap:3px;font-size:10px;padding:1px 6px}
+.pin.opened .pin-body{opacity:.6}
+/* The player never blocks a tap on what is behind them (only their "this is you" label is tappable). */
+.you.walking .me{animation:stride .36s ease-in-out infinite}
+@keyframes stride{0%,100%{translate:0 0}50%{translate:0 -3px}}
+.you,.you *{pointer-events:none}.you .label{pointer-events:auto}
 .pin.far{opacity:.75}
 .pin.far .pin-body{transform:scale(.72)}
 .pin.sea.far .pin-body,.pin.sea.sel .pin-body{transform:none}
@@ -221,6 +240,7 @@ const map=new maplibregl.Map({container:'map',style:${JSON.stringify(style)},cen
 window.__tcmapInstance=map;
 let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 // Wayposts are floating gems, clearly not buildings and clearly not capsules.
+const HOURGLASS='<svg viewBox="0 0 10 12" width="8" height="10"><path d="M1 1h8M1 11h8M2 1c0 3 3 3.5 3 5S2 8 2 11M8 1c0 3-3 3.5-3 5s3 2 3 5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
 map.on('load',()=>{
@@ -229,14 +249,44 @@ map.on('load',()=>{
   map.addSource('reach',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   map.addLayer({id:'reach-fill',type:'fill',source:'reach',paint:{'fill-color':'${C.brass}','fill-opacity':.12}});
   map.addLayer({id:'reach-line',type:'line',source:'reach',paint:{'line-color':'${C.brass}','line-width':1.5,'line-dasharray':[2,2]}});
-  send({type:'ready'});render();
+  send({type:'ready'});render();rescale();
 });
 map.on('dragstart',()=>{if(follow){follow=false;send({type:'follow',follow:false})}});
+// Pin size follows the zoom: full size at the pickup zoom (never bigger), half per level out, at least 40%;
+// three levels out they fade away. Recomputed on every zoom.
+const mapEl=document.getElementById('map');let zNow=1;
+const rescale=()=>{const base=pickupZoom(you?you.lat:map.getCenter().lat,state.reach||100),d=map.getZoom()-base;
+  zNow=Math.max(.4,Math.min(1,Math.pow(2,d)));mapEl.style.setProperty('--z',zNow.toFixed(3));mapEl.classList.toggle('tiny',d<-3)};
+map.on('zoom',rescale);
+// Overlapping pins: the first tap on a stack fans it out around its spot (pins never move on the map itself);
+// tapping one then opens it. Tapping the map or moving it folds the fan back.
+let fan=null;
+const fold=()=>{if(!fan)return;for(const id of fan.ids){const m=marks.get(id);if(m){const b=m.marker.getElement();b.style.removeProperty('--fx');b.style.removeProperty('--fy');b.classList.remove('fanned')}}fan.dot.remove();fan=null};
+const screenOf=m=>{const p=map.project(m.marker.getLngLat()),o=m.marker.getOffset();return{x:p.x+o.x,y:p.y+o.y}};
+// The pictures you can see (not the transparent box around them), so "overlapping" means what it looks like.
+const artBox=el=>{let b=null;for(const x of el.querySelectorAll('.pin-body>*:not(.disc)')){const r=x.getBoundingClientRect();if(!r.width)continue;b=b?{l:Math.min(b.l,r.left),t:Math.min(b.t,r.top),r:Math.max(b.r,r.right),b:Math.max(b.b,r.bottom)}:{l:r.left,t:r.top,r:r.right,b:r.bottom}}return b};
+const stackOf=id=>{const at=new Map();for(const [k,m] of marks){const box=artBox(m.marker.getElement());if(box)at.set(k,{p:screenOf(m),w:box.r-box.l,box})}
+  const A=at.get(id);if(!A)return{out:[id],at,me:null};const ov=(a,b)=>a.l+6<b.r&&b.l+6<a.r&&a.t+6<b.b&&b.t+6<a.b;
+  // The player counts too: whatever they cover joins the stack, and the ring forms around them.
+  const meEl=youMark&&youMark.getElement().querySelector('.me,.face'),r0=meEl&&meEl.getBoundingClientRect();
+  const me=r0&&r0.width?{l:r0.left,t:r0.top,r:r0.right,b:r0.bottom}:null,underMe=me&&ov(A.box,me);
+  const out=[id];for(const [k,B] of at)if(k!==id&&out.length<10&&(ov(A.box,B.box)||(underMe&&ov(me,B.box))))out.push(k);
+  return{out,at,me:underMe?me:null}};
+const tapPin=id=>{
+  if(fan&&fan.ids.includes(id)){fold();send({type:'select',id});return}
+  fold();const{out,at,me}=stackOf(id);if(out.length<2&&!me){send({type:'select',id});return}
+  // Around the player's feet when they were in the way (they stay put), otherwise around the stack's middle.
+  const c=me?{x:(me.l+me.r)/2,y:(me.t+me.b)/2+40*zNow}:out.reduce((s,k)=>({x:s.x+at.get(k).p.x/out.length,y:s.y+at.get(k).p.y/out.length}),{x:0,y:0});
+  const w=Math.max(...out.map(k=>at.get(k).w)),n=out.length+(me?1:0),r=Math.max(w*.75+(me?Math.max(me.r-me.l,me.b-me.t)/2:0),w/2/Math.sin(Math.PI/n));
+  out.forEach((k,i)=>{const a=(me?-Math.PI/4:-Math.PI/2)+i*2*Math.PI/out.length,p=at.get(k).p,b=marks.get(k).marker.getElement();
+    b.style.setProperty('--fx',(c.x+r*Math.cos(a)-p.x).toFixed(1)+'px');b.style.setProperty('--fy',(c.y+r*Math.sin(a)-p.y).toFixed(1)+'px');b.classList.add('fanned')});
+  const d=document.createElement('div');d.className='fan-dot';fan={ids:out,dot:new maplibregl.Marker({element:d}).setLngLat(map.unproject([c.x,c.y])).addTo(map)}};
+map.on('movestart',fold);
 map.on('resize',()=>{if(follow&&you)map.jumpTo({center:[you.lng,you.lat],zoom:pickupZoom(you.lat,state.reach||100),padding:cameraPadding})});
 // Tapping a monument building opens its Landmark; anywhere else is a plain map tap.
 const TILE_OWNER=${JSON.stringify(TILE_OWNER)};
 const monumentAt=p=>{const layers=['monuments','monument-tiles'].filter(l=>map.getLayer(l));const hit=layers.length&&map.queryRenderedFeatures(p,{layers})[0];return hit?(hit.layer.id==='monuments'?hit.properties.id:TILE_OWNER[hit.id]):null};
-map.on('click',e=>{const id=monumentAt(e.point);if(id){send({type:'select',id:'monument-'+id});return}send({type:'tap',lat:e.lngLat.lat,lng:e.lngLat.lng})});
+map.on('click',e=>{if(fan){fold();return}const id=monumentAt(e.point);if(id){send({type:'select',id:'monument-'+id});return}send({type:'tap',lat:e.lngLat.lat,lng:e.lngLat.lng})});
 map.on('mousemove',e=>{map.getCanvas().style.cursor=monumentAt(e.point)?'pointer':''});
 // A badge "on top" of a building: the screen offset from its ground point to the same point raised
 // to the building's height, through the camera's own perspective, so it stays on the spire as the map moves.
@@ -244,10 +294,26 @@ const liftOffset=(ll,meters)=>{const t=map.transform;const mc=maplibregl.Mercato
   if(typeof t.coordinatePoint!=='function')return [0,0];const a=t.coordinatePoint(mc,0),b=t.coordinatePoint(mc,meters);return [b.x-a.x,b.y-a.y]};
 const relift=()=>{for(const [,m] of marks){if(m.lift)m.marker.setOffset(liftOffset(m.marker.getLngLat(),m.lift))}};
 map.on('move',relift);map.on('resize',relift);
+// Tap-to-walk: inside the pickup circle the figure strolls to where you tapped. Only the picture moves: the
+// circle, the camera and every server check stay on your real position. Once you really move about 10 m,
+// the figure walks back to you.
+let walkAt=null,walkFrom=null,walkLeft=null,strolling=false,strollId=0;
+const shown=()=>walkAt?[walkAt.lng,walkAt.lat]:[you.lng,you.lat];
+const metres=(a,b)=>Math.hypot((a.lng-b.lng)*111320*Math.cos(a.lat*Math.PI/180),(a.lat-b.lat)*110540);
+const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function stroll(to,after){if(!youMark)return;const from=youMark.getLngLat(),f={lat:from.lat,lng:from.lng},d=metres(f,to);
+  const a=map.project([f.lng,f.lat]),b=map.project([to.lng,to.lat]);if(Math.abs(b.x-a.x)>4)walkLeft=b.x<a.x;
+  const ms=still?0:Math.min(2200,Math.max(350,d/30*1000)),t0=performance.now(),yel=youMark.getElement(),id=++strollId;strolling=true;yel.classList.add('walking');render();
+  const step=now=>{if(id!==strollId)return;const k=ms?Math.min(1,(now-t0)/ms):1,e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    youMark.setLngLat([f.lng+(to.lng-f.lng)*e,f.lat+(to.lat-f.lat)*e]);
+    if(k<1)requestAnimationFrame(step);else{strolling=false;yel.classList.remove('walking');after&&after();render()}};
+  requestAnimationFrame(step)}
+const walkTo=to=>{if(!you)return;walkFrom={lat:you.lat,lng:you.lng};walkAt={lat:to.lat,lng:to.lng};stroll(walkAt)};
+const walkHome=()=>{walkAt=null;walkFrom=null;stroll({lat:you.lat,lng:you.lng},()=>{walkLeft=null})};
 function render(){
   if(you){
-    if(!youMark){const el=document.createElement('div');el.className='you'+(state.figure?' fig':'');el.innerHTML='<div class="pulse"></div><div class="cone"></div>'+(state.figure?'<div class="me" style="background-image:url('+state.figure+')"></div>':face(state.portrait));youMark=new maplibregl.Marker({element:el,rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([you.lng,you.lat]).addTo(map)}
-    else youMark.setLngLat([you.lng,you.lat]);
+    if(!youMark){const el=document.createElement('div');el.className='you'+(state.figure?' fig':'');el.innerHTML='<div class="pulse"></div><div class="cone"></div>'+(state.figure?'<div class="me" style="background-image:url('+state.figure+')"></div>':face(state.portrait));youMark=new maplibregl.Marker({element:el,rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat(shown()).addTo(map)}
+    else if(!strolling)youMark.setLngLat(shown());
     const yel=youMark.getElement();
     // Swap face ↔ figure if the profile arrived after the map.
     const want=state.figure||'';if((yel.dataset.fig||'')!==want){yel.dataset.fig=want;yel.classList.toggle('fig',!!want);const old=yel.querySelector('.me,.face');const n=document.createElement('div');n.innerHTML=want?'<div class="me" style="background-image:url('+want+')"></div>':face(state.portrait);old?old.replaceWith(n.firstChild):yel.appendChild(n.firstChild)}
@@ -255,7 +321,7 @@ function render(){
     if(state.youLabel){if(!lab){lab=document.createElement('div');lab.className='label';lab.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:'you'})});yel.appendChild(lab)}lab.textContent=state.youLabel}else if(lab&&!lab.dataset.out){lab.dataset.out='1';lab.style.transition='opacity .4s';lab.style.opacity='0';setTimeout(()=>lab.remove(),420)}
     youMark.getElement().querySelector('.cone').style.transform='rotate('+((heading||0)-map.getBearing())+'deg)';
     // The figure faces right in the art: mirror it when walking toward the left of the screen.
-    const me=yel.querySelector('.me');if(me)me.classList.toggle('left',Math.sin(((heading||0)-map.getBearing())*Math.PI/180)<-.2);
+    const me=yel.querySelector('.me');if(me)me.classList.toggle('left',walkLeft!==null?walkLeft:Math.sin(((heading||0)-map.getBearing())*Math.PI/180)<-.2);
     map.getSource('reach')&&map.getSource('reach').setData({type:'FeatureCollection',features:[circle(you,state.reach||100)]});
   }
   const want=new Set(state.pins.map(p=>p.id));
@@ -263,10 +329,10 @@ function render(){
   for(const p of state.pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
       :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 1.5C12.8 8.2 15.8 11.2 22.5 12 15.8 12.8 12.8 15.8 12 22.5 11.2 15.8 8.2 12.8 1.5 12 8.2 11.2 11.2 8.2 12 1.5Z"/></svg></div></div>'
-      :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
-    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'');
+      :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait!==undefined&&(p.portrait||p.private)?'<div class="who">'+face(p.portrait)+(p.private?'<div class="lock"></div>':'')+'</div>':'')+(p.timer?'<div class="tag timer">'+HOURGLASS+p.timer+'</div>':p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
+    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'')+(p.private?' private':'')+(p.opened?' opened':'');
     let m=marks.get(p.id);
-    if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:p.id})});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
+    if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();tapPin(p.id)});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
     const el=m.marker.getElement();
     if(m.html!==html){el.innerHTML=html;m.html=html}
     if(m.cls!==cls){if(m.cls)el.classList.remove(...m.cls.split(' '));el.classList.add(...cls.split(' '));m.cls=cls}
@@ -276,8 +342,9 @@ function render(){
   }
 }
 function recv(m){
-  if(m.type==='state'){const moved=!you||!m.you||Math.abs(you.lat-m.you.lat)+Math.abs(you.lng-m.you.lng)>1e-6;you=m.you;state=m;heading=m.heading||heading;render();if(follow&&you&&moved)map.easeTo({center:[you.lng,you.lat],duration:you?900:0,padding:cameraPadding})}
+  if(m.type==='state'){if(fan&&m.pins.map(p=>p.id).join()!==state.pins.map(p=>p.id).join())fold();const moved=!you||!m.you||Math.abs(you.lat-m.you.lat)+Math.abs(you.lng-m.you.lng)>1e-6;if(walkFrom&&m.you&&metres(walkFrom,m.you)>10){you=m.you;walkHome()}you=m.you;state=m;heading=m.heading||heading;render();rescale();if(follow&&you&&moved)map.easeTo({center:[you.lng,you.lat],duration:you?900:0,padding:cameraPadding})}
   if(m.type==='recenter'&&you){follow=true;map.easeTo({center:[you.lng,you.lat],zoom:pickupZoom(you.lat,state.reach||100),pitch:40,bearing:0,duration:900,padding:cameraPadding})}
+  if(m.type==='walk'&&you)walkTo({lat:m.lat,lng:m.lng});
   if(m.type==='focus'){follow=false;send({type:'follow',follow:false});map.easeTo({center:[m.lng,m.lat],zoom:pickupZoom(m.lat,state.reach||100),duration:700})}
 }
 window.__tcmap=recv;

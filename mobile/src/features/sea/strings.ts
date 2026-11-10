@@ -140,6 +140,11 @@ export function useSeaText() {
   return seaText(language);
 }
 export const distanceText = (m: number) => m < 1000 ? `${Math.max(10, Math.round(m / 10) * 10)} m` : `${(m / 1000).toFixed(1)} km`;
+/** A compact time left for a map pin: 3天 / 5小時 / 12分, or 3d / 5h / 12m. */
+export const timeLeftShort = (ms: number, language: "zh" | "en") => {
+  const min = Math.max(1, Math.ceil(ms / 60_000)), hr = Math.ceil(min / 60), day = Math.ceil(min / 1440);
+  return min < 60 ? (language === "zh" ? `${min}分` : `${min}m`) : min < 1440 ? (language === "zh" ? `${hr}小時` : `${hr}h`) : (language === "zh" ? `${day}天` : `${day}d`);
+};
 export const daysSince = (iso: string) => Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
 export const shortDate = (iso: string, language: "zh" | "en") =>
   new Date(iso).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US", { year: "numeric", month: "short", day: "numeric" });

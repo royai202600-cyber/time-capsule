@@ -1,8 +1,9 @@
 import { Image, type ImageSourcePropType } from "react-native";
 
-export type LivePin = { id: string; lat: number; lng: number; vessel: string; cracks?: string; portrait?: string | null; tag?: string; kind: "sea" | "place" | "corrupted" | "waypost" | "landmark" | "keeper"; hunt?: boolean; mark?: string | null; figure?: string | null; lift?: number; rarity?: "common" | "uncommon" | "rare"; done?: boolean; near?: boolean; far?: boolean; selected?: boolean; sealed?: boolean };
+export type LivePin = { id: string; lat: number; lng: number; vessel: string; cracks?: string; portrait?: string | null; tag?: string; kind: "sea" | "place" | "corrupted" | "waypost" | "landmark" | "keeper"; hunt?: boolean; mark?: string | null; figure?: string | null; lift?: number; rarity?: "common" | "uncommon" | "rare"; done?: boolean; near?: boolean; far?: boolean; selected?: boolean; sealed?: boolean; private?: boolean; opened?: boolean; timer?: string };
 export type LiveState = { you: { lat: number; lng: number } | null; heading?: number | null; portrait?: string | null; figure?: string | null; youLabel?: string | null; reach: number; pins: LivePin[] };
-export type LiveMapHandle = { recenter: () => void; focus: (lat: number, lng: number) => void };
+/** walk: the player's figure strolls to a spot inside the pickup circle (a picture only; the real position and the server's checks never change). */
+export type LiveMapHandle = { recenter: () => void; focus: (lat: number, lng: number) => void; walk: (lat: number, lng: number) => void };
 export type LiveMapProps = {
   html: string;
   state: LiveState;
