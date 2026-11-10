@@ -1,0 +1,169 @@
+[
+  {
+    "relative_path": "characters/keeper.png",
+    "what": "Letter Keeper map figure; faithful A1 identity",
+    "prompt": "Use case: illustration-story\nAsset type: Letter Keeper full-body map figure for Time Capsule, 1024 square RGBA.\nInput references: Image 1 is design/art/style-sheet.png: match this approved style exactly. Image 2 is the Roy-selected A1 NPC sketch from codex/character-profile-options. Match the SAME MAN and the SAME OUTFIT faithfully; do not redesign him.\nSubject identity: friendly middle-aged man, warm medium skin, short dark hair with some grey, same soft face shape and gentle smile as A1. Ink-blue short-brim cap, no emblem; short navy collared jacket over a cream shirt; navy trousers; simple brown walking shoes; small cream cross-body letter satchel at his hip. No new accessories.\nFULL BODY: one complete standing person, normal illustrated head on his neck, torso, both arms down with complete hands, two separate legs, BOTH COMPLETE SHOES including soles. Never crop any body part. Do NOT create a bust, portrait disc, photo window, circular head background, pedestal, pin, ground shadow, map or scenery.\nPose: upright and relaxed, arms down, body turned slightly toward the VIEWER'S RIGHT (his left), nose and toe tips subtly pointing toward image right. Front three-quarter view, camera slightly elevated to see shoulder/shoe tops, as a billboard sprite on a map tilted 40 degrees. Keep his pose usable as the same canonical facing as the player figures; the app will mirror it.\nScale: same gentle adult storybook proportions as A1, about four head-heights, not caricature/chibi. In the 1024 square, ordinary head-top around y=180, soles at y=900; the cap may rise slightly above the head-top. Roughly 720 px adult head-to-soles. Center the complete figure around x=512. Generous fully transparent padding all around.\nPortrait-weight clean plum/navy lines, flat fills plus one soft shadow tone, no hatching on the face. Must read at 64–120 px tall. Use the natural human skin and hair treatment established by the selected A1.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "codex/character-profile-options@36ef7dcd2447346401738fb44ef1b43af9bcfa66:design/art/concepts/map-characters/npc-a1.png"
+    ],
+    "postprocess": "normalize-city-hunt-figures.py: remove isolated alpha <=8; one shared canonical scale 0.6715063520871143 for every figure, no per-figure fit; translate x centre to512 and projected soles to900 +/-4; no upscale. Mirrored to canonical viewer-right facing.",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "alpha_bbox_px": [
+      375,
+      158,
+      650,
+      902
+    ],
+    "shared_scale": 0.6715063520871143,
+    "standing_height_px": 744,
+    "facing": "viewer-right",
+    "review_status": "test batch; awaiting Roy’s art approval"
+  },
+  {
+    "relative_path": "characters/figure-01.png",
+    "what": "Player 01 map figure matched to their portrait",
+    "prompt": "Use case: illustration-story\nAsset type: full-body player map figure 01, identity-matched to the existing portrait.\nImage 1: approved design/art/style-sheet.png, style reference — match this style exactly.\nImage 2: portraits/portrait-01.png, STRICT IDENTITY REFERENCE: same person, face shape, age, skin, hair and facial features. It is NOT the composition; do not make a portrait.\nImage 3: the canonical Letter Keeper full-body source, pose, viewing angle, adult body scale and subject-to-canvas scale reference ONLY. Do not copy his face, hat, outfit, bag or colours.\nThe SAME young adult woman as portrait-01: warm light-medium skin, same oval face, dark brown shoulder-length bob with swept fringe, same large kind dark eyes and gentle smile. No hat or glasses. Simple LIGHT-BLUE top matching the shirt colour visible in the portrait, plain navy trousers and simple navy-and-cream everyday shoes. Natural human hands matching her skin. No jacket resembling the Keeper, no bag or satchel.\nOne COMPLETE STANDING PERSON, normal illustrated head attached to neck, torso, both arms with complete hands DOWN, two SEPARATE legs and BOTH COMPLETE SHOES INCLUDING SOLES. Never crop head, hands, legs, feet or shoes. All limbs must read as a whole human at 64–120px tall. No avatar disc, round photo window, circle behind the head, portrait framing, pedestal, shadow, ground, map, scenery or text.\nPose/facing: upright, relaxed arms down, front three-quarter, body turned slightly toward VIEWER'S RIGHT (his/her left), nose and toe tips subtly to IMAGE RIGHT; match Image 3's RIGHT-facing body and camera angle. Camera slightly elevated as a billboard sprite over a 40-degree tilted map. Face is still clearly visible to us. App mirrors left/right later.\nBody scale: same adult standing scale as Image 3, about four head-heights, not anime/chibi. Keep the same proportion of the square canvas as that full-body reference, and enough transparent padding. Final master will be 1024 square with soles y900 and ordinary head top near y180, about720px standing height; all four figures will be downscaled using ONE shared factor, not individually enlarged to fill their canvases. Natural adult stature variation up to40px after normalization is fine.\nUse slightly thicker clean plum/navy outlines like the portrait, no hatching on faces, simple flat fills with one soft shadow tone. Retain the portrait's natural human skin/hair treatment. Restrained everyday clothing, distinct from the Keeper.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/portraits/portrait-01.png",
+      "design/art/_checks/city-hunt-reference-keeper.png"
+    ],
+    "postprocess": "normalize-city-hunt-figures.py: remove isolated alpha <=8; one shared canonical scale 0.6715063520871143 for every figure, no per-figure fit; translate x centre to512 and projected soles to900 +/-4; no upscale.",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "alpha_bbox_px": [
+      405,
+      170,
+      619,
+      904
+    ],
+    "shared_scale": 0.6715063520871143,
+    "standing_height_px": 734,
+    "facing": "viewer-right",
+    "review_status": "test batch; awaiting Roy’s art approval"
+  },
+  {
+    "relative_path": "characters/figure-04.png",
+    "what": "Player 04 map figure matched to their portrait",
+    "prompt": "Use case: illustration-story\nAsset type: full-body player map figure 04, identity-matched to the existing portrait.\nImage 1: approved design/art/style-sheet.png, style reference — match this style exactly.\nImage 2: portraits/portrait-04.png, STRICT IDENTITY REFERENCE: same person, face shape, age, skin, hair and facial features. It is NOT the composition; do not make a portrait.\nImage 3: the canonical Letter Keeper full-body source, pose, viewing angle, adult body scale and subject-to-canvas scale reference ONLY. Do not copy his face, hat, outfit, bag or colours.\nThe SAME adult man as portrait-04: deep warm brown skin, same close short tight curls, thick dark eyebrows, same neat full beard and moustache, rounded friendly face, dark eyes and warm smile. Simple INK-BLUE top in the portrait's blue colour family, plain navy trousers, simple navy everyday shoes. Natural human hands matching his skin. No hat, bag, satchel or uniform.\nOne COMPLETE STANDING PERSON, normal illustrated head attached to neck, torso, both arms with complete hands DOWN, two SEPARATE legs and BOTH COMPLETE SHOES INCLUDING SOLES. Never crop head, hands, legs, feet or shoes. All limbs must read as a whole human at 64–120px tall. No avatar disc, round photo window, circle behind the head, portrait framing, pedestal, shadow, ground, map, scenery or text.\nPose/facing: upright, relaxed arms down, front three-quarter, body turned slightly toward VIEWER'S RIGHT (his/her left), nose and toe tips subtly to IMAGE RIGHT; match Image 3's RIGHT-facing body and camera angle. Camera slightly elevated as a billboard sprite over a 40-degree tilted map. Face is still clearly visible to us. App mirrors left/right later.\nBody scale: same adult standing scale as Image 3, about four head-heights, not anime/chibi. Keep the same proportion of the square canvas as that full-body reference, and enough transparent padding. Final master will be 1024 square with soles y900 and ordinary head top near y180, about720px standing height; all four figures will be downscaled using ONE shared factor, not individually enlarged to fill their canvases. Natural adult stature variation up to40px after normalization is fine.\nUse slightly thicker clean plum/navy outlines like the portrait, no hatching on faces, simple flat fills with one soft shadow tone. Retain the portrait's natural human skin/hair treatment. Restrained everyday clothing, distinct from the Keeper.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/portraits/portrait-04.png",
+      "design/art/_checks/city-hunt-reference-keeper.png"
+    ],
+    "postprocess": "normalize-city-hunt-figures.py: remove isolated alpha <=8; one shared canonical scale 0.6715063520871143 for every figure, no per-figure fit; translate x centre to512 and projected soles to900 +/-4; no upscale. Blue upper garment pixels (B>G>R, G>=85, B-R>=35, y<0.61 of source height) RGB multiplied by0.72, alpha and skin/hair retained.",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "alpha_bbox_px": [
+      381,
+      155,
+      644,
+      904
+    ],
+    "shared_scale": 0.6715063520871143,
+    "standing_height_px": 749,
+    "facing": "viewer-right",
+    "review_status": "test batch; awaiting Roy’s art approval"
+  },
+  {
+    "relative_path": "characters/figure-06.png",
+    "what": "Player 06 map figure matched to their portrait",
+    "prompt": "Use case: illustration-story\nAsset type: full-body player map figure 06, identity-matched to the existing portrait.\nImage 1: approved design/art/style-sheet.png, style reference — match this style exactly.\nImage 2: portraits/portrait-06.png, STRICT IDENTITY REFERENCE: same person, face shape, age, skin, hair and facial features. It is NOT the composition; do not make a portrait.\nImage 3: the canonical Letter Keeper full-body source, pose, viewing angle, adult body scale and subject-to-canvas scale reference ONLY. Do not copy his face, hat, outfit, bag or colours.\nThe SAME older man as portrait-06: warm medium skin, same silver-grey wavy side-swept short hair, grey moustache, kind gently lined face and warm smile. No glasses. Plain CREAM collared shirt matching the visible portrait shirt, plain navy trousers and simple brown/navy walking shoes. Natural human hands matching his skin. A little shorter adult height is fine, but no childlike proportions. No hat, bag or satchel.\nOne COMPLETE STANDING PERSON, normal illustrated head attached to neck, torso, both arms with complete hands DOWN, two SEPARATE legs and BOTH COMPLETE SHOES INCLUDING SOLES. Never crop head, hands, legs, feet or shoes. All limbs must read as a whole human at 64–120px tall. No avatar disc, round photo window, circle behind the head, portrait framing, pedestal, shadow, ground, map, scenery or text.\nPose/facing: upright, relaxed arms down, front three-quarter, body turned slightly toward VIEWER'S RIGHT (his/her left), nose and toe tips subtly to IMAGE RIGHT; match Image 3's RIGHT-facing body and camera angle. Camera slightly elevated as a billboard sprite over a 40-degree tilted map. Face is still clearly visible to us. App mirrors left/right later.\nBody scale: same adult standing scale as Image 3, about four head-heights, not anime/chibi. Keep the same proportion of the square canvas as that full-body reference, and enough transparent padding. Final master will be 1024 square with soles y900 and ordinary head top near y180, about720px standing height; all four figures will be downscaled using ONE shared factor, not individually enlarged to fill their canvases. Natural adult stature variation up to40px after normalization is fine.\nUse slightly thicker clean plum/navy outlines like the portrait, no hatching on faces, simple flat fills with one soft shadow tone. Retain the portrait's natural human skin/hair treatment. Restrained everyday clothing, distinct from the Keeper.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/portraits/portrait-06.png",
+      "design/art/_checks/city-hunt-reference-keeper.png"
+    ],
+    "postprocess": "normalize-city-hunt-figures.py: remove isolated alpha <=8; one shared canonical scale 0.6715063520871143 for every figure, no per-figure fit; translate x centre to512 and projected soles to900 +/-4; no upscale.",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "alpha_bbox_px": [
+      390,
+      161,
+      634,
+      903
+    ],
+    "shared_scale": 0.6715063520871143,
+    "standing_height_px": 742,
+    "facing": "viewer-right",
+    "review_status": "test batch; awaiting Roy’s art approval"
+  },
+  {
+    "relative_path": "portraits/portrait-keeper.png",
+    "what": "Letter Keeper round dialog portrait with cap and pale brass-cream disc",
+    "prompt": "Use case: illustration-story\nAsset type: round Letter Keeper dialog portrait, head and shoulders, 1024 square.\nImage 1 is the approved style-sheet.png: match this style exactly.\nImage 2 is portrait-01.png: FRAMING ONLY — match its circular disc size, head/face scale, eye height, shoulder crop and thicker portrait line weight. Do not copy this woman's face or hair.\nImage 3 is characters/keeper.png: STRICT IDENTITY — the exact same friendly middle-aged man, face shape, warm medium skin, same short dark hair with grey at the temples, same gentle smile, ink-blue short-brim cap kept ON, same navy collar and cream shirt. Do not redesign him or make him younger. Same slight turn to viewer's right. No beard or glasses.\nHead and shoulders only, shoulders cropped at the bottom of the circular disc exactly like Image 2. The cap must fit fully inside the top of the disc, without reducing his face to a tiny head. Face/eyes at the same scale/height as Image 2, eye line near y490 in 1024. Simple clean face, no facial hatching. Readable at24px and40px.\nPortrait-specific framing: opaque soft pale brass-cream disc RGB(233,226,204), #E9E2CC, centred (505,526), radius430 on a 1024 square. This is distinct from portrait-02's peach cream. Outer corners genuinely transparent. No rim/frame, text, icons or logos; the app draws the brass dialog rim separately.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/portraits/portrait-01.png",
+      "design/art/characters/keeper.png"
+    ],
+    "postprocess": "mask-portraits.py --only portrait-keeper.png: downscale1254 to1024; apply exact circle centre505,526 radius430; pale brass-cream TARGETS RGB233,226,204 (#E9E2CC). All existing portraits skipped unchanged.",
+    "circle": {
+      "center": {
+        "x": 505,
+        "y": 526
+      },
+      "radius": 430
+    },
+    "review_status": "test batch; awaiting Roy’s art approval"
+  },
+  {
+    "relative_path": "game/waypost-gem-blue.png",
+    "what": "Common blue Waypost gem (pre-spin colour)",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.\nTWO shallow faceted gem shapes stacked: a large gem made from two shallow pyramids joined at their widest point, with a small matching gem HOVERING a short clear gap ABOVE it. The single straight stem supports the large lower gem. No connection or plate between the gems.\nLandmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/game/waypost-gem.png"
+    ],
+    "generation_method": "scripted RGB recolour only; model/prompt provenance inherited from the approved source",
+    "source": {
+      "path": "design/art/game/waypost-gem.png",
+      "sha256": "24cd6775ce8d9e44b9abc614ab1210223c032bf0bd72dcf9d00688d63dba6da2"
+    },
+    "postprocess": "recolor-gems-blue.py: source HSL lightness mapped through navy #16263F, ink blue #2F5D8A, light blue #5A8FD0 using shared source 1st/99th percentile bounds. Landmark undoes its known source RGB x0.8 before the shared ramp, then blue RGB x0.8 is applied once. Alpha and placement byte-identical; no generation, no outline.",
+    "alpha_bbox_px": [
+      403,
+      339,
+      621,
+      685
+    ],
+    "review_status": "test batch; awaiting Roy’s art approval"
+  },
+  {
+    "relative_path": "game/landmark-gem-blue.png",
+    "what": "Landmark blue Waypost gem (pre-spin colour)",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\nOverride for this image only: this is one small, simple map marker made to sit on the map in the second reference image. Ignore the style block's lines about ink line art, hatching, paper grain and palette. Do not copy the detail of the style sheet. One solid object hovers in the upper part of the canvas, held up by a single thin straight stem that ends in one small soft dot of shadow on the ground. The object looks three-dimensional, with a few clean flat facets, matte surfaces, no outlines and three soft tones of a single muted colour (lit, mid, shaded), with light from the top-left. It is calm and slightly dusty, not bright, shiny, glossy, plastic or realistic. Only one colour family. No base, plate, ring, disc, beam, glow, sparkle or ground. Transparent background.\nTWO shallow faceted gem shapes stacked: a large gem made from two shallow pyramids joined at their widest point, with a small matching gem HOVERING a short clear gap ABOVE it. The single straight stem supports the large lower gem. No connection or plate between the gems.\nLandmark Waypost marker. Muted dusty plum based on #6E2B3F but greyer and softer, one colour family with three calm flat facet tones. Clearly larger and more important than its common marker counterpart, supported on a slightly thicker straight stem ending at ONE small soft shadow dot. No base or platform. No cube, blue object, flat plate, square beneath the object, ring, disc, tower, building, beam, glow, sparkle, text, letters, numbers, logos or writing-like marks.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/game/landmark-gem.png"
+    ],
+    "generation_method": "scripted RGB recolour only; model/prompt provenance inherited from the approved source",
+    "source": {
+      "path": "design/art/game/landmark-gem.png",
+      "sha256": "d44657f07723537904c6780529a21dcbee0e197fef26b1a422282f1572aefbb5"
+    },
+    "postprocess": "recolor-gems-blue.py: source HSL lightness mapped through navy #16263F, ink blue #2F5D8A, light blue #5A8FD0 using shared source 1st/99th percentile bounds. Landmark undoes its known source RGB x0.8 before the shared ramp, then blue RGB x0.8 is applied once. Alpha and placement byte-identical; no generation, no outline.",
+    "alpha_bbox_px": [
+      403,
+      103,
+      621,
+      609
+    ],
+    "review_status": "test batch; awaiting Roy’s art approval"
+  }
+]

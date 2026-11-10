@@ -1,0 +1,86 @@
+[
+  {
+    "source": "design/art/characters/keeper.png",
+    "output": "public/art/characters/keeper.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "cfea2619cb908d9bff28754972043558a4a85a28d0491a29d9016287739f2654",
+    "pass": true
+  },
+  {
+    "source": "design/art/characters/figure-01.png",
+    "output": "public/art/characters/figure-01.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "329c0980f2b50862fc7bf23c0577a4b20c7523203ccc9c5a2430a063d8ce96c3",
+    "pass": true
+  },
+  {
+    "source": "design/art/characters/figure-04.png",
+    "output": "public/art/characters/figure-04.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "e94184e31e28ee0291673a3a4b571e44c3fcb06c9d423438d2257e7367a7fdf1",
+    "pass": true
+  },
+  {
+    "source": "design/art/characters/figure-06.png",
+    "output": "public/art/characters/figure-06.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "2547b27963a77c9b34824dcfdb5c0b4d62ecf2ec382dc4baa79dc7b3d38b781b",
+    "pass": true
+  },
+  {
+    "source": "design/art/portraits/portrait-keeper.png",
+    "output": "public/art/portraits/portrait-keeper.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "613b72cb4a40a2d3de2f43660e99495b2f3549eb30b7275272af4c52c804442f",
+    "pass": true
+  },
+  {
+    "source": "design/art/game/waypost-gem-blue.png",
+    "output": "public/art/game/waypost-gem-blue.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "e924803ec5ae6e96ecf63414a2f5122af84fbdc45ae7578667fbd9c2de8c12b4",
+    "pass": true
+  },
+  {
+    "source": "design/art/game/landmark-gem-blue.png",
+    "output": "public/art/game/landmark-gem-blue.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "22269f3d496eff76e45ad4e18dfb7f1945e3ab78678c3a65a2728f30777faf6a",
+    "pass": true
+  }
+]

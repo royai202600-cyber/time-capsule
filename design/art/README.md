@@ -114,6 +114,8 @@ Do not draw the capsule, wax ball, target rings, Waypost picture, shadows belong
 Option variation: Calm bright overcast light, airy broad slightly irregular tree canopies and softly layered dusty sage bushes. Keep the specified palette and exact layout; no rain, fog, fallen leaves or extra objects.
 ```
 
+- City Hunt art test batch: Letter Keeper from selected sketch A1, matching dialog portrait, player figures 01/04/06 on one shared adult scale, and RGB-only blue Waypost gems. Eight selectable player portraits exist; the other five figures and hunt stamp are held for the next prompt after Roy’s OK. No app registration or deployment. Exact prompts, source references, common scale and preservation hashes are in `_checks/city-hunt-*.json`.
+
 ## Masters
 
 | File | What | Size | Notes |
@@ -435,6 +437,13 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-wishing-lamp-lid.png` | wishing-lamp lid layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-wishing-lamp-smoke.png` | wishing-lamp smoke layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-wishing-lamp.png` | wishing-lamp assembled vessel | 1024×1024 | processed; see manifest |
+| `characters/keeper.png` | Letter Keeper map figure; faithful A1 identity | 1024×1024 | test batch; see manifest |
+| `characters/figure-01.png` | Player 01 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
+| `characters/figure-04.png` | Player 04 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
+| `characters/figure-06.png` | Player 06 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
+| `portraits/portrait-keeper.png` | Letter Keeper round dialog portrait with cap and pale brass-cream disc | 1024×1024 | test batch; see manifest |
+| `game/waypost-gem-blue.png` | Common blue Waypost gem (pre-spin colour) | 1024×1024 | test batch; see manifest |
+| `game/landmark-gem-blue.png` | Landmark blue Waypost gem (pre-spin colour) | 1024×1024 | test batch; see manifest |
 
 ## Review
 
@@ -443,3 +452,5 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 [B3 motion index](_checks/b3-review.md)
 
 [Sea portrait crop review](_checks/portrait-sea-review.png) · [Sea sealed scene comparison](_checks/scene-sea-sealed-review.png)
+
+[City Hunt figures and anchor guides](_checks/city-hunt-figures.png) · [Compact figure review](_checks/city-hunt-figures-review.png) · [Keeper portrait at 24/40 px](_checks/portraits-small.png) · [Blue/purple gem review](_checks/city-hunt-gems.png)

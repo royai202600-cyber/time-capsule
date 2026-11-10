@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Give every avatar the same clean circular disc and remove generated edge specks."""
 
+import argparse
 from pathlib import Path
 from PIL import Image, ImageChops, ImageDraw
 
@@ -8,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1] / "portraits"
 CENTER = (505, 526)
 RADIUS = 430
 TARGETS = {
+    "portrait-keeper.png": (233, 226, 204),  # pale brass-cream, distinct from portrait-02
     "portrait-sea.png": (205, 222, 236),  # pale sea-glass blue
     "portrait-06.png": (214, 208, 223),  # mist plum
     "portrait-07.png": (193, 224, 231),  # blue mint
@@ -31,12 +33,17 @@ def recolor_disc(image: Image.Image, target: tuple[int, int, int]) -> Image.Imag
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--only', nargs='+', help='Normalize only these portrait filenames; preserve every other file.')
+    args = parser.parse_args()
     disc_mask = Image.new("L", (1024, 1024), 0)
     ImageDraw.Draw(disc_mask).ellipse(
         (CENTER[0] - RADIUS, CENTER[1] - RADIUS, CENTER[0] + RADIUS, CENTER[1] + RADIUS),
         fill=255,
     )
     for path in sorted(ROOT.glob("portrait-*.png")):
+        if args.only and path.name not in args.only:
+            continue
         portrait = Image.open(path).convert("RGBA")
         # Approved canonical portraits are immutable; only normalize new inputs.
         if portrait.size == (1024, 1024) and ImageChops.difference(portrait.getchannel("A"), disc_mask).getbbox() is None:
