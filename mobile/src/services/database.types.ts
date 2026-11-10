@@ -423,6 +423,7 @@ export type Database = {
           landmark: string
           name_en: string
           name_zh: string
+          reset_timezone: string | null
           reward_gold: number
           reward_xp: number
           starts_at: string
@@ -442,6 +443,7 @@ export type Database = {
           landmark: string
           name_en: string
           name_zh: string
+          reset_timezone?: string | null
           reward_gold: number
           reward_xp: number
           starts_at: string
@@ -461,6 +463,7 @@ export type Database = {
           landmark?: string
           name_en?: string
           name_zh?: string
+          reset_timezone?: string | null
           reward_gold?: number
           reward_xp?: number
           starts_at?: string
