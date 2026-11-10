@@ -88,6 +88,8 @@ Steps 2–4 can be done in any order, and only count **after** check-in and **be
 - **On the map during a hunt** (for players who joined): the Letter Keeper with his marker, the five hunt Wayposts with a thin brass ring, and Taipei 101 as usual. Players who haven't joined still see him with **!** when they are nearby.
 - **Wayposts by colour:** **ink blue `#2F5D8A`** when you can spin it, and **purple** (today's colour) during its cooldown after you spin. This replaces today's fading. Landmarks follow the same rule but stay larger.
 - **Passport:** a "City Hunts" section for hunt stamps, below the place stamps.
+- **Toy-scale city (Roy, 2026-11-10):** map buildings are drawn at 35% of their real height and never above 40 m, so tall towers never wall off the pickup circle.
+- **Landmarks are monuments, not gems (Roy, 2026-11-10):** each Landmark is drawn at its real spot as stacked boxes in brass fading to cream, with a brass glow ring on the ground. Taipei 101 is a wide base, eight stepped sections, a crown and a spire, about 140 m tall in map terms. It is plain map geometry, with no art file or 3D model. The fight spot on the plaza is a brass ground ring with a floating seal badge (stepped-tower mark), turning plum once beaten. The Merlion and Senado Square get low, wide versions when hunts reach them.
 
 ## Your map character (Claude screens, art session art)
 - **Two separate things:**

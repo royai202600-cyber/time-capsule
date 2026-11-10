@@ -6,6 +6,36 @@ import { C } from "../../../theme";
 export const MAPLIBRE = "https://unpkg.com/maplibre-gl@5.24.0/dist";
 export const PMTILES = "https://unpkg.com/pmtiles@4.5.0/dist/pmtiles.js";
 
+// Toy-scale city: buildings at a third of their height, never above 40 m, so they never wall off the game.
+const TOY_SCALE = 0.35;
+const TOY_MAX_M = 40;
+
+// Landmarks drawn as stacked brass boxes at their real spot: [south-west-north-east box half-width m, base m, top m].
+type Tier = [number, number, number];
+const flare = (from: number, h: number, narrow: number, wide: number): Tier[] => [[narrow, from, from + h * .35], [(narrow + wide) / 2, from + h * .35, from + h * .7], [wide, from + h * .7, from + h]];
+export const MONUMENTS: { id: string; lat: number; lng: number; tiers: Tier[] }[] = [
+  { id: "taipei101", lat: 25.033964, lng: 121.564472, tiers: [
+    // A wide low base covers the real (grey) mall around the tower foot.
+    [62, 0, 18], [36, 18, 24], [24, 24, 30], [21, 30, 36],
+    ...Array.from({ length: 8 }, (_, i) => flare(36 + i * 8, 8, 14, 18.5)).flat(),
+    [12, 100, 106], [8, 106, 112], [4, 112, 116], [1.6, 116, 142],
+  ] },
+];
+function monumentGeoJson() {
+  const features = MONUMENTS.flatMap((m) => m.tiers.map(([half, base, top], i) => {
+    const dLat = half / 110540, dLng = half / (111320 * Math.cos(m.lat * Math.PI / 180));
+    const ring = [[m.lng - dLng, m.lat - dLat], [m.lng + dLng, m.lat - dLat], [m.lng + dLng, m.lat + dLat], [m.lng - dLng, m.lat + dLat], [m.lng - dLng, m.lat - dLat]];
+    return { type: "Feature", properties: { base, top, t: i / (m.tiers.length - 1) }, geometry: { type: "Polygon", coordinates: [ring] } };
+  }));
+  return { type: "FeatureCollection", features };
+}
+function glowGeoJson() {
+  return { type: "FeatureCollection", features: MONUMENTS.map((m) => {
+    const pts = Array.from({ length: 49 }, (_, i) => { const a = i / 48 * Math.PI * 2; return [m.lng + 58 * Math.cos(a) / (111320 * Math.cos(m.lat * Math.PI / 180)), m.lat + 58 * Math.sin(a) / 110540]; });
+    return { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [pts] } };
+  }) };
+}
+
 export const mapPalette = {
   water: "#BCD3E6", waterLine: "#9DBBD6", land: "#F3EFE6", park: "#DCE6CF", sand: "#EFE3C6",
   building: "#E6E0D3", buildingTop: "#EEE9DE", road: "#FFFFFF", roadCase: "#D5DDE7", major: "#F1E2BF", label: C.blue, halo: "#F6F8FB",
@@ -25,7 +55,7 @@ function vectorStyle(pmtiles: string) {
       { id: "shore", type: "line", source: "base", "source-layer": "water", paint: { "line-color": mapPalette.waterLine, "line-width": 1.2 } },
       { id: "road-case", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": mapPalette.roadCase, "line-width": ["interpolate", ["linear"], ["zoom"], 13, 2, 17, 12, 19, 22] } },
       { id: "roads", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road", "path"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "kind"], ["highway", "major_road"], mapPalette.major, mapPalette.road], "line-width": ["interpolate", ["linear"], ["zoom"], 13, 1, 17, ["match", ["get", "kind"], "path", 2, 9], 19, ["match", ["get", "kind"], "path", 4, 18]] } },
-      { id: "buildings", type: "fill-extrusion", source: "base", "source-layer": "buildings", minzoom: 15, paint: { "fill-extrusion-color": mapPalette.building, "fill-extrusion-height": ["coalesce", ["get", "height"], 9], "fill-extrusion-opacity": .82 } },
+      { id: "buildings", type: "fill-extrusion", source: "base", "source-layer": "buildings", minzoom: 15, paint: { "fill-extrusion-color": mapPalette.building, "fill-extrusion-height": ["min", ["*", ["coalesce", ["get", "height"], 9], TOY_SCALE], TOY_MAX_M], "fill-extrusion-opacity": .82 } },
       { id: "places", type: "symbol", source: "base", "source-layer": "places", filter: ["in", ["get", "kind"], ["literal", ["neighbourhood", "locality", "macrohood"]]], layout: { "text-field": ["coalesce", ["get", "name:zh-Hant"], ["get", "name"]], "text-font": ["Noto Sans Regular"], "text-size": 12, "text-letter-spacing": .08 }, paint: { "text-color": mapPalette.label, "text-halo-color": mapPalette.halo, "text-halo-width": 1.6 } },
     ],
   };
@@ -78,10 +108,10 @@ html,body,#map{--ready:hue-rotate(-130deg) saturate(1.5);margin:0;height:100%;wi
 .pin.waypost .disc{left:6px;width:28px;height:8px}
 .pin.waypost .post{position:absolute;left:7px;bottom:9px;width:26px;height:41px;background-size:122px;background-position:center;background-repeat:no-repeat;animation:bob 3.6s ease-in-out infinite}
 /* Ready to spin: ink blue (tinted until the blue gem art lands). Spun: the original purple. */
-.pin.waypost .post,.pin.landmark .post{filter:var(--ready)}
-.pin.waypost.done .post,.pin.landmark.done .post{filter:none}
-.pin.waypost.near:not(.done) .post,.pin.landmark.near:not(.done) .post{filter:var(--ready) drop-shadow(0 0 6px ${C.lightBlue}) brightness(1.12)}
-.pin.waypost.near:not(.done) .disc,.pin.landmark.near:not(.done) .disc{background:radial-gradient(${C.lightBlue}AA,transparent 70%)}
+.pin.waypost .post{filter:var(--ready)}
+.pin.waypost.done .post{filter:none}
+.pin.waypost.near:not(.done) .post{filter:var(--ready) drop-shadow(0 0 6px ${C.lightBlue}) brightness(1.12)}
+.pin.waypost.near:not(.done) .disc{background:radial-gradient(${C.lightBlue}AA,transparent 70%)}
 /* A City Hunt stop: a thin brass ring on the ground. */
 .pin.hunt .disc{border:2px solid ${C.brass};box-sizing:border-box;background:radial-gradient(${C.brass}33,transparent 70%)}
 .pin.waypost.hunt .disc{left:2px;width:36px;height:12px;bottom:-2px}
@@ -97,11 +127,15 @@ html,body,#map{--ready:hue-rotate(-130deg) saturate(1.5);margin:0;height:100%;wi
 @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.06)}}
 .you .label{position:absolute;left:50%;bottom:66px;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:12px;background:${C.ink};color:${C.brass};box-shadow:0 2px 8px rgba(22,38,63,.3);cursor:pointer}
 .you .label:after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:${C.ink}}
-.pin.landmark{width:64px;height:88px}
-.pin.landmark .disc{left:12px;width:40px;height:10px}
-.pin.landmark .post{position:absolute;left:15px;bottom:12px;width:33px;height:76px;background-size:154px;background-position:-61px -15px;background-repeat:no-repeat;animation:bob 3.6s ease-in-out infinite}
+/* Landmark fight spot: a brass ring on the ground and a floating seal badge, never a gem. Plum once beaten. */
+.pin.landmark{width:64px;height:76px;--lm:${C.brass};--lm-hi:#E8D3A3;--lm-lo:#9C7B3C;--lm-glow:${C.brass}55}
+.pin.landmark.done{--lm:${C.plum};--lm-hi:#B98494;--lm-lo:#4A1C2A;--lm-glow:${C.plum}44}
+.pin.landmark .ring{position:absolute;left:4px;bottom:0;width:56px;height:18px;border-radius:50%;border:2.5px solid var(--lm);box-sizing:border-box;background:radial-gradient(var(--lm-glow),transparent 70%)}
+.pin.landmark .badge{position:absolute;left:12px;bottom:18px;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--lm-hi),var(--lm) 62%,var(--lm-lo));box-shadow:0 3px 8px rgba(22,38,63,.35),inset 0 0 0 2.5px var(--lm-hi);display:flex;align-items:center;justify-content:center;animation:bob 3.6s ease-in-out infinite}
+.pin.landmark .badge svg{width:22px;height:22px}
+.pin.landmark.near .badge{box-shadow:0 0 12px var(--lm),inset 0 0 0 2.5px var(--lm-hi)}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.you .pulse,.pin.keeper .seal{animation:none}}
+@media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.pin .badge,.you .pulse,.pin.keeper .seal{animation:none}}
 </style></head><body><div id="map"></div>
 <script>
 const send=m=>{const s=JSON.stringify(m);if(window.ReactNativeWebView)window.ReactNativeWebView.postMessage(s);else parent.postMessage({__tcmap:s},'*')};
@@ -121,6 +155,11 @@ let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
 map.on('load',()=>{
+  map.addSource('monument-glow',{type:'geojson',data:${JSON.stringify(glowGeoJson())}});
+  map.addLayer({id:'monument-glow',type:'fill',source:'monument-glow',paint:{'fill-color':'${C.brass}','fill-opacity':.28}});
+  map.addLayer({id:'monument-glow-line',type:'line',source:'monument-glow',paint:{'line-color':'${C.brass}','line-width':2}});
+  map.addSource('monuments',{type:'geojson',data:${JSON.stringify(monumentGeoJson())}});
+  map.addLayer({id:'monuments',type:'fill-extrusion',source:'monuments',paint:{'fill-extrusion-base':['get','base'],'fill-extrusion-height':['get','top'],'fill-extrusion-color':['interpolate',['linear'],['get','t'],0,'#B98F45',0.6,'${C.brass}',1,'#F3E2BB'],'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}});
   map.addSource('reach',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   map.addLayer({id:'reach-fill',type:'fill',source:'reach',paint:{'fill-color':'${C.brass}','fill-opacity':.12}});
   map.addLayer({id:'reach-line',type:'line',source:'reach',paint:{'line-color':'${C.brass}','line-width':1.5,'line-dasharray':[2,2]}});
@@ -142,7 +181,8 @@ function render(){
   for(const [id,m] of marks){if(!want.has(id)){m.marker.remove();marks.delete(id)}}
   for(const p of state.pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
-      :p.kind==='waypost'||p.kind==='landmark'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
+      :p.kind==='landmark'?'<div class="pin-body"><div class="ring"></div><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M11.4 1h1.2v4h-1.2zM10 5h4v2.5h-4zM9 7.5h6v2.6H9zM9 10.1h6v2.6H9zM8.5 12.7h7v2.6h-7zM8 15.3h8v2.6H8zM6 17.9h12V21H6z"/></svg></div></div>'
+      :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
     const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'');
     let m=marks.get(p.id);
     if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:p.id})});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
