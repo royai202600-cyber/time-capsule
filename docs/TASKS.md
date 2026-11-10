@@ -7,8 +7,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| H2 Senado test hunt | Daily-reset opt-in, 800 m Senado Square hunt, open every day with no planned end | Codex | Rollback and real-JWT route checks, 375 px zh/en Quest/Keeper check, green CI, fountain-point migration applied, types regenerated, disposable fixtures removed. Passport scroll fallback until stamp art. |
-| H2 HKUST | Await the approved `red-bird` vessel art and catalogue before setup | Codex → Roy | `landmark_hit` requires a vessel on a win; do not seed game rows or extend tiles until Roy approves and merges that art/catalogue PR. |
+| H2 HKUST | Await registration of the approved `red-bird` art in app/catalogue before setup | Codex → Roy | PR #99 merged art only. `landmark_hit` requires a vessel on a win; do not seed game rows or extend tiles until the real earned vessel is registered. |
 | H1 backend | City Hunt tables and RPCs, seed the Xinyi hunt (`docs/design/city-hunt.md`, backend contract) | Codex | `hunt_list/join/check_in/finish`, server-side progress from spin/catch/landmark win, Passport hunt stamps, Xinyi hunt open until 2026-11-30 23:59 Asia/Taipei; real-JWT checks pass and the test account can complete the route with the walk control. |
 | H1 art | Letter Keeper, nine player map figures, blue Waypost/Landmark gems, Xinyi hunt stamp (`gpt-image-2`) | Art session → Codex | Roy approves the three-figure test, then the full set; art-only PR merged. |
 | S1 | Public Sea: sea bottles as capsules + live MapLibre Journey (`docs/design/public-sea.md`) | Claude UI → Codex backend | UI/backend #67/#69 and map worker #73 released; 60 shores/six RPCs applied after app confirmation. Real-JWT sealed-content checks passed; disposable fixtures removed and dedicated Taipei demos retained. Roy confirmed physical Expo Go map/pickup, then reloaded and passed the follow-up pin/control fixes. Follow-up removes fog, duplicate pin pickup labels and screen offsets, adds a locate icon, and fixes safe-area/control layers plus Safari dynamic viewport. Browser compact/tall 375 px pan/control/Create checks pass; Roy approved creating and merging the final Journey controls PR after green CI; production confirmation follows. Later local changes add half-phone-width pickup-circle framing, all received place capsule pins across cities, compact bold locate-blue discovery badge 「附近有什麼」 / “what’s waiting” docked flush right with square right corners (badge and locate backgrounds at 90% opacity), and the restored red bottle pill labelled 「放下一個瓶子」 / “Drop a bottle.” Unlimited pickup migration `20261108105331` applied with Roy’s explicit approval after hosted rollback/security checks. |
@@ -54,6 +53,8 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+
+- H2 Senado test hunt: daily-reset 800 m Senado Square hunt open every day with no planned end. PRs #95/#96/#97/#98 merged; three migrations applied; rollback and real-JWT full route/security checks, 375 px zh/en map and Quest checks passed; types regenerated; disposable fixtures removed. Passport uses the current generic hunt stamp until art lands.
 
 - City Hunt Keeper one-time backend setup: PR #94 passed CI 42786785487 and owner-account squash-merged as `10c62b2`. Migration `20261110085702_hunt_keeper_names` is applied and live types regenerated. Hosted rollback preserved every old hunt-object field; 375 px zh/en Keeper lines checked without changing the dedicated account's completed progress.
 
