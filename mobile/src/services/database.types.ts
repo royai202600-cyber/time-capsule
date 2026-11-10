@@ -374,6 +374,211 @@ export type Database = {
           },
         ]
       }
+      hunt_passport_stamps: {
+        Row: {
+          hunt_id: string
+          user_id: string
+          first_at: string
+        }
+        Insert: {
+          hunt_id: string
+          user_id: string
+          first_at: string
+        }
+        Update: {
+          hunt_id?: string
+          user_id?: string
+          first_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hunt_passport_stamps_hunt_id_fkey"
+            columns: ["hunt_id"]
+            isOneToOne: false
+            referencedRelation: "hunts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hunt_passport_stamps_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hunt_progress: {
+        Row: {
+          hunt_id: string
+          user_id: string
+          joined_at: string
+          checked_in_at: string | null
+          spin_count: number
+          restore_count: number
+          landmark_count: number
+          finished_at: string | null
+        }
+        Insert: {
+          hunt_id: string
+          user_id: string
+          joined_at?: string
+          checked_in_at?: string | null
+          spin_count?: number
+          restore_count?: number
+          landmark_count?: number
+          finished_at?: string | null
+        }
+        Update: {
+          hunt_id?: string
+          user_id?: string
+          joined_at?: string
+          checked_in_at?: string | null
+          spin_count?: number
+          restore_count?: number
+          landmark_count?: number
+          finished_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hunt_progress_hunt_id_fkey"
+            columns: ["hunt_id"]
+            isOneToOne: false
+            referencedRelation: "hunts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hunt_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hunt_spin_credits: {
+        Row: {
+          hunt_id: string
+          user_id: string
+          waypost_id: string
+        }
+        Insert: {
+          hunt_id: string
+          user_id: string
+          waypost_id: string
+        }
+        Update: {
+          hunt_id?: string
+          user_id?: string
+          waypost_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hunt_spin_credits_hunt_id_user_id_fkey"
+            columns: ["hunt_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "hunt_progress"
+            referencedColumns: ["hunt_id", "user_id"]
+          },
+          {
+            foreignKeyName: "hunt_spin_credits_waypost_id_fkey"
+            columns: ["waypost_id"]
+            isOneToOne: false
+            referencedRelation: "sea_shores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hunt_steps: {
+        Row: {
+          hunt_id: string
+          step_key: string
+          ordinal: number
+          goal: number
+        }
+        Insert: {
+          hunt_id: string
+          step_key: string
+          ordinal: number
+          goal: number
+        }
+        Update: {
+          hunt_id?: string
+          step_key?: string
+          ordinal?: number
+          goal?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hunt_steps_hunt_id_fkey"
+            columns: ["hunt_id"]
+            isOneToOne: false
+            referencedRelation: "hunts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hunts: {
+        Row: {
+          id: string
+          name_zh: string
+          name_en: string
+          city_zh: string
+          city_en: string
+          starts_at: string
+          ends_at: string
+          keeper_lat: number
+          keeper_lng: number
+          area_lat: number
+          area_lng: number
+          area_radius_m: number
+          landmark: string
+          reward_xp: number
+          reward_gold: number
+        }
+        Insert: {
+          id: string
+          name_zh: string
+          name_en: string
+          city_zh: string
+          city_en: string
+          starts_at: string
+          ends_at: string
+          keeper_lat: number
+          keeper_lng: number
+          area_lat: number
+          area_lng: number
+          area_radius_m: number
+          landmark: string
+          reward_xp: number
+          reward_gold: number
+        }
+        Update: {
+          id?: string
+          name_zh?: string
+          name_en?: string
+          city_zh?: string
+          city_en?: string
+          starts_at?: string
+          ends_at?: string
+          keeper_lat?: number
+          keeper_lng?: number
+          area_lat?: number
+          area_lng?: number
+          area_radius_m?: number
+          landmark?: string
+          reward_xp?: number
+          reward_gold?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hunts_landmark_fkey"
+            columns: ["landmark"]
+            isOneToOne: false
+            referencedRelation: "sea_shores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       passport_stamps: {
         Row: {
           first_at: string
@@ -810,6 +1015,16 @@ export type Database = {
           xp_to_next: number
         }[]
       }
+      hunt_check_in: {
+        Args: { p_hunt: string; p_accuracy: number; p_lat: number; p_lng: number }
+        Returns: Json
+      }
+      hunt_finish: {
+        Args: { p_hunt: string; p_accuracy: number; p_lat: number; p_lng: number }
+        Returns: Json
+      }
+      hunt_join: { Args: { p_hunt: string }; Returns: Json }
+      hunt_list: { Args: { p_lat: number; p_lng: number }; Returns: Json }
       invite_info: {
         Args: { p_code: string }
         Returns: {
