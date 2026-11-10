@@ -116,6 +116,8 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 
 - City Hunt art: Letter Keeper from selected sketch A1, matching dialog portrait, all eight player figures on the approved shared adult scale, RGB-only blue Waypost gems, and the ink-blue double-ring Xinyi hunt stamp. Roy approved the first seven assets at `9c247aa`; their PNGs and WebPs remain unchanged. The five remaining figures and stamp await whole-PR approval. No app registration, deployment or merge. Exact prompts, references, scale and preservation hashes are in `_checks/city-hunt-*.json`.
 
+- Red Bird Sundial Box (`red-bird`, 火鳥日晷盒): original low brass sundial keepsake with a wax-red swept pointer inspired by the verified HKUST Piazza sculpture. Closed master, complete rolled-letter interior, back-hinged dial/pointer and soft shadow. The shadow sways 4° about its foot on a 4200ms loop; the rim has a measured sparkle anchor. Earned landmark art only, pending Roy’s visual OK; no app registration, migration, deployment or merge.
+
 ## Masters
 
 | File | What | Size | Notes |
@@ -450,6 +452,10 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `characters/figure-07.png` | Player map figure 07; identity matched to portrait-07 | 1024×1024 | awaiting whole-PR approval; see manifest |
 | `characters/figure-08.png` | Player map figure 08; identity matched to portrait-08 | 1024×1024 | awaiting whole-PR approval; see manifest |
 | `stamps/stamp-hunt-xinyi-2026-11.png` | Xinyi City Hunt event stamp; double ring, stepped tower left, focal sealed letter right and dotted walking path | 1024×1024 | awaiting whole-PR approval; see manifest |
+| `vessels/vessel-red-bird.png` | Red Bird Sundial Box — assembled | 1024×1024 | pending Roy; see manifest |
+| `vessels/vessel-red-bird-box.png` | Red Bird Sundial Box — box | 1024×1024 | pending Roy; see manifest |
+| `vessels/vessel-red-bird-lid.png` | Red Bird Sundial Box — lid | 1024×1024 | pending Roy; see manifest |
+| `vessels/vessel-red-bird-shadow.png` | Red Bird Sundial Box — shadow | 1024×1024 | pending Roy; see manifest |
 
 ## Review
 
@@ -464,3 +470,11 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 [All nine head-and-shoulder facing crops](_checks/city-hunt-facing.png) · [Xinyi event stamp versus Taipei 101 place stamp](_checks/city-hunt-stamp.png)
 
 - Xinyi hunt stamp silhouette reference: [TAIPEI 101 official sunrise photograph](https://www.taipei-101.com.tw/asset/img/cover-sunrise.jpg), linked from the [official gallery](https://www.taipei-101.com.tw/tw/explore/photogallery), inspected 2026-11-10. Observed stacked upward-flared tiers and slim spire; used only to inform a smaller loose tower behind the focal letter. The photograph is not reproduced in the artwork or repository.
+
+[Red Bird vessel review](_checks/red-bird-review.png) · [40/120px](_checks/red-bird-sizes.png) · [stack](_checks/red-bird-stack.png) · [closed/half/open motion](_checks/red-bird-motion.png) · [shadow idle](_checks/red-bird-idle.png) · [audit](_checks/red-bird-audit.json)
+
+### Red Bird reference
+
+[HKUST Campus Management Office: Circle of Time / Red Bird Sundial](https://cmo.hkust.edu.hk/sundial-sculpture) · [official photograph, the filename Roy identified](https://cmo.hkust.edu.hk/files/sundial_M0089_01_m001R2.jpg). Credit: HKUST Campus Management Office / HKUST. Inspected 2026-11-10: the red swept steel planes stand in the circular pool and stepped podium of the Entrance Piazza. The [official Visit HKUST page](https://hkust.edu.hk/visit) confirms the same sculpture against the curved academic building. This is not the Guangzhou sundial or the university emblem. Only the small reference thumbnail is stored; the vessel is an original souvenir design, not a replica.
+
+![HKUST official Red Bird Piazza reference](reference/red-bird/hkust-piazza-thumb.jpg)

@@ -1,0 +1,177 @@
+{
+  "vessel": "red-bird",
+  "geometry": {
+    "assembled": {
+      "size": [
+        1024,
+        1024
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        203,
+        141,
+        821,
+        904
+      ],
+      "visible_bbox_alpha_gt20": [
+        205,
+        143,
+        819,
+        902
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    "box": {
+      "size": [
+        1024,
+        1024
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        203,
+        528,
+        821,
+        904
+      ],
+      "visible_bbox_alpha_gt20": [
+        206,
+        530,
+        819,
+        902
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    "lid": {
+      "size": [
+        1024,
+        1024
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        203,
+        141,
+        820,
+        791
+      ],
+      "visible_bbox_alpha_gt20": [
+        205,
+        143,
+        817,
+        788
+      ],
+      "alpha_range": [
+        0,
+        255
+      ]
+    },
+    "shadow": {
+      "size": [
+        1024,
+        1024
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_bbox": [
+        417,
+        621,
+        710,
+        690
+      ],
+      "visible_bbox_alpha_gt20": [
+        424,
+        627,
+        702,
+        686
+      ],
+      "alpha_range": [
+        0,
+        103
+      ]
+    }
+  },
+  "baseY": 900,
+  "mouth": {
+    "x": 513,
+    "y": 668
+  },
+  "hinge": {
+    "x": 664,
+    "y": 550
+  },
+  "shadow_pivot": {
+    "x": 517,
+    "y": 672
+  },
+  "sparkle": {
+    "x": 297,
+    "y": 754
+  },
+  "motion": [
+    {
+      "open": 0,
+      "alpha_bbox": [
+        203,
+        141,
+        821,
+        904
+      ],
+      "inside_canvas": true
+    },
+    {
+      "open": 0.5,
+      "alpha_bbox": [
+        203,
+        156,
+        832,
+        904
+      ],
+      "inside_canvas": true
+    },
+    {
+      "open": 1,
+      "alpha_bbox": [
+        203,
+        173,
+        835,
+        904
+      ],
+      "inside_canvas": true
+    }
+  ],
+  "exact_rest_stack": true,
+  "no_ground_layers": true,
+  "interior_complete_and_letter_visible": true,
+  "ip_check": {
+    "original_souvenir_design": true,
+    "landmark_photo_verified": true,
+    "no_text_logos_emblem_or_franchise_character": true,
+    "notes": "Simplified swept red planes on an original brass sundial box. No university emblem or logo artwork, no exact sculpture replica; visual review only."
+  },
+  "existing_art_files_unchanged": 725,
+  "pass": true
+}

@@ -1,0 +1,30 @@
+{
+  "native_size": [
+    1254,
+    1254
+  ],
+  "scale": 0.8165869218500797,
+  "translation": [
+    3,
+    -30
+  ],
+  "one_common_transform": true,
+  "never_upscaled": true,
+  "hinge_source_px": [
+    810,
+    710
+  ],
+  "bird_foot_source_px": [
+    630,
+    860
+  ],
+  "mouth_source_px": [
+    625,
+    855
+  ],
+  "sparkle_source_px": [
+    360,
+    960
+  ],
+  "postprocess": "alpha<=16 dust removed; common full-canvas resize/translation; generated shadow blurred4px and clipped off red pointer; closed assembled re-composited from exact rest layers."
+}
