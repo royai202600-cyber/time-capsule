@@ -20,7 +20,7 @@ const strings = {
     preview: "預覽：進度只存在這支手機，不會發放獎勵",
     steps: {
       checkin: "找到守信人",
-      spin: "轉動尋寶驛站",
+      spin: "轉動區內的驛站",
       restore: "修復破損膠囊",
       landmark: "贏得地標挑戰",
       return: "回到守信人身邊",
@@ -69,7 +69,7 @@ const strings = {
     preview: "Preview: progress is kept on this phone only, with no reward",
     steps: {
       checkin: "Meet the Letter Keeper",
-      spin: "Spin hunt Wayposts",
+      spin: "Spin Wayposts in the area",
       restore: "Restore Corrupted Capsules",
       landmark: "Win the Landmark fight",
       return: "Return to the Letter Keeper",

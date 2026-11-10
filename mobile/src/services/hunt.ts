@@ -13,7 +13,7 @@ export type Hunt = {
   starts_at: string; ends_at: string;
   keeper: { lat: number; lng: number };
   area: { lat: number; lng: number; radius_m: number };
-  wayposts: string[]; landmark: string;
+  landmark: string;
   reward: { xp: number; gold: number };
   steps: HuntStep[];
   joined_at: string | null; checked_in_at: string | null; finished_at: string | null;
@@ -57,7 +57,6 @@ const XINYI = {
   id: "xinyi-2026-11", name_zh: "信義城市尋寶", name_en: "Xinyi City Hunt", city_zh: "台北", city_en: "Taipei",
   starts_at: "2026-11-10T00:00:00+08:00", ends_at: "2026-11-30T23:59:59+08:00",
   keeper: { lat: 25.037546, lng: 121.562754 }, area: { lat: 25.033263, lng: 121.564887, radius_m: 1200 },
-  wayposts: ["Xiangti Avenue Square", "Xinyi 21 Plaza", "Songren Green", "Zhenghe Park", "Jinglian Plaza"],
   landmark: "Taipei 101 Plaza", reward: { xp: 300, gold: 5 },
 };
 type Progress = { joined_at: string | null; checked_in_at: string | null; finished_at: string | null; spun: string[]; restored: number; won: number };
@@ -75,18 +74,15 @@ function buildPreview(at: Coords, known: Waypost[], live: boolean): Hunt | null 
   const name = (w: Waypost) => w.name_en;
   if (live) {
     // The real Xinyi hunt, matched to the live Wayposts by name.
-    const posts = known.filter((w) => w.kind === "common" && XINYI.wayposts.includes(name(w))).map((w) => w.id);
     const landmark = known.find((w) => w.kind === "landmark" && name(w) === XINYI.landmark)?.id ?? previewHunt?.landmark ?? "";
-    const before = previewHunt?.id === XINYI.id ? previewHunt.wayposts : [];
-    return asPreview({ ...XINYI, wayposts: Array.from(new Set([...before, ...posts])), landmark });
+    return asPreview({ ...XINYI, landmark });
   }
   // Signed out in development: a small hunt around wherever you are, using the stand-in Wayposts.
   if (previewHunt && previewHunt.id === "dev-hunt") return previewHunt;
-  const common = known.filter((w) => w.kind === "common").map((w) => w.id);
   return asPreview({
     ...XINYI, id: "dev-hunt", name_zh: "測試尋寶", name_en: "Test Hunt", city_zh: "這附近", city_en: "Nearby",
     starts_at: new Date(Date.now() - 3_600_000).toISOString(), ends_at: new Date(Date.now() + 3 * 3_600_000).toISOString(),
-    keeper: offset(at, 40, -30), area: { ...at, radius_m: 1200 }, wayposts: common,
+    keeper: offset(at, 40, -30), area: { ...at, radius_m: 1200 },
     landmark: known.find((w) => w.kind === "landmark")?.id ?? ""
   });
 }
@@ -105,12 +101,14 @@ function withProgress(h: Hunt): Hunt {
     ],
   };
 }
-const previewGoals = (h: Hunt) => h.id === "dev-hunt" ? { spin: Math.min(3, Math.max(1, h.wayposts.length)), restore: 3 } : { spin: 3, restore: 5 };
+// The signed-out stand-in has only two common Wayposts.
+const previewGoals = (h: Hunt) => h.id === "dev-hunt" ? { spin: 2, restore: 3 } : { spin: 3, restore: 5 };
 const counting = () => !!previewHunt && !!progress.checked_in_at && !progress.finished_at && huntStatus(previewHunt) === "open";
 onGameEvent((e) => {
   const h = previewHunt;
   if (!h || !counting()) return;
-  if (e.kind === "spin" && h.wayposts.includes(e.waypost) && !progress.spun.includes(e.waypost)) { progress.spun.push(e.waypost); save(); }
+  // Any Waypost inside the hunt area counts, each one once.
+  if (e.kind === "spin" && distanceMeters(h.area.lat, h.area.lng, e.lat, e.lng) <= h.area.radius_m && !progress.spun.includes(e.waypost)) { progress.spun.push(e.waypost); save(); }
   if (e.kind === "restore" && distanceMeters(h.area.lat, h.area.lng, e.lat, e.lng) <= h.area.radius_m) { progress.restored += 1; save(); }
   if (e.kind === "landmark" && e.waypost === h.landmark) { progress.won += 1; save(); }
 });

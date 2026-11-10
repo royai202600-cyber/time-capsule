@@ -49,23 +49,23 @@ Nothing new is invented for it. It **combines what already exists**:
 - **Open:** from its release until **2026-11-30 23:59 Asia/Taipei**, so Roy can test it any time. Later hunts are short windows, for example a Saturday 14:00–17:00.
 - **Letter Keeper:** Taipei City Hall Civic Square (25.037546, 121.562754). This is also the test account's simulated location, so Roy starts right next to him.
 - **Hunt area:** a 1,200 m circle around Taipei 101 Plaza (25.033263, 121.564887). It covers every stop below.
-- **Route** (measured distances; about 2–2.5 km in total, 40–60 minutes):
+- **Suggested route** (any Waypost in the area counts; these are the nearby ones, measured; about 2–2.5 km, 40–60 minutes):
 
 | Stop | Kind | From Civic Square | From 101 Plaza |
 |---|---|---|---|
 | Civic Square | Letter Keeper | — | 522 m |
-| Xiangti Avenue Square 香緹大道廣場 | Hunt Waypost | 430 m | 515 m |
-| Xinyi 21 Plaza 信義21號廣場 | Hunt Waypost | 356 m | 168 m |
-| Songren Green 松仁綠地 | Hunt Waypost | 738 m | 282 m |
-| Zhenghe Park 正和公園 | Hunt Waypost | 390 m | 644 m |
-| Jinglian Plaza 景聯廣場 | Hunt Waypost | 634 m | 486 m |
+| Xiangti Avenue Square 香緹大道廣場 | Waypost on the route | 430 m | 515 m |
+| Xinyi 21 Plaza 信義21號廣場 | Waypost on the route | 356 m | 168 m |
+| Songren Green 松仁綠地 | Waypost on the route | 738 m | 282 m |
+| Zhenghe Park 正和公園 | Waypost on the route | 390 m | 644 m |
+| Jinglian Plaza 景聯廣場 | Waypost on the route | 634 m | 486 m |
 | Taipei 101 Plaza | Landmark Waypost | 522 m | — |
 
 ### Steps
 | # | Step | Goal | Counts when |
 |---|---|---|---|
 | 1 | Meet the Letter Keeper | check in | within the action radius of him, inside the window |
-| 2 | Spin hunt Wayposts | 3 different ones | a successful spin of any of the five hunt Wayposts |
+| 2 | Spin Wayposts in the area | 3 different ones | a successful spin of any Waypost inside the hunt area (Roy, 2026-11-10) |
 | 3 | Restore Corrupted Capsules | 5 | a successful catch of any Corrupted Capsule inside the hunt area |
 | 4 | Win the Landmark fight | 1 | a win at Taipei 101 Plaza (a repeat win counts too) |
 | 5 | Return to the Letter Keeper | finish | steps 2–4 complete, back within his action radius |
@@ -85,7 +85,7 @@ Steps 2–4 can be done in any order, and only count **after** check-in and **be
   - Open, not joined: name, place, time left, the reward, and **Join**.
   - Joined: the five steps as a checklist with counts (2/3, 4/5), the time left, and **Show on map**.
   - Finished: the stamp and "Finished".
-- **On the map during a hunt** (for players who joined): the Letter Keeper with his marker and Taipei 101 as usual. Hunt Wayposts look like every other Waypost, with no ring (Roy, 2026-11-10). Players who haven't joined still see him with **!** when they are nearby.
+- **On the map during a hunt** (for players who joined): the Letter Keeper with his marker and Taipei 101 as usual. Every Waypost looks the same, with no ring, and any Waypost inside the area counts (Roy, 2026-11-10). Players who haven't joined still see him with **!** when they are nearby.
 - **Wayposts by colour:** **ink blue `#2F5D8A`** when you can spin it, and **purple** (today's colour) during its cooldown after you spin. This replaces today's fading. Landmarks follow the same rule but stay larger.
 - **Passport:** a "City Hunts" section for hunt stamps, below the place stamps.
 - **Toy-scale city (Roy, 2026-11-10):** map buildings are drawn at 35% of their real height and never above 40 m, so tall towers never wall off the pickup circle.
@@ -117,7 +117,7 @@ Map figures: 1024×1024 transparent, feet on a common anchor at (512, 900), full
 The screens are built against this shape with a dev fallback, the same pattern as `mobile/src/services/game.ts`.
 
 - `hunt_list(p_lat, p_lng)` → jsonb array of open and upcoming hunts, each:
-  `{ id, name_zh, name_en, city_zh, city_en, starts_at, ends_at, keeper: { lat, lng }, area: { lat, lng, radius_m }, wayposts: [uuid], landmark: uuid, reward: { xp, gold }, steps: [{ key: "checkin"|"spin"|"restore"|"landmark"|"return", goal, count }], joined_at, checked_in_at, finished_at }`
+  `{ id, name_zh, name_en, city_zh, city_en, starts_at, ends_at, keeper: { lat, lng }, area: { lat, lng, radius_m }, landmark: uuid, reward: { xp, gold }, steps: [{ key: "checkin"|"spin"|"restore"|"landmark"|"return", goal, count }], joined_at, checked_in_at, finished_at }`
 - `hunt_join(p_hunt)` → the same hunt object. Allowed from anywhere before the window closes.
 - `hunt_check_in(p_hunt, p_lat, p_lng, p_accuracy)` → hunt object; within the action radius of the keeper, inside the window.
 - `hunt_finish(p_hunt, p_lat, p_lng, p_accuracy)` → `{ hunt, xp_gained, gold_gained, state }`; steps 2–4 complete, at the keeper, inside the window, once only.

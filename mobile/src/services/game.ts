@@ -34,11 +34,12 @@ const fail = (error: { message?: string } | null) => {
 const LANDMARK_VESSEL: Record<string, string> = { taipei101: "bamboo-tower", merlion: "lionfish-fountain", senado: "senado-fountain" };
 let position: Coords | null = null;
 /** Successful game actions, so a City Hunt can count them on the device while its backend is not live. */
-export type GameEvent = { kind: "spin"; waypost: string } | { kind: "restore"; lat: number; lng: number } | { kind: "landmark"; waypost: string };
+export type GameEvent = { kind: "spin"; waypost: string; lat: number; lng: number } | { kind: "restore"; lat: number; lng: number } | { kind: "landmark"; waypost: string };
 const listeners = new Set<(e: GameEvent) => void>();
 const emit = (e: GameEvent) => { listeners.forEach((l) => { try { l(e); } catch { /* never break the game */ } }); };
 export const onGameEvent = (l: (e: GameEvent) => void) => { listeners.add(l); return () => { listeners.delete(l); }; };
 const spots = new Map<string, { lat: number; lng: number }>();
+const posts = new Map<string, { lat: number; lng: number }>();
 const attemptPost = new Map<string, string>();
 const live = async () => GAME_BACKEND && !!(await supabase.auth.getSession()).data.session;
 const coords = () => {
@@ -129,6 +130,7 @@ export const game = {
       fail(error);
       const payload = data as unknown as NearbyPayload;
       payload.spawns.forEach((c) => spots.set(c.spawn_id, { lat: c.lat, lng: c.lng }));
+      payload.wayposts.forEach((w) => posts.set(w.id, { lat: w.lat, lng: w.lng }));
       return {
         corrupted: payload.spawns.filter((c) => !c.already_caught && c.attempts_left > 0)
           .map((c) => ({ id: c.spawn_id, vessel: c.vessel, rarity: c.rarity, lat: c.lat, lng: c.lng, expires_at: c.expires_at, attempts_left: c.attempts_left })),
@@ -139,6 +141,7 @@ export const game = {
     seed(at);
     refreshDevWave(at);
     dev.corrupted.forEach((c) => spots.set(c.id, { lat: c.lat, lng: c.lng }));
+    dev.wayposts.forEach((w) => posts.set(w.id, { lat: w.lat, lng: w.lng }));
     return { corrupted: dev.corrupted.filter((c) => c.attempts_left > 0), wayposts: dev.wayposts.map((w) => ({ ...w })) };
   },
   async throwBall(args: { id: string; ball: BallKind; ring: number; hit: boolean }): Promise<ThrowResult> {
@@ -255,7 +258,8 @@ export const game = {
   },
   async spin(id: string): Promise<{ wax: number; gold: number; state: GameState }> {
     const out = await game.spinOnce(id);
-    emit({ kind: "spin", waypost: id });
+    const at = posts.get(id);
+    if (at) emit({ kind: "spin", waypost: id, ...at });
     return out;
   },
   async spinOnce(id: string): Promise<{ wax: number; gold: number; state: GameState }> {

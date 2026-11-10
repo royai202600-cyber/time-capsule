@@ -176,7 +176,6 @@ export default function JourneyScreen() {
   const metersTo = (lat: number, lng: number) => you ? distanceMeters(you.lat, you.lng, lat, lng) : Infinity;
   // The open City Hunt, if any. The Letter Keeper stands only at its starting point.
   const activeHunt = huntList.find((x) => huntStatus(x) === "open") ?? null;
-  const onHunt = !!activeHunt?.checked_in_at && !activeHunt.finished_at;
   const keeperMeters = activeHunt ? metersTo(activeHunt.keeper.lat, activeHunt.keeper.lng) : Infinity;
   const showKeeper = !!activeHunt && (!!activeHunt.joined_at || keeperMeters <= 1500);
   const questDot = !!activeHunt && (!activeHunt.joined_at || keeperMark(activeHunt) === "✓");
@@ -195,10 +194,9 @@ export default function JourneyScreen() {
       return {
       id: `way-${w.id}`, lat: monument?.lat ?? w.lat, lng: monument?.lng ?? w.lng, lift: monument ? monumentTop(monument) + 4 : undefined, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: assetUri(w.kind === "landmark" ? gameArt.landmarkGem : gameArt.waypostGem) ?? "",
       done: !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now(),
-      hunt: onHunt && (activeHunt!.wayposts.includes(w.id) || activeHunt!.landmark === w.id),
       near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
     }; }),
-  ], [nearby, throwing?.id, you?.lat, you?.lng, onHunt, activeHunt]);
+  ], [nearby, throwing?.id, you?.lat, you?.lng]);
 
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: you ?? FALLBACK }), [!!you]);
   const mapState = useMemo(() => ({
