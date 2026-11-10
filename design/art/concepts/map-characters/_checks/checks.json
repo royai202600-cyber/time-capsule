@@ -1,0 +1,236 @@
+[
+  {
+    "id": "npc-a1",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "source_size": [
+      1254,
+      1254
+    ],
+    "source_bbox": [
+      414,
+      74,
+      818,
+      1199
+    ],
+    "visible_bbox": [
+      378,
+      156,
+      645,
+      900
+    ],
+    "map_anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "review_heights_px": [
+      64,
+      96,
+      120
+    ],
+    "pass": true
+  },
+  {
+    "id": "npc-a2",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "source_size": [
+      1254,
+      1254
+    ],
+    "source_bbox": [
+      423,
+      64,
+      930,
+      1195
+    ],
+    "visible_bbox": [
+      345,
+      156,
+      679,
+      900
+    ],
+    "map_anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "review_heights_px": [
+      64,
+      96,
+      120
+    ],
+    "pass": true
+  },
+  {
+    "id": "npc-a3",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "source_size": [
+      1254,
+      1254
+    ],
+    "source_bbox": [
+      404,
+      33,
+      818,
+      1220
+    ],
+    "visible_bbox": [
+      382,
+      156,
+      641,
+      900
+    ],
+    "map_anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "review_heights_px": [
+      64,
+      96,
+      120
+    ],
+    "pass": true
+  },
+  {
+    "id": "player-b1",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "source_size": [
+      1254,
+      1254
+    ],
+    "source_bbox": [
+      430,
+      77,
+      803,
+      1186
+    ],
+    "visible_bbox": [
+      387,
+      156,
+      637,
+      900
+    ],
+    "map_anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "review_heights_px": [
+      64,
+      96,
+      120
+    ],
+    "pass": true
+  },
+  {
+    "id": "player-b2",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "source_size": [
+      1254,
+      1254
+    ],
+    "source_bbox": [
+      404,
+      71,
+      838,
+      1200
+    ],
+    "visible_bbox": [
+      369,
+      156,
+      655,
+      900
+    ],
+    "map_anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "review_heights_px": [
+      64,
+      96,
+      120
+    ],
+    "pass": true
+  },
+  {
+    "id": "player-b3",
+    "canvas": [
+      1024,
+      1024
+    ],
+    "source_size": [
+      1254,
+      1254
+    ],
+    "source_bbox": [
+      404,
+      66,
+      845,
+      1199
+    ],
+    "visible_bbox": [
+      367,
+      156,
+      657,
+      900
+    ],
+    "map_anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "review_heights_px": [
+      64,
+      96,
+      120
+    ],
+    "pass": true
+  }
+]

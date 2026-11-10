@@ -10,6 +10,8 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 
 ## Rules and checks
 
+- Map character concepts (2026-11-09): three complete human NPCs and three complete player outfit examples, with body, legs and feet. [NPC options](concepts/map-characters/_checks/npc-options.png), [player options](concepts/map-characters/_checks/player-options.png), [120 px map comparison](concepts/map-characters/_checks/map-size-review.png). Generated with built-in GPT Image 2 and approved style sheet A. All six are review concepts; player faces are examples and head separation/wiring follows selection.
+
 - T10f-fix: wishing-lamp is redrawn as a traditional antique brass oil lamp with low oval body, long tapering spout, soft smoke at the tip, curled handle and domed lid. Same four filenames and lamp → smoke → lid stack on a 1024 canvas. Measured mouth/pivot 542,685; sparkle 532,662; baseY 889. Lid lifts y −0.40 and fades; smoke drifts up. All other vessel master/export bytes are preserved. Roy approved PR #72; final main refresh and checks precede merge.
 
 - T10f B6: ten original magic and milestone vessels have measured opening and 40/120 px sheets. Roy approved the full batch; PR #71 merged as a8cc451. Layer order, motion and anchors are proposed in the manifest; screen wiring and catalogue changes are separate. The original cylindrical lamp is superseded by T10f-fix below. [B6 contact sheet](_checks/b6-contact-sheet.png).
@@ -435,6 +437,13 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-wishing-lamp-lid.png` | wishing-lamp lid layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-wishing-lamp-smoke.png` | wishing-lamp smoke layer | 1024×1024 | processed; see manifest |
 | `vessels/vessel-wishing-lamp.png` | wishing-lamp assembled vessel | 1024×1024 | processed; see manifest |
+
+| `concepts/map-characters/npc-a1.png` | NPC A1 — Letter keeper full-body concept | 1024 × 1024 | transparent; review concept |
+| `concepts/map-characters/npc-a2.png` | NPC A2 — Neighborhood guide full-body concept | 1024 × 1024 | transparent; review concept |
+| `concepts/map-characters/npc-a3.png` | NPC A3 — Book keeper full-body concept | 1024 × 1024 | transparent; review concept |
+| `concepts/map-characters/player-b1.png` | Player B1 — Short jacket full-body concept | 1024 × 1024 | transparent; review concept |
+| `concepts/map-characters/player-b2.png` | Player B2 — Hooded walker full-body concept | 1024 × 1024 | transparent; review concept |
+| `concepts/map-characters/player-b3.png` | Player B3 — Long coat full-body concept | 1024 × 1024 | transparent; review concept |
 
 ## Review
 

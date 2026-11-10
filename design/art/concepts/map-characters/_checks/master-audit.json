@@ -1,0 +1,135 @@
+{
+  "new_masters": [
+    {
+      "path": "concepts/map-characters/npc-a1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "concepts/map-characters/npc-a2.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "concepts/map-characters/npc-a3.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "concepts/map-characters/player-b1.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "concepts/map-characters/player-b2.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "concepts/map-characters/player-b3.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    }
+  ],
+  "new_passed": 6,
+  "new_count": 6,
+  "legacy_full_audit_failures_unchanged": [
+    "game/catch-background-options/option-3.png",
+    "game/catch-background.png",
+    "game/crack-overlay.png",
+    "game/hit-dust.png",
+    "game/wheel/scene-garden.png",
+    "game/wheel/scene-landmark-macau.png",
+    "game/wheel/scene-landmark-singapore.png",
+    "game/wheel/scene-landmark-taipei.png",
+    "game/wheel/scene-park.png",
+    "game/wheel/scene-public-art.png",
+    "game/wheel/scene-square.png",
+    "game/wheel/scene-waterfront.png"
+  ],
+  "note": "Legacy check-assets.py dimensions/opacity rules flag these existing game assets. No existing art asset or checker rule was changed."
+}
