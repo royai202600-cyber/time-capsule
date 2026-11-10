@@ -363,7 +363,10 @@ export default function JourneyScreen() {
     <View style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, zIndex: 0 }}>
     {you
       ? <LiveMap ref={map} html={html} state={mapState} onSelect={onPin}
-        onTap={(lat, lng) => { if (keeperOpen) setKeeperOpen(false); else if (gameCard) setGameCard(null); else if (selectedId) setSelectedId(null); else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
+        onTap={(lat, lng) => { if (keeperOpen) setKeeperOpen(false); else if (gameCard) setGameCard(null); else if (selectedId) setSelectedId(null);
+          // Inside the pickup circle your figure walks there (only the picture moves); outside, only the test account can jump.
+          else if (you && distanceMeters(you.lat, you.lng, lat, lng) <= SEA_PICKUP_RADIUS_M) { setWalkTo(null); map.current?.walk(lat, lng); }
+          else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
       : <LocationGate status={status} onAllow={() => void location.request()} onSettings={() => void location.openSettings()} />}
     </View>
 

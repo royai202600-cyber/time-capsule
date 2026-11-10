@@ -8,7 +8,7 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(function LiveMap(
   const web = useRef<{ injectJavaScript: (js: string) => void }>(null);
   const [ready, setReady] = useState(false);
   const post = (m: object) => web.current?.injectJavaScript(`window.__tcmap && window.__tcmap(${JSON.stringify(m)}); true;`);
-  useImperativeHandle(ref, () => ({ recenter: () => post({ type: "recenter" }), focus: (lat, lng) => post({ type: "focus", lat, lng }) }));
+  useImperativeHandle(ref, () => ({ recenter: () => post({ type: "recenter" }), focus: (lat, lng) => post({ type: "focus", lat, lng }), walk: (lat, lng) => post({ type: "walk", lat, lng }) }));
   useEffect(() => { if (ready) post({ type: "state", ...state }); }, [ready, state]);
   return <Web ref={web} originWhitelist={["*"]} source={{ html, baseUrl: "http://localhost/" }} style={{ flex: 1, backgroundColor: "transparent" }}
     javaScriptEnabled domStorageEnabled bounces={false} scrollEnabled={false}

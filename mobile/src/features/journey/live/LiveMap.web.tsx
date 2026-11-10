@@ -8,7 +8,7 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(function LiveMap(
   const handlers = useRef({ onSelect, onTap, onFollowChange });
   handlers.current = { onSelect, onTap, onFollowChange };
   const post = (m: object) => frame.current?.contentWindow?.postMessage({ __tcin: JSON.stringify(m) }, "*");
-  useImperativeHandle(ref, () => ({ recenter: () => post({ type: "recenter" }), focus: (lat, lng) => post({ type: "focus", lat, lng }) }));
+  useImperativeHandle(ref, () => ({ recenter: () => post({ type: "recenter" }), focus: (lat, lng) => post({ type: "focus", lat, lng }), walk: (lat, lng) => post({ type: "walk", lat, lng }) }));
   useEffect(() => {
     const listen = (e: MessageEvent) => {
       if (e.source !== frame.current?.contentWindow || typeof e.data?.__tcmap !== "string") return;

@@ -177,6 +177,8 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin .tag.timer{bottom:-16px;display:flex;align-items:center;gap:3px;font-size:10px;padding:1px 6px}
 .pin.opened .pin-body{opacity:.6}
 /* The player never blocks a tap on what is behind them (only their "this is you" label is tappable). */
+.you.walking .me{animation:stride .36s ease-in-out infinite}
+@keyframes stride{0%,100%{translate:0 0}50%{translate:0 -3px}}
 .you,.you *{pointer-events:none}.you .label{pointer-events:auto}
 .pin.far{opacity:.75}
 .pin.far .pin-body{transform:scale(.72)}
@@ -292,10 +294,26 @@ const liftOffset=(ll,meters)=>{const t=map.transform;const mc=maplibregl.Mercato
   if(typeof t.coordinatePoint!=='function')return [0,0];const a=t.coordinatePoint(mc,0),b=t.coordinatePoint(mc,meters);return [b.x-a.x,b.y-a.y]};
 const relift=()=>{for(const [,m] of marks){if(m.lift)m.marker.setOffset(liftOffset(m.marker.getLngLat(),m.lift))}};
 map.on('move',relift);map.on('resize',relift);
+// Tap-to-walk: inside the pickup circle the figure strolls to where you tapped. Only the picture moves: the
+// circle, the camera and every server check stay on your real position. Once you really move about 10 m,
+// the figure walks back to you.
+let walkAt=null,walkFrom=null,walkLeft=null,strolling=false,strollId=0;
+const shown=()=>walkAt?[walkAt.lng,walkAt.lat]:[you.lng,you.lat];
+const metres=(a,b)=>Math.hypot((a.lng-b.lng)*111320*Math.cos(a.lat*Math.PI/180),(a.lat-b.lat)*110540);
+const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function stroll(to,after){if(!youMark)return;const from=youMark.getLngLat(),f={lat:from.lat,lng:from.lng},d=metres(f,to);
+  const a=map.project([f.lng,f.lat]),b=map.project([to.lng,to.lat]);if(Math.abs(b.x-a.x)>4)walkLeft=b.x<a.x;
+  const ms=still?0:Math.min(2200,Math.max(350,d/30*1000)),t0=performance.now(),yel=youMark.getElement(),id=++strollId;strolling=true;yel.classList.add('walking');render();
+  const step=now=>{if(id!==strollId)return;const k=ms?Math.min(1,(now-t0)/ms):1,e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    youMark.setLngLat([f.lng+(to.lng-f.lng)*e,f.lat+(to.lat-f.lat)*e]);
+    if(k<1)requestAnimationFrame(step);else{strolling=false;yel.classList.remove('walking');after&&after();render()}};
+  requestAnimationFrame(step)}
+const walkTo=to=>{if(!you)return;walkFrom={lat:you.lat,lng:you.lng};walkAt={lat:to.lat,lng:to.lng};stroll(walkAt)};
+const walkHome=()=>{walkAt=null;walkFrom=null;stroll({lat:you.lat,lng:you.lng},()=>{walkLeft=null})};
 function render(){
   if(you){
-    if(!youMark){const el=document.createElement('div');el.className='you'+(state.figure?' fig':'');el.innerHTML='<div class="pulse"></div><div class="cone"></div>'+(state.figure?'<div class="me" style="background-image:url('+state.figure+')"></div>':face(state.portrait));youMark=new maplibregl.Marker({element:el,rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([you.lng,you.lat]).addTo(map)}
-    else youMark.setLngLat([you.lng,you.lat]);
+    if(!youMark){const el=document.createElement('div');el.className='you'+(state.figure?' fig':'');el.innerHTML='<div class="pulse"></div><div class="cone"></div>'+(state.figure?'<div class="me" style="background-image:url('+state.figure+')"></div>':face(state.portrait));youMark=new maplibregl.Marker({element:el,rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat(shown()).addTo(map)}
+    else if(!strolling)youMark.setLngLat(shown());
     const yel=youMark.getElement();
     // Swap face ↔ figure if the profile arrived after the map.
     const want=state.figure||'';if((yel.dataset.fig||'')!==want){yel.dataset.fig=want;yel.classList.toggle('fig',!!want);const old=yel.querySelector('.me,.face');const n=document.createElement('div');n.innerHTML=want?'<div class="me" style="background-image:url('+want+')"></div>':face(state.portrait);old?old.replaceWith(n.firstChild):yel.appendChild(n.firstChild)}
@@ -303,7 +321,7 @@ function render(){
     if(state.youLabel){if(!lab){lab=document.createElement('div');lab.className='label';lab.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:'you'})});yel.appendChild(lab)}lab.textContent=state.youLabel}else if(lab&&!lab.dataset.out){lab.dataset.out='1';lab.style.transition='opacity .4s';lab.style.opacity='0';setTimeout(()=>lab.remove(),420)}
     youMark.getElement().querySelector('.cone').style.transform='rotate('+((heading||0)-map.getBearing())+'deg)';
     // The figure faces right in the art: mirror it when walking toward the left of the screen.
-    const me=yel.querySelector('.me');if(me)me.classList.toggle('left',Math.sin(((heading||0)-map.getBearing())*Math.PI/180)<-.2);
+    const me=yel.querySelector('.me');if(me)me.classList.toggle('left',walkLeft!==null?walkLeft:Math.sin(((heading||0)-map.getBearing())*Math.PI/180)<-.2);
     map.getSource('reach')&&map.getSource('reach').setData({type:'FeatureCollection',features:[circle(you,state.reach||100)]});
   }
   const want=new Set(state.pins.map(p=>p.id));
@@ -324,8 +342,9 @@ function render(){
   }
 }
 function recv(m){
-  if(m.type==='state'){if(fan&&m.pins.map(p=>p.id).join()!==state.pins.map(p=>p.id).join())fold();const moved=!you||!m.you||Math.abs(you.lat-m.you.lat)+Math.abs(you.lng-m.you.lng)>1e-6;you=m.you;state=m;heading=m.heading||heading;render();rescale();if(follow&&you&&moved)map.easeTo({center:[you.lng,you.lat],duration:you?900:0,padding:cameraPadding})}
+  if(m.type==='state'){if(fan&&m.pins.map(p=>p.id).join()!==state.pins.map(p=>p.id).join())fold();const moved=!you||!m.you||Math.abs(you.lat-m.you.lat)+Math.abs(you.lng-m.you.lng)>1e-6;if(walkFrom&&m.you&&metres(walkFrom,m.you)>10){you=m.you;walkHome()}you=m.you;state=m;heading=m.heading||heading;render();rescale();if(follow&&you&&moved)map.easeTo({center:[you.lng,you.lat],duration:you?900:0,padding:cameraPadding})}
   if(m.type==='recenter'&&you){follow=true;map.easeTo({center:[you.lng,you.lat],zoom:pickupZoom(you.lat,state.reach||100),pitch:40,bearing:0,duration:900,padding:cameraPadding})}
+  if(m.type==='walk'&&you)walkTo({lat:m.lat,lng:m.lng});
   if(m.type==='focus'){follow=false;send({type:'follow',follow:false});map.easeTo({center:[m.lng,m.lat],zoom:pickupZoom(m.lat,state.reach||100),duration:700})}
 }
 window.__tcmap=recv;
