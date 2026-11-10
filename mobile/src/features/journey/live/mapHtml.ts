@@ -13,8 +13,10 @@ const TOY_MAX_M = 40;
 // Landmarks drawn as stacked brass boxes at their real spot: [south-west-north-east box half-width m, base m, top m].
 type Tier = [number, number, number];
 const flare = (from: number, h: number, narrow: number, wide: number): Tier[] => [[narrow, from, from + h * .35], [(narrow + wide) / 2, from + h * .35, from + h * .7], [wide, from + h * .7, from + h]];
+/** The monument's top, where its Landmark seal floats. */
+export const monumentTop = (m: { tiers: Tier[] }) => Math.max(...m.tiers.map((t) => t[2]));
 export const MONUMENTS: { id: string; lat: number; lng: number; tiers: Tier[] }[] = [
-  { id: "taipei101", lat: 25.033964, lng: 121.564472, tiers: [
+  { id: "taipei101", lat: 25.033667, lng: 121.56481, tiers: [ // spire axis from the OSM building data in our tiles; Wikipedia agrees within ~20 m
     // A wide low base covers the real (grey) mall around the tower foot.
     [62, 0, 18], [36, 18, 24], [24, 24, 30], [21, 30, 36],
     ...Array.from({ length: 8 }, (_, i) => flare(36 + i * 8, 8, 14, 18.5)).flat(),
@@ -25,7 +27,7 @@ function monumentGeoJson() {
   const features = MONUMENTS.flatMap((m) => m.tiers.map(([half, base, top], i) => {
     const dLat = half / 110540, dLng = half / (111320 * Math.cos(m.lat * Math.PI / 180));
     const ring = [[m.lng - dLng, m.lat - dLat], [m.lng + dLng, m.lat - dLat], [m.lng + dLng, m.lat + dLat], [m.lng - dLng, m.lat + dLat], [m.lng - dLng, m.lat - dLat]];
-    return { type: "Feature", properties: { base, top, t: i / (m.tiers.length - 1) }, geometry: { type: "Polygon", coordinates: [ring] } };
+    return { type: "Feature", properties: { id: m.id, base, top, t: i / (m.tiers.length - 1) }, geometry: { type: "Polygon", coordinates: [ring] } };
   }));
   return { type: "FeatureCollection", features };
 }
@@ -133,6 +135,8 @@ html,body,#map{--ready:hue-rotate(-130deg) saturate(1.5);margin:0;height:100%;wi
 .pin.landmark .ring{position:absolute;left:4px;bottom:0;width:56px;height:18px;border-radius:50%;border:2.5px solid var(--lm);box-sizing:border-box;background:radial-gradient(var(--lm-glow),transparent 70%)}
 .pin.landmark .badge{position:absolute;left:12px;bottom:18px;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--lm-hi),var(--lm) 62%,var(--lm-lo));box-shadow:0 3px 8px rgba(22,38,63,.35),inset 0 0 0 2.5px var(--lm-hi);display:flex;align-items:center;justify-content:center;animation:bob 3.6s ease-in-out infinite}
 .pin.landmark .badge svg{width:22px;height:22px}
+.pin.landmark.top{height:44px}
+.pin.landmark.top .badge{bottom:2px;width:44px;height:44px;left:10px}
 .pin.landmark.near .badge{box-shadow:0 0 12px var(--lm),inset 0 0 0 2.5px var(--lm-hi)}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.pin .badge,.you .pulse,.pin.keeper .seal{animation:none}}
@@ -150,6 +154,7 @@ ${pmtiles ? "const protocol=new pmtiles.Protocol();maplibregl.addProtocol('pmtil
 const pickupZoom=(lat,r=100)=>Math.log2(40075016.686*Math.cos(lat*Math.PI/180)*Math.min(innerWidth,innerHeight)*.75/(512*2*r));
 const cameraPadding={top:80,bottom:160,left:0,right:0};
 const map=new maplibregl.Map({container:'map',style:${JSON.stringify(style)},center:[${center.lng},${center.lat}],zoom:pickupZoom(${center.lat}),padding:cameraPadding,pitch:40,maxPitch:70,bearing:0,attributionControl:{compact:true},localIdeographFontFamily:'"PingFang TC","Noto Sans TC",sans-serif'});
+window.__tcmapInstance=map;
 let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 // Wayposts are floating gems, clearly not buildings and clearly not capsules.
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
@@ -167,7 +172,13 @@ map.on('load',()=>{
 });
 map.on('dragstart',()=>{if(follow){follow=false;send({type:'follow',follow:false})}});
 map.on('resize',()=>{if(follow&&you)map.jumpTo({center:[you.lng,you.lat],zoom:pickupZoom(you.lat,state.reach||100),padding:cameraPadding})});
-map.on('click',e=>send({type:'tap',lat:e.lngLat.lat,lng:e.lngLat.lng}));
+// Tapping a monument building opens its Landmark; anywhere else is a plain map tap.
+map.on('click',e=>{const hit=map.getLayer('monuments')&&map.queryRenderedFeatures(e.point,{layers:['monuments']})[0];if(hit){send({type:'select',id:'monument-'+hit.properties.id});return}send({type:'tap',lat:e.lngLat.lat,lng:e.lngLat.lng})});
+map.on('mousemove',e=>{const c=map.getCanvas();const over=map.getLayer('monuments')&&map.queryRenderedFeatures(e.point,{layers:['monuments']}).length;c.style.cursor=over?'pointer':''});
+// A badge "on top" of a building: lift it by the building's height as seen at the current zoom and tilt.
+const liftPx=(lat,meters)=>meters/(40075016.686*Math.cos(lat*Math.PI/180)/(512*Math.pow(2,map.getZoom())))*Math.sin(map.getPitch()*Math.PI/180);
+const relift=()=>{for(const [,m] of marks){if(m.lift){const ll=m.marker.getLngLat();m.marker.setOffset([0,-liftPx(ll.lat,m.lift)])}}};
+map.on('move',relift);
 function render(){
   if(you){
     if(!youMark){const el=document.createElement('div');el.className='you';el.innerHTML='<div class="pulse"></div><div class="cone"></div>'+face(state.portrait);youMark=new maplibregl.Marker({element:el,rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([you.lng,you.lat]).addTo(map)}
@@ -181,9 +192,9 @@ function render(){
   for(const [id,m] of marks){if(!want.has(id)){m.marker.remove();marks.delete(id)}}
   for(const p of state.pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
-      :p.kind==='landmark'?'<div class="pin-body"><div class="ring"></div><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M11.4 1h1.2v4h-1.2zM10 5h4v2.5h-4zM9 7.5h6v2.6H9zM9 10.1h6v2.6H9zM8.5 12.7h7v2.6h-7zM8 15.3h8v2.6H8zM6 17.9h12V21H6z"/></svg></div></div>'
+      :p.kind==='landmark'?'<div class="pin-body">'+(p.lift?'':'<div class="ring"></div>')+'<div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M11.4 1h1.2v4h-1.2zM10 5h4v2.5h-4zM9 7.5h6v2.6H9zM9 10.1h6v2.6H9zM8.5 12.7h7v2.6h-7zM8 15.3h8v2.6H8zM6 17.9h12V21H6z"/></svg></div></div>'
       :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
-    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'');
+    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'');
     let m=marks.get(p.id);
     if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:p.id})});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
     const el=m.marker.getElement();
@@ -191,6 +202,7 @@ function render(){
     if(m.cls!==cls){if(m.cls)el.classList.remove(...m.cls.split(' '));el.classList.add(...cls.split(' '));m.cls=cls}
     el.style.zIndex=p.selected?20:p.kind==="keeper"?8:p.near?5:1;
     m.marker.setLngLat([p.lng,p.lat]);
+    if(m.lift!==(p.lift||0)){m.lift=p.lift||0;m.marker.setOffset([0,m.lift?-liftPx(p.lat,m.lift):0])}
   }
 }
 function recv(m){

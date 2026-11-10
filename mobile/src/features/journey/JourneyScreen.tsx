@@ -18,7 +18,7 @@ import { Passport } from "./Passport";
 import { CapsuleMapPage } from "./CapsuleMapPage";
 import { LiveMap } from "./live/LiveMap";
 import { JourneyViewport } from "./JourneyViewport";
-import { mapHtml } from "./live/mapHtml";
+import { mapHtml, MONUMENTS, monumentTop } from "./live/mapHtml";
 import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
 import type { Tables } from "../../services/database.types";
 import { MAP_PMTILES_URL, sea, SeaError, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
@@ -189,12 +189,15 @@ export default function JourneyScreen() {
     ...nearby.corrupted.filter((c) => c.id !== throwing?.id && metersTo(c.lat, c.lng) <= GAME_ACTION_RADIUS_M).map<LivePin>((c) => (
       { id: `corrupted-${c.id}`, lat: c.lat, lng: c.lng, kind: "corrupted", vessel: vesselUri(c.vessel), cracks: assetUri(crackOverlays[c.vessel]) ?? undefined, rarity: c.rarity, near: true }
     )),
-    ...nearby.wayposts.map<LivePin>((w) => ({
-      id: `way-${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: assetUri(w.kind === "landmark" ? gameArt.landmarkGem : gameArt.waypostGem) ?? "",
+    ...nearby.wayposts.map<LivePin>((w) => {
+      // A Landmark with a monument is the building itself: its seal floats on top, at the real spot.
+      const monument = w.kind === "landmark" ? MONUMENTS.find((m) => m.id === w.place) : undefined;
+      return {
+      id: `way-${w.id}`, lat: monument?.lat ?? w.lat, lng: monument?.lng ?? w.lng, lift: monument ? monumentTop(monument) + 4 : undefined, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: assetUri(w.kind === "landmark" ? gameArt.landmarkGem : gameArt.waypostGem) ?? "",
       done: !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now(),
       hunt: onHunt && (activeHunt!.wayposts.includes(w.id) || activeHunt!.landmark === w.id),
       near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
-    })),
+    }; }),
   ], [nearby, throwing?.id, you?.lat, you?.lng, onHunt, activeHunt]);
 
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: you ?? FALLBACK }), [!!you]);
@@ -257,8 +260,10 @@ export default function JourneyScreen() {
       map.current?.focus(capsule.lat, capsule.lng); setThrowing(capsule);
       return;
     }
-    if (id.startsWith("way-")) {
-      const waypost = nearby.wayposts.find((w) => `way-${w.id}` === id);
+    if (id.startsWith("way-") || id.startsWith("monument-")) {
+      const waypost = id.startsWith("monument-")
+        ? nearby.wayposts.find((w) => w.kind === "landmark" && w.place === id.slice("monument-".length))
+        : nearby.wayposts.find((w) => `way-${w.id}` === id);
       if (!waypost) return;
       setSelectedId(null); void haptics.tick();
       const meters = metersTo(waypost.lat, waypost.lng);

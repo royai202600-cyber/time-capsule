@@ -81,7 +81,7 @@ function seed(at: Coords) {
   dev.wayposts = [
     { id: "dev-a", kind: "common", name_zh: "公園驛站", name_en: "Park Waypost", ...offset(at, -70, 25), cooldown_until: null },
     { id: "dev-b", kind: "common", name_zh: "廣場驛站", name_en: "Square Waypost", ...offset(at, 130, 80), cooldown_until: null },
-    { id: "dev-c", kind: "landmark", name_zh: "地標驛站", name_en: "Landmark Waypost", ...offset(at, 78, -52), cooldown_until: null },
+    { id: "dev-c", kind: "landmark", name_zh: "台北101廣場", name_en: "Taipei 101 Plaza", place: "taipei101", ...offset(at, 78, -52), cooldown_until: null },
   ];
   const sealed = new Date(Date.now() - 9 * 86_400_000).toISOString();
   const bottles: [string, string, string, string, string, number, number][] = [
