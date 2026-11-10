@@ -2,9 +2,10 @@ import React from 'react';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { C } from '../theme';
 
-export type IconName = 'pin' | 'back' | 'close' | 'plus' | 'lock' | 'check' | 'shop' | 'user' | 'map' | 'cabinet' | 'share' | 'camera' | 'pen' | 'mic' | 'alarm' | 'up' | 'down' | 'locate' | 'passport' | 'album';
+export type IconName = 'pin' | 'back' | 'close' | 'plus' | 'lock' | 'check' | 'shop' | 'user' | 'map' | 'cabinet' | 'share' | 'camera' | 'pen' | 'mic' | 'alarm' | 'up' | 'down' | 'locate' | 'passport' | 'album' | 'quest';
 const lines: Record<IconName, string> = {
   locate: 'M12 5a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM12 2v3m0 14v3M2 12h3m14 0h3',
+  quest: 'M6 3h12a1.5 1.5 0 0 1 0 3H6a1.5 1.5 0 0 1 0-3Zm0 15h12a1.5 1.5 0 0 1 0 3H6a1.5 1.5 0 0 1 0-3ZM7.5 6v12m9-12v12M10 9.5h4M10 12h4',
   album: 'M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm-1 6h18M3 15h18M9 3v18m6-18v18',
   passport: 'M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm6 4.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9ZM7.5 11h9M12 6.5c-3 3-3 6 0 9 3-3 3-6 0-9ZM9 18.5h6',
   pin: 'M12 22C8 17 4 13.5 4 9a8 8 0 0 1 16 0c0 4.5-4 8-8 13Z',
@@ -29,6 +30,7 @@ export function ArtIcon({ name, size = 24, color = C.ink }: { name: IconName; si
   return <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path d={lines[name]} stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
     {name === 'locate' && <Circle cx={12} cy={12} r={2} fill={color} />}
+    {name === 'quest' && <Circle cx={12} cy={15.2} r={1.5} fill={color} />}
     {name === 'pin' && <Circle cx={12} cy={9} r={2.5} stroke={color} strokeWidth={1.8} />}
   </Svg>;
 }

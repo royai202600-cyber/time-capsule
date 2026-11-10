@@ -45,7 +45,7 @@ export function mapHtml({ pmtiles, center }: { pmtiles: string | null; center: {
 <link rel="stylesheet" href="${MAPLIBRE}/maplibre-gl.css">
 <script src="${MAPLIBRE}/maplibre-gl.js"></script>${pmtiles ? `<script src="${PMTILES}"></script>` : ""}
 <style>
-html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hidden;-webkit-tap-highlight-color:transparent;font-family:-apple-system,"Noto Sans TC",sans-serif}
+html,body,#map{--ready:hue-rotate(-130deg) saturate(1.5);margin:0;height:100%;width:100%;background:${C.paper};overflow:hidden;-webkit-tap-highlight-color:transparent;font-family:-apple-system,"Noto Sans TC",sans-serif}
 .maplibregl-ctrl-attrib{font-size:9px;background:rgba(246,248,251,.7)!important}
 .you{position:absolute;width:52px;height:52px}
 .you .pulse{position:absolute;left:-14px;top:-14px;width:80px;height:80px;border-radius:50%;background:${C.lightBlue}33;animation:pulse 2.6s ease-out infinite}
@@ -77,14 +77,31 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.waypost{width:40px;height:50px}
 .pin.waypost .disc{left:6px;width:28px;height:8px}
 .pin.waypost .post{position:absolute;left:7px;bottom:9px;width:26px;height:41px;background-size:122px;background-position:center;background-repeat:no-repeat;animation:bob 3.6s ease-in-out infinite}
-.pin.waypost.done{opacity:.45}
-.pin.waypost.near .post,.pin.landmark.near .post{filter:drop-shadow(0 0 6px #D7B7E6) brightness(1.18)}
-.pin.waypost.near .disc,.pin.landmark.near .disc{background:radial-gradient(#D7B7E6CC,transparent 70%)}
+/* Ready to spin: ink blue (tinted until the blue gem art lands). Spun: the original purple. */
+.pin.waypost .post,.pin.landmark .post{filter:var(--ready)}
+.pin.waypost.done .post,.pin.landmark.done .post{filter:none}
+.pin.waypost.near:not(.done) .post,.pin.landmark.near:not(.done) .post{filter:var(--ready) drop-shadow(0 0 6px ${C.lightBlue}) brightness(1.12)}
+.pin.waypost.near:not(.done) .disc,.pin.landmark.near:not(.done) .disc{background:radial-gradient(${C.lightBlue}AA,transparent 70%)}
+/* A City Hunt stop: a thin brass ring on the ground. */
+.pin.hunt .disc{border:2px solid ${C.brass};box-sizing:border-box;background:radial-gradient(${C.brass}33,transparent 70%)}
+.pin.waypost.hunt .disc{left:2px;width:36px;height:12px;bottom:-2px}
+/* The Letter Keeper: a person, with a brass wax seal over his head (! or ✓). */
+.pin.keeper{width:56px;height:96px;z-index:6}
+.pin.keeper .disc{left:10px;width:36px;height:10px}
+.pin.keeper .fig{position:absolute;left:4px;bottom:6px;width:48px;height:48px}
+.pin.keeper .fig .face{border-color:${C.brass}}
+.pin.keeper .fig.full{left:-12px;bottom:2px;width:80px;height:80px;background-size:contain;background-position:center bottom;background-repeat:no-repeat}
+.pin.keeper .seal{position:absolute;left:14px;top:0;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#E2C58A,${C.brass} 60%,#A9843F);box-shadow:0 2px 6px rgba(22,38,63,.35),inset 0 0 0 2px #E8D3A3;color:#fff;font:700 17px/28px Georgia,serif;text-align:center;animation:float 2.2s ease-in-out infinite}
+/* With full-body art the seal sits above his head. */
+.pin.keeper .fig.full+.seal{top:-22px}
+@keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.06)}}
+.you .label{position:absolute;left:50%;bottom:66px;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:12px;background:${C.ink};color:${C.brass};box-shadow:0 2px 8px rgba(22,38,63,.3);cursor:pointer}
+.you .label:after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:${C.ink}}
 .pin.landmark{width:64px;height:88px}
 .pin.landmark .disc{left:12px;width:40px;height:10px}
 .pin.landmark .post{position:absolute;left:15px;bottom:12px;width:33px;height:76px;background-size:154px;background-position:-61px -15px;background-repeat:no-repeat;animation:bob 3.6s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.you .pulse{animation:none}}
+@media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.you .pulse,.pin.keeper .seal{animation:none}}
 </style></head><body><div id="map"></div>
 <script>
 const send=m=>{const s=JSON.stringify(m);if(window.ReactNativeWebView)window.ReactNativeWebView.postMessage(s);else parent.postMessage({__tcmap:s},'*')};
@@ -116,20 +133,23 @@ function render(){
   if(you){
     if(!youMark){const el=document.createElement('div');el.className='you';el.innerHTML='<div class="pulse"></div><div class="cone"></div>'+face(state.portrait);youMark=new maplibregl.Marker({element:el,rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([you.lng,you.lat]).addTo(map)}
     else youMark.setLngLat([you.lng,you.lat]);
+    const yel=youMark.getElement();let lab=yel.querySelector('.label');
+    if(state.youLabel){if(!lab){lab=document.createElement('div');lab.className='label';lab.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:'you'})});yel.appendChild(lab)}lab.textContent=state.youLabel}else if(lab)lab.remove();
     youMark.getElement().querySelector('.cone').style.transform='rotate('+((heading||0)-map.getBearing())+'deg)';
     map.getSource('reach')&&map.getSource('reach').setData({type:'FeatureCollection',features:[circle(you,state.reach||100)]});
   }
   const want=new Set(state.pins.map(p=>p.id));
   for(const [id,m] of marks){if(!want.has(id)){m.marker.remove();marks.delete(id)}}
   for(const p of state.pins){
-    const html=p.kind==='waypost'||p.kind==='landmark'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
-    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'');
+    const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
+      :p.kind==='waypost'||p.kind==='landmark'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
+    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'');
     let m=marks.get(p.id);
     if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:p.id})});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
     const el=m.marker.getElement();
     if(m.html!==html){el.innerHTML=html;m.html=html}
     if(m.cls!==cls){if(m.cls)el.classList.remove(...m.cls.split(' '));el.classList.add(...cls.split(' '));m.cls=cls}
-    el.style.zIndex=p.selected?20:p.near?5:1;
+    el.style.zIndex=p.selected?20:p.kind==="keeper"?8:p.near?5:1;
     m.marker.setLngLat([p.lng,p.lat]);
   }
 }

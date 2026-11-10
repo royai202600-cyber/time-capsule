@@ -21,6 +21,7 @@ export type ThrowResult = {
 };
 export type LandmarkAttempt = { id: string; waypost: string; vessel: string; cracks: number; expires_at: string };
 export type LandmarkHit = { result: "hit" | "won"; cracks: number; vessel: string; copies: number; stars: number; is_new: boolean; xp_gained: number; state: GameState };
+export type PassportHunt = { id: string; name_zh: string; name_en: string; at: string };
 export type DevLetter = { bottle: SeaBottle; message: string };
 export type GameErrorCode = "no_balls" | "expired" | "no_attempts" | "already_caught" | "too_far" | "too_fast" | "cooldown" | "active_attempt" | "unknown";
 export class GameError extends Error { constructor(public code: GameErrorCode) { super(code); } }
@@ -32,6 +33,13 @@ const fail = (error: { message?: string } | null) => {
 // Landmark Wayposts only return their place; each place has one earned vessel.
 const LANDMARK_VESSEL: Record<string, string> = { taipei101: "bamboo-tower", merlion: "lionfish-fountain", senado: "senado-fountain" };
 let position: Coords | null = null;
+/** Successful game actions, so a City Hunt can count them on the device while its backend is not live. */
+export type GameEvent = { kind: "spin"; waypost: string } | { kind: "restore"; lat: number; lng: number } | { kind: "landmark"; waypost: string };
+const listeners = new Set<(e: GameEvent) => void>();
+const emit = (e: GameEvent) => { listeners.forEach((l) => { try { l(e); } catch { /* never break the game */ } }); };
+export const onGameEvent = (l: (e: GameEvent) => void) => { listeners.add(l); return () => { listeners.delete(l); }; };
+const spots = new Map<string, { lat: number; lng: number }>();
+const attemptPost = new Map<string, string>();
 const live = async () => GAME_BACKEND && !!(await supabase.auth.getSession()).data.session;
 const coords = () => {
   if (!position) throw new GameError("too_far");
@@ -120,6 +128,7 @@ export const game = {
       const { data, error } = await supabase.rpc("corrupted_nearby", coords());
       fail(error);
       const payload = data as unknown as NearbyPayload;
+      payload.spawns.forEach((c) => spots.set(c.spawn_id, { lat: c.lat, lng: c.lng }));
       return {
         corrupted: payload.spawns.filter((c) => !c.already_caught && c.attempts_left > 0)
           .map((c) => ({ id: c.spawn_id, vessel: c.vessel, rarity: c.rarity, lat: c.lat, lng: c.lng, expires_at: c.expires_at, attempts_left: c.attempts_left })),
@@ -129,9 +138,16 @@ export const game = {
     if (!__DEV__) return { corrupted: [], wayposts: [] };
     seed(at);
     refreshDevWave(at);
+    dev.corrupted.forEach((c) => spots.set(c.id, { lat: c.lat, lng: c.lng }));
     return { corrupted: dev.corrupted.filter((c) => c.attempts_left > 0), wayposts: dev.wayposts.map((w) => ({ ...w })) };
   },
   async throwBall(args: { id: string; ball: BallKind; ring: number; hit: boolean }): Promise<ThrowResult> {
+    const out = await game.throwOnce(args);
+    const at = spots.get(args.id);
+    if (out.result === "restored" && at) emit({ kind: "restore", ...at });
+    return out;
+  },
+  async throwOnce(args: { id: string; ball: BallKind; ring: number; hit: boolean }): Promise<ThrowResult> {
     if (!args.id.startsWith("dev-") && await live()) {
       const { data, error } = await supabase.rpc("corrupted_throw", { p_spawn: args.id, ...coords(), p_ball: args.ball, p_ring: args.ring, p_hit: args.hit });
       fail(error);
@@ -167,6 +183,11 @@ export const game = {
     return { vessel: capsule.vessel, result: "restored", copies, stars: starsFor(copies), is_new, xp_gained, attempts_left: 0, state: stateNow() };
   },
   async landmarkStart(target: Waypost): Promise<LandmarkAttempt> {
+    const attempt = await game.landmarkStartOnce(target);
+    attemptPost.set(attempt.id, target.id);
+    return attempt;
+  },
+  async landmarkStartOnce(target: Waypost): Promise<LandmarkAttempt> {
     if (await live()) {
       const { data, error } = await supabase.rpc("landmark_start", { p_waypost: target.id, ...coords() });
       fail(error);
@@ -179,6 +200,12 @@ export const game = {
     return attempt;
   },
   async landmarkHit(args: { attempt: string; ball: BallKind; ring: number }): Promise<LandmarkHit> {
+    const out = await game.landmarkHitOnce(args);
+    const post = attemptPost.get(args.attempt);
+    if (out.result === "won" && post) emit({ kind: "landmark", waypost: post });
+    return out;
+  },
+  async landmarkHitOnce(args: { attempt: string; ball: BallKind; ring: number }): Promise<LandmarkHit> {
     if (await live()) {
       const { data, error } = await supabase.rpc("landmark_hit", { p_attempt: args.attempt, ...coords(), p_ball: args.ball, p_ring: args.ring });
       fail(error);
@@ -216,13 +243,22 @@ export const game = {
     return found;
   },
   /** Places stamped by a Landmark win or an opened capsule, with when they were first earned. */
-  async passport(): Promise<Record<string, string>> {
-    if (!await live()) return {};
+  async passport(): Promise<{ places: Record<string, string>; hunts: PassportHunt[] }> {
+    if (!await live()) return { places: {}, hunts: [] };
     const { data, error } = await supabase.rpc("my_passport");
     fail(error);
-    return Object.fromEntries((data ?? []).map((row) => [row.place, row.first_at]));
+    const rows = data ?? [];
+    return {
+      places: Object.fromEntries(rows.filter((row) => row.how_earned !== "hunt").map((row) => [row.place, row.first_at])),
+      hunts: rows.filter((row) => row.how_earned === "hunt").map((row) => ({ id: row.place, name_zh: row.name_zh, name_en: row.name_en, at: row.first_at })),
+    };
   },
   async spin(id: string): Promise<{ wax: number; gold: number; state: GameState }> {
+    const out = await game.spinOnce(id);
+    emit({ kind: "spin", waypost: id });
+    return out;
+  },
+  async spinOnce(id: string): Promise<{ wax: number; gold: number; state: GameState }> {
     if (await live()) {
       const { data, error } = await supabase.rpc("waypost_spin", { p_id: id, ...coords() });
       fail(error);

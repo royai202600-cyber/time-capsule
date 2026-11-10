@@ -30,6 +30,11 @@ import { SpinScreen } from "../game/SpinScreen";
 import { sceneKey } from "../game/waypostScene";
 import { ThrowScreen } from "../game/ThrowScreen";
 import { errorKey, useGameText } from "../game/strings";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { hunt as hunts, HuntError, huntStatus, keeperMark, onHuntChange, type Hunt } from "../../services/hunt";
+import { KeeperCard, keeperPortrait, QuestSheet } from "../hunt/HuntViews";
+import { useHuntText } from "../hunt/strings";
+import type { PassportHunt } from "../../services/game";
 
 type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string; waiting?: boolean };
 
@@ -73,6 +78,20 @@ export default function JourneyScreen() {
   const [devLetter, setDevLetter] = useState<DevLetter | null>(null);
   const [fight, setFight] = useState<LandmarkAttempt | null>(null);
   const [passportStamps, setPassportStamps] = useState<Record<string, string>>({});
+  const [huntStamps, setHuntStamps] = useState<PassportHunt[]>([]);
+  const [huntList, setHuntList] = useState<Hunt[]>([]);
+  const [questOpen, setQuestOpen] = useState(false);
+  const [keeperOpen, setKeeperOpen] = useState(false);
+  const [youLabel, setYouLabel] = useState(false);
+  const h = useHuntText();
+  const youKey = `tc-journey-you-${userId}`;
+  useEffect(() => {
+    if (!userId) return;
+    let active = true;
+    AsyncStorage.getItem(youKey).then((v) => { if (active && !v) setYouLabel(true); }).catch(() => {});
+    return () => { active = false; };
+  }, [youKey]);
+  const dismissYou = () => { setYouLabel(false); void AsyncStorage.setItem(youKey, "1").catch(() => {}); };
   const [spinning, setSpinning] = useState<Waypost | null>(null);
   const [gameCard, setGameCard] = useState<{ waypost: Waypost; meters: number } | null>(null);
   const last = useRef<{ lat: number; lng: number } | null>(null);
@@ -101,9 +120,11 @@ export default function JourneyScreen() {
     if (!GAME_ENABLED || !at) return;
     try {
       const [state, around, stamps] = await Promise.all([game.state(), game.nearby({ lat: at.lat, lng: at.lng, accuracy: at.accuracy }), game.passport()]);
-      setGameState(state); setNearby(around); setPassportStamps(stamps);
+      setGameState(state); setNearby(around); setPassportStamps(stamps.places); setHuntStamps(stamps.hunts);
+      setHuntList(await hunts.list({ userId, at, known: around.wayposts, previewAllowed: __DEV__ || isTestLocationUser(userId) }));
     } catch { /* the map still works without the game */ }
   }, [cell]);
+  useEffect(() => onHuntChange(() => { void loadGame(); }), [loadGame]);
   useFocusEffect(useCallback(() => {
     void loadGame();
     const timer = setInterval(() => { void loadGame(); }, 30_000);
@@ -153,6 +174,16 @@ export default function JourneyScreen() {
   const selected = items.find((i) => i.id === selectedId) ?? null;
 
   const metersTo = (lat: number, lng: number) => you ? distanceMeters(you.lat, you.lng, lat, lng) : Infinity;
+  // The open City Hunt, if any. The Letter Keeper stands only at its starting point.
+  const activeHunt = huntList.find((x) => huntStatus(x) === "open") ?? null;
+  const onHunt = !!activeHunt?.checked_in_at && !activeHunt.finished_at;
+  const keeperMeters = activeHunt ? metersTo(activeHunt.keeper.lat, activeHunt.keeper.lng) : Infinity;
+  const showKeeper = !!activeHunt && (!!activeHunt.joined_at || keeperMeters <= 1500);
+  const questDot = !!activeHunt && (!activeHunt.joined_at || keeperMark(activeHunt) === "✓");
+  const huntPins = useMemo<LivePin[]>(() => activeHunt && showKeeper ? [{
+    id: `keeper-${activeHunt.id}`, lat: activeHunt.keeper.lat, lng: activeHunt.keeper.lng, kind: "keeper", vessel: "",
+    portrait: assetUri(keeperPortrait), mark: keeperMark(activeHunt),
+  }] : [], [activeHunt, showKeeper]);
   const gamePins = useMemo<LivePin[]>(() => [
     // Only what's inside the pickup circle shows, so capsules never crowd the map.
     ...nearby.corrupted.filter((c) => c.id !== throwing?.id && metersTo(c.lat, c.lng) <= GAME_ACTION_RADIUS_M).map<LivePin>((c) => (
@@ -161,19 +192,21 @@ export default function JourneyScreen() {
     ...nearby.wayposts.map<LivePin>((w) => ({
       id: `way-${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: assetUri(w.kind === "landmark" ? gameArt.landmarkGem : gameArt.waypostGem) ?? "",
       done: !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now(),
+      hunt: onHunt && (activeHunt!.wayposts.includes(w.id) || activeHunt!.landmark === w.id),
       near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
     })),
-  ], [nearby, throwing?.id, you?.lat, you?.lng]);
+  ], [nearby, throwing?.id, you?.lat, you?.lng, onHunt, activeHunt]);
 
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: you ?? FALLBACK }), [!!you]);
   const mapState = useMemo(() => ({
     you, heading, reach: SEA_PICKUP_RADIUS_M,
     portrait: portraitUri(profile?.avatar),
+    youLabel: youLabel && !throwing ? h.thisIsYou : null,
     // While throwing, the capsule is alone on the plain map.
     pins: throwing ? [] : [...items.map<LivePin>((i) => i.kind === "sea"
       ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri("bottle"), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
-      : { id: i.id, lat: i.lat, lng: i.lng, kind: "place", vessel: vesselUri(i.pin.vessel ?? "dome"), near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId, tag: language === "zh" ? i.pin.place.name_zh : i.pin.place.name_en }), ...gamePins],
-  }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language, gamePins, !!throwing]);
+      : { id: i.id, lat: i.lat, lng: i.lng, kind: "place", vessel: vesselUri(i.pin.vessel ?? "dome"), near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId, tag: language === "zh" ? i.pin.place.name_zh : i.pin.place.name_en }), ...gamePins, ...huntPins],
+  }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language, gamePins, huntPins, !!throwing, youLabel, h]);
 
   const select = (id: string | null) => {
     setWalkTo(null);
@@ -210,6 +243,13 @@ export default function JourneyScreen() {
     } finally { setBusy(false); }
   };
   const onPin = (id: string) => {
+    if (id === "you") { dismissYou(); return; }
+    if (id.startsWith("keeper-")) {
+      setSelectedId(null); setGameCard(null); setKeeperOpen(true); void haptics.tick();
+      if (activeHunt) map.current?.focus(activeHunt.keeper.lat, activeHunt.keeper.lng);
+      return;
+    }
+    setKeeperOpen(false);
     if (id.startsWith("corrupted-")) {
       const capsule = nearby.corrupted.find((c) => `corrupted-${c.id}` === id);
       if (!capsule) return;
@@ -242,6 +282,31 @@ export default function JourneyScreen() {
       setToast(g(errorKey(e instanceof GameError ? e.code : "unknown")));
     } finally { setBusy(false); }
   };
+  const huntAction = async (run: () => Promise<unknown>, done?: (out: unknown) => void) => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const out = await run();
+      void haptics.success();
+      done?.(out);
+      await loadGame();
+    } catch (e) {
+      void haptics.warn();
+      setToast(h.err[e instanceof HuntError ? e.code : "unknown"]);
+    } finally { setBusy(false); }
+  };
+  const at = () => fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null;
+  const joinHunt = (x: Hunt) => huntAction(() => hunts.join(x));
+  const finishHunt = (x: Hunt) => huntAction(() => hunts.finish(x, at()), (out) => {
+    const r = out as { xp_gained: number; gold_gained: number };
+    setKeeperOpen(false);
+    setToast(r.gold_gained || r.xp_gained ? h.gotReward(r.gold_gained, r.xp_gained) : h.gotStamp);
+  });
+  const showHunt = (x: Hunt) => {
+    setQuestOpen(false); setSelectedId(null); setGameCard(null);
+    if (x.checked_in_at && !x.finished_at && keeperMark(x) !== "✓") map.current?.recenter();
+    else { map.current?.focus(x.keeper.lat, x.keeper.lng); setKeeperOpen(true); }
+  };
   const directions = (lat: number, lng: number) => {
     const at = `${lat},${lng}`;
     void Linking.openURL(Platform.OS === "ios" ? `https://maps.apple.com/?daddr=${at}` : `https://www.google.com/maps/dir/?api=1&destination=${at}`);
@@ -259,7 +324,7 @@ export default function JourneyScreen() {
     <View style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, zIndex: 0 }}>
     {you
       ? <LiveMap ref={map} html={html} state={mapState} onSelect={onPin}
-        onTap={(lat, lng) => { if (gameCard) setGameCard(null); else if (selectedId) setSelectedId(null); else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
+        onTap={(lat, lng) => { if (keeperOpen) setKeeperOpen(false); else if (gameCard) setGameCard(null); else if (selectedId) setSelectedId(null); else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
       : <LocationGate status={status} onAllow={() => void location.request()} onSettings={() => void location.openSettings()} />}
     </View>
 
@@ -280,8 +345,11 @@ export default function JourneyScreen() {
           {you && <Chip onPress={() => { setSelectedId(null); setWalkTo(null); map.current?.recenter(); void haptics.tick(); }} label={s("recenter")} translucent><ArtIcon name="locate" size={24} color={C.blue} /></Chip>}
         </View>
         {!!toast && <Text accessibilityRole="alert" style={{ alignSelf: "center", backgroundColor: C.ink, color: C.white, fontFamily: sans, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, overflow: "hidden" }}>{toast}</Text>}
-        {you && !selected && gameCard && <GameCard card={gameCard} busy={busy} g={g} language={language} onChallenge={startLandmark} />}
-        {you && !gameCard && (selected
+        {you && keeperOpen && activeHunt && <KeeperCard hunt={activeHunt} meters={keeperMeters} busy={busy}
+          onJoin={() => void joinHunt(activeHunt)} onCheckIn={() => void huntAction(() => hunts.checkIn(activeHunt, at()), () => map.current?.recenter())}
+          onFinish={() => void finishHunt(activeHunt)} onClose={() => setKeeperOpen(false)} />}
+        {you && !selected && !keeperOpen && gameCard && <GameCard card={gameCard} busy={busy} g={g} language={language} onChallenge={startLandmark} />}
+        {you && !gameCard && !keeperOpen && (selected
           ? <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
             <SelectedCard item={selected} busy={busy} onPickUp={pickUp} onDirections={directions}
               onView={(item) => router.push({ pathname: "/capsule/[id]", params: { id: item.capsuleId } })}
@@ -292,19 +360,18 @@ export default function JourneyScreen() {
               style={{ alignSelf: "flex-end", marginRight: -spacing.md - insets.right, backgroundColor: "rgba(255,255,255,.9)", borderTopLeftRadius: 12, borderBottomLeftRadius: 12, padding: 12, paddingRight: 12 + insets.right, borderWidth: 1, borderRightWidth: 0, borderColor: C.line, ...shadows.card }}>
             <Text style={{ fontFamily: sans, fontSize: 11, fontWeight: "700", letterSpacing: 1.2, color: C.blue }}>{s("kicker")}</Text>
           </Pressable>)}
-        {!selected && !gameCard && <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <Pressable accessibilityRole="button" accessibilityLabel={s("passport")} onPress={() => { void haptics.tap(); setPassport(true); }} style={{ width: 62, alignItems: "center" }}>
-          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="passport" size={27} color={C.blue} /></View>
-        </Pressable>
+        {!selected && !gameCard && !keeperOpen && <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <View pointerEvents="box-none" style={{ flexDirection: "row", gap: spacing.sm }}>
+          <RoundButton label={s("passport")} onPress={() => setPassport(true)}><ArtIcon name="passport" size={27} color={C.blue} /></RoundButton>
+          {GAME_ENABLED && <RoundButton label={h.quest} dot={questDot} onPress={() => setQuestOpen(true)}><ArtIcon name="quest" size={26} color={C.blue} /></RoundButton>}
+        </View>
         {SEA_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
           onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: "sea" } }); }}
           style={({ pressed }) => ({ alignSelf: "center", flexShrink: 0, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: C.wax, borderRadius: radii.pill, paddingLeft: 8, paddingRight: 20, paddingVertical: 7, opacity: pressed ? .9 : 1, ...shadows.card })}>
           <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}><Vessel kind="hourglass" size={26} /></View>
           <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("throwCta")}</Text>
         </Pressable> : null}
-        {GAME_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={g("album")} onPress={() => { void haptics.tap(); router.push("/album"); }} style={{ width: 62, alignItems: "center" }}>
-          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}><ArtIcon name="album" size={25} color={C.blue} /></View>
-        </Pressable> : <View style={{ width: 62 }} />}
+        <RoundButton label={h.cabinet} onPress={() => router.push("/cabinet")}><ArtIcon name="cabinet" size={25} color={C.blue} /></RoundButton>
         </View>}
       </View>
     </SafeAreaView>
@@ -322,7 +389,8 @@ export default function JourneyScreen() {
     {spinning && <SpinScreen waypost={spinning} language={language} onState={setGameState} onClose={() => { setSpinning(null); void loadGame(); }} />}
     {throwing && gameState && <ThrowScreen capsule={throwing} landmark={fight ?? undefined} state={gameState} onState={setGameState}
       onClose={() => { setThrowing(null); setFight(null); map.current?.recenter(); void loadGame(); }} />}
-    <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows} />
+    <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows} hunts={[...huntStamps, ...hunts.previewStamps().filter((p) => !huntStamps.some((x) => x.id === p.id))]} />
+    <QuestSheet visible={questOpen} hunts={huntList} busy={busy} onClose={() => setQuestOpen(false)} onJoin={(x) => void joinHunt(x)} onShowOnMap={showHunt} />
   </JourneyViewport>;
 }
 
@@ -412,6 +480,13 @@ function LocationGate({ status, onAllow, onSettings }: { status: string; onAllow
   </SafeAreaView>;
 }
 
+function RoundButton({ children, label, onPress, dot }: { children: React.ReactNode; label: string; onPress: () => void; dot?: boolean }) {
+  return <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={() => { void haptics.tap(); onPress(); }}
+    style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}>
+    {children}
+    {dot && <View style={{ position: "absolute", top: 4, right: 4, width: 11, height: 11, borderRadius: 6, backgroundColor: C.wax, borderWidth: 2, borderColor: C.white }} />}
+  </Pressable>;
+}
 function Chip({ children, onPress, label, translucent = false }: { children: React.ReactNode; onPress: () => void; label: string; translucent?: boolean }) {
   return <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
     style={{ minWidth: 44, height: 44, paddingHorizontal: 8, borderRadius: 22, backgroundColor: translucent ? "rgba(246,248,251,.9)" : "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}>{children}</Pressable>;
