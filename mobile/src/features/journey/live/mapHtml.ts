@@ -34,9 +34,9 @@ export const MONUMENTS: Monument[] = [
     ...Array.from({ length: 8 }, (_, i) => flare(36 + i * 8, 8, 14, 18.5)).flat(),
     [12, 100, 106], [8, 106, 112], [4, 112, 116], [1.6, 116, 142],
   ] },
-  // Senado Square: the fountain (round basin, column, armillary globe) at the fountain basin in our tiles,
-  // with the Leal Senado building beside it taken from the tiles (OSM way, 16.8 m real).
-  { id: "senado", lat: 22.193683, lng: 113.53989, tile: { ids: [35184564662506], realTop: 16.8, top: 10 }, tiers: [
+  // Senado Square: the fountain (round basin, column, armillary globe) at the fountain basin in our tiles, and
+  // the buildings lining the square (tile buildings within 3 m of OSM way 192573684; Leal Senado is across the road).
+  { id: "senado", lat: 22.193683, lng: 113.53989, tile: { ids: [35184577873359, 35185133855962, 35185133855963, 35184763410348, 35185029968552, 35185133855967, 35185133855964, 35185133855966, 35185133855960, 35185133855961, 35184763410351, 35185190550958, 35185133855953, 35184637522361, 35184702457087, 35185152337983, 35184702457086], realTop: 26.2, top: 12 }, tiers: [
     [7, 0, 2.5, { round: true }], [4.5, 2.5, 3.5, { round: true }], [2.2, 3.5, 12, { round: true }], [3.2, 12, 13, { round: true }],
     [3.5, 13, 14.5, { round: true }], [5, 14.5, 16.5, { round: true }], [5.8, 16.5, 19, { round: true }], [5, 19, 21, { round: true }], [3.5, 21, 22.5, { round: true }],
     [1.5, 22.5, 25, { round: true }],

@@ -21,12 +21,12 @@ How to give a Landmark Waypost its 3D monument. Codex can do this on its own by 
 Every face also has the map's vertical shading. Opacity is 1. A beaten Landmark is shown only by its seal turning plum; the building never changes colour. No ring on the ground.
 
 ## Where the code is
-`mobile/src/features/journey/live/mapHtml.ts`, the `MONUMENTS` list. Examples in the file: Taipei 101 (tiers only), Senado (a hand-built fountain plus Leal Senado from the tiles), HKUST (arcs only).
+`mobile/src/features/journey/live/mapHtml.ts`, the `MONUMENTS` list. Examples in the file: Taipei 101 (stacked squares), Senado (a hand-built round fountain plus the buildings lining the square from the tiles), HKUST (arcs).
 
 ```ts
 { id: "senado", lat: 22.193683, lng: 113.53989,
-  tile: { ids: [35184564662506], realTop: 16.8, top: 10 },
-  tiers: [[7, 0, 2.5, { round: true }], /* ... */] }
+  tile: { ids: [35184577873359, /* ... */], realTop: 26.2, top: 12 },  // the buildings lining the square
+  tiers: [[7, 0, 2.5, { round: true }], /* ... */] }                   // the fountain
 ```
 
 - `id` is the Landmark's id in the `places` table. It must equal the `place` value of the Landmark Waypost row in `sea_shores` (`kind = 'landmark'`). That is how the app links the monument to its Waypost.
@@ -46,7 +46,7 @@ Nothing else in the app needs editing. The seal height, the taps and the hiding 
 2. **Check the tiles cover it.** Open the map there. If it is blank blue, the tile extract doesn't reach it: stop, because the tiles have to be extended first.
 3. **Look at reference photos** (Roy's, or Wikipedia/Wikimedia Commons). Name the two or three things people recognise at a glance. Record the links in the PR. Make sure it is the landmark Roy means: for HKUST it was the curved academic building, not the sculpture in its piazza.
 4. **Find the real positions** in OpenStreetMap (the same data as our tiles): the structure's centre, not the whole site's. Write the source in a comment on the entry.
-5. **Try the tile building first.** In the browser, query the `buildings` layer at the spot (`map.queryRenderedFeatures(point, { layers: ['buildings'] })`) for its feature id(s), `height` and `min_height`. If its outline alone is recognisable, use `tile`. Otherwise, or for anything not in the tiles, hand-build tiers. Mix both when a place is several things (Senado: the fountain is hand-built, Leal Senado comes from the tiles).
+5. **Try the tile building first.** In the browser, query the `buildings` layer at the spot (`map.queryRenderedFeatures(point, { layers: ['buildings'] })`) for its feature id(s), `height` and `min_height`. If its outline alone is recognisable, use `tile`. Otherwise, or for anything not in the tiles, hand-build tiers. Mix both when the landmark is a place made of several things. Draw only what belongs to the landmark: at Senado the fountain and the buildings lining the square, found as tile buildings within 3 m of the square's OSM outline; Leal Senado, across the road, stays grey (Roy, 2026-11-10).
 6. **Move the server's Landmark point** to the monument's `lat`/`lng` if they differ by more than about 10 m: a small data-only migration updating that `sea_shores` row. Otherwise the seal floats over the monument but the fight checks distance from somewhere else.
 7. **Check it in the browser** (below), take the screenshots, and open a PR with them.
 
@@ -60,9 +60,9 @@ Nothing else in the app needs editing. The seal height, the taps and the hiding 
 |---|---|---|
 | Skyscraper or tower (Taipei 101, Petronas) | 100–145 m | Never above 145 m. A needle spire may be the last 20–30 m. |
 | Statue, fountain, gate, temple (Merlion, Senado) | 15–40 m | Low and wide, so it reads as a landmark, not a tower. |
-| Low building or campus (Leal Senado, HKUST) | 10–20 m | Just above the toy buildings around it. |
+| Square or campus buildings (Senado's frame, HKUST) | 10–20 m | Just above the toy buildings around it. |
 
-- **The landmark itself is the tallest part.** A tile building added beside it stays lower (Leal Senado 10 m beside a 25 m fountain).
+- **The centrepiece is the tallest part.** Buildings framing a square stay lower than its fountain or statue (Senado: buildings 12 m, fountain 25 m).
 - **Cover the real building.** A hand-built base must be at least as wide as the real grey building at its foot (Taipei 101's base is 62 m half-width because of the mall).
 - **Thinnest piece: at least 1.5 m half-width,** or it disappears on a phone.
 - **Don't change** `TOY_SCALE`, `TOY_MAX_M`, the colours, the layers, or another monument.
