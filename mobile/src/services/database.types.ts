@@ -418,6 +418,8 @@ export type Database = {
           id: string
           keeper_lat: number
           keeper_lng: number
+          keeper_spot_en: string
+          keeper_spot_zh: string
           landmark: string
           name_en: string
           name_zh: string
@@ -435,6 +437,8 @@ export type Database = {
           id: string
           keeper_lat: number
           keeper_lng: number
+          keeper_spot_en: string
+          keeper_spot_zh: string
           landmark: string
           name_en: string
           name_zh: string
@@ -452,6 +456,8 @@ export type Database = {
           id?: string
           keeper_lat?: number
           keeper_lng?: number
+          keeper_spot_en?: string
+          keeper_spot_zh?: string
           landmark?: string
           name_en?: string
           name_zh?: string

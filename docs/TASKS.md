@@ -52,7 +52,9 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 
 ## Done
 
-- City Hunt and Landmark monument SOPs: PR #93 passed CI 42786275193 and owner-account squash-merged as `8d067be`. The Keeper reads spot and step counts from hunt data while preserving Xinyi's approved “101” wording. Owner-authored release follows; one-time backend fields are the next Codex task.
+- City Hunt Keeper one-time backend setup: PR #94 passed CI 42786785487 and owner-account squash-merged as `10c62b2`. Migration `20261110085702_hunt_keeper_names` is applied and live types regenerated. Hosted rollback preserved every old hunt-object field; 375 px zh/en Keeper lines checked without changing the dedicated account's completed progress.
+
+- City Hunt and Landmark monument SOPs: PR #93 passed CI 42786275193 and owner-account squash-merged as `8d067be`; owner-authored release `0c8ef6c` is live. The Keeper reads spot and step counts from hunt data while preserving Xinyi's approved “101” wording. The one-time backend setup is recorded above.
 
 - H1 UI City Hunt: PR #90 passed CI 42782705894 and owner-account squash-merged as `dd80667` with backend #91 and art #92 on main. Fresh-worktree TypeScript, 79 tests, Expo dependency check, web/iOS exports and root build pass. Signed-in 375 px zh/en browser checks cover Quest, Keeper !/✓ and card, blue-to-purple spin, player figure, Taipei 101 tower tap and seal alignment on the OSM/Protomaps/MapLibre vector map. Migration `20261110082103_localize_game_waypost_names` corrected 87 game-enabled Chinese names and is applied. Dedicated Taipei hunt progress/stamp reset; physical Expo Go remains Roy's check. Owner-authored Vercel release follows.
 

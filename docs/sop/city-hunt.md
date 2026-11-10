@@ -3,10 +3,12 @@
 How Codex adds a new City Hunt on its own. A hunt is **data only**: one migration, one Passport stamp, no screen changes. The rules of the game are in [`docs/design/city-hunt.md`](../design/city-hunt.md); this SOP never changes them.
 
 ## One-time setup (before the second hunt only)
-The app's Keeper lines read the meeting spot and the Landmark name from the hunt, and fall back to Xinyi's names. Before any second hunt, add once:
+Completed in `20261110085702_hunt_keeper_names.sql` on 2026-11-10; use the fields below for every new hunt.
+
+The app's Keeper lines read the meeting spot and the Landmark name from the hunt, with a fallback for Xinyi. The setup added:
 - Columns `keeper_spot_zh` and `keeper_spot_en` (text, not null) on `public.hunts`, filled for Xinyi with 市府廣場 / Civic Square.
 - `private.hunt_object` also returns `keeper_spot_zh`, `keeper_spot_en`, and `landmark_name_zh`, `landmark_name_en` (the `name_zh` / `name_en` of the hunt's Landmark row in `sea_shores`).
-- Regenerate the database types. The app already reads these fields; nothing else changes. Do not change any other hunt behaviour.
+- The database types were regenerated. The app reads these fields; no other hunt behaviour changed.
 
 ## What Roy gives you
 - The area (for example "Marina Bay, Singapore").
