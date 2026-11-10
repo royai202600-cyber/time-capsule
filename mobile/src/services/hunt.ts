@@ -34,7 +34,9 @@ export const keeperSpot = (h: Hunt, language: "zh" | "en") =>
   (language === "zh" ? h.keeper_spot_zh : h.keeper_spot_en) || KNOWN_NAMES[h.id]?.spot[language] || null;
 /** The Landmark's name for his lines, or null (he then says "the Landmark"). */
 export const landmarkName = (h: Hunt, language: "zh" | "en") =>
-  (language === "zh" ? h.landmark_name_zh : h.landmark_name_en) || KNOWN_NAMES[h.id]?.landmark[language] || null;
+  // Preserve the approved Xinyi Keeper line ("101") when the server adds the full Waypost name.
+  (h.id === "xinyi-2026-11" ? KNOWN_NAMES[h.id].landmark[language] : null)
+  || (language === "zh" ? h.landmark_name_zh : h.landmark_name_en) || KNOWN_NAMES[h.id]?.landmark[language] || null;
 /** A step's goal, for his lines. */
 export const stepGoal = (h: Hunt, key: HuntStepKey) => h.steps.find((s) => s.key === key)?.goal ?? 0;
 
