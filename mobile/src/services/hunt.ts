@@ -57,7 +57,7 @@ const XINYI = {
   id: "xinyi-2026-11", name_zh: "信義城市尋寶", name_en: "Xinyi City Hunt", city_zh: "台北", city_en: "Taipei",
   starts_at: "2026-11-10T00:00:00+08:00", ends_at: "2026-11-30T23:59:59+08:00",
   keeper: { lat: 25.037546, lng: 121.562754 }, area: { lat: 25.033263, lng: 121.564887, radius_m: 1200 },
-  landmark: "Taipei 101 Plaza", reward: { xp: 300, gold: 5 },
+  landmark: "Taipei 101", reward: { xp: 300, gold: 5 },
 };
 type Progress = { joined_at: string | null; checked_in_at: string | null; finished_at: string | null; spun: string[]; restored: number; won: number };
 const empty = (): Progress => ({ joined_at: null, checked_in_at: null, finished_at: null, spun: [], restored: 0, won: 0 });
