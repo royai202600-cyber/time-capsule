@@ -7,7 +7,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| H2 Senado test hunt | Daily-reset opt-in, 800 m Senado Square hunt, 24-hour test window | Codex | Rollback and real-JWT route checks, 375 px zh/en Quest/Keeper check, green CI, migration applied, types regenerated, disposable fixtures removed. Floating Landmark seal only; Passport scroll fallback until stamp art. |
+| H2 Senado test hunt | Daily-reset opt-in, 800 m Senado Square hunt, open at all hours through the test period | Codex | Rollback and real-JWT route checks, 375 px zh/en Quest/Keeper check, green CI, migration applied, types regenerated, disposable fixtures removed. Floating Landmark seal only; Passport scroll fallback until stamp art. |
 | H2 HKUST research | Check PMTiles, public outdoor paths, and new Landmark requirements | Codex → Roy | Read-only report to Roy; no HKUST game rows or monument until a separate decision. |
 | H1 backend | City Hunt tables and RPCs, seed the Xinyi hunt (`docs/design/city-hunt.md`, backend contract) | Codex | `hunt_list/join/check_in/finish`, server-side progress from spin/catch/landmark win, Passport hunt stamps, Xinyi hunt open until 2026-11-30 23:59 Asia/Taipei; real-JWT checks pass and the test account can complete the route with the walk control. |
 | H1 art | Letter Keeper, nine player map figures, blue Waypost/Landmark gems, Xinyi hunt stamp (`gpt-image-2`) | Art session → Codex | Roy approves the three-figure test, then the full set; art-only PR merged. |
