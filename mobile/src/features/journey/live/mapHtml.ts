@@ -116,8 +116,9 @@ html,body,#map{--ready:hue-rotate(-130deg) saturate(1.5);margin:0;height:100%;wi
 .pin.keeper .seal{position:absolute;left:14px;top:0;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#E2C58A,${C.brass} 60%,#A9843F);box-shadow:0 2px 6px rgba(22,38,63,.35),inset 0 0 0 2px #E8D3A3;color:#fff;font:700 17px/28px Georgia,serif;text-align:center;animation:float 2.2s ease-in-out infinite}
 /* With full-body art the seal sits above his head. */
 .pin.keeper .fig.full+.seal{top:-22px}
+@keyframes labelIn{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translateX(-50%)}}
 @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.06)}}
-.you .label{position:absolute;left:50%;bottom:66px;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:12px;background:${C.ink};color:${C.brass};box-shadow:0 2px 8px rgba(22,38,63,.3);cursor:pointer}
+.you .label{animation:labelIn .3s ease-out;position:absolute;left:50%;bottom:66px;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:12px;background:${C.ink};color:${C.brass};box-shadow:0 2px 8px rgba(22,38,63,.3);cursor:pointer}
 .you .label:after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:${C.ink}}
 /* Landmark: a floating seal badge (on top of its monument when it has one), never a gem. Plum once beaten. */
 .pin.landmark{width:64px;height:76px;--lm:${C.brass};--lm-hi:#E8D3A3;--lm-lo:#9C7B3C}
@@ -172,7 +173,7 @@ function render(){
     if(!youMark){const el=document.createElement('div');el.className='you';el.innerHTML='<div class="pulse"></div><div class="cone"></div>'+face(state.portrait);youMark=new maplibregl.Marker({element:el,rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([you.lng,you.lat]).addTo(map)}
     else youMark.setLngLat([you.lng,you.lat]);
     const yel=youMark.getElement();let lab=yel.querySelector('.label');
-    if(state.youLabel){if(!lab){lab=document.createElement('div');lab.className='label';lab.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:'you'})});yel.appendChild(lab)}lab.textContent=state.youLabel}else if(lab)lab.remove();
+    if(state.youLabel){if(!lab){lab=document.createElement('div');lab.className='label';lab.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:'you'})});yel.appendChild(lab)}lab.textContent=state.youLabel}else if(lab&&!lab.dataset.out){lab.dataset.out='1';lab.style.transition='opacity .4s';lab.style.opacity='0';setTimeout(()=>lab.remove(),420)}
     youMark.getElement().querySelector('.cone').style.transform='rotate('+((heading||0)-map.getBearing())+'deg)';
     map.getSource('reach')&&map.getSource('reach').setData({type:'FeatureCollection',features:[circle(you,state.reach||100)]});
   }

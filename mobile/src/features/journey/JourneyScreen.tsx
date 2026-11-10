@@ -92,6 +92,12 @@ export default function JourneyScreen() {
     return () => { active = false; };
   }, [youKey]);
   const dismissYou = () => { setYouLabel(false); void AsyncStorage.setItem(youKey, "1").catch(() => {}); };
+  // Shown briefly, once: it fades by itself after a few seconds on the first Journey visit.
+  useEffect(() => {
+    if (!youLabel || !fix) return;
+    const id = setTimeout(dismissYou, 3200);
+    return () => clearTimeout(id);
+  }, [youLabel, !!fix]);
   const [spinning, setSpinning] = useState<Waypost | null>(null);
   const [gameCard, setGameCard] = useState<{ waypost: Waypost; meters: number } | null>(null);
   const last = useRef<{ lat: number; lng: number } | null>(null);
