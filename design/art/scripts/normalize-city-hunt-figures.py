@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Place four map figures on one adult scale and the shared (512, 900) anchor."""
-import colorsys
+"""Place map figures on the approved adult scale and shared (512, 900) anchor."""
+import argparse
 import json
 from pathlib import Path
 from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECKS = ROOT / '_checks'
-NAMES = ('keeper', 'figure-01', 'figure-04', 'figure-06')
+NAMES = ('keeper',) + tuple(f'figure-{n:02d}' for n in range(1, 9))
 
 def cleaned(im):
     # Generated cutouts contain isolated alpha 1–8 dust far from the person.
@@ -41,6 +41,10 @@ def feet(alpha):
     return left[3]+ankle, right[3]+ankle
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--only', nargs='+', choices=NAMES,
+                        help='Normalize only new figures; leave approved PNGs untouched.')
+    args = parser.parse_args()
     config = json.loads((CHECKS/'city-hunt-scale.json').read_text())
     reference = cleaned(Image.open(ROOT/config['figures']['keeper']['source']))
     bbox = reference.getchannel('A').getbbox()
@@ -48,10 +52,16 @@ def main():
     # Players inherit it; they are not fitted individually to their own bboxes.
     canonical_edge = reference.width
     shared_scale = 740/(bbox[3]-bbox[1])
+    assert shared_scale == config['shared_scale'] == 0.6715063520871143
     config['canonical_source_edge'] = canonical_edge
     config['shared_scale'] = shared_scale
+    report_path = CHECKS/'city-hunt-figures.json'
+    previous = {r['file']:r for r in json.loads(report_path.read_text())}
     reports = []
     for name in NAMES:
+        if args.only and name not in args.only:
+            reports.append(previous[f'characters/{name}.png'])
+            continue
         entry = config['figures'][name]
         im = cleaned(Image.open(ROOT/entry['source']))
         native_factor = canonical_edge/im.width

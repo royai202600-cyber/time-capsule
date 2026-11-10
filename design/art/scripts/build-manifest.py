@@ -269,7 +269,7 @@ def register_public_sea() -> None:
 
 
 def register_city_hunt() -> None:
-    """Append only this seven-file art test batch, preserving existing records."""
+    """Append City Hunt artwork, preserving all previously registered records."""
     from PIL import Image
     path = ROOT / 'manifest.json'
     raw = path.read_text()
@@ -303,23 +303,40 @@ def register_city_hunt() -> None:
     readme = readme_path.read_text()
     prefix,rest = readme.split('## Masters\n',1)
     table,review = rest.split('## Review\n',1)
-    note = ('- City Hunt art test batch: Letter Keeper from selected sketch A1, matching dialog portrait, '
-            'player figures 01/04/06 on one shared adult scale, and RGB-only blue Waypost gems. '
-            'Eight selectable player portraits exist; the other five figures and hunt stamp are held '
-            'for the next prompt after Roy’s OK. No app registration or deployment. '
-            'Exact prompts, source references, common scale and preservation hashes are in `_checks/city-hunt-*.json`.\n\n')
-    if '- City Hunt art test batch:' not in prefix:
+    note = ('- City Hunt art: Letter Keeper from selected sketch A1, matching dialog portrait, '
+            'all eight player figures on the approved shared adult scale, RGB-only blue Waypost gems, '
+            'and the ink-blue double-ring Xinyi hunt stamp. Roy approved the first seven assets at '
+            '`9c247aa`; their PNGs and WebPs remain unchanged. The five remaining figures and stamp '
+            'await whole-PR approval. No app registration, deployment or merge. '
+            'Exact prompts, references, scale and preservation hashes are in `_checks/city-hunt-*.json`.\n\n')
+    if '- City Hunt art test batch:' in prefix:
+        start = prefix.index('- City Hunt art test batch:')
+        end = prefix.index('\n\n', start) + 2
+        prefix = prefix[:start] + note + prefix[end:]
+    elif '- City Hunt art:' not in prefix:
         prefix += note
     for e in batch:
         rel = e['path'].removeprefix('design/art/')
         if '| `'+rel+'` |' not in table:
-            table = table.rstrip()+'\n'+f"| `{rel}` | {e['what']} | 1024×1024 | test batch; see manifest |\n"
+            table = table.rstrip()+'\n'+f"| `{rel}` | {e['what']} | 1024×1024 | awaiting whole-PR approval; see manifest |\n"
     links = ('[City Hunt figures and anchor guides](_checks/city-hunt-figures.png) · '
              '[Compact figure review](_checks/city-hunt-figures-review.png) · '
              '[Keeper portrait at 24/40 px](_checks/portraits-small.png) · '
              '[Blue/purple gem review](_checks/city-hunt-gems.png)')
     if links not in review:
         review += '\n'+links+'\n'
+    final_links = ('[All nine head-and-shoulder facing crops](_checks/city-hunt-facing.png) · '
+                   '[Xinyi event stamp versus Taipei 101 place stamp](_checks/city-hunt-stamp.png)')
+    if final_links not in review:
+        review += '\n'+final_links+'\n'
+    reference = ('- Xinyi hunt stamp silhouette reference: [TAIPEI 101 official sunrise photograph]'
+                 '(https://www.taipei-101.com.tw/asset/img/cover-sunrise.jpg), linked from the '
+                 '[official gallery](https://www.taipei-101.com.tw/tw/explore/photogallery), '
+                 'inspected 2026-11-10. Observed stacked upward-flared tiers and slim spire; '
+                 'used only to inform a smaller loose tower behind the focal letter. '
+                 'The photograph is not reproduced in the artwork or repository.\n')
+    if reference not in review:
+        review += '\n'+reference
     readme_path.write_text(prefix+'## Masters\n'+table.rstrip()+'\n\n## Review\n'+review)
     print('City Hunt: registered',len(batch),'assets; retained',len(entries),'existing records')
 

@@ -21,6 +21,6 @@ async function main(){
     alpha_matches_exact_export_resize:true,alpha_sha256:crypto.createHash('sha256').update(actual).digest('hex'),pass:true});
  }
  fs.writeFileSync(path.join(art,'_checks/city-hunt-webp.json'),JSON.stringify(results,null,2)+'\n');
- console.log('7/7 WebP previews: 512px, exact resized alpha PASS');
+ console.log(`${results.length}/${results.length} WebP previews: 512px, exact resized alpha PASS`);
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});

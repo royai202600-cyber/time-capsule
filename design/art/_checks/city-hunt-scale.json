@@ -22,6 +22,26 @@
     "figure-06": {
       "source": "_checks/city-hunt-source-figure-06.png",
       "mirror_to_right": false
+    },
+    "figure-02": {
+      "source": "_checks/city-hunt-source-figure-02.png",
+      "mirror_to_right": false
+    },
+    "figure-03": {
+      "source": "_checks/city-hunt-source-figure-03.png",
+      "mirror_to_right": false
+    },
+    "figure-05": {
+      "source": "_checks/city-hunt-source-figure-05.png",
+      "mirror_to_right": false
+    },
+    "figure-07": {
+      "source": "_checks/city-hunt-source-figure-07.png",
+      "mirror_to_right": false
+    },
+    "figure-08": {
+      "source": "_checks/city-hunt-source-figure-08.png",
+      "mirror_to_right": false
     }
   },
   "clothing_rgb_adjustment": {
