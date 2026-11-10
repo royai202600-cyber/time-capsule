@@ -9,6 +9,7 @@ import type { VesselKind } from "../../components/Vessel";
 import { useLanguage } from "../../i18n";
 import { game, GameError, type BallKind, type GameState, type CorruptedCapsule, type LandmarkAttempt, type Rarity, type ThrowResult } from "../../services/game";
 import { mapPalette } from "../journey/live/mapHtml";
+import { noWebSelect, useNoWebDrag } from "./noWebDrag";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import Reanimated, { cancelAnimation, Easing as Curve, runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { fxGlint, gameArt, lightBurst } from "../../art/manifest";
@@ -121,6 +122,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   }, [halfMs, ringPhase]);
 
   useEffect(() => () => { alive.current = false; }, []);
+  useNoWebDrag();
 
 
   useEffect(() => {
@@ -346,7 +348,8 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   const ringScale = ringPhase.interpolate({ inputRange: [0, 1], outputRange: [MIN_RING, 1] });
 
   return <View onLayout={(e: LayoutChangeEvent) => setHeight(e.nativeEvent.layout.height)}
-    style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 40, backgroundColor: mapPalette.land }}>
+    style={[{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 40, backgroundColor: mapPalette.land },
+      noWebSelect]}>
     <ThrowBackground />
     <Animated.View pointerEvents="none" style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, backgroundColor: C.ink, opacity: dim }} />
     {height > 0 && <>

@@ -154,6 +154,15 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 /* MapLibre owns the anchor transform: never animate or scale this element. */
 .pin{position:absolute;width:80px;height:96px;cursor:pointer;transition:opacity .25s}
 .pin-body{position:absolute;inset:0;transform-origin:50% 100%}
+/* Pins shrink with the map when you zoom out (--z, set from the zoom), like the buildings; only you and the
+   Keeper keep their size. Taps only land on what you can see, so a smaller pin has a smaller tap area.
+   A tapped stack fans out with --fx/--fy, kept separate from the scale so both can change smoothly. */
+.pin{pointer-events:none}.pin-body>*{pointer-events:auto}.pin .disc{pointer-events:none}
+.pin-body{scale:var(--z,1);translate:var(--fx,0) var(--fy,0);transition:translate .22s ease-out,opacity .25s}
+.pin.keeper .pin-body{scale:1}
+.pin.fanned{z-index:30!important}
+#map.tiny .pin:not(.keeper) .pin-body{opacity:0}#map.tiny .pin:not(.keeper) .pin-body>*{pointer-events:none}
+.fan-dot{width:8px;height:8px;border-radius:50%;background:${C.ink};border:2px solid #fff;box-shadow:0 1px 3px rgba(22,38,63,.3);pointer-events:none}
 .pin .disc{position:absolute;left:18px;bottom:0;width:44px;height:12px;border-radius:50%;background:radial-gradient(${C.ink}40,transparent 70%)}
 .pin .v{position:absolute;left:0;bottom:2px;width:80px;height:80px;object-fit:contain;animation:bob 3.6s ease-in-out infinite}
 .pin .who{position:absolute;right:2px;top:4px;width:28px;height:28px}
@@ -229,14 +238,39 @@ map.on('load',()=>{
   map.addSource('reach',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   map.addLayer({id:'reach-fill',type:'fill',source:'reach',paint:{'fill-color':'${C.brass}','fill-opacity':.12}});
   map.addLayer({id:'reach-line',type:'line',source:'reach',paint:{'line-color':'${C.brass}','line-width':1.5,'line-dasharray':[2,2]}});
-  send({type:'ready'});render();
+  send({type:'ready'});render();rescale();
 });
 map.on('dragstart',()=>{if(follow){follow=false;send({type:'follow',follow:false})}});
+// Pin size follows the zoom: full size at the pickup zoom (never bigger), half per level out, at least 40%;
+// three levels out they fade away. Recomputed on every zoom.
+const mapEl=document.getElementById('map');let zNow=1;
+const rescale=()=>{const base=pickupZoom(you?you.lat:map.getCenter().lat,state.reach||100),d=map.getZoom()-base;
+  zNow=Math.max(.4,Math.min(1,Math.pow(2,d)));mapEl.style.setProperty('--z',zNow.toFixed(3));mapEl.classList.toggle('tiny',d<-3)};
+map.on('zoom',rescale);
+// Overlapping pins: the first tap on a stack fans it out around its spot (pins never move on the map itself);
+// tapping one then opens it. Tapping the map or moving it folds the fan back.
+let fan=null;
+const fold=()=>{if(!fan)return;for(const id of fan.ids){const m=marks.get(id);if(m){const b=m.marker.getElement();b.style.removeProperty('--fx');b.style.removeProperty('--fy');b.classList.remove('fanned')}}fan.dot.remove();fan=null};
+const screenOf=m=>{const p=map.project(m.marker.getLngLat()),o=m.marker.getOffset();return{x:p.x+o.x,y:p.y+o.y}};
+// The pictures you can see (not the transparent box around them), so "overlapping" means what it looks like.
+const artBox=el=>{let b=null;for(const x of el.querySelectorAll('.pin-body>*:not(.disc)')){const r=x.getBoundingClientRect();if(!r.width)continue;b=b?{l:Math.min(b.l,r.left),t:Math.min(b.t,r.top),r:Math.max(b.r,r.right),b:Math.max(b.b,r.bottom)}:{l:r.left,t:r.top,r:r.right,b:r.bottom}}return b};
+const stackOf=id=>{const at=new Map();for(const [k,m] of marks){const box=artBox(m.marker.getElement());if(box)at.set(k,{p:screenOf(m),w:box.r-box.l,box})}
+  const A=at.get(id);if(!A)return{out:[id],at};const ov=(a,b)=>a.l+6<b.r&&b.l+6<a.r&&a.t+6<b.b&&b.t+6<a.b;
+  const out=[id];for(const [k,B] of at)if(k!==id&&out.length<10&&ov(A.box,B.box))out.push(k);return{out,at}};
+const tapPin=id=>{
+  if(fan&&fan.ids.includes(id)){fold();send({type:'select',id});return}
+  fold();const{out,at}=stackOf(id);if(out.length<2){send({type:'select',id});return}
+  const c=out.reduce((s,k)=>({x:s.x+at.get(k).p.x/out.length,y:s.y+at.get(k).p.y/out.length}),{x:0,y:0});
+  const w=Math.max(...out.map(k=>at.get(k).w)),r=Math.max(w*.75,w/2/Math.sin(Math.PI/out.length));
+  out.forEach((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/out.length,p=at.get(k).p,b=marks.get(k).marker.getElement();
+    b.style.setProperty('--fx',(c.x+r*Math.cos(a)-p.x).toFixed(1)+'px');b.style.setProperty('--fy',(c.y+r*Math.sin(a)-p.y).toFixed(1)+'px');b.classList.add('fanned')});
+  const d=document.createElement('div');d.className='fan-dot';fan={ids:out,dot:new maplibregl.Marker({element:d}).setLngLat(map.unproject([c.x,c.y])).addTo(map)}};
+map.on('movestart',fold);
 map.on('resize',()=>{if(follow&&you)map.jumpTo({center:[you.lng,you.lat],zoom:pickupZoom(you.lat,state.reach||100),padding:cameraPadding})});
 // Tapping a monument building opens its Landmark; anywhere else is a plain map tap.
 const TILE_OWNER=${JSON.stringify(TILE_OWNER)};
 const monumentAt=p=>{const layers=['monuments','monument-tiles'].filter(l=>map.getLayer(l));const hit=layers.length&&map.queryRenderedFeatures(p,{layers})[0];return hit?(hit.layer.id==='monuments'?hit.properties.id:TILE_OWNER[hit.id]):null};
-map.on('click',e=>{const id=monumentAt(e.point);if(id){send({type:'select',id:'monument-'+id});return}send({type:'tap',lat:e.lngLat.lat,lng:e.lngLat.lng})});
+map.on('click',e=>{if(fan){fold();return}const id=monumentAt(e.point);if(id){send({type:'select',id:'monument-'+id});return}send({type:'tap',lat:e.lngLat.lat,lng:e.lngLat.lng})});
 map.on('mousemove',e=>{map.getCanvas().style.cursor=monumentAt(e.point)?'pointer':''});
 // A badge "on top" of a building: the screen offset from its ground point to the same point raised
 // to the building's height, through the camera's own perspective, so it stays on the spire as the map moves.
@@ -266,7 +300,7 @@ function render(){
       :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
     const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'');
     let m=marks.get(p.id);
-    if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();send({type:'select',id:p.id})});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
+    if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();tapPin(p.id)});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
     const el=m.marker.getElement();
     if(m.html!==html){el.innerHTML=html;m.html=html}
     if(m.cls!==cls){if(m.cls)el.classList.remove(...m.cls.split(' '));el.classList.add(...cls.split(' '));m.cls=cls}
@@ -276,7 +310,7 @@ function render(){
   }
 }
 function recv(m){
-  if(m.type==='state'){const moved=!you||!m.you||Math.abs(you.lat-m.you.lat)+Math.abs(you.lng-m.you.lng)>1e-6;you=m.you;state=m;heading=m.heading||heading;render();if(follow&&you&&moved)map.easeTo({center:[you.lng,you.lat],duration:you?900:0,padding:cameraPadding})}
+  if(m.type==='state'){if(fan&&m.pins.map(p=>p.id).join()!==state.pins.map(p=>p.id).join())fold();const moved=!you||!m.you||Math.abs(you.lat-m.you.lat)+Math.abs(you.lng-m.you.lng)>1e-6;you=m.you;state=m;heading=m.heading||heading;render();rescale();if(follow&&you&&moved)map.easeTo({center:[you.lng,you.lat],duration:you?900:0,padding:cameraPadding})}
   if(m.type==='recenter'&&you){follow=true;map.easeTo({center:[you.lng,you.lat],zoom:pickupZoom(you.lat,state.reach||100),pitch:40,bearing:0,duration:900,padding:cameraPadding})}
   if(m.type==='focus'){follow=false;send({type:'follow',follow:false});map.easeTo({center:[m.lng,m.lat],zoom:pickupZoom(m.lat,state.reach||100),duration:700})}
 }

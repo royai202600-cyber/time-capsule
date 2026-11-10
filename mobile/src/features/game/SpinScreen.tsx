@@ -10,6 +10,7 @@ import { useReducedMotion } from "../../useReducedMotion";
 import { errorKey, useGameText } from "./strings";
 import { sceneKey } from "./waypostScene";
 import { ThrowBackground, WaxBall } from "./ThrowScreen";
+import { noWebSelect, useNoWebDrag } from "./noWebDrag";
 
 const NATIVE = Platform.OS !== "web";
 const DISC = 250;
@@ -85,6 +86,7 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
   const spinRef = useRef(spin);
   spinRef.current = spin;
 
+  useNoWebDrag();
   const pan = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => !busy.current,
     onMoveShouldSetPanResponder: () => !busy.current,
@@ -100,7 +102,7 @@ export function SpinScreen({ waypost, language, onState, onClose }: {
   const balls: ("wax" | "gold")[] = reward ? [...Array<"wax">(reward.wax).fill("wax"), ...Array<"gold">(reward.gold).fill("gold")] : [];
   const lines = reward ? [{ kind: "wax" as const, count: reward.wax }, ...(reward.gold ? [{ kind: "gold" as const, count: reward.gold }] : [])] : [];
 
-  return <View style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 40 }}>
+  return <View style={[{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 40 }, noWebSelect]}>
     <ThrowBackground />
     <Text numberOfLines={1} style={{ position: "absolute", top: insets.top + spacing.md, left: spacing.lg, right: spacing.lg, textAlign: "center", fontFamily: serif, fontSize: 20, color: C.ink }}>{name}</Text>
 
