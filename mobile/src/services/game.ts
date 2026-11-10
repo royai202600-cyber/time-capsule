@@ -31,7 +31,7 @@ const fail = (error: { message?: string } | null) => {
   if (error) throw new GameError(CODES.find((c) => error.message?.includes(c)) ?? "unknown");
 };
 // Landmark Wayposts only return their place; each place has one earned vessel.
-const LANDMARK_VESSEL: Record<string, string> = { taipei101: "bamboo-tower", merlion: "lionfish-fountain", senado: "senado-fountain" };
+const LANDMARK_VESSEL: Record<string, string> = { taipei101: "bamboo-tower", merlion: "lionfish-fountain", senado: "senado-fountain", hkust: "red-bird" };
 let position: Coords | null = null;
 /** Successful game actions, so a City Hunt can count them on the device while its backend is not live. */
 export type GameEvent = { kind: "spin"; waypost: string; lat: number; lng: number } | { kind: "restore"; lat: number; lng: number } | { kind: "landmark"; waypost: string };
