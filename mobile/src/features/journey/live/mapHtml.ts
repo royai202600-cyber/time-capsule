@@ -31,13 +31,6 @@ function monumentGeoJson() {
   }));
   return { type: "FeatureCollection", features };
 }
-function glowGeoJson() {
-  return { type: "FeatureCollection", features: MONUMENTS.map((m) => {
-    const pts = Array.from({ length: 49 }, (_, i) => { const a = i / 48 * Math.PI * 2; return [m.lng + 58 * Math.cos(a) / (111320 * Math.cos(m.lat * Math.PI / 180)), m.lat + 58 * Math.sin(a) / 110540]; });
-    return { type: "Feature", properties: {}, geometry: { type: "Polygon", coordinates: [pts] } };
-  }) };
-}
-
 export const mapPalette = {
   water: "#BCD3E6", waterLine: "#9DBBD6", land: "#F3EFE6", park: "#DCE6CF", sand: "#EFE3C6",
   building: "#E6E0D3", buildingTop: "#EEE9DE", road: "#FFFFFF", roadCase: "#D5DDE7", major: "#F1E2BF", label: C.blue, halo: "#F6F8FB",
@@ -126,10 +119,9 @@ html,body,#map{--ready:hue-rotate(-130deg) saturate(1.5);margin:0;height:100%;wi
 @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.06)}}
 .you .label{position:absolute;left:50%;bottom:66px;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:12px;background:${C.ink};color:${C.brass};box-shadow:0 2px 8px rgba(22,38,63,.3);cursor:pointer}
 .you .label:after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:${C.ink}}
-/* Landmark fight spot: a brass ring on the ground and a floating seal badge, never a gem. Plum once beaten. */
-.pin.landmark{width:64px;height:76px;--lm:${C.brass};--lm-hi:#E8D3A3;--lm-lo:#9C7B3C;--lm-glow:${C.brass}55}
-.pin.landmark.done{--lm:${C.plum};--lm-hi:#B98494;--lm-lo:#4A1C2A;--lm-glow:${C.plum}44}
-.pin.landmark .ring{position:absolute;left:4px;bottom:0;width:56px;height:18px;border-radius:50%;border:2.5px solid var(--lm);box-sizing:border-box;background:radial-gradient(var(--lm-glow),transparent 70%)}
+/* Landmark: a floating seal badge (on top of its monument when it has one), never a gem. Plum once beaten. */
+.pin.landmark{width:64px;height:76px;--lm:${C.brass};--lm-hi:#E8D3A3;--lm-lo:#9C7B3C}
+.pin.landmark.done{--lm:${C.plum};--lm-hi:#B98494;--lm-lo:#4A1C2A}
 .pin.landmark .badge{position:absolute;left:12px;bottom:18px;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--lm-hi),var(--lm) 62%,var(--lm-lo));box-shadow:0 3px 8px rgba(22,38,63,.35),inset 0 0 0 2.5px var(--lm-hi);display:flex;align-items:center;justify-content:center;animation:bob 3.6s ease-in-out infinite}
 .pin.landmark .badge svg{width:22px;height:22px}
 .pin.landmark.top{height:44px}
@@ -157,9 +149,6 @@ let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
 map.on('load',()=>{
-  map.addSource('monument-glow',{type:'geojson',data:${JSON.stringify(glowGeoJson())}});
-  map.addLayer({id:'monument-glow',type:'fill',source:'monument-glow',paint:{'fill-color':'${C.brass}','fill-opacity':.28}});
-  map.addLayer({id:'monument-glow-line',type:'line',source:'monument-glow',paint:{'line-color':'${C.brass}','line-width':2}});
   map.addSource('monuments',{type:'geojson',data:${JSON.stringify(monumentGeoJson())}});
   map.addLayer({id:'monuments',type:'fill-extrusion',source:'monuments',paint:{'fill-extrusion-base':['get','base'],'fill-extrusion-height':['get','top'],'fill-extrusion-color':['interpolate',['linear'],['get','t'],0,'#B98F45',0.6,'${C.brass}',1,'#F3E2BB'],'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}});
   map.addSource('reach',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
@@ -172,10 +161,12 @@ map.on('resize',()=>{if(follow&&you)map.jumpTo({center:[you.lng,you.lat],zoom:pi
 // Tapping a monument building opens its Landmark; anywhere else is a plain map tap.
 map.on('click',e=>{const hit=map.getLayer('monuments')&&map.queryRenderedFeatures(e.point,{layers:['monuments']})[0];if(hit){send({type:'select',id:'monument-'+hit.properties.id});return}send({type:'tap',lat:e.lngLat.lat,lng:e.lngLat.lng})});
 map.on('mousemove',e=>{const c=map.getCanvas();const over=map.getLayer('monuments')&&map.queryRenderedFeatures(e.point,{layers:['monuments']}).length;c.style.cursor=over?'pointer':''});
-// A badge "on top" of a building: lift it by the building's height as seen at the current zoom and tilt.
-const liftPx=(lat,meters)=>meters/(40075016.686*Math.cos(lat*Math.PI/180)/(512*Math.pow(2,map.getZoom())))*Math.sin(map.getPitch()*Math.PI/180);
-const relift=()=>{for(const [,m] of marks){if(m.lift){const ll=m.marker.getLngLat();m.marker.setOffset([0,-liftPx(ll.lat,m.lift)])}}};
-map.on('move',relift);
+// A badge "on top" of a building: the screen offset from its ground point to the same point raised
+// to the building's height, through the camera's own perspective, so it stays on the spire as the map moves.
+const liftOffset=(ll,meters)=>{const t=map.transform;const mc=maplibregl.MercatorCoordinate.fromLngLat(ll);
+  if(typeof t.coordinatePoint!=='function')return [0,0];const a=t.coordinatePoint(mc,0),b=t.coordinatePoint(mc,meters);return [b.x-a.x,b.y-a.y]};
+const relift=()=>{for(const [,m] of marks){if(m.lift)m.marker.setOffset(liftOffset(m.marker.getLngLat(),m.lift))}};
+map.on('move',relift);map.on('resize',relift);
 function render(){
   if(you){
     if(!youMark){const el=document.createElement('div');el.className='you';el.innerHTML='<div class="pulse"></div><div class="cone"></div>'+face(state.portrait);youMark=new maplibregl.Marker({element:el,rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([you.lng,you.lat]).addTo(map)}
@@ -189,7 +180,7 @@ function render(){
   for(const [id,m] of marks){if(!want.has(id)){m.marker.remove();marks.delete(id)}}
   for(const p of state.pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
-      :p.kind==='landmark'?'<div class="pin-body">'+(p.lift?'':'<div class="ring"></div>')+'<div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M11.4 1h1.2v4h-1.2zM10 5h4v2.5h-4zM9 7.5h6v2.6H9zM9 10.1h6v2.6H9zM8.5 12.7h7v2.6h-7zM8 15.3h8v2.6H8zM6 17.9h12V21H6z"/></svg></div></div>'
+      :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M11.4 1h1.2v4h-1.2zM10 5h4v2.5h-4zM9 7.5h6v2.6H9zM9 10.1h6v2.6H9zM8.5 12.7h7v2.6h-7zM8 15.3h8v2.6H8zM6 17.9h12V21H6z"/></svg></div></div>'
       :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
     const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'');
     let m=marks.get(p.id);
@@ -199,7 +190,7 @@ function render(){
     if(m.cls!==cls){if(m.cls)el.classList.remove(...m.cls.split(' '));el.classList.add(...cls.split(' '));m.cls=cls}
     el.style.zIndex=p.selected?20:p.kind==="keeper"?8:p.near?5:1;
     m.marker.setLngLat([p.lng,p.lat]);
-    if(m.lift!==(p.lift||0)){m.lift=p.lift||0;m.marker.setOffset([0,m.lift?-liftPx(p.lat,m.lift):0])}
+    if(m.lift!==(p.lift||0)){m.lift=p.lift||0;m.marker.setOffset(m.lift?liftOffset(m.marker.getLngLat(),m.lift):[0,0])}
   }
 }
 function recv(m){
