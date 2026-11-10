@@ -1,0 +1,46 @@
+[
+  {
+    "file": "public/art/vessels/vessel-red-bird.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "exact_resized_alpha": true,
+    "alpha_sha256": "60b5c09633891e66794e45ddbf3edfa37d37fbe2682de21112c4fd1766cc0455",
+    "pass": true
+  },
+  {
+    "file": "public/art/vessels/vessel-red-bird-box.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "exact_resized_alpha": true,
+    "alpha_sha256": "87773bc5ace2414d209fc3682a074e705809cb06242c575937a52b9bf9406b74",
+    "pass": true
+  },
+  {
+    "file": "public/art/vessels/vessel-red-bird-lid.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "exact_resized_alpha": true,
+    "alpha_sha256": "d95b3cef01e1d2c76091742dc867b0fd2a48ebb77038c050a4a4000b79bead75",
+    "pass": true
+  },
+  {
+    "file": "public/art/vessels/vessel-red-bird-shadow.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "exact_resized_alpha": true,
+    "alpha_sha256": "1400374961e6106e843c61016b7b37d39b942d05df89000011659871a6c8ed3e",
+    "pass": true
+  }
+]

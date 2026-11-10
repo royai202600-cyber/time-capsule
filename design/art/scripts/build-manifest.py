@@ -341,7 +341,72 @@ def register_city_hunt() -> None:
     print('City Hunt: registered',len(batch),'assets; retained',len(entries),'existing records')
 
 
+def register_red_bird() -> None:
+    """Append the one-vessel landmark art batch without rewriting prior records."""
+    from PIL import Image
+    prompts=json.loads((CHECKS/'red-bird-prompts.json').read_text())
+    spec=json.loads((CHECKS/'red-bird-vessel.json').read_text())
+    path=ROOT/'manifest.json'
+    raw=path.read_text(); existing=json.loads(raw)
+    by_path={e['path']:e for e in existing}
+    added=[]
+    for name in ('assembled','box','lid','shadow'):
+        filename='vessel-red-bird'+('' if name=='assembled' else '-'+name)+'.png'
+        source=prompts['closed'] if name=='assembled' else next(p for p in prompts['parts'] if p['name']==name)
+        im=Image.open(ROOT/'vessels'/filename).convert('RGBA')
+        entry={'path':'design/art/vessels/'+filename,
+               'what':('Closed Red Bird Sundial Box / 火鳥日晷盒; Earned HKUST landmark vessel' if name=='assembled'
+                       else 'Red Bird Sundial Box — '+name+' layer'),
+               'size_px':list(im.size),'transparent':True,'prompt':source['prompt'],'model':'gpt-image-2',
+               'references':source['references'],'native_source':source['source'],
+               'postprocess':'finish-red-bird.py: alpha dust cutoff16; all generated edits share one full-canvas downscale1024/1254 and translation(3,-30), never independent fit or upscale. Generated shadow softened4px and clipped off the red pointer. Assembled is the exact at=0 stack. See red-bird-prompts.json for all exact generation/isolation prompts.',
+               'alpha_bbox_px':list(im.getchannel('A').getbbox()),
+               'web_export':'public/art/vessels/'+filename.removesuffix('.png')+'.webp'}
+        if name=='assembled':entry['vessel']=spec
+        if entry['path'] in by_path:
+            assert by_path[entry['path']]==entry,filename+' metadata differs'
+        else:added.append(entry)
+    if added:
+        snippet=json.dumps(added,ensure_ascii=False,indent=2)[2:-2]
+        path.write_text(raw[:raw.rfind(']')].rstrip()+',\n'+snippet+'\n]\n')
+    assert json.loads(path.read_text())[:len(existing)]==existing
+    readme_path=ROOT/'README.md';readme=readme_path.read_text()
+    before,rest=readme.split('## Masters\n',1);table,review=rest.split('## Review\n',1)
+    note=('- Red Bird Sundial Box (`red-bird`, 火鳥日晷盒): original low brass sundial keepsake '
+          'with a wax-red swept pointer inspired by the verified HKUST Piazza sculpture. Closed master, '
+          'complete rolled-letter interior, back-hinged dial/pointer and soft shadow. The shadow sways '
+          '4° about its foot on a 4200ms loop; the rim has a measured sparkle anchor. Earned landmark '
+          'art only, pending Roy’s visual OK; no app registration, migration, deployment or merge.\n\n')
+    if '- Red Bird Sundial Box (' not in before:before+=note
+    for name in ('assembled','box','lid','shadow'):
+        filename='vessel-red-bird'+('' if name=='assembled' else '-'+name)+'.png'
+        if '| `vessels/'+filename+'` |' not in table:
+            table=table.rstrip()+'\n'+f'| `vessels/{filename}` | Red Bird Sundial Box — {name} | 1024×1024 | pending Roy; see manifest |\n'
+    links=('[Red Bird vessel review](_checks/red-bird-review.png) · '
+           '[40/120px](_checks/red-bird-sizes.png) · [stack](_checks/red-bird-stack.png) · '
+           '[closed/half/open motion](_checks/red-bird-motion.png) · '
+           '[shadow idle](_checks/red-bird-idle.png) · [audit](_checks/red-bird-audit.json)')
+    if links not in review:review+='\n'+links+'\n'
+    reference=('### Red Bird reference\n\n'
+               '[HKUST Campus Management Office: Circle of Time / Red Bird Sundial]'
+               '(https://cmo.hkust.edu.hk/sundial-sculpture) · '
+               '[official photograph, the filename Roy identified]'
+               '(https://cmo.hkust.edu.hk/files/sundial_M0089_01_m001R2.jpg). '
+               'Credit: HKUST Campus Management Office / HKUST. Inspected 2026-11-10: the red '
+               'swept steel planes stand in the circular pool and stepped podium of the Entrance Piazza. '
+               'The [official Visit HKUST page](https://hkust.edu.hk/visit) confirms the same sculpture '
+               'against the curved academic building. This is not the Guangzhou sundial or the university emblem. '
+               'Only the small reference thumbnail is stored; the vessel is an original souvenir design, not a replica.\n\n'
+               '![HKUST official Red Bird Piazza reference](reference/red-bird/hkust-piazza-thumb.jpg)\n')
+    if '### Red Bird reference' not in review:review+='\n'+reference
+    readme_path.write_text(before+'## Masters\n'+table.rstrip()+'\n\n## Review\n'+review)
+    print('Red Bird: registered 4 masters; retained',len(existing),'existing records')
+
+
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--red-bird"]:
+        register_red_bird()
+        raise SystemExit(0)
     if sys.argv[1:] == ["--city-hunt"]:
         register_city_hunt()
         raise SystemExit(0)

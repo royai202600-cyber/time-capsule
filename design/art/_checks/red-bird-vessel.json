@@ -1,0 +1,86 @@
+{
+  "id": "red-bird",
+  "assembled": "vessel-red-bird.png",
+  "opening": "A",
+  "idleMs": 4200,
+  "idle": [],
+  "layers": [
+    {
+      "name": "box",
+      "file": "vessel-red-bird-box.png",
+      "role": "static"
+    },
+    {
+      "name": "lid",
+      "file": "vessel-red-bird-lid.png",
+      "role": "hinge",
+      "pivot": {
+        "x": 664,
+        "y": 550
+      },
+      "open": [
+        {
+          "at": 0,
+          "rotate": 0,
+          "y": 0,
+          "scaleY": 1,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "rotate": -15,
+          "y": -0.12,
+          "scaleY": 0.65,
+          "opacity": 1
+        }
+      ]
+    },
+    {
+      "name": "shadow",
+      "file": "vessel-red-bird-shadow.png",
+      "role": "hinge",
+      "pivot": {
+        "x": 664,
+        "y": 550
+      },
+      "open": [
+        {
+          "at": 0,
+          "rotate": 0,
+          "y": 0,
+          "scaleY": 1,
+          "opacity": 1
+        },
+        {
+          "at": 1,
+          "rotate": -15,
+          "y": -0.12,
+          "scaleY": 0.65,
+          "opacity": 1
+        }
+      ],
+      "idle": [
+        {
+          "type": "sway",
+          "deg": 4,
+          "pivot": {
+            "x": 517,
+            "y": 672
+          }
+        }
+      ]
+    }
+  ],
+  "mouth": {
+    "x": 513,
+    "y": 668
+  },
+  "baseY": 900,
+  "sparkle": {
+    "x": 297,
+    "y": 754
+  },
+  "glint": null,
+  "openGlow": null,
+  "readyPulse": null
+}
