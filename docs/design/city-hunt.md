@@ -1,6 +1,6 @@
 # City Hunt, the Letter Keeper and map characters
 
-Status: design agreed with Roy on 2026-11-10. The first hunt is in Xinyi, Taipei, around Taipei 101, and Roy tests it. This extends [time-capsule-game.md](time-capsule-game.md); where the two disagree, this doc wins.
+Status: design agreed with Roy on 2026-11-10. The first hunt is in Xinyi, Taipei, around Taipei 101, and Roy tests it. This extends [time-capsule-game.md](time-capsule-game.md); where the two disagree, this doc wins. New hunts and monuments follow [`docs/sop/city-hunt.md`](../sop/city-hunt.md) and [`docs/sop/landmark-monument.md`](../sop/landmark-monument.md).
 
 ## Why
 A **City Hunt** (城市尋寶) is a scheduled event in one area. People join, meet the Letter Keeper, walk a route of Wayposts, restore Corrupted Capsules, win the Landmark fight and come back to him. It gives people a reason to come out at the same time and bring friends, which is how we get more players.
