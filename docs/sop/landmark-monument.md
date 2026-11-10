@@ -62,7 +62,7 @@ Nothing else in the app needs editing. The seal height, the taps and the hiding 
 | Statue, fountain, gate, temple (Merlion, Senado) | 15–40 m | Low and wide, so it reads as a landmark, not a tower. |
 | Square or campus buildings (Senado's frame, HKUST) | 10–20 m | Just above the toy buildings around it. |
 
-- **The centrepiece is the tallest part.** Buildings framing a square stay lower than its fountain or statue (Senado: buildings 12 m, fountain 25 m).
+- **The centrepiece is the tallest part.** Buildings framing a square stay lower than its fountain or statue (Senado: buildings 12 m, fountain 15 m).
 - **Cover the real building.** A hand-built base must be at least as wide as the real grey building at its foot (Taipei 101's base is 62 m half-width because of the mall).
 - **Thinnest piece: at least 1.5 m half-width,** or it disappears on a phone.
 - **Don't change** `TOY_SCALE`, `TOY_MAX_M`, the colours, the layers, or another monument.

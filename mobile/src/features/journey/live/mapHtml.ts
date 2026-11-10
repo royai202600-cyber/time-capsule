@@ -34,12 +34,19 @@ export const MONUMENTS: Monument[] = [
     ...Array.from({ length: 8 }, (_, i) => flare(36 + i * 8, 8, 14, 18.5)).flat(),
     [12, 100, 106], [8, 106, 112], [4, 112, 116], [1.6, 116, 142],
   ] },
-  // Senado Square: the fountain (round basin, column, armillary globe) at the fountain basin in our tiles, and
+  // Senado Square: the fountain (wide round basin, inner bowl, small armillary globe) at the fountain basin in our tiles, and
   // the buildings lining the square (tile buildings within 3 m of OSM way 192573684; Leal Senado is across the road).
   { id: "senado", lat: 22.193683, lng: 113.53989, tile: { ids: [35184577873359, 35185133855962, 35185133855963, 35184763410348, 35185029968552, 35185133855967, 35185133855964, 35185133855966, 35185133855960, 35185133855961, 35184763410351, 35185190550958, 35185133855953, 35184637522361, 35184702457087, 35185152337983, 35184702457086], realTop: 26.2, top: 12 }, tiers: [
-    [7, 0, 2.5, { round: true }], [4.5, 2.5, 3.5, { round: true }], [2.2, 3.5, 12, { round: true }], [3.2, 12, 13, { round: true }],
-    [3.5, 13, 14.5, { round: true }], [5, 14.5, 16.5, { round: true }], [5.8, 16.5, 19, { round: true }], [5, 19, 21, { round: true }], [3.5, 21, 22.5, { round: true }],
-    [1.5, 22.5, 25, { round: true }],
+    // Low and wide, like the real one: a round step, a thick hollow basin rim (two half-rings) around the water,
+    // a dark inner bowl, and a small armillary globe just above the jets.
+    [13, 0, .5, { round: true }],
+    [9, .5, 3.5, { arc: { inner: 7.4, from: 0, to: 180 } }], [9, .5, 3.5, { arc: { inner: 7.4, from: 180, to: 360 } }],
+    [7.4, .5, 1.6, { round: true }],
+    [4, 1.6, 5, { round: true }], [1.6, 5, 7.5, { round: true }],
+    [2.2, 7.5, 8.5, { round: true }], [3.2, 8.5, 10, { round: true }], [3.6, 10, 11.5, { round: true }], [3.2, 11.5, 13, { round: true }], [2.2, 13, 14, { round: true }],
+    [1.5, 14, 15, { round: true }],
+    // The armillary's ring band around the globe's middle.
+    [4.6, 10.3, 11.2, { arc: { inner: 4.1, from: 0, to: 180 } }], [4.6, 10.3, 11.2, { arc: { inner: 4.1, from: 180, to: 360 } }],
   ] },
   // HKUST: the curved academic building that wraps the Piazza, opening west towards the gate. The Piazza
   // (OSM way 235913807) is a ring centred here; the seal floats over the Piazza.
