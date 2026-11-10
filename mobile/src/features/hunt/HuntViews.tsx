@@ -14,7 +14,8 @@ import { timeUntil, useHuntText } from "./strings";
 export const keeperPortrait = characters.keeperPortrait;
 
 const when = (h: Hunt, language: "zh" | "en", t: ReturnType<typeof useHuntText>) =>
-  huntStatus(h) === "upcoming" ? t.opensIn(timeUntil(h.starts_at, language)) : t.endsIn(timeUntil(h.ends_at, language));
+  huntStatus(h) === "upcoming" ? t.opensIn(timeUntil(h.starts_at, language))
+    : h.ends_at === "infinity" ? t.openDaily : t.endsIn(timeUntil(h.ends_at, language));
 
 export function StepList({ hunt, compact = false }: { hunt: Hunt; compact?: boolean }) {
   const t = useHuntText();
