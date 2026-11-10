@@ -29,7 +29,10 @@ export function useData<T>(
 }
 export const useCapsules = (id: string, side: "inbox" | "sent") =>
   useData(
-    () => (side === "inbox" ? capsules.inbox(id) : capsules.sent(id)),
+    () => {
+      if (!id) return Promise.resolve({ data: [], error: null });
+      return side === "inbox" ? capsules.inbox(id) : capsules.sent(id);
+    },
     [id, side],
   );
 export const useProfile = (id: string) => useData(() => profiles.get(id), [id]);

@@ -54,6 +54,8 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 
 ## Done
 
+- Journey map pin polish: PR #105 passed CI 42838348782 and owner-account squash-merged as `fbded1d`. The signed-in 375 px local map verified pin scaling, player/Keeper size, overlap fanning, private capsule portrait and seal, visual-only walk and web drag prevention. A separate follow-up skips capsule list queries until the user id is loaded; its production release and live check are in progress. No migration.
+
 - HKUST monument and fight: PR #102 passed CI 42829446880 and owner-account squash-merged as `c69acad`; PR #104 passed CI 42830511831 and owner-account squash-merged as `02a1ba3`. The 375 px signed-in local map showed the brass campus, Red Bird with seal on its tip, and a real HKUST Landmark attempt displaying the Red Bird vessel with 12 cracks. Both changes ship in the owner-authored release after these merges; no migration or new art. Physical Expo Go remains Roy's check.
 
 - HKUST playable: PR #103 passed CI 42825856903 and owner-account squash-merged as `eb9f313`. The expanded 98,984,820-byte Hong Kong PMTiles archive is live on R2; six audited public outdoor Wayposts, eleven capsule spots, the Piazza Landmark and daily-reset `hkust-2026-11` hunt are live through migrations `20261110132000`–`20261110132002`. Hosted rollback and disposable real-JWT route, rewards, RLS and nonparticipant checks passed; 375 px zh/en map, Keeper, Quest and Landmark checks passed. Both disposable accounts and all cascading records were removed, and the Taipei test account’s HKUST join was reset. Physical Expo Go play remains Roy’s check.
