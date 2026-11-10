@@ -517,36 +517,6 @@ export type Database = {
           },
         ]
       }
-      hunt_wayposts: {
-        Row: {
-          hunt_id: string
-          waypost_id: string
-        }
-        Insert: {
-          hunt_id: string
-          waypost_id: string
-        }
-        Update: {
-          hunt_id?: string
-          waypost_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "hunt_wayposts_hunt_id_fkey"
-            columns: ["hunt_id"]
-            isOneToOne: false
-            referencedRelation: "hunts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "hunt_wayposts_waypost_id_fkey"
-            columns: ["waypost_id"]
-            isOneToOne: false
-            referencedRelation: "sea_shores"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       hunts: {
         Row: {
           id: string

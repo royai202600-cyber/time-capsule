@@ -16,8 +16,12 @@ end $$;
 
 select pg_temp.require_ok((select count(*)=1 from public.hunts where id='xinyi-2026-11'),
   'seeded Xinyi hunt');
-select pg_temp.require_ok((select count(*)=5 from public.hunt_wayposts where hunt_id='xinyi-2026-11'),
-  'five distinct hunt Wayposts');
+select pg_temp.require_ok((select name_zh='台北101' and name_en='Taipei 101'
+  and lat=25.033667 and lng=121.564810 from public.sea_shores
+  where kind='landmark' and place='taipei101' and source_ref='osm:node/6936432822'),
+  'Landmark follows the Taipei 101 tower');
+select pg_temp.require_ok((select area_lat=25.033263 and area_lng=121.564887
+  from public.hunts where id='xinyi-2026-11'),'hunt area remains at the plaza');
 select pg_temp.require_ok(not has_function_privilege('anon',
   'public.hunt_finish(text,double precision,double precision,double precision)','execute'),
   'anonymous hunt finish denied');
@@ -41,8 +45,9 @@ update private.game_config set spawn_chance=1,visible_min_minutes=wave_minutes,
 
 create temp table h1_posts on commit drop as
   select row_number() over(order by s.name_en) n,s.id,s.lat,s.lng
-  from public.hunt_wayposts w join public.sea_shores s on s.id=w.waypost_id
-  where w.hunt_id='xinyi-2026-11';
+  from public.sea_shores s where s.kind='common' and s.game_enabled
+    and s.source_ref in ('osm:node/12396028030','osm:way/1341042550',
+      'osm:way/555866062','osm:way/430627693','osm:way/232744980');
 create temp table h1_spawns on commit drop as
   select row_number() over(order by p.source_ref) n,p.id,p.lat,p.lng,r.spawn_id,
     public.distance_m(p.lat,p.lng,25.033263,121.564887) as area_distance
@@ -55,16 +60,24 @@ create temp table h1_spawns on commit drop as
         and public.distance_m(x.lat,x.lng,25.033263,121.564887)>1200
         order by public.distance_m(x.lat,x.lng,25.033263,121.564887) limit 1))
   order by area_distance;
-create temp table h1_nonhunt on commit drop as
+create temp table h1_other_inside on commit drop as
   select s.id,s.lat,s.lng from public.sea_shores s where s.game_enabled and s.kind='common'
     and public.distance_m(s.lat,s.lng,25.033263,121.564887)<=1200
-    and not exists (select 1 from public.hunt_wayposts w where w.waypost_id=s.id)
+    and not exists (select 1 from h1_posts p where p.id=s.id)
     order by s.name_en limit 1;
+create temp table h1_outside on commit drop as
+  select s.id,s.lat,s.lng from public.sea_shores s where s.game_enabled and s.kind='common'
+    and public.distance_m(s.lat,s.lng,25.033263,121.564887)>1200
+    order by public.distance_m(s.lat,s.lng,25.033263,121.564887) limit 1;
 create temp table h1_landmark on commit drop as
   select s.id,s.lat,s.lng from public.hunts h join public.sea_shores s on s.id=h.landmark
     where h.id='xinyi-2026-11';
-grant select on h1_posts,h1_spawns,h1_nonhunt,h1_landmark to authenticated;
+grant select on h1_posts,h1_spawns,h1_other_inside,h1_outside,h1_landmark to authenticated;
 select pg_temp.require_ok((select count(*)=5 from h1_posts),'five route posts');
+select pg_temp.require_ok((select count(*)=1 from h1_other_inside),
+  'other in-area Waypost');
+select pg_temp.require_ok((select count(*)=1 from h1_outside),
+  'outside-area Waypost');
 select pg_temp.require_ok((select count(*)>=5 from h1_spawns where area_distance<=1200),
   'five in-area spawns');
 
@@ -72,6 +85,8 @@ select set_config('request.jwt.claim.sub','087e002a-3aee-4cb4-a1ad-a6d001dbba01'
 set local role authenticated;
 select pg_temp.require_ok(jsonb_array_length(public.hunt_list(25.037546,121.562754))>=1,
   'hunt list is visible');
+select pg_temp.require_ok(not (public.hunt_list(25.037546,121.562754)->0 ? 'wayposts'),
+  'hunt object no longer lists designated Wayposts');
 select pg_temp.require_ok(public.hunt_join('xinyi-2026-11')->>'joined_at' is not null,
   'join works anywhere');
 select pg_temp.expect_error(
@@ -107,15 +122,19 @@ select public.waypost_spin(id,lat,lng,10) from h1_posts where n=2;
 select pg_temp.require_ok((select spin_count=3 from public.hunt_progress
   where hunt_id='xinyi-2026-11'),'repeat Waypost spin counted once');
 
--- A non-hunt Waypost in the same area succeeds but adds no hunt credit.
+-- Every common, game-enabled Waypost inside the area can count.
 do $$ declare s record; v record;
 begin
-  select * into s from h1_nonhunt limit 1;
-  perform pg_temp.require_ok(s.id is not null,'non-hunt Waypost fixture');
+  select * into s from h1_other_inside limit 1;
   select * into v from public.waypost_spin(s.id,s.lat,s.lng,10);
-  perform pg_temp.require_ok(v.wax_awarded>=0,'ordinary non-hunt spin succeeds');
-  perform pg_temp.require_ok((select spin_count=3 from public.hunt_progress
-    where hunt_id='xinyi-2026-11'),'non-hunt spin not counted');
+  perform pg_temp.require_ok(v.wax_awarded>=0,'other in-area spin succeeds');
+  perform pg_temp.require_ok((select spin_count=4 from public.hunt_progress
+    where hunt_id='xinyi-2026-11'),'other in-area Waypost counted');
+  select * into s from h1_outside limit 1;
+  select * into v from public.waypost_spin(s.id,s.lat,s.lng,10);
+  perform pg_temp.require_ok(v.wax_awarded>=0,'outside-area spin still succeeds');
+  perform pg_temp.require_ok((select spin_count=4 from public.hunt_progress
+    where hunt_id='xinyi-2026-11'),'outside-area Waypost not counted');
 end $$;
 
 do $$ declare s record; v record;
@@ -140,8 +159,12 @@ select pg_temp.expect_error(
 do $$ declare a record; v record; landmark record;
 begin
   select * into landmark from h1_landmark;
+  perform pg_temp.require_ok(public.distance_m(25.033263,121.564887,
+    landmark.lat,landmark.lng)<100,'plaza remains in tower action radius');
+  perform pg_temp.expect_error(format('select public.landmark_start(%L,25.037546,121.562754,10)',
+    landmark.id),'too_far');
   for i in 1..2 loop
-    select * into a from public.landmark_start(landmark.id,landmark.lat,landmark.lng,10);
+    select * into a from public.landmark_start(landmark.id,25.033263,121.564887,10);
     loop
       select * into v from public.landmark_hit(a.attempt_id,landmark.lat,landmark.lng,10,'wax',1);
       exit when v.result='won';
@@ -169,7 +192,7 @@ select pg_temp.require_ok((select count(*)=1 from public.my_passport()
   where place='xinyi-2026-11' and how_earned='hunt'),'Passport includes hunt');
 select pg_temp.require_ok((select gold_balls>=5 from public.game_state()),'Gold reward paid');
 select public.waypost_spin(id,lat,lng,10) from h1_posts where n=5;
-select pg_temp.require_ok((select spin_count=3 from public.hunt_progress
+select pg_temp.require_ok((select spin_count=4 from public.hunt_progress
   where hunt_id='xinyi-2026-11'),'post-finish spin not counted');
 
 -- Other players cannot read or write this player's progress.
@@ -208,5 +231,6 @@ set local role authenticated;
 select public.corrupted_nearby(25.037546,121.562754,10);
 select public.corrupted_nearby(lat,lng,10) from h1_posts order by n;
 select public.corrupted_nearby(25.033263,121.564887,10);
+select public.corrupted_nearby(25.033667,121.564810,10);
 select public.corrupted_nearby(25.037546,121.562754,10);
 reset role;

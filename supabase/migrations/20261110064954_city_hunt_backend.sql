@@ -1,5 +1,18 @@
--- H1 City Hunt. Deploy only after Roy approves this PR.
+-- H1 City Hunt. The app screens release separately.
 begin;
+
+-- The map depicts the Landmark as the Taipei 101 tower; action range follows
+-- the building centre, while the hunt area remains centred on its plaza.
+do $$
+declare changed integer;
+begin
+  update public.sea_shores
+    set name_zh='台北101',name_en='Taipei 101',lat=25.033667,lng=121.564810
+    where kind='landmark' and place='taipei101'
+      and source_ref='osm:node/6936432822';
+  get diagnostics changed = row_count;
+  if changed<>1 then raise exception 'Taipei 101 Landmark row missing'; end if;
+end $$;
 
 create table public.hunts (
   id text primary key,
@@ -22,11 +35,6 @@ create table public.hunt_steps (
   ordinal integer not null check (ordinal between 1 and 5),
   goal integer not null check (goal > 0),
   primary key (hunt_id,step_key), unique (hunt_id,ordinal)
-);
-create table public.hunt_wayposts (
-  hunt_id text not null references public.hunts(id) on delete cascade,
-  waypost_id uuid not null references public.sea_shores(id),
-  primary key (hunt_id,waypost_id)
 );
 create table public.hunt_progress (
   hunt_id text not null references public.hunts(id) on delete cascade,
@@ -55,7 +63,6 @@ create table public.hunt_passport_stamps (
 );
 alter table public.hunts enable row level security;
 alter table public.hunt_steps enable row level security;
-alter table public.hunt_wayposts enable row level security;
 alter table public.hunt_progress enable row level security;
 alter table public.hunt_spin_credits enable row level security;
 alter table public.hunt_passport_stamps enable row level security;
@@ -65,7 +72,7 @@ create policy "hunt spin credits: own read" on public.hunt_spin_credits for sele
   using ((select auth.uid()) = user_id);
 create policy "hunt stamps: own read" on public.hunt_passport_stamps for select to authenticated
   using ((select auth.uid()) = user_id);
-revoke all on public.hunts,public.hunt_steps,public.hunt_wayposts,
+revoke all on public.hunts,public.hunt_steps,
   public.hunt_progress,public.hunt_spin_credits,public.hunt_passport_stamps
   from public,anon,authenticated;
 grant select on public.hunt_progress,public.hunt_spin_credits,public.hunt_passport_stamps to authenticated;
@@ -85,15 +92,6 @@ insert into public.hunt_steps(hunt_id,step_key,ordinal,goal) values
   ('xinyi-2026-11','checkin',1,1),('xinyi-2026-11','spin',2,3),
   ('xinyi-2026-11','restore',3,5),('xinyi-2026-11','landmark',4,1),
   ('xinyi-2026-11','return',5,1);
-insert into public.hunt_wayposts(hunt_id,waypost_id)
-select 'xinyi-2026-11',s.id from public.sea_shores s
-where s.source_ref in ('osm:node/12396028030','osm:way/1341042550',
-  'osm:way/555866062','osm:way/430627693','osm:way/232744980') and s.kind='common';
-do $$ begin
-  if (select count(*) from public.hunt_wayposts where hunt_id='xinyi-2026-11')<>5 then
-    raise exception 'Xinyi Waypost seed incomplete';
-  end if;
-end $$;
 
 create function private.hunt_object(p_hunt text,p_user uuid) returns jsonb
 language sql stable security definer set search_path = '' as $$
@@ -103,9 +101,6 @@ language sql stable security definer set search_path = '' as $$
     'starts_at',h.starts_at,'ends_at',h.ends_at,
     'keeper',jsonb_build_object('lat',h.keeper_lat,'lng',h.keeper_lng),
     'area',jsonb_build_object('lat',h.area_lat,'lng',h.area_lng,'radius_m',h.area_radius_m),
-    'wayposts',coalesce((select jsonb_agg(w.waypost_id order by s.name_en)
-      from public.hunt_wayposts w join public.sea_shores s on s.id=w.waypost_id
-      where w.hunt_id=h.id),'[]'::jsonb),
     'landmark',h.landmark,
     'reward',jsonb_build_object('xp',h.reward_xp,'gold',h.reward_gold),
     'steps',(select jsonb_agg(jsonb_build_object('key',st.step_key,'goal',st.goal,
@@ -174,8 +169,9 @@ begin
   for h in select x.* from public.hunts x
     where now()>=x.starts_at and now()<x.ends_at
       and public.distance_m(p_lat,p_lng,x.area_lat,x.area_lng)<=x.area_radius_m
-      and (p_kind='spin' and exists (select 1 from public.hunt_wayposts w
-        where w.hunt_id=x.id and w.waypost_id=p_id)
+      and (p_kind='spin' and exists (select 1 from public.sea_shores s
+        where s.id=p_id and s.kind='common' and s.game_enabled
+          and public.distance_m(s.lat,s.lng,x.area_lat,x.area_lng)<=x.area_radius_m)
         or p_kind='restore' and exists (select 1 from public.corrupted_spots s
           where s.id=p_id and public.distance_m(s.lat,s.lng,x.area_lat,x.area_lng)<=x.area_radius_m)
         or p_kind='landmark' and x.landmark=p_id)
