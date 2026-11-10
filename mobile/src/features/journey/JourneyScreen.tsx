@@ -22,7 +22,8 @@ import { mapHtml, MONUMENTS, monumentTop } from "./live/mapHtml";
 import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
 import type { Tables } from "../../services/database.types";
 import { MAP_PMTILES_URL, sea, SeaError, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
-import { daysSince, distanceText, useSeaText } from "../sea/strings";
+import { daysSince, distanceText, timeLeftShort, useSeaText } from "../sea/strings";
+import { supabase } from "../../services/supabase";
 import { game, GameError, GAME_ACTION_RADIUS_M, GAME_ENABLED, type GameState, type CorruptedCapsule, type DevLetter, type LandmarkAttempt, type Nearby, type Waypost } from "../../services/game";
 import { characters, gameArt } from "../../art/manifest";
 import { figureFor } from "../../components/Figure";
@@ -87,6 +88,19 @@ export default function JourneyScreen() {
   const [keeperOpen, setKeeperOpen] = useState(false);
   const [youLabel, setYouLabel] = useState(false);
   const h = useHuntText();
+  // Private capsule pins show their sender's profile picture and a small countdown while still on a timer.
+  const [senders, setSenders] = useState<Record<string, unknown>>({});
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 60_000); return () => clearInterval(t); }, []);
+  const senderIds = [...new Set((capsuleData.data ?? []).map((c) => c.sender))].sort().join(",");
+  useEffect(() => {
+    if (!senderIds) return;
+    let active = true;
+    void supabase.from("profiles").select("id,avatar").in("id", senderIds.split(",")).then(({ data }) => {
+      if (active && data) setSenders(Object.fromEntries(data.map((p) => [p.id, p.avatar])));
+    });
+    return () => { active = false; };
+  }, [senderIds]);
   const youKey = `tc-journey-you-${userId}`;
   useEffect(() => {
     if (!userId) return;
@@ -211,6 +225,15 @@ export default function JourneyScreen() {
   ], [nearby, throwing?.id, you?.lat, you?.lng]);
 
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: you ?? FALLBACK }), [!!you]);
+  // A private capsule: its own vessel, the sender's picture with a wax seal (public ones are always the bottle,
+  // with no seal), and only while it is still on its timer, a tiny countdown. No place name: the card has it.
+  const placePin = (i: Extract<Item, { kind: "place" }>): LivePin => {
+    const c = capsules.find((x) => x.id === i.capsuleId);
+    const left = c && !c.opened_at ? new Date(c.open_at).getTime() - now : 0;
+    return { id: i.id, lat: i.lat, lng: i.lng, kind: "place", private: true, opened: !!c?.opened_at, vessel: vesselUri(i.pin.vessel ?? "dome"),
+      portrait: c ? portraitUri(senders[c.sender]) : null, near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId,
+      timer: left > 0 ? timeLeftShort(left, language) : undefined };
+  };
   const mapState = useMemo(() => ({
     you, heading, reach: SEA_PICKUP_RADIUS_M,
     portrait: portraitUri(profile?.avatar),
@@ -219,8 +242,8 @@ export default function JourneyScreen() {
     // While throwing, the capsule is alone on the plain map.
     pins: throwing ? [] : [...items.map<LivePin>((i) => i.kind === "sea"
       ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri("bottle"), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
-      : { id: i.id, lat: i.lat, lng: i.lng, kind: "place", vessel: vesselUri(i.pin.vessel ?? "dome"), near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId, tag: language === "zh" ? i.pin.place.name_zh : i.pin.place.name_en }), ...gamePins, ...huntPins],
-  }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language, gamePins, huntPins, !!throwing, youLabel, h]);
+      : placePin(i)), ...gamePins, ...huntPins],
+  }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language, gamePins, huntPins, !!throwing, youLabel, h, senders, now]);
 
   const select = (id: string | null) => {
     setWalkTo(null);
