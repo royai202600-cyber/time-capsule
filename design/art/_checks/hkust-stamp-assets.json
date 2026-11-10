@@ -1,0 +1,27 @@
+{
+  "count": 1,
+  "passed": 1,
+  "failed": [],
+  "assets": [
+    {
+      "path": "stamps/stamp-hkust.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true,
+        "one_ink_color": true
+      },
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "path": "stamps/stamp-hkust.png",
+  "size": [
+    1024,
+    1024
+  ],
+  "corners_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "visible_rgb_colours": [
+    [
+      47,
+      93,
+      138
+    ]
+  ],
+  "alpha_bbox": [
+    78,
+    93,
+    941,
+    983
+  ],
+  "native_review_sizes": [
+    24,
+    40,
+    64,
+    120
+  ],
+  "existing_stamps_unchanged": 12,
+  "existing_stamp_webps_unchanged": 12,
+  "existing_art_unchanged": 735,
+  "reference_comparison": "Concave multi-storey frontage and window bands wrap the Piazza; checked against PR99 official ground view and the Commons helicopter aerial. No Red Bird, emblem or lettering.",
+  "pass": true
+}

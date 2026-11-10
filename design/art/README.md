@@ -118,6 +118,8 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 
 - Red Bird Sundial Box (`red-bird`, 火鳥日晷盒): original low brass sundial keepsake with a wax-red swept pointer inspired by the verified HKUST Piazza sculpture. Closed master, complete rolled-letter interior, back-hinged dial/pointer and soft shadow. The shadow sways 4° about its foot on a 4200ms loop; the rim has a measured sparkle anchor. Earned landmark art only, pending Roy’s visual OK; no app registration, migration, deployment or merge.
 
+- HKUST Passport stamp: one ink-blue round landmark stamp featuring the curved academic building wrapping the Piazza, with no lettering or emblem. Generated with GPT Image 2, normalized only with `normalize-stamps.py --only hkust`; every existing stamp stays byte-identical. Art only, pending Roy’s OK; no app wiring, migration, deployment or merge.
+
 ## Masters
 
 | File | What | Size | Notes |
@@ -456,6 +458,7 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-red-bird-box.png` | Red Bird Sundial Box — box | 1024×1024 | pending Roy; see manifest |
 | `vessels/vessel-red-bird-lid.png` | Red Bird Sundial Box — lid | 1024×1024 | pending Roy; see manifest |
 | `vessels/vessel-red-bird-shadow.png` | Red Bird Sundial Box — shadow | 1024×1024 | pending Roy; see manifest |
+| `stamps/stamp-hkust.png` | HKUST curved academic building / Piazza Passport stamp | 1024×1024 | ink blue; pending Roy |
 
 ## Review
 
@@ -478,3 +481,10 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 [HKUST Campus Management Office: Circle of Time / Red Bird Sundial](https://cmo.hkust.edu.hk/sundial-sculpture) · [official photograph, the filename Roy identified](https://cmo.hkust.edu.hk/files/sundial_M0089_01_m001R2.jpg). Credit: HKUST Campus Management Office / HKUST. Inspected 2026-11-10: the red swept steel planes stand in the circular pool and stepped podium of the Entrance Piazza. The [official Visit HKUST page](https://hkust.edu.hk/visit) confirms the same sculpture against the curved academic building. This is not the Guangzhou sundial or the university emblem. Only the small reference thumbnail is stored; the vessel is an original souvenir design, not a replica.
 
 ![HKUST official Red Bird Piazza reference](reference/red-bird/hkust-piazza-thumb.jpg)
+
+### HKUST stamp references
+
+- Ground level: [official Visit HKUST page](https://hkust.edu.hk/visit) and [Piazza photo used in PR #99](https://hkust.edu.hk/sites/default/files/styles/hkust_multi_card_block_short/public/2025-02/Circle%20of%20Time.png?itok=ecDGajgj). Credit: HKUST. Used to inspect the curved academic facade behind the sculpture.
+- Aerial: [HKUST campus view looking from above](https://commons.wikimedia.org/wiki/File:HKUST_campus_view_looking_from_above.jpg), uploaded by Hkust pao, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). Inspected 2026-11-10: the concave frontage and square end blocks wrap the Entrance Piazza at Clear Water Bay. The stamp is an original simplified architectural drawing; no photographic content is committed. The Red Bird and university emblem are omitted.
+
+[HKUST stamp review at 40/64/120px](_checks/hkust-stamp-review.png) · [Checks](_checks/hkust-stamp-audit.json) · [Exact prompt](_checks/hkust-stamp-prompts.json)
