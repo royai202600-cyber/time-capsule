@@ -403,7 +403,100 @@ def register_red_bird() -> None:
     print('Red Bird: registered 4 masters; retained',len(existing),'existing records')
 
 
+def register_hkust_stamp() -> None:
+    """Register the single HKUST academic-building Passport stamp."""
+    from PIL import Image
+    provenance=json.loads((CHECKS/'hkust-stamp-prompts.json').read_text())
+    im=Image.open(ROOT/'stamps/stamp-hkust.png').convert('RGBA')
+    entry={'path':'design/art/stamps/stamp-hkust.png',
+           'what':'HKUST Passport stamp / 香港科技大學; curved academic building wrapping the Piazza',
+           'size_px':list(im.size),'transparent':True,'model':'gpt-image-2',
+           'prompt':provenance['prompt'],'references':provenance['references'],
+           'reference_pages':provenance['reference_pages'],
+           'reference_notes':provenance['reference_notes'],
+           'postprocess':provenance['postprocess'],'native_source':provenance['native_source'],
+           'ink_rgb':[47,93,138],'alpha_bbox_px':list(im.getchannel('A').getbbox()),
+           'web_export':'public/art/stamps/stamp-hkust.webp'}
+    path=ROOT/'manifest.json';raw=path.read_text();previous=json.loads(raw)
+    found=next((e for e in previous if e['path']==entry['path']),None)
+    if found and found!=entry:
+        # Roy's review correction changes only this stamp's postprocess record.
+        assert {k:v for k,v in found.items() if k!='postprocess'}=={k:v for k,v in entry.items() if k!='postprocess'}
+        old=json.dumps(found,ensure_ascii=False,indent=2)
+        assert old in raw
+        path.write_text(raw.replace(old,json.dumps(entry,ensure_ascii=False,indent=2),1))
+    elif found:pass
+    else:
+        snippet=json.dumps(entry,ensure_ascii=False,indent=2)
+        path.write_text(raw[:raw.rfind(']')].rstrip()+',\n'+snippet+'\n]\n')
+    updated=json.loads(path.read_text())
+    assert all(old==new for old,new in zip(previous,updated) if old['path']!=entry['path'])
+    readme_path=ROOT/'README.md';s=readme_path.read_text()
+    prefix,rest=s.split('## Masters\n',1);table,review=rest.split('## Review\n',1)
+    note=('- HKUST Passport stamps: single-ring place stamp and double-ring HKUST City Hunt stamp, '
+          'both ink blue with the curved academic building motif. Roy’s review removes only the '
+          'place stamp’s inverted triangle by script (1467 pixels); all other place-master pixels '
+          'are identical. The hunt stamp is a new GPT Image 2 drawing, normalized only with '
+          '`--only hunt-hkust-2026-11`. Other stamps are byte-identical. Only the hunt image is '
+          'registered in `mobile/src/art/manifest.ts`; no migration, deployment or merge. Await Roy’s OK.\n\n')
+    if '- HKUST Passport stamp:' in prefix:
+        start=prefix.index('- HKUST Passport stamp:');end=prefix.index('\n\n',start)+2
+        prefix=prefix[:start]+note+prefix[end:]
+    elif '- HKUST Passport stamps:' not in prefix:prefix+=note
+    row='| `stamps/stamp-hkust.png` | HKUST curved academic building / Piazza Passport stamp | 1024×1024 | ink blue; pending Roy |\n'
+    if '| `stamps/stamp-hkust.png` |' not in table:table=table.rstrip()+'\n'+row
+    reference=('### HKUST stamp references\n\n'
+       '- Ground level: [official Visit HKUST page](https://hkust.edu.hk/visit) and '
+       '[Piazza photo used in PR #99](https://hkust.edu.hk/sites/default/files/styles/hkust_multi_card_block_short/public/2025-02/Circle%20of%20Time.png?itok=ecDGajgj). '
+       'Credit: HKUST. Used to inspect the curved academic facade behind the sculpture.\n'
+       '- Aerial: [HKUST campus view looking from above](https://commons.wikimedia.org/wiki/File:HKUST_campus_view_looking_from_above.jpg), '
+       'uploaded by Hkust pao, [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). '
+       'Inspected 2026-11-10: the concave frontage and square end blocks wrap the Entrance Piazza at '
+       'Clear Water Bay. The stamp is an original simplified architectural drawing; no photographic '
+       'content is committed. The Red Bird and university emblem are omitted.\n\n'
+       '[HKUST stamp review at 40/64/120px](_checks/hkust-stamp-review.png) · '
+       '[Checks](_checks/hkust-stamp-audit.json) · [Exact prompt](_checks/hkust-stamp-prompts.json)\n')
+    if '### HKUST stamp references' not in review:review+='\n'+reference
+    readme_path.write_text(prefix+'## Masters\n'+table.rstrip()+'\n\n## Review\n'+review)
+    print('HKUST stamp registered; retained',len(previous),'existing records')
+
+
+def register_hkust_hunt_stamp() -> None:
+    """Append the new double-ring hunt stamp, preserving every other record."""
+    from PIL import Image
+    p=json.loads((CHECKS/'hkust-hunt-stamp-prompts.json').read_text())
+    im=Image.open(ROOT/'stamps/stamp-hunt-hkust-2026-11.png').convert('RGBA')
+    entry={'path':'design/art/stamps/stamp-hunt-hkust-2026-11.png',
+           'what':'HKUST City Hunt stamp; double ring and curved academic building motif',
+           'size_px':list(im.size),'transparent':True,'model':'gpt-image-2','prompt':p['prompt'],
+           'references':p['references'],'tool_reference_renders':p['tool_reference_renders'],
+           'reference_notes':p['reference_notes'],'native_source':p['native_source'],
+           'postprocess':p['postprocess'],'ink_rgb':[47,93,138],
+           'alpha_bbox_px':list(im.getchannel('A').getbbox()),
+           'web_export':'public/art/stamps/stamp-hunt-hkust-2026-11.webp'}
+    path=ROOT/'manifest.json';raw=path.read_text();previous=json.loads(raw)
+    found=next((e for e in previous if e['path']==entry['path']),None)
+    if found:assert found==entry
+    else:path.write_text(raw[:raw.rfind(']')].rstrip()+',\n'+json.dumps(entry,ensure_ascii=False,indent=2)+'\n]\n')
+    assert json.loads(path.read_text())[:len(previous)]==previous
+    path=ROOT/'README.md';s=path.read_text();before,rest=s.split('## Masters\n',1);table,review=rest.split('## Review\n',1)
+    row='| `stamps/stamp-hunt-hkust-2026-11.png` | HKUST City Hunt stamp; double ring, curved academic building | 1024×1024 | ink blue; pending Roy |\n'
+    if '| `stamps/stamp-hunt-hkust-2026-11.png` |' not in table:table=table.rstrip()+'\n'+row
+    links=('[HKUST place/hunt beside Xinyi review](_checks/hkust-stamp-review.png) · '
+           '[Triangle-only pixel proof](_checks/hkust-triangle-fix.json) · '
+           '[Hunt prompt and references](_checks/hkust-hunt-stamp-prompts.json)')
+    if links not in review:review+='\n'+links+'\n'
+    path.write_text(before+'## Masters\n'+table.rstrip()+'\n\n## Review\n'+review)
+    print('HKUST hunt stamp registered; retained',len(previous),'existing records')
+
+
 if __name__ == "__main__":
+    if sys.argv[1:] == ["--stamp-hunt-hkust"]:
+        register_hkust_hunt_stamp()
+        raise SystemExit(0)
+    if sys.argv[1:] == ["--stamp-hkust"]:
+        register_hkust_stamp()
+        raise SystemExit(0)
     if sys.argv[1:] == ["--red-bird"]:
         register_red_bird()
         raise SystemExit(0)

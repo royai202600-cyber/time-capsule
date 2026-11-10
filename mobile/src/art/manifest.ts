@@ -2038,6 +2038,7 @@ export const mapPins: Record<string, { x: number; y: number }> = {
 export const passportCover = require('../../../public/art/journey/passport-cover.webp');
 export const passportPage = require('../../../public/art/journey/passport-page.webp');
 export const stamps: Record<string, ImageSourcePropType> = {
+  hkust: require('../../../public/art/stamps/stamp-hkust.webp'),
   senado: require('../../../public/art/stamps/stamp-senado.webp'),
   'tst-clock': require('../../../public/art/stamps/stamp-tst-clock.webp'),
   taipei101: require('../../../public/art/stamps/stamp-taipei101.webp'),
@@ -2050,4 +2051,5 @@ export const stamps: Record<string, ImageSourcePropType> = {
   petronas: require('../../../public/art/stamps/stamp-petronas.webp'),
   'aurele-cotai': require('../../../public/art/stamps/stamp-aurele-cotai.webp'),
   'hunt-xinyi-2026-11': require('../../../public/art/stamps/stamp-hunt-xinyi-2026-11.webp'),
+  'hunt-hkust-2026-11': require('../../../public/art/stamps/stamp-hunt-hkust-2026-11.webp'),
 };
