@@ -120,7 +120,7 @@ html,body,#map{--ready:hue-rotate(-130deg) saturate(1.5);margin:0;height:100%;wi
 @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.06)}}
 .you .label{animation:labelIn .3s ease-out;position:absolute;left:50%;bottom:66px;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:12px;background:${C.ink};color:${C.brass};box-shadow:0 2px 8px rgba(22,38,63,.3);cursor:pointer}
 .you .label:after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:${C.ink}}
-/* Landmark: a floating seal badge (on top of its monument when it has one), never a gem. Plum once beaten. */
+/* Landmark: a floating seal badge with a four-point star, the same for every Landmark (on top of its monument when it has one), never a gem. Plum once beaten. */
 .pin.landmark{width:40px;height:44px;--lm:${C.brass};--lm-hi:#E8D3A3;--lm-lo:#9C7B3C}
 .pin.landmark.done{--lm:${C.plum};--lm-hi:#B98494;--lm-lo:#4A1C2A}
 .pin.landmark .badge{position:absolute;left:6px;bottom:8px;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--lm-hi),var(--lm) 62%,var(--lm-lo));box-shadow:0 2px 6px rgba(22,38,63,.35),inset 0 0 0 2px var(--lm-hi);display:flex;align-items:center;justify-content:center;animation:bob 3.6s ease-in-out infinite}
@@ -181,7 +181,7 @@ function render(){
   for(const [id,m] of marks){if(!want.has(id)){m.marker.remove();marks.delete(id)}}
   for(const p of state.pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
-      :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M11.4 1h1.2v4h-1.2zM10 5h4v2.5h-4zM9 7.5h6v2.6H9zM9 10.1h6v2.6H9zM8.5 12.7h7v2.6h-7zM8 15.3h8v2.6H8zM6 17.9h12V21H6z"/></svg></div></div>'
+      :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 1.5C12.8 8.2 15.8 11.2 22.5 12 15.8 12.8 12.8 15.8 12 22.5 11.2 15.8 8.2 12.8 1.5 12 8.2 11.2 11.2 8.2 12 1.5Z"/></svg></div></div>'
       :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait?'<div class="who">'+face(p.portrait)+'</div>':'')+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
     const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'');
     let m=marks.get(p.id);
