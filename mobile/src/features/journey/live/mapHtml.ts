@@ -121,13 +121,13 @@ html,body,#map{--ready:hue-rotate(-130deg) saturate(1.5);margin:0;height:100%;wi
 .you .label{animation:labelIn .3s ease-out;position:absolute;left:50%;bottom:66px;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:12px;background:${C.ink};color:${C.brass};box-shadow:0 2px 8px rgba(22,38,63,.3);cursor:pointer}
 .you .label:after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:${C.ink}}
 /* Landmark: a floating seal badge (on top of its monument when it has one), never a gem. Plum once beaten. */
-.pin.landmark{width:64px;height:76px;--lm:${C.brass};--lm-hi:#E8D3A3;--lm-lo:#9C7B3C}
+.pin.landmark{width:40px;height:44px;--lm:${C.brass};--lm-hi:#E8D3A3;--lm-lo:#9C7B3C}
 .pin.landmark.done{--lm:${C.plum};--lm-hi:#B98494;--lm-lo:#4A1C2A}
-.pin.landmark .badge{position:absolute;left:12px;bottom:18px;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--lm-hi),var(--lm) 62%,var(--lm-lo));box-shadow:0 3px 8px rgba(22,38,63,.35),inset 0 0 0 2.5px var(--lm-hi);display:flex;align-items:center;justify-content:center;animation:bob 3.6s ease-in-out infinite}
-.pin.landmark .badge svg{width:22px;height:22px}
-.pin.landmark.top{height:44px}
-.pin.landmark.top .badge{bottom:2px;width:44px;height:44px;left:10px}
-.pin.landmark.near .badge{box-shadow:0 0 12px var(--lm),inset 0 0 0 2.5px var(--lm-hi)}
+.pin.landmark .badge{position:absolute;left:6px;bottom:8px;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--lm-hi),var(--lm) 62%,var(--lm-lo));box-shadow:0 2px 6px rgba(22,38,63,.35),inset 0 0 0 2px var(--lm-hi);display:flex;align-items:center;justify-content:center;animation:bob 3.6s ease-in-out infinite}
+.pin.landmark .badge svg{width:16px;height:16px}
+.pin.landmark.top{height:30px;width:28px}
+.pin.landmark.top .badge{bottom:1px;left:0}
+.pin.landmark.near .badge{box-shadow:0 0 10px var(--lm),inset 0 0 0 2px var(--lm-hi)}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.pin .badge,.you .pulse,.pin.keeper .seal{animation:none}}
 </style></head><body><div id="map"></div>
