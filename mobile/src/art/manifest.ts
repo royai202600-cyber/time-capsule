@@ -552,6 +552,19 @@ export const vesselParts: Record<VesselKind, IllustratedParts> = {
       { name: 'top', role: 'lift', source: require('../../../public/art/vessels/vessel-river-lantern-top.webp'), open: [{at: 0, y: 0, opacity: 1}, {at: 1, y: -0.55, opacity: 0}] },
     ],
   },
+  'red-bird': {
+    assembled: require('../../../public/art/vessels/vessel-red-bird.webp'),
+    opening: 'A', idleMs: 4200, idle: [],
+    mouth: { x: 513, y: 668 }, baseY: 900, sparkle: { x: 297, y: 754 },
+    layers: [
+      { name: 'box', role: 'static', source: require('../../../public/art/vessels/vessel-red-bird-box.webp') },
+      { name: 'lid', role: 'hinge', pivot: { x: 664, y: 550 }, source: require('../../../public/art/vessels/vessel-red-bird-lid.webp'),
+        open: [{ at: 0, rotate: 0, y: 0, scaleY: 1, opacity: 1 }, { at: 1, rotate: -15, y: -.12, scaleY: .65, opacity: 1 }] },
+      { name: 'shadow', role: 'hinge', pivot: { x: 664, y: 550 }, source: require('../../../public/art/vessels/vessel-red-bird-shadow.webp'),
+        open: [{ at: 0, rotate: 0, y: 0, scaleY: 1, opacity: 1 }, { at: 1, rotate: -15, y: -.12, scaleY: .65, opacity: 1 }],
+        idle: [{ type: 'sway', deg: 4, pivot: { x: 517, y: 672 } }] },
+    ],
+  },
   'clock-tower': {
     assembled: require('../../../public/art/vessels/vessel-clock-tower.webp'),
     opening: 'J',

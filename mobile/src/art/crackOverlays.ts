@@ -39,6 +39,7 @@ export const crackOverlays: Record<string, ImageSourcePropType> = {
   "rice-dumpling": require('../../../public/art/game/cracks/rice-dumpling.webp'),
   "wish-tag": require('../../../public/art/game/cracks/wish-tag.webp'),
   "river-lantern": require('../../../public/art/game/cracks/river-lantern.webp'),
+  "red-bird": require('../../../public/art/game/cracks/red-bird.webp'),
   "clock-tower": require('../../../public/art/game/cracks/clock-tower.webp'),
   "senado-fountain": require('../../../public/art/game/cracks/senado-fountain.webp'),
   "bamboo-tower": require('../../../public/art/game/cracks/bamboo-tower.webp'),

@@ -5,7 +5,9 @@ export type VesselKind = 'dome' | 'bottle' | 'envelope' | 'tin' | 'lantern' | 'm
   // Wave 2: retro and love, festivals, landmarks
   | 'vinyl' | 'vhs' | 'photo-strip' | 'arcade' | 'pager' | 'rotary-phone' | 'umbrella' | 'love-padlock' | 'lucky-stars' | 'paper-plane' | 'lucky-cat' | 'mooncake-tin' | 'cake-box' | 'candy-box' | 'chocolate-heart' | 'stocking' | 'pumpkin' | 'rice-dumpling' | 'wish-tag' | 'river-lantern' | 'clock-tower' | 'senado-fountain' | 'bamboo-tower' | 'gate-lantern' | 'torii-scroll' | 'palace-pavilion' | 'lionfish-fountain' | 'golden-roof' | 'gate-lacquer' | 'twin-towers'
   // Final illustrated batches B5 and B6
-  | 'hot-air-balloon' | 'bubble-tea' | 'dim-sum-steamer' | 'bento' | 'paper-cranes' | 'heart-locket' | 'suitcase' | 'postbox' | 'camp-lantern' | 'treasure-chest' | 'spellbook' | 'escape-pod' | 'crystal-ball' | 'wishing-lamp' | 'potion' | 'pocket-watch' | 'diploma-tube' | 'baby-shoes' | 'memorial-candle' | 'rocket-tin';
+  | 'hot-air-balloon' | 'bubble-tea' | 'dim-sum-steamer' | 'bento' | 'paper-cranes' | 'heart-locket' | 'suitcase' | 'postbox' | 'camp-lantern' | 'treasure-chest' | 'spellbook' | 'escape-pod' | 'crystal-ball' | 'wishing-lamp' | 'potion' | 'pocket-watch' | 'diploma-tube' | 'baby-shoes' | 'memorial-candle' | 'rocket-tin'
+  // HKUST Landmark reward
+  | 'red-bird';
 /** The original 7 vessels, which also have SVG drawings. */
 export type SvgVesselKind = 'dome' | 'bottle' | 'envelope' | 'tin' | 'lantern' | 'musicbox' | 'maison';
 // Pivots are normalized to the vessel view box and identify the moving lid.
