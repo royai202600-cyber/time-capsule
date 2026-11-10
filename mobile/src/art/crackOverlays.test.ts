@@ -8,7 +8,7 @@ const overlays = readFileSync(resolve(here, "crackOverlays.ts"), "utf8");
 const vessels = [...manifest.matchAll(/['"]?([\w-]+)['"]?: \{\s*['"]?assembled['"]?: require/g)].map((m) => m[1]);
 
 describe("crack overlays", () => {
-  it("finds the whole catalogue in either manifest format", () => expect(vessels.length).toBe(67));
+  it("finds the whole catalogue in either manifest format", () => expect(vessels.length).toBe(68));
   it("has an overlay for every vessel", () => {
     for (const kind of vessels) expect(overlays, kind).toContain(`"${kind}": require(`);
   });

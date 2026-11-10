@@ -789,6 +789,7 @@ export const VESSELS = {
     desc: { zh: "一對，永遠並肩。", en: "A pair, always side by side." },
     price: 0,
   },
+  "red-bird": { name: { zh: f2Strings.zh["shop.vessel.red-bird"], en: f2Strings.en["shop.vessel.red-bird"] }, desc: { zh: f2Strings.zh["shop.desc.red-bird"], en: f2Strings.en["shop.desc.red-bird"] }, price: 0 },
   "hot-air-balloon": { name: { zh: f2Strings.zh["shop.vessel.hot-air-balloon"], en: f2Strings.en["shop.vessel.hot-air-balloon"] }, desc: { zh: f2Strings.zh["shop.desc.hot-air-balloon"], en: f2Strings.en["shop.desc.hot-air-balloon"] }, price: 22 },
   "bubble-tea": { name: { zh: f2Strings.zh["shop.vessel.bubble-tea"], en: f2Strings.en["shop.vessel.bubble-tea"] }, desc: { zh: f2Strings.zh["shop.desc.bubble-tea"], en: f2Strings.en["shop.desc.bubble-tea"] }, price: 12 },
   "dim-sum-steamer": { name: { zh: f2Strings.zh["shop.vessel.dim-sum-steamer"], en: f2Strings.en["shop.vessel.dim-sum-steamer"] }, desc: { zh: f2Strings.zh["shop.desc.dim-sum-steamer"], en: f2Strings.en["shop.desc.dim-sum-steamer"] }, price: 16 },
