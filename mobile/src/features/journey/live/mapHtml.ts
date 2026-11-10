@@ -67,6 +67,15 @@ export const MONUMENTS: Monument[] = [
     ] },
     tiers: [
     [64, 0, 14, { arc: { inner: 50, from: -80, to: 100 } }], [62, 14, 18, { arc: { inner: 53, from: -76, to: 96 } }],
+    // The Red Bird (OSM node 2439950828, exactly this lat/lng) in front of the arc, so the seal sits on its tip:
+    // the round sundial it stands on, a curling foot, and a neck that sways up into a beak. Tallest piece (20 m).
+    [8, 0, .5, { round: true }],
+    [2.6, .5, 1.5, { round: true, dx: -9 }], [2.6, .5, 1.5, { round: true, dx: -7.5, dy: -1 }],
+    [1.7, .5, 3, { round: true, dx: -8, dy: 3.5 }], [1.5, 3, 5, { round: true, dx: -9, dy: 4.5 }],
+    [2.5, .5, 2.5, { round: true, dx: -5.5 }], [2.4, 2.5, 4.5, { round: true, dx: -3.5 }], [2.3, 4.5, 6.5, { round: true, dx: -1.5 }],
+    [2.2, 6.5, 8.5, { round: true }], [2, 8.5, 10.5, { round: true, dx: .8 }], [1.9, 10.5, 12.5, { round: true, dx: .8 }],
+    [1.8, 12.5, 14.5, { round: true }], [1.7, 14.5, 16, { round: true, dx: 1.5 }], [1.6, 16, 17.5, { round: true, dx: 3 }],
+    [1.5, 17.5, 19, { round: true, dx: 4.5 }], [1.5, 19, 20, { round: true, dx: 6 }],
   ] },
 ] as Monument[];
 const TILE_IDS = MONUMENTS.flatMap((m) => m.tile?.ids ?? []);
