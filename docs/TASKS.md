@@ -54,7 +54,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 
 ## Done
 
-- Journey map pin polish: PR #105 passed CI 42838348782 and owner-account squash-merged as `fbded1d`. The signed-in 375 px local map verified pin scaling, player/Keeper size, overlap fanning, private capsule portrait and seal, visual-only walk and web drag prevention. A separate follow-up skips capsule list queries until the user id is loaded; its production release and live check are in progress. No migration.
+- Journey map pin polish: PR #105 passed CI 42838348782 and owner-account squash-merged as `fbded1d`. The signed-in 375 px local map verified pin scaling, player/Keeper size, overlap fanning, private capsule portrait and seal, visual-only walk and web drag prevention. PR #106 passed CI 42840116798 and owner-account squash-merged as owner-authored `f8511fc`; it skips capsule list queries until the user id is loaded and deployed both PRs to production. The production page responds at 375 px; signed-in live map visuals remain unverified because this browser blocks location and is signed out. No migration.
 
 - HKUST monument and fight: PR #102 passed CI 42829446880 and owner-account squash-merged as `c69acad`; PR #104 passed CI 42830511831 and owner-account squash-merged as `02a1ba3`. The 375 px signed-in local map showed the brass campus, Red Bird with seal on its tip, and a real HKUST Landmark attempt displaying the Red Bird vessel with 12 cracks. Both changes ship in the owner-authored release after these merges; no migration or new art. Physical Expo Go remains Roy's check.
 
