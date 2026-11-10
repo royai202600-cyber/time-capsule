@@ -368,5 +368,42 @@
       956
     ],
     "exact_shared_mask": true
+  },
+  {
+    "file": "portraits/portrait-keeper.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "circle_center": [
+      505,
+      526
+    ],
+    "circle_radius": 430,
+    "visible_bbox": [
+      75,
+      96,
+      936,
+      957
+    ],
+    "tested_px": [
+      24,
+      40,
+      60
+    ],
+    "app_crop": [
+      75,
+      96,
+      935,
+      956
+    ],
+    "exact_shared_mask": true
   }
 ]

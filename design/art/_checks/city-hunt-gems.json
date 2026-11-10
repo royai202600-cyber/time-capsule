@@ -1,0 +1,103 @@
+{
+  "gems": [
+    {
+      "source": "game/waypost-gem.png",
+      "output": "game/waypost-gem-blue.png",
+      "source_sha256": "24cd6775ce8d9e44b9abc614ab1210223c032bf0bd72dcf9d00688d63dba6da2",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha_byte_identical": true,
+      "alpha_bbox": [
+        403,
+        339,
+        621,
+        685
+      ],
+      "lightness_bounds": [
+        0.3,
+        0.7313725490196078
+      ],
+      "blue_ramp": [
+        "#16263F",
+        "#2F5D8A",
+        "#5A8FD0"
+      ],
+      "landmark_rgb_factor": 1.0,
+      "generated": false,
+      "pass": true
+    },
+    {
+      "source": "game/landmark-gem.png",
+      "output": "game/landmark-gem-blue.png",
+      "source_sha256": "d44657f07723537904c6780529a21dcbee0e197fef26b1a422282f1572aefbb5",
+      "size": [
+        1024,
+        1024
+      ],
+      "alpha_byte_identical": true,
+      "alpha_bbox": [
+        403,
+        103,
+        621,
+        609
+      ],
+      "lightness_bounds": [
+        0.3,
+        0.7313725490196078
+      ],
+      "blue_ramp": [
+        "#16263F",
+        "#2F5D8A",
+        "#5A8FD0"
+      ],
+      "landmark_rgb_factor": 0.8,
+      "generated": false,
+      "pass": true
+    }
+  ],
+  "map_background_samples": {
+    "water": {
+      "rgb": [
+        188,
+        211,
+        229
+      ],
+      "source_pixel": [
+        461,
+        969
+      ]
+    },
+    "park": {
+      "rgb": [
+        220,
+        230,
+        206
+      ],
+      "source_pixel": [
+        33,
+        300
+      ]
+    },
+    "road": {
+      "rgb": [
+        255,
+        255,
+        255
+      ],
+      "source_pixel": [
+        520,
+        300
+      ]
+    }
+  },
+  "background_source": "design/art/reference/catch-background/map-now.jpg",
+  "background_sha256": "c83b4194de0fda36dab9d78490c22226eeec969754577138fda1b84a9e4664cf",
+  "sample_sizes_visible_height_px": [
+    48,
+    64
+  ],
+  "added_outline": false,
+  "visual_review": "Blue facets remain distinguishable on water, park and road; subject to Roy review."
+}

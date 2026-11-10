@@ -1,0 +1,37 @@
+{
+  "path": "stamps/stamp-hunt-xinyi-2026-11.png",
+  "size": [
+    1024,
+    1024
+  ],
+  "corners_alpha": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "alpha_bbox": [
+    33,
+    54,
+    973,
+    998
+  ],
+  "visible_rgb_colours": [
+    [
+      47,
+      93,
+      138
+    ]
+  ],
+  "review_sizes": [
+    40,
+    64,
+    120
+  ],
+  "double_ring": true,
+  "tower_left_letter_focal_right": true,
+  "reference_url": "https://www.taipei-101.com.tw/asset/img/cover-sunrise.jpg",
+  "reference_page": "https://www.taipei-101.com.tw/tw/explore/photogallery",
+  "reference_observations": "Stacked upward-flared tier sections, narrower upper sections and a slim spire; simplified tower placed left behind the focal sealed letter.",
+  "pass": true
+}

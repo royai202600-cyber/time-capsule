@@ -1,0 +1,158 @@
+[
+  {
+    "source": "design/art/characters/keeper.png",
+    "output": "public/art/characters/keeper.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "cfea2619cb908d9bff28754972043558a4a85a28d0491a29d9016287739f2654",
+    "pass": true
+  },
+  {
+    "source": "design/art/characters/figure-01.png",
+    "output": "public/art/characters/figure-01.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "329c0980f2b50862fc7bf23c0577a4b20c7523203ccc9c5a2430a063d8ce96c3",
+    "pass": true
+  },
+  {
+    "source": "design/art/characters/figure-04.png",
+    "output": "public/art/characters/figure-04.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "e94184e31e28ee0291673a3a4b571e44c3fcb06c9d423438d2257e7367a7fdf1",
+    "pass": true
+  },
+  {
+    "source": "design/art/characters/figure-06.png",
+    "output": "public/art/characters/figure-06.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "2547b27963a77c9b34824dcfdb5c0b4d62ecf2ec382dc4baa79dc7b3d38b781b",
+    "pass": true
+  },
+  {
+    "source": "design/art/portraits/portrait-keeper.png",
+    "output": "public/art/portraits/portrait-keeper.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "613b72cb4a40a2d3de2f43660e99495b2f3549eb30b7275272af4c52c804442f",
+    "pass": true
+  },
+  {
+    "source": "design/art/game/waypost-gem-blue.png",
+    "output": "public/art/game/waypost-gem-blue.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "e924803ec5ae6e96ecf63414a2f5122af84fbdc45ae7578667fbd9c2de8c12b4",
+    "pass": true
+  },
+  {
+    "source": "design/art/game/landmark-gem-blue.png",
+    "output": "public/art/game/landmark-gem-blue.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "22269f3d496eff76e45ad4e18dfb7f1945e3ab78678c3a65a2728f30777faf6a",
+    "pass": true
+  },
+  {
+    "source": "design/art/characters/figure-02.png",
+    "output": "public/art/characters/figure-02.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "69ce709d0823bda8b181a816a2f9187786436f91b2055599066b0ccfb7517786",
+    "pass": true
+  },
+  {
+    "source": "design/art/characters/figure-03.png",
+    "output": "public/art/characters/figure-03.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "2f5611180c2ceab2d90fe47461d0f5b3070e8c68418fbd89db9bc664d30f418b",
+    "pass": true
+  },
+  {
+    "source": "design/art/characters/figure-05.png",
+    "output": "public/art/characters/figure-05.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "e568a778ab1c7225248ba53fe2a318bd394c6fbb2595a36e7e085a751ce3aab8",
+    "pass": true
+  },
+  {
+    "source": "design/art/characters/figure-07.png",
+    "output": "public/art/characters/figure-07.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "1de594f1b416bd2cfa545500f40ab2f2b4b5348a1fe48eb7162d8d2d6094dc8e",
+    "pass": true
+  },
+  {
+    "source": "design/art/characters/figure-08.png",
+    "output": "public/art/characters/figure-08.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "f2bcd5d845c3fe14ff3b4d0500b85bcbc88d4b45eda71a6392fe32754b2cff2d",
+    "pass": true
+  },
+  {
+    "source": "design/art/stamps/stamp-hunt-xinyi-2026-11.png",
+    "output": "public/art/stamps/stamp-hunt-xinyi-2026-11.webp",
+    "size": [
+      512,
+      512
+    ],
+    "quality": 85,
+    "alpha_matches_exact_export_resize": true,
+    "alpha_sha256": "eb6a2be4960d2c71468dde5c60f2124ab690545e90d421d1ff4a2e6b5e16587b",
+    "pass": true
+  }
+]

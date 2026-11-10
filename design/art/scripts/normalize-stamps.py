@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Convert generated stamp ink to one exact palette color and cut paper/specks."""
 
+import argparse
 import math
 from pathlib import Path
 from PIL import Image
@@ -13,14 +14,22 @@ INKS = {
     "merlion": (110, 43, 63), "grandpal": (47, 93, 138),
     "wumen": (163, 54, 79), "petronas": (110, 43, 63),
     "aurele-cotai": (47, 93, 138),
+    "hunt-xinyi-2026-11": (47, 93, 138),
 }
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--only', nargs='+', choices=tuple(INKS),
+                        help='Normalize only named stamps, preserving all others.')
+    args = parser.parse_args()
     for name, color in INKS.items():
+        if args.only and name not in args.only:
+            continue
         path = ROOT / f"stamp-{name}.png"
         image = Image.open(path).convert("RGBA")
         if image.size != (1024, 1024):
+            assert min(image.size) >= 1024, 'Never upscale stamp artwork'
             image = image.resize((1024, 1024), Image.Resampling.LANCZOS)
         rgba = bytearray(image.tobytes())
         for p in range(0, len(rgba), 4):

@@ -1,0 +1,398 @@
+[
+  {
+    "file": "characters/keeper.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "alpha_bbox": [
+      375,
+      158,
+      650,
+      902
+    ],
+    "bottom_of_alpha_y": 902,
+    "head_top_y": 158,
+    "cap_included": true,
+    "standing_height": 744,
+    "soles_y": [
+      902,
+      899
+    ],
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "canonical_source_edge": 1254,
+    "native_canvas_factor": 1.0,
+    "applied_downscale": 0.6715063520871143,
+    "translation": [
+      96,
+      98
+    ],
+    "mirror_to_right": true,
+    "upper_garment_rgb_pixels_adjusted": 0,
+    "pose": "upright, arms down, slightly viewer-right, slightly elevated camera",
+    "pass": true
+  },
+  {
+    "file": "characters/figure-01.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "alpha_bbox": [
+      405,
+      170,
+      619,
+      904
+    ],
+    "bottom_of_alpha_y": 904,
+    "head_top_y": 170,
+    "cap_included": false,
+    "standing_height": 734,
+    "soles_y": [
+      904,
+      896
+    ],
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "canonical_source_edge": 1254,
+    "native_canvas_factor": 1.0,
+    "applied_downscale": 0.6715063520871143,
+    "translation": [
+      95,
+      102
+    ],
+    "mirror_to_right": false,
+    "upper_garment_rgb_pixels_adjusted": 0,
+    "pose": "upright, arms down, slightly viewer-right, slightly elevated camera",
+    "pass": true
+  },
+  {
+    "file": "characters/figure-02.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "alpha_bbox": [
+      390,
+      195,
+      634,
+      901
+    ],
+    "bottom_of_alpha_y": 901,
+    "head_top_y": 195,
+    "cap_included": false,
+    "standing_height": 706,
+    "soles_y": [
+      901,
+      899
+    ],
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "canonical_source_edge": 1254,
+    "native_canvas_factor": 1.0,
+    "applied_downscale": 0.6715063520871143,
+    "translation": [
+      93,
+      116
+    ],
+    "mirror_to_right": false,
+    "upper_garment_rgb_pixels_adjusted": 0,
+    "pose": "upright, arms down, slightly viewer-right, slightly elevated camera",
+    "pass": true
+  },
+  {
+    "file": "characters/figure-03.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "alpha_bbox": [
+      396,
+      180,
+      627,
+      903
+    ],
+    "bottom_of_alpha_y": 903,
+    "head_top_y": 180,
+    "cap_included": false,
+    "standing_height": 723,
+    "soles_y": [
+      903,
+      898
+    ],
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "canonical_source_edge": 1254,
+    "native_canvas_factor": 1.0,
+    "applied_downscale": 0.6715063520871143,
+    "translation": [
+      88,
+      112
+    ],
+    "mirror_to_right": false,
+    "upper_garment_rgb_pixels_adjusted": 0,
+    "pose": "upright, arms down, slightly viewer-right, slightly elevated camera",
+    "pass": true
+  },
+  {
+    "file": "characters/figure-04.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "alpha_bbox": [
+      381,
+      155,
+      644,
+      904
+    ],
+    "bottom_of_alpha_y": 904,
+    "head_top_y": 155,
+    "cap_included": false,
+    "standing_height": 749,
+    "soles_y": [
+      904,
+      896
+    ],
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "canonical_source_edge": 1254,
+    "native_canvas_factor": 1.0,
+    "applied_downscale": 0.6715063520871143,
+    "translation": [
+      100,
+      93
+    ],
+    "mirror_to_right": false,
+    "upper_garment_rgb_pixels_adjusted": 92788,
+    "pose": "upright, arms down, slightly viewer-right, slightly elevated camera",
+    "pass": true
+  },
+  {
+    "file": "characters/figure-05.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "alpha_bbox": [
+      397,
+      209,
+      627,
+      902
+    ],
+    "bottom_of_alpha_y": 902,
+    "head_top_y": 209,
+    "cap_included": false,
+    "standing_height": 693,
+    "soles_y": [
+      902,
+      899
+    ],
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "canonical_source_edge": 1254,
+    "native_canvas_factor": 1.0,
+    "applied_downscale": 0.6715063520871143,
+    "translation": [
+      94,
+      136
+    ],
+    "mirror_to_right": false,
+    "upper_garment_rgb_pixels_adjusted": 0,
+    "pose": "upright, arms down, slightly viewer-right, slightly elevated camera",
+    "pass": true
+  },
+  {
+    "file": "characters/figure-06.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "alpha_bbox": [
+      390,
+      161,
+      634,
+      903
+    ],
+    "bottom_of_alpha_y": 903,
+    "head_top_y": 161,
+    "cap_included": false,
+    "standing_height": 742,
+    "soles_y": [
+      903,
+      897
+    ],
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "canonical_source_edge": 1254,
+    "native_canvas_factor": 1.0,
+    "applied_downscale": 0.6715063520871143,
+    "translation": [
+      99,
+      96
+    ],
+    "mirror_to_right": false,
+    "upper_garment_rgb_pixels_adjusted": 0,
+    "pose": "upright, arms down, slightly viewer-right, slightly elevated camera",
+    "pass": true
+  },
+  {
+    "file": "characters/figure-07.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "alpha_bbox": [
+      396,
+      203,
+      628,
+      901
+    ],
+    "bottom_of_alpha_y": 901,
+    "head_top_y": 203,
+    "cap_included": false,
+    "standing_height": 698,
+    "soles_y": [
+      901,
+      899
+    ],
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "canonical_source_edge": 1254,
+    "native_canvas_factor": 1.0,
+    "applied_downscale": 0.6715063520871143,
+    "translation": [
+      90,
+      125
+    ],
+    "mirror_to_right": false,
+    "upper_garment_rgb_pixels_adjusted": 0,
+    "pose": "upright, arms down, slightly viewer-right, slightly elevated camera",
+    "pass": true
+  },
+  {
+    "file": "characters/figure-08.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "mode": "RGBA",
+    "corners_alpha": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "alpha_bbox": [
+      397,
+      178,
+      626,
+      901
+    ],
+    "bottom_of_alpha_y": 901,
+    "head_top_y": 178,
+    "cap_included": false,
+    "standing_height": 723,
+    "soles_y": [
+      901,
+      899
+    ],
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "canonical_source_edge": 1254,
+    "native_canvas_factor": 1.0,
+    "applied_downscale": 0.6715063520871143,
+    "translation": [
+      90,
+      110
+    ],
+    "mirror_to_right": false,
+    "upper_garment_rgb_pixels_adjusted": 0,
+    "pose": "upright, arms down, slightly viewer-right, slightly elevated camera",
+    "pass": true
+  }
+]
