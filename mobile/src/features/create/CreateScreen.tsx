@@ -512,8 +512,8 @@ export default function CreateScreen() {
         </Pressable>; })}
       </View>
       <Text style={muted}>{toSea ? t('create2.textOnly') : t('create2.oneEach')}</Text>
-      <View style={{ gap: 6 }}>
-        {sectionLabel(t('create.hint'))}
+      <View style={{ gap: 8 }}>
+        <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12, letterSpacing: .7 }}>{t('create.hint')}</Text>
         <TextInput value={hint} onChangeText={setHint} maxLength={40} placeholder={t('create.hintPlaceholder')} placeholderTextColor={PLACEHOLDER} style={[card, { color: C.ink, padding: 12 }]} />
         <Text style={{ color: C.muted, textAlign: 'right', fontSize: 12 }}>{hint.length} / 40</Text>
       </View>
