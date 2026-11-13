@@ -419,7 +419,7 @@ export default function CreateScreen() {
   const title = (text: string) => <Text style={{ fontFamily: serif, color: C.ink, fontSize: 23 }}>{text}</Text>;
   const sectionLabel = (text: string) => <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12, letterSpacing: .7, marginBottom: -8 }}>{text}</Text>;
 
-  const header = <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: C.line, backgroundColor: C.paper }}>
+  const header = <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: C.paper }}>
     <Pressable accessibilityRole='button' accessibilityLabel={stepIndex > 1 ? t('create.back') : t('create2.close')} onPress={() => { if (stepIndex > 1) goTo(stepIndex - 1); else goBack(); }}
       style={{ width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: C.line, backgroundColor: C.white, alignItems: 'center', justifyContent: 'center' }}>
       <ArtIcon name={stepIndex > 1 ? 'back' : 'close'} size={20} color={stepIndex > 1 ? C.ink : C.plum} />
@@ -428,7 +428,7 @@ export default function CreateScreen() {
       <WaxSteps compact step={stepIndex} label={t('create2.step', stepIndex, flow.length)} labels={flow.map(n => t(`create2.s${n}`))} onBack={goTo} />
     </View>
     <Pressable accessibilityRole='button' onPress={next} style={({ pressed }) => ({ borderRadius: 999, backgroundColor: last ? C.wax : C.blue, paddingHorizontal: 16, paddingVertical: 10, opacity: pressed ? .85 : 1 })}>
-      <Text style={{ fontFamily: sans, color: C.white, fontSize: 15 }}>{last ? t(toSea ? 'create2.drop' : 'create2.seal') : t('create.next')}</Text>
+      <Text style={{ fontFamily: sans, color: C.white, fontSize: 15 }}>{last ? t('create2.send') : t('create.next')}</Text>
     </Pressable>
   </View>;
 

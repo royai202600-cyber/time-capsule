@@ -1,7 +1,7 @@
 export const f2Strings = {
   zh: {
     "create.title": "寄一個新膠囊", "create.step": (n: number) => `第 ${n} 步，共 4 步`, "create.stepName1": "收件人", "create.stepName2": "內容", "create.stepName3": "容器", "create.stepName4": "時間地點", "create.loading": "正在載入…",
-    "create2.step": (n: number, total: number) => `第 ${n} 步，共 ${total} 步`, "create2.s1": "收件人", "create2.s2": "內容", "create2.s3": "容器", "create2.s4": "時間地點", "create2.drop": "放下膠囊", "create2.seal": "封存寄出", "create2.close": "關閉",
+    "create2.step": (n: number, total: number) => `第 ${n} 步，共 ${total} 步`, "create2.s1": "收件人", "create2.s2": "內容", "create2.s3": "容器", "create2.s4": "時間地點", "create2.drop": "放下膠囊", "create2.send": "寄出", "create2.close": "關閉",
     "create2.to": "收件人", "create2.futureSub": "只有你自己能打開", "create2.friendSub": "朋友 · 只有對方能打開", "create2.inviteSub": "傳一個連結，對方加入後就能收", "create2.groupMe": "自己", "create2.groupFriends": "朋友",
     "create2.private": "私人", "create2.privateNote": "封存後連你也看不到內容，只有收件人能在時間到了之後打開。", "create2.envTo": "寄給", "create2.envFrom": "寄件人", "create2.you": "你",
     "create2.writeLede": "像一張信紙：用下面的按鈕加入文字、錄音、相片、手寫或預言。", "create2.pubTitle": "放下一個公開膠囊", "create2.pubLede": "任何路過這裡的人都能撿起來讀。",
@@ -55,7 +55,7 @@ export const f2Strings = {
   },
   en: {
     "create.title": "Send a new capsule", "create.step": (n: number) => `Step ${n} of 4`, "create.stepName1": "To", "create.stepName2": "Letter", "create.stepName3": "Vessel", "create.stepName4": "When, where", "create.loading": "Loading…",
-    "create2.step": (n: number, total: number) => `Step ${n} of ${total}`, "create2.s1": "To", "create2.s2": "Message", "create2.s3": "Vessel", "create2.s4": "When", "create2.drop": "Drop it", "create2.seal": "Seal it", "create2.close": "Close",
+    "create2.step": (n: number, total: number) => `Step ${n} of ${total}`, "create2.s1": "To", "create2.s2": "Message", "create2.s3": "Vessel", "create2.s4": "When", "create2.drop": "Drop it", "create2.send": "Send", "create2.close": "Close",
     "create2.to": "To", "create2.futureSub": "Only you can open it", "create2.friendSub": "Friend · only they can open it", "create2.inviteSub": "Send a link; once they join, they can receive", "create2.groupMe": "You", "create2.groupFriends": "Friends",
     "create2.private": "Private", "create2.privateNote": "Once sealed, not even you can read it. Only the recipient can open it when the time comes.", "create2.envTo": "To", "create2.envFrom": "From", "create2.you": "You",
     "create2.writeLede": "Like a sheet of letter paper: add text, a voice note, a photo, handwriting or a prediction with the buttons below.", "create2.pubTitle": "Drop a public capsule", "create2.pubLede": "Anyone who passes by can pick it up and read it.",
