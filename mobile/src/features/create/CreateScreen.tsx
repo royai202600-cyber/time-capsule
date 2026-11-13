@@ -461,6 +461,8 @@ export default function CreateScreen() {
     <View style={{ alignSelf: 'center', width: '100%', maxWidth: toSea ? 220 : 400 }}>
       <WaxSteps step={stepIndex} label={t('create2.step', stepIndex, flow.length)} labels={flow.map(n => t(`create2.s${n}`))} onBack={goTo} labelSize={13} />
     </View>
+    {/* Errors sit under the header, next to the Next / Send button that caused them. */}
+    <Toast message={error || ((friends.error || catalog.error || places.error) ? t('create.noData') : '')} />
   </View>;
 
   const self = <View pointerEvents='none'><Avatar avatar={profile?.avatar} size={44} future /></View>;
@@ -591,7 +593,6 @@ export default function CreateScreen() {
       </View>
     </View>}
 
-    <Toast message={error || ((friends.error || catalog.error || places.error) ? t('create.noData') : '')} />
 
     <Sheet open={sheet === 'to'} title={t('create2.to')} onClose={() => setSheet(null)}>
       <SheetGroup>{t('create2.groupMe')}</SheetGroup>
