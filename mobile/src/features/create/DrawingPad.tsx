@@ -7,15 +7,16 @@ import { C, handwriting } from "../../theme";
 
 const WIDTH = 320, HEIGHT = 240;
 type Point = { x: number; y: number };
-export type DrawingHandle = { clear: () => void; hasInk: () => boolean; png: () => Promise<string | null> };
+export type DrawingStrokes = Point[][];
+export type DrawingHandle = { getStrokes: () => DrawingStrokes; clear: () => void; hasInk: () => boolean; png: () => Promise<string | null> };
 
 // The page around the pad can scroll (keyboard handling), so drawing must block that scroll or
 // the scroll view steals the finger after a few millimetres: on phones the pan below blocks the
 // page's native scroll gesture; on the web the touch layer refuses to hand over and sets
 // touch-action: none so the browser doesn't scroll instead.
-export const DrawingPad = forwardRef<DrawingHandle, { label: string; scrollGesture?: ReturnType<typeof useNativeGesture> }>(function DrawingPad({ label, scrollGesture }, ref) {
-  const [strokes, setStrokes] = useState<Point[][]>([]);
-  const strokesRef = useRef<Point[][]>([]);
+export const DrawingPad = forwardRef<DrawingHandle, { label: string; scrollGesture?: ReturnType<typeof useNativeGesture>; initialStrokes?: DrawingStrokes }>(function DrawingPad({ label, scrollGesture, initialStrokes = [] }, ref) {
+  const [strokes, setStrokes] = useState(initialStrokes);
+  const strokesRef = useRef(initialStrokes);
   const inkView = useRef<any>(null);
   const size = useRef({ width: WIDTH, height: HEIGHT });
   const update = (next: Point[][]) => { strokesRef.current = next; setStrokes(next); };
@@ -33,6 +34,7 @@ export const DrawingPad = forwardRef<DrawingHandle, { label: string; scrollGestu
     onUpdate: e => extend(toPoint(e.x, e.y)),
   });
   useImperativeHandle(ref, () => ({
+    getStrokes: () => strokesRef.current,
     clear: () => update([]),
     hasInk: () => strokesRef.current.some(s => s.length > 0),
     png: async () => {

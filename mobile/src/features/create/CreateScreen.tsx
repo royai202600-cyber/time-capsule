@@ -1,7 +1,7 @@
 import { GAME_ENABLED } from "../../services/game";
 import { canUseVessel as canAccessVessel, isCollected, showVesselInShop } from "../../services/vesselAccess";
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Image, PanResponder, Keyboard, Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { Animated, Easing, Image, ImageBackground, PanResponder, Keyboard, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { GestureDetector, useNativeGesture, usePanGesture } from 'react-native-gesture-handler';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { goBack } from "../../navigation";
@@ -18,25 +18,36 @@ import { useReducedMotion } from '../../useReducedMotion';
 import { useAuth } from '../../services/auth';
 import { capsules } from '../../services/data';
 import { useFriends, useOwnedVessels, usePlaces, useVessels } from '../../services/hooks';
-import { C, handwriting, motion, serif, sans } from '../../theme';
-import { DrawingPad, type DrawingHandle } from './DrawingPad';
-import { letterDropFor, scenes, sealWax } from '../../art/manifest';
+import { C, handwriting, motion, serif, sans, shadows } from '../../theme';
+import { DrawingPad, type DrawingHandle, type DrawingStrokes } from './DrawingPad';
+import { letterDropFor, paperLetter, scenes, sealWax } from '../../art/manifest';
 import { ArtIcon } from '../../components/ArtIcon';
 import { SealLoader } from '../../components/SealLoader';
 import { WaxSteps } from '../../components/WaxSteps';
 import { VoiceRecorder } from '../voice/VoiceRecorder';
 import { stubAttachVoice, uploadVoice, VOICE_BACKEND, VOICE_ENABLED, type VoiceClip } from '../../services/voice';
 import { PREDICTION_ENABLED, predictionSendArgs, type CapsuleKind } from '../../services/prediction';
-import { KindChoice, PredictionInput } from '../prediction/PredictionParts';
+import { PredictionInput } from '../prediction/PredictionParts';
+import { Chip, Glyph, MonthCalendar, PickerRow, Sheet, SheetGroup, SheetOption, ToolIcon, VESSEL_CATEGORIES, vesselCategory, type ToolKind, type VesselCategory } from './CreateParts';
 import { usePredictionText } from '../prediction/strings';
 import { DRIFT_CHOICES, sea, SeaError, SEA_BACKEND, SEA_ENABLED, SEA_MESSAGE_MAX, SEA_AVATAR, SEA_RECIPIENT, type DriftDays, type ThrowResult } from '../../services/sea';
 import { shortDate, useSeaText } from '../sea/strings';
-import { openingCoordinates } from '../journey/location';
+import { openingCoordinates, useForegroundLocation } from '../journey/location';
+import { ANY_PLACE_BACKEND, pointPlaceArgs, searchPlaces, type PointPlace } from '../../services/places';
 
-type Quick = 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
-const quickDate = (q: Quick) => { const d = new Date(); if (q === 'm1') d.setMonth(d.getMonth() + 1); if (q === 'm6') d.setMonth(d.getMonth() + 6); if (q === 'y1') d.setFullYear(d.getFullYear() + 1); if (q === 'y5') d.setFullYear(d.getFullYear() + 5); if (q === 'dev') d.setMinutes(d.getMinutes() + 2); return d; };
+type Quick = 'd1' | 'w1' | 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
+// The blocks a capsule can hold. Today's backend keeps one of each, and text or handwriting (docs/design/create-v2.md).
+type Block = 'text' | 'voice' | 'photo' | 'hand' | 'predict';
+const BLOCKS: Block[] = ['text', 'voice', 'photo', 'hand', 'predict'];
+const BLOCK_ICON: Record<Block, ToolKind> = { text: 'text', voice: 'voice', photo: 'photo', hand: 'hand', predict: 'predict' };
+const BLOCK_LABEL: Record<Block, string> = { text: 'create2.tText', voice: 'create2.tVoice', photo: 'create2.tPhoto', hand: 'create2.tHand', predict: 'create2.tPredict' };
+// Public capsules still use the sea's drift days, so their time list maps onto them.
+const SEA_QUICK: Quick[] = ['d1', 'w1', 'm1', 'y1'];
+const SEA_DRIFT: Partial<Record<Quick, DriftDays>> = { d1: 1, w1: 7, m1: 30, y1: 365 };
+const quickDate = (q: Quick) => { const d = new Date(); if (q === 'd1') d.setDate(d.getDate() + 1); if (q === 'w1') d.setDate(d.getDate() + 7); if (q === 'm1') d.setMonth(d.getMonth() + 1); if (q === 'm6') d.setMonth(d.getMonth() + 6); if (q === 'y1') d.setFullYear(d.getFullYear() + 1); if (q === 'y5') d.setFullYear(d.getFullYear() + 5); if (q === 'dev') d.setMinutes(d.getMinutes() + 2); return d; };
 const dateValue = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const customDate = (s: string) => { if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null; const d = new Date(`${s}T12:00:00`); return dateValue(d) === s && d.getTime() > Date.now() ? d : null; };
+const PLACEHOLDER = '#A5AFBD';
 const card = { borderWidth: 1.5, borderColor: C.line, backgroundColor: C.white, borderRadius: 16, padding: 14 } as const;
 const label = { fontFamily: sans, color: C.ink } as const;
 // The letter's centre is at stage y=125; these drops meet each vessel's opening at stage y=270–325.
@@ -75,26 +86,48 @@ function pickWebPhoto(source: 'camera' | 'library'): Promise<string | null> {
 }
 
 export default function CreateScreen() {
-  const { t, language, setLanguage } = useLanguage();
+  const { t, language } = useLanguage();
   const { session, profile, loading: authLoading } = useAuth();
   const params = useLocalSearchParams<{ to?: string; recipient?: string; kind?: string }>();
   const p = usePredictionText();
   const st = useSeaText();
-  // A prediction is a special kind of capsule: same four steps, but its main content is one prediction line.
-  const [kind, setKind] = useState<CapsuleKind>(PREDICTION_ENABLED && params.kind === 'prediction' ? 'prediction' : 'letter'), [prediction, setPrediction] = useState('');
-  const predicting = kind === 'prediction';
+  // A prediction is a block on the page; a capsule holding one is sent as a prediction capsule.
+  const [blocks, setBlocks] = useState<Block[]>(PREDICTION_ENABLED && params.kind === 'prediction' ? ['predict'] : ['text']), [prediction, setPrediction] = useState('');
+  const predicting = PREDICTION_ENABLED && blocks.includes('predict');
+  const kind: CapsuleKind = predicting ? 'prediction' : 'letter';
+  const startsAtSea = SEA_ENABLED && params.to === SEA_RECIPIENT;
   const id = session?.user.id ?? '';
   const friends = useFriends(id), catalog = useVessels(), owned = useOwnedVessels(id), places = usePlaces();
   const reduced = useReducedMotion();
-  const [step, setStep] = useState(1), [recipient, setRecipient] = useState<string | null>(((params.to ?? params.recipient) === 'future' ? session?.user.id : (params.to ?? params.recipient)) ?? session?.user.id ?? null);
-  const [mode, setMode] = useState<'type' | 'hand'>('type'), [message, setMessage] = useState(''), [hint, setHint] = useState(''), [drawingData, setDrawingData] = useState<string | null>(null);
+  const [stepIndex, setStepIndex] = useState(1), [recipient, setRecipient] = useState<string | null>(((params.to ?? params.recipient) === 'future' ? session?.user.id : (params.to ?? params.recipient)) ?? session?.user.id ?? null);
+  const [message, setMessage] = useState(''), [hint, setHint] = useState(''), [drawingData, setDrawingData] = useState<string | null>(null);
   const [photo, setPhoto] = useState<string | null>(null), [photoChoices, setPhotoChoices] = useState(false), [voice, setVoice] = useState<VoiceClip | null>(null);
   const voicePath = useRef<{ uri: string; path: string } | null>(null);
   const [vessel, setVessel] = useState<VesselKind | null>(null), [place, setPlace] = useState<string | null>(null);
-  const [quick, setQuick] = useState<Quick>('m1'), [dateText, setDateText] = useState(dateValue(quickDate('m1')));
-  const [driftDays, setDriftDays] = useState<DriftDays>(7), [seaResult, setSeaResult] = useState<ThrowResult | null>(null);
+  const hasText = blocks.includes('text'), hasHand = blocks.includes('hand');
+  const [quick, setQuick] = useState<Quick>(startsAtSea ? 'd1' : 'y1'), [dateText, setDateText] = useState('');
+  const driftDays: DriftDays = SEA_DRIFT[quick] ?? 7;
+  const [seaResult, setSeaResult] = useState<ThrowResult | null>(null);
+  // Where: anywhere, the sender's current spot, or a specific place (one of our landmarks or a searched address).
+  const [placeMode, setPlaceMode] = useState<'anywhere' | 'current' | 'specific'>('anywhere'), [point, setPoint] = useState<PointPlace | null>(null);
+  const [placeQuery, setPlaceQuery] = useState(''), [placeResults, setPlaceResults] = useState<PointPlace[]>([]), [searching, setSearching] = useState(false);
+  const location = useForegroundLocation(placeMode === 'current');
+  useEffect(() => {
+    if (placeMode !== 'current' || !location.fix || point) return;
+    setPoint({ name: t('create2.where.current'), detail: `${location.fix.lat.toFixed(4)}, ${location.fix.lng.toFixed(4)}`, lat: location.fix.lat, lng: location.fix.lng });
+  }, [placeMode, location.fix, point]);
+  useEffect(() => {
+    if (placeMode !== 'specific' || placeQuery.trim().length < 2) { setPlaceResults([]); setSearching(false); return; }
+    let live = true; setSearching(true);
+    const timer = setTimeout(() => {
+      searchPlaces(placeQuery, location.fix).then(r => { if (live) setPlaceResults(r); }).catch(() => { if (live) setPlaceResults([]); }).finally(() => { if (live) setSearching(false); });
+    }, 400);
+    return () => { live = false; clearTimeout(timer); };
+  }, [placeMode, placeQuery]);
+  const [sheet, setSheet] = useState<'to' | 'when' | 'where' | null>(null), [vesselQuery, setVesselQuery] = useState(''), [vesselCat, setVesselCat] = useState<'all' | VesselCategory>('all');
   const [error, setError] = useState(''), [busy, setBusy] = useState(false), [phase, setPhase] = useState<'steps' | 'seal' | 'sealed'>('steps'), [sealedAt, setSealedAt] = useState<Date | null>(null), [stamped, setStamped] = useState(false);
   const drawing = useRef<DrawingHandle>(null);
+  const drawingStrokes = useRef<DrawingStrokes>([]);
   const sentOnce = useRef(false);
   const sendingRef = useRef(false);
   const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterNarrow = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, letterEntry = useRef(new Animated.Value(44)).current, letterOpacity = useRef(new Animated.Value(0)).current, letterFade = useRef(new Animated.Value(1)).current, drift = useRef(new Animated.Value(0)).current;
@@ -164,6 +197,9 @@ export default function CreateScreen() {
     else if (wasToSea.current) setVessel(null);
     wasToSea.current = toSea;
   }, [toSea]);
+  // Private: To → Message → Vessel → When & where. Public (from the map): Message → When & where.
+  const flow = toSea ? [2, 4] : [1, 2, 3, 4];
+  const step = flow[stepIndex - 1] ?? flow[0];
   const recipientName = toSea ? st('toSea') : recipient === id ? t('create.self') : ((recipientRow as any)?.profiles?.name ?? '');
   const openAt = toSea ? new Date(Date.now() + driftDays * 86_400_000) : quick === 'custom' ? customDate(dateText) : quickDate(quick);
   const formatted = (sealedAt ?? openAt)?.toLocaleDateString(language === 'zh' ? 'zh-Hant' : 'en', { year: 'numeric', month: 'long', day: 'numeric', hour: quick === 'dev' ? 'numeric' : undefined, minute: quick === 'dev' ? '2-digit' : undefined }) ?? dateText;
@@ -173,13 +209,21 @@ export default function CreateScreen() {
     if (step >= 2 && predicting && !prediction.trim()) return p('need');
     if (step >= 2 && toSea && !message.trim()) return t('create.needMessage');
     if (step >= 4 && toSea && SEA_BACKEND && !openingCoordinates()) return st('needLocation');
-    if (step >= 2 && !predicting && (mode === 'type' ? !message.trim() : step === 2 ? !drawing.current?.hasInk() : !drawingData)) return t('create.needMessage');
+    // Text and handwriting can sit together; one of them (or a prediction) must have content.
+    const inked = hasHand && (step === 2 ? !!drawing.current?.hasInk() : !!drawingData);
+    if (step >= 2 && !predicting && !(hasText && message.trim()) && !inked) return t('create.needMessage');
     if (step >= 3 && !vessel) return t('create.chooseFirst');
     if (step >= 3 && chosenVessel && !canUseVessel(chosenVessel)) return t('create.notOwned');
     if (step >= 4 && !openAt) return t('create.badDate');
+    if (step >= 4 && !toSea && placeMode === 'current' && !point) return t('create2.needHere');
+    if (step >= 4 && !toSea && placeMode === 'specific' && !place && !point) return t('create2.needPlace');
+    if (step >= 4 && !toSea && placeMode !== 'anywhere' && point && !ANY_PLACE_BACKEND) return t('create2.placeSoon');
     return '';
   };
-  const next = async () => { const issue = validate(); if (issue) { setError(issue); void haptics.warn(); return; } if (step === 2 && mode === 'hand') { try { setDrawingData(drawing.current?.hasInk() ? await drawing.current.png() ?? null : null); } catch { setError(t('create.sendError')); return; } } setError(''); Keyboard.dismiss(); void haptics.tap(); if (step === 2 && predicting && !vessel) { const cookie = catalog.data?.find(v => v.id === 'fortune-cookie'); if (cookie && canUseVessel(cookie)) setVessel('fortune-cookie'); } if (step < 4) setStep(step + 1); else setPhase('seal'); };
+  const saveDrawingDraft = () => {
+    if (drawing.current) drawingStrokes.current = drawing.current.getStrokes();
+  };
+  const next = async () => { const issue = validate(); if (issue) { setError(issue); void haptics.warn(); return; } if (step === 2 && hasHand) { saveDrawingDraft(); try { setDrawingData(drawing.current?.hasInk() ? await drawing.current.png() ?? null : null); } catch { setError(t('create.sendError')); return; } } setError(''); Keyboard.dismiss(); void haptics.tap(); if (step === 2 && predicting && !vessel) { const cookie = catalog.data?.find(v => v.id === 'fortune-cookie'); if (cookie && canUseVessel(cookie)) setVessel('fortune-cookie'); } if (stepIndex < flow.length) setStepIndex(stepIndex + 1); else setPhase('seal'); };
   const choosePhoto = async (source: 'camera' | 'library') => {
     setPhotoChoices(false); setError('');
     if (Platform.OS !== 'web') { const permission = source === 'camera' ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync(); if (!permission.granted) { setError(t('create.photoPermission')); return; } }
@@ -248,8 +292,8 @@ export default function CreateScreen() {
         finishAnimation();
         return;
       }
-      const ink = mode === 'hand' ? drawingData : null;
-      if (mode === 'hand' && !ink && !predicting) throw new Error('empty drawing');
+      const ink = hasHand ? drawingData : null;
+      if (!ink && !(hasText && message.trim()) && !predicting) throw new Error('empty drawing');
       // Upload once per recording; a retried send reuses the same pending path.
       let voiceArgs = {};
       if (voice && VOICE_BACKEND) {
@@ -259,7 +303,7 @@ export default function CreateScreen() {
         }
         voiceArgs = { p_voice: voicePath.current.path, p_voice_ms: Math.round(voice.durationMs) };
       }
-      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: mode === 'type' ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), p_place: place ?? undefined, ...voiceArgs, ...predictionSendArgs(kind, prediction) });
+      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: hasText ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), p_place: place ?? undefined, ...pointPlaceArgs(placeMode === 'anywhere' ? null : point) as {}, ...voiceArgs, ...predictionSendArgs(kind, prediction) });
       if (rpcError) throw rpcError;
       if (voice && capsuleId) stubAttachVoice(String(capsuleId), voice);
       sentOnce.current = true;
@@ -377,47 +421,197 @@ export default function CreateScreen() {
     <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
   </Screen>;
   if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={toSea ? scenes.seaSealed : scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{toSea && seaResult ? st('sealedSea', language === 'zh' ? seaResult.shore_zh : seaResult.shore_en, shortDate(seaResult.washes_up_at, language)) : predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
-  return <Screen scrollGesture={drawScrollGesture} footer={<View style={{ flexDirection: 'row', gap: 8, marginTop: 'auto' }}>{step > 1 && <View style={{ flex: 1 }}><Button title={t('create.back')} onPress={() => { Keyboard.dismiss(); setStep(step - 1); setError(''); void haptics.tap(); }} /></View>}<View style={{ flex: 1 }}><Button title={t(step === 4 ? 'create.sealSend' : 'create.next')} onPress={next} /></View></View>}>
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Pressable onPress={goBack} accessibilityRole='button' accessibilityLabel={t('create.close')} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="close" color={C.plum} /></Pressable><Pressable onPress={() => setLanguage(language === 'zh' ? 'en' : 'zh')} accessibilityRole='button'><Text style={{ color: C.blue }}>{t('create.langSwitch')}</Text></Pressable></View>
-    <Heading>{t('create.title')}</Heading><WaxSteps step={step} label={t('create.step', step)} labels={[t('create.stepName1'), t('create.stepName2'), t('create.stepName3'), t('create.stepName4')]} onBack={n => { Keyboard.dismiss(); setStep(n); setError(''); void haptics.tap(); }} />
-    {step === 1 && PREDICTION_ENABLED && <KindChoice kind={kind} onChange={k => { setKind(k); setError(''); }} />}
-    <Text style={{ fontFamily: serif, color: C.ink, fontSize: 23 }}>{step === 2 && predicting ? p('write') : t(['', 'create.who', 'create.write', 'create.vessel', 'create.whenWhere'][step])}</Text>
-    {step === 1 && <View style={{ gap: 12 }}><View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-      <Pressable accessibilityRole='button' accessibilityState={{ selected: recipient === id }} onPress={() => { setRecipient(id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === id ? C.blue : C.line, backgroundColor: recipient === id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={profile?.avatar} size={60} future /></View><Text style={[label, { marginTop: 8 }]}>{t('create.self')}</Text></Pressable>
-      {(friends.data ?? []).map(f => <Pressable key={f.friend_id} accessibilityRole='button' accessibilityState={{ selected: recipient === f.friend_id }} onPress={() => { setRecipient(f.friend_id); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: recipient === f.friend_id ? C.blue : C.line, backgroundColor: recipient === f.friend_id ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={(f as any).profiles?.avatar} size={60} /></View><Text style={[label, { marginTop: 8 }]}>{(f as any).profiles?.name}</Text></Pressable>)}
-      {SEA_ENABLED && !predicting && <Pressable accessibilityRole='button' accessibilityState={{ selected: toSea }} onPress={() => { setRecipient(SEA_RECIPIENT); setMode('type'); setDrawingData(null); setPhoto(null); setVoice(null); setError(''); void haptics.tick(); }} style={[card, { width: '46%', alignItems: 'center', borderColor: toSea ? C.blue : C.line, backgroundColor: toSea ? C.cream : C.white }]}><View pointerEvents='none'><Avatar avatar={SEA_AVATAR} size={60} /></View><Text style={[label, { marginTop: 8 }]}>{st('toSea')}</Text><Text style={{ color: C.muted, fontSize: 11, textAlign: 'center' }}>{st('toSeaNote')}</Text></Pressable>}
-      <Pressable onPress={() => router.push('/invite')} style={[card, { width: '46%', alignItems: 'center', justifyContent: 'center', minHeight: 116 }]}><ArtIcon name="plus" color={C.blue} /><Text style={{ color: C.blue }}>{t('create.invite')}</Text></Pressable>
-    </View>{friends.loading && <SealLoader size={44} label={t('create.loading')} />}{!friends.loading && !friends.data?.length && <Body>{t('create.noFriends')}</Body>}</View>}
-    {<View style={{ gap: 15, display: step === 2 ? 'flex' : 'none' }}>
-      {predicting && <><PredictionInput value={prediction} onChange={setPrediction} /><Text style={label}>{p('letterOptional')}</Text></>}
-      {toSea ? <Text style={{ color: C.muted, fontSize: 13, lineHeight: 20, backgroundColor: C.glass, borderRadius: 8, padding: 10 }}>{st('seaTypedOnly')}</Text> : <View style={{ flexDirection: 'row', gap: 8 }}>{(['type', 'hand'] as const).map(m => <Pressable key={m} onPress={() => { setMode(m); if (m === 'type') setDrawingData(null); void haptics.tick(); }} style={[card, { flex: 1, backgroundColor: mode === m ? C.cream : C.white }]}><Text style={{ textAlign: 'center', color: C.ink }}>{t(`create.${m}`)}</Text></Pressable>)}</View>}
-      {mode === 'type' ? <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} maxLength={toSea ? SEA_MESSAGE_MAX : 500} multiline textAlignVertical='top' style={[card, { minHeight: predicting ? 140 : 230, fontFamily: serif, fontSize: 18, color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{message.length} / {toSea ? SEA_MESSAGE_MAX : 500}</Text></> : <><DrawingPad scrollGesture={drawScrollGesture} ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
-      {VOICE_ENABLED && !toSea && <VoiceRecorder value={voice} onChange={setVoice} active={step === 2 && phase === 'steps'} />}
-      {toSea ? null : photo ? <Pressable onPress={() => setPhoto(null)} accessibilityLabel={t('create.removePhoto')} style={{ alignSelf: 'flex-start' }}><Image source={{ uri: photo }} style={{ width: 110, height: 110, borderRadius: 8 }} /><Text style={{ color: C.blue }}>{t('create.removePhoto')}</Text></Pressable> : <Pressable onPress={() => setPhotoChoices(!photoChoices)} style={[card, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}><ArtIcon name="camera" color={C.blue} size={20} /><Text style={{ color: C.blue }}>{t('create.photo')}</Text></Pressable>}
-      {photoChoices && !toSea && <View style={{ flexDirection: 'row', gap: 8 }}><Button title={t('create.camera')} onPress={() => void choosePhoto('camera')} /><Button title={t('create.library')} onPress={() => void choosePhoto('library')} /></View>}
-      <Text style={label}>{t('create.hint')}</Text><TextInput value={hint} onChangeText={setHint} maxLength={40} placeholder={t('create.hintPlaceholder')} style={[card, { color: C.ink }]} /><Text style={{ color: C.muted, textAlign: 'right' }}>{hint.length} / 40</Text>
+  const last = stepIndex === flow.length;
+  const goTo = (n: number) => { saveDrawingDraft(); Keyboard.dismiss(); setStepIndex(n); setError(''); void haptics.tap(); };
+  const blockOff = (b: Block) => blocks.includes(b) || (toSea && b !== 'text') || (b === 'voice' && !VOICE_ENABLED) || (b === 'predict' && !PREDICTION_ENABLED);
+  const addBlock = (b: Block) => { if (blockOff(b)) return; setBlocks([...blocks, b]); setError(''); void haptics.tick(); if (b === 'photo') setPhotoChoices(true); };
+  const removeBlock = (b: Block) => {
+    setBlocks(blocks.filter(x => x !== b)); void haptics.tap();
+    if (b === 'text') setMessage('');
+    if (b === 'hand') { drawing.current?.clear(); drawingStrokes.current = []; setDrawingData(null); }
+    if (b === 'photo') { setPhoto(null); setPhotoChoices(false); }
+    if (b === 'voice') setVoice(null);
+    if (b === 'predict') setPrediction('');
+  };
+  const quickList: Quick[] = toSea ? SEA_QUICK : ['d1', 'm1', 'm6', 'y1', 'y5', 'custom', ...(__DEV__ ? ['dev' as Quick] : [])];
+  const quickLabel = (q: Quick) => t(q === 'd1' || q === 'w1' ? `create2.${q}` : `create.${q}`);
+  const dateLabel = (d: Date | null) => d?.toLocaleDateString(language === 'zh' ? 'zh-Hant' : 'en', { year: 'numeric', month: 'long', day: 'numeric' }) ?? '';
+  const friendName = (f: any) => f?.profiles?.name ?? '';
+  const usableList = (catalog.data ?? []).filter(v => GAME_ENABLED ? canUseVessel(v) : showVesselInShop(v, ownsVessel(v.id)));
+  const query = vesselQuery.trim().toLowerCase();
+  const shownVessels = usableList.filter(v => (vesselCat === 'all' || vesselCategory(v) === vesselCat) && (!query || v.id.includes(query) || t(`shop.vessel.${v.id}`).toLowerCase().includes(query)));
+  const cookie = catalog.data?.find(v => v.id === 'fortune-cookie');
+  const insideSummary = blocks.filter(b => b !== 'predict' || predicting).map(b => t(BLOCK_LABEL[b])).join(' · ') || '—';
+  const muted = { fontFamily: sans, color: C.muted, fontSize: 13, lineHeight: 20 } as const;
+  const title = (text: string) => <Text style={{ fontFamily: serif, color: C.ink, fontSize: 23 }}>{text}</Text>;
+  const sectionLabel = (text: string) => <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12, letterSpacing: .7, marginBottom: -8 }}>{text}</Text>;
+
+  const shownLandmarks = (places.data ?? []).filter(pl => { const q = placeQuery.trim().toLowerCase(); return !q || `${pl.name_zh} ${pl.name_en} ${pl.city_zh} ${pl.city_en}`.toLowerCase().includes(q); });
+  const whereLabel = placeMode === 'anywhere' ? '' : selectedPlace ? placeName : point?.name ?? '';
+  const placeCard = (name: string, detail: string) => <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 12 }}>
+    <Glyph><ToolIcon kind="landmark" color={C.wax} /></Glyph>
+    <View style={{ flex: 1, gap: 2 }}><Text style={{ fontFamily: serif, color: C.ink, fontSize: 16 }}>{name}</Text>{!!detail && <Text style={muted}>{detail}</Text>}<Text style={{ fontFamily: sans, color: C.plum, fontSize: 12 }}>{t('create2.radius')}</Text>{!!point && !ANY_PLACE_BACKEND && <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12 }}>{t('create2.placeSoon')}</Text>}</View>
+  </View>;
+  const header = <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 6, gap: 8, backgroundColor: C.paper }}><View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+    <Pressable accessibilityRole='button' accessibilityLabel={stepIndex > 1 ? t('create.back') : t('create2.close')} onPress={() => { if (stepIndex > 1) goTo(stepIndex - 1); else goBack(); }}
+      style={{ width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: C.line, backgroundColor: C.white, alignItems: 'center', justifyContent: 'center' }}>
+      <ArtIcon name={stepIndex > 1 ? 'back' : 'close'} size={20} color={stepIndex > 1 ? C.ink : C.plum} />
+    </Pressable>
+    <Text numberOfLines={1} style={{ flex: 1, textAlign: 'center', fontFamily: serif, fontSize: 18, color: C.ink }}>{toSea ? t('create2.pubTitle') : t('create.title')}</Text>
+    <Pressable accessibilityRole='button' onPress={next} style={({ pressed }) => ({ borderRadius: 999, backgroundColor: last ? C.wax : C.blue, paddingHorizontal: 16, paddingVertical: 10, opacity: pressed ? .85 : 1 })}>
+      <Text style={{ fontFamily: sans, color: C.white, fontSize: 15 }}>{last ? t('create2.send') : t('create.next')}</Text>
+    </Pressable>
+  </View>
+    <View style={{ alignSelf: 'center', width: '100%', maxWidth: toSea ? 220 : 400 }}>
+      <WaxSteps step={stepIndex} label={t('create2.step', stepIndex, flow.length)} labels={flow.map(n => t(`create2.s${n}`))} onBack={goTo} labelSize={13} />
+    </View>
+    {/* Errors sit under the header, next to the Next / Send button that caused them. */}
+    <Toast message={error || ((friends.error || catalog.error || places.error) ? t('create.noData') : '')} />
+  </View>;
+
+  const self = <View pointerEvents='none'><Avatar avatar={profile?.avatar} size={44} future /></View>;
+  const whoFace = recipient === id ? self : <View pointerEvents='none'><Avatar avatar={(recipientRow as any)?.profiles?.avatar} size={44} /></View>;
+
+  return <Screen scrollGesture={drawScrollGesture} header={header}>
+    {step === 1 && <View style={{ gap: 16 }}>
+      {title(t('create.who'))}
+      {sectionLabel(t('create2.to'))}
+      <PickerRow label={t('create2.to')} icon={whoFace} title={recipientName || t('create.self')} sub={recipient === id ? t('create2.futureSub') : t('create2.friendSub')} onPress={() => setSheet('to')} />
+      <View style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start', padding: 12, borderRadius: 12, borderWidth: 1, borderStyle: 'dashed', borderColor: C.line, backgroundColor: C.white }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.glass, borderRadius: 999, paddingHorizontal: 9, paddingVertical: 2 }}><ArtIcon name="lock" size={12} color={C.blue} /><Text style={{ fontFamily: sans, fontSize: 12, color: C.blue }}>{t('create2.private')}</Text></View>
+        <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.ink }}>{t('create2.privateNote')}</Text>
+      </View>
+      <ImageBackground source={paperLetter} resizeMode='cover' imageStyle={{ borderRadius: 14 }} style={{ borderRadius: 14, borderWidth: 1, borderColor: C.line, paddingHorizontal: 20, paddingVertical: 22, gap: 6, overflow: 'hidden' }}>
+        <Text style={{ fontFamily: serif, color: C.ink, fontSize: 18 }}><Text style={{ fontSize: 12, color: C.muted }}>{t('create2.envTo')}　</Text>{recipientName || t('create.self')}</Text>
+        <Text style={{ fontFamily: serif, color: C.ink, fontSize: 18 }}><Text style={{ fontSize: 12, color: C.muted }}>{t('create2.envFrom')}　</Text>{t('create2.you')}</Text>
+        <Image source={sealWax} style={{ position: 'absolute', right: 14, bottom: 10, width: 60, height: 60 }} resizeMode='contain' />
+      </ImageBackground>
+      {friends.loading && <SealLoader size={44} label={t('create.loading')} />}
     </View>}
-    {step === 3 && toSea && <View style={{ alignItems: 'center', gap: 12, paddingVertical: 24 }}><Vessel kind="bottle" size={150} idle /><Text style={{ color: C.muted, fontSize: 13, lineHeight: 20, textAlign: 'center' }}>{st('bottleOnly')}</Text></View>}
-    {step === 3 && !toSea && <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
-      {(catalog.data ?? []).filter(v => GAME_ENABLED ? canUseVessel(v) : showVesselInShop(v, ownsVessel(v.id))).map(v => { const usable = canUseVessel(v); return <Pressable key={v.id} onPress={() => { setVessel(v.id as VesselKind); if (selectedPlace?.brand_vessel && selectedPlace.brand_vessel !== v.id) setPlace(null); if (usable) void haptics.tick(); else router.push({ pathname: '/shop', params: { focus: v.id, returnTo: 'create' } }); }} style={[card, { width: '46%', alignItems: 'center', borderColor: vessel === v.id ? C.blue : C.line, opacity: usable ? 1 : .68 }]}><Vessel kind={v.id as VesselKind} size={105} idle={vessel === v.id} /><Text style={{ fontFamily: serif, color: C.ink, textAlign: 'center' }}>{t(`shop.vessel.${v.id}`)}</Text><Text style={{ color: usable ? C.blue : C.plum, fontSize: 12 }}>{t(usable ? 'create.owned' : 'create.getShop')}</Text></Pressable>; })}
+
+    <View style={{ gap: 16, display: step === 2 ? 'flex' : 'none' }}>
+      {title(t('create.write'))}
+      <Text style={[muted, { marginTop: -8 }]}>{toSea ? t('create2.pubLede') : t('create2.writeLede')}</Text>
+      <ImageBackground source={paperLetter} resizeMode='cover' imageStyle={{ borderRadius: 6 }} style={{ borderRadius: 6, borderWidth: 1, borderColor: C.line, padding: 16, gap: 14, minHeight: 280, overflow: 'hidden' }}>
+        {!blocks.length && <Text style={{ fontFamily: handwriting, color: C.muted, fontSize: 16, lineHeight: 27, textAlign: 'center', marginVertical: 'auto', paddingVertical: 40 }}>{t('create2.empty')}</Text>}
+        {blocks.map(b => <View key={b} style={{ gap: 6 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ flex: 1, fontFamily: sans, fontSize: 11.5, letterSpacing: .5, color: C.muted }}>{t(BLOCK_LABEL[b])}</Text>
+            <Pressable accessibilityRole='button' accessibilityLabel={t('create2.remove', t(BLOCK_LABEL[b]))} onPress={() => removeBlock(b)} hitSlop={8} style={{ paddingHorizontal: 6 }}><Text style={{ color: C.muted, fontSize: 14 }}>✕</Text></Pressable>
+          </View>
+          {b === 'text' && <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} placeholderTextColor={PLACEHOLDER} maxLength={toSea ? SEA_MESSAGE_MAX : 500} multiline textAlignVertical='top' style={{ minHeight: 120, fontFamily: serif, fontSize: 18, lineHeight: 30, color: C.ink, padding: 0 }} /><Text style={{ color: C.muted, textAlign: 'right', fontSize: 12 }}>{message.length} / {toSea ? SEA_MESSAGE_MAX : 500}</Text></>}
+          {b === 'hand' && <><DrawingPad initialStrokes={drawingStrokes.current} scrollGesture={drawScrollGesture} ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
+          {b === 'predict' && <><PredictionInput value={prediction} onChange={setPrediction} /><Text style={{ fontFamily: sans, fontSize: 12, color: C.plum }}>{t('create2.predictNote')}</Text></>}
+          {b === 'voice' && <VoiceRecorder value={voice} onChange={setVoice} active={step === 2 && phase === 'steps'} />}
+          {b === 'photo' && (photo ? <Image source={{ uri: photo }} style={{ width: '100%', height: 220, borderRadius: 6 }} resizeMode='cover' /> : <View style={{ gap: 8, borderWidth: 1.5, borderStyle: 'dashed', borderColor: C.line, borderRadius: 10, padding: 14, alignItems: 'center' }}>
+            <ToolIcon kind="photo" /><Text style={{ fontFamily: sans, color: C.blue }}>{t('create2.photoPick')}</Text>
+            {photoChoices && <View style={{ flexDirection: 'row', gap: 8, alignSelf: 'stretch' }}><View style={{ flex: 1 }}><Button title={t('create.camera')} onPress={() => void choosePhoto('camera')} /></View><View style={{ flex: 1 }}><Button title={t('create.library')} onPress={() => void choosePhoto('library')} /></View></View>}
+          </View>)}
+        </View>)}
+      </ImageBackground>
+      <View accessibilityRole='toolbar' style={{ flexDirection: 'row', gap: 4, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 16, padding: 6, ...shadows.card }}>
+        {BLOCKS.map(b => { const off = blockOff(b); return <Pressable key={b} accessibilityRole='button' accessibilityState={{ disabled: off }} disabled={off} onPress={() => addBlock(b)}
+          style={({ pressed }) => ({ flex: 1, alignItems: 'center', gap: 3, paddingVertical: 7, borderRadius: 11, backgroundColor: pressed ? C.glass : 'transparent', opacity: off ? .32 : 1 })}>
+          <ToolIcon kind={BLOCK_ICON[b]} color={b === 'predict' ? C.brass : C.blue} /><Text style={{ fontFamily: sans, fontSize: 12, color: C.ink }}>{t(BLOCK_LABEL[b])}</Text>
+        </Pressable>; })}
+      </View>
+      <Text style={muted}>{toSea ? t('create2.textOnly') : t('create2.oneEach')}</Text>
+      <View style={{ gap: 8 }}>
+        <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12, letterSpacing: .7 }}>{t('create.hint')}</Text>
+        <TextInput value={hint} onChangeText={setHint} maxLength={40} placeholder={t('create.hintPlaceholder')} placeholderTextColor={PLACEHOLDER} style={[card, { color: C.ink, padding: 12 }]} />
+        <Text style={{ color: C.muted, textAlign: 'right', fontSize: 12 }}>{hint.length} / 40</Text>
+      </View>
+    </View>
+
+    {step === 3 && <View style={{ gap: 14 }}>
+      {title(t('create.vessel'))}
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 12, paddingHorizontal: 12 }}>
+        <ToolIcon kind="search" color={C.muted} size={18} />
+        <TextInput value={vesselQuery} onChangeText={setVesselQuery} placeholder={t('create2.search')} placeholderTextColor={PLACEHOLDER} autoCorrect={false} style={{ flex: 1, paddingVertical: 11, fontFamily: sans, color: C.ink }} />
+      </View>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6 }} style={{ marginHorizontal: -24, paddingHorizontal: 24, flexGrow: 0 }}>
+        <Chip on={vesselCat === 'all'} label={t('create2.all')} count={usableList.length} onPress={() => setVesselCat('all')} />
+        {VESSEL_CATEGORIES.map(c => { const n = usableList.filter(v => vesselCategory(v) === c).length; return n ? <Chip key={c} on={vesselCat === c} label={t(`create2.cat.${c}`)} count={n} onPress={() => setVesselCat(c)} /> : null; })}
+        <View style={{ width: 24 }} />
+      </ScrollView>
+      {predicting && vessel !== 'fortune-cookie' && cookie && canUseVessel(cookie) && <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: C.cream, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 8 }}>
+        <Vessel kind="fortune-cookie" size={40} /><Text style={{ flex: 1, fontFamily: sans, color: C.ink, fontSize: 13.5 }}>{t('create2.suggest')} {t('shop.vessel.fortune-cookie')}</Text>
+        <Pressable accessibilityRole='button' onPress={() => { setVessel('fortune-cookie'); void haptics.tick(); }}><Text style={{ color: C.blue, fontFamily: sans }}>{t('create2.use')}</Text></Pressable>
+      </View>}
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+        {shownVessels.map(v => { const usable = canUseVessel(v), on = vessel === v.id; return <Pressable key={v.id} accessibilityRole='button' accessibilityState={{ selected: on }} onPress={() => { setVessel(v.id as VesselKind); if (selectedPlace?.brand_vessel && selectedPlace.brand_vessel !== v.id) setPlace(null); if (usable) void haptics.tick(); else router.push({ pathname: '/shop', params: { focus: v.id, returnTo: 'create' } }); }}
+          style={{ width: '31.5%', alignItems: 'center', gap: 4, paddingVertical: 8, paddingHorizontal: 4, borderRadius: 14, borderWidth: 1.5, borderColor: on ? C.blue : C.line, backgroundColor: C.white, opacity: usable ? 1 : .55 }}>
+          {on && <View style={{ position: 'absolute', top: 6, right: 6, width: 20, height: 20, borderRadius: 10, backgroundColor: C.blue, alignItems: 'center', justifyContent: 'center', zIndex: 1 }}><ArtIcon name="check" size={12} color={C.white} /></View>}
+          <Vessel kind={v.id as VesselKind} size={78} idle={on} />
+          <Text numberOfLines={2} style={{ fontFamily: serif, color: C.ink, fontSize: 13, textAlign: 'center' }}>{t(`shop.vessel.${v.id}`)}</Text>
+          {!usable && <Text style={{ color: C.plum, fontSize: 10.5 }}>{t('create.getShop')}</Text>}
+        </Pressable>; })}
+        {!catalog.loading && !shownVessels.length && <Text style={[muted, { width: '100%', textAlign: 'center', paddingVertical: 24 }]}>{t('create2.none')}</Text>}
+      </View>
       {catalog.loading && <SealLoader size={44} label={t('create.loading')} />}
       {catalog.error && <Button title={t('create.retry')} onPress={() => void catalog.refresh()} />}
     </View>}
-    {step === 4 && toSea && <View style={{ gap: 15 }}>
-      <Body>{st('driftLabel')}</Body>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{DRIFT_CHOICES.map(d => <Pressable key={d} accessibilityRole='button' accessibilityState={{ selected: driftDays === d }} onPress={() => { setDriftDays(d); void haptics.tick(); }} style={[card, { backgroundColor: driftDays === d ? C.cream : C.white, padding: 10 }]}><Text style={{ color: C.ink }}>{st('drift', d)}</Text></Pressable>)}</View>
-      <Text style={{ color: C.blue }}>{st('washesUp', formatted)}</Text>
-      <View style={[card, { backgroundColor: C.glass, borderColor: C.glass, gap: 8 }]}><Text style={{ color: C.ink, lineHeight: 21 }}>{st('shoreNote')}</Text><Text style={{ color: C.muted, fontSize: 13, lineHeight: 20 }}>{st('rules')}</Text></View>
-    </View>}
-    {step === 4 && !toSea && <View style={{ gap: 15 }}>
-      <Body>{t('create.when')}</Body><View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{(['m1', 'm6', 'y1', 'y5', 'custom', ...(__DEV__ ? ['dev'] : [])] as Quick[]).map(q => <Pressable key={q} onPress={() => { setQuick(q); if (q !== 'custom') setDateText(dateValue(quickDate(q))); void haptics.tick(); }} style={[card, { backgroundColor: quick === q ? C.cream : C.white, padding: 10 }]}><Text style={{ color: C.ink }}>{t(`create.${q}`)}</Text></Pressable>)}</View>
-      {quick === 'custom' && <TextInput value={dateText} onChangeText={setDateText} placeholder={t('create.dateHint')} keyboardType='numbers-and-punctuation' style={[card, { color: C.ink }]} />}
-      <Text style={{ color: C.blue }}>{t('create.arrives', formatted)}</Text><View style={[card, { backgroundColor: C.cream }]}><Text style={{ fontFamily: serif, color: C.plum }}>{t('create.memoryTitle')}</Text><Text style={{ color: C.ink, marginTop: 6 }}>{t('create.memoryBody')}</Text></View>
-      <Body>{t('create.where')}</Body><Pressable onPress={() => { setPlace(null); void haptics.tick(); }} style={[card, { borderColor: !place ? C.blue : C.line }]}><Text style={label}>{t('create.anywhere')}</Text></Pressable>
-      {(places.data ?? []).map(p => { const disabled = !!p.brand_vessel && p.brand_vessel !== vessel; return <Pressable key={p.id} disabled={disabled} onPress={() => { setPlace(p.id); void haptics.tick(); }} style={[card, { borderColor: place === p.id ? C.blue : C.line, opacity: disabled ? .45 : 1 }]}><Text style={{ fontFamily: serif, color: C.ink }}>{language === 'zh' ? p.name_zh : p.name_en}</Text><Text style={{ color: C.muted }}>{language === 'zh' ? p.city_zh : p.city_en} · {language === 'zh' ? p.why_zh : p.why_en}</Text>{disabled && <Text style={{ color: C.plum, fontSize: 12 }}>{t('create.brandPlace')}</Text>}</Pressable>; })}
-      <Body>{t('create.radius')}</Body><Text style={{ color: C.muted, fontSize: 12 }}>{t('create.serverTime')}</Text>
-    </View>}
-    <Toast message={error || ((friends.error || catalog.error || places.error) ? t('create.noData') : '')} />
 
+    {step === 4 && <View style={{ gap: 16 }}>
+      {title(toSea ? t('create2.pubWhen') : t('create.whenWhere'))}
+      {sectionLabel(toSea ? t('create2.appears') : t('create.when'))}
+      <PickerRow label={toSea ? t('create2.appears') : t('create.when')} icon={<Glyph><ToolIcon kind={quick === 'custom' ? 'calendar' : 'clock'} /></Glyph>} title={quickLabel(quick)} sub={quick === 'custom' ? (openAt ? dateLabel(openAt) : t('create2.customSub')) : dateLabel(openAt)} onPress={() => setSheet('when')} />
+      {quick === 'custom' && <MonthCalendar value={dateText} onChange={setDateText} language={language} />}
+      {!!openAt && <Text style={{ fontFamily: serif, color: C.blue, fontSize: 15 }}>{toSea ? t('create2.appearsOn', formatted) : t('create2.opensOn', formatted)}</Text>}
+      {sectionLabel(t('create.where'))}
+      {toSea ? <View style={{ gap: 10 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 12 }}>
+          <Glyph><ToolIcon kind="here" /></Glyph>
+          <View style={{ flex: 1, gap: 2 }}><Text style={{ fontFamily: serif, color: C.ink, fontSize: 17 }}>{t('create2.here')}</Text><Text style={muted}>{st('shoreNote')}</Text></View>
+        </View>
+        <Text style={muted}>{st('rules')}</Text>
+      </View> : <>
+        <PickerRow label={t('create.where')} icon={<Glyph><ToolIcon kind={placeMode === 'current' ? 'here' : placeMode === 'specific' ? 'landmark' : 'anywhere'} /></Glyph>} title={t(`create2.where.${placeMode}`)} sub={placeMode === 'anywhere' ? t('create2.anywhereSub') : placeMode === 'current' ? t('create2.where.currentSub') : whereLabel || t('create2.where.specificSub')} onPress={() => setSheet('where')} />
+        {placeMode === 'current' && (point ? placeCard(point.name, point.detail) : <View style={{ gap: 8 }}>
+          <Text style={muted}>{location.status === 'denied' ? t('create2.locationDenied') : t('create2.locating')}</Text>
+          {location.status === 'denied' && <Button title={t('create2.openSettings')} onPress={() => void location.openSettings()} />}
+        </View>)}
+        {placeMode === 'specific' && <View style={{ gap: 10 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 12, paddingHorizontal: 12 }}>
+            <ToolIcon kind="search" color={C.muted} size={18} />
+            <TextInput value={placeQuery} onChangeText={setPlaceQuery} placeholder={t('create2.placeSearch')} placeholderTextColor={PLACEHOLDER} autoCorrect={false} style={{ flex: 1, paddingVertical: 11, fontFamily: sans, color: C.ink }} />
+          </View>
+          {(place || point) && !placeQuery.trim() ? placeCard(whereLabel, selectedPlace ? `${language === 'zh' ? selectedPlace.city_zh : selectedPlace.city_en}` : point?.detail ?? '') : <View style={{ backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 4 }}>
+            {shownLandmarks.length > 0 && <SheetGroup>{t('create2.landmarks')}</SheetGroup>}
+            {shownLandmarks.map(pl => { const disabled = !!pl.brand_vessel && pl.brand_vessel !== vessel; return <SheetOption key={pl.id} icon={<Glyph size={36}><ToolIcon kind="landmark" color={disabled ? C.muted : C.wax} size={18} /></Glyph>} title={language === 'zh' ? pl.name_zh : pl.name_en} sub={disabled ? t('create.brandPlace') : language === 'zh' ? pl.city_zh : pl.city_en} onPress={() => { if (disabled) return; setPlace(pl.id); setPoint(null); setPlaceQuery(''); void haptics.tick(); }} />; })}
+            {placeResults.length > 0 && <SheetGroup>{t('create2.mapResults')}</SheetGroup>}
+            {placeResults.map((r, i) => <SheetOption key={`${r.lat},${r.lng},${i}`} icon={<Glyph size={36}><ToolIcon kind="search" size={18} /></Glyph>} title={r.name} sub={r.detail} onPress={() => { setPoint(r); setPlace(null); setPlaceQuery(''); void haptics.tick(); }} />)}
+            {searching && <Text style={[muted, { padding: 10 }]}>{t('create.loading')}</Text>}
+            {!searching && placeQuery.trim().length >= 2 && !shownLandmarks.length && !placeResults.length && <Text style={[muted, { padding: 10 }]}>{t('create2.noPlace')}</Text>}
+          </View>}
+        </View>}
+        <Text style={{ color: C.muted, fontSize: 12 }}>{t('create.serverTime')}</Text>
+      </>}
+      <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center', backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 14 }}>
+        {vessel ? <Vessel kind={vessel} size={64} /> : null}
+        <View style={{ flex: 1, gap: 8 }}>
+          {([['create2.sumTo', toSea ? t('create2.anyone') : recipientName], ['create2.sumBody', insideSummary], ['create2.sumVessel', vessel ? t(`shop.vessel.${vessel}`) : '—'], ['create2.sumWhen', openAt ? formatted : '—'], ['create2.sumWhere', toSea ? t('create2.nearShore') : whereLabel || t('create.anywhere')]] as const).map(([k, v]) => <View key={k}>
+            <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12 }}>{t(k)}</Text><Text style={{ fontFamily: sans, color: C.ink, fontSize: 14 }}>{v}</Text>
+          </View>)}
+        </View>
+      </View>
+    </View>}
+
+
+    <Sheet open={sheet === 'to'} title={t('create2.to')} onClose={() => setSheet(null)}>
+      <SheetGroup>{t('create2.groupMe')}</SheetGroup>
+      <SheetOption selected={recipient === id} icon={self} title={t('create.self')} sub={t('create2.futureSub')} onPress={() => { setRecipient(id); setSheet(null); setError(''); void haptics.tick(); }} />
+      <SheetGroup>{t('create2.groupFriends')}</SheetGroup>
+      {(friends.data ?? []).map(f => <SheetOption key={f.friend_id} selected={recipient === f.friend_id} icon={<View pointerEvents='none'><Avatar avatar={(f as any).profiles?.avatar} size={44} /></View>} title={friendName(f)} sub={t('create2.friendSub')} onPress={() => { setRecipient(f.friend_id); setSheet(null); setError(''); void haptics.tick(); }} />)}
+      {!friends.loading && !friends.data?.length && <Text style={[muted, { marginHorizontal: 10 }]}>{t('create.noFriends')}</Text>}
+      <SheetOption accent icon={<Glyph><ArtIcon name="plus" color={C.blue} /></Glyph>} title={t('create.invite')} sub={t('create2.inviteSub')} onPress={() => { setSheet(null); router.push('/invite'); }} />
+    </Sheet>
+    <Sheet open={sheet === 'when'} title={toSea ? t('create2.appears') : t('create.when')} onClose={() => setSheet(null)}>
+      {quickList.map(q => <SheetOption key={q} selected={quick === q} icon={<Glyph><ToolIcon kind={q === 'custom' ? 'calendar' : 'clock'} /></Glyph>} title={quickLabel(q)} sub={q === 'custom' ? t('create2.customSub') : dateLabel(quickDate(q))} onPress={() => { setQuick(q); setSheet(null); setError(''); void haptics.tick(); }} />)}
+    </Sheet>
+    <Sheet open={sheet === 'where'} title={t('create.where')} onClose={() => setSheet(null)}>
+      {(['anywhere', 'current', 'specific'] as const).map(m => <SheetOption key={m} selected={placeMode === m} icon={<Glyph><ToolIcon kind={m === 'current' ? 'here' : m === 'specific' ? 'landmark' : 'anywhere'} /></Glyph>} title={t(`create2.where.${m}`)} sub={t(m === 'anywhere' ? 'create2.anywhereSub' : `create2.where.${m}Sub`)}
+        onPress={() => { setPlaceMode(m); setPlace(null); setPoint(null); setPlaceQuery(''); setSheet(null); setError(''); void haptics.tick(); if (m === 'current') void location.request(); }} />)}
+    </Sheet>
   </Screen>;
 }
