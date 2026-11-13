@@ -44,7 +44,8 @@ export function VoiceRecorder({ value, onChange, active }: { value: VoiceClip | 
     finished.current = true;
     setRecording(false); cleanup();
     const ms = Math.min(VOICE_MAX_MS, lastMs.current);
-    if (!uri || ms < MIN_MS) { setError(t(uri ? "voice.tooShort" : "voice.error")); void haptics.warn(); return; }
+    if (!uri || ms < MIN_MS) { if (uri) revoke({ uri, durationMs: ms }); setError(t(uri ? "voice.tooShort" : "voice.error")); void haptics.warn(); return; }
+    revoke(value);
     onChange({ uri, durationMs: ms });
     void haptics.tap();
   };
@@ -74,6 +75,10 @@ export function VoiceRecorder({ value, onChange, active }: { value: VoiceClip | 
   const revoke = (clip: VoiceClip | null) => { if (Platform.OS === "web" && clip?.uri.startsWith("blob:")) URL.revokeObjectURL(clip.uri); };
   const start = async () => {
     if (starting || recording) return;
+    if (Platform.OS === "web" && typeof MediaRecorder === "undefined") {
+      setError(t("voice.unsupported"));
+      return;
+    }
     setError(""); setStarting(true);
     try {
       if (Platform.OS !== "web") {
@@ -81,7 +86,6 @@ export function VoiceRecorder({ value, onChange, active }: { value: VoiceClip | 
         if (!permission.granted) { setError(t("voice.permission")); void haptics.warn(); return; }
       }
       void haptics.tap();
-      revoke(value); onChange(null);
       release.current = music.hold();
       await setVoiceAudioMode("record");
       await recorder.prepareToRecordAsync();
@@ -90,9 +94,17 @@ export function VoiceRecorder({ value, onChange, active }: { value: VoiceClip | 
       recorder.record({ forDuration: VOICE_MAX_MS / 1000 });
       setRecording(true);
     } catch (e) {
+      if (__DEV__) console.warn("Voice recording setup failed:", e);
       cleanup();
-      const name = String((e as any)?.name ?? "") + String((e as any)?.message ?? "");
-      setError(t(/NotAllowed|Permission|denied/i.test(name) ? "voice.permission" : "voice.error"));
+      const name = e instanceof Error ? e.name : "";
+      const message = e instanceof Error ? e.message : "";
+      if (/^(NotFoundError|DevicesNotFoundError)$/.test(name) || /No media devices available/i.test(message)) {
+        setError(t("voice.noMicrophone"));
+      } else if (/NotAllowed|Permission|denied/i.test(`${name} ${message}`)) {
+        setError(t("voice.permission"));
+      } else {
+        setError(t("voice.error"));
+      }
       void haptics.warn();
     } finally { setStarting(false); }
   };
@@ -126,8 +138,8 @@ export function VoiceRecorder({ value, onChange, active }: { value: VoiceClip | 
     <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}><ArtIcon name="mic" size={18} color={C.plum} /><Text style={{ color: C.plum, fontFamily: serif, fontSize: 16 }}>{t("voice.ready")}</Text></View>
     <VoicePlayback uri={value.uri} durationMs={value.durationMs} seed={value.uri} compact />
     <View style={{ flexDirection: "row", gap: 18, flexWrap: "wrap" }}>
-      <Pressable onPress={() => void start()} accessibilityRole="button" hitSlop={8}><Text style={{ color: C.blue, fontFamily: sans }}>{t("voice.rerecord")}</Text></Pressable>
-      <Pressable onPress={remove} accessibilityRole="button" hitSlop={8}><Text style={{ color: C.plum, fontFamily: sans }}>{t("voice.delete")}</Text></Pressable>
+      <Pressable onPress={() => void start()} disabled={starting} accessibilityRole="button" hitSlop={8}><Text style={{ color: C.blue, fontFamily: sans }}>{t("voice.rerecord")}</Text></Pressable>
+      <Pressable onPress={remove} disabled={starting} accessibilityRole="button" hitSlop={8}><Text style={{ color: C.plum, fontFamily: sans }}>{t("voice.delete")}</Text></Pressable>
     </View>
     <Text style={{ color: C.muted, fontFamily: sans, fontSize: 12 }}>{t("voice.sealedNote")}</Text>
     {!!error && <Text accessibilityRole="alert" style={{ color: C.wax, fontSize: 13 }}>{error}</Text>}
