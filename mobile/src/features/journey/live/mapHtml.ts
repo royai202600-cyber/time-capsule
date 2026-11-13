@@ -10,8 +10,8 @@ export const PMTILES = "https://unpkg.com/pmtiles@4.5.0/dist/pmtiles.js";
 const TOY_SCALE = 0.35;
 const TOY_MAX_M = 40;
 
-// Landmarks drawn in brass at their real spot (docs/sop/landmark-monument.md). Two ways, mixable:
-// - tile: the real building outline already in our map tiles, picked by feature id and repainted in brass;
+// Landmarks drawn in blues at their real spot (docs/sop/landmark-monument.md). Two ways, mixable:
+// - tile: the real building outline already in our map tiles, picked by feature id and repainted in ink blue;
 // - tiers: hand-stacked boxes for shapes the tiles don't have (fountains, statues, flared towers).
 /**
  * [half-width m, base m, top m, options]: a box centred on the monument. Options: `round` (a disc of that radius),
@@ -50,7 +50,7 @@ export const MONUMENTS: Monument[] = [
   ] },
   // HKUST: the curved academic building that wraps the Piazza, opening west towards the gate. The Piazza
   // (OSM way 235913807) is a ring centred here; the seal floats over the Piazza. Roy (2026-11-10): the whole
-  // campus is the landmark, so every tile building inside the campus outline (OSM way 40664120) is brass too.
+  // campus is the landmark, so every tile building inside the campus outline (OSM way 40664120) is blue too.
   { id: "hkust", lat: 22.3374255, lng: 114.2629606,
     tile: { realTop: 38, top: 14, ids: [
       35184588150781, 35184588150874, 35184588151507, 35184588151845, 35184604980730, 35184604980739, 35184605712876, 35184605712877,
@@ -101,7 +101,8 @@ function monumentGeoJson() {
   }));
   return { type: "FeatureCollection", features };
 }
-const BRASS_RAMP = (t: unknown) => ["interpolate", ["linear"], t, 0, "#B98F45", 0.6, C.brass, 1, "#F3E2BB"];
+// Everything of ours on the map is blue; brass is kept for private hunts (docs/design/city-orienteering.md).
+const MONUMENT_RAMP = (t: unknown) => ["interpolate", ["linear"], t, 0, C.ink, 0.35, C.blue, 0.75, C.lightBlue, 1, C.glass];
 export const mapPalette = {
   water: "#BCD3E6", waterLine: "#9DBBD6", land: "#F3EFE6", park: "#DCE6CF", sand: "#EFE3C6",
   building: "#E6E0D3", buildingTop: "#EEE9DE", road: "#FFFFFF", roadCase: "#D5DDE7", major: "#F1E2BF", label: C.blue, halo: "#F6F8FB",
@@ -122,8 +123,8 @@ function vectorStyle(pmtiles: string) {
       { id: "road-case", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": mapPalette.roadCase, "line-width": ["interpolate", ["linear"], ["zoom"], 13, 2, 17, 12, 19, 22] } },
       { id: "roads", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road", "path"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "kind"], ["highway", "major_road"], mapPalette.major, mapPalette.road], "line-width": ["interpolate", ["linear"], ["zoom"], 13, 1, 17, ["match", ["get", "kind"], "path", 2, 9], 19, ["match", ["get", "kind"], "path", 4, 18]] } },
       { id: "buildings", type: "fill-extrusion", source: "base", "source-layer": "buildings", minzoom: 15, filter: ["!", ["in", ["id"], ["literal", TILE_IDS]]], paint: { "fill-extrusion-color": mapPalette.building, "fill-extrusion-height": ["min", ["*", ["coalesce", ["get", "height"], 9], TOY_SCALE], TOY_MAX_M], "fill-extrusion-opacity": .82 } },
-      // Landmark buildings from the tiles, repainted in the monument brass (darker at the foot, cream at the top).
-      { id: "monument-tiles", type: "fill-extrusion", source: "base", "source-layer": "buildings", minzoom: 15, filter: ["in", ["id"], ["literal", TILE_IDS]], paint: { "fill-extrusion-base": ["*", ["coalesce", ["get", "min_height"], 0], tileScale()], "fill-extrusion-height": ["*", ["coalesce", ["get", "height"], 9], tileScale()], "fill-extrusion-color": C.brass, "fill-extrusion-opacity": 1, "fill-extrusion-vertical-gradient": true } },
+      // Landmark buildings from the tiles, repainted in the monument blue.
+      { id: "monument-tiles", type: "fill-extrusion", source: "base", "source-layer": "buildings", minzoom: 15, filter: ["in", ["id"], ["literal", TILE_IDS]], paint: { "fill-extrusion-base": ["*", ["coalesce", ["get", "min_height"], 0], tileScale()], "fill-extrusion-height": ["*", ["coalesce", ["get", "height"], 9], tileScale()], "fill-extrusion-color": C.blue, "fill-extrusion-opacity": 1, "fill-extrusion-vertical-gradient": true } },
       { id: "places", type: "symbol", source: "base", "source-layer": "places", filter: ["in", ["get", "kind"], ["literal", ["neighbourhood", "locality", "macrohood"]]], layout: { "text-field": ["coalesce", ["get", "name:zh-Hant"], ["get", "name"]], "text-font": ["Noto Sans Regular"], "text-size": 12, "text-letter-spacing": .08 }, paint: { "text-color": mapPalette.label, "text-halo-color": mapPalette.halo, "text-halo-width": 1.6 } },
     ],
   };
@@ -214,7 +215,7 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .you .label{animation:labelIn .3s ease-out;position:absolute;left:50%;bottom:66px;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:12px;background:${C.ink};color:${C.brass};box-shadow:0 2px 8px rgba(22,38,63,.3);cursor:pointer}
 .you .label:after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:${C.ink}}
 /* Landmark: a floating seal badge with a four-point star, the same for every Landmark (on top of its monument when it has one), never a gem. Plum once beaten. */
-.pin.landmark{width:40px;height:44px;--lm:${C.brass};--lm-hi:#E8D3A3;--lm-lo:#9C7B3C}
+.pin.landmark{width:40px;height:44px;--lm:${C.blue};--lm-hi:#A9C6E8;--lm-lo:#1E3F61}
 .pin.landmark.done{--lm:${C.plum};--lm-hi:#B98494;--lm-lo:#4A1C2A}
 .pin.landmark .badge{position:absolute;left:6px;bottom:8px;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--lm-hi),var(--lm) 62%,var(--lm-lo));box-shadow:0 2px 6px rgba(22,38,63,.35),inset 0 0 0 2px var(--lm-hi);display:flex;align-items:center;justify-content:center;animation:bob 3.6s ease-in-out infinite}
 .pin.landmark .badge svg{width:16px;height:16px}
@@ -245,7 +246,7 @@ const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="f
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
 map.on('load',()=>{
   map.addSource('monuments',{type:'geojson',data:${JSON.stringify(monumentGeoJson())}});
-  map.addLayer({id:'monuments',type:'fill-extrusion',source:'monuments',paint:{'fill-extrusion-base':['get','base'],'fill-extrusion-height':['get','top'],'fill-extrusion-color':${JSON.stringify(BRASS_RAMP(["get", "t"]))},'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}});
+  map.addLayer({id:'monuments',type:'fill-extrusion',source:'monuments',paint:{'fill-extrusion-base':['get','base'],'fill-extrusion-height':['get','top'],'fill-extrusion-color':${JSON.stringify(MONUMENT_RAMP(["get", "t"]))},'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}});
   map.addSource('reach',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   map.addLayer({id:'reach-fill',type:'fill',source:'reach',paint:{'fill-color':'${C.brass}','fill-opacity':.12}});
   map.addLayer({id:'reach-line',type:'line',source:'reach',paint:{'line-color':'${C.brass}','line-width':1.5,'line-dasharray':[2,2]}});
