@@ -67,6 +67,9 @@ export type Database = {
           opened_lat: number | null
           opened_lng: number | null
           place: string | null
+          place_lat: number | null
+          place_lng: number | null
+          place_name: string | null
           recipient: string | null
           sea: boolean
           sea_returns: number
@@ -92,6 +95,9 @@ export type Database = {
           opened_lat?: number | null
           opened_lng?: number | null
           place?: string | null
+          place_lat?: number | null
+          place_lng?: number | null
+          place_name?: string | null
           recipient?: string | null
           sea?: boolean
           sea_returns?: number
@@ -117,6 +123,9 @@ export type Database = {
           opened_lat?: number | null
           opened_lng?: number | null
           place?: string | null
+          place_lat?: number | null
+          place_lng?: number | null
+          place_name?: string | null
           recipient?: string | null
           sea?: boolean
           sea_returns?: number

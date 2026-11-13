@@ -38,6 +38,8 @@ import { KeeperCard, keeperPortrait, QuestSheet } from "../hunt/HuntViews";
 import { useHuntText } from "../hunt/strings";
 import type { PassportHunt } from "../../services/game";
 
+import { pointOpeningPlace } from "../capsule/model";
+
 type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string; waiting?: boolean };
 
 const FALLBACK = { lat: 22.19358, lng: 113.53917 }; // Senado Square, Macau (development only)
@@ -190,7 +192,10 @@ export default function JourneyScreen() {
     const m = (lat: number, lng: number) => distanceMeters(you.lat, you.lng, lat, lng);
     const seaItems: Item[] = bottles.map((b) => ({ kind: "sea", id: b.id, lat: b.lat, lng: b.lng, meters: m(b.lat, b.lng), bottle: b }));
     const placeItems: Item[] = capsules.flatMap((capsule) => {
-      const pin = pins.find((p) => p.place.id === capsule.place);
+      const point = pointOpeningPlace(capsule);
+      const pin: JourneyPin | undefined = point
+        ? { place: point, kind: capsule.opened_at ? "visited" : "waiting" }
+        : pins.find((p) => p.place.id === capsule.place);
       return pin ? [{ kind: "place" as const, id: `place-${capsule.id}`, lat: pin.place.lat, lng: pin.place.lng,
         meters: m(pin.place.lat, pin.place.lng), pin: { ...pin, vessel: capsule.vessel }, capsuleId: capsule.id }] : [];
     });

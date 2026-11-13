@@ -53,17 +53,26 @@ export const formatDate = (iso: string | null, lang: "zh" | "en", time = false) 
     ...(time ? { hour: "numeric", minute: "2-digit" } : {}),
   }).format(new Date(iso)) : "";
 
+export function pointOpeningPlace(c: Row): Place | undefined {
+  if (c.place_lat == null || c.place_lng == null || c.place_name == null) return;
+  return {
+    id: c.id, lat: c.place_lat, lng: c.place_lng, radius_m: 100,
+    name_zh: c.place_name, name_en: c.place_name,
+    city_zh: "", city_en: "", why_zh: "", why_en: "", sort: 0, brand_vessel: null,
+  };
+}
+
 export function status(c: Row, side: "inbox" | "sent", fix: Fix | null, place?: Place, now = Date.now()) {
   if (c.opened_at) return "opened" as const;
   if (new Date(c.open_at).getTime() > now) return "time" as const;
   if (side === "sent") return "waiting" as const;
   if (place && (!fix || fix.accuracy > 200 || distanceMeters(fix.lat, fix.lng, place.lat, place.lng) > place.radius_m)) return "place" as const;
-  if (c.place && !place) return "place" as const;
+  if ((c.place || c.place_lat != null) && !place) return "place" as const;
   return "ready" as const;
 }
 
 export function distance(c: Row, fix: Fix | null, place?: Place) {
-  return c.place && fix && place ? distanceMeters(fix.lat, fix.lng, place.lat, place.lng) : null;
+  return (c.place || c.place_lat != null) && fix && place ? distanceMeters(fix.lat, fix.lng, place.lat, place.lng) : null;
 }
 
 export async function openForRecipient(id: string, fix: Fix | null) {
