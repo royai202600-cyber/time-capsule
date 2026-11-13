@@ -32,7 +32,8 @@ import { Chip, Glyph, MonthCalendar, PickerRow, Sheet, SheetGroup, SheetOption, 
 import { usePredictionText } from '../prediction/strings';
 import { DRIFT_CHOICES, sea, SeaError, SEA_BACKEND, SEA_ENABLED, SEA_MESSAGE_MAX, SEA_AVATAR, SEA_RECIPIENT, type DriftDays, type ThrowResult } from '../../services/sea';
 import { shortDate, useSeaText } from '../sea/strings';
-import { openingCoordinates } from '../journey/location';
+import { openingCoordinates, useForegroundLocation } from '../journey/location';
+import { ANY_PLACE_BACKEND, pointPlaceArgs, searchPlaces, type PointPlace } from '../../services/places';
 
 type Quick = 'd1' | 'w1' | 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
 // The blocks a capsule can hold. Today's backend keeps one of each, and text or handwriting (docs/design/create-v2.md).
@@ -46,6 +47,7 @@ const SEA_DRIFT: Partial<Record<Quick, DriftDays>> = { d1: 1, w1: 7, m1: 30, y1:
 const quickDate = (q: Quick) => { const d = new Date(); if (q === 'd1') d.setDate(d.getDate() + 1); if (q === 'w1') d.setDate(d.getDate() + 7); if (q === 'm1') d.setMonth(d.getMonth() + 1); if (q === 'm6') d.setMonth(d.getMonth() + 6); if (q === 'y1') d.setFullYear(d.getFullYear() + 1); if (q === 'y5') d.setFullYear(d.getFullYear() + 5); if (q === 'dev') d.setMinutes(d.getMinutes() + 2); return d; };
 const dateValue = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const customDate = (s: string) => { if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null; const d = new Date(`${s}T12:00:00`); return dateValue(d) === s && d.getTime() > Date.now() ? d : null; };
+const PLACEHOLDER = '#A5AFBD';
 const card = { borderWidth: 1.5, borderColor: C.line, backgroundColor: C.white, borderRadius: 16, padding: 14 } as const;
 const label = { fontFamily: sans, color: C.ink } as const;
 // The letter's centre is at stage y=125; these drops meet each vessel's opening at stage y=270–325.
@@ -102,10 +104,26 @@ export default function CreateScreen() {
   const [photo, setPhoto] = useState<string | null>(null), [photoChoices, setPhotoChoices] = useState(false), [voice, setVoice] = useState<VoiceClip | null>(null);
   const voicePath = useRef<{ uri: string; path: string } | null>(null);
   const [vessel, setVessel] = useState<VesselKind | null>(null), [place, setPlace] = useState<string | null>(null);
-  const mode = blocks.includes('hand') ? 'hand' : 'type';
+  const hasText = blocks.includes('text'), hasHand = blocks.includes('hand');
   const [quick, setQuick] = useState<Quick>(startsAtSea ? 'd1' : 'y1'), [dateText, setDateText] = useState('');
   const driftDays: DriftDays = SEA_DRIFT[quick] ?? 7;
   const [seaResult, setSeaResult] = useState<ThrowResult | null>(null);
+  // Where: anywhere, the sender's current spot, or a specific place (one of our landmarks or a searched address).
+  const [placeMode, setPlaceMode] = useState<'anywhere' | 'current' | 'specific'>('anywhere'), [point, setPoint] = useState<PointPlace | null>(null);
+  const [placeQuery, setPlaceQuery] = useState(''), [placeResults, setPlaceResults] = useState<PointPlace[]>([]), [searching, setSearching] = useState(false);
+  const location = useForegroundLocation(placeMode === 'current');
+  useEffect(() => {
+    if (placeMode !== 'current' || !location.fix || point) return;
+    setPoint({ name: t('create2.where.current'), detail: `${location.fix.lat.toFixed(4)}, ${location.fix.lng.toFixed(4)}`, lat: location.fix.lat, lng: location.fix.lng });
+  }, [placeMode, location.fix, point]);
+  useEffect(() => {
+    if (placeMode !== 'specific' || placeQuery.trim().length < 2) { setPlaceResults([]); setSearching(false); return; }
+    let live = true; setSearching(true);
+    const timer = setTimeout(() => {
+      searchPlaces(placeQuery, location.fix).then(r => { if (live) setPlaceResults(r); }).catch(() => { if (live) setPlaceResults([]); }).finally(() => { if (live) setSearching(false); });
+    }, 400);
+    return () => { live = false; clearTimeout(timer); };
+  }, [placeMode, placeQuery]);
   const [sheet, setSheet] = useState<'to' | 'when' | 'where' | null>(null), [vesselQuery, setVesselQuery] = useState(''), [vesselCat, setVesselCat] = useState<'all' | VesselCategory>('all');
   const [error, setError] = useState(''), [busy, setBusy] = useState(false), [phase, setPhase] = useState<'steps' | 'seal' | 'sealed'>('steps'), [sealedAt, setSealedAt] = useState<Date | null>(null), [stamped, setStamped] = useState(false);
   const drawing = useRef<DrawingHandle>(null);
@@ -190,13 +208,18 @@ export default function CreateScreen() {
     if (step >= 2 && predicting && !prediction.trim()) return p('need');
     if (step >= 2 && toSea && !message.trim()) return t('create.needMessage');
     if (step >= 4 && toSea && SEA_BACKEND && !openingCoordinates()) return st('needLocation');
-    if (step >= 2 && !predicting && (mode === 'type' ? !message.trim() : step === 2 ? !drawing.current?.hasInk() : !drawingData)) return t('create.needMessage');
+    // Text and handwriting can sit together; one of them (or a prediction) must have content.
+    const inked = hasHand && (step === 2 ? !!drawing.current?.hasInk() : !!drawingData);
+    if (step >= 2 && !predicting && !(hasText && message.trim()) && !inked) return t('create.needMessage');
     if (step >= 3 && !vessel) return t('create.chooseFirst');
     if (step >= 3 && chosenVessel && !canUseVessel(chosenVessel)) return t('create.notOwned');
     if (step >= 4 && !openAt) return t('create.badDate');
+    if (step >= 4 && !toSea && placeMode === 'current' && !point) return t('create2.needHere');
+    if (step >= 4 && !toSea && placeMode === 'specific' && !place && !point) return t('create2.needPlace');
+    if (step >= 4 && !toSea && placeMode !== 'anywhere' && point && !ANY_PLACE_BACKEND) return t('create2.placeSoon');
     return '';
   };
-  const next = async () => { const issue = validate(); if (issue) { setError(issue); void haptics.warn(); return; } if (step === 2 && mode === 'hand') { try { setDrawingData(drawing.current?.hasInk() ? await drawing.current.png() ?? null : null); } catch { setError(t('create.sendError')); return; } } setError(''); Keyboard.dismiss(); void haptics.tap(); if (step === 2 && predicting && !vessel) { const cookie = catalog.data?.find(v => v.id === 'fortune-cookie'); if (cookie && canUseVessel(cookie)) setVessel('fortune-cookie'); } if (stepIndex < flow.length) setStepIndex(stepIndex + 1); else setPhase('seal'); };
+  const next = async () => { const issue = validate(); if (issue) { setError(issue); void haptics.warn(); return; } if (step === 2 && hasHand) { try { setDrawingData(drawing.current?.hasInk() ? await drawing.current.png() ?? null : null); } catch { setError(t('create.sendError')); return; } } setError(''); Keyboard.dismiss(); void haptics.tap(); if (step === 2 && predicting && !vessel) { const cookie = catalog.data?.find(v => v.id === 'fortune-cookie'); if (cookie && canUseVessel(cookie)) setVessel('fortune-cookie'); } if (stepIndex < flow.length) setStepIndex(stepIndex + 1); else setPhase('seal'); };
   const choosePhoto = async (source: 'camera' | 'library') => {
     setPhotoChoices(false); setError('');
     if (Platform.OS !== 'web') { const permission = source === 'camera' ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync(); if (!permission.granted) { setError(t('create.photoPermission')); return; } }
@@ -265,8 +288,8 @@ export default function CreateScreen() {
         finishAnimation();
         return;
       }
-      const ink = mode === 'hand' ? drawingData : null;
-      if (mode === 'hand' && !ink && !predicting) throw new Error('empty drawing');
+      const ink = hasHand ? drawingData : null;
+      if (!ink && !(hasText && message.trim()) && !predicting) throw new Error('empty drawing');
       // Upload once per recording; a retried send reuses the same pending path.
       let voiceArgs = {};
       if (voice && VOICE_BACKEND) {
@@ -276,7 +299,7 @@ export default function CreateScreen() {
         }
         voiceArgs = { p_voice: voicePath.current.path, p_voice_ms: Math.round(voice.durationMs) };
       }
-      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: mode === 'type' ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), p_place: place ?? undefined, ...voiceArgs, ...predictionSendArgs(kind, prediction) });
+      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: hasText ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), p_place: place ?? undefined, ...pointPlaceArgs(placeMode === 'anywhere' ? null : point) as {}, ...voiceArgs, ...predictionSendArgs(kind, prediction) });
       if (rpcError) throw rpcError;
       if (voice && capsuleId) stubAttachVoice(String(capsuleId), voice);
       sentOnce.current = true;
@@ -396,7 +419,7 @@ export default function CreateScreen() {
   if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={toSea ? scenes.seaSealed : scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{toSea && seaResult ? st('sealedSea', language === 'zh' ? seaResult.shore_zh : seaResult.shore_en, shortDate(seaResult.washes_up_at, language)) : predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
   const last = stepIndex === flow.length;
   const goTo = (n: number) => { Keyboard.dismiss(); setStepIndex(n); setError(''); void haptics.tap(); };
-  const blockOff = (b: Block) => blocks.includes(b) || (toSea && b !== 'text') || (b === 'text' && blocks.includes('hand')) || (b === 'hand' && blocks.includes('text')) || (b === 'voice' && !VOICE_ENABLED) || (b === 'predict' && !PREDICTION_ENABLED);
+  const blockOff = (b: Block) => blocks.includes(b) || (toSea && b !== 'text') || (b === 'voice' && !VOICE_ENABLED) || (b === 'predict' && !PREDICTION_ENABLED);
   const addBlock = (b: Block) => { if (blockOff(b)) return; setBlocks([...blocks, b]); setError(''); void haptics.tick(); if (b === 'photo') setPhotoChoices(true); };
   const removeBlock = (b: Block) => {
     setBlocks(blocks.filter(x => x !== b)); void haptics.tap();
@@ -419,17 +442,25 @@ export default function CreateScreen() {
   const title = (text: string) => <Text style={{ fontFamily: serif, color: C.ink, fontSize: 23 }}>{text}</Text>;
   const sectionLabel = (text: string) => <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12, letterSpacing: .7, marginBottom: -8 }}>{text}</Text>;
 
-  const header = <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 8, backgroundColor: C.paper }}>
+  const shownLandmarks = (places.data ?? []).filter(pl => { const q = placeQuery.trim().toLowerCase(); return !q || `${pl.name_zh} ${pl.name_en} ${pl.city_zh} ${pl.city_en}`.toLowerCase().includes(q); });
+  const whereLabel = placeMode === 'anywhere' ? '' : selectedPlace ? placeName : point?.name ?? '';
+  const placeCard = (name: string, detail: string) => <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 12 }}>
+    <Glyph><ToolIcon kind="landmark" color={C.wax} /></Glyph>
+    <View style={{ flex: 1, gap: 2 }}><Text style={{ fontFamily: serif, color: C.ink, fontSize: 16 }}>{name}</Text>{!!detail && <Text style={muted}>{detail}</Text>}<Text style={{ fontFamily: sans, color: C.plum, fontSize: 12 }}>{t('create2.radius')}</Text>{!!point && !ANY_PLACE_BACKEND && <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12 }}>{t('create2.placeSoon')}</Text>}</View>
+  </View>;
+  const header = <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 6, gap: 8, backgroundColor: C.paper }}><View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
     <Pressable accessibilityRole='button' accessibilityLabel={stepIndex > 1 ? t('create.back') : t('create2.close')} onPress={() => { if (stepIndex > 1) goTo(stepIndex - 1); else goBack(); }}
       style={{ width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: C.line, backgroundColor: C.white, alignItems: 'center', justifyContent: 'center' }}>
       <ArtIcon name={stepIndex > 1 ? 'back' : 'close'} size={20} color={stepIndex > 1 ? C.ink : C.plum} />
     </Pressable>
-    <View style={{ flex: 1, alignItems: 'center' }}>
-      <WaxSteps compact step={stepIndex} label={t('create2.step', stepIndex, flow.length)} labels={flow.map(n => t(`create2.s${n}`))} onBack={goTo} />
-    </View>
+    <Text numberOfLines={1} style={{ flex: 1, textAlign: 'center', fontFamily: serif, fontSize: 18, color: C.ink }}>{toSea ? t('create2.pubTitle') : t('create.title')}</Text>
     <Pressable accessibilityRole='button' onPress={next} style={({ pressed }) => ({ borderRadius: 999, backgroundColor: last ? C.wax : C.blue, paddingHorizontal: 16, paddingVertical: 10, opacity: pressed ? .85 : 1 })}>
       <Text style={{ fontFamily: sans, color: C.white, fontSize: 15 }}>{last ? t('create2.send') : t('create.next')}</Text>
     </Pressable>
+  </View>
+    <View style={{ alignSelf: 'center', width: '100%', maxWidth: toSea ? 220 : 400 }}>
+      <WaxSteps step={stepIndex} label={t('create2.step', stepIndex, flow.length)} labels={flow.map(n => t(`create2.s${n}`))} onBack={goTo} labelSize={13} />
+    </View>
   </View>;
 
   const self = <View pointerEvents='none'><Avatar avatar={profile?.avatar} size={44} future /></View>;
@@ -453,7 +484,7 @@ export default function CreateScreen() {
     </View>}
 
     <View style={{ gap: 16, display: step === 2 ? 'flex' : 'none' }}>
-      {title(toSea ? t('create2.pubTitle') : t('create.write'))}
+      {title(t('create.write'))}
       <Text style={[muted, { marginTop: -8 }]}>{toSea ? t('create2.pubLede') : t('create2.writeLede')}</Text>
       <ImageBackground source={paperLetter} resizeMode='cover' imageStyle={{ borderRadius: 6 }} style={{ borderRadius: 6, borderWidth: 1, borderColor: C.line, padding: 16, gap: 14, minHeight: 280, overflow: 'hidden' }}>
         {!blocks.length && <Text style={{ fontFamily: handwriting, color: C.muted, fontSize: 16, lineHeight: 27, textAlign: 'center', marginVertical: 'auto', paddingVertical: 40 }}>{t('create2.empty')}</Text>}
@@ -462,7 +493,7 @@ export default function CreateScreen() {
             <Text style={{ flex: 1, fontFamily: sans, fontSize: 11.5, letterSpacing: .5, color: C.muted }}>{t(BLOCK_LABEL[b])}</Text>
             <Pressable accessibilityRole='button' accessibilityLabel={t('create2.remove', t(BLOCK_LABEL[b]))} onPress={() => removeBlock(b)} hitSlop={8} style={{ paddingHorizontal: 6 }}><Text style={{ color: C.muted, fontSize: 14 }}>✕</Text></Pressable>
           </View>
-          {b === 'text' && <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} maxLength={toSea ? SEA_MESSAGE_MAX : 500} multiline textAlignVertical='top' style={{ minHeight: 120, fontFamily: serif, fontSize: 18, lineHeight: 30, color: C.ink, padding: 0 }} /><Text style={{ color: C.muted, textAlign: 'right', fontSize: 12 }}>{message.length} / {toSea ? SEA_MESSAGE_MAX : 500}</Text></>}
+          {b === 'text' && <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} placeholderTextColor={PLACEHOLDER} maxLength={toSea ? SEA_MESSAGE_MAX : 500} multiline textAlignVertical='top' style={{ minHeight: 120, fontFamily: serif, fontSize: 18, lineHeight: 30, color: C.ink, padding: 0 }} /><Text style={{ color: C.muted, textAlign: 'right', fontSize: 12 }}>{message.length} / {toSea ? SEA_MESSAGE_MAX : 500}</Text></>}
           {b === 'hand' && <><DrawingPad scrollGesture={drawScrollGesture} ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
           {b === 'predict' && <><PredictionInput value={prediction} onChange={setPrediction} /><Text style={{ fontFamily: sans, fontSize: 12, color: C.plum }}>{t('create2.predictNote')}</Text></>}
           {b === 'voice' && <VoiceRecorder value={voice} onChange={setVoice} active={step === 2 && phase === 'steps'} />}
@@ -478,21 +509,19 @@ export default function CreateScreen() {
           <ToolIcon kind={BLOCK_ICON[b]} color={b === 'predict' ? C.brass : C.blue} /><Text style={{ fontFamily: sans, fontSize: 12, color: C.ink }}>{t(BLOCK_LABEL[b])}</Text>
         </Pressable>; })}
       </View>
-      <Text style={muted}>{toSea ? t('create2.textOnly') : blocks.includes('text') || blocks.includes('hand') ? t('create2.textOrHand') : t('create2.oneEach')}</Text>
+      <Text style={muted}>{toSea ? t('create2.textOnly') : t('create2.oneEach')}</Text>
       <View style={{ gap: 6 }}>
         {sectionLabel(t('create.hint'))}
-        <Text style={[muted, { marginTop: 4 }]}>{t('create2.hintSub')}</Text>
-        <TextInput value={hint} onChangeText={setHint} maxLength={40} placeholder={t('create.hintPlaceholder')} style={[card, { color: C.ink, padding: 12 }]} />
+        <TextInput value={hint} onChangeText={setHint} maxLength={40} placeholder={t('create.hintPlaceholder')} placeholderTextColor={PLACEHOLDER} style={[card, { color: C.ink, padding: 12 }]} />
         <Text style={{ color: C.muted, textAlign: 'right', fontSize: 12 }}>{hint.length} / 40</Text>
       </View>
     </View>
 
     {step === 3 && <View style={{ gap: 14 }}>
       {title(t('create.vessel'))}
-      <Text style={[muted, { marginTop: -6 }]}>{t('create2.vesselLede')}</Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 12, paddingHorizontal: 12 }}>
         <ToolIcon kind="search" color={C.muted} size={18} />
-        <TextInput value={vesselQuery} onChangeText={setVesselQuery} placeholder={t('create2.search')} autoCorrect={false} style={{ flex: 1, paddingVertical: 11, fontFamily: sans, color: C.ink }} />
+        <TextInput value={vesselQuery} onChangeText={setVesselQuery} placeholder={t('create2.search')} placeholderTextColor={PLACEHOLDER} autoCorrect={false} style={{ flex: 1, paddingVertical: 11, fontFamily: sans, color: C.ink }} />
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6 }} style={{ marginHorizontal: -24, paddingHorizontal: 24, flexGrow: 0 }}>
         <Chip on={vesselCat === 'all'} label={t('create2.all')} count={usableList.length} onPress={() => setVesselCat('all')} />
@@ -531,13 +560,31 @@ export default function CreateScreen() {
         </View>
         <Text style={muted}>{st('rules')}</Text>
       </View> : <>
-        <PickerRow label={t('create.where')} icon={<Glyph><ToolIcon kind={place ? 'landmark' : 'anywhere'} /></Glyph>} title={place ? placeName : t('create.anywhere')} sub={selectedPlace ? `${language === 'zh' ? selectedPlace.city_zh : selectedPlace.city_en} · ${t('create2.radius')}` : t('create2.anywhereSub')} onPress={() => setSheet('where')} />
+        <PickerRow label={t('create.where')} icon={<Glyph><ToolIcon kind={placeMode === 'current' ? 'here' : placeMode === 'specific' ? 'landmark' : 'anywhere'} /></Glyph>} title={t(`create2.where.${placeMode}`)} sub={placeMode === 'anywhere' ? t('create2.anywhereSub') : placeMode === 'current' ? t('create2.where.currentSub') : whereLabel || t('create2.where.specificSub')} onPress={() => setSheet('where')} />
+        {placeMode === 'current' && (point ? placeCard(point.name, point.detail) : <View style={{ gap: 8 }}>
+          <Text style={muted}>{location.status === 'denied' ? t('create2.locationDenied') : t('create2.locating')}</Text>
+          {location.status === 'denied' && <Button title={t('create2.openSettings')} onPress={() => void location.openSettings()} />}
+        </View>)}
+        {placeMode === 'specific' && <View style={{ gap: 10 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 12, paddingHorizontal: 12 }}>
+            <ToolIcon kind="search" color={C.muted} size={18} />
+            <TextInput value={placeQuery} onChangeText={setPlaceQuery} placeholder={t('create2.placeSearch')} placeholderTextColor={PLACEHOLDER} autoCorrect={false} style={{ flex: 1, paddingVertical: 11, fontFamily: sans, color: C.ink }} />
+          </View>
+          {(place || point) && !placeQuery.trim() ? placeCard(whereLabel, selectedPlace ? `${language === 'zh' ? selectedPlace.city_zh : selectedPlace.city_en}` : point?.detail ?? '') : <View style={{ backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 12, padding: 4 }}>
+            {shownLandmarks.length > 0 && <SheetGroup>{t('create2.landmarks')}</SheetGroup>}
+            {shownLandmarks.map(pl => { const disabled = !!pl.brand_vessel && pl.brand_vessel !== vessel; return <SheetOption key={pl.id} icon={<Glyph size={36}><ToolIcon kind="landmark" color={disabled ? C.muted : C.wax} size={18} /></Glyph>} title={language === 'zh' ? pl.name_zh : pl.name_en} sub={disabled ? t('create.brandPlace') : language === 'zh' ? pl.city_zh : pl.city_en} onPress={() => { if (disabled) return; setPlace(pl.id); setPoint(null); setPlaceQuery(''); void haptics.tick(); }} />; })}
+            {placeResults.length > 0 && <SheetGroup>{t('create2.mapResults')}</SheetGroup>}
+            {placeResults.map((r, i) => <SheetOption key={`${r.lat},${r.lng},${i}`} icon={<Glyph size={36}><ToolIcon kind="search" size={18} /></Glyph>} title={r.name} sub={r.detail} onPress={() => { setPoint(r); setPlace(null); setPlaceQuery(''); void haptics.tick(); }} />)}
+            {searching && <Text style={[muted, { padding: 10 }]}>{t('create.loading')}</Text>}
+            {!searching && placeQuery.trim().length >= 2 && !shownLandmarks.length && !placeResults.length && <Text style={[muted, { padding: 10 }]}>{t('create2.noPlace')}</Text>}
+          </View>}
+        </View>}
         <Text style={{ color: C.muted, fontSize: 12 }}>{t('create.serverTime')}</Text>
       </>}
       <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center', backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 14 }}>
         {vessel ? <Vessel kind={vessel} size={64} /> : null}
         <View style={{ flex: 1, gap: 8 }}>
-          {([['create2.sumTo', toSea ? t('create2.anyone') : recipientName], ['create2.sumBody', insideSummary], ['create2.sumVessel', vessel ? t(`shop.vessel.${vessel}`) : '—'], ['create2.sumWhen', openAt ? formatted : '—'], ['create2.sumWhere', toSea ? t('create2.nearShore') : place ? placeName : t('create.anywhere')]] as const).map(([k, v]) => <View key={k}>
+          {([['create2.sumTo', toSea ? t('create2.anyone') : recipientName], ['create2.sumBody', insideSummary], ['create2.sumVessel', vessel ? t(`shop.vessel.${vessel}`) : '—'], ['create2.sumWhen', openAt ? formatted : '—'], ['create2.sumWhere', toSea ? t('create2.nearShore') : whereLabel || t('create.anywhere')]] as const).map(([k, v]) => <View key={k}>
             <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12 }}>{t(k)}</Text><Text style={{ fontFamily: sans, color: C.ink, fontSize: 14 }}>{v}</Text>
           </View>)}
         </View>
@@ -558,10 +605,8 @@ export default function CreateScreen() {
       {quickList.map(q => <SheetOption key={q} selected={quick === q} icon={<Glyph><ToolIcon kind={q === 'custom' ? 'calendar' : 'clock'} /></Glyph>} title={quickLabel(q)} sub={q === 'custom' ? t('create2.customSub') : dateLabel(quickDate(q))} onPress={() => { setQuick(q); setSheet(null); setError(''); void haptics.tick(); }} />)}
     </Sheet>
     <Sheet open={sheet === 'where'} title={t('create.where')} onClose={() => setSheet(null)}>
-      <SheetOption selected={!place} icon={<Glyph><ToolIcon kind="anywhere" /></Glyph>} title={t('create.anywhere')} sub={t('create2.anywhereSub')} onPress={() => { setPlace(null); setSheet(null); void haptics.tick(); }} />
-      <SheetGroup>{t('create2.landmarks')}</SheetGroup>
-      {(places.data ?? []).map(pl => { const disabled = !!pl.brand_vessel && pl.brand_vessel !== vessel; return <SheetOption key={pl.id} selected={place === pl.id} icon={<Glyph><ToolIcon kind="landmark" color={disabled ? C.muted : C.wax} /></Glyph>}
-        title={language === 'zh' ? pl.name_zh : pl.name_en} sub={disabled ? t('create.brandPlace') : `${language === 'zh' ? pl.city_zh : pl.city_en} · ${language === 'zh' ? pl.why_zh : pl.why_en}`} onPress={() => { if (disabled) return; setPlace(pl.id); setSheet(null); void haptics.tick(); }} />; })}
+      {(['anywhere', 'current', 'specific'] as const).map(m => <SheetOption key={m} selected={placeMode === m} icon={<Glyph><ToolIcon kind={m === 'current' ? 'here' : m === 'specific' ? 'landmark' : 'anywhere'} /></Glyph>} title={t(`create2.where.${m}`)} sub={t(m === 'anywhere' ? 'create2.anywhereSub' : `create2.where.${m}Sub`)}
+        onPress={() => { setPlaceMode(m); setPlace(null); setPoint(null); setPlaceQuery(''); setSheet(null); setError(''); void haptics.tick(); if (m === 'current') void location.request(); }} />)}
     </Sheet>
   </Screen>;
 }
