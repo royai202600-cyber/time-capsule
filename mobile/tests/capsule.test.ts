@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("../src/services/supabase", () => ({ supabase: {} }));
 
 import { capsuleStatus, distanceMeters } from "../src/services/data";
-import { distance, formatDate, status, type Place, type Row } from "../src/features/capsule/model";
+import { distance, formatDate, pointOpeningPlace, status, type Place, type Row } from "../src/features/capsule/model";
 
 const capsule = (changes: Partial<Row> = {}) => ({
   open_at: "2026-11-07T12:00:00.000Z",
@@ -41,6 +41,16 @@ describe("capsule status", () => {
     expect(status(capsule({ place: "test-place" }), "inbox", near, place, at)).toBe("ready");
     expect(status(capsule(), "inbox", null, undefined, at)).toBe("ready");
     expect(status(capsule({ opened_at: "2026-11-07T12:01:00.000Z" }), "inbox", null, undefined, before)).toBe("opened");
+  });
+
+  it("uses the point and 100 m radius for a capsule without a landmark ID", () => {
+    const row = capsule({ place_lat: 0, place_lng: 0, place_name: "Opening point" });
+    const point = pointOpeningPlace(row);
+    expect(point).toMatchObject({ radius_m: 100, name_en: "Opening point" });
+    expect(status(row, "inbox", near, point, at)).toBe("ready");
+    expect(status(row, "inbox", far, point, at)).toBe("place");
+    expect(status(row, "inbox", near, undefined, at)).toBe("place");
+    expect(distance(row, near, point)).toBeCloseTo(55.6, 1);
   });
 
   it("shows the sender's waiting state and preserves the existing service status", () => {

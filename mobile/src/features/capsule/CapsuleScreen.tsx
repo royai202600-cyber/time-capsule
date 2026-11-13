@@ -37,7 +37,7 @@ import { LetterVoice } from "../voice/LetterVoice";
 import { isPrediction, openedPrediction, senderPrediction, type SenderPrediction } from "../../services/prediction";
 import { PredictionStamp, SenderPredictionCard } from "../prediction/PredictionParts";
 import { usePredictionText } from "../prediction/strings";
-import { formatDate, loadOne, openForRecipient, status, type Bundle, type Opened, type Row } from "./model";
+import { formatDate, loadOne, openForRecipient, pointOpeningPlace, status, type Bundle, type Opened, type Row } from "./model";
 
 const blank: Bundle = { capsules: [], people: {}, places: {}, vessels: {} };
 
@@ -90,7 +90,7 @@ export default function CapsuleScreen() {
   const lid = useSharedValue(0);
   const letterRise = useRef(new Animated.Value(0)).current;
   const c = bundle.capsules[0];
-  const pl = c?.place ? bundle.places[c.place] : undefined;
+  const pl = c?.place ? bundle.places[c.place] : c ? pointOpeningPlace(c) : undefined;
   const { fix } = usePlaceDistance(pl);
   const v = c ? bundle.vessels[c.vessel] : undefined;
   const sender = c ? bundle.people[c.sender] : undefined;
@@ -132,8 +132,8 @@ export default function CapsuleScreen() {
     if (!c || busy) return;
     setBusy(true);
     setError("");
-    const latestFix = c.place ? openingCoordinates() : null;
-    if (c.place && !latestFix) {
+    const latestFix = pl ? openingCoordinates() : null;
+    if (pl && !latestFix) {
       setBusy(false);
       setCharge(0);
       goPage(1);

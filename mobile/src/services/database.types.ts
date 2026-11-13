@@ -67,6 +67,9 @@ export type Database = {
           opened_lat: number | null
           opened_lng: number | null
           place: string | null
+          place_lat: number | null
+          place_lng: number | null
+          place_name: string | null
           recipient: string | null
           sea: boolean
           sea_returns: number
@@ -92,6 +95,9 @@ export type Database = {
           opened_lat?: number | null
           opened_lng?: number | null
           place?: string | null
+          place_lat?: number | null
+          place_lng?: number | null
+          place_name?: string | null
           recipient?: string | null
           sea?: boolean
           sea_returns?: number
@@ -117,6 +123,9 @@ export type Database = {
           opened_lat?: number | null
           opened_lng?: number | null
           place?: string | null
+          place_lat?: number | null
+          place_lng?: number | null
+          place_name?: string | null
           recipient?: string | null
           sea?: boolean
           sea_returns?: number
@@ -1191,7 +1200,8 @@ export type Database = {
           washes_up_at: string
         }[]
       }
-      send_capsule: {
+      send_capsule:
+      | {
         Args: {
           p_drawing?: string
           p_hint: string
@@ -1200,6 +1210,25 @@ export type Database = {
           p_open_at: string
           p_photo?: string
           p_place?: string
+          p_prediction?: string
+          p_recipient: string
+          p_vessel: string
+          p_voice?: string
+          p_voice_ms?: number
+        }
+        Returns: string
+      }
+      | {
+        Args: {
+          p_drawing?: string
+          p_hint: string
+          p_kind?: string
+          p_message: string
+          p_open_at: string
+          p_photo?: string
+          p_place_lat: number
+          p_place_lng: number
+          p_place_name: string
           p_prediction?: string
           p_recipient: string
           p_vessel: string

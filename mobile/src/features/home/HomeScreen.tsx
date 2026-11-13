@@ -19,7 +19,7 @@ import { C, handwriting, sans, serif, shadows } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
 import type { VesselKind } from "../../vesselArt";
 import { usePlaceDistance } from "../journey/location";
-import { distance, formatDate, loadBundle, status, type Bundle, type Row } from "../capsule/model";
+import { distance, formatDate, loadBundle, pointOpeningPlace, status, type Bundle, type Row } from "../capsule/model";
 import { isPrediction } from "../../services/prediction";
 import { predictionText } from "../prediction/strings";
 
@@ -64,7 +64,8 @@ export default function HomeScreen() {
   const list = useRef<FlatList<Row>>(null);
   const rows = bundle.capsules.filter(c => side === "inbox" ? c.recipient === session?.user.id : c.sender === session?.user.id);
   const active = rows[index] ?? rows[0];
-  const activePlace = active?.place ? bundle.places[active.place] : null;
+  const placeFor = (c: Row) => c.place ? bundle.places[c.place] : pointOpeningPlace(c);
+  const activePlace = active ? placeFor(active) : undefined;
   const { fix, meters: activeMeters } = usePlaceDistance(activePlace);
   const inset = Math.max(0, (Math.min(width, 640) - W) / 2);
   const refresh = useCallback(async () => {
@@ -88,11 +89,11 @@ export default function HomeScreen() {
     return (id ? bundle.people[id] : undefined) ?? { name: t("home.future"), avatar: null };
   };
   const headline = (c: Row) => {
-    const state = status(c, side, fix, bundle.places[c.place ?? ""], now);
+    const state = status(c, side, fix, placeFor(c), now);
     if (state === "opened") return t(side === "inbox" ? "home.openedIn" : "home.openedOut", formatDate(c.opened_at, language));
     if (state === "waiting") return t("home.waiting");
     if (state === "ready") return t("home.ready");
-    if (state === "place") { const d = c.id === active?.id ? activeMeters : distance(c, fix, bundle.places[c.place ?? ""]); return d === null ? t("home.placeUnknown") : t("home.place", (d / 1000).toFixed(1)); }
+    if (state === "place") { const d = c.id === active?.id ? activeMeters : distance(c, fix, placeFor(c)); return d === null ? t("home.placeUnknown") : t("home.place", (d / 1000).toFixed(1)); }
     const s = Math.max(0, Math.ceil((new Date(c.open_at).getTime() - now) / 1000));
     const unit = s >= 86400 ? "days" : s >= 3600 ? "hours" : "minutes";
     return t("home.time", Math.ceil(s / (unit === "days" ? 86400 : unit === "hours" ? 3600 : 60)), t(`home.${unit}`));
@@ -107,7 +108,7 @@ export default function HomeScreen() {
     void haptics.tap();
     router.push({ pathname: "/capsule/[id]", params: { id: c.id, side } });
   };
-  const ready = rows.filter(c => status(c, side, fix, bundle.places[c.place ?? ""], now) === "ready").length;
+  const ready = rows.filter(c => status(c, side, fix, placeFor(c), now) === "ready").length;
   return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}><View style={{ flex: 1, width: "100%", maxWidth: 640, alignSelf: "center" }}>
     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 14, paddingTop: 8 }}>
       <Pressable onPress={() => router.push("/me")} accessibilityLabel={t("home.my")} style={{ alignItems: "center" }}><Avatar avatar={profile?.avatar} size={36} /><Text style={{ color: C.ink, fontFamily: sans, fontSize: 11 }}>{t("home.my")}</Text></Pressable>
@@ -116,7 +117,7 @@ export default function HomeScreen() {
     </View>
     {loading ? <View style={{ flex: 1, justifyContent: "center" }}><SealLoader /></View> : error ? <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}><Text style={{ color: C.wax }}>{error}</Text><Pressable onPress={() => void refresh()}><Text style={{ color: C.blue, padding: 16 }}>{t("capsule.retry")}</Text></Pressable></View> : rows.length ? <>
       <View style={{ flex: 1, justifyContent: "center", minHeight: 450 }}><Animated.FlatList ref={list as any} data={rows} getItemLayout={(_, i) => ({ length: STEP, offset: STEP * i, index: i })} horizontal keyExtractor={(c: Row) => c.id} showsHorizontalScrollIndicator={false} snapToInterval={STEP} decelerationRate="fast" contentContainerStyle={{ paddingHorizontal: inset, gap: GAP, alignItems: "center" }} onScroll={e => { const x = e.nativeEvent.contentOffset.x; scrollOffset.current = x; scroll.setValue(x); dotPosition.setValue(x / STEP); const next = Math.max(0, Math.min(rows.length - 1, Math.round(x / STEP))); if (next !== indexRef.current) { indexRef.current = next; setIndex(next); void haptics.page(); } }} scrollEventThrottle={16} renderItem={({ item: c, index: i }: { item: Row; index: number }) => {
-        const state = status(c, side, fix, bundle.places[c.place ?? ""], now), p = person(c), pl = bundle.places[c.place ?? ""], v = bundle.vessels[c.vessel];
+        const state = status(c, side, fix, placeFor(c), now), p = person(c), pl = placeFor(c), v = bundle.vessels[c.vessel];
         const inputRange = [(i - 1) * STEP, i * STEP, (i + 1) * STEP];
         return <Animated.View style={{ opacity: scroll.interpolate({ inputRange, outputRange: [0.5, 1, 0.5], extrapolate: "clamp" }), transform: [{ perspective: 900 }, { scale: scroll.interpolate({ inputRange, outputRange: [0.9, 1, 0.9], extrapolate: "clamp" }) }, { rotateY: scroll.interpolate({ inputRange, outputRange: ["8deg", "0deg", "-8deg"], extrapolate: "clamp" }) }] }}><Pressable onPress={() => { const centre = Math.max(0, Math.min(rows.length - 1, Math.round(scrollOffset.current / STEP))); if (i === centre) open(c); else { list.current?.scrollToIndex({ index: i, animated: true }); setIndex(i); void haptics.tick(); } }} accessibilityRole="button" accessibilityLabel={`${headline(c)}, ${p.name}`} style={{ width: W, height: 430, backgroundColor: C.white, borderWidth: 1.5, borderColor: "#5B6474", borderRadius: 20, padding: 18, alignItems: "center", justifyContent: "space-between", ...shadows.card }}>
           <View style={{ height: 26, flexDirection: "row", gap: 6, alignItems: "center" }}>{side === "inbox" && !c.seen_at && !c.opened_at && <Text style={{ color: C.wax, fontSize: 11 }}>{t("home.newTag")}</Text>}{c.handwritten && <Text style={{ color: C.wax, fontFamily: handwriting }}>{t("home.handTag")}</Text>}{isPrediction(c) && <Text style={{ color: C.plum, fontFamily: handwriting }}>{predictionText(language)("tag")}</Text>}{c.edition_no && v?.brand && <Text style={{ color: C.brass, fontSize: 11 }}>{v.brand} No.{String(c.edition_no).padStart(3, "0")}</Text>}</View>
