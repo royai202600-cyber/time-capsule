@@ -27,8 +27,9 @@ function Drop({ state, n }: { state: "done" | "current" | "future"; n: number })
   </View>;
 }
 
-/** Create progress: four wax drops on a curved brass ribbon. Tapping a done drop goes back to it. */
-export function WaxSteps({ step, labels, label, onBack }: { step: number; labels: string[]; label: string; onBack: (n: number) => void }) {
+/** Create progress: wax drops on a curved brass ribbon. Tapping a done drop goes back to it.
+ *  Compact keeps the drops close together so it fits between Back and Next in a header. */
+export function WaxSteps({ step, labels, label, onBack, compact = false }: { step: number; labels: string[]; label: string; onBack: (n: number) => void; compact?: boolean }) {
   const [w, setW] = useState(0);
   const inset = 100 / (2 * labels.length); // ribbon runs between the first and last drop centres
   return <View accessibilityLabel={label} onLayout={e => setW(e.nativeEvent.layout.width)} style={{ paddingTop: 4 }}>
@@ -41,9 +42,9 @@ export function WaxSteps({ step, labels, label, onBack }: { step: number; labels
         const n = i + 1, state = n < step ? "done" : n === step ? "current" : "future";
         return <Pressable key={n} disabled={state !== "done"} onPress={() => onBack(n)} accessibilityRole="button"
           accessibilityState={{ disabled: state !== "done", selected: state === "current" }} accessibilityLabel={name}
-          style={{ flex: 1, alignItems: "center", gap: 4 }}>
+          style={compact ? { width: 50, alignItems: "center", gap: 4 } : { flex: 1, alignItems: "center", gap: 4 }}>
           <Drop state={state} n={n} />
-          <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 11, color: state === "done" ? C.plum : state === "current" ? C.ink : C.muted }}>{name}</Text>
+          <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: compact ? 10.5 : 11, color: state === "done" ? C.plum : state === "current" ? C.ink : C.muted }}>{name}</Text>
         </Pressable>;
       })}
     </View>
