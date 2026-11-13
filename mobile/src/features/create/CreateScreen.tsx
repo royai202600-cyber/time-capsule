@@ -19,7 +19,7 @@ import { useAuth } from '../../services/auth';
 import { capsules } from '../../services/data';
 import { useFriends, useOwnedVessels, usePlaces, useVessels } from '../../services/hooks';
 import { C, handwriting, motion, serif, sans, shadows } from '../../theme';
-import { DrawingPad, type DrawingHandle } from './DrawingPad';
+import { DrawingPad, type DrawingHandle, type DrawingStrokes } from './DrawingPad';
 import { letterDropFor, paperLetter, scenes, sealWax } from '../../art/manifest';
 import { ArtIcon } from '../../components/ArtIcon';
 import { SealLoader } from '../../components/SealLoader';
@@ -127,6 +127,7 @@ export default function CreateScreen() {
   const [sheet, setSheet] = useState<'to' | 'when' | 'where' | null>(null), [vesselQuery, setVesselQuery] = useState(''), [vesselCat, setVesselCat] = useState<'all' | VesselCategory>('all');
   const [error, setError] = useState(''), [busy, setBusy] = useState(false), [phase, setPhase] = useState<'steps' | 'seal' | 'sealed'>('steps'), [sealedAt, setSealedAt] = useState<Date | null>(null), [stamped, setStamped] = useState(false);
   const drawing = useRef<DrawingHandle>(null);
+  const drawingStrokes = useRef<DrawingStrokes>([]);
   const sentOnce = useRef(false);
   const sendingRef = useRef(false);
   const wax = useRef(new Animated.ValueXY()).current, waxScale = useRef(new Animated.Value(1)).current, letter = useRef(new Animated.Value(1)).current, letterNarrow = useRef(new Animated.Value(1)).current, letterDrop = useRef(new Animated.Value(0)).current, letterEntry = useRef(new Animated.Value(44)).current, letterOpacity = useRef(new Animated.Value(0)).current, letterFade = useRef(new Animated.Value(1)).current, drift = useRef(new Animated.Value(0)).current;
@@ -219,7 +220,10 @@ export default function CreateScreen() {
     if (step >= 4 && !toSea && placeMode !== 'anywhere' && point && !ANY_PLACE_BACKEND) return t('create2.placeSoon');
     return '';
   };
-  const next = async () => { const issue = validate(); if (issue) { setError(issue); void haptics.warn(); return; } if (step === 2 && hasHand) { try { setDrawingData(drawing.current?.hasInk() ? await drawing.current.png() ?? null : null); } catch { setError(t('create.sendError')); return; } } setError(''); Keyboard.dismiss(); void haptics.tap(); if (step === 2 && predicting && !vessel) { const cookie = catalog.data?.find(v => v.id === 'fortune-cookie'); if (cookie && canUseVessel(cookie)) setVessel('fortune-cookie'); } if (stepIndex < flow.length) setStepIndex(stepIndex + 1); else setPhase('seal'); };
+  const saveDrawingDraft = () => {
+    if (drawing.current) drawingStrokes.current = drawing.current.getStrokes();
+  };
+  const next = async () => { const issue = validate(); if (issue) { setError(issue); void haptics.warn(); return; } if (step === 2 && hasHand) { saveDrawingDraft(); try { setDrawingData(drawing.current?.hasInk() ? await drawing.current.png() ?? null : null); } catch { setError(t('create.sendError')); return; } } setError(''); Keyboard.dismiss(); void haptics.tap(); if (step === 2 && predicting && !vessel) { const cookie = catalog.data?.find(v => v.id === 'fortune-cookie'); if (cookie && canUseVessel(cookie)) setVessel('fortune-cookie'); } if (stepIndex < flow.length) setStepIndex(stepIndex + 1); else setPhase('seal'); };
   const choosePhoto = async (source: 'camera' | 'library') => {
     setPhotoChoices(false); setError('');
     if (Platform.OS !== 'web') { const permission = source === 'camera' ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync(); if (!permission.granted) { setError(t('create.photoPermission')); return; } }
@@ -418,13 +422,13 @@ export default function CreateScreen() {
   </Screen>;
   if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={toSea ? scenes.seaSealed : scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{toSea && seaResult ? st('sealedSea', language === 'zh' ? seaResult.shore_zh : seaResult.shore_en, shortDate(seaResult.washes_up_at, language)) : predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
   const last = stepIndex === flow.length;
-  const goTo = (n: number) => { Keyboard.dismiss(); setStepIndex(n); setError(''); void haptics.tap(); };
+  const goTo = (n: number) => { saveDrawingDraft(); Keyboard.dismiss(); setStepIndex(n); setError(''); void haptics.tap(); };
   const blockOff = (b: Block) => blocks.includes(b) || (toSea && b !== 'text') || (b === 'voice' && !VOICE_ENABLED) || (b === 'predict' && !PREDICTION_ENABLED);
   const addBlock = (b: Block) => { if (blockOff(b)) return; setBlocks([...blocks, b]); setError(''); void haptics.tick(); if (b === 'photo') setPhotoChoices(true); };
   const removeBlock = (b: Block) => {
     setBlocks(blocks.filter(x => x !== b)); void haptics.tap();
     if (b === 'text') setMessage('');
-    if (b === 'hand') { drawing.current?.clear(); setDrawingData(null); }
+    if (b === 'hand') { drawing.current?.clear(); drawingStrokes.current = []; setDrawingData(null); }
     if (b === 'photo') { setPhoto(null); setPhotoChoices(false); }
     if (b === 'voice') setVoice(null);
     if (b === 'predict') setPrediction('');
@@ -496,7 +500,7 @@ export default function CreateScreen() {
             <Pressable accessibilityRole='button' accessibilityLabel={t('create2.remove', t(BLOCK_LABEL[b]))} onPress={() => removeBlock(b)} hitSlop={8} style={{ paddingHorizontal: 6 }}><Text style={{ color: C.muted, fontSize: 14 }}>✕</Text></Pressable>
           </View>
           {b === 'text' && <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} placeholderTextColor={PLACEHOLDER} maxLength={toSea ? SEA_MESSAGE_MAX : 500} multiline textAlignVertical='top' style={{ minHeight: 120, fontFamily: serif, fontSize: 18, lineHeight: 30, color: C.ink, padding: 0 }} /><Text style={{ color: C.muted, textAlign: 'right', fontSize: 12 }}>{message.length} / {toSea ? SEA_MESSAGE_MAX : 500}</Text></>}
-          {b === 'hand' && <><DrawingPad scrollGesture={drawScrollGesture} ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
+          {b === 'hand' && <><DrawingPad initialStrokes={drawingStrokes.current} scrollGesture={drawScrollGesture} ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
           {b === 'predict' && <><PredictionInput value={prediction} onChange={setPrediction} /><Text style={{ fontFamily: sans, fontSize: 12, color: C.plum }}>{t('create2.predictNote')}</Text></>}
           {b === 'voice' && <VoiceRecorder value={voice} onChange={setVoice} active={step === 2 && phase === 'steps'} />}
           {b === 'photo' && (photo ? <Image source={{ uri: photo }} style={{ width: '100%', height: 220, borderRadius: 6 }} resizeMode='cover' /> : <View style={{ gap: 8, borderWidth: 1.5, borderStyle: 'dashed', borderColor: C.line, borderRadius: 10, padding: 14, alignItems: 'center' }}>
