@@ -1,0 +1,721 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Capsule Creation Demo</title>
+<!-- Disposable demo of docs/design/create-v2.md. Open this file directly in a browser. Add #en to the URL for English. Art loads from public/art. -->
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&family=LXGW+WenKai+TC&display=swap">
+<style>
+/* Layout: one phone-width column, sticky header carrying Back · wax steps · Next, content scrolls under it. Tokens are the app's own (mobile/src/theme.ts). Single light look, like the app. */
+:root {
+  --paper: #F6F8FB; --cream: #F3E2BB; --ink: #16263F; --blue: #2F5D8A; --light-blue: #5A8FD0;
+  --plum: #6E2B3F; --brass: #C9A15A; --wax: #A3364F; --line: #D5DDE7; --muted: #748195;
+  --glass: #DCE8F2; --white: #FFFFFF; --sheet-shade: rgba(22,38,63,.38);
+  --serif: "Noto Serif TC", "Songti TC", Georgia, serif;
+  --sans: "Noto Sans TC", "PingFang TC", system-ui, sans-serif;
+  --hand: "LXGW WenKai TC", "Kaiti TC", var(--serif);
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { background: var(--glass); color: var(--ink); font-family: var(--sans); font-size: 15px; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--light-blue); outline-offset: 2px; }
+
+.phone { max-width: 430px; min-height: 100%; margin: 0 auto; background: var(--paper); position: relative; display: flex; flex-direction: column; box-shadow: 0 0 0 1px var(--line); }
+.modes { display: flex; justify-content: center; gap: 4px; padding: 8px 16px 0; }
+.mode { border: 1px solid var(--line); background: var(--white); border-radius: 999px; padding: 5px 12px; font-size: 12.5px; color: var(--muted); }
+.mode.on { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.here { display: flex; gap: 12px; align-items: center; background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.here .txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.here .main { font: 500 17px var(--serif); }
+.here .sub { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.demo-tag { font-size: 11px; color: var(--muted); text-align: center; padding: 6px 16px 0; letter-spacing: .04em; }
+
+/* Header */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--paper); padding: 8px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--line); display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; }
+.icon-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--white); display: grid; place-items: center; }
+.icon-btn[disabled] { opacity: .35; cursor: default; }
+.head-title { font: 700 17px var(--serif); text-align: center; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Mirrors mobile/src/components/WaxSteps.tsx: wax drops on a curved brass ribbon. */
+.wax { position: relative; display: flex; justify-self: center; padding-top: 2px; }
+.wax .ribbon { position: absolute; left: 0; top: 2px; width: 100%; height: 34px; pointer-events: none; }
+.drop { width: 50px; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; background: none; padding: 0; position: relative; }
+.drop[disabled] { cursor: default; }
+.drop .nm { font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+.drop.done .nm { color: var(--plum); }
+.drop.now .nm { color: var(--ink); }
+.drop .num { position: absolute; top: 0; left: 0; right: 0; height: 34px; display: grid; place-items: center; font: 15px var(--serif); color: #FBF1E1; }
+.dots { display: flex; gap: 6px; align-items: center; }
+.dot { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--white); font: 600 11px var(--serif); color: var(--muted); display: grid; place-items: center; padding: 0; }
+.dot.done { background: var(--wax); border-color: var(--wax); color: var(--white); }
+.dot.now { border-color: var(--wax); color: var(--wax); box-shadow: 0 0 0 3px rgba(163,54,79,.14); }
+.dot-line { width: 12px; height: 1.5px; background: var(--line); }
+.step-name { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.right { display: flex; gap: 6px; align-items: center; }
+.lang { border: 0; background: none; color: var(--blue); font-size: 13px; padding: 6px 4px; }
+.next { border: 0; border-radius: 999px; background: var(--blue); color: var(--white); padding: 9px 16px; font-weight: 500; white-space: nowrap; }
+.next.seal { background: var(--wax); }
+
+main { flex: 1; padding: 18px max(16px, env(safe-area-inset-right, 0px)) 28px max(16px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; gap: 16px; }
+h1 { font: 700 24px/1.3 var(--serif); margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); margin: -8px 0 0; line-height: 1.55; font-size: 14px; }
+.label { font-size: 12px; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; margin-bottom: -8px; }
+
+/* Dropdown trigger */
+.pick { width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+.pick:hover { border-color: var(--light-blue); }
+.pick .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pick .main { font: 500 17px var(--serif); }
+.pick .sub { color: var(--muted); font-size: 13px; }
+.pick .chev { color: var(--muted); flex: none; }
+.avatar { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; background: var(--glass); flex: none; border: 1.5px solid var(--white); box-shadow: 0 0 0 1px var(--line); }
+.glyph { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: var(--glass); color: var(--blue); flex: none; }
+
+.privacy { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; background: var(--white); border: 1px dashed var(--line); font-size: 13px; line-height: 1.55; color: var(--ink); }
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.pill.private { background: var(--glass); color: var(--blue); }
+.pill.public { background: var(--cream); color: var(--plum); }
+
+.envelope { position: relative; border-radius: 14px; background: var(--white) url(../../../public/art/textures/paper-letter.webp) center/cover; border: 1px solid var(--line); padding: 22px 20px 20px; display: grid; gap: 6px; overflow: hidden; }
+.envelope .row { display: flex; gap: 10px; align-items: baseline; font-family: var(--serif); }
+.envelope .k { color: var(--muted); font-size: 12px; width: 44px; letter-spacing: .06em; }
+.envelope .v { font-size: 18px; }
+.envelope .seal { position: absolute; right: 14px; bottom: 10px; width: 64px; opacity: .9; }
+
+/* Sheet */
+.shade { position: fixed; inset: 0; background: var(--sheet-shade); z-index: 20; display: flex; align-items: flex-end; justify-content: center; }
+.sheet { width: 100%; max-width: 430px; max-height: 78%; overflow: auto; background: var(--paper); border-radius: 18px 18px 0 0; padding: 8px max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; gap: 4px; }
+.grab { width: 40px; height: 4px; border-radius: 4px; background: var(--line); margin: 4px auto 8px; }
+.sheet h2 { font: 700 17px var(--serif); margin: 4px 0 8px; }
+.opt { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; border: 1px solid transparent; background: none; border-radius: 12px; padding: 9px 10px; }
+.opt:hover { background: var(--white); }
+.opt.on { background: var(--white); border-color: var(--blue); }
+.opt .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.opt .main { font-weight: 500; }
+.opt .sub { color: var(--muted); font-size: 12.5px; }
+.opt .glyph, .opt .avatar { width: 40px; height: 40px; }
+.sep { height: 1px; background: var(--line); margin: 6px 4px; }
+.group { font-size: 11.5px; color: var(--muted); letter-spacing: .08em; margin: 8px 10px 2px; }
+
+/* Paper + blocks */
+.sheet-paper { background: var(--white) url(../../../public/art/textures/paper-letter.webp) center top/100% auto repeat-y; border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 10px 24px -18px rgba(22,38,63,.5); padding: 20px 18px; min-height: 300px; display: flex; flex-direction: column; gap: 12px; }
+.empty { margin: auto; text-align: center; color: var(--muted); font: 16px/1.7 var(--hand); padding: 30px 10px; }
+.block { position: relative; border-radius: 10px; padding: 8px 8px 8px 10px; border: 1px solid transparent; }
+.block:hover, .block:focus-within { border-color: var(--line); background: rgba(255,255,255,.6); }
+.block-head { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted); letter-spacing: .05em; margin-bottom: 4px; }
+.block-head .sp { flex: 1; }
+.mini { border: 0; background: none; color: var(--muted); padding: 2px 5px; border-radius: 6px; font-size: 13px; line-height: 1; }
+.mini:hover { background: var(--glass); color: var(--ink); }
+.mini[disabled] { opacity: .3; cursor: default; background: none; }
+textarea.write { width: 100%; border: 0; background: transparent; resize: none; font: 17px/1.75 var(--serif); padding: 0; min-height: 56px; outline: none; }
+textarea.write::placeholder, input.predict::placeholder { color: #A5AFBD; }
+.predict-box { border: 1.5px solid var(--brass); border-radius: 10px; padding: 10px 12px; background: rgba(243,226,187,.35); display: grid; gap: 4px; }
+input.predict { border: 0; background: transparent; font: 500 17px var(--serif); outline: none; width: 100%; padding: 0; }
+.predict-note { font-size: 12px; color: var(--plum); }
+.audio { display: flex; align-items: center; gap: 10px; background: var(--glass); border-radius: 999px; padding: 6px 12px 6px 6px; }
+.rec { width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--wax); color: var(--white); display: grid; place-items: center; flex: none; }
+.rec.play { background: var(--blue); }
+.wave { flex: 1; display: flex; align-items: center; gap: 2px; height: 26px; min-width: 0; overflow: hidden; }
+.wave i { flex: 1; max-width: 4px; background: var(--blue); border-radius: 2px; opacity: .75; }
+.time { font: 13px var(--sans); font-variant-numeric: tabular-nums; color: var(--ink); }
+.photo img { width: 100%; border-radius: 6px; display: block; max-height: 260px; object-fit: cover; }
+.photo label { display: grid; place-items: center; gap: 4px; border: 1.5px dashed var(--line); border-radius: 10px; padding: 22px; color: var(--blue); cursor: pointer; text-align: center; font-size: 14px; }
+.photo input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+canvas.pad { width: 100%; height: 180px; display: block; border-radius: 8px; background: repeating-linear-gradient(transparent 0 35px, rgba(47,93,138,.14) 35px 36px); touch-action: none; cursor: crosshair; }
+
+.tools { position: sticky; bottom: calc(10px + env(safe-area-inset-bottom, 0px)); z-index: 3; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 6px; box-shadow: 0 8px 22px -12px rgba(22,38,63,.45); }
+.tool { border: 0; background: none; border-radius: 11px; padding: 7px 2px 6px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; color: var(--ink); }
+.tool svg { color: var(--blue); }
+.tool:hover { background: var(--glass); }
+.tool[disabled] { opacity: .32; cursor: default; background: none; }
+.tool.predict-tool svg { color: var(--brass); }
+.note { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+
+.field { display: grid; gap: 6px; }
+.field input[type=text], .field input[type=search] { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; background: var(--white); outline: none; }
+.field input:focus { border-color: var(--light-blue); }
+.count { font-size: 12px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+
+/* Vessels */
+.search { position: relative; }
+.search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+.search input { padding-left: 38px !important; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; margin: 0 -16px; padding-inline: 16px; scrollbar-width: none; }
+.chip { flex: none; border: 1px solid var(--line); background: var(--white); border-radius: 999px; padding: 6px 13px; font-size: 13.5px; }
+.chip.on { background: var(--ink); border-color: var(--ink); color: var(--white); }
+.chip .n { color: var(--muted); font-size: 11.5px; margin-left: 3px; }
+.chip.on .n { color: var(--glass); }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.vessel { position: relative; border: 1.5px solid var(--line); background: var(--white); border-radius: 14px; padding: 8px 6px 9px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.vessel img { width: 100%; aspect-ratio: 1; object-fit: contain; max-width: 100%; }
+.vessel .nm { font: 500 13px/1.3 var(--serif); text-align: center; }
+.vessel .tag { font-size: 10.5px; color: var(--plum); }
+.vessel.on { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(47,93,138,.15); }
+.vessel.locked { opacity: .5; }
+.vessel .check { position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%; background: var(--blue); color: var(--white); display: grid; place-items: center; }
+.suggest { display: flex; align-items: center; gap: 10px; background: var(--cream); border-radius: 12px; padding: 8px 12px; font-size: 13.5px; }
+.suggest img { width: 44px; }
+.suggest .sp { flex: 1; }
+.link { border: 0; background: none; color: var(--blue); font-weight: 500; padding: 4px; }
+.noresult { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 28px 0; }
+
+/* Calendar */
+.cal { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 8px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; font: 500 16px var(--serif); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+.cal-grid .wd { font-size: 11px; color: var(--muted); padding: 4px 0; }
+.day { border: 0; background: none; border-radius: 50%; aspect-ratio: 1; font-variant-numeric: tabular-nums; font-size: 14px; }
+.day:hover:not([disabled]) { background: var(--glass); }
+.day.on { background: var(--wax); color: var(--white); }
+.day[disabled] { color: #C4CBD6; cursor: default; }
+.result { color: var(--blue); font-family: var(--serif); font-size: 15px; }
+
+/* Map */
+.map { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #EEF2F0; aspect-ratio: 16 / 10; max-width: 100%; }
+.map svg { display: block; width: 100%; height: 100%; }
+.map .cap { position: absolute; left: 10px; bottom: 10px; right: 10px; background: rgba(255,255,255,.92); border-radius: 10px; padding: 8px 10px; font-size: 13px; display: grid; gap: 1px; }
+.map .cap b { font: 500 15px var(--serif); }
+.map .cap span { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.map .badge { position: absolute; top: 8px; right: 8px; font-size: 10.5px; background: rgba(255,255,255,.85); color: var(--muted); border-radius: 6px; padding: 2px 6px; }
+.results { display: grid; gap: 2px; background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 4px; }
+.res { display: flex; gap: 10px; align-items: center; border: 0; background: none; text-align: left; padding: 8px; border-radius: 9px; }
+.res:hover { background: var(--glass); }
+.res .txt { display: flex; flex-direction: column; min-width: 0; }
+.res .sub { color: var(--muted); font-size: 12px; }
+.res svg { color: var(--wax); flex: none; }
+
+.summary { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; font-size: 14px; align-items: center; }
+.summary .k { color: var(--muted); font-size: 12px; letter-spacing: .05em; }
+.summary .v { min-width: 0; }
+.summary img { width: 64px; grid-row: span 1; }
+
+.toast { position: fixed; left: 50%; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--white); padding: 10px 16px; border-radius: 12px; font-size: 14px; z-index: 30; max-width: 90%; text-align: center; transition: opacity .2s; }
+
+.sealed { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; padding-top: 30px; }
+.sealed img { width: 100%; max-width: 340px; }
+.sealed p { color: var(--muted); line-height: 1.7; margin: 0; max-width: 32ch; }
+.btn { border: 0; border-radius: 999px; background: var(--blue); color: var(--white); padding: 12px 22px; font-weight: 500; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="phone">
+  <div class="demo-tag" id="demoTag"></div>
+  <div class="modes" id="modes"></div>
+  <header class="top">
+    <button class="icon-btn" id="back" aria-label="Back"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="wax" id="dots"></div>
+    <div class="right"><button class="next" id="next"></button></div>
+  </header>
+  <main id="main"></main>
+</div>
+<div id="layer"></div>
+
+<script>
+const T = {
+  zh: {
+    demo: '示範版 · 不會寄出任何東西', createTitle: '寄出時光膠囊', steps: ['收件人', '內容', '容器', '時間與地點'], pubSteps: ['內容', '時間與地點'],
+    modePrivate: '私人膠囊（從主頁 ＋）', modePublic: '公開膠囊（從地圖「放下」）', drop: '放下膠囊',
+    pubWriteTitle: '放下一個公開膠囊', pubWriteLede: '任何路過這裡的人都能撿起來讀。內容跟私人膠囊一樣，用下面的按鈕加入。',
+    pubWhenTitle: '什麼時候出現？', appears: '出現時間', appearsOn: d => `${d} 出現，等路過的人撿起`,
+    hereTitle: '就放在這裡', hereSub: '會放在你附近的公共地點（公園、海旁、廣場），不會顯示你的確切位置。',
+    hereSpot: '信義廣場（離你約 80 公尺）', pubVessel: '公開膠囊都用漂流瓶，一眼就知道是別人留下的。', anyone: '任何路過的人',
+    d1: '明天', next: '下一步', seal: '封存寄出',
+    whoTitle: '這顆膠囊寄給誰？', whoLede: '預設寄給未來的自己，也可以寄給朋友。只有收件人能打開。',
+    to: '收件人', future: '未來的我', futureSub: '只有你自己能打開', friendSub: '朋友 · 只有對方能打開',
+    sea: '公開海', seaSub: '漂到某個海岸，附近的人都能撿到', invite: '邀請朋友', inviteSub: '傳一個連結，對方加入後就能收',
+    groupMe: '自己', groupFriends: '朋友',
+    private: '私人', public: '公開',
+    privateNote: '封存後連你也看不到內容，只有收件人能在時間到了之後打開。',
+    publicNote: '公開膠囊會漂到海岸，任何人走到那裡都能撿起來讀。只能放文字。',
+    envTo: '寄給', envFrom: '寄件人', you: '你',
+    writeTitle: '寫點什麼', writeLede: '像一張信紙：用下面的按鈕加入文字、錄音、相片、手寫或預言，想加幾個都可以。',
+    empty: '這張信紙還是空的。<br>從下面挑一種開始寫。',
+    t_text: '文字', t_audio: '錄音', t_photo: '相片', t_hand: '手寫', t_predict: '預言',
+    textPh: '親愛的未來的我……', predictPh: '我預言……', predictNote: '打開那天，收件人會判斷你說對了沒有。',
+    record: '開始錄音', stop: '停止', recording: '錄音中', recDemo: '示範版：錄音是模擬的',
+    photoPick: '選一張相片', clear: '清除', handPh: '用手指寫字',
+    up: '上移', down: '下移', remove: '刪除',
+    hint: '提示', hintSub: '打開前收件人看得到的一句話', hintPh: '例：還記得那年夏天嗎？',
+    onePredict: '每顆膠囊放一個預言就夠了', seaOnlyText: '公開膠囊只能放文字',
+    vesselTitle: '選一個容器', vesselLede: '膠囊封存時的樣子。可以搜尋或依分類找。',
+    searchPh: '搜尋容器', all: '全部', none: '找不到這個容器，換個關鍵字試試。',
+    earn: '在地標贏取', limited: '限量', suggest: '有預言區塊，很適合放進', use: '使用',
+    seaBottle: '公開膠囊都裝在漂流瓶裡。',
+    whenTitle: '什麼時候、在哪裡打開？', when: '打開時間', where: '打開地點',
+    m1: '1 個月後', m6: '半年後', y1: '1 年後', y5: '5 年後', custom: '自訂日期…', customSub: '從日曆選一天',
+    opensOn: d => `${d} 可以打開`, weekdays: ['日','一','二','三','四','五','六'],
+    anywhere: '任何地方', anywhereSub: '時間到了，在哪裡都能打開',
+    current: '我現在的位置', currentSub: '收件人要來到這裡才能打開',
+    searchMap: '在地圖上搜尋', searchMapSub: '任何地址、店名或景點（OpenStreetMap）',
+    landmark: '我們的地標', landmarkSub: '城市尋寶的地標，打開時有特別的動畫',
+    mapSearchPh: '搜尋地點，例如「太古廣場」', radius: '收件人要在 100 公尺內才能打開', mapDemo: '示意地圖',
+    drift: '漂流天數', driftN: n => `${n} 天`, washes: d => `大約 ${d} 漂到一個隨機海岸`,
+    sumTo: '收件人', sumBody: '內容', sumVessel: '容器', sumWhen: '時間', sumWhere: '地點',
+    blocksSum: c => c, chooseWhere: '選一個地點',
+    sealedTitle: '已封存', sealedBody: (who, d) => `膠囊已經寄給${who}。<br>${d} 之前，誰都打不開。`, droppedTitle: '膠囊放下了', droppedBody: (spot, d) => `它會在 ${d} 出現在「${spot}」，<br>等一位路過的人撿起。`, again: '再寄一顆（重新開始）',
+    errWho: '先選一個收件人', errBody: '信紙上至少要有一段內容', errVessel: '先選一個容器', errDate: '選一個打開日期', errPlace: '在地圖上選一個地點',
+    errLocked: '這個容器要先在地標贏取', inviteToast: '示範版：這裡會打開邀請頁',
+    curPlace: '你目前的位置', curPlaceSub: '台北市信義區（示範定位）',
+    blockLabel: { text: '文字', audio: '錄音', photo: '相片', hand: '手寫', predict: '預言' },
+  },
+  en: {
+    demo: 'Demo · nothing is sent', createTitle: 'New capsule', steps: ['To', 'Message', 'Vessel', 'When & where'], pubSteps: ['Message', 'When & where'],
+    modePrivate: 'Private capsule (Home ＋)', modePublic: 'Public capsule (map “Drop”)', drop: 'Drop it',
+    pubWriteTitle: 'Drop a public capsule', pubWriteLede: 'Anyone who passes by can pick it up and read it. Fill it just like a private capsule, with the buttons below.',
+    pubWhenTitle: 'When does it appear?', appears: 'Appears on', appearsOn: d => `Appears on ${d}, waiting for someone passing by`,
+    hereTitle: 'Right here', hereSub: 'It goes to a public spot near you (a park, waterfront or square). Your exact location is never shown.',
+    hereSpot: 'Xinyi Plaza (about 80 m from you)', pubVessel: 'Public capsules always use a bottle, so everyone can tell a person left them.', anyone: 'Anyone passing by',
+    d1: 'Tomorrow', next: 'Next', seal: 'Seal & send',
+    whoTitle: 'Who is this capsule for?', whoLede: 'It goes to your future self by default, or you can send it to a friend. Only the recipient can open it.',
+    to: 'To', future: 'Future me', futureSub: 'Only you can open it', friendSub: 'Friend · only they can open it',
+    sea: 'Public Sea', seaSub: 'Drifts to a shore where anyone nearby can find it', invite: 'Invite a friend', inviteSub: 'Send a link; once they join, they can receive',
+    groupMe: 'You', groupFriends: 'Friends',
+    private: 'Private', public: 'Public',
+    privateNote: 'Once sealed, not even you can read it. Only the recipient can open it when the time comes.',
+    publicNote: 'A public capsule washes up on a shore, and anyone who walks there can pick it up and read it. Text only.',
+    envTo: 'To', envFrom: 'From', you: 'You',
+    writeTitle: 'Write something', writeLede: 'Like a sheet of letter paper: add text, a voice note, a photo, handwriting or a prediction with the buttons below, as many as you like.',
+    empty: 'This page is still empty.<br>Pick something below to start.',
+    t_text: 'Text', t_audio: 'Voice', t_photo: 'Photo', t_hand: 'Draw', t_predict: 'Predict',
+    textPh: 'Dear future me…', predictPh: 'I predict…', predictNote: 'On the day it opens, the recipient decides whether you were right.',
+    record: 'Record', stop: 'Stop', recording: 'Recording', recDemo: 'Demo: recording is simulated',
+    photoPick: 'Choose a photo', clear: 'Clear', handPh: 'Write with your finger',
+    up: 'Move up', down: 'Move down', remove: 'Remove',
+    hint: 'Hint', hintSub: 'One line the recipient sees before opening', hintPh: 'e.g. Remember that summer?',
+    onePredict: 'One prediction per capsule is enough', seaOnlyText: 'Public capsules are text only',
+    vesselTitle: 'Choose a vessel', vesselLede: 'How the capsule looks while sealed. Search or browse by category.',
+    searchPh: 'Search vessels', all: 'All', none: 'No vessel matches that. Try another word.',
+    earn: 'Earn at a landmark', limited: 'Limited', suggest: 'You added a prediction. It fits nicely in', use: 'Use',
+    seaBottle: 'Public capsules always travel in a bottle.',
+    whenTitle: 'When and where can it open?', when: 'Opens on', where: 'Opens at',
+    m1: 'In 1 month', m6: 'In 6 months', y1: 'In 1 year', y5: 'In 5 years', custom: 'Pick a date…', customSub: 'Choose a day on the calendar',
+    opensOn: d => `Can be opened on ${d}`, weekdays: ['S','M','T','W','T','F','S'],
+    anywhere: 'Anywhere', anywhereSub: 'Opens wherever they are when the time comes',
+    current: 'Where I am now', currentSub: 'They must come here to open it',
+    searchMap: 'Search the map', searchMapSub: 'Any address, shop or sight (OpenStreetMap)',
+    landmark: 'Our landmarks', landmarkSub: 'City Hunt landmarks, with a special opening',
+    mapSearchPh: 'Search a place, e.g. "Pacific Place"', radius: 'They must be within 100 m to open it', mapDemo: 'Sample map',
+    drift: 'Drift time', driftN: n => `${n} days`, washes: d => `Washes up on a random shore around ${d}`,
+    sumTo: 'To', sumBody: 'Inside', sumVessel: 'Vessel', sumWhen: 'When', sumWhere: 'Where',
+    blocksSum: c => c, chooseWhere: 'Choose a place',
+    sealedTitle: 'Sealed', sealedBody: (who, d) => `Your capsule is on its way to ${who}.<br>No one can open it before ${d}.`, droppedTitle: 'Capsule dropped', droppedBody: (spot, d) => `It appears at ${spot} on ${d},<br>waiting for someone passing by.`, again: 'Send another (start over)',
+    errWho: 'Choose who it is for first', errBody: 'Add at least one block to the page', errVessel: 'Choose a vessel first', errDate: 'Choose an opening date', errPlace: 'Choose a place on the map',
+    errLocked: 'Earn this vessel at its landmark first', inviteToast: 'Demo: this opens the invite page',
+    curPlace: 'Your current location', curPlaceSub: 'Xinyi District, Taipei (sample location)',
+    blockLabel: { text: 'Text', audio: 'Voice', photo: 'Photo', hand: 'Drawing', predict: 'Prediction' },
+  }
+};
+
+const FRIENDS = [
+  { id: 'mei', zh: '美美', en: 'Mei', img: '../../../public/art/portraits/portrait-01.webp' },
+  { id: 'kai', zh: '阿凱', en: 'Kai', img: '../../../public/art/portraits/portrait-02.webp' },
+  { id: 'lam', zh: '阿林', en: 'Lam', img: '../../../public/art/portraits/portrait-03.webp' },
+  { id: 'yuki', zh: '雪', en: 'Yuki', img: '../../../public/art/portraits/portrait-04.webp' },
+];
+
+const CATS = [
+  { id: 'classic', zh: '經典', en: 'Classic' },
+  { id: 'festival', zh: '節慶', en: 'Festivals' },
+  { id: 'keepsake', zh: '回憶', en: 'Keepsakes' },
+  { id: 'food', zh: '美食', en: 'Food' },
+  { id: 'landmark', zh: '地標', en: 'Landmarks' },
+  { id: 'brand', zh: '品牌聯名', en: 'Brands' },
+];
+const V = (id, cat, zh, en, extra = {}) => ({ id, cat, zh, en, ...extra });
+const VESSELS = [
+  V('dome','classic','玻璃罩藍玫瑰','Glass-dome rose'), V('bottle','classic','漂流瓶','Message in a bottle'), V('envelope','classic','火漆信封','Wax-sealed letter'),
+  V('tin','classic','鐵盒','Tin'), V('hourglass','classic','沙漏','Hourglass'), V('postbox','classic','郵筒','Postbox'),
+  V('pocket-watch','classic','懷錶','Pocket watch'), V('treasure-chest','classic','寶箱','Treasure chest'), V('musicbox','classic','音樂盒','Music box'), V('snow-globe','classic','雪花球','Snow globe'),
+  V('lantern','festival','中秋燈籠','Mid-Autumn lantern'), V('mooncake-tin','festival','月餅盒','Mooncake tin'), V('red-packet','festival','利是封','Red packet'),
+  V('rice-dumpling','festival','糭子','Rice dumpling'), V('pumpkin','festival','南瓜燈','Pumpkin'), V('stocking','festival','聖誕襪','Stocking'),
+  V('river-lantern','festival','河燈','River lantern'), V('cake-box','festival','生日蛋糕盒','Birthday cake box'),
+  V('instant-camera','keepsake','即影即有相機','Instant camera'), V('photo-strip','keepsake','大頭貼','Photo strip'), V('mixtape','keepsake','錄音帶','Mixtape'),
+  V('vinyl','keepsake','黑膠唱片','Vinyl record'), V('rotary-phone','keepsake','轉盤電話','Rotary phone'), V('paper-cranes','keepsake','紙鶴','Paper cranes'),
+  V('love-padlock','keepsake','同心鎖','Love padlock'), V('heart-locket','keepsake','心形吊墜','Heart locket'),
+  V('bubble-tea','food','珍珠奶茶','Bubble tea'), V('ramen','food','拉麵','Ramen'), V('bento','food','便當','Bento'),
+  V('dim-sum-steamer','food','點心蒸籠','Dim sum steamer'), V('fortune-cookie','food','幸運籤餅','Fortune cookie'), V('chocolate-heart','food','心形朱古力','Chocolate heart'),
+  V('red-bird','landmark','火鳥日晷盒','Red Bird Sundial Box', { locked: true }), V('senado-fountain','landmark','議事亭噴泉','Senado fountain', { locked: true }),
+  V('twin-towers','landmark','雙子塔','Twin towers'), V('clock-tower','landmark','鐘樓','Clock tower'), V('golden-roof','landmark','金頂','Golden roof'),
+  V('maison','brand','Maison Aurèle 戒指盒','Maison Aurèle ring box', { limited: '027 / 300' }),
+];
+
+const PLACES = [
+  { zh: '太古廣場', en: 'Pacific Place', sub_zh: '香港金鐘道 88 號', sub_en: '88 Queensway, Admiralty, Hong Kong', lat: 22.2776, lng: 114.1655 },
+  { zh: '維多利亞公園', en: 'Victoria Park', sub_zh: '香港銅鑼灣', sub_en: 'Causeway Bay, Hong Kong', lat: 22.2820, lng: 114.1880 },
+  { zh: '尖沙咀鐘樓', en: 'Tsim Sha Tsui Clock Tower', sub_zh: '香港九龍尖沙咀', sub_en: 'Tsim Sha Tsui, Kowloon', lat: 22.2935, lng: 114.1694 },
+  { zh: '香港大學', en: 'The University of Hong Kong', sub_zh: '香港薄扶林道', sub_en: 'Pok Fu Lam Road, Hong Kong', lat: 22.2830, lng: 114.1371 },
+  { zh: '大三巴牌坊', en: 'Ruins of St. Paul’s', sub_zh: '澳門花王堂區', sub_en: 'Santo António, Macau', lat: 22.1974, lng: 113.5409 },
+  { zh: '台北 101', en: 'Taipei 101', sub_zh: '台北市信義區信義路五段 7 號', sub_en: '7 Xinyi Rd Sec. 5, Taipei', lat: 25.0340, lng: 121.5645 },
+  { zh: '象山步道', en: 'Elephant Mountain Trail', sub_zh: '台北市信義區', sub_en: 'Xinyi District, Taipei', lat: 25.0273, lng: 121.5764 },
+  { zh: '星巴克 誠品信義店', en: 'Starbucks Eslite Xinyi', sub_zh: '台北市信義區松高路 11 號', sub_en: '11 Songgao Rd, Taipei', lat: 25.0397, lng: 121.5655 },
+];
+const LANDMARKS = [
+  { zh: '香港科技大學', en: 'HKUST', sub_zh: '香港清水灣 · 火鳥日晷', sub_en: 'Clear Water Bay · the Red Bird sundial', lat: 22.3364, lng: 114.2654 },
+  { zh: '議事亭前地', en: 'Senado Square', sub_zh: '澳門 · 每天開放的城市尋寶', sub_en: 'Macau · daily City Hunt', lat: 22.1935, lng: 113.5398 },
+  { zh: '信義區', en: 'Xinyi District', sub_zh: '台北 · 信義城市尋寶', sub_en: 'Taipei · Xinyi City Hunt', lat: 25.0330, lng: 121.5654 },
+];
+
+const today = new Date(); today.setHours(0,0,0,0);
+const addMonths = (n) => { const d = new Date(today); d.setMonth(d.getMonth() + n); return d; };
+const S = {
+  lang: 'zh', mode: 'private', step: 1, sheet: null, done: false,
+  to: 'future', blocks: [], hint: '', vessel: null, cat: 'all', q: '',
+  when: 'y1', custom: null, calMonth: null, where: 'anywhere', place: null, mapQ: '',
+};
+let uid = 0;
+const t = (k) => T[S.lang][k];
+const L = (o) => S.lang === 'zh' ? o.zh : o.en;
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = (d) => d.toLocaleDateString(S.lang === 'zh' ? 'zh-Hant' : 'en', { year: 'numeric', month: 'long', day: 'numeric' });
+const isPub = () => S.mode === 'public';
+const stepNames = () => isPub() ? t('pubSteps') : t('steps');
+// Public flow: 1 = content, 2 = time (place is fixed). Map to the private step renderer it shares.
+const view = () => isPub() ? [null, 2, 4][S.step] : S.step;
+const $ = (id) => document.getElementById(id);
+
+const ICON = {
+  chev: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>',
+  lock: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>',
+  globe: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>',
+  plus: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  wave: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2 15c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/><path d="M9 9l3-5 3 5M12 4v9"/></svg>',
+  text: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5 6h14M5 11h14M5 16h9"/></svg>',
+  mic: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>',
+  photo: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/></svg>',
+  hand: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1 11-11-3-3L5 16l-1 4z"/><path d="M14 7l3 3"/></svg>',
+  predict: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="11" r="7"/><path d="M8 21h8M12 18v3M9.5 9.5a3 3 0 013-2"/></svg>',
+  search: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
+  pin: '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 00-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg>',
+  check: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>',
+  any: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>',
+  locate: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>',
+  map: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></svg>',
+  flag: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>',
+  cal: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  clock: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  play: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg>',
+  stop: '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>',
+};
+
+/* ---------- Recipient ---------- */
+function recipient() {
+  if (S.to === 'future') return { name: t('future'), sub: t('futureSub'), img: '../../../public/art/portraits/portrait-future.webp', priv: true };
+  if (isPub()) return { name: t('anyone'), sub: '', glyph: ICON.wave, priv: false };
+  const f = FRIENDS.find(x => x.id === S.to); return { name: L(f), sub: t('friendSub'), img: f.img, priv: true };
+}
+const face = (r) => r.img ? `<img class="avatar" src="${r.img}" alt="">` : `<span class="glyph">${r.glyph}</span>`;
+
+function stepWho() {
+  const r = recipient();
+  return `<h1>${t('whoTitle')}</h1><p class="lede">${t('whoLede')}</p>
+  <div class="label">${t('to')}</div>
+  <button class="pick" id="pickTo" aria-haspopup="listbox">${face(r)}<span class="txt"><span class="main">${esc(r.name)}</span><span class="sub">${esc(r.sub)}</span></span><span class="chev">${ICON.chev}</span></button>
+  <div class="privacy"><span class="pill private">${ICON.lock} ${t('private')}</span><span>${t('privateNote')}</span></div>
+  <div class="envelope"><div class="row"><span class="k">${t('envTo')}</span><span class="v">${esc(r.name)}</span></div><div class="row"><span class="k">${t('envFrom')}</span><span class="v">${t('you')}</span></div><img class="seal" src="../../../public/art/seal-wax.webp" alt=""></div>`;
+}
+function sheetWho() {
+  const opt = (id, name, sub, faceHtml) => `<button class="opt ${S.to === id ? 'on' : ''}" data-to="${id}" role="option" aria-selected="${S.to === id}">${faceHtml}<span class="txt"><span class="main">${esc(name)}</span><span class="sub">${esc(sub)}</span></span></button>`;
+  return `<div class="grab"></div><h2>${t('to')}</h2>
+    <div class="group">${t('groupMe')}</div>${opt('future', t('future'), t('futureSub'), '<img class="avatar" src="../../../public/art/portraits/portrait-future.webp" alt="">')}
+    <div class="group">${t('groupFriends')}</div>${FRIENDS.map(f => opt(f.id, L(f), t('friendSub'), `<img class="avatar" src="${f.img}" alt="">`)).join('')}
+    <button class="opt" data-invite="1"><span class="glyph">${ICON.plus}</span><span class="txt"><span class="main" style="color:var(--blue)">${t('invite')}</span><span class="sub">${t('inviteSub')}</span></span></button>`;
+}
+
+/* ---------- Blocks ---------- */
+const TOOLS = [['text', ICON.text], ['audio', ICON.mic], ['photo', ICON.photo], ['hand', ICON.hand], ['predict', ICON.predict]];
+function stepWrite() {
+  const hasPredict = S.blocks.some(b => b.type === 'predict');
+  const tools = TOOLS.map(([k, ic]) => {
+    const off = k === 'predict' && hasPredict;
+    const why = off ? t('onePredict') : '';
+    return `<button class="tool ${k === 'predict' ? 'predict-tool' : ''}" data-add="${k}" ${off ? 'disabled' : ''} title="${why}">${ic}<span>${t('t_' + k)}</span></button>`;
+  }).join('');
+  return `<h1>${t(isPub() ? 'pubWriteTitle' : 'writeTitle')}</h1><p class="lede">${t(isPub() ? 'pubWriteLede' : 'writeLede')}</p>
+  <div class="sheet-paper" id="paper">${S.blocks.length ? S.blocks.map(blockHtml).join('') : `<div class="empty">${t('empty')}</div>`}</div>
+  <div class="tools" role="toolbar">${tools}</div>
+  <div class="field"><div class="label">${t('hint')}</div><div class="note">${t('hintSub')}</div><input type="text" id="hint" maxlength="40" placeholder="${t('hintPh')}" value="${esc(S.hint)}"><div class="count" id="hintCount">${S.hint.length} / 40</div></div>`;
+}
+function blockHtml(b, i) {
+  const n = S.blocks.length;
+  const head = `<div class="block-head"><span>${t('blockLabel')[b.type]}</span><span class="sp"></span>
+    <button class="mini" data-move="${i}" data-dir="-1" aria-label="${t('up')}" ${i === 0 ? 'disabled' : ''}>↑</button>
+    <button class="mini" data-move="${i}" data-dir="1" aria-label="${t('down')}" ${i === n - 1 ? 'disabled' : ''}>↓</button>
+    <button class="mini" data-del="${i}" aria-label="${t('remove')}">✕</button></div>`;
+  let body = '';
+  if (b.type === 'text') body = `<textarea class="write" id="b${b.id}" data-text="${i}" rows="2" placeholder="${t('textPh')}">${esc(b.value || '')}</textarea>`;
+  if (b.type === 'predict') body = `<div class="predict-box"><input class="predict" id="b${b.id}" data-predict="${i}" maxlength="80" placeholder="${t('predictPh')}" value="${esc(b.value || '')}"><span class="predict-note">${t('predictNote')}</span></div>`;
+  if (b.type === 'audio') body = audioHtml(b, i);
+  if (b.type === 'photo') body = `<div class="photo">${b.src ? `<img src="${b.src}" alt="">` : `<label for="f${b.id}">${ICON.photo}<span>${t('photoPick')}</span></label><input type="file" accept="image/*" id="f${b.id}" data-photo="${i}">`}</div>`;
+  if (b.type === 'hand') body = `<canvas class="pad" id="c${b.id}" data-hand="${i}" aria-label="${t('handPh')}"></canvas><button class="mini" data-clear="${i}" style="margin-top:4px">${t('clear')}</button>`;
+  return `<div class="block" data-i="${i}">${head}${body}</div>`;
+}
+function audioHtml(b, i) {
+  const bars = (b.bars || []).map(h => `<i style="height:${h}%"></i>`).join('');
+  const mmss = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  if (b.state === 'rec') return `<div class="audio"><button class="rec" data-stop="${i}" aria-label="${t('stop')}">${ICON.stop}</button><span class="wave">${bars}</span><span class="time">${t('recording')} ${mmss(b.secs)}</span></div>`;
+  if (b.state === 'done') return `<div class="audio"><button class="rec play" aria-label="Play">${ICON.play}</button><span class="wave">${bars}</span><span class="time">${mmss(b.secs)}</span></div><div class="note" style="margin-top:4px">${t('recDemo')}</div>`;
+  return `<div class="audio"><button class="rec" data-rec="${i}" aria-label="${t('record')}">${ICON.mic}</button><span class="time">${t('record')}</span></div>`;
+}
+let recTimer = null;
+
+function drawPads() {
+  S.blocks.forEach(b => {
+    if (b.type !== 'hand') return;
+    const c = $('c' + b.id); if (!c) return;
+    const dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight;
+    c.width = w * dpr; c.height = h * dpr;
+    const ctx = c.getContext('2d'); ctx.scale(dpr, dpr);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 2.6; ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink');
+    if (b.data) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0, w, h); img.src = b.data; }
+    let drawing = false;
+    c.onpointerdown = e => { drawing = true; c.setPointerCapture(e.pointerId); const r = c.getBoundingClientRect(); ctx.beginPath(); ctx.moveTo(e.clientX - r.left, e.clientY - r.top); };
+    c.onpointermove = e => { if (!drawing) return; const r = c.getBoundingClientRect(); ctx.lineTo(e.clientX - r.left, e.clientY - r.top); ctx.stroke(); };
+    c.onpointerup = c.onpointercancel = () => { if (!drawing) return; drawing = false; b.data = c.toDataURL(); };
+  });
+}
+function autosize() { document.querySelectorAll('textarea.write').forEach(a => { a.style.height = 'auto'; a.style.height = a.scrollHeight + 'px'; }); }
+
+/* ---------- Vessels ---------- */
+function stepVessel() {
+  const hasPredict = S.blocks.some(b => b.type === 'predict');
+  const cookie = VESSELS.find(v => v.id === 'fortune-cookie');
+  const counts = Object.fromEntries(CATS.map(c => [c.id, VESSELS.filter(v => v.cat === c.id).length]));
+  return `<h1>${t('vesselTitle')}</h1><p class="lede">${t('vesselLede')}</p>
+  <div class="field search">${ICON.search}<input type="search" id="vq" placeholder="${t('searchPh')}" value="${esc(S.q)}" autocomplete="off"></div>
+  <div class="chips" role="tablist"><button class="chip ${S.cat === 'all' ? 'on' : ''}" data-cat="all">${t('all')}<span class="n">${VESSELS.length}</span></button>${CATS.map(c => `<button class="chip ${S.cat === c.id ? 'on' : ''}" data-cat="${c.id}">${L(c)}<span class="n">${counts[c.id]}</span></button>`).join('')}</div>
+  ${hasPredict && S.vessel !== 'fortune-cookie' ? `<div class="suggest"><img src="../../../public/art/vessels/vessel-fortune-cookie.webp" alt=""><span class="sp">${t('suggest')} <b>${L(cookie)}</b></span><button class="link" data-vessel="fortune-cookie">${t('use')}</button></div>` : ''}
+  <div class="grid" id="vgrid">${vesselGrid()}</div>`;
+}
+function vesselGrid() {
+  const q = S.q.trim().toLowerCase();
+  const list = VESSELS.filter(v => (S.cat === 'all' || v.cat === S.cat) && (!q || v.zh.includes(q) || v.en.toLowerCase().includes(q) || v.id.includes(q)));
+  if (!list.length) return `<div class="noresult">${t('none')}</div>`;
+  return list.map(v => `<button class="vessel ${S.vessel === v.id ? 'on' : ''} ${v.locked ? 'locked' : ''}" data-vessel="${v.id}" aria-pressed="${S.vessel === v.id}">
+    ${S.vessel === v.id ? `<span class="check">${ICON.check}</span>` : ''}<img src="../../../public/art/vessels/vessel-${v.id}.webp" alt="" loading="lazy"><span class="nm">${esc(L(v))}</span>
+    ${v.locked ? `<span class="tag">${ICON.lock} ${t('earn')}</span>` : v.limited ? `<span class="tag">${t('limited')} ${v.limited}</span>` : ''}</button>`).join('');
+}
+
+/* ---------- When & where ---------- */
+function openDate() {
+  return presetDate(S.when) || S.custom;
+}
+const presetDate = (k) => { if (k === 'd1') { const d = new Date(today); d.setDate(d.getDate() + 1); return d; } return { m1: addMonths(1), m6: addMonths(6), y1: addMonths(12), y5: addMonths(60) }[k]; };
+// One list for both flows, so the control behaves the same everywhere.
+const WHEN = [['d1', 'clock'], ['m1', 'clock'], ['m6', 'clock'], ['y1', 'clock'], ['y5', 'clock'], ['custom', 'cal']];
+const WHERE = [['anywhere', 'any'], ['current', 'locate'], ['search', 'map'], ['landmark', 'flag']];
+function stepWhen() {
+  const d = openDate();
+  const whenSub = S.when === 'custom' ? (S.custom ? fmt(S.custom) : t('customSub')) : fmt(d);
+  const wh = WHERE.find(w => w[0] === S.where);
+  const whereMain = { anywhere: t('anywhere'), current: t('current'), search: t('searchMap'), landmark: t('landmark') }[S.where];
+  const whereSub = S.place ? L(S.place) : { anywhere: t('anywhereSub'), current: t('currentSub'), search: t('searchMapSub'), landmark: t('landmarkSub') }[S.where];
+  return `<h1>${t(isPub() ? 'pubWhenTitle' : 'whenTitle')}</h1>
+  <div class="label">${t(isPub() ? 'appears' : 'when')}</div>
+  <button class="pick" id="pickWhen"><span class="glyph">${ICON[S.when === 'custom' ? 'cal' : 'clock']}</span><span class="txt"><span class="main">${t(S.when)}</span><span class="sub">${esc(whenSub)}</span></span><span class="chev">${ICON.chev}</span></button>
+  ${S.when === 'custom' ? calendar() : ''}
+  ${d ? `<div class="result">${isPub() ? t('appearsOn')(fmt(d)) : t('opensOn')(fmt(d))}</div>` : ''}
+  <div class="label" style="margin-top:6px">${t('where')}</div>
+  ${isPub() ? hereCard() : `
+  <button class="pick" id="pickWhere"><span class="glyph">${ICON[wh[1]]}</span><span class="txt"><span class="main">${whereMain}</span><span class="sub">${esc(whereSub)}</span></span><span class="chev">${ICON.chev}</span></button>
+  ${whereDetail()}`}
+  ${summary()}`;
+}
+function hereCard() {
+  const spot = { zh: T.zh.hereSpot, en: T.en.hereSpot, lat: 25.0358, lng: 121.5668 };
+  return `<div class="here"><span class="glyph">${ICON.locate}</span><span class="txt"><span class="main">${t('hereTitle')}</span><span class="sub">${t('hereSub')}</span></span></div>${mapCard(spot)}`;
+}
+function calendar() {
+  const m = S.calMonth || new Date(today.getFullYear(), today.getMonth() + 1, 1);
+  const first = new Date(m.getFullYear(), m.getMonth(), 1), days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
+  const title = first.toLocaleDateString(S.lang === 'zh' ? 'zh-Hant' : 'en', { year: 'numeric', month: 'long' });
+  const prevOk = first > new Date(today.getFullYear(), today.getMonth(), 1);
+  let cells = t('weekdays').map(w => `<span class="wd">${w}</span>`).join('') + '<span></span>'.repeat(first.getDay());
+  for (let i = 1; i <= days; i++) {
+    const d = new Date(m.getFullYear(), m.getMonth(), i), past = d <= today, on = S.custom && d.getTime() === S.custom.getTime();
+    cells += `<button class="day ${on ? 'on' : ''}" data-day="${d.getTime()}" ${past ? 'disabled' : ''}>${i}</button>`;
+  }
+  return `<div class="cal"><div class="cal-head"><button class="icon-btn" data-cal="-1" ${prevOk ? '' : 'disabled'} aria-label="Previous month">‹</button><span>${title}</span><button class="icon-btn" data-cal="1" aria-label="Next month">›</button></div><div class="cal-grid">${cells}</div></div>`;
+}
+function whereDetail() {
+  if (S.where === 'anywhere') return '';
+  let top = '';
+  if (S.where === 'search') {
+    const q = S.mapQ.trim().toLowerCase();
+    const hits = q ? PLACES.filter(p => (p.zh + p.en + p.sub_zh + p.sub_en).toLowerCase().includes(q)) : PLACES.slice(0, 4);
+    top = `<div class="field search">${ICON.search}<input type="search" id="mapq" placeholder="${t('mapSearchPh')}" value="${esc(S.mapQ)}" autocomplete="off"></div>
+    ${S.place && !S.mapOpen ? '' : `<div class="results">${hits.map((p, i) => `<button class="res" data-place="${PLACES.indexOf(p)}">${ICON.pin}<span class="txt"><span>${esc(L(p))}</span><span class="sub">${esc(S.lang === 'zh' ? p.sub_zh : p.sub_en)}</span></span></button>`).join('') || `<div class="noresult">${t('none')}</div>`}</div>`}`;
+  }
+  if (S.where === 'landmark') top = `<div class="results">${LANDMARKS.map((p, i) => `<button class="res" data-landmark="${i}" style="${S.place === p ? 'background:var(--glass)' : ''}">${ICON.flag}<span class="txt"><span>${esc(L(p))}</span><span class="sub">${esc(S.lang === 'zh' ? p.sub_zh : p.sub_en)}</span></span></button>`).join('')}</div>`;
+  return top + (S.place ? mapCard(S.place) : '');
+}
+function mapCard(p) {
+  // A stylised stand-in. The real screen uses the app's MapLibre map with OpenStreetMap data.
+  return `<div class="map"><svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <rect width="320" height="200" fill="#EEF2F0"/><path d="M0 150 C80 130 120 175 200 160 S300 120 320 130 V200 H0z" fill="#DCE8F2"/>
+    <rect x="20" y="20" width="70" height="44" rx="4" fill="#E2E8E0"/><rect x="220" y="24" width="80" height="54" rx="4" fill="#E2E8E0"/><rect x="40" y="88" width="56" height="40" rx="4" fill="#E2E8E0"/>
+    <path d="M0 76 H320 M150 0 V200 M0 34 L320 120 M250 0 L210 200" stroke="#FFFFFF" stroke-width="7" fill="none"/>
+    <circle cx="160" cy="88" r="38" fill="rgba(163,54,79,.12)" stroke="#A3364F" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <path d="M160 58a13 13 0 00-13 13c0 10 13 24 13 24s13-14 13-24a13 13 0 00-13-13z" fill="#A3364F"/><circle cx="160" cy="71" r="4.5" fill="#FFFFFF"/></svg>
+    <span class="badge">${t('mapDemo')}</span>
+    <div class="cap"><b>${esc(L(p))}</b><span>${p.lat.toFixed(4)}, ${p.lng.toFixed(4)} · ${t('radius')}</span></div></div>`;
+}
+function sheetWhen() {
+  return `<div class="grab"></div><h2>${t(isPub() ? 'appears' : 'when')}</h2>` + WHEN.map(([k, ic]) => `<button class="opt ${S.when === k ? 'on' : ''}" data-when="${k}"><span class="glyph">${ICON[ic]}</span><span class="txt"><span class="main">${t(k)}</span><span class="sub">${k === 'custom' ? t('customSub') : fmt(presetDate(k))}</span></span></button>`).join('');
+}
+function sheetWhere() {
+  const sub = { anywhere: 'anywhereSub', current: 'currentSub', search: 'searchMapSub', landmark: 'landmarkSub' };
+  const main = { anywhere: 'anywhere', current: 'current', search: 'searchMap', landmark: 'landmark' };
+  return `<div class="grab"></div><h2>${t('where')}</h2>` + WHERE.map(([k, ic]) => `<button class="opt ${S.where === k ? 'on' : ''}" data-where="${k}"><span class="glyph">${ICON[ic]}</span><span class="txt"><span class="main">${t(main[k])}</span><span class="sub">${t(sub[k])}</span></span></button>`).join('');
+}
+function summary() {
+  const r = recipient(), v = VESSELS.find(x => x.id === (isPub() ? 'bottle' : S.vessel)), d = openDate();
+  const counts = {}; S.blocks.forEach(b => counts[b.type] = (counts[b.type] || 0) + 1);
+  const body = Object.entries(counts).map(([k, n]) => `${t('blockLabel')[k]}${n > 1 ? ' ×' + n : ''}`).join(' · ') || '—';
+  const where = isPub() ? t('hereSpot') : S.where === 'anywhere' ? t('anywhere') : (S.place ? L(S.place) : t('chooseWhere'));
+  return `<div class="summary">
+    ${v ? `<img src="../../../public/art/vessels/vessel-${v.id}.webp" alt="" style="grid-row:span 5">` : '<span style="grid-row:span 5"></span>'}
+    <div class="v"><div class="k">${t('sumTo')}</div>${esc(r.name)} <span class="pill ${r.priv ? 'private' : 'public'}">${r.priv ? ICON.lock : ICON.globe} ${r.priv ? t('private') : t('public')}</span></div>
+    <div class="v"><div class="k">${t('sumBody')}</div>${body}</div>
+    <div class="v"><div class="k">${t('sumVessel')}</div>${v ? esc(L(v)) : '—'}${isPub() ? `<div class="note">${t('pubVessel')}</div>` : ''}</div>
+    <div class="v"><div class="k">${t('sumWhen')}</div>${d ? fmt(d) : '—'}</div>
+    <div class="v"><div class="k">${t('sumWhere')}</div>${esc(where)}</div></div>`;
+}
+
+/* ---------- Wax steps ---------- */
+const SEAL = (() => { const pts = []; for (let i = 0; i <= 90; i++) { const a = i / 90 * Math.PI * 2, r = 30 + Math.sin(a * 11) + .9 * Math.sin(a * 3 + 1) + .6 * Math.sin(a * 7 + 2); pts.push(`${(34 + r * Math.cos(a)).toFixed(2)} ${(34 + r * Math.sin(a)).toFixed(2)}`); } return `M${pts.join(' L')} Z`; })();
+function drop(state, n) {
+  if (state === 'future') return `<svg width="34" height="34" viewBox="0 0 68 68"><circle cx="34" cy="34" r="20" fill="#FFFFFF" stroke="#CDB9C0" stroke-width="2.2" stroke-dasharray="4 4"/></svg>`;
+  const now = state === 'now';
+  return `<svg width="34" height="34" viewBox="0 0 68 68"><path d="${SEAL}" fill="#9A2E48" stroke="${now ? '#C9A15A' : '#74203A'}" stroke-width="${now ? 4.5 : 1.5}" ${now ? '' : 'transform="translate(34 34) scale(0.8) translate(-34 -34)"'}/><circle cx="30" cy="29" r="${now ? 21 : 17}" fill="#BD4A66" opacity=".5"/>${now ? '' : '<path d="M24 36 l7 7 l13 -15" stroke="#5E1529" stroke-opacity=".5" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 35 l7 7 l13 -15" stroke="#FBF1E1" stroke-width="4.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'}</svg>${now ? `<span class="num">${n}</span>` : ''}`;
+}
+function waxSteps(names) {
+  const k = names.length, a = 100 / (2 * k), b = 100 - a;
+  const ribbon = `<svg class="ribbon" viewBox="0 0 100 34" preserveAspectRatio="none"><path d="M${a} 17 C30 24 40 10 50 17 S75 24 ${b} 17" stroke="#C9A15A" stroke-width="1.6" fill="none" vector-effect="non-scaling-stroke"/></svg>`;
+  return ribbon + names.map((nm, i) => { const n = i + 1, st = n < S.step ? 'done' : n === S.step ? 'now' : 'future';
+    return `<button class="drop ${st}" data-go="${n}" ${st === 'done' ? '' : 'disabled'} aria-label="${nm}">${drop(st, n)}<span class="nm">${nm}</span></button>`; }).join('');
+}
+
+/* ---------- Shell ---------- */
+function render() {
+  document.documentElement.lang = S.lang === 'zh' ? 'zh-Hant' : 'en';
+  $('demoTag').textContent = t('demo');
+  if (S.done) { renderSealed(); return; }
+  $('modes').innerHTML = ['private', 'public'].map(m => `<button class="mode ${S.mode === m ? 'on' : ''}" data-mode="${m}">${t(m === 'private' ? 'modePrivate' : 'modePublic')}</button>`).join('');
+  const names = stepNames(), last = names.length;
+  $('back').disabled = S.step === 1;
+  $('dots').innerHTML = waxSteps(names);
+  const nx = $('next'); nx.hidden = false; nx.textContent = S.step === last ? t(isPub() ? 'drop' : 'seal') : t('next'); nx.classList.toggle('seal', S.step === last);
+  $('main').innerHTML = [null, stepWho, stepWrite, stepVessel, stepWhen][view()]();
+  if (view() === 2) { drawPads(); autosize(); }
+  renderSheet();
+}
+function renderSheet() {
+  const map = { who: sheetWho, when: sheetWhen, where: sheetWhere };
+  $('layer').innerHTML = S.sheet ? `<div class="shade" id="shade"><div class="sheet" role="dialog" aria-modal="true">${map[S.sheet]()}</div></div>` : '';
+}
+function renderSealed() {
+  $('back').disabled = true; $('dots').innerHTML = '';  $('next').hidden = true;
+  const r = recipient(), d = openDate();
+  $('modes').innerHTML = '';
+  const title = isPub() ? t('droppedTitle') : t('sealedTitle'), body = isPub() ? t('droppedBody')(t('hereSpot'), fmt(d)) : t('sealedBody')(esc(r.name), fmt(d));
+  $('main').innerHTML = `<div class="sealed"><img src="../../../public/art/scenes/${isPub() ? 'scene-sea-sealed' : 'scene-sealed'}.webp" alt=""><h1>${title}</h1><p>${body}</p><button class="btn" id="again">${t('again')}</button></div>`;
+}
+function toast(msg) {
+  const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg; document.body.appendChild(el);
+  setTimeout(() => { el.style.opacity = 0; setTimeout(() => el.remove(), 250); }, 1800);
+}
+function validate() {
+  const v = view();
+  if (v === 1 && !S.to) return t('errWho');
+  if (v === 2 && !S.blocks.some(b => (b.type === 'text' || b.type === 'predict') ? (b.value || '').trim() : b.type === 'audio' ? b.state === 'done' : b.type === 'photo' ? b.src : b.data)) return t('errBody');
+  if (v === 3 && !S.vessel) return t('errVessel');
+  if (v === 4 && !openDate()) return t('errDate');
+  if (v === 4 && !isPub() && S.where !== 'anywhere' && !S.place) return t('errPlace');
+  return '';
+}
+
+/* ---------- Events ---------- */
+$('next').onclick = () => {
+  const err = validate(); if (err) { toast(err); return; }
+  if (view() === 2 && !isPub() && !S.vessel && S.blocks.some(b => b.type === 'predict')) S.vessel = 'fortune-cookie';
+  if (S.step < stepNames().length) { S.step++; window.scrollTo(0, 0); render(); } else { S.done = true; render(); window.scrollTo(0, 0); }
+};
+$('back').onclick = () => { if (S.step > 1) { S.step--; render(); } };
+// Language is set elsewhere in the app (Me), not inside Create. Demo-only: add #en to the link to preview English.
+if (location.hash === '#en') S.lang = 'en';
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('button, #shade'); if (!el) return;
+  const d = el.dataset;
+  if (el.id === 'shade' && e.target === el) { S.sheet = null; renderSheet(); return; }
+  if (el.id === 'pickTo') { S.sheet = 'who'; renderSheet(); return; }
+  if (el.id === 'pickWhen') { S.sheet = 'when'; renderSheet(); return; }
+  if (el.id === 'pickWhere') { S.sheet = 'where'; renderSheet(); return; }
+  if (el.id === 'again') { Object.assign(S, { step: 1, done: false, to: 'future', blocks: [{ id: ++uid, type: 'text', value: '' }], hint: '', vessel: null, cat: 'all', q: '', when: isPub() ? 'd1' : 'y1', custom: null, where: 'anywhere', place: null, mapQ: '' }); render(); return; }
+  if (d.go) { S.step = +d.go; render(); return; }
+  if (d.to) { S.to = d.to; S.sheet = null; render(); return; }
+  if (d.mode) { S.mode = d.mode; S.step = 1; S.when = isPub() ? 'd1' : 'y1'; S.custom = null; render(); window.scrollTo(0, 0); return; }
+  if (d.invite) { S.sheet = null; renderSheet(); toast(t('inviteToast')); return; }
+  if (d.add) {
+    const b = { id: ++uid, type: d.add };
+    if (b.type === 'audio') b.state = 'idle';
+    S.blocks.push(b); render();
+    const focus = $('b' + b.id); if (focus) focus.focus();
+    document.querySelector(`.block[data-i="${S.blocks.length - 1}"]`)?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    return;
+  }
+  if (d.del != null) { S.blocks.splice(+d.del, 1); render(); return; }
+  if (d.move != null) { const i = +d.move, j = i + +d.dir; [S.blocks[i], S.blocks[j]] = [S.blocks[j], S.blocks[i]]; render(); return; }
+  if (d.clear != null) { const b = S.blocks[+d.clear]; b.data = null; render(); return; }
+  if (d.rec != null) {
+    const b = S.blocks[+d.rec]; b.state = 'rec'; b.secs = 0; b.bars = [];
+    clearInterval(recTimer);
+    recTimer = setInterval(() => { b.bars.push(20 + Math.random() * 80); if (b.bars.length > 60) b.bars.shift(); if (b.bars.length % 4 === 0) b.secs++; const blk = document.querySelector(`.block[data-i="${S.blocks.indexOf(b)}"] .audio`); if (blk) blk.outerHTML = audioHtml(b, S.blocks.indexOf(b)); }, 250);
+    render(); return;
+  }
+  if (d.stop != null) { clearInterval(recTimer); const b = S.blocks[+d.stop]; b.state = 'done'; b.secs = Math.max(b.secs, 1); render(); return; }
+  if (d.cat) { S.cat = d.cat; render(); return; }
+  if (d.vessel) {
+    const v = VESSELS.find(x => x.id === d.vessel);
+    if (v.locked) { toast(t('errLocked')); return; }
+    S.vessel = v.id; render(); return;
+  }
+  if (d.when) { S.when = d.when; S.sheet = null; render(); return; }
+  if (d.cal) { const m = S.calMonth || new Date(today.getFullYear(), today.getMonth() + 1, 1); S.calMonth = new Date(m.getFullYear(), m.getMonth() + +d.cal, 1); render(); return; }
+  if (d.day) { S.custom = new Date(+d.day); render(); return; }
+  if (d.where) {
+    S.where = d.where; S.sheet = null; S.place = null; S.mapOpen = false;
+    if (S.where === 'current') S.place = { zh: t('curPlace'), en: t('curPlace'), lat: 25.0336, lng: 121.5648 };
+    render(); return;
+  }
+  if (d.place) { S.place = PLACES[+d.place]; S.mapOpen = false; render(); return; }
+  if (d.landmark) { S.place = LANDMARKS[+d.landmark]; render(); return; }
+});
+document.addEventListener('input', e => {
+  const el = e.target, d = el.dataset;
+  if (d.text != null) { S.blocks[+d.text].value = el.value; autosize(); }
+  if (d.predict != null) S.blocks[+d.predict].value = el.value;
+  if (el.id === 'hint') { S.hint = el.value; $('hintCount').textContent = `${el.value.length} / 40`; }
+  if (el.id === 'vq') { S.q = el.value; $('vgrid').innerHTML = vesselGrid(); }
+  if (el.id === 'mapq') {
+    S.mapQ = el.value; S.mapOpen = true;
+    const pos = el.selectionStart; render(); const n = $('mapq'); n.focus(); n.setSelectionRange(pos, pos);
+  }
+});
+document.addEventListener('change', e => {
+  const d = e.target.dataset;
+  if (d.photo != null) {
+    const f = e.target.files[0]; if (!f) return;
+    const r = new FileReader(); r.onload = () => { S.blocks[+d.photo].src = r.result; render(); }; r.readAsDataURL(f);
+  }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.sheet) { S.sheet = null; renderSheet(); } });
+
+// Open in a realistic state: one text block already on the page.
+S.blocks.push({ id: ++uid, type: 'text', value: '' });
+render();
+</script>
