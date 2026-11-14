@@ -8,6 +8,7 @@ begin
  foreach mode in array array['fixed','near'] loop
   draft:=jsonb_build_object('name','Guide rollback','description','','route_mode','any','leaderboard_visible',true,'starts_at',now()-interval '1 hour','ends_at',now()+interval '1 hour','time_limit_min',10,'guide_mode',mode,'guide_lat',case when mode='fixed' then 25 end,'guide_lng',case when mode='fixed' then 121 end);
   h:=public.private_hunt_create(draft)->>'id';
+  if mode='near' then assert private.private_hunt_area(h)->>'lat' is null; end if;
   perform public.private_hunt_quest_save(h,jsonb_build_object('name','Arrive','quest_type','arrive','ordinal',1,'points',10,'location_lat',25,'location_lng',121));
   perform public.private_hunt_quest_save(h,jsonb_build_object('name','Catch','quest_type','restore','ordinal',2,'points',20,'catch_count',1));
   select id into q from public.private_hunt_quests where hunt_id=h and quest_type='restore';

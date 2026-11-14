@@ -64,7 +64,7 @@ AS $function$
   with centre as (
     select avg(location_lat) as lat, avg(location_lng) as lng from (select location_lat,location_lng from public.private_hunt_quests where hunt_id=p_hunt and location_lat is not null union all select guide_lat,guide_lng from public.hunts where id=p_hunt and guide_mode='fixed' and not exists(select 1 from public.private_hunt_quests where hunt_id=p_hunt and location_lat is not null)) locations
   )
-  select jsonb_build_object('lat', coalesce(c.lat, 0), 'lng', coalesce(c.lng, 0),
+  select jsonb_build_object('lat', c.lat, 'lng', c.lng,
     'radius_m', case when c.lat is null then 200 else
       ceil(greatest(200, 1.25 * (select max(public.distance_m(c.lat, c.lng, w.location_lat, w.location_lng))
         from public.private_hunt_quests w where w.hunt_id = p_hunt)))::integer end)
