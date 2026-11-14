@@ -507,7 +507,7 @@ export type Database = {
           description: string
           hunt_id: string
           id: string
-          image: string | null
+          image: string
           lat: number
           lng: number
           mission_type: string
@@ -522,7 +522,7 @@ export type Database = {
           description?: string
           hunt_id: string
           id?: string
-          image?: string | null
+          image?: string
           lat: number
           lng: number
           mission_type: string
@@ -537,7 +537,7 @@ export type Database = {
           description?: string
           hunt_id?: string
           id?: string
-          image?: string | null
+          image?: string
           lat?: number
           lng?: number
           mission_type?: string
@@ -566,6 +566,7 @@ export type Database = {
           cover: string | null
           description: string
           ends_at: string
+          first_joined_at: string | null
           id: string
           join_code: string | null
           keeper_lat: number | null
@@ -595,6 +596,7 @@ export type Database = {
           cover?: string | null
           description?: string
           ends_at: string
+          first_joined_at?: string | null
           id: string
           join_code?: string | null
           keeper_lat?: number | null
@@ -624,6 +626,7 @@ export type Database = {
           cover?: string | null
           description?: string
           ends_at?: string
+          first_joined_at?: string | null
           id?: string
           join_code?: string | null
           keeper_lat?: number | null

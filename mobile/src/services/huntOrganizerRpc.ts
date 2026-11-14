@@ -34,6 +34,7 @@ export type WaypointDraft = {
 
 type Waypoint = Omit<WaypointDraft, "id" | "qr_token" | "answer" | "puzzle_kind" | "choices"> & {
   id: string;
+  image: string;
   puzzle_kind: WaypointDraft["puzzle_kind"] | null;
   choices: string[] | null;
 };
@@ -53,9 +54,10 @@ export type OwnedHunt = HuntDraft & {
 
 export type HuntEditState = {
   draft: HuntDraft;
-  waypoints: WaypointDraft[];
+  waypoints: (WaypointDraft & { id: string; image: string })[];
   status: HuntStatus;
   code: string | null;
+  locked: boolean;
 };
 
 export type Review = {

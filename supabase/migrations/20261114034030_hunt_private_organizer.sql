@@ -13,6 +13,7 @@ where id = '1fd214ef-4de5-4b4f-81bc-77c3328441fe';
 
 alter table public.hunts
   add column kind text not null default 'system' check (kind in ('system', 'private')),
+  add column first_joined_at timestamptz,
   add column owner uuid references public.profiles(id) on delete cascade,
   add column status text not null default 'published' check (status in ('draft', 'published', 'closed')),
   add column join_code text unique check (join_code ~ '^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$'),
@@ -58,7 +59,14 @@ create table public.hunt_waypoints (
   mission_type text not null check (mission_type in ('arrive', 'spin', 'puzzle')),
   points integer not null check (points between 1 and 999),
   description text not null default '' check (char_length(description) <= 500),
-  image text,
+  image text not null default 'tpl:park',
+  constraint hunt_waypoints_image_reference check (
+    image in ('tpl:park', 'tpl:garden', 'tpl:waterfront', 'tpl:square', 'tpl:publicArt')
+    or (
+      split_part(image, '/', 1) = hunt_id
+      and substr(image, char_length(hunt_id) + 2) ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[.]jpg$'
+    )
+  ),
   puzzle_kind text check (puzzle_kind in ('text', 'choice')),
   choices jsonb,
   arrive_check text not null default 'gps' check (arrive_check in ('gps', 'gps_qr')),
@@ -121,6 +129,17 @@ end $$;
 create trigger hunt_members_cap before insert or update of hunt_id on public.hunt_members
 for each row execute function private.private_hunt_member_cap();
 
+-- Keep the editor locked even if the first player later leaves or deletes their account.
+create function private.mark_hunt_first_join() returns trigger
+language plpgsql set search_path = '' as $$
+begin
+  update public.hunts set first_joined_at = new.joined_at
+  where id = new.hunt_id and first_joined_at is null;
+  return new;
+end $$;
+create trigger hunt_members_first_join after insert or update of hunt_id on public.hunt_members
+for each row execute function private.mark_hunt_first_join();
+
 create function private.lock_owned_hunt(p_hunt text) returns public.hunts
 language plpgsql set search_path = '' as $$
 declare h public.hunts;
@@ -155,10 +174,10 @@ begin
     name text, description text, cover text, route_mode text, leaderboard_visible boolean,
     starts_at timestamptz, ends_at timestamptz, time_limit_min integer);
   if nullif(btrim(draft.name), '') is null then raise exception 'name required'; end if;
-  if exists (select 1 from public.hunt_members where hunt_id = h.id)
+  if h.first_joined_at is not null
     and (h.starts_at, h.ends_at, h.route_mode, h.time_limit_min) is distinct from
         (draft.starts_at, draft.ends_at, draft.route_mode, draft.time_limit_min)
-  then raise exception 'route and timing are locked after a player joins'; end if;
+  then raise exception 'hunt_locked' using errcode = 'PT409'; end if;
   update public.hunts set name_en = btrim(draft.name), name_zh = btrim(draft.name),
     description = coalesce(draft.description, ''), cover = draft.cover,
     route_mode = draft.route_mode, leaderboard_visible = draft.leaderboard_visible,
@@ -198,8 +217,8 @@ declare
   waypoint_id uuid;
 begin
   if h.status = 'closed' or (h.status = 'published' and h.ends_at <= now())
-    or exists (select 1 from public.hunt_members where hunt_id = h.id)
-  then raise exception 'waypoints are locked'; end if;
+  then raise exception 'closed'; end if;
+  if h.first_joined_at is not null then raise exception 'hunt_locked' using errcode = 'PT409'; end if;
 
   select * into w from jsonb_populate_record(null::public.hunt_waypoints, p_waypoint);
   waypoint_id := coalesce(w.id, gen_random_uuid());
@@ -235,8 +254,7 @@ begin
     id, hunt_id, ordinal, lat, lng, name, mission_type, points, description, image, puzzle_kind, choices, arrive_check
   ) values (
     waypoint_id, h.id, w.ordinal, w.lat, w.lng, btrim(w.name), w.mission_type, w.points,
-    coalesce(w.description, ''), case when p_waypoint ? 'image' then w.image else
-      (select image from public.hunt_waypoints where id = w.id) end,
+    coalesce(w.description, ''), coalesce(nullif(w.image, ''), 'tpl:park'),
     case when w.mission_type = 'puzzle' then w.puzzle_kind end, choice_list,
     case when w.mission_type = 'arrive' then coalesce(w.arrive_check, 'gps') else 'gps' end
   )
@@ -264,8 +282,8 @@ declare h public.hunts;
 begin
   h := private.lock_owned_hunt((select hunt_id from public.hunt_waypoints where id = p_waypoint));
   if h.status = 'closed' or (h.status = 'published' and h.ends_at <= now())
-    or exists (select 1 from public.hunt_members where hunt_id = h.id)
-  then raise exception 'waypoints are locked'; end if;
+  then raise exception 'closed'; end if;
+  if h.first_joined_at is not null then raise exception 'hunt_locked' using errcode = 'PT409'; end if;
   delete from public.hunt_waypoints where id = p_waypoint and hunt_id = h.id;
 end $$;
 
@@ -319,6 +337,7 @@ begin
   select * into h from public.hunts where id = p_hunt and kind = 'private' and owner = auth.uid();
   if not found then raise exception 'not allowed' using errcode = '42501'; end if;
   return jsonb_build_object('draft', private.private_hunt_draft(h), 'status', h.status, 'code', h.join_code,
+    'locked', h.first_joined_at is not null,
     'waypoints', coalesce((select jsonb_agg(
       (to_jsonb(w) - 'hunt_id') || jsonb_build_object(
         'puzzle_kind', coalesce(w.puzzle_kind, 'choice'),
@@ -364,7 +383,7 @@ begin
   );
 end $$;
 
-revoke all on function private.private_hunt_member_cap(), private.lock_owned_hunt(text),
+revoke all on function private.private_hunt_member_cap(), private.mark_hunt_first_join(), private.lock_owned_hunt(text),
   private.private_hunt_area(text), private.hunt_apply_draft(text, jsonb),
   private.private_hunt_draft(public.hunts) from public, anon, authenticated;
 
@@ -377,7 +396,8 @@ grant execute on function public.hunt_create(jsonb), public.hunt_update(text, js
   public.hunt_publish(text), public.hunt_close(text), public.hunt_edit_state(text),
   public.my_hunts(), public.hunt_review(text) to authenticated;
 
--- Paths in hunt-media start with the hunt id, followed by a slash and a filename.
+-- Quest photos use <hunt_id>/<uuid>.jpg in hunt-media. Owners and members resolve
+-- these private paths with the Storage client.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('hunt-media', 'hunt-media', false, 10485760, array['image/jpeg', 'image/png', 'image/webp']);
 

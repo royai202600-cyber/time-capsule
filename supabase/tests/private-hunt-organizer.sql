@@ -28,6 +28,8 @@ declare
   base jsonb := '{"ordinal":1,"lat":25.03,"lng":121.56,"name":"Arrive","mission_type":"arrive","points":999,"arrive_check":"gps_qr","qr_token":"supplied"}';
   token text;
   code text;
+  picture text;
+  photo_path text;
 begin
   begin
     perform public.hunt_create(draft || '{"ends_at":"infinity"}');
@@ -45,6 +47,8 @@ begin
   end;
   perform public.hunt_waypoint_save(h, base);
   state := public.hunt_edit_state(h);
+  assert state->>'locked' = 'false';
+  assert state->'waypoints'->0->>'image' = 'tpl:park';
   token := state->'waypoints'->0->>'qr_token';
   assert token ~ '^[0-9a-f]{32}$';
   perform public.hunt_waypoint_save(h, base || jsonb_build_object('id', state->'waypoints'->0->>'id'));
@@ -54,6 +58,26 @@ begin
           "points":1,"puzzle_kind":"choice","choices":["first","second"],"answer":"second"}';
   perform public.hunt_waypoint_save(h, w);
   assert public.hunt_edit_state(h)->'waypoints'->1->>'answer' = '';
+  -- A blank replacement succeeds only by retaining the saved answer.
+  perform public.hunt_waypoint_save(h, w || jsonb_build_object(
+    'id', public.hunt_edit_state(h)->'waypoints'->1->>'id', 'answer', ''));
+  foreach picture in array array['tpl:park','tpl:garden','tpl:waterfront','tpl:square','tpl:publicArt'] loop
+    perform public.hunt_waypoint_save(h, base || jsonb_build_object(
+      'id', state->'waypoints'->0->>'id', 'image', picture));
+    assert public.hunt_edit_state(h)->'waypoints'->0->>'image' = picture;
+  end loop;
+  photo_path := h || '/01234567-89ab-4def-8abc-0123456789ab.jpg';
+  insert into storage.objects(bucket_id, name) values ('hunt-media', photo_path);
+  perform public.hunt_waypoint_save(h, base || jsonb_build_object(
+    'id', state->'waypoints'->0->>'id', 'image', photo_path));
+  assert public.my_hunts()->0->'waypoints'->0->>'image' = photo_path;
+  foreach picture in array array['data:image/jpeg;base64,abc', 'tpl:unknown',
+    '00000000-0000-4000-8000-000000000000/01234567-89ab-4def-8abc-0123456789ab.jpg'] loop
+    begin
+      perform public.hunt_waypoint_save(h, base || jsonb_build_object('ordinal', 3, 'image', picture));
+      raise exception 'invalid image accepted';
+    exception when check_violation then null; end;
+  end loop;
   assert (public.my_hunts()->0->'area'->>'radius_m')::integer between 1389 and 1391;
   assert not (public.my_hunts()->0->'waypoints'->0 ? 'qr_token');
   assert not (public.my_hunts()->0->'waypoints'->1 ? 'answer');
@@ -138,10 +162,26 @@ do $$
 declare
   h text := current_setting('test.private_hunt_id');
   review jsonb := public.hunt_review(h);
+  state jsonb := public.hunt_edit_state(h);
+  waypoint jsonb := state->'waypoints'->0;
 begin
   assert review->'stats'->>'finished' = '1';
   assert review->'stats'->'per_waypoint'->0->>'done' = '1';
   assert review->'members'->0->>'duration_s' = '60';
+  assert state->>'locked' = 'true';
+  perform public.hunt_update(h, state->'draft' || '{"description":"Updated after join"}');
+  begin
+    perform public.hunt_update(h, state->'draft' || '{"route_mode":"any"}');
+    raise exception 'locked route changed';
+  exception when sqlstate 'PT409' then assert sqlerrm = 'hunt_locked'; end;
+  begin
+    perform public.hunt_waypoint_save(h, waypoint || '{"points":42}');
+    raise exception 'locked waypoint changed';
+  exception when sqlstate 'PT409' then assert sqlerrm = 'hunt_locked'; end;
+  begin
+    perform public.hunt_waypoint_delete((waypoint->>'id')::uuid);
+    raise exception 'locked waypoint deleted';
+  exception when sqlstate 'PT409' then assert sqlerrm = 'hunt_locked'; end;
   perform public.hunt_close(h);
   assert public.hunt_edit_state(h)->>'status' = 'closed';
 end $$;
