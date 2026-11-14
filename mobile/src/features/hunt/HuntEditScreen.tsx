@@ -24,6 +24,9 @@ import { QuestGlyph } from "./PrivateHuntViews";
 import { useHuntText } from "./strings";
 import { useOrganizerText, type OrganizerText } from "./organizerStrings";
 import { QuestEditor } from "./QuestEditor";
+import { QuestMap } from "./QuestMap";
+import { useForegroundLocation } from "../journey/location";
+import { reversePlace } from "../../services/places";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 
 const PLACEHOLDER = "#A5AFBD";
@@ -39,6 +42,9 @@ export default function HuntEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const [section, setSection] = useState<Section>("details");
+  const [questView, setQuestView] = useState<"map" | "list">("map");
+  const location = useForegroundLocation(section === "quests");
+  const you = location.fix ? { lat: location.fix.lat, lng: location.fix.lng } : null;
   const [draft, setDraft] = useState<HuntDraft | null>(null);
   const [quests, setQuests] = useState<QuestDraft[]>([]);
   const [status, setStatus] = useState<HuntStatus>("draft");
@@ -101,6 +107,14 @@ export default function HuntEditScreen() {
     () => organizer.deleteQuest(userId, id, w.id!),
     async () => { await load(); setEditing(null); },
   );
+  // A tap on the map drops an arrive quest there at once, named after the place, so a route goes down
+  // tap after tap; its type and details are set afterwards by tapping its pin.
+  const drop = (lat: number, lng: number) => void act(async () => {
+    const ordinal = nextOrdinal(quests);
+    const place = await reversePlace({ lat, lng }, language).catch(() => null);
+    const name = (place?.name || o.questNumbered(quests.length + 1)).slice(0, LIMITS.name);
+    await organizer.saveQuest(userId, id, { ...blankQuest(ordinal, { lat, lng }), name });
+  }, async () => { await load(); setToast(o.dropped(quests.length + 1)); });
   const publish = () => void act(
     async () => { flush.current(); setCode(await organizer.publish(userId, id)); },
     () => { setStatus("published"); setSection("share"); },
@@ -190,6 +204,21 @@ export default function HuntEditScreen() {
     </>}
 
     {section === "quests" && <>
+      <View accessibilityRole="tablist" style={{ flexDirection: "row", alignSelf: "flex-start", backgroundColor: C.glass, borderRadius: radii.pill, padding: 3 }}>
+        {(["map", "list"] as const).map((v) => <Pressable key={v} accessibilityRole="tab" accessibilityState={{ selected: questView === v }}
+          onPress={() => setQuestView(v)}
+          style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingVertical: 6, paddingHorizontal: 16, borderRadius: radii.pill, backgroundColor: questView === v ? C.white : "transparent", ...(questView === v ? shadows.card : null) }}>
+          <ArtIcon name={v === "map" ? "map" : "quest"} size={15} color={questView === v ? C.blue : C.muted} />
+          <Text style={{ fontFamily: sans, fontSize: 13, color: questView === v ? C.ink : C.muted }}>{o.questViews[v]}</Text>
+        </Pressable>)}
+      </View>
+
+      {questView === "map" && <QuestMap quests={quests} ordered={draft.route_mode === "ordered"} you={you}
+        hint={locked ? o.mapHintLocked : quests.length >= LIMITS.quests ? o.questFull(LIMITS.quests) : o.mapHint}
+        onDrop={locked || quests.length >= LIMITS.quests ? null : drop}
+        onOpen={(q) => { if (!locked) setEditing(q); }} />}
+
+      {questView === "list" && <>
       {!rows.length && <View style={{ gap: 4, paddingVertical: spacing.sm }}>
         <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{o.noQuests}</Text>
         <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{o.noQuestsNote}</Text>
@@ -198,6 +227,7 @@ export default function HuntEditScreen() {
       {locked ? null : quests.length < LIMITS.quests
         ? <Btn quiet title={o.addQuest} disabled={busy} onPress={() => setEditing(blankQuest(nextOrdinal(quests), null))} />
         : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{o.questFull(LIMITS.quests)}</Text>}
+      </>}
     </>}
 
     {section === "share" && <>
