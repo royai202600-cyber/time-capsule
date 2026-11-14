@@ -2,6 +2,14 @@
 
 Context for any AI agent working in this folder. Read this before doing anything. Keep it up to date when decisions change. The "Decisions log" at the bottom is the place for new ones.
 
+## Words we use
+- **Quest (任務)** is one task in a City Hunt or private hunt. Quest types include checking in with the Keeper, arriving at a spot, scanning a QR code, spinning Wayposts, solving a puzzle, catching Corrupted Capsules, and defeating the Landmark capsule.
+- A **quest pin** is the map marker for a quest that has a place. Location is optional quest data, with fields such as `location_lat` and `location_lng`.
+- **City Hunt** is a system hunt. **Private hunt** is an organizer-made hunt. City Hunts and private hunts share quest types where they overlap. Use names such as `city_hunt_quests`, `city_hunt_quest_progress`, and `private_hunt_quests`.
+- **Waypost** is the blue gem. **Landmark Waypost** is the large Waypost with the fight.
+- **Corrupted Capsule** is a system capsule. **Public capsule** is a capsule dropped for whoever passes by.
+- Apply this vocabulary to code and comments. Retire the terms “mission”, “關卡”, “waypoint”, “城市尋寶”, and the former public-capsule terms “sea”, “bottle”, and “shore”. Name quest locations as optional fields on the quest.
+
 ## Owner and working style
 - Owner: **Roy**. He prefers to **keep it simple**: fewest moving parts, no speculative features.
 - Propose before building anything big (stack, architecture, new dependencies) and wait for Roy's OK.
@@ -74,6 +82,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-14: Roy reversed the 2026-11-09 code naming decision for public capsules. Use the glossary above. Both City Hunt and private hunt tasks are quests, with optional location data. Existing user-facing translations are preserved.
 - 2026-11-14: Waypost discovery expands from 500 m to 5 km through migration 20261114075139. Hosted rollback at Taipei Civic Square returned 15 → 51 Wayposts with identical Corrupted Capsule spawns. The dedicated Expo test account can create private hunts. The Civic Square placeholder was corrected using Photon. PR #123 passed CI 43572035508 and owner-account squash-merged as `e7077f1`.
 - 2026-11-14: Old Street is enabled as the sixth private-hunt quest picture. Migration `20261114065634` adds only `tpl:oldStreet` to the image constraint. Hosted rollback verified all six templates, an existing-format photo path and rejection of an unknown template. Live generated types matched. PR #122 merged as `f0eed21`, and the approved template wiring in PR #121 merged as `0c5804c`.
 - 2026-11-14: City Orienteering is live with both backend flags enabled. The eight release PRs passed CI before owner-account squash merge. Migrations `20261114033941`, `20261114034030` and `20261114054459` passed hosted rollback checks and were applied in order. Live types were regenerated. Release `a793578` and fixes `7cedda1` (localized draft names) and `3f8d53a` (wait for quest refresh between saves) reached production. Signed-in 375 px checks covered the timed Xinyi run, private hunt organizer and player flows, map filters, photos, leaderboard, stamps and first-join edit lock. The disposable accounts, rows and photos were deleted. Camera QR and photo upload in Expo Go remain for Roy. PR #115 merged separately as `c2c32d6` and its art was outside the release verification.
