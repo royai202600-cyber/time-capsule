@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Image, Linking, Platform, Pressable, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { goBack } from "../../navigation";
 import { useAuth } from "../../services/auth";
 import { useCapsules, usePlaces } from "../../services/hooks";
@@ -35,7 +35,9 @@ import { errorKey, useGameText } from "../game/strings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { hunt as hunts, HuntError, huntStatus, keeperMark, onHuntChange, type Hunt } from "../../services/hunt";
 import { clockText } from "../../services/huntClock";
+import { inOrder, locked as missionLocked, onPrivateHuntChange, privateHunt as privateHunts, PrivateHuntError, type LeaderRow, type PrivateHunt, type Waypoint } from "../../services/huntPrivate";
 import { KeeperCard, keeperPortrait, QuestSheet, RunChip } from "../hunt/HuntViews";
+import { JoinPrivateSheet, LeaderboardSheet, MissionSheet, PrivateHuntCard } from "../hunt/PrivateHuntViews";
 import { useHuntText } from "../hunt/strings";
 import type { PassportHunt } from "../../services/game";
 
@@ -88,6 +90,16 @@ export default function JourneyScreen() {
   const [huntStamps, setHuntStamps] = useState<PassportHunt[]>([]);
   const [huntList, setHuntList] = useState<Hunt[]>([]);
   const [questOpen, setQuestOpen] = useState(false);
+  // Private hunts: the ones I joined, the join-by-code sheet, the mission I have open and the leaderboard.
+  const [privateList, setPrivateList] = useState<PrivateHunt[]>([]);
+  const [joinOpen, setJoinOpen] = useState(false);
+  const [joinFound, setJoinFound] = useState<PrivateHunt | null>(null);
+  const [joinError, setJoinError] = useState<string | null>(null);
+  const [mission, setMission] = useState<{ hunt: string; waypoint: string } | null>(null);
+  const [missionError, setMissionError] = useState<string | null>(null);
+  const [board, setBoard] = useState<{ hunt: PrivateHunt; rows: LeaderRow[] | null } | null>(null);
+  const { huntCode: huntCodeParam } = useLocalSearchParams<{ huntCode?: string }>();
+  const [linkCode, setLinkCode] = useState<string | null>(null);
   const [keeperOpen, setKeeperOpen] = useState(false);
   const [youLabel, setYouLabel] = useState(false);
   const h = useHuntText();
@@ -148,11 +160,16 @@ export default function JourneyScreen() {
       const [state, around, stamps] = await Promise.all([game.state(), game.nearby({ lat: at.lat, lng: at.lng, accuracy: at.accuracy }), game.passport()]);
       setGameState(state); setNearby(around); nearbyRef.current = around; setPassportStamps(stamps.places); setHuntStamps(stamps.hunts);
     } catch { /* the map still works without the game */ }
+    const previewAllowed = __DEV__ || isTestLocationUser(userId);
     try {
-      setHuntList(await hunts.list({ userId, at, known: nearbyRef.current.wayposts, previewAllowed: __DEV__ || isTestLocationUser(userId) }));
+      setHuntList(await hunts.list({ userId, at, known: nearbyRef.current.wayposts, previewAllowed }));
     } catch (e) { if (__DEV__) console.warn("City Hunt list failed", e); }
+    try {
+      setPrivateList(await privateHunts.mine({ userId, at, previewAllowed }));
+    } catch (e) { if (__DEV__) console.warn("private hunt list failed", e); }
   }, [cell]);
   useEffect(() => onHuntChange(() => { void loadGame(); }), [loadGame]);
+  useEffect(() => onPrivateHuntChange(() => { void loadGame(); }), [loadGame]);
   useFocusEffect(useCallback(() => {
     void loadGame();
     const timer = setInterval(() => { void loadGame(); }, 30_000);
@@ -214,6 +231,13 @@ export default function JourneyScreen() {
     id: `keeper-${activeHunt.id}`, lat: activeHunt.keeper.lat, lng: activeHunt.keeper.lng, kind: "keeper", vessel: "",
     portrait: assetUri(keeperPortrait), figure: assetUri(characters.keeper), mark: keeperMark(activeHunt),
   }] : [], [activeHunt, showKeeper]);
+  // A joined private hunt's waypoints: brass location pins, only ever visible to people who joined.
+  const missionPins = useMemo<LivePin[]>(() => privateList.flatMap((ph) => inOrder(ph).map<LivePin>((w) => ({
+    id: `mission-${ph.id}-${w.id}`, lat: w.lat, lng: w.lng, kind: "mission", vessel: "",
+    mission: w.mission_type, done: !!w.done_at, locked: missionLocked(ph, w),
+    near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
+    tag: w.done_at ? undefined : h.pointsShort(w.points),
+  }))), [privateList, you?.lat, you?.lng, h]);
   const cooling = (w: Waypost) => !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now();
   const gamePins = useMemo<LivePin[]>(() => [
     // Only what's inside the pickup circle shows, so capsules never crowd the map.
@@ -248,8 +272,8 @@ export default function JourneyScreen() {
     // While throwing, the capsule is alone on the plain map.
     pins: throwing ? [] : [...items.map<LivePin>((i) => i.kind === "sea"
       ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri("bottle"), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
-      : placePin(i)), ...gamePins, ...huntPins],
-  }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language, gamePins, huntPins, !!throwing, youLabel, h, senders, now]);
+      : placePin(i)), ...gamePins, ...huntPins, ...missionPins],
+  }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language, gamePins, huntPins, missionPins, !!throwing, youLabel, h, senders, now]);
 
   const select = (id: string | null) => {
     setWalkTo(null);
@@ -293,6 +317,15 @@ export default function JourneyScreen() {
       return;
     }
     setKeeperOpen(false);
+    if (id.startsWith("mission-")) {
+      const pin = missionPins.find((p) => p.id === id);
+      const found = findMission(id);
+      if (!pin || !found) return;
+      setSelectedId(null); setGameCard(null); void haptics.tick();
+      map.current?.focus(pin.lat, pin.lng);
+      setMissionError(null); setMission({ hunt: found.hunt.id, waypoint: found.waypoint.id });
+      return;
+    }
     if (id.startsWith("corrupted-")) {
       const capsule = nearby.corrupted.find((c) => `corrupted-${c.id}` === id);
       if (!capsule) return;
@@ -353,6 +386,71 @@ export default function JourneyScreen() {
     if (x.checked_in_at && !x.finished_at && keeperMark(x) !== "✓") map.current?.recenter();
     else { map.current?.focus(x.keeper.lat, x.keeper.lng); setKeeperOpen(true); }
   };
+
+  // ---- private hunts ----
+  // The open mission is held by id, so it follows the hunt as the server (or the demo) refreshes it.
+  const openMission = mission ? privateList.find((p) => p.id === mission.hunt) ?? null : null;
+  const openWaypoint = openMission?.waypoints.find((w) => w.id === mission?.waypoint) ?? null;
+  const findMission = (pinId: string) => {
+    for (const ph of privateList) for (const w of ph.waypoints) if (`mission-${ph.id}-${w.id}` === pinId) return { hunt: ph, waypoint: w };
+    return null;
+  };
+  const privateAction = async (run: () => Promise<unknown>, fail: (message: string) => void, done?: () => void) => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await run();
+      void haptics.success();
+      done?.();
+      await loadGame();
+    } catch (e) {
+      void haptics.warn();
+      fail(h.perr[e instanceof PrivateHuntError ? e.code : "unknown"]);
+    } finally { setBusy(false); }
+  };
+  const findCode = (code: string) => {
+    setJoinError(null); setJoinFound(null);
+    void privateAction(async () => { setJoinFound(await privateHunts.preview(code, at())); }, setJoinError);
+  };
+  const joinPrivate = (ph: PrivateHunt) => void privateAction(
+    async () => { setJoinFound(await privateHunts.join(ph)); },
+    setJoinError,
+    () => { setJoinOpen(false); setToast(h.joined); },
+  );
+  const completeMission = (ph: PrivateHunt, w: Waypoint, answer?: string) => {
+    setMissionError(null);
+    void privateAction(
+      async () => {
+        const out = await privateHunts.complete(ph, w, at(), answer);
+        // Back to the map, where the pin turns cream and the toast says what the mission was worth.
+        setMission(null);
+        setToast([h.gotPoints(out.points_gained), out.hunt.finished_at ? h.privateStamp : ""].filter(Boolean).join(" · "));
+      },
+      setMissionError,
+    );
+  };
+  const showLeaderboard = (ph: PrivateHunt) => {
+    setQuestOpen(false); setBoard({ hunt: ph, rows: null });
+    void privateHunts.leaderboard(ph)
+      .then((rows) => setBoard({ hunt: ph, rows }))
+      .catch(() => { setBoard(null); setToast(h.leaderboardHidden); });
+  };
+  const showMissions = (ph: PrivateHunt) => {
+    setQuestOpen(false); setSelectedId(null); setGameCard(null); setKeeperOpen(false);
+    const next = inOrder(ph).find((w) => !w.done_at) ?? inOrder(ph)[0];
+    if (next) map.current?.focus(next.lat, next.lng);
+  };
+  const reportPrivate = (ph: PrivateHunt) => {
+    setQuestOpen(false);
+    void privateHunts.report(ph).then(() => setToast(h.reported)).catch(() => setToast(h.perr.unknown));
+  };
+  // A code that arrived in a share link opens the join sheet once, with the code already filled in.
+  // It waits for a position first, so the hunt's distances are right the moment the sheet appears.
+  useEffect(() => {
+    if (!huntCodeParam || !you) return;
+    setLinkCode(huntCodeParam); setJoinOpen(true);
+    router.setParams({ huntCode: "" });
+  }, [huntCodeParam, !!you]);
   const directions = (lat: number, lng: number) => {
     const at = `${lat},${lng}`;
     void Linking.openURL(Platform.OS === "ios" ? `https://maps.apple.com/?daddr=${at}` : `https://www.google.com/maps/dir/?api=1&destination=${at}`);
@@ -382,6 +480,7 @@ export default function JourneyScreen() {
         <Chip onPress={goBack} label={t("back")}><ArtIcon name="back" size={22} /></Chip>
         <View style={{ flex: 1 }} pointerEvents="none" />
         <RunChip hunt={activeHunt} onPress={() => setQuestOpen(true)} />
+        {privateList.map((ph) => <RunChip key={ph.id} hunt={ph} tone={C.brass} onPress={() => setQuestOpen(true)} />)}
         {GAME_ENABLED && gameState && <View accessibilityRole="text" style={{ height: 44, paddingHorizontal: 14, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", justifyContent: "center", ...shadows.card }}>
           <Text style={{ fontFamily: sans, fontSize: 12, color: C.ink }}>{g("level", gameState.level)} · {g("balls", gameState.wax_balls)}</Text>
         </View>}
@@ -439,8 +538,25 @@ export default function JourneyScreen() {
     {spinning && <SpinScreen waypost={spinning} language={language} onState={setGameState} onClose={() => { setSpinning(null); void loadGame(); }} />}
     {throwing && gameState && <ThrowScreen capsule={throwing} landmark={fight ?? undefined} state={gameState} onState={setGameState}
       onClose={() => { setThrowing(null); setFight(null); map.current?.recenter(); void loadGame(); }} />}
-    <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows} hunts={[...huntStamps, ...hunts.previewStamps().filter((p) => !huntStamps.some((x) => x.id === p.id))]} />
-    <QuestSheet visible={questOpen} hunts={huntList} busy={busy} onClose={() => setQuestOpen(false)} onJoin={(x) => void joinHunt(x)} onShowOnMap={showHunt} />
+    <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows}
+      hunts={[...huntStamps, ...hunts.previewStamps().filter((p) => !huntStamps.some((x) => x.id === p.id))]}
+      privateHunts={privateHunts.demoStamps()} />
+    <QuestSheet visible={questOpen} hunts={huntList} busy={busy} onClose={() => setQuestOpen(false)} onJoin={(x) => void joinHunt(x)} onShowOnMap={showHunt}
+      privateTab={{
+        count: privateList.length,
+        onEnterCode: () => { setQuestOpen(false); setLinkCode(null); setJoinFound(null); setJoinError(null); setJoinOpen(true); },
+        children: privateList.map((ph) => <PrivateHuntCard key={ph.id} hunt={ph}
+          onShowOnMap={showMissions} onLeaderboard={showLeaderboard} onReport={reportPrivate}
+          onOpenMission={(x, w) => { setQuestOpen(false); setMissionError(null); setMission({ hunt: x.id, waypoint: w.id }); map.current?.focus(w.lat, w.lng); }} />),
+      }} />
+    <JoinPrivateSheet visible={joinOpen} initialCode={linkCode} found={joinFound} busy={busy} error={joinError}
+      onClose={() => setJoinOpen(false)} onFind={findCode} onJoin={joinPrivate} />
+    {openMission && openWaypoint && <MissionSheet visible hunt={openMission} waypoint={openWaypoint}
+      meters={metersTo(openWaypoint.lat, openWaypoint.lng)} busy={busy} error={missionError}
+      tries={openWaypoint.tries ? 3 - (openWaypoint.tries % 3) : undefined}
+      onClose={() => { setMission(null); setMissionError(null); }}
+      onComplete={(answer) => completeMission(openMission, openWaypoint, answer)} />}
+    <LeaderboardSheet visible={!!board} hunt={board?.hunt ?? null} rows={board?.rows ?? null} onClose={() => setBoard(null)} />
   </JourneyViewport>;
 }
 

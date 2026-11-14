@@ -74,7 +74,7 @@ const signedIn = async () => !!(await supabase.auth.getSession()).data.session;
 
 // ---------- preview (device-only) ----------
 const XINYI = {
-  id: "xinyi-2026-11", name_zh: "信義城市尋寶", name_en: "Xinyi City Hunt", city_zh: "台北", city_en: "Taipei",
+  id: "xinyi-2026-11", name_zh: "信義城市定向", name_en: "Xinyi City Hunt", city_zh: "台北", city_en: "Taipei",
   starts_at: "2026-11-10T00:00:00+08:00", ends_at: "2026-11-30T23:59:59+08:00",
   keeper: { lat: 25.037546, lng: 121.562754 }, area: { lat: 25.033263, lng: 121.564887, radius_m: 1200 },
   landmark: "Taipei 101", reward: { xp: 300, gold: 5 }, time_limit_min: 60,
@@ -100,7 +100,7 @@ function buildPreview(at: Coords, known: Waypost[], live: boolean): Hunt | null 
   // Signed out in development: a small hunt around wherever you are, using the stand-in Wayposts.
   if (previewHunt && previewHunt.id === "dev-hunt") return previewHunt;
   return asPreview({
-    ...XINYI, id: "dev-hunt", name_zh: "測試尋寶", name_en: "Test Hunt", city_zh: "這附近", city_en: "Nearby",
+    ...XINYI, id: "dev-hunt", name_zh: "測試定向", name_en: "Test Hunt", city_zh: "這附近", city_en: "Nearby",
     starts_at: new Date(Date.now() - 3_600_000).toISOString(), ends_at: new Date(Date.now() + 3 * 3_600_000).toISOString(),
     keeper: offset(at, 40, -30), area: { ...at, radius_m: 1200 },
     landmark: known.find((w) => w.kind === "landmark")?.id ?? ""

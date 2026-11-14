@@ -1,11 +1,14 @@
-// The clock of a timed City Hunt (docs/design/city-orienteering.md, Part A): it starts at check-in with
-// the Letter Keeper and stops on the return to him. The server owns the times; this only reads them.
+// The clock of a timed hunt (docs/design/city-orienteering.md). A City Hunt starts it at check-in with
+// the Letter Keeper and stops on the return to him; a private hunt starts it when you join. Both are the
+// same activity to a player, so both satisfy this shape and share one clock. The server owns the times.
 export type RunTimes = {
   time_limit_min?: number | null;
   run_started_at?: string | null;
   run_ends_at?: string | null;
-  checked_in_at: string | null;
+  checked_in_at?: string | null;
   finished_at: string | null;
+  best_s?: number | null;
+  today_s?: number | null;
 };
 export type RunClock =
   | { state: "none" }
