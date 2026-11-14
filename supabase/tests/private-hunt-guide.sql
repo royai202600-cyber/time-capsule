@@ -1,7 +1,7 @@
 begin;
 -- Run inside a transaction; caller rolls back all fixtures.
 do $$
-declare u uuid:=gen_random_uuid(); outsider uuid:=gen_random_uuid(); h text; q uuid; code text; draft jsonb; state jsonb; mode text; spot uuid; started timestamptz;
+declare u uuid:=gen_random_uuid(); outsider uuid:=gen_random_uuid(); h text; q uuid; code text; draft jsonb; state jsonb; mode text; unavailable text; spot uuid; started timestamptz;
 begin
  insert into auth.users(id,email) values(u,u||'@guide.invalid'),(outsider,outsider||'@guide.invalid');
  insert into public.profiles(id,name,can_create_hunts) values(u,'Guide rollback',true),(outsider,'Outsider',false);
@@ -24,7 +24,7 @@ begin
   update public.private_hunt_quests set location_lat=25,location_lng=121 where hunt_id=h and quest_type='arrive';
   assert not exists(select 1 from public.private_hunt_quest_progress where quest_id=q);
   update public.hunts set guide_lat=case when mode='fixed' then 25 else null end,guide_lng=case when mode='fixed' then 121 else null end where id=h;
-  state:=public.private_hunt_start(h,25,121,10);started:=(state->>'started_at')::timestamptz;
+  state:=public.private_hunt_start(h,case when mode='fixed' then 25+(select action_radius_m*0.75/111195 from private.game_config where singleton) else 25 end,121,10);started:=(state->>'started_at')::timestamptz;
   assert started>=now();
   perform private.private_hunt_record_catch(spot,0,0);
   assert not exists(select 1 from public.private_hunt_quest_progress where quest_id=q);
@@ -42,6 +42,16 @@ begin
   update public.private_hunt_members set finished_at=now()-interval '2 seconds' where hunt_id=h;
   state:=public.private_hunt_collect_reward(h);assert state->>'reward_collected_at' is not null;
   assert exists(select 1 from public.my_passport() where place=h and how_earned='private_hunt');
+  foreach unavailable in array array['closed','hidden'] loop
+   update public.hunts set ends_at=now()+interval '1 hour',
+    status=case when unavailable='closed' then 'closed' else 'published' end,
+    hidden_at=case when unavailable='hidden' then now() end where id=h;
+   update public.private_hunt_members set finished_at=null,reward_collected_at=null where hunt_id=h;
+   begin perform public.private_hunt_collect_reward(h);raise exception 'expected not_finished';exception when raise_exception then if sqlerrm<>'not_finished' then raise;end if;end;
+   update public.private_hunt_members set finished_at=now() where hunt_id=h;
+   state:=public.private_hunt_collect_reward(h);assert state->>'reward_collected_at' is not null;
+   assert exists(select 1 from public.my_passport() where place=h and how_earned='private_hunt');
+  end loop;
  end loop;
  assert not has_function_privilege('anon','public.private_hunt_start(text,double precision,double precision,double precision)','execute');
  assert not has_function_privilege('authenticated','private.private_hunt_record_catch(uuid,double precision,double precision)','execute');

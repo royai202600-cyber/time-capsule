@@ -357,7 +357,7 @@ end $function$;
 create function private.private_hunt_at_guide(h public.hunts, p_lat double precision,p_lng double precision,p_accuracy double precision)
 returns boolean language sql stable set search_path='' as $$
  select coalesce(p_lat between -90 and 90 and p_lng between -180 and 180 and p_accuracy>0 and p_accuracy<=200 and
- case when h.guide_mode='fixed' then public.distance_m(p_lat,p_lng,h.guide_lat,h.guide_lng)<=50
+ case when h.guide_mode='fixed' then public.distance_m(p_lat,p_lng,h.guide_lat,h.guide_lng)<=(select action_radius_m from private.game_config where singleton)
  else public.distance_m(p_lat,p_lng,(a->>'lat')::double precision,(a->>'lng')::double precision)<=(a->>'radius_m')::double precision end,false)
  from (select private.private_hunt_area(h.id) a) area
 $$;
@@ -396,8 +396,9 @@ begin
  if not found then raise exception 'not_joined'; end if;
  if m.finished_at is null then raise exception 'not_finished'; end if;
  if m.reward_collected_at is null then
-  -- Only the scheduled end releases the guide requirement, not an early close.
-  if clock_timestamp()<h.ends_at and not private.private_hunt_at_guide(h,p_lat,p_lng,p_accuracy) then raise exception 'too_far'; end if;
+  -- Once the hunt ends, closes or is hidden, the guide is gone; finished players may claim anywhere.
+  if clock_timestamp()<h.ends_at and h.status='published' and h.hidden_at is null
+     and not private.private_hunt_at_guide(h,p_lat,p_lng,p_accuracy) then raise exception 'too_far'; end if;
   update public.private_hunt_members set reward_collected_at=clock_timestamp() where hunt_id=h.id and user_id=m.user_id returning * into m;
  end if;
  return private.private_hunt_player_object(h,m);
