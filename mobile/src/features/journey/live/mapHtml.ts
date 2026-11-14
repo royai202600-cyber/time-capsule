@@ -156,14 +156,16 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 /* MapLibre owns the anchor transform: never animate or scale this element. */
 .pin{position:absolute;width:80px;height:96px;cursor:pointer;transition:opacity .25s}
 .pin-body{position:absolute;inset:0;transform-origin:50% 100%}
-/* Pins shrink with the map when you zoom out (--z, set from the zoom), like the buildings; only you and the
-   Keeper keep their size. Taps only land on what you can see, so a smaller pin has a smaller tap area.
+/* Pins shrink with the map when you zoom out (--z, set from the zoom), like the buildings; you, the Keeper
+   and waypoints keep their size. Taps only land on what you can see, so a smaller pin has a smaller tap area.
    A tapped stack fans out with --fx/--fy, kept separate from the scale so both can change smoothly. */
 .pin{pointer-events:none}.pin-body>*{pointer-events:auto}.pin .disc{pointer-events:none}
 .pin-body{scale:var(--z,1);translate:var(--fx,0) var(--fy,0);transition:translate .22s ease-out,opacity .25s}
-.pin.keeper .pin-body{scale:1}
+/* Waypoints (Wayposts, Landmarks, quests) also keep their size and never fade, so a whole hunt can be planned
+   zoomed out. */
+.pin.keeper .pin-body,.pin.waypost .pin-body,.pin.landmark .pin-body,.pin.mission .pin-body{scale:1}
 .pin.fanned{z-index:30!important}
-#map.tiny .pin:not(.keeper) .pin-body{opacity:0}#map.tiny .pin:not(.keeper) .pin-body>*{pointer-events:none}
+#map.tiny .pin:not(.keeper,.waypost,.landmark,.mission) .pin-body{opacity:0}#map.tiny .pin:not(.keeper,.waypost,.landmark,.mission) .pin-body>*{pointer-events:none}
 .fan-dot{width:8px;height:8px;border-radius:50%;background:${C.ink};border:2px solid #fff;box-shadow:0 1px 3px rgba(22,38,63,.3);pointer-events:none}
 .pin .disc{position:absolute;left:18px;bottom:0;width:44px;height:12px;border-radius:50%;background:radial-gradient(${C.ink}40,transparent 70%)}
 .pin .v{position:absolute;left:0;bottom:2px;width:80px;height:80px;object-fit:contain;animation:bob 3.6s ease-in-out infinite}

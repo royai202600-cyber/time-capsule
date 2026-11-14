@@ -1,7 +1,8 @@
 // Opening places beyond our landmark list: the sender's current spot or any searched address.
 export const ANY_PLACE_BACKEND = true;
 
-export type PointPlace = { name: string; detail: string; lat: number; lng: number };
+/** `area` is the city and country ("臺北市, 臺灣"), so a saved place name says where in the world it is. */
+export type PointPlace = { name: string; detail: string; area?: string; lat: number; lng: number };
 
 /** OpenStreetMap search through the public Photon service. Phase 2 moves this behind our own Edge Function. */
 export async function searchPlaces(query: string, near?: { lat: number; lng: number } | null): Promise<PointPlace[]> {
@@ -18,7 +19,8 @@ type Feature = { geometry: { coordinates: [number, number] }; properties: Record
 function asPlace(f: Feature): PointPlace {
   const p = f.properties, [lng, lat] = f.geometry.coordinates;
   const detail = [p.street && [p.housenumber, p.street].filter(Boolean).join(' '), p.district, p.city, p.country].filter(Boolean).join(', ');
-  return { name: p.name ?? p.street ?? p.district ?? p.city ?? detail, detail, lat, lng };
+  const area = [...new Set([p.city ?? p.county ?? p.state, p.country].filter(Boolean))].join(', ');
+  return { name: p.name ?? p.street ?? p.district ?? p.city ?? detail, detail, area, lat, lng };
 }
 
 /**
@@ -37,6 +39,13 @@ export async function reversePlace(at: { lat: number; lng: number }, language: '
   return place.name ? { ...place, lat: at.lat, lng: at.lng } : null;
 }
 
-/** Extra send_capsule arguments for a point place (only once the backend accepts them). */
+/** The place name with its city and country: "台北市民廣場，臺北市，臺灣" / "Civic Square, Taipei, Taiwan". */
+export function placeLabel(point: PointPlace) {
+  const parts = [point.name, ...(point.area ?? '').split(', ')].filter(Boolean);
+  const unique = parts.filter((x, i) => !parts.slice(0, i).some(y => y.includes(x)));
+  return unique.join(/[\u3400-\u9fff]/.test(point.name) ? '，' : ', ');
+}
+
+/** Extra send_capsule arguments for a point place (the server allows 200 characters). */
 export const pointPlaceArgs = (point: PointPlace) =>
-  ({ p_place_lat: point.lat, p_place_lng: point.lng, p_place_name: point.name });
+  ({ p_place_lat: point.lat, p_place_lng: point.lng, p_place_name: placeLabel(point).slice(0, 200) });
