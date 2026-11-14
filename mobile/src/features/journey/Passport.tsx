@@ -7,18 +7,21 @@ import type { Tables } from "../../services/database.types";
 import { haptics } from "../../components/haptics";
 import { useReducedMotion } from "../../useReducedMotion";
 import { useLanguage } from "../../i18n";
+import { PrivateStampMark } from "../hunt/PrivateHuntViews";
 import { C, motion, radii, sans, serif, shadows, spacing } from "../../theme";
 
 type Place = Tables<"places">;
 type Stamp = { place: Place; openedAt: string | null };
 const art = manifest as typeof manifest & { passportCover?: ImageSourcePropType; passportPage?: ImageSourcePropType; stamps?: Record<string, ImageSourcePropType> };
-export function Passport({ visible, onClose, userId, stamps, hunts = [] }: {
+export function Passport({ visible, onClose, userId, stamps, hunts = [], privateHunts = [] }: {
   visible: boolean;
   onClose: () => void;
   userId: string;
   stamps: Stamp[];
   /** City Hunt stamps, one per finished hunt. */
   hunts?: { id: string; name_zh: string; name_en: string; at: string }[];
+  /** Private hunt stamps, in their own brass section (docs/design/city-orienteering.md). */
+  privateHunts?: { id: string; name: string; at: string }[];
 }) {
   const { t, language } = useLanguage();
   const reduced = useReducedMotion();
@@ -55,6 +58,8 @@ export function Passport({ visible, onClose, userId, stamps, hunts = [] }: {
           {shown !== null && stamps.map((stamp) => <StampSlot key={stamp.place.id} stamp={stamp} language={language} animate={!!stamp.openedAt && !shown.includes(stamp.place.id)} reduced={reduced} onStamped={() => remember(stamp.place.id)} />)}
           {shown !== null && hunts.length > 0 && <Text style={{ width: "100%", fontFamily: serif, fontSize: 17, color: C.plum, marginTop: spacing.sm }}>{t("journey.huntStamps")}</Text>}
           {shown !== null && hunts.map((hunt) => <HuntStamp key={hunt.id} hunt={hunt} language={language} />)}
+          {shown !== null && privateHunts.length > 0 && <Text style={{ width: "100%", fontFamily: serif, fontSize: 17, color: "#A9843F", marginTop: spacing.sm }}>{t("journey.privateHuntStamps")}</Text>}
+          {shown !== null && privateHunts.map((hunt) => <PrivateHuntStamp key={hunt.id} hunt={hunt} language={language} />)}
         </ScrollView>
       </View>
     </View>
@@ -98,6 +103,18 @@ function StampSlot({ stamp, language, animate, reduced, onStamped }: {
     <Text numberOfLines={2} style={{ fontFamily: serif, color: C.ink, textAlign: "center", marginTop: spacing.sm }}>{name}</Text>
     {stamp.openedAt && <Text style={{ fontFamily: sans, color: C.muted, fontSize: 11 }}>{new Date(stamp.openedAt).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US")}</Text>}
     {stamp.place.brand_vessel && <Text style={{ fontFamily: sans, color: C.brass, fontSize: 10 }}>{t("journey.brandStamp")}</Text>}
+  </View>;
+}
+
+/** A private hunt's stamp is brass and carries the organizer's own name for the hunt. */
+function PrivateHuntStamp({ hunt, language }: { hunt: { id: string; name: string; at: string }; language: "zh" | "en" }) {
+  const source = art.stamps?.["private-hunt"];
+  return <View style={{ width: "47%", minHeight: 152, borderWidth: 1, borderColor: C.brass, borderStyle: "dashed", borderRadius: radii.md, padding: spacing.sm, alignItems: "center", justifyContent: "center", backgroundColor: "#FFF9EA", ...shadows.card }}>
+    <View style={{ width: 86, height: 86, alignItems: "center", justifyContent: "center", transform: [{ rotate: "4deg" }] }}>
+      {source ? <Image source={source} style={{ width: 80, height: 80 }} resizeMode="contain" /> : <PrivateStampMark size={82} />}
+    </View>
+    <Text numberOfLines={2} style={{ fontFamily: serif, color: C.ink, textAlign: "center", marginTop: spacing.sm }}>{hunt.name}</Text>
+    <Text style={{ fontFamily: sans, color: C.muted, fontSize: 11 }}>{new Date(hunt.at).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US")}</Text>
   </View>;
 }
 

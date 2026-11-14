@@ -99,14 +99,22 @@ export function StepList({ hunt, compact = false }: { hunt: Hunt; compact?: bool
   </View>;
 }
 
-export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap }: {
+/**
+ * The Quest sheet. Our own City Hunts and the player's private hunts each get a tab
+ * (docs/design/city-orienteering.md); with no private hunt joined, the tabs are still there so the
+ * "enter a code" button has a home.
+ */
+export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap, privateTab }: {
   visible: boolean; hunts: Hunt[]; busy: boolean;
   onClose: () => void; onJoin: (h: Hunt) => void; onShowOnMap: (h: Hunt) => void;
+  /** The private-hunt tab's content and its "enter a code" button, or nothing to hide the tabs. */
+  privateTab?: { count: number; onEnterCode: () => void; children: React.ReactNode };
 }) {
   const t = useHuntText();
   const { language } = useLanguage();
   const reduced = useReducedMotion();
   const list = hunts.filter((h) => huntStatus(h) !== "closed");
+  const [tab, setTab] = useState<"system" | "private">("system");
   return <Modal visible={visible} transparent animationType={reduced ? "fade" : "slide"} onRequestClose={onClose}>
     <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "#16263F77" }}>
       <Pressable style={{ flex: 1 }} onPress={onClose} accessibilityLabel={t.close} />
@@ -115,7 +123,21 @@ export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap 
           <Text style={{ flex: 1, fontFamily: serif, fontSize: 22, color: C.ink }}>{t.quest}</Text>
           <Pressable accessibilityRole="button" accessibilityLabel={t.close} onPress={onClose} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><ArtIcon name="close" /></Pressable>
         </View>
-        <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
+        {!!privateTab && <View style={{ flexDirection: "row", gap: spacing.sm, paddingHorizontal: spacing.lg, paddingBottom: spacing.sm }}>
+          <Tab title={t.systemTab} count={list.length} active={tab === "system"} tone={C.blue} onPress={() => setTab("system")} />
+          <Tab title={t.privateTab} count={privateTab.count} active={tab === "private"} tone={C.brass} onPress={() => setTab("private")} />
+        </View>}
+        {privateTab && tab === "private"
+          ? <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
+            <Btn quiet brass title={t.enterCode} onPress={privateTab.onEnterCode} />
+            {privateTab.children}
+            {!privateTab.count && <View style={{ alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xl }}>
+              <ArtIcon name="map" size={40} color={C.brass} />
+              <Text style={{ fontFamily: serif, fontSize: 17, color: C.ink }}>{t.noPrivate}</Text>
+              <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted, textAlign: "center" }}>{t.noPrivateNote}</Text>
+            </View>}
+          </ScrollView>
+          : <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
           {!list.length && <View style={{ alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xl }}>
             <ArtIcon name="quest" size={40} color={C.brass} />
             <Text style={{ fontFamily: serif, fontSize: 17, color: C.ink }}>{t.noHunt}</Text>
@@ -137,10 +159,18 @@ export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap 
               : <Btn title={t.join} disabled={busy || huntStatus(h) === "closed"} onPress={() => onJoin(h)} />)}
             {h.preview && <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{t.preview}</Text>}
           </View>)}
-        </ScrollView>
+        </ScrollView>}
       </View>
     </View>
   </Modal>;
+}
+
+function Tab({ title, count, active, tone, onPress }: { title: string; count: number; active: boolean; tone: string; onPress: () => void }) {
+  return <Pressable accessibilityRole="tab" accessibilityState={{ selected: active }} onPress={onPress}
+    style={{ flexDirection: "row", alignItems: "center", gap: 6, paddingVertical: 8, paddingHorizontal: spacing.md, borderRadius: radii.pill, backgroundColor: active ? tone : C.white, borderWidth: 1.5, borderColor: active ? tone : C.line }}>
+    <Text style={{ fontFamily: serif, fontSize: 14, color: active ? C.white : C.muted }}>{title}</Text>
+    {count > 0 && <Text style={{ fontFamily: sans, fontSize: 11, color: active ? C.white : tone }}>{count}</Text>}
+  </Pressable>;
 }
 
 /** The card that opens when you tap the Letter Keeper on the map. His lines are set text, never generated. */
@@ -179,9 +209,10 @@ export function KeeperCard({ hunt, meters, busy, onJoin, onCheckIn, onFinish, on
   </View>;
 }
 
-function Btn({ title, onPress, quiet, disabled }: { title: string; onPress: () => void; quiet?: boolean; disabled?: boolean }) {
+function Btn({ title, onPress, quiet, disabled, brass }: { title: string; onPress: () => void; quiet?: boolean; disabled?: boolean; brass?: boolean }) {
+  const tone = brass ? C.brass : C.blue;
   return <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress}
-    style={({ pressed }) => ({ borderRadius: radii.pill, paddingVertical: 12, alignItems: "center", backgroundColor: quiet ? C.white : C.blue, borderWidth: quiet ? 1.5 : 0, borderColor: C.blue, opacity: disabled ? .5 : pressed ? .85 : 1 })}>
-    <Text style={{ fontFamily: serif, fontSize: 15, color: quiet ? C.blue : C.white }}>{title}</Text>
+    style={({ pressed }) => ({ borderRadius: radii.pill, paddingVertical: 12, alignItems: "center", backgroundColor: quiet ? C.white : tone, borderWidth: quiet ? 1.5 : 0, borderColor: tone, opacity: disabled ? .5 : pressed ? .85 : 1 })}>
+    <Text style={{ fontFamily: serif, fontSize: 15, color: quiet ? tone : C.white }}>{title}</Text>
   </Pressable>;
 }
