@@ -423,7 +423,7 @@ export default function JourneyScreen() {
     void privateAction(
       async () => {
         const out = await privateHunts.complete(ph, w, at(), answer);
-        // Back to the map, where the pin turns cream and the toast says what the mission was worth.
+        // Back to the map, where the pin turns purple and the toast says what the mission was worth.
         setMission(null);
         setToast([h.gotPoints(out.points_gained), out.hunt.finished_at ? h.privateStamp : ""].filter(Boolean).join(" · "));
       },
@@ -481,7 +481,7 @@ export default function JourneyScreen() {
         <Chip onPress={goBack} label={t("back")}><ArtIcon name="back" size={22} /></Chip>
         <View style={{ flex: 1 }} pointerEvents="none" />
         <RunChip hunt={activeHunt} onPress={() => setQuestOpen(true)} />
-        {privateList.map((ph) => <RunChip key={ph.id} hunt={ph} tone={C.brass} onPress={() => setQuestOpen(true)} />)}
+        {privateList.map((ph) => <RunChip key={ph.id} hunt={ph} onPress={() => setQuestOpen(true)} />)}
         {GAME_ENABLED && gameState && <View accessibilityRole="text" style={{ height: 44, paddingHorizontal: 14, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", justifyContent: "center", ...shadows.card }}>
           <Text style={{ fontFamily: sans, fontSize: 12, color: C.ink }}>{g("level", gameState.level)} · {g("balls", gameState.wax_balls)}</Text>
         </View>}

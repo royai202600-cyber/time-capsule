@@ -33,7 +33,7 @@ import { usePredictionText } from '../prediction/strings';
 import { DRIFT_CHOICES, sea, SeaError, SEA_BACKEND, SEA_ENABLED, SEA_MESSAGE_MAX, SEA_AVATAR, SEA_RECIPIENT, type DriftDays, type ThrowResult } from '../../services/sea';
 import { shortDate, useSeaText } from '../sea/strings';
 import { openingCoordinates, useForegroundLocation } from '../journey/location';
-import { ANY_PLACE_BACKEND, pointPlaceArgs, searchPlaces, type PointPlace } from '../../services/places';
+import { ANY_PLACE_BACKEND, pointPlaceArgs, reversePlace, searchPlaces, type PointPlace } from '../../services/places';
 
 type Quick = 'd1' | 'w1' | 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
 // The blocks a capsule can hold. Today's backend keeps one of each, and text or handwriting (docs/design/create-v2.md).
@@ -114,7 +114,12 @@ export default function CreateScreen() {
   const location = useForegroundLocation(placeMode === 'current');
   useEffect(() => {
     if (placeMode !== 'current' || !location.fix || point) return;
-    setPoint({ name: t('create2.where.current'), detail: `${location.fix.lat.toFixed(4)}, ${location.fix.lng.toFixed(4)}`, lat: location.fix.lat, lng: location.fix.lng });
+    const here = { lat: location.fix.lat, lng: location.fix.lng };
+    setPoint({ name: t('create2.where.current'), detail: `${here.lat.toFixed(4)}, ${here.lng.toFixed(4)}`, ...here });
+    // Name the spot from the map, so the card and the recipient read "Civic Square, Xinyi, Taipei" rather than "Where I am now".
+    reversePlace(here, language).then(found => {
+      if (found) setPoint(old => old && old.lat === here.lat && old.lng === here.lng ? found : old);
+    }).catch(() => {});
   }, [placeMode, location.fix, point]);
   useEffect(() => {
     if (placeMode !== 'specific' || placeQuery.trim().length < 2) { setPlaceResults([]); setSearching(false); return; }
@@ -566,7 +571,7 @@ export default function CreateScreen() {
         </View>
         <Text style={muted}>{st('rules')}</Text>
       </View> : <>
-        <PickerRow label={t('create.where')} icon={<Glyph><ToolIcon kind={placeMode === 'current' ? 'here' : placeMode === 'specific' ? 'landmark' : 'anywhere'} /></Glyph>} title={t(`create2.where.${placeMode}`)} sub={placeMode === 'anywhere' ? t('create2.anywhereSub') : placeMode === 'current' ? t('create2.where.currentSub') : whereLabel || t('create2.where.specificSub')} onPress={() => setSheet('where')} />
+        <PickerRow label={t('create.where')} icon={<Glyph><ToolIcon kind={placeMode === 'current' ? 'here' : placeMode === 'specific' ? 'landmark' : 'anywhere'} /></Glyph>} title={t(`create2.where.${placeMode}`)} sub={placeMode === 'anywhere' ? t('create2.anywhereSub') : placeMode === 'current' ? (point && point.name !== t('create2.where.current') ? point.name : t('create2.where.currentSub')) : whereLabel || t('create2.where.specificSub')} onPress={() => setSheet('where')} />
         {placeMode === 'current' && (point ? placeCard(point.name, point.detail) : <View style={{ gap: 8 }}>
           <Text style={muted}>{location.status === 'denied' ? t('create2.locationDenied') : t('create2.locating')}</Text>
           {location.status === 'denied' && <Button title={t('create2.openSettings')} onPress={() => void location.openSettings()} />}

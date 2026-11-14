@@ -2,9 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 // The rules under test are pure; these two keep the module's native imports out of the test run.
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: { getItem: vi.fn(), setItem: vi.fn() } }));
 vi.mock("./supabase", () => ({ supabase: { auth: { getSession: vi.fn() }, rpc: vi.fn() } }));
-import { LIMITS, appLink, blankDraft, blankWaypoint, canPublish, huntProblems, makeCode, nextOrdinal, shareLink, waypointProblems, type HuntDraft, type WaypointDraft } from "./huntOrganizer";
+import { LIMITS, appLink, blankDraft, huntArea, blankWaypoint, canPublish, huntProblems, makeCode, nextOrdinal, shareLink, waypointProblems, type HuntDraft, type WaypointDraft } from "./huntOrganizer";
 
-const draft = (over: Partial<HuntDraft> = {}): HuntDraft => ({ ...blankDraft({ lat: 25, lng: 121 }), name: "Park hunt", ...over });
+const draft = (over: Partial<HuntDraft> = {}): HuntDraft => ({ ...blankDraft(), name: "Park hunt", ...over });
 const wp = (over: Partial<WaypointDraft> = {}): WaypointDraft => ({ ...blankWaypoint(1, { lat: 25, lng: 121 }), name: "Gate", ...over });
 
 describe("join codes", () => {
@@ -64,4 +64,17 @@ describe("what blocks a waypoint", () => {
 describe("ordinals", () => {
   it("starts at one", () => expect(nextOrdinal([])).toBe(1));
   it("follows the highest so far, not the count", () => expect(nextOrdinal([{ ordinal: 1 }, { ordinal: 7 }])).toBe(8));
+});
+
+describe("huntArea", () => {
+  it("is empty with no placed quests", () => {
+    expect(huntArea([{ lat: 0, lng: 0 }]).radius_m).toBe(0);
+  });
+  it("reaches the furthest quest with room to spare, and is never tiny", () => {
+    expect(huntArea([{ lat: 25.03, lng: 121.56 }]).radius_m).toBe(200);
+    const a = huntArea([{ lat: 25.03, lng: 121.56 }, { lat: 25.04, lng: 121.56 }]);
+    expect(a.lat).toBeCloseTo(25.035);
+    expect(a.radius_m).toBeGreaterThan(680);
+    expect(a.radius_m).toBeLessThan(700);
+  });
 });

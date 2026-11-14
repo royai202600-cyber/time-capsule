@@ -1,4 +1,4 @@
-// One waypoint and its mission, as the organizer sets it (docs/design/city-orienteering.md, Part B).
+// One quest and its waypoint, as the organizer sets it (docs/design/city-orienteering.md, Part B).
 // A puzzle's answer is typed here and sent to the server; it never travels back to a player.
 import React, { useEffect, useState } from "react";
 import { Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
@@ -6,6 +6,8 @@ import { ArtIcon } from "../../components/ArtIcon";
 import { useForegroundLocation } from "../journey/location";
 import { searchPlaces, type PointPlace } from "../../services/places";
 import { LIMITS, waypointProblems, type WaypointDraft } from "../../services/huntOrganizer";
+import { GiftQr } from "../capsule/GiftQr";
+import { PinPicker } from "./PinPicker";
 import type { MissionType } from "../../services/huntPrivate";
 import { Btn } from "./HuntViews";
 import { MissionGlyph } from "./PrivateHuntViews";
@@ -15,7 +17,7 @@ import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 
 const PLACEHOLDER = "#A5AFBD";
 const TYPES: MissionType[] = ["arrive", "spin", "puzzle"];
-const POINTS = [5, 10, 15, 25, 50];
+const POINTS = [10, 25, 50, 99];
 const input = { fontFamily: sans, fontSize: 15, color: C.ink, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, paddingHorizontal: 14, paddingVertical: 12 } as const;
 
 export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
@@ -30,6 +32,7 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PointPlace[]>([]);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [picking, setPicking] = useState(false);
   useEffect(() => { setW(waypoint); setQuery(""); setResults([]); setConfirmDelete(false); }, [waypoint]);
 
   // The same place search the Create flow uses, so an organizer picks a spot the way a sender does.
@@ -58,11 +61,30 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
         </View>
 
         <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
+          <Label text={o.whereLabel} />
+          <Pressable accessibilityRole="button" onPress={() => setPicking(true)}
+            style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: pressed ? C.glass : C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, padding: spacing.md })}>
+            <ArtIcon name="pin" size={18} color={placed ? C.blue : C.muted} />
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: serif, fontSize: 15, color: placed ? C.ink : C.muted }}>{placed ? (placeName || w.name || o.unnamedSpot) : o.pickOnMap}</Text>
+              {placed && <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{w.lat.toFixed(5)}, {w.lng.toFixed(5)}</Text>}
+            </View>
+            {placed && <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue }}>{o.movePin}</Text>}
+          </Pressable>
+          <TextInput accessibilityLabel={o.whereSearch} value={query} onChangeText={setQuery}
+            placeholder={o.whereSearchPlaceholder} placeholderTextColor={PLACEHOLDER} style={input} />
+          {results.map((p) => <Pressable key={`${p.lat},${p.lng}`} accessibilityRole="button"
+            onPress={() => { set({ lat: p.lat, lng: p.lng, name: w.name.trim() || p.name }); setPlaceName(p.name); setQuery(""); setResults([]); }}
+            style={({ pressed }) => ({ padding: spacing.md, borderRadius: radii.md, backgroundColor: pressed ? C.glass : C.white, borderWidth: 1, borderColor: C.line })}>
+            <Text style={{ fontFamily: serif, fontSize: 15, color: C.ink }}>{p.name}</Text>
+            {!!p.detail && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{p.detail}</Text>}
+          </Pressable>)}
+
           <Label text={o.waypointName} />
           <TextInput accessibilityLabel={o.waypointName} value={w.name} onChangeText={(v) => set({ name: v })}
             maxLength={LIMITS.name} placeholder={o.waypointNamePlaceholder} placeholderTextColor={PLACEHOLDER} style={input} />
 
-          <Label text={o.missionLabel} />
+          <Label text={o.questLabel} />
           <View style={{ flexDirection: "row", gap: spacing.sm }}>
             {TYPES.map((kind) => {
               const on = w.mission_type === kind;
@@ -75,36 +97,37 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
           </View>
           <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.missionSub[w.mission_type]}</Text>
 
-          <Label text={o.whereLabel} />
-          {placed && !query.trim() && <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, padding: spacing.md }}>
-            <ArtIcon name="pin" size={18} color={C.blue} />
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: serif, fontSize: 15, color: C.ink }}>{placeName || o.whereHere}</Text>
-              <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{w.lat.toFixed(5)}, {w.lng.toFixed(5)}</Text>
+          {w.mission_type === "arrive" && <>
+            <Label text={o.arriveCheckLabel} />
+            <View style={{ flexDirection: "row", gap: spacing.sm }}>
+              {(["gps", "gps_qr"] as const).map((kind) => {
+                const on = w.arrive_check === kind;
+                return <Pressable key={kind} accessibilityRole="radio" accessibilityState={{ selected: on }} onPress={() => set({ arrive_check: kind })}
+                  style={{ flex: 1, alignItems: "center", paddingVertical: 10, borderRadius: radii.md, backgroundColor: on ? C.glass : C.white, borderWidth: 1.5, borderColor: on ? C.blue : C.line }}>
+                  <Text style={{ fontFamily: sans, fontSize: 13, color: on ? C.ink : C.muted }}>{o.arriveCheck[kind]}</Text>
+                </Pressable>;
+              })}
             </View>
-          </View>}
-          {!!location.fix && <Pressable accessibilityRole="button" onPress={() => { if (location.fix) { set({ lat: location.fix.lat, lng: location.fix.lng }); setPlaceName(o.whereHere); setQuery(""); } }}
-            style={{ alignSelf: "flex-start" }}>
-            <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue, textDecorationLine: "underline" }}>{o.whereHere}</Text>
-          </Pressable>}
-          <TextInput accessibilityLabel={o.whereSearch} value={query} onChangeText={setQuery}
-            placeholder={o.whereSearchPlaceholder} placeholderTextColor={PLACEHOLDER} style={input} />
-          {results.map((p) => <Pressable key={`${p.lat},${p.lng}`} accessibilityRole="button"
-            onPress={() => { set({ lat: p.lat, lng: p.lng }); setPlaceName(p.name); setQuery(""); setResults([]); }}
-            style={({ pressed }) => ({ padding: spacing.md, borderRadius: radii.md, backgroundColor: pressed ? C.glass : C.white, borderWidth: 1, borderColor: C.line })}>
-            <Text style={{ fontFamily: serif, fontSize: 15, color: C.ink }}>{p.name}</Text>
-            {!!p.detail && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{p.detail}</Text>}
-          </Pressable>)}
+            <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.arriveCheckSub[w.arrive_check]}</Text>
+            {w.arrive_check === "gps_qr" && <View style={{ alignItems: "center", gap: spacing.sm, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, padding: spacing.md }}>
+              {w.qr_token
+                ? <><GiftQr value={questQr(w.qr_token)} label={o.qrForQuest(w.name || o.unnamedSpot)} />
+                  <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textAlign: "center" }}>{o.printQr}</Text></>
+                : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textAlign: "center" }}>{o.qrAfterSave}</Text>}
+            </View>}
+          </>}
 
           <Label text={o.pointsLabel} />
-          <View style={{ flexDirection: "row", gap: spacing.sm }}>
-            {POINTS.map((p) => {
-              const on = w.points === p;
-              return <Pressable key={p} accessibilityRole="radio" accessibilityState={{ selected: on }} onPress={() => set({ points: p })}
-                style={{ flex: 1, alignItems: "center", paddingVertical: 10, borderRadius: radii.md, backgroundColor: on ? C.blue : C.white, borderWidth: 1.5, borderColor: on ? C.blue : C.line }}>
-                <Text style={{ fontFamily: serif, fontSize: 15, color: on ? C.white : C.muted }}>{p}</Text>
-              </Pressable>;
-            })}
+          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
+            <TextInput accessibilityLabel={o.pointsLabel} value={String(w.points)} keyboardType="number-pad"
+              onChangeText={(v) => set({ points: Math.min(LIMITS.points, Number(v.replace(/[^0-9]/g, "")) || 0) })}
+              style={[input, { width: 96, fontFamily: serif, fontSize: 18, textAlign: "center" }]} />
+            <View style={{ flex: 1, flexDirection: "row", gap: 6 }}>
+              {POINTS.map((p) => <Pressable key={p} accessibilityRole="button" onPress={() => set({ points: p })}
+                style={{ flex: 1, alignItems: "center", paddingVertical: 8, borderRadius: radii.sm, backgroundColor: C.white, borderWidth: 1, borderColor: w.points === p ? C.blue : C.line }}>
+                <Text style={{ fontFamily: sans, fontSize: 13, color: w.points === p ? C.blue : C.muted }}>{p}</Text>
+              </Pressable>)}
+            </View>
           </View>
 
           <Label text={o.taskLabel} />
@@ -174,8 +197,20 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
         </ScrollView>
       </View>
     </View>
+    {picking && <PinPicker mission={w.mission_type}
+      at={placed ? { lat: w.lat, lng: w.lng } : null}
+      you={location.fix ? { lat: location.fix.lat, lng: location.fix.lng } : null}
+      onClose={() => setPicking(false)}
+      onPick={(pin) => {
+        // A dropped pin names the quest when the organizer has not named it themselves.
+        set({ lat: pin.lat, lng: pin.lng, name: w.name.trim() || pin.name });
+        setPlaceName(pin.name); setPicking(false);
+      }} />}
   </Modal>;
 }
+
+/** What the on-site QR code carries: the server's secret for that quest, which a player's scan sends back. */
+export const questQr = (token: string) => `timecapsule://quest/${token}`;
 
 const Label = ({ text }: { text: string }) =>
   <Text style={{ fontFamily: sans, fontSize: 12, letterSpacing: 1, color: C.muted, marginBottom: -8 }}>{text}</Text>;

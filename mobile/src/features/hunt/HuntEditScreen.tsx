@@ -1,8 +1,8 @@
 // One private hunt, as its organizer edits it (docs/design/city-orienteering.md, Part B): its details,
-// its missions on the map, the code and link it goes out as, and how everyone is doing.
+// its quests on the map, the code and link it goes out as, and how everyone is doing.
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Platform, Pressable, Share, Text, TextInput, View } from "react-native";
-import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { Platform, Pressable, ScrollView, Share, Text, TextInput, View } from "react-native";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import { goBack } from "../../navigation";
 import { Screen, Bar, BackButton, Heading } from "../../components/Screen";
@@ -11,24 +11,22 @@ import { Avatar } from "../../components/Avatar";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
 import { useAuth } from "../../services/auth";
-import { useForegroundLocation } from "../journey/location";
 import { GiftQr } from "../capsule/GiftQr";
 import { Sheet, SheetOption, PickerRow, Glyph, ToolIcon, MonthCalendar } from "../create/CreateParts";
 import { clockText } from "../../services/huntClock";
-import { PrivateHuntError, type MissionType } from "../../services/huntPrivate";
+import { PrivateHuntError } from "../../services/huntPrivate";
 import {
-  LIMITS, appLink, canPublish, huntProblems, nextOrdinal, organizer, shareLink,
+  LIMITS, appLink, blankWaypoint, canPublish, huntArea, huntProblems, nextOrdinal, organizer, shareLink,
   type HuntDraft, type HuntStatus, type Review, type WaypointDraft,
 } from "../../services/huntOrganizer";
 import { Btn, TaskList, type TaskRow } from "./HuntViews";
 import { MissionGlyph } from "./PrivateHuntViews";
 import { useHuntText } from "./strings";
-import { useOrganizerText } from "./organizerStrings";
+import { useOrganizerText, type OrganizerText } from "./organizerStrings";
 import { WaypointEditor } from "./WaypointEditor";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 
 const PLACEHOLDER = "#A5AFBD";
-const RADII = [500, 1200, 2000, 5000];
 const LIMIT_MINUTES = [null, 30, 45, 60, 90, 120];
 type Section = "details" | "missions" | "share" | "review";
 
@@ -39,7 +37,6 @@ export default function HuntEditScreen() {
   const { session } = useAuth();
   const userId = session?.user.id ?? "";
   const { id } = useLocalSearchParams<{ id: string }>();
-  const location = useForegroundLocation(true);
 
   const [section, setSection] = useState<Section>("details");
   const [draft, setDraft] = useState<HuntDraft | null>(null);
@@ -48,7 +45,7 @@ export default function HuntEditScreen() {
   const [code, setCode] = useState<string | null>(null);
   const [editing, setEditing] = useState<WaypointDraft | null>(null);
   const [review, setReview] = useState<Review | null>(null);
-  const [sheet, setSheet] = useState<"route" | "limit" | "radius" | "end" | null>(null);
+  const [sheet, setSheet] = useState<"route" | "limit" | "start" | "end" | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
 
@@ -62,17 +59,26 @@ export default function HuntEditScreen() {
   useEffect(() => { if (!toast) return; const x = setTimeout(() => setToast(""), 2600); return () => clearTimeout(x); }, [toast]);
 
   // The draft saves itself a moment after you stop typing, so nothing is lost on the way out.
+  // Leaving the screen saves whatever is still waiting.
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const edit = (patch: Partial<HuntDraft>) => {
-    setDraft((old) => {
-      if (!old) return old;
-      const next = { ...old, ...patch };
-      if (saveTimer.current) clearTimeout(saveTimer.current);
-      saveTimer.current = setTimeout(() => { void organizer.update(userId, id, next).catch(() => {}); }, 600);
-      return next;
-    });
+  const unsaved = useRef<HuntDraft | null>(null);
+  const flush = useRef(() => {});
+  flush.current = () => {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = null;
+    const next = unsaved.current;
+    unsaved.current = null;
+    if (next) void organizer.update(userId, id, next).catch(() => {});
   };
-  useEffect(() => () => { if (saveTimer.current) clearTimeout(saveTimer.current); }, []);
+  const edit = (patch: Partial<HuntDraft>) => {
+    if (!draft) return;
+    const next = { ...draft, ...patch };
+    setDraft(next);
+    unsaved.current = next;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => flush.current(), 600);
+  };
+  useEffect(() => () => flush.current(), []);
 
   const act = async (run: () => Promise<unknown>, after?: () => void) => {
     if (busy) return;
@@ -91,7 +97,7 @@ export default function HuntEditScreen() {
     () => { setEditing(null); load(); },
   );
   const publish = () => void act(
-    async () => { setCode(await organizer.publish(userId, id)); },
+    async () => { flush.current(); setCode(await organizer.publish(userId, id)); },
     () => { setStatus("published"); setSection("share"); },
   );
   const close = () => void act(() => organizer.close(userId, id), () => setStatus("closed"));
@@ -118,6 +124,8 @@ export default function HuntEditScreen() {
     onPress: () => setEditing(w),
   }));
   const dateText = (iso: string) => new Date(iso).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US");
+  const timeText = (iso: string) => new Date(iso).toLocaleTimeString(language === "zh" ? "zh-Hant" : "en-US", { hour: "2-digit", minute: "2-digit" });
+  const area = huntArea(waypoints);
 
   return <Screen>
     <Bar><BackButton label={o.back} onPress={goBack} /><Heading>{draft.name || o.untitled}</Heading></Bar>
@@ -145,21 +153,27 @@ export default function HuntEditScreen() {
           style={[input, { minHeight: 92, textAlignVertical: "top" }]} />
       </Field>
 
-      <PickerRow label={o.areaLabel} icon={<Glyph><ToolIcon kind="here" /></Glyph>}
-        title={o.radiusLabel} sub={`${draft.area.radius_m >= 1000 ? `${draft.area.radius_m / 1000} km` : `${draft.area.radius_m} m`}`}
-        onPress={() => setSheet("radius")} />
-      {!!location.fix && <Pressable accessibilityRole="button" onPress={() => location.fix && edit({ area: { ...draft.area, lat: location.fix.lat, lng: location.fix.lng } })}
-        style={{ alignSelf: "flex-start" }}>
-        <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue, textDecorationLine: "underline" }}>{o.areaHere}</Text>
-      </Pressable>}
+      <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: C.glass, borderRadius: radii.md, paddingHorizontal: spacing.md, paddingVertical: 10 }}>
+        <ArtIcon name="map" size={17} color={C.blue} />
+        <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, lineHeight: 19, color: C.ink }}>
+          {area.radius_m ? o.areaAuto((area.radius_m * 2 / 1000).toFixed(1)) : o.areaEmpty}
+        </Text>
+      </View>
+
+      <Field label={o.startLabel2}>
+        <PickerRow label={o.startLabel2} icon={<Glyph><ToolIcon kind="calendar" /></Glyph>}
+          title={o.timeAt(dateText(draft.starts_at), timeText(draft.starts_at))} onPress={() => setSheet("start")} />
+      </Field>
+      <Field label={o.endLabel2}>
+        <PickerRow label={o.endLabel2} icon={<Glyph><ToolIcon kind="calendar" /></Glyph>}
+          title={o.timeAt(dateText(draft.ends_at), timeText(draft.ends_at))} onPress={() => setSheet("end")} />
+      </Field>
 
       <PickerRow label={o.routeLabel} icon={<Glyph><ToolIcon kind="landmark" /></Glyph>}
         title={o.route[draft.route_mode]} sub={o.routeSub[draft.route_mode]} onPress={() => setSheet("route")} />
       <PickerRow label={o.limitLabel} icon={<Glyph><ToolIcon kind="clock" /></Glyph>}
         title={draft.time_limit_min ? o.limitMinutes(draft.time_limit_min) : o.limitNone}
-        sub={draft.time_limit_min ? h.privateLimit(draft.time_limit_min) : undefined} onPress={() => setSheet("limit")} />
-      <PickerRow label={o.endLabel} icon={<Glyph><ToolIcon kind="calendar" /></Glyph>}
-        title={draft.ends_at === "infinity" ? o.endNever : dateText(draft.ends_at)} onPress={() => setSheet("end")} />
+        sub={o.limitSub} onPress={() => setSheet("limit")} />
 
       <Toggle label={o.leaderboardLabel} on={draft.leaderboard_visible}
         onText={o.leaderboardOn} offText={o.leaderboardOff}
@@ -173,7 +187,7 @@ export default function HuntEditScreen() {
       </View>}
       {!!rows.length && <TaskList rows={rows} />}
       {waypoints.length < LIMITS.waypoints
-        ? <Btn quiet title={o.addWaypoint} onPress={() => setEditing({ ...blankAt(nextOrdinal(waypoints), location.fix) })} />
+        ? <Btn quiet title={o.addWaypoint} onPress={() => setEditing(blankWaypoint(nextOrdinal(waypoints), null))} />
         : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{o.waypointFull(LIMITS.waypoints)}</Text>}
     </>}
 
@@ -243,16 +257,12 @@ export default function HuntEditScreen() {
         icon={<Glyph><ToolIcon kind="clock" /></Glyph>}
         title={m ? o.limitMinutes(m) : o.limitNone} onPress={() => { edit({ time_limit_min: m }); setSheet(null); }} />)}
     </Sheet>
-    <Sheet open={sheet === "radius"} title={o.radiusLabel} onClose={() => setSheet(null)}>
-      {RADII.map((r) => <SheetOption key={r} selected={draft.area.radius_m === r}
-        icon={<Glyph><ToolIcon kind="here" /></Glyph>}
-        title={r >= 1000 ? `${r / 1000} km` : `${r} m`} onPress={() => { edit({ area: { ...draft.area, radius_m: r } }); setSheet(null); }} />)}
+    <Sheet open={sheet === "start"} title={o.startLabel2} onClose={() => setSheet(null)}>
+      <WhenPicker language={language} value={draft.starts_at} onChange={(v) => edit({ starts_at: v })} o={o} />
     </Sheet>
-    <Sheet open={sheet === "end"} title={o.endLabel} onClose={() => setSheet(null)}>
-      <SheetOption selected={draft.ends_at === "infinity"} icon={<Glyph><ToolIcon kind="anywhere" /></Glyph>}
-        title={o.endNever} onPress={() => { edit({ ends_at: "infinity" }); setSheet(null); }} />
-      <MonthCalendar language={language} value={draft.ends_at === "infinity" ? new Date().toISOString() : draft.ends_at}
-        onChange={(v) => edit({ ends_at: v })} />
+    <Sheet open={sheet === "end"} title={o.endLabel2} onClose={() => setSheet(null)}>
+      <WhenPicker language={language} value={draft.ends_at}
+        onChange={(v) => edit({ ends_at: v })} o={o} />
     </Sheet>
 
     {!!editing && <WaypointEditor waypoint={editing} busy={busy}
@@ -261,13 +271,49 @@ export default function HuntEditScreen() {
   </Screen>;
 }
 
-const blankAt = (ordinal: number, fix: { lat: number; lng: number } | null | undefined): WaypointDraft => ({
-  ordinal, name: "", lat: fix?.lat ?? 0, lng: fix?.lng ?? 0,
-  mission_type: "arrive" as MissionType, points: 10, description: "",
-  puzzle_kind: "choice", choices: ["", ""], answer: "",
-});
-
 const input = { fontFamily: sans, fontSize: 15, color: C.ink, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, paddingHorizontal: 14, paddingVertical: 12 } as const;
+
+/**
+ * A day and a clock time together, because an organized hunt starts and ends at a moment, not a date.
+ * The calendar sets the day and the chips set the time; the minutes run in five-minute steps.
+ */
+function WhenPicker({ language, value, onChange, o }: {
+  language: "zh" | "en"; value: string; onChange: (iso: string) => void; o: OrganizerText;
+}) {
+  const when = new Date(value);
+  const withTime = (hours: number, minutes: number) => {
+    const next = new Date(when);
+    next.setHours(hours, minutes, 0, 0);
+    onChange(next.toISOString());
+  };
+  const chip = (on: boolean) => ({
+    minWidth: 46, alignItems: "center" as const, paddingVertical: 8, paddingHorizontal: 10, borderRadius: radii.sm,
+    backgroundColor: on ? C.blue : C.white, borderWidth: 1, borderColor: on ? C.blue : C.line,
+  });
+  return <View style={{ gap: spacing.sm, paddingHorizontal: 10 }}>
+    <MonthCalendar language={language} value={value} onChange={(v) => {
+      // The calendar only moves the day; keep the time already chosen.
+      const day = new Date(v), next = new Date(when);
+      next.setFullYear(day.getFullYear(), day.getMonth(), day.getDate());
+      onChange(next.toISOString());
+    }} />
+    <Text style={{ fontFamily: sans, fontSize: 12, letterSpacing: 1, color: C.muted }}>{o.timeLabel}</Text>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, paddingVertical: 2 }}>
+      {Array.from({ length: 24 }, (_, hour) => <Pressable key={hour} accessibilityRole="radio"
+        accessibilityState={{ selected: when.getHours() === hour }} onPress={() => withTime(hour, when.getMinutes())}
+        style={chip(when.getHours() === hour)}>
+        <Text style={{ fontFamily: serif, fontSize: 14, color: when.getHours() === hour ? C.white : C.ink }}>{String(hour).padStart(2, "0")}</Text>
+      </Pressable>)}
+    </ScrollView>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, paddingVertical: 2 }}>
+      {Array.from({ length: 12 }, (_, i) => i * 5).map((minute) => <Pressable key={minute} accessibilityRole="radio"
+        accessibilityState={{ selected: when.getMinutes() === minute }} onPress={() => withTime(when.getHours(), minute)}
+        style={chip(when.getMinutes() === minute)}>
+        <Text style={{ fontFamily: serif, fontSize: 14, color: when.getMinutes() === minute ? C.white : C.ink }}>:{String(minute).padStart(2, "0")}</Text>
+      </Pressable>)}
+    </ScrollView>
+  </View>;
+}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <View style={{ gap: 8 }}>

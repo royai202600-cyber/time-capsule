@@ -26,9 +26,15 @@ export function useRunClock(hunt: RunTimes | null): RunClock {
   const clock: RunClock = hunt ? runClock(hunt) : { state: "none" };
   const running = clock.state === "running";
   useEffect(() => {
-    if (!running) return;
-    const timer = setInterval(() => tick((n) => n + 1), 1000);
-    return () => clearInterval(timer);
+    if (running) {
+      const timer = setInterval(() => tick((n) => n + 1), 1000);
+      return () => clearInterval(timer);
+    }
+    // Joined ahead of a coordinated start: wake up when the run begins.
+    const wait = hunt?.run_started_at ? new Date(hunt.run_started_at).getTime() - Date.now() : 0;
+    if (wait <= 0 || wait > 86_400_000) return;
+    const timer = setTimeout(() => tick((n) => n + 1), wait + 50);
+    return () => clearTimeout(timer);
   }, [running, hunt?.run_started_at, hunt?.checked_in_at]);
   return clock;
 }
@@ -39,11 +45,11 @@ const Stopwatch = ({ color, size = 18 }: { color: string; size?: number }) => <S
 </Svg>;
 
 /** The countdown on the map during a timed run, for either kind of hunt. Tapping it opens the Quest sheet. */
-export function RunChip({ hunt, tone = C.blue, onPress }: { hunt: RunTimes | null; tone?: string; onPress: () => void }) {
+export function RunChip({ hunt, onPress }: { hunt: RunTimes | null; onPress: () => void }) {
   const t = useHuntText();
   const clock = useRunClock(hunt);
   if (clock.state === "none") return null;
-  const low = clock.state === "up" || runningLow(clock), color = low ? C.wax : tone;
+  const low = clock.state === "up" || runningLow(clock), color = low ? C.wax : C.blue;
   return <Pressable accessibilityRole="button" accessibilityLabel={clock.state === "up" ? t.timeUp : `${t.timeLeft} ${clockText(clock.left_s)}`} onPress={onPress}
     style={{ height: 44, paddingHorizontal: 14, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", flexDirection: "row", alignItems: "center", gap: 6, borderWidth: 1.5, borderColor: color, ...shadows.card }}>
     <Stopwatch color={color} />
@@ -58,7 +64,7 @@ export function RunChip({ hunt, tone = C.blue, onPress }: { hunt: RunTimes | nul
 export function HuntClock({ hunt, startNote, upNote }: { hunt: RunTimes; startNote: (min: number) => string; upNote: string }) {
   const t = useHuntText();
   const clock = useRunClock(hunt);
-  if (!hunt.time_limit_min) return null;
+  if (!hunt.time_limit_min && !hunt.run_ends_at) return null;
   const box = { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: C.glass, borderRadius: radii.md, paddingHorizontal: spacing.md, paddingVertical: 10 } as const;
   if (hunt.finished_at) {
     if (hunt.today_s == null && hunt.best_s == null) return null;
@@ -81,6 +87,7 @@ export function HuntClock({ hunt, startNote, upNote }: { hunt: RunTimes; startNo
     <Stopwatch color={C.wax} />
     <View style={{ flex: 1 }}><Text style={{ fontFamily: serif, fontSize: 16, color: C.wax }}>{t.timeUp}</Text><Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{upNote}</Text></View>
   </View>;
+  if (!hunt.time_limit_min) return null;
   return <View style={box}>
     <Stopwatch color={C.blue} />
     <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, lineHeight: 19, color: C.ink }}>{startNote(hunt.time_limit_min)}{hunt.best_s != null ? `　${t.bestTime} ${clockText(hunt.best_s)}` : ""}</Text>
@@ -216,7 +223,7 @@ export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap,
                 : daily ? t.finishedToday
                   : t.finishedOn(new Date(h.finished_at!).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US"))}
               clock={h} startNote={t.limit} upNote={t.timeUpNote}
-              progress={h.joined_at && !done ? t.missionCount(tasks.filter((x) => x.done).length, tasks.length) : undefined}
+              progress={h.joined_at && !done ? t.questCount(tasks.filter((x) => x.done).length, tasks.length) : undefined}
               // A finished daily hunt says when it comes back instead of listing the ticks again.
               tasks={done ? undefined : h.joined_at ? tasks : undefined}
               note={done ? (daily ? t.backTomorrow : undefined) : h.joined_at ? undefined : t.reward(h.reward.gold, h.reward.xp)}

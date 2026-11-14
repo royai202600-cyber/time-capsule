@@ -6,7 +6,6 @@ import { goBack } from "../../navigation";
 import { Screen, Bar, BackButton, Heading } from "../../components/Screen";
 import { ArtIcon } from "../../components/ArtIcon";
 import { useAuth } from "../../services/auth";
-import { useForegroundLocation } from "../journey/location";
 import { PrivateHuntError } from "../../services/huntPrivate";
 import { blankDraft, LIMITS, organizer, type OwnedHunt } from "../../services/huntOrganizer";
 import { Btn } from "./HuntViews";
@@ -21,7 +20,6 @@ export default function MyHuntsScreen() {
   const h = useHuntText();
   const { session } = useAuth();
   const userId = session?.user.id ?? "";
-  const location = useForegroundLocation(true);
   const [list, setList] = useState<OwnedHunt[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
@@ -36,8 +34,7 @@ export default function MyHuntsScreen() {
     if (busy) return;
     setBusy(true);
     try {
-      const at = location.fix ? { lat: location.fix.lat, lng: location.fix.lng } : null;
-      const id = await organizer.create(userId, blankDraft(at));
+      const id = await organizer.create(userId, blankDraft());
       router.push({ pathname: "/hunts/[id]", params: { id } });
     } catch (e) {
       setToast(h.perr[e instanceof PrivateHuntError ? e.code : "unknown"]);

@@ -12,20 +12,23 @@ import {
 export type HuntStatus = "draft" | "published" | "closed";
 /** A hunt as its owner sees it: the player's view plus what only the owner may know. */
 export type OwnedHunt = PrivateHunt & { status: HuntStatus; joined: number };
-/** The editable details of a hunt, without its waypoints. */
+/** The editable details of a hunt, without its quests. The area is derived, never typed in. */
 export type HuntDraft = {
   name: string; description: string; cover: string | null;
-  area: { lat: number; lng: number; radius_m: number };
   route_mode: "any" | "ordered";
   leaderboard_visible: boolean;
   starts_at: string; ends_at: string;
   time_limit_min: number | null;
 };
-/** One waypoint being edited. `answer` only ever travels organizer → server, never back to players. */
+/** One quest being edited. `answer` only ever travels organizer → server, never back to players. */
 export type WaypointDraft = {
   id?: string; ordinal: number; name: string;
   lat: number; lng: number;
   mission_type: MissionType; points: number; description: string;
+  /** Arrive quests check GPS, or GPS plus a QR code the organizer prints and leaves at the spot. */
+  arrive_check: "gps" | "gps_qr";
+  /** Issued by the server once a GPS + QR quest is saved; the printed code carries it. Only the organizer sees it. */
+  qr_token?: string;
   puzzle_kind: "text" | "choice"; choices: string[]; answer: string;
 };
 export type Review = {
@@ -36,7 +39,7 @@ export type Review = {
 /** The limits in "Rules and safety"; the server enforces them too. */
 export const LIMITS = {
   waypoints: 30, participants: 500, unfinishedHunts: 3,
-  name: 60, description: 500, answer: 80, choices: 6, points: 100,
+  name: 60, description: 500, answer: 80, choices: 6, points: 999,
 } as const;
 
 /** Six characters with no 0/O or 1/I, so a code read aloud or off a poster cannot be mistyped. */
@@ -49,6 +52,24 @@ export function makeCode(random: () => number = Math.random) {
 /** The link an organizer shares. The app and the website both open it. */
 export const shareLink = (code: string) => `https://time-capsule-pi-two.vercel.app/hunt/${cleanCode(code)}`;
 export const appLink = (code: string) => `timecapsule://hunt/${cleanCode(code)}`;
+
+/**
+ * A hunt is as wide as the quests in it, so the organizer never guesses a radius. The centre is the
+ * middle of the spread and the radius reaches the furthest quest with a little room to spare.
+ */
+export function huntArea(waypoints: { lat: number; lng: number }[]): { lat: number; lng: number; radius_m: number } {
+  const placed = waypoints.filter((w) => w.lat || w.lng);
+  if (!placed.length) return { lat: 0, lng: 0, radius_m: 0 };
+  const lat = placed.reduce((sum, w) => sum + w.lat, 0) / placed.length;
+  const lng = placed.reduce((sum, w) => sum + w.lng, 0) / placed.length;
+  const far = Math.max(...placed.map((w) => metres(lat, lng, w.lat, w.lng)));
+  return { lat, lng, radius_m: Math.round(Math.max(200, far * 1.25)) };
+}
+const metres = (aLat: number, aLng: number, bLat: number, bLng: number) => {
+  const north = (bLat - aLat) * 110_540;
+  const east = (bLng - aLng) * 111_320 * Math.cos(aLat * Math.PI / 180);
+  return Math.hypot(north, east);
+};
 
 export const nextOrdinal = (waypoints: { ordinal: number }[]) =>
   waypoints.reduce((top, w) => Math.max(top, w.ordinal), 0) + 1;
@@ -68,7 +89,7 @@ export function waypointProblems(w: WaypointDraft): WaypointProblem[] {
   const problems: WaypointProblem[] = [];
   if (!w.name.trim()) problems.push("name");
   if (!w.lat && !w.lng) problems.push("place");
-  if (w.points < 0 || w.points > LIMITS.points) problems.push("points");
+  if (!Number.isInteger(w.points) || w.points < 1 || w.points > LIMITS.points) problems.push("points");
   if (w.mission_type === "puzzle") {
     if (!w.answer.trim()) problems.push("answer");
     // A multiple-choice puzzle needs at least two options, and the answer has to be one of them.
@@ -81,21 +102,22 @@ export function waypointProblems(w: WaypointDraft): WaypointProblem[] {
 }
 export const canPublish = (draft: HuntDraft, waypoints: { id?: string }[]) => huntProblems(draft, waypoints).length === 0;
 
-/** A fresh hunt, centred wherever the organizer is, open for the next week. */
-export function blankDraft(at: { lat: number; lng: number } | null): HuntDraft {
-  const week = new Date(Date.now() + 7 * 86_400_000);
+/** A fresh hunt, starting on the hour and running for a week. */
+export function blankDraft(): HuntDraft {
+  const start = new Date();
+  start.setMinutes(0, 0, 0);
+  start.setHours(start.getHours() + 1);
   return {
     name: "", description: "", cover: null,
-    area: { lat: at?.lat ?? 25.033263, lng: at?.lng ?? 121.564887, radius_m: 1200 },
     route_mode: "any", leaderboard_visible: true,
-    starts_at: new Date().toISOString(), ends_at: week.toISOString(),
+    starts_at: start.toISOString(), ends_at: new Date(start.getTime() + 7 * 86_400_000).toISOString(),
     time_limit_min: null,
   };
 }
 export function blankWaypoint(ordinal: number, at: { lat: number; lng: number } | null): WaypointDraft {
   return {
     ordinal, name: "", lat: at?.lat ?? 0, lng: at?.lng ?? 0,
-    mission_type: "arrive", points: 10, description: "",
+    mission_type: "arrive", points: 10, description: "", arrive_check: "gps",
     puzzle_kind: "choice", choices: ["", ""], answer: "",
   };
 }
@@ -132,6 +154,7 @@ function asOwned(id: string, s: Stored): OwnedHunt {
   const waypoints: Waypoint[] = s.waypoints.map((w) => ({
     id: w.id ?? `${id}-${w.ordinal}`, ordinal: w.ordinal, name: w.name, lat: w.lat, lng: w.lng,
     mission_type: w.mission_type, points: w.points, description: w.description || null,
+    arrive_check: w.mission_type === "arrive" ? w.arrive_check : null,
     puzzle_kind: w.mission_type === "puzzle" ? w.puzzle_kind : null,
     choices: w.mission_type === "puzzle" && w.puzzle_kind === "choice" ? w.choices.filter((c) => c.trim()) : null,
     done_at: null,
@@ -139,7 +162,7 @@ function asOwned(id: string, s: Stored): OwnedHunt {
   return {
     id, status: s.status, joined: 0, join_code: s.code,
     name: s.draft.name, description: s.draft.description, cover: s.draft.cover,
-    area: s.draft.area, route_mode: s.draft.route_mode, leaderboard_visible: s.draft.leaderboard_visible,
+    area: huntArea(s.waypoints), route_mode: s.draft.route_mode, leaderboard_visible: s.draft.leaderboard_visible,
     starts_at: s.draft.starts_at, ends_at: s.draft.ends_at, time_limit_min: s.draft.time_limit_min,
     joined_at: null, finished_at: null, points: 0, waypoints, preview: true,
   };
@@ -206,6 +229,7 @@ export const organizer = {
     const s = hunts[id];
     if (!s) throw new PrivateHuntError("unknown");
     const at = s.waypoints.findIndex((x) => x.id && x.id === w.id);
+    if (w.arrive_check === "gps_qr" && !w.qr_token) w = { ...w, qr_token: makeCode() + makeCode() };
     if (at >= 0) s.waypoints[at] = w;
     else {
       if (s.waypoints.length >= LIMITS.waypoints) throw new PrivateHuntError("too_many");

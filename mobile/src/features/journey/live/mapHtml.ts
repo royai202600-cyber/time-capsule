@@ -224,7 +224,8 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 /* Private-hunt waypoint: a brass location pin, not a gem, so it never reads as one of ours
    (docs/design/city-orienteering.md). Done: cream with a tick. Locked by an in-order route: dashed. */
 .pin.mission{width:36px;height:52px;--mp:${C.brass};--mp-hi:#E2C58A;--mp-lo:#A9843F;--mg:#fff}
-.pin.mission.done{--mp:${C.cream};--mp-hi:#FBF2DC;--mp-lo:#D9C291;--mg:${C.brass}}
+/* A finished quest turns purple, like a Waypost after its spin. */
+.pin.mission.done{--mp:${C.plum};--mp-hi:#B98494;--mp-lo:#4A1C2A;--mg:#fff}
 .pin.mission .disc{left:6px;width:24px;height:7px;background:radial-gradient(${C.brass}66,transparent 70%)}
 .pin.mission .loc{position:absolute;left:0;bottom:4px;width:36px;height:46px;filter:drop-shadow(0 2px 4px rgba(22,38,63,.3));animation:bob 3.6s ease-in-out infinite}
 .pin.mission.locked .loc{opacity:.6}
