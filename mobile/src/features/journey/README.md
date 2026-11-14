@@ -14,3 +14,7 @@ const result = await capsules.open(capsule.id, coordinates?.lat, coordinates?.ln
 A1 registers the eleven place stamps and passport cover/page art in `mobile/src/art/manifest.ts`. The illustrated Asia map was removed on 2026-11-09; Journey uses only the live map.
 
 The detailed web map uses OpenStreetMap's Web Mercator fitted bounds for the vessel, radius, position dot and line. Reference inspected: [OpenStreetMap at the Tsim Sha Tsui Clock Tower](https://www.openstreetmap.org/?mlat=22.29359&mlon=114.16954#map=17/22.29359/114.16954). Browser and OS permission denial must be resolved in their settings; the page explains the relevant path.
+
+## Journey modules
+
+`JourneyScreen` coordinates server refreshes, selection and actions. `useCapsuleItems` builds received/public capsule items and Passport visits; `useCityHuntPins`, `usePrivateQuestPins` and `useGamePins` build their map layers. `SelectedCard`, `GameCard`, `LocationGate` and `JourneyControls` own their presentation. `journeyModel` shares item types and asset URI helpers. `MapFilterSheet` and `mapFilter` keep filtering separate from these layers. A quest is a task; its optional location gives it a quest pin.

@@ -5,7 +5,7 @@ import { ArtIcon } from "../../components/ArtIcon";
 import { Vessel } from "../../components/Vessel";
 import { gameArt } from "../../art/manifest";
 import { haptics } from "../../components/haptics";
-import { useSeaText } from "../sea/strings";
+import { usePublicCapsuleText } from "../publicCapsule/strings";
 import { MAP_FILTERS, type MapFilter } from "./mapFilter";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 
@@ -22,7 +22,7 @@ function Picture({ filter }: { filter: MapFilter }) {
 export function MapFilterSheet({ value, counts, onChange, onClose }: {
   value: MapFilter; counts: Record<MapFilter, number>; onChange: (f: MapFilter) => void; onClose: () => void;
 }) {
-  const s = useSeaText();
+  const s = usePublicCapsuleText();
   return <View style={{ gap: spacing.sm, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, borderWidth: 1, borderColor: C.line, padding: spacing.md, ...shadows.card }}>
     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
       <Text style={{ fontFamily: serif, fontSize: 17, color: C.ink }}>{s("filterTitle")}</Text>

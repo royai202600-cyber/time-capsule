@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, Text, View } from "react-native";
-import { useF1Text } from "../i18n/f1";
+import { useScreenText } from "../i18n/useScreenText";
 import { useReducedMotion } from "../useReducedMotion";
 import { C, sans, serif } from "../theme";
 
@@ -31,7 +31,7 @@ function Tile({ value, unit, reduced }: { value: string; unit: string; reduced: 
 }
 
 export function Countdown({ until }: { until: string }) {
-  const t = useF1Text();
+  const t = useScreenText();
   const reduced = useReducedMotion();
   const [now, setNow] = useState(Date.now());
   useEffect(() => {

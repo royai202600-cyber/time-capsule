@@ -1,5 +1,7 @@
 # Task board
 
+Part B PR #124 (2026-11-14): Claude approved B1–B6 at `68258e4`; Roy authorized release. The two final naming touch-ups passed CI on `fb3e938`. Migration `20261114080044` is now applied, and the old production app `980c30c` passed the live signed-in wrapper flow checks before the app release. Types were regenerated from production. Owner-account merge, owner-authored release and final 375 px zh/en production checks follow. Remove old-name wrappers/read aliases and rename the legacy server error codes only after old app versions are gone.
+
 2026-11-14 release: Waypost discovery now reaches 5 km, the Expo test account has organizer access, the Civic Square placeholder place name was fixed, and PR #123 was merged after green CI. The naming refactor is a separate review before migration.
 
 Owner per task: **Claude** (UI, design, planning) or **Codex** (backend, merging, deploy, setup).

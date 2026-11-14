@@ -7,21 +7,21 @@ import { ArtIcon } from "../../components/ArtIcon";
 import { Avatar } from "../../components/Avatar";
 import { useLanguage } from "../../i18n";
 import { useReducedMotion } from "../../useReducedMotion";
-import { distanceText } from "../sea/strings";
+import { distanceText } from "../publicCapsule/strings";
 import { GAME_ACTION_RADIUS_M } from "../../services/game";
 import { clockText } from "../../services/huntClock";
 import {
   cleanCode, doneCount, inOrder, locked, totalPoints, waitLeft,
-  type LeaderRow, type MissionType, type PrivateHunt, type Waypoint,
-} from "../../services/huntPrivate";
+  type LeaderRow, type PrivateHuntQuestType, type PrivateHunt, type Quest,
+} from "../../services/privateHunt";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { Btn, HuntCard, huntWindow, type TaskRow } from "./HuntViews";
 import { useHuntText } from "./strings";
 import { QrScanner } from "./QrScanner";
 import { questImageSource, useQuestImages } from "./questImage";
 
-/** One glyph per mission type, matching the glyph drawn on its brass pin. */
-export function MissionGlyph({ type, size = 18, color = C.blue }: { type: MissionType; size?: number; color?: string }) {
+/** One glyph per quest type, matching the glyph drawn on its brass pin. */
+export function QuestGlyph({ type, size = 18, color = C.blue }: { type: PrivateHuntQuestType; size?: number; color?: string }) {
   return <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
     {type === "arrive" && <Path d="M7 21V4m0 0 10 2.5L7 11" />}
     {type === "spin" && <><Circle cx={12} cy={12} r={7.5} /><Path d="M12 4.5v15M4.5 12h15" /></>}
@@ -90,7 +90,7 @@ function PrivatePreview({ hunt, busy, onJoin }: { hunt: PrivateHunt; busy: boole
       <Text style={{ fontFamily: sans, fontSize: 11, letterSpacing: 1.2, color: C.brass }}>{t.privateKicker}</Text>
       <Text style={{ fontFamily: serif, fontSize: 20, color: C.ink }}>{hunt.name}</Text>
       {!!hunt.description && <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.ink }}>{hunt.description}</Text>}
-      <Text style={{ fontFamily: sans, fontSize: 13, color: C.ink }}>{t.questCount(0, hunt.waypoints.length)}　{t.pointsShort(totalPoints(hunt))}</Text>
+      <Text style={{ fontFamily: sans, fontSize: 13, color: C.ink }}>{t.questCount(0, hunt.quests.length)}　{t.pointsShort(totalPoints(hunt))}</Text>
       {!!hunt.time_limit_min && <Text style={{ fontFamily: sans, fontSize: 13, color: C.ink }}>{t.privateLimit(hunt.time_limit_min)}</Text>}
       <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{t.privateRules}</Text>
       <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{t.privateNoOthers}</Text>
@@ -105,10 +105,10 @@ function PrivatePreview({ hunt, busy, onJoin }: { hunt: PrivateHunt; busy: boole
  * A joined private hunt on the Quest sheet. It uses the same card, clock and checklist as a City Hunt,
  * so nothing has to be learned twice; only the kicker colour says who is running it.
  */
-export function PrivateHuntCard({ hunt, onShowOnMap, onOpenMission, onLeaderboard, onReport }: {
+export function PrivateHuntCard({ hunt, onShowOnMap, onOpenQuest, onLeaderboard, onReport }: {
   hunt: PrivateHunt;
   onShowOnMap: (h: PrivateHunt) => void;
-  onOpenMission: (h: PrivateHunt, w: Waypoint) => void;
+  onOpenQuest: (h: PrivateHunt, w: Quest) => void;
   onLeaderboard: (h: PrivateHunt) => void;
   onReport: (h: PrivateHunt) => void;
 }) {
@@ -119,10 +119,10 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenMission, onLeaderboar
     const shut = locked(hunt, w);
     return {
       key: w.id, label: w.name, done: !!w.done_at, locked: shut,
-      sub: t.missionTypes[w.mission_type] + (shut ? `　${t.questLocked}` : ""),
+      sub: t.questTypes[w.quest_type] + (shut ? `　${t.questLocked}` : ""),
       right: t.pointsShort(w.points),
-      glyph: <MissionGlyph type={w.mission_type} size={15} color={C.blue} />,
-      onPress: () => onOpenMission(hunt, w),
+      glyph: <QuestGlyph type={w.quest_type} size={15} color={C.blue} />,
+      onPress: () => onOpenQuest(hunt, w),
     };
   });
   return <HuntCard
@@ -130,7 +130,7 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenMission, onLeaderboar
     title={hunt.name}
     subtitle={done ? t.privateFinished : huntWindow(hunt, language, t)}
     clock={hunt} startNote={t.privateLimit} upNote={t.privateTimeUpNote}
-    progress={`${t.questCount(doneCount(hunt), hunt.waypoints.length)}　${t.pointsOf(hunt.points, totalPoints(hunt))}`}
+    progress={`${t.questCount(doneCount(hunt), hunt.quests.length)}　${t.pointsOf(hunt.points, totalPoints(hunt))}`}
     tasks={tasks}
     note={hunt.route_mode === "ordered" ? t.questLockedNote : undefined}
     actions={<View style={{ gap: spacing.sm }}>
@@ -148,11 +148,11 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenMission, onLeaderboar
 }
 
 /**
- * One mission: walk there, then check in, spin or answer. Every check is the server's; this screen only
+ * One quest: walk there, then check in, spin or answer. Every check is the server's; this screen only
  * says what it refused.
  */
-export function MissionSheet({ visible, hunt, waypoint, meters, busy, error, tries, onClose, onComplete }: {
-  visible: boolean; hunt: PrivateHunt; waypoint: Waypoint; meters: number; busy: boolean;
+export function QuestSheet({ visible, hunt, quest, meters, busy, error, tries, onClose, onComplete }: {
+  visible: boolean; hunt: PrivateHunt; quest: Quest; meters: number; busy: boolean;
   error?: string | null; tries?: number;
   onClose: () => void; onComplete: (answer?: string, qr?: string) => void;
 }) {
@@ -160,38 +160,38 @@ export function MissionSheet({ visible, hunt, waypoint, meters, busy, error, tri
   const [answer, setAnswer] = useState("");
   const [scanning, setScanning] = useState(false);
   const [, tick] = useState(0);
-  useEffect(() => { if (visible) setAnswer(""); }, [visible, waypoint.id]);
+  useEffect(() => { if (visible) setAnswer(""); }, [visible, quest.id]);
   const near = meters <= GAME_ACTION_RADIUS_M;
-  const done = !!waypoint.done_at, shut = locked(hunt, waypoint);
-  const wait = waitLeft(waypoint);
+  const done = !!quest.done_at, shut = locked(hunt, quest);
+  const wait = waitLeft(quest);
   // The wait after three wrong answers counts down in front of the player, rather than sitting still.
   useEffect(() => {
     if (!wait) return;
     const timer = setInterval(() => tick((n) => n + 1), 1000);
     return () => clearInterval(timer);
   }, [!wait]);
-  useQuestImages([waypoint.image]);
-  const puzzle = waypoint.mission_type === "puzzle";
-  const needsQr = waypoint.mission_type === "arrive" && waypoint.arrive_check === "gps_qr";
+  useQuestImages([quest.image]);
+  const puzzle = quest.quest_type === "puzzle";
+  const needsQr = quest.quest_type === "arrive" && quest.arrive_check === "gps_qr";
   const canAct = near && !done && !shut && !wait && (!puzzle || !!answer.trim());
-  return <Sheet visible={visible} title={waypoint.name} onClose={onClose}>
+  return <Sheet visible={visible} title={quest.name} onClose={onClose}>
     <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-        <MissionGlyph type={waypoint.mission_type} size={20} />
-        <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, color: C.blue, letterSpacing: .6 }}>{t.missionTypes[waypoint.mission_type]}</Text>
-        <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{t.pointsShort(waypoint.points)}</Text>
+        <QuestGlyph type={quest.quest_type} size={20} />
+        <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, color: C.blue, letterSpacing: .6 }}>{t.questTypes[quest.quest_type]}</Text>
+        <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{t.pointsShort(quest.points)}</Text>
       </View>
-      {!!waypoint.image && <Image source={questImageSource(waypoint.image)} style={{ width: "100%", aspectRatio: 16 / 9, borderRadius: radii.md }} resizeMode="cover" />}
-      {!!waypoint.description && <Text style={{ fontFamily: sans, fontSize: 14, lineHeight: 22, color: C.ink }}>{waypoint.description}</Text>}
-      <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{waypoint.mission_type === "arrive" && waypoint.arrive_check === "gps_qr" ? t.questHowQr : t.questHow[waypoint.mission_type]}</Text>
+      {!!quest.image && <Image source={questImageSource(quest.image)} style={{ width: "100%", aspectRatio: 16 / 9, borderRadius: radii.md }} resizeMode="cover" />}
+      {!!quest.description && <Text style={{ fontFamily: sans, fontSize: 14, lineHeight: 22, color: C.ink }}>{quest.description}</Text>}
+      <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{quest.quest_type === "arrive" && quest.arrive_check === "gps_qr" ? t.questHowQr : t.questHow[quest.quest_type]}</Text>
 
       {done && <Note icon="check" tone={C.blue} text={t.questDone} />}
       {!done && shut && <Note icon="lock" tone={C.muted} text={t.questLocked} />}
       {!done && !shut && !near && <Note icon="pin" tone={C.blue} text={t.walkCloser(distanceText(meters - GAME_ACTION_RADIUS_M))} />}
 
       {!done && !shut && puzzle && <View style={{ gap: spacing.sm }}>
-        {waypoint.puzzle_kind === "choice" && !!waypoint.choices?.length
-          ? waypoint.choices.map((choice) => {
+        {quest.puzzle_kind === "choice" && !!quest.choices?.length
+          ? quest.choices.map((choice) => {
             const picked = choice === answer;
             return <Pressable key={choice} accessibilityRole="radio" accessibilityState={{ selected: picked }} onPress={() => setAnswer(choice)}
               style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: picked ? C.glass : C.white, borderWidth: 1.5, borderColor: picked ? C.blue : C.line, borderRadius: radii.md, paddingVertical: 12, paddingHorizontal: spacing.md }}>
@@ -211,7 +211,7 @@ export function MissionSheet({ visible, hunt, waypoint, meters, busy, error, tri
       {!wait && tries != null && tries > 0 && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.triesLeft(tries)}</Text>}
 
       {!done && <Btn disabled={!canAct || busy} onPress={() => needsQr ? setScanning(true) : onComplete(puzzle ? answer : undefined)}
-        title={needsQr ? t.scanQr : puzzle ? t.answerSend : waypoint.mission_type === "spin" ? t.spinHere : t.checkInHere} />}
+        title={needsQr ? t.scanQr : puzzle ? t.answerSend : quest.quest_type === "spin" ? t.spinHere : t.checkInHere} />}
     </ScrollView>
     {scanning && <QrScanner onClose={() => setScanning(false)} onScan={(token) => { setScanning(false); onComplete(undefined, token); }} />}
   </Sheet>;

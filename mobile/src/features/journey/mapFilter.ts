@@ -6,9 +6,9 @@ export const MAP_FILTERS: MapFilter[] = ["all", "capsules", "cityHunt", "private
 
 // City Hunt is everything its steps use: the Keeper, Wayposts, Corrupted Capsules and the Landmark.
 const KINDS: Record<Exclude<MapFilter, "all">, LivePin["kind"][]> = {
-  capsules: ["sea", "place"],
+  capsules: ["publicCapsule", "place"],
   cityHunt: ["keeper", "waypost", "corrupted", "landmark"],
-  privateHunt: ["mission"],
+  privateHunt: ["quest"],
 };
 
 export const shows = (filter: MapFilter, kind: LivePin["kind"]) => filter === "all" || KINDS[filter].includes(kind);

@@ -1,9 +1,8 @@
 // The collecting game's data. Signed-in players use the live server functions; signed-out
-// development falls back to an in-memory stand-in. The game stays hidden in production until launch.
-import type { SeaBottle } from "./sea";
+// development falls back to an in-memory stand-in.
+import type { PublicCapsule } from "./publicCapsule";
 import { supabase } from "./supabase";
 
-export const GAME_BACKEND = true;
 export const GAME_ENABLED = true;
 export const GAME_ACTION_RADIUS_M = 100;
 
@@ -25,7 +24,7 @@ export type LandmarkHit = { result: "hit" | "won"; cracks: number; vessel: strin
 export const cityHuntNameZh = (name: string) => name.replace("城市尋寶", "城市定向");
 export type PassportHunt = { id: string; name_zh: string; name_en: string; at: string };
 export type PrivateHuntStamp = { id: string; name: string; at: string };
-export type DevLetter = { bottle: SeaBottle; message: string };
+export type DevLetter = { publicCapsule: PublicCapsule; message: string };
 export type GameErrorCode = "no_balls" | "expired" | "no_attempts" | "already_caught" | "too_far" | "too_fast" | "cooldown" | "active_attempt" | "unknown";
 export class GameError extends Error { constructor(public code: GameErrorCode) { super(code); } }
 
@@ -36,7 +35,7 @@ const fail = (error: { message?: string } | null) => {
 // Landmark Wayposts only return their place; each place has one earned vessel.
 const LANDMARK_VESSEL: Record<string, string> = { taipei101: "bamboo-tower", merlion: "lionfish-fountain", senado: "senado-fountain", hkust: "red-bird" };
 let position: Coords | null = null;
-/** Successful game actions, so a City Hunt can count them on the device while its backend is not live. */
+/** Successful game actions, also counted by the signed-out development City Hunt preview. */
 export type GameEvent = { kind: "spin"; waypost: string; lat: number; lng: number } | { kind: "restore"; lat: number; lng: number } | { kind: "landmark"; waypost: string };
 const listeners = new Set<(e: GameEvent) => void>();
 const emit = (e: GameEvent) => { listeners.forEach((l) => { try { l(e); } catch { /* never break the game */ } }); };
@@ -44,7 +43,11 @@ export const onGameEvent = (l: (e: GameEvent) => void) => { listeners.add(l); re
 const spots = new Map<string, { lat: number; lng: number }>();
 const posts = new Map<string, { lat: number; lng: number }>();
 const attemptPost = new Map<string, string>();
-const live = async () => GAME_BACKEND && !!(await supabase.auth.getSession()).data.session;
+const live = async () => {
+  const present = !!(await supabase.auth.getSession()).data.session;
+  if (!present && !__DEV__) throw new GameError("unknown");
+  return present;
+};
 const coords = () => {
   if (!position) throw new GameError("too_far");
   return { p_lat: position.lat, p_lng: position.lng, p_accuracy: position.accuracy ?? 10 };
@@ -68,7 +71,7 @@ const THROW_CHANCE: Record<Rarity, number> = { common: .55, uncommon: .35, rare:
 
 const dev = {
   xp: 0, wax: 30, gold: 2, seeded: false,
-  corrupted: [] as CorruptedCapsule[], wayposts: [] as Waypost[], copies: new Map<string, number>(), bottles: [] as DevLetter[],
+  corrupted: [] as CorruptedCapsule[], wayposts: [] as Waypost[], copies: new Map<string, number>(), publicCapsules: [] as DevLetter[],
   attempts: new Map<string, { attempt: LandmarkAttempt; cracks: number }>(),
 };
 const stateNow = (): GameState => ({
@@ -88,15 +91,15 @@ function seed(at: Coords) {
     { id: "dev-c", kind: "landmark", name_zh: "台北101廣場", name_en: "Taipei 101 Plaza", place: "taipei101", ...offset(at, 78, -52), cooldown_until: null },
   ];
   const sealed = new Date(Date.now() - 9 * 86_400_000).toISOString();
-  const bottles: [string, string, string, string, string, number, number][] = [
+  const publicCapsules: [string, string, string, string, string, number, number][] = [
     ["小雅", "02", "給今天有點累的你", "測試信：如果你正在讀這封信，希望你今天吃得好。", "tin", 12, 82],
     ["阿明", "05", "這裡的風很舒服", "測試信：我在這裡坐了一個下午，你也坐一下吧。", "bottle", -84, -72],
     ["Mei", "03", "寫給路過的人", "測試信：謝謝你走過來，把這封信撿起來。", "envelope", 68, -24],
     ["Ken", "07", "要走近一點才能撿", "測試信：這封放得遠一點，測試走近才能撿起。", "hourglass", 150, 150],
   ];
-  dev.bottles = bottles.map(([name, avatar, hint, message, vessel, n, e], i) => ({
+  dev.publicCapsules = publicCapsules.map(([name, avatar, hint, message, vessel, n, e], i) => ({
     message,
-    bottle: { id: `dev-bottle-${i}`, hint, vessel, ...offset(at, n, e), shore_zh: "公園驛站", shore_en: "Park Waypost", sealed_at: sealed, washed_up_at: sealed, returns: 0, sender: { id: `dev-sender-${i}`, name, avatar: { set: "illus", id: avatar }, city: "台北" } },
+    publicCapsule: { id: `dev-public-capsule-${i}`, hint, vessel, ...offset(at, n, e), spot_zh: "公園驛站", spot_en: "Park Waypost", sealed_at: sealed, available_at: sealed, returns: 0, sender: { id: `dev-sender-${i}`, name, avatar: { set: "illus", id: avatar }, city: "台北" } },
   }));
 }
 
@@ -129,7 +132,7 @@ export const game = {
   async nearby(at: Coords): Promise<Nearby> {
     position = at;
     if (await live()) {
-      const { data, error } = await supabase.rpc("corrupted_nearby", coords());
+      const { data, error } = await supabase.rpc("game_nearby", coords());
       fail(error);
       const payload = data as unknown as NearbyPayload;
       payload.spawns.forEach((c) => spots.set(c.spawn_id, { lat: c.lat, lng: c.lng }));
@@ -155,7 +158,7 @@ export const game = {
   },
   async throwOnce(args: { id: string; ball: BallKind; ring: number; hit: boolean }): Promise<ThrowResult> {
     if (!args.id.startsWith("dev-") && await live()) {
-      const { data, error } = await supabase.rpc("corrupted_throw", { p_spawn: args.id, ...coords(), p_ball: args.ball, p_ring: args.ring, p_hit: args.hit });
+      const { data, error } = await supabase.rpc("corrupted_capsule_throw", { p_spawn: args.id, ...coords(), p_ball: args.ball, p_ring: args.ring, p_hit: args.hit });
       fail(error);
       const row = data?.[0];
       if (!row) throw new GameError("unknown");
@@ -242,10 +245,10 @@ export const game = {
     return Object.fromEntries([...dev.copies].map(([id, copies]) => [id, { copies, stars: starsFor(copies) }]));
   },
   /** Development only: capsules from other people, so the pickup can be tried anywhere. */
-  devBottles(at: Coords): SeaBottle[] { if (!__DEV__) return []; seed(at); return dev.bottles.map((b) => b.bottle); },
+  devPublicCapsules(at: Coords): PublicCapsule[] { if (!__DEV__) return []; seed(at); return dev.publicCapsules.map((b) => b.publicCapsule); },
   devPickUp(id: string): DevLetter | null {
-    const found = dev.bottles.find((b) => b.bottle.id === id) ?? null;
-    dev.bottles = dev.bottles.filter((b) => b.bottle.id !== id);
+    const found = dev.publicCapsules.find((b) => b.publicCapsule.id === id) ?? null;
+    dev.publicCapsules = dev.publicCapsules.filter((b) => b.publicCapsule.id !== id);
     return found;
   },
   /** Places stamped by a Landmark win or an opened capsule, with when they were first earned. */

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { isSeaCapsule, SEA_AVATAR } from "../../services/sea";
-import { seaText } from "../sea/strings";
+import { isPublicCapsule, PUBLIC_CAPSULE_AVATAR } from "../../services/publicCapsule";
+import { publicCapsuleText } from "../publicCapsule/strings";
 import { Animated, FlatList, Image, Pressable, Text, View, useWindowDimensions } from "react-native";
 import { SealLoader } from "../../components/SealLoader";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
@@ -13,7 +13,7 @@ import { scenes } from "../../art/manifest";
 import { Vessel } from "../../components/Vessel";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
-import { useF1Text } from "../../i18n/f1";
+import { useScreenText } from "../../i18n/useScreenText";
 import { useAuth } from "../../services/auth";
 import { C, handwriting, sans, serif, shadows } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
@@ -48,7 +48,7 @@ export default function HomeScreen() {
   const { tab } = useLocalSearchParams<{ tab?: string }>();
   const { profile, session } = useAuth();
   const { language, setLanguage } = useLanguage();
-  const t = useF1Text();
+  const t = useScreenText();
   const reduced = useReducedMotion();
   const { width } = useWindowDimensions();
   const [side, setSide] = useState<"inbox" | "sent">(tab === "sent" ? "sent" : "inbox");
@@ -85,7 +85,7 @@ export default function HomeScreen() {
   const person = (c: Row) => {
     const id = side === "inbox" ? c.sender : c.recipient;
     if (side === "sent" && id === session?.user.id) return { name: t("home.future"), avatar: { set: "illus", id: "future" } };
-    if (side === "sent" && isSeaCapsule(c) && !c.recipient) return { name: seaText(language)("toTheSea"), avatar: SEA_AVATAR };
+    if (side === "sent" && isPublicCapsule(c) && !c.recipient) return { name: publicCapsuleText(language)("toPassersBy"), avatar: PUBLIC_CAPSULE_AVATAR };
     return (id ? bundle.people[id] : undefined) ?? { name: t("home.future"), avatar: null };
   };
   const headline = (c: Row) => {

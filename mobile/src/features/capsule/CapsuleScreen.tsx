@@ -14,9 +14,9 @@ import { Countdown } from "../../components/Countdown";
 import { Vessel } from "../../components/Vessel";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
-import { useF1Text } from "../../i18n/f1";
-import { VESSELS } from "../../i18n/webStrings";
-import { STR } from "../../i18n/webStrings";
+import { useScreenText } from "../../i18n/useScreenText";
+import { VESSELS } from "../../features/shop/strings";
+import { strings as STR } from "../../i18n/strings";
 import { useAuth } from "../../services/auth";
 import { capsules, vessels } from "../../services/data";
 import { LandmarkReveal } from "./LandmarkReveal";
@@ -27,9 +27,9 @@ import { CapsuleMapPage } from "../journey/CapsuleMapPage";
 import { openingCoordinates, usePlaceDistance } from "../journey/location";
 import { GiftQr } from "./GiftQr";
 import { LightBurst } from "./LightBurst";
-import { isSeaCapsule } from "../../services/sea";
-import { SeaLetterActions } from "../sea/SeaLetterActions";
-import { seaText } from "../sea/strings";
+import { isPublicCapsule } from "../../services/publicCapsule";
+import { PublicCapsuleLetterActions } from "../publicCapsule/PublicCapsuleLetterActions";
+import { publicCapsuleText } from "../publicCapsule/strings";
 import { RitualHold } from "./RitualHold";
 import { SealedLines } from "./SealedLines";
 import { useAlarmText } from "../alarm/strings";
@@ -56,7 +56,7 @@ export default function CapsuleScreen() {
   const side = sideParam === "sent" ? "sent" : "inbox";
   const { session } = useAuth();
   const { language } = useLanguage();
-  const t = useF1Text();
+  const t = useScreenText();
   const reduced = useReducedMotion();
   const { width } = useWindowDimensions();
   const pageWidth = width;
@@ -95,7 +95,7 @@ export default function CapsuleScreen() {
   const v = c ? bundle.vessels[c.vessel] : undefined;
   const sender = c ? bundle.people[c.sender] : undefined;
   const receiver = c?.recipient ? bundle.people[c.recipient] : undefined;
-  const name = side === "sent" && c && isSeaCapsule(c) && !c.recipient ? seaText(language)("toTheSea") : side === "sent" && c?.recipient === session?.user.id ? t("home.future") : (side === "sent" ? receiver?.name : sender?.name) ?? t("home.future");
+  const name = side === "sent" && c && isPublicCapsule(c) && !c.recipient ? publicCapsuleText(language)("toPassersBy") : side === "sent" && c?.recipient === session?.user.id ? t("home.future") : (side === "sent" ? receiver?.name : sender?.name) ?? t("home.future");
   const placeName = pl ? pl[language === "zh" ? "name_zh" : "name_en"] : "";
   const state = c ? status(c, side, pl && fix ? openingCoordinates() : null, pl, now) : "time";
   const waitMs = c ? Math.max(0, new Date(c.open_at).getTime() - now) : 0;
@@ -220,7 +220,7 @@ function Checklist({ label, value, done }: { label: string; value: string; done:
   return <View style={{ flexDirection: "row", gap: 12, alignItems: "center", borderBottomWidth: 1, borderColor: C.line, paddingBottom: 8 }}><ArtIcon name={done ? "check" : "lock"} size={22} color={done ? C.blue : C.muted} /><View><Text style={{ color: C.ink, fontFamily: sans }}>{label}</Text><Text style={{ color: C.muted, fontSize: 12 }}>{value}</Text></View></View>;
 }
 
-function SenderView({ c, name, placeName, language, t }: { c: Row; name: string; placeName: string; language: "zh" | "en"; t: ReturnType<typeof useF1Text> }) {
+function SenderView({ c, name, placeName, language, t }: { c: Row; name: string; placeName: string; language: "zh" | "en"; t: ReturnType<typeof useScreenText> }) {
   const predicted = isPrediction(c);
   const [own, setOwn] = useState<SenderPrediction | null>(null);
   useEffect(() => {
@@ -242,7 +242,7 @@ function SenderView({ c, name, placeName, language, t }: { c: Row; name: string;
   </ScrollView>;
 }
 
-function LetterView({ c, content, name, placeName, self, language, t }: { c: Row; content: Opened; name: string; placeName: string; self: boolean; language: "zh" | "en"; t: ReturnType<typeof useF1Text> }) {
+function LetterView({ c, content, name, placeName, self, language, t }: { c: Row; content: Opened; name: string; placeName: string; self: boolean; language: "zh" | "en"; t: ReturnType<typeof useScreenText> }) {
   const brand = c.edition_no ? "Maison Aurèle" : "";
   const p = usePredictionText();
   const predicted = openedPrediction(c.id, content as Record<string, unknown>);
@@ -256,7 +256,7 @@ function LetterView({ c, content, name, placeName, self, language, t }: { c: Row
     {!!content.photo && <Image source={{ uri: content.photo }} resizeMode="contain" style={{ width: "100%", height: 230, marginTop: 20, borderRadius: 4 }} />}
     <Text style={{ color: C.plum, fontFamily: handwriting, fontSize: 19, textAlign: "right", marginTop: 25 }}>{self ? t("capsule.pastMe") : name}</Text><Text style={{ color: C.muted, fontSize: 12, textAlign: "right" }}>{t("capsule.sealedOn", formatDate(c.sealed_at, language, true))}</Text>
   </View>{!!content.gift_code && <View style={{ backgroundColor: C.ink, borderRadius: 16, padding: 22, alignItems: "center", gap: 12 }}><Text style={{ color: C.cream, fontFamily: serif, fontSize: 19, textAlign: "center" }}>{t("capsule.giftHead", brand)}</Text><Text style={{ color: C.white }}>{t("capsule.giftItem")}</Text><Text style={{ color: C.cream, fontFamily: serif, fontSize: 23 }}>{content.gift_code}</Text><GiftQr value={content.gift_code} label={t("capsule.qr")} /><Text style={{ color: C.white, textAlign: "center" }}>{t("capsule.giftNote")}</Text></View>}
-    <Text style={{ color: C.blue, fontFamily: serif, textAlign: "center", marginTop: 8 }}>{t("capsule.record", formatDate(content.opened_at, language, true), placeName)}</Text>{isSeaCapsule(c) && !self ? <SeaLetterActions capsuleId={c.id} /> : <Action ghost title={self ? t("capsule.replySelf") : t("capsule.reply", name)} onPress={() => router.push({ pathname: "/create", params: { recipient: self ? "future" : c.sender } })} />}
+    <Text style={{ color: C.blue, fontFamily: serif, textAlign: "center", marginTop: 8 }}>{t("capsule.record", formatDate(content.opened_at, language, true), placeName)}</Text>{isPublicCapsule(c) && !self ? <PublicCapsuleLetterActions capsuleId={c.id} /> : <Action ghost title={self ? t("capsule.replySelf") : t("capsule.reply", name)} onPress={() => router.push({ pathname: "/create", params: { recipient: self ? "future" : c.sender } })} />}
     <WakeMe c={c} name={name} self={self} />
   </View>;
 }

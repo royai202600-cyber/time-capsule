@@ -1,5 +1,5 @@
 import { useLanguage } from "../../i18n";
-import { VESSELS } from "../../i18n/webStrings";
+import { VESSELS } from "../../features/shop/strings";
 
 const strings = {
   zh: {

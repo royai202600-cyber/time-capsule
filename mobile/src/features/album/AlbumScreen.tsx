@@ -5,7 +5,7 @@ import { useFocusEffect } from "expo-router";
 import { BackButton, Bar, Heading } from "../../components/Screen";
 import { Vessel, type VesselKind } from "../../components/Vessel";
 import { useLanguage } from "../../i18n";
-import { VESSELS } from "../../i18n/webStrings";
+import { VESSELS } from "../../features/shop/strings";
 import { goBack } from "../../navigation";
 import { useAuth } from "../../services/auth";
 import { vessels } from "../../services/data";

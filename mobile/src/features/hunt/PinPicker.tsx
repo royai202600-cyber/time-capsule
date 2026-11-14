@@ -7,9 +7,9 @@ import { haptics } from "../../components/haptics";
 import { LiveMap } from "../journey/live/LiveMap";
 import { mapHtml } from "../journey/live/mapHtml";
 import type { LiveMapHandle, LivePin } from "../journey/live/types";
-import { MAP_PMTILES_URL } from "../../services/sea";
+import { MAP_PMTILES_URL } from "../../services/publicCapsule";
 import { reversePlace } from "../../services/places";
-import type { MissionType } from "../../services/huntPrivate";
+import type { PrivateHuntQuestType } from "../../services/privateHunt";
 import { Btn } from "./HuntViews";
 import { useOrganizerText } from "./organizerStrings";
 import { useLanguage } from "../../i18n";
@@ -18,11 +18,11 @@ import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 
 export type PickedPin = { lat: number; lng: number; name: string; detail: string };
 
-export function PinPicker({ at, you, mission, image, onClose, onPick }: {
+export function PinPicker({ at, you, quest, image, onClose, onPick }: {
   /** Where the pin starts, or null to start on the player's own position. */
   at: { lat: number; lng: number } | null;
   you: { lat: number; lng: number } | null;
-  mission: MissionType; image?: string | null;
+  quest: PrivateHuntQuestType; image?: string | null;
   onClose: () => void;
   onPick: (pin: PickedPin) => void;
 }) {
@@ -38,8 +38,8 @@ export function PinPicker({ at, you, mission, image, onClose, onPick }: {
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: start }), []);
   const signedVersion = useQuestImages([image]);
   const pins = useMemo<LivePin[]>(() => [{
-    id: "picked", lat: point.lat, lng: point.lng, kind: "mission", vessel: "", mission, photo: questImageUri(image), near: true,
-  }], [point.lat, point.lng, mission, image, signedVersion]);
+    id: "picked", lat: point.lat, lng: point.lng, kind: "quest", vessel: "", quest, photo: questImageUri(image), near: true,
+  }], [point.lat, point.lng, quest, image, signedVersion]);
   const state = useMemo(() => ({ you, reach: 0, pins }), [you?.lat, you?.lng, pins]);
 
   // Whatever is at the pin names the quest, so the organizer rarely types a name at all.

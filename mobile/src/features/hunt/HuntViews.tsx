@@ -5,9 +5,9 @@ import { ArtIcon } from "../../components/ArtIcon";
 import { useLanguage } from "../../i18n";
 import { useReducedMotion } from "../../useReducedMotion";
 import { characters } from "../../art/manifest";
-import { distanceText } from "../sea/strings";
+import { distanceText } from "../publicCapsule/strings";
 import { GAME_ACTION_RADIUS_M } from "../../services/game";
-import { huntStatus, keeperSpot, landmarkName, stepGoal, readyToReturn, type Hunt } from "../../services/hunt";
+import { huntStatus, keeperSpot, landmarkName, questGoal, readyToReturn, type Hunt } from "../../services/cityHunt";
 import { clockText, runClock, runningLow, type RunClock, type RunTimes } from "../../services/huntClock";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { timeUntil, useHuntText, type HuntText } from "./strings";
@@ -95,13 +95,13 @@ export function HuntClock({ hunt, startNote, upNote }: { hunt: RunTimes; startNo
 }
 
 /**
- * One line of a hunt's checklist. A City Hunt's steps and a private hunt's missions are the same thing
+ * One line of a hunt's checklist. City Hunt quests and private hunt quests are the same thing
  * to a player, so they are drawn by the same component and only differ in what fills them.
  */
 export type TaskRow = {
   key: string; label: string; sub?: string; right?: string;
   done?: boolean; locked?: boolean;
-  /** Private missions carry a glyph for their type; a City Hunt's steps leave the circle empty. */
+  /** Private quests carry a glyph for their type; City Hunt quests leave the circle empty. */
   glyph?: React.ReactNode;
   onPress?: () => void;
 };
@@ -131,9 +131,9 @@ export function TaskList({ rows, compact = false }: { rows: TaskRow[]; compact?:
   </View>;
 }
 
-/** A City Hunt's steps as task rows. */
-export const huntTasks = (hunt: Hunt, t: HuntText): TaskRow[] => hunt.steps.map((s) => ({
-  key: s.key, label: t.steps[s.key], done: s.count >= s.goal,
+/** City Hunt quests as checklist rows. */
+export const huntTasks = (hunt: Hunt, t: HuntText): TaskRow[] => hunt.quests.map((s) => ({
+  key: s.key, label: t.quests[s.key], done: s.count >= s.goal,
   right: s.goal > 1 ? `${s.count} / ${s.goal}` : undefined,
 }));
 
@@ -257,16 +257,16 @@ export function KeeperCard({ hunt, meters, busy, onJoin, onCheckIn, onFinish, on
   const spot = keeperSpot(hunt, language) ?? t.startSpot;
   const farNote = near ? "" : t.walkCloser(distanceText(meters - GAME_ACTION_RADIUS_M));
   const clock = useRunClock(hunt);
-  let line = t.lineDuring, action: { title: string; run: () => void } | null = null, steps = false, note = "";
+  let line = t.lineDuring, action: { title: string; run: () => void } | null = null, showQuests = false, note = "";
   if (hunt.finished_at) line = hunt.today_s != null && hunt.today_s === hunt.best_s ? t.lineRecord(clockText(hunt.today_s)) : t.lineAfter;
   // Out of time: the run is over, and checking in again starts a new one.
   else if (clock.state === "up") { line = t.lineTimeUp; if (near) action = { title: t.again, run: onCheckIn }; else note = farNote; }
   else if (!hunt.checked_in_at) {
     if (!hunt.joined_at) { line = t.lineBefore; action = { title: t.join, run: onJoin }; }
-    else if (near) { line = t.lineCheckIn(stepGoal(hunt, "spin"), stepGoal(hunt, "restore"), landmarkName(hunt, language) ?? t.theLandmark); action = { title: t.go, run: onCheckIn }; }
+    else if (near) { line = t.lineCheckIn(questGoal(hunt, "spin"), questGoal(hunt, "restore"), landmarkName(hunt, language) ?? t.theLandmark); action = { title: t.go, run: onCheckIn }; }
     else { line = t.lineWaiting(spot); note = farNote; }
   } else if (readyToReturn(hunt) && near) { line = t.lineDone; action = { title: t.take, run: onFinish }; }
-  else { steps = true; note = readyToReturn(hunt) ? farNote : ""; }
+  else { showQuests = true; note = readyToReturn(hunt) ? farNote : ""; }
   return <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", gap: spacing.md, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
     <View style={{ flexDirection: "row", gap: spacing.md, alignItems: "flex-start" }}>
       <Image source={keeperPortrait} style={{ width: 60, height: 60, borderRadius: 30, borderWidth: 3, borderColor: C.brass }} />
@@ -276,7 +276,7 @@ export function KeeperCard({ hunt, meters, busy, onJoin, onCheckIn, onFinish, on
       </View>
       <Pressable accessibilityRole="button" accessibilityLabel={t.close} onPress={onClose} hitSlop={8} style={{ width: 32, height: 32, alignItems: "center", justifyContent: "center" }}><ArtIcon name="close" size={18} color={C.muted} /></Pressable>
     </View>
-    {steps && <TaskList rows={huntTasks(hunt, t)} compact />}
+    {showQuests && <TaskList rows={huntTasks(hunt, t)} compact />}
     {!!note && <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue }}>{note}</Text>}
     {action && <Btn title={action.title} disabled={busy} onPress={action.run} />}
   </View>;

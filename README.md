@@ -6,9 +6,10 @@ Project context, decisions and roadmap: see [AGENTS.md](AGENTS.md).
 ## Run locally
 
 ```bash
-npm install
+cd mobile
+npm ci
 cp .env.example .env.local   # then fill in the Supabase project URL and publishable key
-npm run dev                  # http://localhost:5173
+npm run web                  # http://localhost:8088
 ```
 
 ## Database

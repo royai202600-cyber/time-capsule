@@ -7,7 +7,7 @@ import { questTemplates } from "../../art/manifest";
 import { assetUri } from "../journey/live/types";
 import { isMediaPath, signedMediaUrl, signMedia } from "../../services/huntMedia";
 
-// The order the editor offers them in; the keys must match the server's allow-list for hunt_waypoints.image.
+// The order the editor offers them in; the keys must match the server's allow-list for private_hunt_quests.image.
 export const QUEST_TEMPLATES = ["park", "garden", "waterfront", "square", "publicArt", "oldStreet"] as const satisfies readonly (keyof typeof questTemplates)[];
 type Template = typeof QUEST_TEMPLATES[number];
 

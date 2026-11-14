@@ -3,7 +3,6 @@
 // the organizer and the hunt's members read it through short-lived signed URLs.
 import * as Crypto from "expo-crypto";
 import { supabase } from "./supabase";
-import { HUNT_PRIVATE_BACKEND } from "./huntPrivate";
 
 export const HUNT_MEDIA_BUCKET = "hunt-media";
 const SIGNED_SECONDS = 3600;
@@ -20,7 +19,7 @@ export const signedMediaUrl = (path: string) => {
 
 /** Returns the path to save. Without the backend (the demo) the photo stays on this phone as its data URL. */
 export async function uploadQuestImage(huntId: string, dataUrl: string): Promise<string> {
-  if (!HUNT_PRIVATE_BACKEND || !(await supabase.auth.getSession()).data.session) return dataUrl;
+  if (!(await supabase.auth.getSession()).data.session) return dataUrl;
   const bytes = Uint8Array.from(atob(dataUrl.slice(dataUrl.indexOf(",") + 1)), (c) => c.charCodeAt(0));
   const path = `${huntId}/${Crypto.randomUUID().toLowerCase()}.jpg`;
   const { error } = await supabase.storage.from(HUNT_MEDIA_BUCKET).upload(path, bytes, { contentType: "image/jpeg", upsert: false });

@@ -1,6 +1,6 @@
 import { useLanguage } from "../../i18n";
-import type { HuntErrorCode, HuntStepKey } from "../../services/hunt";
-import type { MissionType, PrivateHuntErrorCode } from "../../services/huntPrivate";
+import type { HuntErrorCode, CityHuntQuestType } from "../../services/cityHunt";
+import type { PrivateHuntQuestType, PrivateHuntErrorCode } from "../../services/privateHunt";
 
 const ZH = ["零", "一", "兩", "三", "四", "五", "六", "七", "八", "九", "十"];
 const EN = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
@@ -27,13 +27,13 @@ const strings = {
     finishedToday: "今天完成了",
     backTomorrow: "明天再開放，進度重新開始",
     preview: "預覽：進度只存在這支手機，不會發放獎勵",
-    steps: {
+    quests: {
       checkin: "找到守信人",
       spin: "轉動區內的驛站",
       restore: "修復破損膠囊",
       landmark: "贏得地標挑戰",
       return: "回到守信人身邊",
-    } satisfies Record<HuntStepKey, string>,
+    } satisfies Record<CityHuntQuestType, string>,
     lineBefore: "我在這裡守著一些信。今天的城市裡有些膠囊破了，願意幫我走一趟嗎？",
     lineWaiting: (spot: string) => `我在${spot}等你。到了再跟我說一聲。`,
     lineCheckIn: (spin: number, restore: number, landmark: string) => `好，路線在地圖上了。轉${zhCount(spin)}座驛站、修好${zhCount(restore)}個膠囊，最後去${landmark}。`,
@@ -90,13 +90,13 @@ const strings = {
     questCount: (done: number, total: number) => `${done} / ${total} 個任務`,
     pointsOf: (got: number, total: number) => `${got} / ${total} 分`,
     pointsShort: (n: number) => `${n} 分`,
-    missionTypes: { arrive: "到達", spin: "轉盤", puzzle: "謎題" } satisfies Record<MissionType, string>,
+    questTypes: { arrive: "到達", spin: "轉盤", puzzle: "謎題" } satisfies Record<PrivateHuntQuestType, string>,
     questHowQr: "走到這個地點，掃描主辦人留在現場的 QR 碼。",
     questHow: {
       arrive: "走到這個地點，然後按打卡。",
       spin: "走到這個地點，轉動這裡的驛站一次。",
       puzzle: "走到這個地點，回答主辦人的問題。",
-    } satisfies Record<MissionType, string>,
+    } satisfies Record<PrivateHuntQuestType, string>,
     questLocked: "先完成前一個任務",
     questLockedNote: "這場定向要照順序走。",
     questDone: "已完成",
@@ -164,13 +164,13 @@ const strings = {
     finishedToday: "Finished today",
     backTomorrow: "Opens again tomorrow, with a fresh run",
     preview: "Preview: progress is kept on this phone only, with no reward",
-    steps: {
+    quests: {
       checkin: "Meet the Letter Keeper",
       spin: "Spin Wayposts in the area",
       restore: "Restore Corrupted Capsules",
       landmark: "Win the Landmark fight",
       return: "Return to the Letter Keeper",
-    } satisfies Record<HuntStepKey, string>,
+    } satisfies Record<CityHuntQuestType, string>,
     lineBefore: "I look after letters here. Some capsules in the city cracked today. Will you walk a route for me?",
     lineWaiting: (spot: string) => `I'm waiting at ${spot}. Come and find me when you're here.`,
     lineCheckIn: (spin: number, restore: number, landmark: string) => `Good, the route is on your map. Spin ${enCount(spin)} Wayposts, mend ${enCount(restore)} capsules, then go to ${landmark}.`,
@@ -227,13 +227,13 @@ const strings = {
     questCount: (done: number, total: number) => `${done} / ${total} quests`,
     pointsOf: (got: number, total: number) => `${got} / ${total} points`,
     pointsShort: (n: number) => `${n} pt${n === 1 ? "" : "s"}`,
-    missionTypes: { arrive: "Arrive", spin: "Spin", puzzle: "Puzzle" } satisfies Record<MissionType, string>,
+    questTypes: { arrive: "Arrive", spin: "Spin", puzzle: "Puzzle" } satisfies Record<PrivateHuntQuestType, string>,
     questHowQr: "Walk to this spot and scan the QR code the organizer left there.",
     questHow: {
       arrive: "Walk to this spot, then tap Check in.",
       spin: "Walk to this spot and spin the Waypost once.",
       puzzle: "Walk to this spot and answer the organizer's question.",
-    } satisfies Record<MissionType, string>,
+    } satisfies Record<PrivateHuntQuestType, string>,
     questLocked: "Finish the one before it first",
     questLockedNote: "This hunt is walked in order.",
     questDone: "Done",

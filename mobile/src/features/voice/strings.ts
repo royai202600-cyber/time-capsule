@@ -1,0 +1,52 @@
+// Translation values are preserved from the original screen dictionaries.
+// @ts-nocheck
+export const voiceStrings = {
+  zh: {
+    "voice.add": "錄下你的聲音",
+    "voice.addNote": "最長 60 秒，和信一起封存。",
+    "voice.recording": "錄音中…",
+    "voice.stop": "停止錄音",
+    "voice.play": "播放",
+    "voice.pause": "暫停",
+    "voice.rerecord": "重新錄音",
+    "voice.delete": "刪除錄音",
+    "voice.ready": "你的聲音",
+    "voice.sealedNote": "封存後，連你自己也聽不到，直到對方打開膠囊。",
+    "voice.permission": "需要麥克風權限才能錄音。請在設定中允許，再試一次。",
+    "voice.noMicrophone": "這個瀏覽器找不到麥克風。請確認麥克風已連接，或用 Chrome 或 Safari 開啟再試。",
+    "voice.unsupported": "這個瀏覽器不支援錄音。請用 Chrome 或 Safari 開啟再試。",
+    "voice.error": "錄音失敗，請重試。",
+    "voice.tooShort": "錄音太短，請再錄一次。",
+    "voice.uploadError": "聲音上載失敗，請重試。",
+    "voice.level": "音量",
+    "voice.limit": (s: string) => `上限 ${s}`,
+    "voice.letterTitle": (name: string) => `${name}的聲音`,
+    "voice.letterSelf": "過去的你的聲音",
+    "voice.loadError": "暫時無法載入這段聲音。",
+    "voice.loading": "正在載入聲音…"
+  },
+  en: {
+    "voice.add": "Record your voice",
+    "voice.addNote": "Up to 60 seconds, sealed with the letter.",
+    "voice.recording": "Recording…",
+    "voice.stop": "Stop recording",
+    "voice.play": "Play",
+    "voice.pause": "Pause",
+    "voice.rerecord": "Record again",
+    "voice.delete": "Delete recording",
+    "voice.ready": "Your voice",
+    "voice.sealedNote": "Once sealed, not even you can play it until it is opened.",
+    "voice.permission": "Allow microphone access to record. Turn it on in Settings, then try again.",
+    "voice.noMicrophone": "This browser can’t find a microphone. Check that one is connected, or open the app in Chrome or Safari and try again.",
+    "voice.unsupported": "This browser doesn’t support recording. Open the app in Chrome or Safari and try again.",
+    "voice.error": "Recording failed. Try again.",
+    "voice.tooShort": "That was too short. Record again.",
+    "voice.uploadError": "Could not upload your voice. Try again.",
+    "voice.level": "Level",
+    "voice.limit": (s: string) => `Limit ${s}`,
+    "voice.letterTitle": (name: string) => `${name}'s voice`,
+    "voice.letterSelf": "Your past self's voice",
+    "voice.loadError": "Could not load this voice note right now.",
+    "voice.loading": "Loading voice…"
+  }
+} as const;
