@@ -185,7 +185,7 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .you,.you *{pointer-events:none}.you .label{pointer-events:auto}
 .pin.far{opacity:.75}
 .pin.far .pin-body{transform:scale(.72)}
-.pin.sea.far .pin-body,.pin.sea.sel .pin-body{transform:none}
+.pin.publicCapsule.far .pin-body,.pin.publicCapsule.sel .pin-body{transform:none}
 .pin.sel{z-index:10}
 .pin.sel .pin-body{transform:scale(1.18)}
 .pin.sel .v{filter:drop-shadow(0 0 8px ${C.brass})}
