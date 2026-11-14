@@ -273,6 +273,90 @@ export type Database = {
           },
         ]
       }
+      hunt_completions: {
+        Row: {
+          completed_at: string | null
+          hunt_id: string
+          tries: number
+          user_id: string
+          wait_until: string | null
+          waypoint_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          hunt_id: string
+          tries?: number
+          user_id: string
+          wait_until?: string | null
+          waypoint_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          hunt_id?: string
+          tries?: number
+          user_id?: string
+          wait_until?: string | null
+          waypoint_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hunt_completions_hunt_id_user_id_fkey"
+            columns: ["hunt_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "hunt_members"
+            referencedColumns: ["hunt_id", "user_id"]
+          },
+          {
+            foreignKeyName: "hunt_completions_hunt_id_waypoint_id_fkey"
+            columns: ["hunt_id", "waypoint_id"]
+            isOneToOne: false
+            referencedRelation: "hunt_waypoints"
+            referencedColumns: ["hunt_id", "id"]
+          },
+        ]
+      }
+      hunt_members: {
+        Row: {
+          finished_at: string | null
+          hunt_id: string
+          joined_at: string
+          points: number
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          finished_at?: string | null
+          hunt_id: string
+          joined_at?: string
+          points?: number
+          started_at: string
+          user_id: string
+        }
+        Update: {
+          finished_at?: string | null
+          hunt_id?: string
+          joined_at?: string
+          points?: number
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hunt_members_hunt_id_fkey"
+            columns: ["hunt_id"]
+            isOneToOne: false
+            referencedRelation: "hunts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hunt_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hunt_passport_stamps: {
         Row: {
           first_at: string
@@ -451,71 +535,154 @@ export type Database = {
           },
         ]
       }
+      hunt_waypoints: {
+        Row: {
+          arrive_check: string
+          choices: Json | null
+          description: string
+          hunt_id: string
+          id: string
+          image: string
+          lat: number
+          lng: number
+          mission_type: string
+          name: string
+          ordinal: number
+          points: number
+          puzzle_kind: string | null
+        }
+        Insert: {
+          arrive_check?: string
+          choices?: Json | null
+          description?: string
+          hunt_id: string
+          id?: string
+          image?: string
+          lat: number
+          lng: number
+          mission_type: string
+          name: string
+          ordinal: number
+          points: number
+          puzzle_kind?: string | null
+        }
+        Update: {
+          arrive_check?: string
+          choices?: Json | null
+          description?: string
+          hunt_id?: string
+          id?: string
+          image?: string
+          lat?: number
+          lng?: number
+          mission_type?: string
+          name?: string
+          ordinal?: number
+          points?: number
+          puzzle_kind?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hunt_waypoints_hunt_id_fkey"
+            columns: ["hunt_id"]
+            isOneToOne: false
+            referencedRelation: "hunts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       hunts: {
         Row: {
-          area_lat: number
-          area_lng: number
-          area_radius_m: number
-          city_en: string
-          city_zh: string
+          area_lat: number | null
+          area_lng: number | null
+          area_radius_m: number | null
+          city_en: string | null
+          city_zh: string | null
+          cover: string | null
+          description: string
           ends_at: string
+          first_joined_at: string | null
           id: string
-          keeper_lat: number
-          keeper_lng: number
-          keeper_spot_en: string
-          keeper_spot_zh: string
-          landmark: string
+          join_code: string | null
+          keeper_lat: number | null
+          keeper_lng: number | null
+          keeper_spot_en: string | null
+          keeper_spot_zh: string | null
+          kind: string
+          landmark: string | null
+          leaderboard_visible: boolean
           name_en: string
           name_zh: string
+          owner: string | null
           repeat_xp: number
           reset_timezone: string | null
-          reward_gold: number
-          reward_xp: number
+          reward_gold: number | null
+          reward_xp: number | null
+          route_mode: string
           starts_at: string
+          status: string
           time_limit_min: number | null
         }
         Insert: {
-          area_lat: number
-          area_lng: number
-          area_radius_m: number
-          city_en: string
-          city_zh: string
+          area_lat?: number | null
+          area_lng?: number | null
+          area_radius_m?: number | null
+          city_en?: string | null
+          city_zh?: string | null
+          cover?: string | null
+          description?: string
           ends_at: string
+          first_joined_at?: string | null
           id: string
-          keeper_lat: number
-          keeper_lng: number
-          keeper_spot_en: string
-          keeper_spot_zh: string
-          landmark: string
+          join_code?: string | null
+          keeper_lat?: number | null
+          keeper_lng?: number | null
+          keeper_spot_en?: string | null
+          keeper_spot_zh?: string | null
+          kind?: string
+          landmark?: string | null
+          leaderboard_visible?: boolean
           name_en: string
           name_zh: string
+          owner?: string | null
           repeat_xp?: number
           reset_timezone?: string | null
-          reward_gold: number
-          reward_xp: number
+          reward_gold?: number | null
+          reward_xp?: number | null
+          route_mode?: string
           starts_at: string
+          status?: string
           time_limit_min?: number | null
         }
         Update: {
-          area_lat?: number
-          area_lng?: number
-          area_radius_m?: number
-          city_en?: string
-          city_zh?: string
+          area_lat?: number | null
+          area_lng?: number | null
+          area_radius_m?: number | null
+          city_en?: string | null
+          city_zh?: string | null
+          cover?: string | null
+          description?: string
           ends_at?: string
+          first_joined_at?: string | null
           id?: string
-          keeper_lat?: number
-          keeper_lng?: number
-          keeper_spot_en?: string
-          keeper_spot_zh?: string
-          landmark?: string
+          join_code?: string | null
+          keeper_lat?: number | null
+          keeper_lng?: number | null
+          keeper_spot_en?: string | null
+          keeper_spot_zh?: string | null
+          kind?: string
+          landmark?: string | null
+          leaderboard_visible?: boolean
           name_en?: string
           name_zh?: string
+          owner?: string | null
           repeat_xp?: number
           reset_timezone?: string | null
-          reward_gold?: number
-          reward_xp?: number
+          reward_gold?: number | null
+          reward_xp?: number | null
+          route_mode?: string
           starts_at?: string
+          status?: string
           time_limit_min?: number | null
         }
         Relationships: [
@@ -524,6 +691,13 @@ export type Database = {
             columns: ["landmark"]
             isOneToOne: false
             referencedRelation: "sea_shores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hunts_owner_fkey"
+            columns: ["owner"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -768,6 +942,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar: Json
+          can_create_hunts: boolean
           city: string | null
           created_at: string
           id: string
@@ -1083,6 +1258,9 @@ export type Database = {
         }
         Returns: Json
       }
+      hunt_close: { Args: { p_hunt: string }; Returns: undefined }
+      hunt_create: { Args: { p_draft: Json }; Returns: Json }
+      hunt_edit_state: { Args: { p_hunt: string }; Returns: Json }
       hunt_finish: {
         Args: {
           p_accuracy: number
@@ -1094,6 +1272,11 @@ export type Database = {
       }
       hunt_join: { Args: { p_hunt: string }; Returns: Json }
       hunt_list: { Args: { p_lat: number; p_lng: number }; Returns: Json }
+      hunt_publish: { Args: { p_hunt: string }; Returns: Json }
+      hunt_review: { Args: { p_hunt: string }; Returns: Json }
+      hunt_update: { Args: { p_draft: Json; p_hunt: string }; Returns: undefined }
+      hunt_waypoint_delete: { Args: { p_waypoint: string }; Returns: undefined }
+      hunt_waypoint_save: { Args: { p_hunt: string; p_waypoint: Json }; Returns: undefined }
       invite_info: {
         Args: { p_code: string }
         Returns: {
@@ -1147,6 +1330,7 @@ export type Database = {
           vessel: string
         }[]
       }
+      my_hunts: { Args: never; Returns: Json }
       my_passport: {
         Args: never
         Returns: {

@@ -25,7 +25,7 @@ select pg_temp.require_ok((select count(*)=9 from public.sea_shores s
 select pg_temp.require_ok((select count(*)=24 from public.corrupted_spots s
   where public.distance_m(22.19383,113.53999,s.lat,s.lng)<=800),
   '24 eligible capsule spots');
--- The current fountain point is about 290 m from the Keeper.
+-- The fountain action point moved in 20261110102000. Its Keeper is about 290 m away.
 select pg_temp.require_ok((select public.distance_m(h.keeper_lat,h.keeper_lng,s.lat,s.lng)
   between 280 and 700 from public.hunts h join public.sea_shores s on s.id=h.landmark
   where h.id='senado-square-2026-11'),'Keeper distance');
