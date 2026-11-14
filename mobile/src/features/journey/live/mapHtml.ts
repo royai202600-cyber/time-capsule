@@ -178,19 +178,19 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin .who .lock:after{content:"";position:absolute;left:5px;top:3px;width:3px;height:3px;border-radius:50%;background:#F3D9DF;box-shadow:0 2px 0 -.5px #F3D9DF}
 .pin .tag.timer{bottom:-16px;display:flex;align-items:center;gap:3px;font-size:10px;padding:1px 6px}
 .pin.opened .pin-body{opacity:.6}
-/* A quest with a picture (docs/design/city-orienteering.md): the picture is the pin, big and round on a short tail,
-   ringed in the quest's brass (purple once done) with its glyph as a small badge. Quests without one keep the brass pin. */
-.pin.mission.pic{width:64px;height:84px}
-.pin.mission.pic .disc{left:20px}
-.pin.mission.pic .photo{position:absolute;left:4px;bottom:4px;width:56px;height:70px;animation:bob 3.6s ease-in-out infinite;filter:drop-shadow(0 3px 5px rgba(22,38,63,.32))}
-.pin.mission.pic .photo .tail{position:absolute;left:20px;top:42px;width:16px;height:16px;background:var(--mp);border-radius:0 0 4px 0;transform:rotate(45deg)}
-.pin.mission.pic .photo .ph{position:absolute;left:0;top:0;width:56px;height:56px;box-sizing:border-box;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 3px var(--mp);background:${C.cream} center/cover no-repeat}
-.pin.mission.pic .photo .badge{position:absolute;right:-8px;top:-6px;width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--mp-hi),var(--mp) 62%,var(--mp-lo));box-shadow:0 1px 3px rgba(22,38,63,.35),inset 0 0 0 1.5px var(--mp-hi)}
-.pin.mission.pic .photo .badge svg{position:absolute;left:0;top:0;width:24px;height:24px}
+/* A quest with a picture (docs/design/city-orienteering.md): the picture fills a brass teardrop pin (purple once done,
+   with a tick badge then). Its points sit below it as on every quest. Quests without one keep the brass pin. */
+.pin.mission.pic{width:48px;height:62px}
+.pin.mission.pic .disc{left:12px}
+.pin.mission.pic .photo{position:absolute;left:4px;bottom:6px;width:40px;height:51px;animation:bob 3.6s ease-in-out infinite;filter:drop-shadow(0 3px 4px rgba(22,38,63,.32))}
+.pin.mission.pic .drop{position:absolute;left:0;top:2px;width:40px;height:40px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,var(--mp-hi),var(--mp) 55%,var(--mp-lo))}
+.pin.mission.pic .ph{position:absolute;inset:3px;border-radius:50%;border:2px solid #fff;transform:rotate(45deg);background:${C.cream} center/cover no-repeat}
+.pin.mission.pic .badge{position:absolute;right:-6px;top:-4px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--mp-hi),var(--mp) 62%,var(--mp-lo));box-shadow:0 1px 3px rgba(22,38,63,.35),inset 0 0 0 1.5px var(--mp-hi)}
+.pin.mission.pic .badge svg{position:absolute;left:0;top:0;width:18px;height:18px}
 .pin.mission.pic.locked .photo{opacity:.6}
-.pin.mission.pic.done .photo .ph{filter:saturate(.6)}
-.pin.mission.pic.near:not(.done):not(.locked) .photo .ph{box-shadow:0 0 0 3px var(--mp),0 0 12px 3px ${C.brass}}
-.pin.mission.pic .tag{bottom:-16px}
+.pin.mission.pic.done .ph{filter:saturate(.6)}
+.pin.mission.pic.near:not(.done):not(.locked) .photo{filter:drop-shadow(0 0 7px ${C.brass})}
+.pin.mission.pic .tag{bottom:-14px}
 /* The player never blocks a tap on what is behind them (only their "this is you" label is tappable). */
 .you.walking .me{animation:stride .36s ease-in-out infinite}
 @keyframes stride{0%,100%{translate:0 0}50%{translate:0 -3px}}
@@ -361,7 +361,7 @@ function render(){
   for(const p of state.pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
       :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 1.5C12.8 8.2 15.8 11.2 22.5 12 15.8 12.8 12.8 15.8 12 22.5 11.2 15.8 8.2 12.8 1.5 12 8.2 11.2 11.2 8.2 12 1.5Z"/></svg></div></div>'
-      :p.kind==='mission'&&p.photo?'<div class="pin-body"><div class="disc"></div><div class="photo"><div class="tail"></div><div class="ph" style="background-image:url('+p.photo+')"></div><div class="badge">'+glyphBadge(p.done?'done':p.locked?'locked':(p.mission||'arrive'))+'</div></div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
+      :p.kind==='mission'&&p.photo?'<div class="pin-body"><div class="disc"></div><div class="photo"><div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>'+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
       :p.kind==='mission'?'<div class="pin-body"><div class="disc"></div>'+locPin(p.done?'done':p.locked?'locked':(p.mission||'arrive'))+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
       :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait!==undefined&&(p.portrait||p.private)?'<div class="who">'+face(p.portrait)+(p.private?'<div class="lock"></div>':'')+'</div>':'')+(p.timer?'<div class="tag timer">'+HOURGLASS+p.timer+'</div>':p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
     const cls='pin '+(p.kind||'')+(p.kind==='mission'&&p.photo?' pic':'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'')+(p.private?' private':'')+(p.opened?' opened':'')+(p.locked?' locked':'');
