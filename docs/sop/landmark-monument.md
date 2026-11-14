@@ -3,20 +3,23 @@
 How to give a Landmark Waypost its 3D monument. Codex can do this on its own by following these steps. Roy approves the screenshots before merge, because it is a visual change.
 
 ## What a monument is
-- **Brass map geometry, nothing else.** A monument is drawn by the map itself (MapLibre `fill-extrusion` layers). No image, no 3D model, no texture, no new library, so the map stays light on phones.
+- **Blue map geometry, nothing else.** A monument is drawn by the map itself (MapLibre `fill-extrusion` layers). No image, no 3D model, no texture, no new library, so the map stays light on phones.
 - **Two ways to build one, mixable (Roy, 2026-11-10):**
-  1. **Tile building (try first).** The real building outline is already in our map tiles. Pick it by its tile feature id and it is redrawn in brass at a toy height. No geometry to write, and it is the exact real shape.
+  1. **Tile building (try first).** The real building outline is already in our map tiles. Pick it by its tile feature id and it is redrawn in ink blue at a toy height. No geometry to write, and it is the exact real shape.
   2. **Hand-built tiers.** Boxes, discs, arcs and shifted boxes, for what the tiles don't have or don't make recognisable: fountains, statues and sculptures (not in the tiles), curved buildings, and towers whose look comes from details the tiles drop (Taipei 101's eight flared sections).
-- **It is the Landmark Waypost.** Tapping any part of it opens the Landmark fight. Its seal (28 px brass, four-point star, the same for every Landmark) floats just above the monument's top, over its `lat`/`lng`. Both happen automatically once the monument is added.
+- **It is the Landmark Waypost.** Tapping any part of it opens the Landmark fight. Its seal (28 px ink blue, four-point star, the same for every Landmark) floats just above the monument's top, over its `lat`/`lng`. Both happen automatically once the monument is added.
 - **Toy scale.** Ordinary buildings are shown at 35% height, capped at 40 m. A monument stands out from them, but it is still a toy, not the real height.
 
 ## Colour (never change per monument)
+Everything of ours on the map is blue; brass now marks private hunts (`docs/design/city-orienteering.md`).
+
 | | Colour |
 |---|---|
-| Hand-built tiers, by height: foot | `#B98F45` dark brass |
-| 60% of the monument's height | `#C9A15A` brass (`C.brass`) |
-| Top | `#F3E2BB` cream |
-| Tile buildings | `#C9A15A` brass |
+| Hand-built tiers, by height: foot | `#16263F` navy (`C.ink`) |
+| 35% of the monument's height | `#2F5D8A` ink blue (`C.blue`) |
+| 75% | `#5A8FD0` light blue (`C.lightBlue`) |
+| Top | `#DCE8F2` glass (`C.glass`) |
+| Tile buildings | `#2F5D8A` ink blue (`C.blue`) |
 
 Every face also has the map's vertical shading. Opacity is 1. A beaten Landmark is shown only by its seal turning plum; the building never changes colour. No ring on the ground.
 

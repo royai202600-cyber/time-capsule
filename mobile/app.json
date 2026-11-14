@@ -21,7 +21,8 @@
         }
       ],
       ["expo-audio", { "microphonePermission": "時光膠囊會用麥克風錄下你想封存在膠囊裡的聲音。 Time Capsule uses the microphone to record a voice note you seal in a capsule.", "recordAudioAndroid": true, "enableBackgroundPlayback": false }],
-      "expo-notifications"
+      "expo-notifications",
+      ["expo-camera", { "cameraPermission": "時光膠囊會用相機掃描定向任務現場的 QR 碼。 Time Capsule uses the camera to scan the QR code at a hunt quest.", "microphonePermission": false, "recordAudioAndroid": false }]
     ],
     "web": {
       "bundler": "metro",
