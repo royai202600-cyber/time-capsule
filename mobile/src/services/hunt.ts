@@ -4,8 +4,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase";
 import { distanceMeters } from "./data";
-import { GAME_ACTION_RADIUS_M, onGameEvent, type Coords, type Waypost } from "./game";
+import { GAME_ACTION_RADIUS_M, cityHuntNameZh, onGameEvent, type Coords, type Waypost } from "./game";
 import { runClock } from "./huntClock";
+
+export const HUNT_TIMED_BACKEND = false;
 
 export type HuntStepKey = "checkin" | "spin" | "restore" | "landmark" | "return";
 export type HuntStep = { key: HuntStepKey; goal: number; count: number };
@@ -23,7 +25,7 @@ export type Hunt = {
   joined_at: string | null; checked_in_at: string | null; finished_at: string | null;
   /** Timed runs (docs/design/city-orienteering.md). Absent until the backend returns them: the hunt is then untimed. */
   time_limit_min?: number | null; run_started_at?: string | null; run_ends_at?: string | null;
-  best_s?: number | null; today_s?: number | null;
+  best_s?: number | null; today_s?: number | null; finished_today?: boolean;
   /** Counted on this device only, before the backend is live. */
   preview?: boolean;
 };
@@ -69,6 +71,11 @@ const fail = (e: { message?: string } | null) => {
   if (!e) return;
   const m = e.message ?? "";
   throw new HuntError(ALIASES.find(([text]) => m.includes(text))?.[1] ?? CODES.find((c) => m.includes(c)) ?? "unknown");
+};
+const fromServer = (hunt: Hunt): Hunt => {
+  const named = { ...hunt, name_zh: cityHuntNameZh(hunt.name_zh) };
+  if (HUNT_TIMED_BACKEND) return named;
+  return { ...named, time_limit_min: null, run_started_at: null, run_ends_at: null, best_s: null, today_s: null, finished_today: undefined };
 };
 const signedIn = async () => !!(await supabase.auth.getSession()).data.session;
 
@@ -156,14 +163,14 @@ export const hunt = {
     const live = await signedIn();
     if (live && !liveMissing) {
       const { data, error } = await rpc("hunt_list", { p_lat: args.at.lat, p_lng: args.at.lng });
-      if (!error) { previewHunt = null; return (data as Hunt[] | null) ?? []; }
+      if (!error) { previewHunt = null; return ((data as Hunt[] | null) ?? []).map(fromServer); }
       if (!missing(error)) fail(error);
       liveMissing = true;
     }
     return args.previewAllowed ? loadPreview(args.userId, args.at, args.known, live) : [];
   },
   async join(h: Hunt): Promise<Hunt> {
-    if (!h.preview) { const { data, error } = await rpc("hunt_join", { p_hunt: h.id }); fail(error); return data as Hunt; }
+    if (!h.preview) { const { data, error } = await rpc("hunt_join", { p_hunt: h.id }); fail(error); return fromServer(data as Hunt); }
     if (huntStatus(h) === "closed") throw new HuntError("closed");
     progress.joined_at ??= new Date().toISOString(); save();
     return withProgress(previewHunt!);
@@ -172,7 +179,7 @@ export const hunt = {
     if (!h.preview) {
       if (!at) throw new HuntError("too_far");
       const { data, error } = await rpc("hunt_check_in", { p_hunt: h.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10 });
-      fail(error); return data as Hunt;
+      fail(error); return fromServer(data as Hunt);
     }
     if (huntStatus(h) !== "open") throw new HuntError("closed");
     if (!near(at, h.keeper)) throw new HuntError("too_far");
@@ -186,7 +193,9 @@ export const hunt = {
     if (!h.preview) {
       if (!at) throw new HuntError("too_far");
       const { data, error } = await rpc("hunt_finish", { p_hunt: h.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10 });
-      fail(error); return data as HuntFinish;
+      fail(error);
+      const result = data as HuntFinish;
+      return { ...result, hunt: fromServer(result.hunt) };
     }
     if (!near(at, h.keeper)) throw new HuntError("too_far");
     if (!readyToReturn(h)) throw new HuntError("incomplete");
