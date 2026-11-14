@@ -71,13 +71,15 @@ export default function HuntEditScreen() {
   // Leaving the screen saves whatever is still waiting.
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const unsaved = useRef<HuntDraft | null>(null);
-  const flush = useRef(() => {});
+  const saving = useRef<Promise<void>>(Promise.resolve());
+  const flush = useRef<() => Promise<void>>(() => Promise.resolve());
   flush.current = () => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = null;
     const next = unsaved.current;
     unsaved.current = null;
-    if (next) void organizer.update(userId, id, next).catch(() => {});
+    if (next) saving.current = saving.current.catch(() => {}).then(() => organizer.update(userId, id, next));
+    return saving.current;
   };
   const edit = (patch: Partial<HuntDraft>) => {
     if (!draft) return;
@@ -85,9 +87,9 @@ export default function HuntEditScreen() {
     setDraft(next);
     unsaved.current = next;
     if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => flush.current(), 600);
+    saveTimer.current = setTimeout(() => void flush.current().catch(() => {}), 600);
   };
-  useEffect(() => () => flush.current(), []);
+  useEffect(() => () => { void flush.current().catch(() => {}); }, []);
 
   const act = async (run: () => Promise<unknown>, after?: () => void | Promise<void>) => {
     if (busy) return;
@@ -118,7 +120,7 @@ export default function HuntEditScreen() {
     await organizer.saveQuest(userId, id, { ...blankQuest(ordinal, { lat, lng }), name });
   }, async () => { await load(); setToast(o.dropped(quests.length + 1)); });
   const publish = () => void act(
-    async () => { flush.current(); setCode(await organizer.publish(userId, id)); },
+    async () => { await flush.current(); setCode(await organizer.publish(userId, id)); },
     () => { setStatus("published"); setSection("share"); },
   );
   const close = () => void act(() => organizer.close(userId, id), () => setStatus("closed"));

@@ -54,6 +54,7 @@ try {
   const { join_code: code } = ok(await owner.rpc('private_hunt_publish', { p_hunt: id }));
   assert.deepEqual(ok(await player.rpc('private_hunt_preview', { p_code: code })).quests, []);
   const hunt = ok(await player.rpc('private_hunt_join_code', { p_code: code }));
+  ok(await player.rpc('private_hunt_start',{p_hunt:id,p_lat:25,p_lng:121,p_accuracy:15}));
   const [arrive, spin, puzzle] = hunt.quests;
   assert(!('qr_token' in arrive) && !('answer' in puzzle));
   const finish = (w, answer = null, qr = null) => player.rpc('private_hunt_quest_complete', {
@@ -83,6 +84,7 @@ try {
   const board = ok(await player.rpc('private_hunt_leaderboard', { p_hunt: id }));
   assert.equal(board[0].points, 30);
   assert.equal(board[0].you, true);
+  ok(await player.rpc('private_hunt_collect_reward',{p_hunt:id,p_lat:25,p_lng:121,p_accuracy:15}));
   assert(ok(await player.rpc('my_passport')).some(stamp => stamp.place === id && stamp.how_earned === 'private_hunt'));
   await player.auth.signOut();
   await owner.auth.signOut();

@@ -109,7 +109,7 @@ export function questProblems(w: QuestDraft): QuestProblem[] {
 }
 export const canPublish = (draft: HuntDraft, quests: Pick<QuestDraft, "location_lat" | "location_lng">[]) => huntProblems(draft, quests).length === 0;
 /** A quest with a spot on the map. */
-export const hasSpot = (w: Pick<QuestDraft, "location_lat" | "location_lng">) => !!(w.location_lat || w.location_lng);
+export const hasSpot = (w: Pick<QuestDraft, "location_lat" | "location_lng">) => w.location_lat != null && w.location_lng != null;
 /** What goes to the server: a catch quest drops any spot, every other kind drops the catch count. */
 export const questForSave = (w: QuestDraft): QuestDraft => w.quest_type === "restore"
   ? { ...w, location_lat: null, location_lng: null, catch_count: w.catch_count ?? 5 }

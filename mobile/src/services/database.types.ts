@@ -7,11 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.18";
-  };
   public: {
     Tables: {
       capsule_contents: {
@@ -24,6 +19,7 @@ export type Database = {
           voice_ms: number | null;
           voice_path: string | null;
         };
+        ComputedFields: never;
         Insert: {
           capsule_id: string;
           drawing?: string | null;
@@ -84,6 +80,7 @@ export type Database = {
           verdict_at: string | null;
           vessel: string;
         };
+        ComputedFields: never;
         Insert: {
           edition_no?: number | null;
           gift_code?: string | null;
@@ -105,12 +102,12 @@ export type Database = {
           public_capsule_returns?: number;
           public_capsule_spot?: string | null;
           recipient?: string | null;
-          sea?: boolean | null;
-          sea_returns?: number | null;
+          sea?: never;
+          sea_returns?: never;
           sealed_at?: string;
           seen_at?: string | null;
           sender: string;
-          shore?: string | null;
+          shore?: never;
           verdict?: boolean | null;
           verdict_at?: string | null;
           vessel: string;
@@ -136,12 +133,12 @@ export type Database = {
           public_capsule_returns?: number;
           public_capsule_spot?: string | null;
           recipient?: string | null;
-          sea?: boolean | null;
-          sea_returns?: number | null;
+          sea?: never;
+          sea_returns?: never;
           sealed_at?: string;
           seen_at?: string | null;
           sender?: string;
-          shore?: string | null;
+          shore?: never;
           verdict?: boolean | null;
           verdict_at?: string | null;
           vessel?: string;
@@ -183,6 +180,7 @@ export type Database = {
           hunt_id: string;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           first_at: string;
           hunt_id: string;
@@ -221,6 +219,7 @@ export type Database = {
           spin_count: number;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           checked_in_at?: string | null;
           finished_at?: string | null;
@@ -265,6 +264,7 @@ export type Database = {
           ordinal: number;
           quest_type: string;
         };
+        ComputedFields: never;
         Insert: {
           goal: number;
           hunt_id: string;
@@ -296,6 +296,7 @@ export type Database = {
           started_at: string;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           day: string;
           duration_s: number;
@@ -328,6 +329,7 @@ export type Database = {
           user_id: string;
           waypost_id: string;
         };
+        ComputedFields: never;
         Insert: {
           hunt_id: string;
           user_id: string;
@@ -364,6 +366,7 @@ export type Database = {
           user_id: string;
           vessel: string;
         };
+        ComputedFields: never;
         Insert: {
           attempts?: number;
           caught_at?: string | null;
@@ -407,6 +410,7 @@ export type Database = {
           source_ref: string;
           timezone: string;
         };
+        ComputedFields: never;
         Insert: {
           city: string;
           habitat: string;
@@ -433,6 +437,7 @@ export type Database = {
           friend_id: string;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           created_at?: string;
           friend_id: string;
@@ -471,6 +476,9 @@ export type Database = {
           description: string;
           ends_at: string;
           first_joined_at: string | null;
+          guide_lat: number | null;
+          guide_lng: number | null;
+          guide_mode: string;
           hidden_at: string | null;
           id: string;
           join_code: string | null;
@@ -493,6 +501,7 @@ export type Database = {
           status: string;
           time_limit_min: number | null;
         };
+        ComputedFields: never;
         Insert: {
           area_lat?: number | null;
           area_lng?: number | null;
@@ -503,6 +512,9 @@ export type Database = {
           description?: string;
           ends_at: string;
           first_joined_at?: string | null;
+          guide_lat?: number | null;
+          guide_lng?: number | null;
+          guide_mode?: string;
           hidden_at?: string | null;
           id: string;
           join_code?: string | null;
@@ -535,6 +547,9 @@ export type Database = {
           description?: string;
           ends_at?: string;
           first_joined_at?: string | null;
+          guide_lat?: number | null;
+          guide_lng?: number | null;
+          guide_mode?: string;
           hidden_at?: string | null;
           id?: string;
           join_code?: string | null;
@@ -580,6 +595,7 @@ export type Database = {
           created_at: string;
           inviter: string;
         };
+        ComputedFields: never;
         Insert: {
           code?: string;
           created_at?: string;
@@ -610,6 +626,7 @@ export type Database = {
           waypost_id: string;
           won_at: string | null;
         };
+        ComputedFields: never;
         Insert: {
           cracks_left: number;
           expires_at: string;
@@ -653,6 +670,7 @@ export type Database = {
           user_id: string;
           vessel: string;
         };
+        ComputedFields: never;
         Insert: {
           acquired_at?: string;
           copies?: number;
@@ -691,6 +709,7 @@ export type Database = {
           place: string;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           first_at: string;
           how_earned: string;
@@ -735,6 +754,7 @@ export type Database = {
           why_en: string;
           why_zh: string;
         };
+        ComputedFields: never;
         Insert: {
           brand_vessel?: string | null;
           city_en: string;
@@ -783,6 +803,7 @@ export type Database = {
           wax_balls: number;
           xp: number;
         };
+        ComputedFields: never;
         Insert: {
           gold_balls: number;
           last_lat?: number | null;
@@ -817,15 +838,18 @@ export type Database = {
           hunt_id: string;
           joined_at: string;
           points: number;
-          started_at: string;
+          reward_collected_at: string | null;
+          started_at: string | null;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           finished_at?: string | null;
           hunt_id: string;
           joined_at?: string;
           points?: number;
-          started_at: string;
+          reward_collected_at?: string | null;
+          started_at?: string | null;
           user_id: string;
         };
         Update: {
@@ -833,7 +857,8 @@ export type Database = {
           hunt_id?: string;
           joined_at?: string;
           points?: number;
-          started_at?: string;
+          reward_collected_at?: string | null;
+          started_at?: string | null;
           user_id?: string;
         };
         Relationships: [
@@ -855,6 +880,7 @@ export type Database = {
       };
       private_hunt_quest_progress: {
         Row: {
+          catch_count: number;
           completed_at: string | null;
           hunt_id: string;
           quest_id: string;
@@ -862,7 +888,9 @@ export type Database = {
           user_id: string;
           wait_until: string | null;
         };
+        ComputedFields: never;
         Insert: {
+          catch_count?: number;
           completed_at?: string | null;
           hunt_id: string;
           quest_id: string;
@@ -871,6 +899,7 @@ export type Database = {
           wait_until?: string | null;
         };
         Update: {
+          catch_count?: number;
           completed_at?: string | null;
           hunt_id?: string;
           quest_id?: string;
@@ -898,28 +927,31 @@ export type Database = {
       private_hunt_quests: {
         Row: {
           arrive_check: string;
+          catch_count: number | null;
           choices: Json | null;
           description: string;
           hunt_id: string;
           id: string;
           image: string;
-          location_lat: number;
-          location_lng: number;
+          location_lat: number | null;
+          location_lng: number | null;
           name: string;
           ordinal: number;
           points: number;
           puzzle_kind: string | null;
           quest_type: string;
         };
+        ComputedFields: never;
         Insert: {
           arrive_check?: string;
+          catch_count?: number | null;
           choices?: Json | null;
           description?: string;
           hunt_id: string;
           id?: string;
           image?: string;
-          location_lat: number;
-          location_lng: number;
+          location_lat?: number | null;
+          location_lng?: number | null;
           name: string;
           ordinal: number;
           points: number;
@@ -928,13 +960,14 @@ export type Database = {
         };
         Update: {
           arrive_check?: string;
+          catch_count?: number | null;
           choices?: Json | null;
           description?: string;
           hunt_id?: string;
           id?: string;
           image?: string;
-          location_lat?: number;
-          location_lng?: number;
+          location_lat?: number | null;
+          location_lng?: number | null;
           name?: string;
           ordinal?: number;
           points?: number;
@@ -953,7 +986,7 @@ export type Database = {
       };
       profiles: {
         Row: {
-          avatar: Json;
+          avatar: NonNullable<Json>;
           can_create_hunts: boolean;
           city: string | null;
           created_at: string;
@@ -962,8 +995,9 @@ export type Database = {
           remind_nearby: boolean;
           remind_open: boolean;
         };
+        ComputedFields: never;
         Insert: {
-          avatar?: Json;
+          avatar?: NonNullable<Json>;
           can_create_hunts?: boolean;
           city?: string | null;
           created_at?: string;
@@ -973,7 +1007,7 @@ export type Database = {
           remind_open?: boolean;
         };
         Update: {
-          avatar?: Json;
+          avatar?: NonNullable<Json>;
           can_create_hunts?: boolean;
           city?: string | null;
           created_at?: string;
@@ -990,6 +1024,7 @@ export type Database = {
           finder: string;
           picked_at: string;
         };
+        ComputedFields: never;
         Insert: {
           capsule_id: string;
           finder: string;
@@ -1024,6 +1059,7 @@ export type Database = {
           reported_at: string;
           reporter: string;
         };
+        ComputedFields: never;
         Insert: {
           capsule_id: string;
           reason: string;
@@ -1068,6 +1104,7 @@ export type Database = {
           scene: string | null;
           source_ref: string | null;
         };
+        ComputedFields: never;
         Insert: {
           city_en: string;
           city_zh: string;
@@ -1115,6 +1152,7 @@ export type Database = {
           price_mop: number;
           sort: number;
         };
+        ComputedFields: never;
         Insert: {
           brand?: string | null;
           earned_place?: string | null;
@@ -1150,6 +1188,7 @@ export type Database = {
           wax_awarded: number;
           waypost_id: string;
         };
+        ComputedFields: never;
         Insert: {
           gold_awarded: number;
           id?: string;
@@ -1191,6 +1230,7 @@ export type Database = {
           source: string;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           amount: number;
           awarded_at?: string;
@@ -1299,7 +1339,7 @@ export type Database = {
         Returns: Json;
       };
       game_state: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           first_catch_bonus_available: boolean;
           gold_balls: number;
@@ -1346,7 +1386,7 @@ export type Database = {
         Returns: Json;
       };
       hunt_preview: { Args: { p_code: string }; Returns: Json };
-      hunt_private_mine: { Args: never; Returns: Json };
+      hunt_private_mine: { Args: Record<PropertyKey, never>; Returns: Json };
       hunt_publish: { Args: { p_hunt: string }; Returns: Json };
       hunt_report: { Args: { p_hunt: string }; Returns: undefined };
       hunt_review: { Args: { p_hunt: string }; Returns: Json };
@@ -1406,7 +1446,7 @@ export type Database = {
       };
       mark_seen: { Args: { p_id: string }; Returns: undefined };
       my_collection: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           acquired_at: string;
           copies: number;
@@ -1415,9 +1455,9 @@ export type Database = {
           vessel: string;
         }[];
       };
-      my_hunts: { Args: never; Returns: Json };
+      my_hunts: { Args: Record<PropertyKey, never>; Returns: Json };
       my_passport: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           city_en: string;
           city_zh: string;
@@ -1456,7 +1496,7 @@ export type Database = {
         }[];
       };
       prediction_record: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           capsule_id: string;
           opened_at: string;
@@ -1468,12 +1508,24 @@ export type Database = {
         }[];
       };
       private_hunt_close: { Args: { p_hunt: string }; Returns: undefined };
+      private_hunt_collect_reward: {
+        Args: {
+          p_accuracy?: number;
+          p_hunt: string;
+          p_lat?: number;
+          p_lng?: number;
+        };
+        Returns: Json;
+      };
       private_hunt_create: { Args: { p_draft: Json }; Returns: Json };
       private_hunt_edit_state: { Args: { p_hunt: string }; Returns: Json };
       private_hunt_join_code: { Args: { p_code: string }; Returns: Json };
-      private_hunt_joined: { Args: never; Returns: Json };
+      private_hunt_joined: { Args: Record<PropertyKey, never>; Returns: Json };
       private_hunt_leaderboard: { Args: { p_hunt: string }; Returns: Json };
-      private_hunt_organized: { Args: never; Returns: Json };
+      private_hunt_organized: {
+        Args: Record<PropertyKey, never>;
+        Returns: Json;
+      };
       private_hunt_preview: { Args: { p_code: string }; Returns: Json };
       private_hunt_publish: { Args: { p_hunt: string }; Returns: Json };
       private_hunt_quest_complete: {
@@ -1497,6 +1549,15 @@ export type Database = {
       };
       private_hunt_report: { Args: { p_hunt: string }; Returns: undefined };
       private_hunt_review: { Args: { p_hunt: string }; Returns: Json };
+      private_hunt_start: {
+        Args: {
+          p_accuracy: number;
+          p_hunt: string;
+          p_lat: number;
+          p_lng: number;
+        };
+        Returns: Json;
+      };
       private_hunt_update: {
         Args: { p_draft: Json; p_hunt: string };
         Returns: undefined;
@@ -1637,7 +1698,7 @@ export type Database = {
         Returns: undefined;
       };
       vessel_stock: {
-        Args: never;
+        Args: Record<PropertyKey, never>;
         Returns: {
           remaining: number;
           vessel: string;
