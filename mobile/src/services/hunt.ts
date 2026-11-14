@@ -7,7 +7,7 @@ import { distanceMeters } from "./data";
 import { GAME_ACTION_RADIUS_M, cityHuntNameZh, onGameEvent, type Coords, type Waypost } from "./game";
 import { runClock } from "./huntClock";
 
-export const HUNT_TIMED_BACKEND = false;
+export const HUNT_TIMED_BACKEND = true;
 
 export type HuntStepKey = "checkin" | "spin" | "restore" | "landmark" | "return";
 export type HuntStep = { key: HuntStepKey; goal: number; count: number };

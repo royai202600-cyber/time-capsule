@@ -438,39 +438,6 @@ export type Database = {
           },
         ]
       }
-      hunt_spin_credits: {
-        Row: {
-          hunt_id: string
-          user_id: string
-          waypost_id: string
-        }
-        Insert: {
-          hunt_id: string
-          user_id: string
-          waypost_id: string
-        }
-        Update: {
-          hunt_id?: string
-          user_id?: string
-          waypost_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "hunt_spin_credits_hunt_id_user_id_fkey"
-            columns: ["hunt_id", "user_id"]
-            isOneToOne: false
-            referencedRelation: "hunt_progress"
-            referencedColumns: ["hunt_id", "user_id"]
-          },
-          {
-            foreignKeyName: "hunt_spin_credits_waypost_id_fkey"
-            columns: ["waypost_id"]
-            isOneToOne: false
-            referencedRelation: "sea_shores"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       hunt_runs: {
         Row: {
           day: string
@@ -503,6 +470,39 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "hunt_progress"
             referencedColumns: ["hunt_id", "user_id"]
+          },
+        ]
+      }
+      hunt_spin_credits: {
+        Row: {
+          hunt_id: string
+          user_id: string
+          waypost_id: string
+        }
+        Insert: {
+          hunt_id: string
+          user_id: string
+          waypost_id: string
+        }
+        Update: {
+          hunt_id?: string
+          user_id?: string
+          waypost_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hunt_spin_credits_hunt_id_user_id_fkey"
+            columns: ["hunt_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "hunt_progress"
+            referencedColumns: ["hunt_id", "user_id"]
+          },
+          {
+            foreignKeyName: "hunt_spin_credits_waypost_id_fkey"
+            columns: ["waypost_id"]
+            isOneToOne: false
+            referencedRelation: "sea_shores"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -955,6 +955,7 @@ export type Database = {
         }
         Insert: {
           avatar?: Json
+          can_create_hunts?: boolean
           city?: string | null
           created_at?: string
           id: string
@@ -964,6 +965,7 @@ export type Database = {
         }
         Update: {
           avatar?: Json
+          can_create_hunts?: boolean
           city?: string | null
           created_at?: string
           id?: string
@@ -1277,15 +1279,31 @@ export type Database = {
       hunt_join_code: { Args: { p_code: string }; Returns: Json }
       hunt_leaderboard: { Args: { p_hunt: string }; Returns: Json }
       hunt_list: { Args: { p_lat: number; p_lng: number }; Returns: Json }
-      hunt_mission_complete: { Args: { p_waypoint: string; p_lat: number; p_lng: number; p_accuracy: number; p_answer: string | null; p_qr: string | null }; Returns: Json }
+      hunt_mission_complete: {
+        Args: {
+          p_accuracy: number
+          p_answer: string
+          p_lat: number
+          p_lng: number
+          p_qr: string
+          p_waypoint: string
+        }
+        Returns: Json
+      }
       hunt_preview: { Args: { p_code: string }; Returns: Json }
       hunt_private_mine: { Args: never; Returns: Json }
       hunt_publish: { Args: { p_hunt: string }; Returns: Json }
       hunt_report: { Args: { p_hunt: string }; Returns: undefined }
       hunt_review: { Args: { p_hunt: string }; Returns: Json }
-      hunt_update: { Args: { p_draft: Json; p_hunt: string }; Returns: undefined }
+      hunt_update: {
+        Args: { p_draft: Json; p_hunt: string }
+        Returns: undefined
+      }
       hunt_waypoint_delete: { Args: { p_waypoint: string }; Returns: undefined }
-      hunt_waypoint_save: { Args: { p_hunt: string; p_waypoint: Json }; Returns: undefined }
+      hunt_waypoint_save: {
+        Args: { p_hunt: string; p_waypoint: Json }
+        Returns: undefined
+      }
       invite_info: {
         Args: { p_code: string }
         Returns: {
@@ -1435,42 +1453,42 @@ export type Database = {
         }[]
       }
       send_capsule:
-      | {
-        Args: {
-          p_drawing?: string
-          p_hint: string
-          p_kind?: string
-          p_message: string
-          p_open_at: string
-          p_photo?: string
-          p_place?: string
-          p_prediction?: string
-          p_recipient: string
-          p_vessel: string
-          p_voice?: string
-          p_voice_ms?: number
-        }
-        Returns: string
-      }
-      | {
-        Args: {
-          p_drawing?: string
-          p_hint: string
-          p_kind?: string
-          p_message: string
-          p_open_at: string
-          p_photo?: string
-          p_place_lat: number
-          p_place_lng: number
-          p_place_name: string
-          p_prediction?: string
-          p_recipient: string
-          p_vessel: string
-          p_voice?: string
-          p_voice_ms?: number
-        }
-        Returns: string
-      }
+        | {
+            Args: {
+              p_drawing?: string
+              p_hint: string
+              p_kind?: string
+              p_message: string
+              p_open_at: string
+              p_photo?: string
+              p_place?: string
+              p_prediction?: string
+              p_recipient: string
+              p_vessel: string
+              p_voice?: string
+              p_voice_ms?: number
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_drawing?: string
+              p_hint: string
+              p_kind?: string
+              p_message: string
+              p_open_at: string
+              p_photo?: string
+              p_place_lat: number
+              p_place_lng: number
+              p_place_name: string
+              p_prediction?: string
+              p_recipient: string
+              p_vessel: string
+              p_voice?: string
+              p_voice_ms?: number
+            }
+            Returns: string
+          }
       set_prediction_verdict: {
         Args: { p_id: string; p_verdict: boolean }
         Returns: undefined

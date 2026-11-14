@@ -9,7 +9,7 @@ import { GAME_ACTION_RADIUS_M, type Coords } from "./game";
 import { privateRun, runClock } from "./huntClock";
 
 /** Flipped to true by Codex's `P2` session once the player RPCs are applied. */
-export const HUNT_PRIVATE_BACKEND = false;
+export const HUNT_PRIVATE_BACKEND = true;
 
 export type MissionType = "arrive" | "spin" | "puzzle";
 export type Waypoint = {
