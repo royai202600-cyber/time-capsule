@@ -52,7 +52,7 @@ export default function HuntEditScreen() {
 
   const load = useCallback(() => {
     if (!userId || !id) return;
-    organizer.get(userId, id)
+    return organizer.get(userId, id)
       .then((s) => { setDraft(s.draft); setWaypoints(s.waypoints); setStatus(s.status); setCode(s.code); setLocked(!!s.locked); })
       .catch(() => setToast(h.perr.unknown));
   }, [userId, id]);
@@ -81,25 +81,25 @@ export default function HuntEditScreen() {
   };
   useEffect(() => () => flush.current(), []);
 
-  const act = async (run: () => Promise<unknown>, after?: () => void) => {
+  const act = async (run: () => Promise<unknown>, after?: () => void | Promise<void>) => {
     if (busy) return;
     setBusy(true);
-    try { await run(); void haptics.success(); after?.(); }
+    try { await run(); void haptics.success(); await after?.(); }
     catch (e) {
       void haptics.warn(); setToast(h.perr[e instanceof PrivateHuntError ? e.code : "unknown"]);
       // Someone joined while this screen was open: reload, so the editor shows the lock.
-      if (e instanceof PrivateHuntError && e.code === "hunt_locked") { setEditing(null); load(); }
+      if (e instanceof PrivateHuntError && e.code === "hunt_locked") { setEditing(null); await load(); }
     }
     finally { setBusy(false); }
   };
 
   const saveWaypoint = (w: WaypointDraft) => void act(
     () => organizer.saveWaypoint(userId, id, w),
-    () => { setEditing(null); load(); },
+    async () => { await load(); setEditing(null); },
   );
   const deleteWaypoint = (w: WaypointDraft) => void act(
     () => organizer.deleteWaypoint(userId, id, w.id!),
-    () => { setEditing(null); load(); },
+    async () => { await load(); setEditing(null); },
   );
   const publish = () => void act(
     async () => { flush.current(); setCode(await organizer.publish(userId, id)); },
@@ -196,7 +196,7 @@ export default function HuntEditScreen() {
       </View>}
       {!!rows.length && <TaskList rows={rows} />}
       {locked ? null : waypoints.length < LIMITS.waypoints
-        ? <Btn quiet title={o.addWaypoint} onPress={() => setEditing(blankWaypoint(nextOrdinal(waypoints), null))} />
+        ? <Btn quiet title={o.addWaypoint} disabled={busy} onPress={() => setEditing(blankWaypoint(nextOrdinal(waypoints), null))} />
         : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{o.waypointFull(LIMITS.waypoints)}</Text>}
     </>}
 
