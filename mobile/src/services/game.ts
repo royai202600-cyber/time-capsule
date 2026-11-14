@@ -21,6 +21,8 @@ export type ThrowResult = {
 };
 export type LandmarkAttempt = { id: string; waypost: string; vessel: string; cracks: number; expires_at: string };
 export type LandmarkHit = { result: "hit" | "won"; cracks: number; vessel: string; copies: number; stars: number; is_new: boolean; xp_gained: number; state: GameState };
+// Normalize names from the old server until the timed-hunt migration ships.
+export const cityHuntNameZh = (name: string) => name.replace("城市尋寶", "城市定向");
 export type PassportHunt = { id: string; name_zh: string; name_en: string; at: string };
 export type DevLetter = { bottle: SeaBottle; message: string };
 export type GameErrorCode = "no_balls" | "expired" | "no_attempts" | "already_caught" | "too_far" | "too_fast" | "cooldown" | "active_attempt" | "unknown";
@@ -253,7 +255,7 @@ export const game = {
     const rows = data ?? [];
     return {
       places: Object.fromEntries(rows.filter((row) => row.how_earned !== "hunt").map((row) => [row.place, row.first_at])),
-      hunts: rows.filter((row) => row.how_earned === "hunt").map((row) => ({ id: row.place, name_zh: row.name_zh, name_en: row.name_en, at: row.first_at })),
+      hunts: rows.filter((row) => row.how_earned === "hunt").map((row) => ({ id: row.place, name_zh: cityHuntNameZh(row.name_zh), name_en: row.name_en, at: row.first_at })),
     };
   },
   async spin(id: string): Promise<{ wax: number; gold: number; state: GameState }> {

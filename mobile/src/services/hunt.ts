@@ -4,7 +4,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase";
 import { distanceMeters } from "./data";
-import { GAME_ACTION_RADIUS_M, onGameEvent, type Coords, type Waypost } from "./game";
+import { GAME_ACTION_RADIUS_M, onGameEvent, cityHuntNameZh, type Coords, type Waypost } from "./game";
+
+export const HUNT_TIMED_BACKEND = false;
 
 export type HuntStepKey = "checkin" | "spin" | "restore" | "landmark" | "return";
 export type HuntStep = { key: HuntStepKey; goal: number; count: number };
@@ -20,6 +22,8 @@ export type Hunt = {
   reward: { xp: number; gold: number };
   steps: HuntStep[];
   joined_at: string | null; checked_in_at: string | null; finished_at: string | null;
+  time_limit_min?: number | null; run_started_at?: string | null; run_ends_at?: string | null;
+  best_s?: number | null; today_s?: number | null; finished_today?: boolean;
   /** Counted on this device only, before the backend is live. */
   preview?: boolean;
 };
@@ -56,7 +60,7 @@ type RpcResult = { data: unknown; error: { message?: string; code?: string } | n
 const rpc = (fn: string, args?: Record<string, unknown>): Promise<RpcResult> =>
   (supabase as unknown as { rpc: (f: string, a?: Record<string, unknown>) => Promise<RpcResult> }).rpc(fn, args);
 const missing = (e: { message?: string; code?: string } | null) => !!e && (e.code === "PGRST202" || /could not find the function|does not exist/i.test(e.message ?? ""));
-const CODES = ["too_far", "closed", "not_joined", "not_checked_in", "incomplete", "already_finished", "too_fast"] as const;
+const CODES = ["too_far", "closed", "not_joined", "not_checked_in", "incomplete", "already_finished", "too_fast", "time_up"] as const;
 export type HuntErrorCode = typeof CODES[number] | "unknown";
 export class HuntError extends Error { constructor(public code: HuntErrorCode) { super(code); } }
 // The server's messages ("join first", "check in first", "already finished") mapped to our codes.
@@ -66,11 +70,12 @@ const fail = (e: { message?: string } | null) => {
   const m = e.message ?? "";
   throw new HuntError(ALIASES.find(([text]) => m.includes(text))?.[1] ?? CODES.find((c) => m.includes(c)) ?? "unknown");
 };
+const fromServer = (h: Hunt): Hunt => ({ ...h, name_zh: cityHuntNameZh(h.name_zh) });
 const signedIn = async () => !!(await supabase.auth.getSession()).data.session;
 
 // ---------- preview (device-only) ----------
 const XINYI = {
-  id: "xinyi-2026-11", name_zh: "信義城市尋寶", name_en: "Xinyi City Hunt", city_zh: "台北", city_en: "Taipei",
+  id: "xinyi-2026-11", name_zh: "信義城市定向", name_en: "Xinyi City Hunt", city_zh: "台北", city_en: "Taipei",
   starts_at: "2026-11-10T00:00:00+08:00", ends_at: "2026-11-30T23:59:59+08:00",
   keeper: { lat: 25.037546, lng: 121.562754 }, area: { lat: 25.033263, lng: 121.564887, radius_m: 1200 },
   landmark: "Taipei 101", reward: { xp: 300, gold: 5 },
@@ -96,7 +101,7 @@ function buildPreview(at: Coords, known: Waypost[], live: boolean): Hunt | null 
   // Signed out in development: a small hunt around wherever you are, using the stand-in Wayposts.
   if (previewHunt && previewHunt.id === "dev-hunt") return previewHunt;
   return asPreview({
-    ...XINYI, id: "dev-hunt", name_zh: "測試尋寶", name_en: "Test Hunt", city_zh: "這附近", city_en: "Nearby",
+    ...XINYI, id: "dev-hunt", name_zh: "測試定向", name_en: "Test Hunt", city_zh: "這附近", city_en: "Nearby",
     starts_at: new Date(Date.now() - 3_600_000).toISOString(), ends_at: new Date(Date.now() + 3 * 3_600_000).toISOString(),
     keeper: offset(at, 40, -30), area: { ...at, radius_m: 1200 },
     landmark: known.find((w) => w.kind === "landmark")?.id ?? ""
@@ -150,14 +155,14 @@ export const hunt = {
     const live = await signedIn();
     if (live && !liveMissing) {
       const { data, error } = await rpc("hunt_list", { p_lat: args.at.lat, p_lng: args.at.lng });
-      if (!error) { previewHunt = null; return (data as Hunt[] | null) ?? []; }
+      if (!error) { previewHunt = null; return ((data as Hunt[] | null) ?? []).map(fromServer); }
       if (!missing(error)) fail(error);
       liveMissing = true;
     }
     return args.previewAllowed ? loadPreview(args.userId, args.at, args.known, live) : [];
   },
   async join(h: Hunt): Promise<Hunt> {
-    if (!h.preview) { const { data, error } = await rpc("hunt_join", { p_hunt: h.id }); fail(error); return data as Hunt; }
+    if (!h.preview) { const { data, error } = await rpc("hunt_join", { p_hunt: h.id }); fail(error); return fromServer(data as Hunt); }
     if (huntStatus(h) === "closed") throw new HuntError("closed");
     progress.joined_at ??= new Date().toISOString(); save();
     return withProgress(previewHunt!);
@@ -166,7 +171,7 @@ export const hunt = {
     if (!h.preview) {
       if (!at) throw new HuntError("too_far");
       const { data, error } = await rpc("hunt_check_in", { p_hunt: h.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10 });
-      fail(error); return data as Hunt;
+      fail(error); return fromServer(data as Hunt);
     }
     if (huntStatus(h) !== "open") throw new HuntError("closed");
     if (!near(at, h.keeper)) throw new HuntError("too_far");
@@ -178,7 +183,9 @@ export const hunt = {
     if (!h.preview) {
       if (!at) throw new HuntError("too_far");
       const { data, error } = await rpc("hunt_finish", { p_hunt: h.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10 });
-      fail(error); return data as HuntFinish;
+      fail(error);
+      const result = data as HuntFinish;
+      return { ...result, hunt: fromServer(result.hunt) };
     }
     if (!near(at, h.keeper)) throw new HuntError("too_far");
     if (!readyToReturn(h)) throw new HuntError("incomplete");
