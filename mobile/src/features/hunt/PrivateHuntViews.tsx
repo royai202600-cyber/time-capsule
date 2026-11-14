@@ -1,9 +1,11 @@
 // Private City Hunt screens for players (docs/design/city-orienteering.md, Part B).
 // Brass marks only what a private hunt leaves on the map and in the Passport; every control is the app's blue.
-import React, { useEffect, useState } from "react";
-import { Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Image, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, Path, Rect } from "react-native-svg";
 import { ArtIcon } from "../../components/ArtIcon";
+import { haptics } from "../../components/haptics";
 import { Avatar } from "../../components/Avatar";
 import { useLanguage } from "../../i18n";
 import { useReducedMotion } from "../../useReducedMotion";
@@ -11,23 +13,26 @@ import { distanceText } from "../publicCapsule/strings";
 import { GAME_ACTION_RADIUS_M } from "../../services/game";
 import { clockText } from "../../services/huntClock";
 import {
-  cleanCode, doneCount, inOrder, locked, totalPoints, waitLeft,
+  cleanCode, collectAnywhere, doneCount, guideStage, inOrder, locked, totalPoints, waitLeft,
   type LeaderRow, type PrivateHuntQuestType, type PrivateHunt, type Quest,
 } from "../../services/privateHunt";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
-import { Btn, HuntCard, huntWindow, type TaskRow } from "./HuntViews";
-import { useHuntText } from "./strings";
+import { Btn, HuntCard, TaskList, huntWindow, keeperPortrait, type TaskRow } from "./HuntViews";
+import { timeUntil, useHuntText, type HuntText } from "./strings";
 import { QrScanner } from "./QrScanner";
 import { questImageSource, useQuestImages } from "./questImage";
+import { DISC, SpinDisc } from "../game/SpinDisc";
+import { ThrowBackground } from "../game/ThrowScreen";
+import { noWebSelect, useNoWebDrag } from "../game/noWebDrag";
+import { useGameText } from "../game/strings";
 
-/** One glyph per quest type, matching the glyph drawn on its brass pin. */
-/** "catch" is drawn for the editor's type picker before private hunts can count catches. */
-export function QuestGlyph({ type, size = 18, color = C.blue }: { type: PrivateHuntQuestType | "catch"; size?: number; color?: string }) {
+/** One glyph per quest type, matching the glyph drawn on its brass pin. A catch quest's is a capsule. */
+export function QuestGlyph({ type, size = 18, color = C.blue }: { type: PrivateHuntQuestType; size?: number; color?: string }) {
   return <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
     {type === "arrive" && <Path d="M7 21V4m0 0 10 2.5L7 11" />}
     {type === "spin" && <><Circle cx={12} cy={12} r={7.5} /><Path d="M12 4.5v15M4.5 12h15" /></>}
     {type === "puzzle" && <Path d="M8.6 9a3.5 3.5 0 1 1 3.6 4v2.4M12 19v.1" />}
-    {type === "catch" && <><Rect x={4} y={8.5} width={16} height={7} rx={3.5} transform="rotate(-35 12 12)" /><Path d="m10.6 9.4 1.6 2.4-1.2 1.4 1.4 1.6" /></>}
+    {type === "restore" && <><Rect x={4} y={8.5} width={16} height={7} rx={3.5} transform="rotate(-35 12 12)" /><Path d="m10.6 9.4 1.6 2.4-1.2 1.4 1.4 1.6" /></>}
   </Svg>;
 }
 
@@ -107,9 +112,11 @@ function PrivatePreview({ hunt, busy, onJoin }: { hunt: PrivateHunt; busy: boole
  * A joined private hunt on the Quest sheet. It uses the same card, clock and checklist as a City Hunt,
  * so nothing has to be learned twice; only the kicker colour says who is running it.
  */
-export function PrivateHuntCard({ hunt, onShowOnMap, onOpenQuest, onLeaderboard, onReport }: {
-  hunt: PrivateHunt;
+export function PrivateHuntCard({ hunt, busy, onShowOnMap, onCollect, onOpenQuest, onLeaderboard, onReport }: {
+  hunt: PrivateHunt; busy: boolean;
   onShowOnMap: (h: PrivateHunt) => void;
+  /** Take the stamp here, once the hunt has ended and its guide has gone home. */
+  onCollect: (h: PrivateHunt) => void;
   onOpenQuest: (h: PrivateHunt, w: Quest) => void;
   onLeaderboard: (h: PrivateHunt) => void;
   onReport: (h: PrivateHunt) => void;
@@ -117,16 +124,10 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenQuest, onLeaderboard,
   const t = useHuntText();
   const { language } = useLanguage();
   const done = !!hunt.finished_at;
-  const tasks: TaskRow[] = inOrder(hunt).map((w) => {
-    const shut = locked(hunt, w);
-    return {
-      key: w.id, label: w.name, done: !!w.done_at, locked: shut,
-      sub: t.questTypes[w.quest_type] + (shut ? `　${t.questLocked}` : ""),
-      right: t.pointsShort(w.points),
-      glyph: <QuestGlyph type={w.quest_type} size={15} color={C.blue} />,
-      onPress: () => onOpenQuest(hunt, w),
-    };
-  });
+  const stage = guideStage(hunt);
+  const tasks = privateTasks(hunt, t, (w) => onOpenQuest(hunt, w));
+  // What the guide is waiting for, said on the card too, so the Quest sheet alone is enough to know what's next.
+  const guideNote = stage === "start" ? t.talkToGuide : stage === "collect" ? (collectAnywhere(hunt) ? t.collectHere : t.backToGuide) : "";
   return <HuntCard
     kicker={t.privateKicker} kickerTone={C.brass}
     title={hunt.name}
@@ -134,9 +135,11 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenQuest, onLeaderboard,
     clock={hunt} startNote={t.privateLimit} upNote={t.privateTimeUpNote}
     progress={`${t.questCount(doneCount(hunt), hunt.quests.length)}　${t.pointsOf(hunt.points, totalPoints(hunt))}`}
     tasks={tasks}
-    note={hunt.route_mode === "ordered" ? t.questLockedNote : undefined}
+    note={guideNote || (hunt.route_mode === "ordered" ? t.questLockedNote : undefined)}
     actions={<View style={{ gap: spacing.sm }}>
-      <Btn quiet title={t.showQuests} onPress={() => onShowOnMap(hunt)} />
+      {stage === "collect" && collectAnywhere(hunt)
+        ? <Btn title={t.collectStamp} disabled={busy} onPress={() => onCollect(hunt)} />
+        : stage !== "done" && stage !== "over" && <Btn quiet title={stage === "playing" ? t.showQuests : t.findGuide} onPress={() => onShowOnMap(hunt)} />}
       {hunt.leaderboard_visible
         ? <Btn quiet title={t.leaderboard} onPress={() => onLeaderboard(hunt)} />
         : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.leaderboardHidden}</Text>}
@@ -149,22 +152,85 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenQuest, onLeaderboard,
     </View>} />;
 }
 
+/** A hunt's quests as checklist rows; a catch quest shows how many are caught so far. */
+function privateTasks(hunt: PrivateHunt, t: HuntText, onPress?: (w: Quest) => void): TaskRow[] {
+  return inOrder(hunt).map((w) => {
+    const shut = locked(hunt, w);
+    const catching = w.quest_type === "restore" && !w.done_at && !!w.catch_count;
+    return {
+      key: w.id, label: w.name, done: !!w.done_at, locked: shut,
+      sub: (catching ? t.caught(w.caught_count ?? 0, w.catch_count!) : t.questTypes[w.quest_type]) + (shut ? `　${t.questLocked}` : ""),
+      right: t.pointsShort(w.points),
+      glyph: <QuestGlyph type={w.quest_type} size={15} color={C.blue} />,
+      onPress: onPress ? () => onPress(w) : undefined,
+    };
+  });
+}
+
 /**
- * One quest: walk there, then check in, spin or answer. Every check is the server's; this screen only
- * says what it refused.
+ * The card that opens when you tap a private hunt's guide (docs/design/city-orienteering.md, Part C).
+ * Talking to him starts the run; coming back with every quest done earns the stamp. The server checks
+ * the distance both times; `near` only decides which line he says.
  */
-export function QuestSheet({ visible, hunt, quest, meters, busy, error, tries, onClose, onComplete }: {
-  visible: boolean; hunt: PrivateHunt; quest: Quest; meters: number; busy: boolean;
-  error?: string | null; tries?: number;
+export function GuideCard({ hunt, near, busy, onStart, onCollect, onClose }: {
+  hunt: PrivateHunt; near: boolean; busy: boolean;
+  onStart: () => void; onCollect: () => void; onClose: () => void;
+}) {
+  const t = useHuntText();
+  const { language } = useLanguage();
+  const stage = guideStage(hunt);
+  const fixed = hunt.guide_mode === "fixed";
+  const notYet = Date.now() < new Date(hunt.starts_at).getTime();
+  let line = t.guidePlaying, action: { title: string; run: () => void } | null = null, sub = "";
+  if (stage === "start") {
+    if (notYet) line = t.guideOpensIn(timeUntil(hunt.starts_at, language));
+    else if (near) { line = t.guideStart; action = { title: t.guideBegin, run: onStart }; if (hunt.time_limit_min) sub = t.privateLimit(hunt.time_limit_min); }
+    else line = fixed ? t.guideWaiting : t.guideFindArea;
+  } else if (stage === "collect") {
+    if (near || collectAnywhere(hunt)) { line = t.guideCollect; action = { title: t.collectStamp, run: onCollect }; }
+    else line = t.guideCollectFar;
+  } else if (stage === "over") line = t.guideOver;
+  return <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", gap: spacing.md, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
+    <View style={{ flexDirection: "row", gap: spacing.md, alignItems: "flex-start" }}>
+      <Image source={keeperPortrait} style={{ width: 60, height: 60, borderRadius: 30, borderWidth: 3, borderColor: C.brass }} />
+      <View style={{ flex: 1, gap: 4 }}>
+        <Text style={{ fontFamily: sans, fontSize: 11, letterSpacing: 1.2, color: C.brass }}>{t.keeper} · {hunt.name}</Text>
+        <Text style={{ fontFamily: serif, fontSize: 16, lineHeight: 25, color: C.ink }}>{line}</Text>
+      </View>
+      <Pressable accessibilityRole="button" accessibilityLabel={t.close} onPress={onClose} hitSlop={8} style={{ width: 32, height: 32, alignItems: "center", justifyContent: "center" }}><ArtIcon name="close" size={18} color={C.muted} /></Pressable>
+    </View>
+    {stage === "playing" && <TaskList rows={privateTasks(hunt, t)} compact />}
+    {!!sub && <Text style={{ fontFamily: sans, fontSize: 13, color: C.ink }}>{sub}</Text>}
+    {action && <Btn title={action.title} disabled={busy} onPress={action.run} />}
+  </View>;
+}
+
+/**
+ * One quest, laid out like a Waypost: the name at the top, its picture in a brass rim, one line saying what
+ * to do, and the buttons at the bottom. A spin quest is spun exactly like a Waypost. Every check is the
+ * server's; this screen only says what it refused. `result` is set once the quest is done here.
+ */
+export function QuestScreen({ hunt, quest, meters, busy, error, tries, result, onClose, onComplete }: {
+  hunt: PrivateHunt; quest: Quest; meters: number; busy: boolean;
+  error?: string | null; tries?: number; result?: { points: number; finished: boolean } | null;
   onClose: () => void; onComplete: (answer?: string, qr?: string) => void;
 }) {
   const t = useHuntText();
+  const g = useGameText();
+  const insets = useSafeAreaInsets();
   const [answer, setAnswer] = useState("");
   const [scanning, setScanning] = useState(false);
   const [, tick] = useState(0);
-  useEffect(() => { if (visible) setAnswer(""); }, [visible, quest.id]);
+  const tally = useRef(new Animated.Value(0)).current;
+  useEffect(() => { setAnswer(""); }, [quest.id]);
+  useEffect(() => {
+    if (!result) return;
+    void haptics.success();
+    tally.setValue(0);
+    Animated.timing(tally, { toValue: 1, duration: 2800, easing: Easing.linear, useNativeDriver: Platform.OS !== "web" }).start();
+  }, [result, tally]);
   const near = meters <= GAME_ACTION_RADIUS_M;
-  const done = !!quest.done_at, shut = locked(hunt, quest);
+  const done = !!quest.done_at || !!result, shut = locked(hunt, quest);
   const wait = waitLeft(quest);
   // The wait after three wrong answers counts down in front of the player, rather than sitting still.
   useEffect(() => {
@@ -173,25 +239,50 @@ export function QuestSheet({ visible, hunt, quest, meters, busy, error, tries, o
     return () => clearInterval(timer);
   }, [!wait]);
   useQuestImages([quest.image]);
+  useNoWebDrag();
   const puzzle = quest.quest_type === "puzzle";
+  const spin = quest.quest_type === "spin";
+  const catching = quest.quest_type === "restore";
+  const started = guideStage(hunt) !== "start";
   const needsQr = quest.quest_type === "arrive" && quest.arrive_check === "gps_qr";
-  const canAct = near && !done && !shut && !wait && (!puzzle || !!answer.trim());
-  return <Sheet visible={visible} title={quest.name} onClose={onClose}>
-    <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-        <QuestGlyph type={quest.quest_type} size={20} />
-        <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, color: C.blue, letterSpacing: .6 }}>{t.questTypes[quest.quest_type]}</Text>
-        <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{t.pointsShort(quest.points)}</Text>
+  const ready = started && near && !done && !shut && !wait;
+  const canAct = ready && (!puzzle || !!answer.trim());
+  // What to do next, in the same pill a Waypost uses for its hint.
+  const line = result ? (result.finished ? t.backToGuide : t.gotPoints(result.points))
+    : error ? error
+    : wait ? t.waitSeconds(wait)
+    : done ? t.questDone
+    : !started ? t.talkToGuide
+    : shut ? t.questLocked
+    : catching ? t.caught(quest.caught_count ?? 0, quest.catch_count ?? 0)
+    : !near ? t.walkCloserQuest(distanceText(meters - GAME_ACTION_RADIUS_M))
+    : spin ? g("spinHint")
+    : needsQr ? t.questHowQr : t.questHow[quest.quest_type];
+  const small = puzzle && !done;
+
+  return <View style={[{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, zIndex: 40 }, spin ? noWebSelect : null]}>
+    <ThrowBackground />
+    <View style={{ position: "absolute", top: insets.top + spacing.md, left: spacing.lg, right: spacing.lg, alignItems: "center", gap: 4 }}>
+      <Text numberOfLines={1} style={{ fontFamily: serif, fontSize: 20, color: C.ink }}>{quest.name}</Text>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+        <QuestGlyph type={quest.quest_type} size={16} />
+        <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue, letterSpacing: .6 }}>{t.questTypes[quest.quest_type]} · {t.pointsShort(quest.points)}</Text>
       </View>
-      {!!quest.image && <Image source={questImageSource(quest.image)} style={{ width: "100%", aspectRatio: 16 / 9, borderRadius: radii.md }} resizeMode="cover" />}
-      {!!quest.description && <Text style={{ fontFamily: sans, fontSize: 14, lineHeight: 22, color: C.ink }}>{quest.description}</Text>}
-      <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{quest.quest_type === "arrive" && quest.arrive_check === "gps_qr" ? t.questHowQr : t.questHow[quest.quest_type]}</Text>
+    </View>
 
-      {done && <Note icon="check" tone={C.blue} text={t.questDone} />}
-      {!done && shut && <Note icon="lock" tone={C.muted} text={t.questLocked} />}
-      {!done && !shut && !near && <Note icon="pin" tone={C.blue} text={t.walkCloser(distanceText(meters - GAME_ACTION_RADIUS_M))} />}
+    {result && <Animated.View pointerEvents="none" style={{
+      position: "absolute", top: insets.top + 68, right: spacing.md,
+      opacity: tally.interpolate({ inputRange: [0, .08, .8, 1], outputRange: [0, 1, 1, 0] }),
+      transform: [{ translateX: tally.interpolate({ inputRange: [0, .08, 1], outputRange: [28, 0, 0] }) }],
+    }}><Text style={{ fontFamily: serif, fontSize: 20, color: C.ink }}>+{t.pointsShort(result.points)}</Text></Animated.View>}
 
-      {!done && !shut && puzzle && <View style={{ gap: spacing.sm }}>
+    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, alignItems: "center", justifyContent: "center", gap: spacing.lg, paddingTop: insets.top + 80, paddingBottom: insets.bottom + (done || spin || catching ? 90 : 150), paddingHorizontal: spacing.lg }}>
+      {/* Remounting after a refusal lets a spin quest be spun again once the player has walked closer. */}
+      <SpinDisc key={error ?? "disc"} source={questImageSource(quest.image)} size={small ? 170 : DISC} spinnable={spin && ready && !busy}
+        dim={(done && !result) || shut || !started} label={spin ? g("spinHint") : quest.name} onSpin={() => onComplete()} />
+      {!!quest.description && !done && <Text style={{ alignSelf: "stretch", maxWidth: 420, fontFamily: sans, fontSize: 14, lineHeight: 22, color: C.ink, backgroundColor: "rgba(246,248,251,.9)", borderRadius: radii.md, overflow: "hidden", paddingHorizontal: spacing.md, paddingVertical: 10 }}>{quest.description}</Text>}
+
+      {!done && !shut && puzzle && <View style={{ alignSelf: "stretch", maxWidth: 420, gap: spacing.sm }}>
         {quest.puzzle_kind === "choice" && !!quest.choices?.length
           ? quest.choices.map((choice) => {
             const picked = choice === answer;
@@ -208,21 +299,23 @@ export function QuestSheet({ visible, hunt, quest, meters, busy, error, tries, o
             style={{ fontFamily: sans, fontSize: 15, color: C.ink, backgroundColor: C.white, borderWidth: 1.5, borderColor: C.line, borderRadius: radii.md, paddingVertical: 12, paddingHorizontal: spacing.md }} />}
       </View>}
 
-      {!!error && <Text style={{ fontFamily: sans, fontSize: 13, color: C.wax }}>{error}</Text>}
-      {!!wait && <Text style={{ fontFamily: sans, fontSize: 13, color: C.wax }}>{t.waitSeconds(wait)}</Text>}
-      {!wait && tries != null && tries > 0 && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.triesLeft(tries)}</Text>}
-
-      {!done && <Btn disabled={!canAct || busy} onPress={() => needsQr ? setScanning(true) : onComplete(puzzle ? answer : undefined)}
-        title={needsQr ? t.scanQr : puzzle ? t.answerSend : quest.quest_type === "spin" ? t.spinHere : t.checkInHere} />}
+      <View style={{ alignItems: "center", gap: 6 }}>
+        <Text style={{ maxWidth: 340, textAlign: "center", fontSize: 14, lineHeight: 20, color: error || wait ? C.wax : C.ink, backgroundColor: "rgba(246,248,251,.86)", paddingHorizontal: 14, paddingVertical: 8, borderRadius: radii.pill, overflow: "hidden" }}>{line}</Text>
+        {!wait && !done && tries != null && tries > 0 && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.triesLeft(tries)}</Text>}
+      </View>
     </ScrollView>
-    {scanning && <QrScanner onClose={() => setScanning(false)} onScan={(token) => { setScanning(false); onComplete(undefined, token); }} />}
-  </Sheet>;
-}
 
-function Note({ icon, tone, text }: { icon: "check" | "lock" | "pin"; tone: string; text: string }) {
-  return <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: C.glass, borderRadius: radii.md, paddingHorizontal: spacing.md, paddingVertical: 10 }}>
-    <ArtIcon name={icon} size={17} color={tone} />
-    <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, lineHeight: 19, color: C.ink }}>{text}</Text>
+    <View style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, gap: spacing.sm }}>
+      {/* A spin quest is played on the picture and a catch quest counts by itself, so only these need a button. */}
+      {!done && !spin && !catching && <Pressable accessibilityRole="button" disabled={!canAct || busy} onPress={() => needsQr ? setScanning(true) : onComplete(puzzle ? answer : undefined)}
+        style={{ alignItems: "center", backgroundColor: C.blue, borderRadius: radii.pill, paddingVertical: 13, opacity: !canAct || busy ? .5 : 1, ...shadows.card }}>
+        <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{needsQr ? t.scanQr : puzzle ? t.answerSend : t.checkInHere}</Text>
+      </Pressable>}
+      <Pressable accessibilityRole="button" onPress={onClose} style={{ alignItems: "center", backgroundColor: result ? C.blue : "rgba(246,248,251,.94)", borderRadius: radii.pill, paddingVertical: 13, ...shadows.card }}>
+        <Text style={{ fontFamily: serif, fontSize: 16, color: result ? C.white : C.ink }}>{g(result ? "done" : "leave")}</Text>
+      </Pressable>
+    </View>
+    {scanning && <QrScanner onClose={() => setScanning(false)} onScan={(token) => { setScanning(false); onComplete(undefined, token); }} />}
   </View>;
 }
 

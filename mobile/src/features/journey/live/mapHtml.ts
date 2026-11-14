@@ -164,6 +164,8 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin-body{scale:var(--z,1);translate:var(--fx,0) var(--fy,0);transition:translate .22s ease-out,opacity .25s}
 /* Quest pins shrink but never fade, so players can plan their route across the whole hunt. */
 .pin.keeper .pin-body{scale:1}
+/* Quest pins are as big as a Corrupted Capsule and shrink half as fast, to at least 70%, so the route stays readable. */
+.pin.quest .pin-body{scale:var(--zq,1)}
 .pin.fanned{z-index:30!important}
 #map.tiny .pin:not(.keeper,.quest) .pin-body{opacity:0}#map.tiny .pin:not(.keeper,.quest) .pin-body>*{pointer-events:none}
 .fan-dot{width:8px;height:8px;border-radius:50%;background:${C.ink};border:2px solid #fff;box-shadow:0 1px 3px rgba(22,38,63,.3);pointer-events:none}
@@ -226,19 +228,19 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.landmark.top .badge{bottom:1px;left:0}
 /* Private-hunt quest (docs/design/city-orienteering.md): its picture fills a brass teardrop pointing at the spot,
    with its points below. Done: purple, like a Waypost after its spin, with a tick badge. Locked by an in-order route: faded. */
-.pin.quest{width:54px;height:72px;--mp:${C.brass};--mp-hi:#E2C58A;--mp-lo:#A9843F;--mg:#fff}
+.pin.quest{width:76px;height:100px;--mp:${C.brass};--mp-hi:#E2C58A;--mp-lo:#A9843F;--mg:#fff}
 .pin.quest.done{--mp:${C.plum};--mp-hi:#B98494;--mp-lo:#4A1C2A;--mg:#fff}
-.pin.quest .disc{left:15px;width:24px;height:7px;background:radial-gradient(${C.brass}66,transparent 70%)}
-.pin.quest .photo{position:absolute;left:4px;bottom:6px;width:46px;height:59px;animation:bob 3.6s ease-in-out infinite;filter:drop-shadow(0 3px 4px rgba(22,38,63,.32))}
-.pin.quest .drop{position:absolute;left:0;top:2px;width:46px;height:46px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,var(--mp-hi),var(--mp) 55%,var(--mp-lo))}
-.pin.quest .ph{position:absolute;inset:3px;border-radius:50%;border:2px solid #fff;transform:rotate(45deg);background:${C.cream} center/cover no-repeat}
-.pin.quest .badge{position:absolute;right:-6px;top:-4px;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--mp-hi),var(--mp) 62%,var(--mp-lo));box-shadow:0 1px 3px rgba(22,38,63,.35),inset 0 0 0 1.5px var(--mp-hi)}
-.pin.quest .badge svg{position:absolute;left:0;top:0;width:20px;height:20px}
+.pin.quest .disc{left:20px;width:36px;height:10px;background:radial-gradient(${C.brass}66,transparent 70%)}
+.pin.quest .photo{position:absolute;left:5px;bottom:8px;width:66px;height:85px;animation:bob 3.6s ease-in-out infinite;filter:drop-shadow(0 3px 4px rgba(22,38,63,.32))}
+.pin.quest .drop{position:absolute;left:0;top:3px;width:66px;height:66px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,var(--mp-hi),var(--mp) 55%,var(--mp-lo))}
+.pin.quest .ph{position:absolute;inset:4px;border-radius:50%;border:2.5px solid #fff;transform:rotate(45deg);background:${C.cream} center/cover no-repeat}
+.pin.quest .badge{position:absolute;right:-6px;top:-4px;width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--mp-hi),var(--mp) 62%,var(--mp-lo));box-shadow:0 1px 3px rgba(22,38,63,.35),inset 0 0 0 1.5px var(--mp-hi)}
+.pin.quest .badge svg{position:absolute;left:0;top:0;width:24px;height:24px}
 .pin.quest.locked .photo{opacity:.6}
 .pin.quest.done .ph{filter:saturate(.6)}
 .pin.quest.near:not(.done):not(.locked) .photo{filter:drop-shadow(0 0 7px ${C.brass})}
 .pin.quest.near:not(.done):not(.locked) .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
-.pin.quest .tag{bottom:-14px;background:${C.brass};color:#fff}
+.pin.quest .tag{bottom:-16px;font-size:11px;background:${C.brass};color:#fff}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.pin .badge,.pin.quest .photo,.you .pulse,.pin.keeper .seal{animation:none}}
 </style></head><body><div id="map"></div>
@@ -282,7 +284,7 @@ map.on('dragstart',()=>{if(follow){follow=false;send({type:'follow',follow:false
 const mapEl=document.getElementById('map');let zNow=1;
 const rescale=()=>{const base=pickupZoom(you?you.lat:map.getCenter().lat,state.reach||100),d=map.getZoom()-base;
   // The quest editor's maps (reach 0) keep every pin full size, so the organizer can read each number.
-  zNow=state.reach===0?1:Math.max(.4,Math.min(1,Math.pow(2,d)));mapEl.style.setProperty('--z',zNow.toFixed(3));mapEl.classList.toggle('tiny',state.reach!==0&&d<-3)};
+  zNow=state.reach===0?1:Math.max(.4,Math.min(1,Math.pow(2,d)));mapEl.style.setProperty('--z',zNow.toFixed(3));mapEl.style.setProperty('--zq',(state.reach===0?1:Math.max(.7,Math.min(1,Math.pow(2,d/2)))).toFixed(3));mapEl.classList.toggle('tiny',state.reach!==0&&d<-3)};
 map.on('zoom',rescale);
 // Overlapping pins: the first tap on a stack fans it out around its spot (pins never move on the map itself);
 // tapping one then opens it. Tapping the map or moving it folds the fan back.

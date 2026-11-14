@@ -2,10 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 // The rules under test are pure; these two keep the module's native imports out of the test run.
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: { getItem: vi.fn(), setItem: vi.fn() } }));
 vi.mock("./supabase", () => ({ supabase: { auth: { getSession: vi.fn() }, rpc: vi.fn() } }));
-import { LIMITS, appLink, blankDraft, huntArea, blankQuest, canPublish, huntProblems, nextOrdinal, shareLink, questProblems, type HuntDraft, type QuestDraft } from "./privateHuntOrganizer";
+import { LIMITS, appLink, blankDraft, huntArea, blankQuest, canPublish, huntProblems, nextOrdinal, questForSave, shareLink, questProblems, type HuntDraft, type QuestDraft } from "./privateHuntOrganizer";
 
 const draft = (over: Partial<HuntDraft> = {}): HuntDraft => ({ ...blankDraft(), name: "Park hunt", ...over });
 const wp = (over: Partial<QuestDraft> = {}): QuestDraft => ({ ...blankQuest(1, { lat: 25, lng: 121 }), name: "Gate", ...over });
+// A quest with a spot, and a catch quest without one.
+const spot = { location_lat: 25, location_lng: 121 };
+const noSpot = { location_lat: null, location_lng: null };
 
 describe("share links", () => {
   it("builds a web link from a loosely typed code", () => expect(shareLink(" park-24 ")).toBe("https://time-capsule-pi-two.vercel.app/hunt/PARK24"));
@@ -14,23 +17,27 @@ describe("share links", () => {
 
 describe("what blocks publishing", () => {
   it("passes a filled-in hunt with one quest", () => {
-    expect(huntProblems(draft(), [{ id: "a" }])).toEqual([]);
-    expect(canPublish(draft(), [{ id: "a" }])).toBe(true);
+    expect(huntProblems(draft(), [spot])).toEqual([]);
+    expect(canPublish(draft(), [spot])).toBe(true);
   });
-  it("needs a name", () => expect(huntProblems(draft({ name: "  " }), [{ id: "a" }])).toContain("name"));
+  it("needs a name", () => expect(huntProblems(draft({ name: "  " }), [spot])).toContain("name"));
   it("needs at least one quest", () => expect(huntProblems(draft(), [])).toContain("quests"));
   it("refuses more quests than the limit", () =>
-    expect(huntProblems(draft(), Array.from({ length: LIMITS.quests + 1 }, (_, i) => ({ id: String(i) })))).toContain("tooManyQuests"));
+    expect(huntProblems(draft(), Array.from({ length: LIMITS.quests + 1 }, () => spot))).toContain("tooManyQuests"));
   it("refuses an end before the start", () =>
-    expect(huntProblems(draft({ starts_at: "2026-12-01T00:00:00Z", ends_at: "2026-11-01T00:00:00Z" }), [{ id: "a" }])).toContain("window"));
+    expect(huntProblems(draft({ starts_at: "2026-12-01T00:00:00Z", ends_at: "2026-11-01T00:00:00Z" }), [spot])).toContain("window"));
   it("refuses a hunt that never ends", () =>
-    expect(huntProblems(draft({ ends_at: "infinity" }), [{ id: "a" }])).toContain("window"));
+    expect(huntProblems(draft({ ends_at: "infinity" }), [spot])).toContain("window"));
+  it("needs a quest with a spot when the guide appears near players", () => {
+    expect(huntProblems(draft(), [noSpot])).toContain("guideArea");
+    expect(huntProblems(draft({ guide_mode: "fixed", guide_lat: 25, guide_lng: 121 }), [noSpot])).toEqual([]);
+  });
 });
 
 describe("what blocks a quest", () => {
   it("passes a plain arrive quest", () => expect(questProblems(wp())).toEqual([]));
   it("needs a name", () => expect(questProblems(wp({ name: "" }))).toContain("name"));
-  it("needs a place", () => expect(questProblems(wp({ location_lat: 0, location_lng: 0 }))).toContain("place"));
+  it("needs a place", () => expect(questProblems(wp(noSpot))).toContain("place"));
   it("refuses points beyond the limit", () => expect(questProblems(wp({ points: LIMITS.points + 1 }))).toContain("points"));
   it("needs an answer for a puzzle", () =>
     expect(questProblems(wp({ quest_type: "puzzle", puzzle_kind: "text", answer: " " }))).toContain("answer"));
@@ -46,6 +53,15 @@ describe("what blocks a quest", () => {
     expect(questProblems(wp({ id: "w1", quest_type: "puzzle", puzzle_kind: "text", answer: "" }))).toEqual([]);
     expect(questProblems(wp({ id: "w1", quest_type: "puzzle", puzzle_kind: "choice", answer: "", choices: ["1897", "1901"] }))).toEqual([]);
     expect(questProblems(wp({ id: "w1", quest_type: "puzzle", puzzle_kind: "choice", answer: "", choices: ["1897", ""] }))).toContain("choices");
+  });
+  it("needs no place for a catch quest, but a count from 1 to 20", () => {
+    expect(questProblems(wp({ quest_type: "restore", ...noSpot, catch_count: 5 }))).toEqual([]);
+    expect(questProblems(wp({ quest_type: "restore", ...noSpot, catch_count: 0 }))).toContain("catches");
+    expect(questProblems(wp({ quest_type: "restore", ...noSpot, catch_count: LIMITS.catches + 1 }))).toContain("catches");
+  });
+  it("saves a catch quest without its spot, and other quests without a count", () => {
+    expect(questForSave(wp({ quest_type: "restore", catch_count: 3 }))).toMatchObject({ location_lat: null, location_lng: null, catch_count: 3 });
+    expect(questForSave(wp({ catch_count: 3 }))).toMatchObject({ location_lat: 25, location_lng: 121, catch_count: null });
   });
   it("ignores puzzle fields on a non-puzzle quest", () =>
     expect(questProblems(wp({ quest_type: "spin", answer: "", choices: [] }))).toEqual([]));

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 // The helpers under test are pure; these two keep the module's native imports out of the test run.
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: { getItem: vi.fn(), setItem: vi.fn() } }));
 vi.mock("./supabase", () => ({ supabase: { auth: { getSession: vi.fn() }, rpc: vi.fn() } }));
-import { byRank, cleanCode, doneCount, huntOpen, huntStillOn, inOrder, locked, sameAnswer, totalPoints, waitLeft, type LeaderRow, type PrivateHunt, type Quest, questQr, questToken, qrGroups } from "./privateHunt";
+import { atGuide, byRank, cleanCode, collectAnywhere, doneCount, guideSpot, guideStage, huntOpen, inOrder, locked, sameAnswer, totalPoints, waitLeft, type LeaderRow, type PrivateHunt, type Quest, questQr, questToken, qrGroups } from "./privateHunt";
 
 const wp = (id: string, ordinal: number, points: number, done?: string | null): Quest =>
   ({ id, ordinal, points, name: id, location_lat: 25, location_lng: 121, quest_type: "arrive", done_at: done ?? null });
@@ -75,12 +75,45 @@ describe("open window", () => {
     expect(huntOpen({ ...h, ends_at: "infinity" }, Date.parse("2099-01-01T00:00:00Z"))).toBe(true));
 });
 
-describe("quest pins on the map", () => {
-  const h = hunt("any", []), mid = Date.parse("2026-06-01T00:00:00Z");
-  it("show while the hunt is on", () => expect(huntStillOn(h, mid)).toBe(true));
-  it("go once the hunt has ended", () => expect(huntStillOn(h, Date.parse("2028-01-01T00:00:00Z"))).toBe(false));
-  it("go once you finish", () => expect(huntStillOn({ ...h, finished_at: "2026-05-31T00:00:00Z" }, mid)).toBe(false));
-  it("go once your own time runs out", () => expect(huntStillOn({ ...h, run_ends_at: "2026-05-31T00:00:00Z" }, mid)).toBe(false));
+describe("where a player stands with the guide", () => {
+  const h = hunt("any", []), mid = Date.parse("2026-06-01T00:00:00Z"), after = Date.parse("2028-01-01T00:00:00Z");
+  const started = { ...h, started_at: "2026-05-31T00:00:00Z" };
+  it("starts with the guide after joining", () => expect(guideStage(h, mid)).toBe("start"));
+  it("is playing once the guide started the run", () => expect(guideStage(started, mid)).toBe("playing"));
+  it("goes back to the guide once every quest is done", () => expect(guideStage({ ...started, finished_at: "2026-05-31T01:00:00Z" }, mid)).toBe("collect"));
+  it("is done once the stamp is collected", () => expect(guideStage({ ...started, finished_at: "2026-05-31T01:00:00Z", reward_collected_at: "2026-05-31T02:00:00Z" }, mid)).toBe("done"));
+  it("is over when your own time runs out unfinished", () => expect(guideStage({ ...started, run_ends_at: "2026-05-31T00:30:00Z" }, mid)).toBe("over"));
+  it("is over when the hunt ends or closes early", () => {
+    expect(guideStage(started, after)).toBe("over");
+    expect(guideStage({ ...started, status: "closed" }, mid)).toBe("over");
+  });
+  it("still lets a finished player collect after the end, from anywhere", () => {
+    const finished = { ...started, finished_at: "2026-05-31T01:00:00Z" };
+    expect(guideStage(finished, after)).toBe("collect");
+    expect(collectAnywhere(finished, mid)).toBe(false);
+    expect(collectAnywhere(finished, after)).toBe(true);
+    expect(collectAnywhere({ ...finished, status: "closed" }, mid)).toBe(true);
+  });
+});
+
+describe("the guide's spot", () => {
+  const h = hunt("any", []);
+  const fixed = { ...h, guide_mode: "fixed" as const, guide_lat: 25.001, guide_lng: 121.001 };
+  it("is his own spot when fixed", () => expect(guideSpot(fixed, { lat: 25, lng: 121 })).toEqual({ lat: 25.001, lng: 121.001 }));
+  it("is a few steps from you inside the area when he appears near you", () => {
+    const spot = guideSpot({ ...h, guide_mode: "near" }, { lat: 25, lng: 121 });
+    const m = Math.hypot((spot.lat - 25) * 110_540, (spot.lng - 121) * 111_320 * Math.cos(25 * Math.PI / 180));
+    expect(m).toBeGreaterThan(20); expect(m).toBeLessThan(40);
+  });
+  it("is the middle of the area while you are outside it", () =>
+    expect(guideSpot({ ...h, guide_mode: "near" }, { lat: 22, lng: 113 })).toEqual({ lat: 25, lng: 121 }));
+  it("counts you as with him inside his pickup circle, or anywhere in the area when he appears near you", () => {
+    expect(atGuide(fixed, { lat: 25.001, lng: 121.0012, accuracy: 10 })).toBe(true);
+    expect(atGuide(fixed, { lat: 25, lng: 121, accuracy: 10 })).toBe(false);
+    expect(atGuide({ ...h, guide_mode: "near" }, { lat: 25.003, lng: 121, accuracy: 10 })).toBe(true);
+    expect(atGuide({ ...h, guide_mode: "near" }, { lat: 25.01, lng: 121, accuracy: 10 })).toBe(false);
+    expect(atGuide(fixed, null)).toBe(false);
+  });
 });
 
 describe("quest QR codes", () => {

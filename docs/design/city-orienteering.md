@@ -150,15 +150,21 @@ Every session: repo https://github.com/royai202600-cyber/time-capsule, read `AGE
 
 **The quest editor** (PR after #124). The organizer's Quests section has two tabs:
 - **Map:** every tap drops another quest (an Arrive quest worth 10 points, named after the place), so a whole route goes down in one go. Pins are numbered with their points; an in-order hunt draws a dotted brass line through them. Tapping a pin opens its form. Pins stay full size on this map and the organizer's own marker is hidden, so nothing covers the route.
-- **List:** every quest in order. **Add a quest** opens the form on the type picker first: Arrive, Spin, Puzzle, and **Catch Corrupted Capsules** (shown as "Coming soon" until the server can count catches in private hunts). The type decides which fields follow.
+- **List:** every quest in order. **Add a quest** opens the form on the type picker first: Arrive, Spin, Puzzle, and **Catch Corrupted Capsules**. The type decides which fields follow; a catch quest asks how many to catch (1 to 20) instead of a place.
 - **Points:** a slider from 5 to 200 in steps of 5, plus a box for any exact number from 1 to 999.
 - The same editor is meant to become the place where Roy reviews AI-designed City Hunts (with the City Hunt types: check in with the guide, catch, Landmark). That review mode is a later step.
 
-**Catch Corrupted Capsules in a private hunt** (server work for Codex): "catch N Corrupted Capsules inside the hunt area". It has no quest pin. Catching keeps its normal game reward; the quest only adds the hunt's points. This updates the earlier rule that Corrupted Capsules belong to system hunts only.
+**Catch Corrupted Capsules in a private hunt** (server: PR #126): "catch N Corrupted Capsules inside the hunt area". It has no quest pin. Catching keeps its normal game reward; the quest only adds the hunt's points. This updates the earlier rule that Corrupted Capsules belong to system hunts only.
+
+**How the guide works on screen** (Claude's guide UI, on the PR #126 server):
+- **Editor.** Details has "Where the Letter Keeper waits": *Appears near each player* (the default) or *At a fixed spot*. Choosing a fixed spot opens the Quests map, and the next tap puts the Keeper there; tapping him later moves him. A near guide needs at least one quest with a spot, because only quest pins make the area (a catch-only hunt needs a fixed guide). Both lock with the route once someone joins.
+- **After joining**, the map flies to the guide (or to the middle of the area when he appears near players), so a hunt in another city never looks empty. Quest pins stay hidden until the run starts. The guide's seal shows ! to start and ✓ to collect.
+- **Start.** Tapping the guide opens his card. Close enough (his pickup circle, or anywhere in the area for a near guide), **Begin** starts the clock. A near guide stands about 30 m from you and stays put until you wander 80 m off.
+- **During the run**, a fixed guide waits at his spot; a near guide only comes back when every quest is done. Catch quests show "2 / 5 caught" in the checklist and fill in by themselves as capsules are caught in the area.
+- **Collect.** With every quest done, the guide gives the stamp. After the hunt's end (or an early close) he has gone home, and **Take the stamp** appears on the hunt's card in the Quest sheet instead, from anywhere.
 
 ## Roy to confirm
 Roy confirmed all five earlier defaults on 2026-11-14: a countdown limit plus personal best with no public ranking on system hunts; Arrive, Spin and Puzzle first (Photo waits for moderation); allow-listed creators during the pilot; a brass stamp and no XP, Gold or vessels for private hunts; the Keeper's marker stays brass.
-
 ## Part C backend contract (Roy approved 2026-11-14; UI design in PR #125)
 
 - `guide_mode: 'fixed' | 'near'` defaults to `near`. `guide_lat/guide_lng` are required for fixed and null for near. `private_hunt_update` accepts these in `p_draft`; edit state and player objects expose them. Old callers omitting guide fields preserve them. Guide settings lock at first join, like route/timing.

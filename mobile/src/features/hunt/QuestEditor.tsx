@@ -6,7 +6,7 @@ import { Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "reac
 import { ArtIcon } from "../../components/ArtIcon";
 import { useForegroundLocation } from "../journey/location";
 import { searchPlaces, type PointPlace } from "../../services/places";
-import { LIMITS, questProblems, type QuestDraft } from "../../services/privateHuntOrganizer";
+import { LIMITS, hasSpot, questProblems, type QuestDraft } from "../../services/privateHuntOrganizer";
 import { GiftQr } from "../capsule/GiftQr";
 import { PinPicker } from "./PinPicker";
 import { DEFAULT_QUEST_IMAGE, QUEST_TEMPLATES, questImageSource, templateImage, useQuestImages } from "./questImage";
@@ -21,7 +21,7 @@ import { useOrganizerText } from "./organizerStrings";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 
 const PLACEHOLDER = "#A5AFBD";
-const TYPES: PrivateHuntQuestType[] = ["arrive", "spin", "puzzle"];
+const TYPES: PrivateHuntQuestType[] = ["arrive", "spin", "puzzle", "restore"];
 const input = { fontFamily: sans, fontSize: 15, color: C.ink, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, paddingHorizontal: 14, paddingVertical: 12 } as const;
 
 export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: {
@@ -40,9 +40,8 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
   const [pictureError, setPictureError] = useState("");
   const [uploading, setUploading] = useState(false);
   // A quest added from the list starts with nothing but the type picker; one dropped on the map is already an arrive quest.
-  const hasPlace = (q: QuestDraft) => !!(q.location_lat || q.location_lng);
-  const [typed, setTyped] = useState(!!quest.id || hasPlace(quest));
-  useEffect(() => { setW(quest); setTyped(!!quest.id || hasPlace(quest)); setQuery(""); setResults([]); setConfirmDelete(false); }, [quest]);
+  const [typed, setTyped] = useState(!!quest.id || hasSpot(quest));
+  useEffect(() => { setW(quest); setTyped(!!quest.id || hasSpot(quest)); setQuery(""); setResults([]); setConfirmDelete(false); }, [quest]);
 
   // The same place search the Create flow uses, so an organizer picks a spot the way a sender does.
   useEffect(() => {
@@ -70,7 +69,8 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
   };
   const problems = questProblems(w);
   useQuestImages([w.image]);
-  const placed = !!(w.location_lat || w.location_lng);
+  const placed = hasSpot(w);
+  const catching = w.quest_type === "restore";
 
   return <Modal visible transparent animationType="slide" onRequestClose={onClose}>
     <View style={{ flex: 1, justifyContent: "flex-end" }}>
@@ -88,29 +88,30 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
             {TYPES.map((kind) => {
               const on = typed && w.quest_type === kind;
-              return <Pressable key={kind} accessibilityRole="radio" accessibilityState={{ selected: on }} onPress={() => { set({ quest_type: kind }); setTyped(true); }}
+              // A catch quest starts with five to catch; its spot, if it had one, is dropped when it saves.
+              return <Pressable key={kind} accessibilityRole="radio" accessibilityState={{ selected: on }}
+                onPress={() => { set(kind === "restore" ? { quest_type: kind, catch_count: w.catch_count ?? 5 } : { quest_type: kind }); setTyped(true); }}
                 style={{ flexBasis: "47%", flexGrow: 1, alignItems: "center", gap: 6, paddingVertical: 12, borderRadius: radii.md, backgroundColor: on ? C.glass : C.white, borderWidth: 1.5, borderColor: on ? C.blue : C.line }}>
                 <QuestGlyph type={kind} size={20} color={on ? C.blue : C.muted} />
-                <Text style={{ fontFamily: sans, fontSize: 13, color: on ? C.ink : C.muted }}>{h.questTypes[kind]}</Text>
+                <Text style={{ fontFamily: sans, fontSize: 13, color: on ? C.ink : C.muted, textAlign: "center" }}>{kind === "restore" ? o.catchType : h.questTypes[kind]}</Text>
               </Pressable>;
             })}
-            {/* Private hunts can't count catches on the server yet, so this one is shown but can't be chosen. */}
-            <View accessible accessibilityRole="radio" accessibilityState={{ disabled: true }} accessibilityLabel={`${o.catchType}, ${o.comingSoon}`}
-              style={{ flexBasis: "47%", flexGrow: 1, alignItems: "center", gap: 6, paddingVertical: 12, borderRadius: radii.md, backgroundColor: C.white, borderWidth: 1.5, borderColor: C.line, borderStyle: "dashed", opacity: .6 }}>
-              <QuestGlyph type="catch" size={20} color={C.muted} />
-              <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted, textAlign: "center" }}>{o.catchType}</Text>
-              <Text style={{ fontFamily: sans, fontSize: 10, letterSpacing: .6, color: C.brass }}>{o.comingSoon}</Text>
-            </View>
           </View>
           {typed && <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.questSub[w.quest_type]}</Text>}
+          {typed && catching && <>
+            <Label text={o.catchCount} />
+            <Stepper value={w.catch_count ?? 5} max={LIMITS.catches} label={o.catchCount} onChange={(catch_count) => set({ catch_count })} />
+            <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.catchNoPin}</Text>
+          </>}
           {typed && <>
+          {!catching && <>
           <Label text={o.whereLabel} />
           <Pressable accessibilityRole="button" onPress={() => setPicking(true)}
             style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: pressed ? C.glass : C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, padding: spacing.md })}>
             <ArtIcon name="pin" size={18} color={placed ? C.blue : C.muted} />
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: serif, fontSize: 15, color: placed ? C.ink : C.muted }}>{placed ? (placeName || w.name || o.unnamedSpot) : o.pickOnMap}</Text>
-              {placed && <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{w.location_lat.toFixed(5)}, {w.location_lng.toFixed(5)}</Text>}
+              {placed && <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{w.location_lat!.toFixed(5)}, {w.location_lng!.toFixed(5)}</Text>}
             </View>
             {placed && <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue }}>{o.movePin}</Text>}
           </Pressable>
@@ -122,6 +123,7 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
             <Text style={{ fontFamily: serif, fontSize: 15, color: C.ink }}>{p.name}</Text>
             {!!p.detail && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{p.detail}</Text>}
           </Pressable>)}
+          </>}
 
           <Label text={o.questName} />
           <TextInput accessibilityLabel={o.questName} value={w.name} onChangeText={(v) => set({ name: v })}
@@ -137,7 +139,7 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
               return <PictureChoice key={key} on={(w.image || DEFAULT_QUEST_IMAGE) === image} label={o.pictureTemplate(i + 1)} image={image} onPress={() => set({ image })} />;
             })}
           </ScrollView>
-          <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: pictureError ? C.wax : C.muted }}>{pictureError || o.pictureSub}</Text>
+          <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: pictureError ? C.wax : C.muted }}>{pictureError || (catching ? o.pictureSubCatch : o.pictureSub)}</Text>
 
           {w.quest_type === "arrive" && <>
             <Label text={o.arriveCheckLabel} />
@@ -235,7 +237,7 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
       </View>
     </View>
     {picking && <PinPicker quest={w.quest_type} image={w.image}
-      at={placed ? { lat: w.location_lat, lng: w.location_lng } : null}
+      at={placed ? { lat: w.location_lat!, lng: w.location_lng! } : null}
       you={location.fix ? { lat: location.fix.lat, lng: location.fix.lng } : null}
       onClose={() => setPicking(false)}
       onPick={(pin) => {
@@ -244,6 +246,23 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
         setPlaceName(pin.name); setPicking(false);
       }} />}
   </Modal>;
+}
+
+/** A small count, one step at a time: fewer, the number, more. */
+function Stepper({ value, max, label, onChange }: { value: number; max: number; label: string; onChange: (n: number) => void }) {
+  const step = (by: number) => onChange(Math.max(1, Math.min(max, value + by)));
+  const button = (by: number, text: string, off: boolean) => <Pressable accessibilityRole="button" accessibilityLabel={`${label} ${text}`} disabled={off} onPress={() => step(by)}
+    style={{ width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", backgroundColor: C.white, borderWidth: 1.5, borderColor: C.blue, opacity: off ? .4 : 1 }}>
+    <Text style={{ fontFamily: serif, fontSize: 22, lineHeight: 26, color: C.blue }}>{text}</Text>
+  </Pressable>;
+  return <View accessible accessibilityRole="adjustable" accessibilityLabel={label} accessibilityValue={{ min: 1, max, now: value }}
+    accessibilityActions={[{ name: "increment" }, { name: "decrement" }]}
+    onAccessibilityAction={(e) => step(e.nativeEvent.actionName === "increment" ? 1 : -1)}
+    style={{ flexDirection: "row", alignItems: "center", gap: spacing.lg }}>
+    {button(-1, "−", value <= 1)}
+    <Text style={{ minWidth: 40, fontFamily: serif, fontSize: 26, color: C.ink, textAlign: "center" }}>{value}</Text>
+    {button(1, "+", value >= max)}
+  </View>;
 }
 
 function PictureChoice({ on, label, image, onPress, children }: { on: boolean; label: string; image?: string; onPress: () => void; children?: React.ReactNode }) {

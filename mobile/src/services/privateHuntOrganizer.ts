@@ -4,7 +4,7 @@
 import { supabase } from "./supabase";
 import {
   PrivateHuntError, byRank, cleanCode, totalPoints,
-  type LeaderRow, type PrivateHuntQuestType, type PrivateHunt, type Quest,
+  type GuideMode, type LeaderRow, type PrivateHuntQuestType, type PrivateHunt, type Quest,
 } from "./privateHunt";
 
 export type HuntStatus = "draft" | "published" | "closed";
@@ -17,11 +17,16 @@ export type HuntDraft = {
   leaderboard_visible: boolean;
   starts_at: string; ends_at: string;
   time_limit_min: number | null;
+  /** Fixed: the guide waits at guide_lat/lng. Near: the guide appears beside each player, with no spot of its own. */
+  guide_mode: GuideMode; guide_lat: number | null; guide_lng: number | null;
 };
 /** One quest being edited. `answer` only ever travels organizer → server, never back to players. */
 export type QuestDraft = {
   id?: string; ordinal: number; name: string;
-  location_lat: number; location_lng: number;
+  /** Null for a catch quest, which has no spot. */
+  location_lat: number | null; location_lng: number | null;
+  /** Catch quests only: how many Corrupted Capsules to catch inside the hunt area. */
+  catch_count?: number | null;
   quest_type: PrivateHuntQuestType; points: number; description: string;
   /** Arrive quests check GPS, or GPS plus a QR code the organizer prints and leaves at the spot. */
   arrive_check: "gps" | "gps_qr";
@@ -39,7 +44,7 @@ export type Review = {
 /** The limits in "Rules and safety"; the server enforces them too. */
 export const LIMITS = {
   quests: 30, participants: 500, unfinishedHunts: 3,
-  name: 60, description: 500, answer: 80, choices: 6, points: 999,
+  name: 60, description: 500, answer: 80, choices: 6, points: 999, catches: 20,
 } as const;
 
 /** The link an organizer shares. The app and the website both open it. */
@@ -68,22 +73,27 @@ export const nextOrdinal = (quests: { ordinal: number }[]) =>
   quests.reduce((top, w) => Math.max(top, w.ordinal), 0) + 1;
 
 /** What still has to be filled in before a hunt can go out. Empty means it is ready. */
-export type Problem = "name" | "quests" | "window" | "tooManyQuests";
-export function huntProblems(draft: HuntDraft, quests: { id?: string }[]): Problem[] {
+export type Problem = "name" | "quests" | "window" | "tooManyQuests" | "guideArea";
+export function huntProblems(draft: HuntDraft, quests: Pick<QuestDraft, "location_lat" | "location_lng">[]): Problem[] {
   const problems: Problem[] = [];
   if (!draft.name.trim()) problems.push("name");
   if (!quests.length) problems.push("quests");
+  // A guide who appears near players needs an area to appear in, and only quest pins make one.
+  else if (draft.guide_mode !== "fixed" && !quests.some(hasSpot)) problems.push("guideArea");
   if (quests.length > LIMITS.quests) problems.push("tooManyQuests");
   // A private hunt always ends: the server refuses "infinity" (only daily City Hunts run without an end).
   const end = new Date(draft.ends_at).getTime();
   if (!Number.isFinite(end) || end <= new Date(draft.starts_at).getTime()) problems.push("window");
   return problems;
 }
-export type QuestProblem = "name" | "place" | "answer" | "choices" | "points";
+export type QuestProblem = "name" | "place" | "answer" | "choices" | "points" | "catches";
 export function questProblems(w: QuestDraft): QuestProblem[] {
   const problems: QuestProblem[] = [];
   if (!w.name.trim()) problems.push("name");
-  if (!w.location_lat && !w.location_lng) problems.push("place");
+  if (w.quest_type === "restore") {
+    const n = w.catch_count ?? 0;
+    if (!Number.isInteger(n) || n < 1 || n > LIMITS.catches) problems.push("catches");
+  } else if (!hasSpot(w)) problems.push("place");
   if (!Number.isInteger(w.points) || w.points < 1 || w.points > LIMITS.points) problems.push("points");
   if (w.quest_type === "puzzle") {
     // The server never sends a saved answer back, so a saved puzzle left blank keeps the answer it has.
@@ -97,7 +107,13 @@ export function questProblems(w: QuestDraft): QuestProblem[] {
   }
   return problems;
 }
-export const canPublish = (draft: HuntDraft, quests: { id?: string }[]) => huntProblems(draft, quests).length === 0;
+export const canPublish = (draft: HuntDraft, quests: Pick<QuestDraft, "location_lat" | "location_lng">[]) => huntProblems(draft, quests).length === 0;
+/** A quest with a spot on the map. */
+export const hasSpot = (w: Pick<QuestDraft, "location_lat" | "location_lng">) => w.location_lat != null && w.location_lng != null;
+/** What goes to the server: a catch quest drops any spot, every other kind drops the catch count. */
+export const questForSave = (w: QuestDraft): QuestDraft => w.quest_type === "restore"
+  ? { ...w, location_lat: null, location_lng: null, catch_count: w.catch_count ?? 5 }
+  : { ...w, catch_count: null };
 
 /** A fresh hunt, starting on the hour and running for a week. */
 export function blankDraft(): HuntDraft {
@@ -109,11 +125,12 @@ export function blankDraft(): HuntDraft {
     route_mode: "any", leaderboard_visible: true,
     starts_at: start.toISOString(), ends_at: new Date(start.getTime() + 7 * 86_400_000).toISOString(),
     time_limit_min: null,
+    guide_mode: "near", guide_lat: null, guide_lng: null,
   };
 }
 export function blankQuest(ordinal: number, at: { lat: number; lng: number } | null): QuestDraft {
   return {
-    ordinal, name: "", location_lat: at?.lat ?? 0, location_lng: at?.lng ?? 0,
+    ordinal, name: "", location_lat: at?.lat ?? null, location_lng: at?.lng ?? null,
     quest_type: "arrive", points: 10, description: "", arrive_check: "gps", image: "tpl:park",
     puzzle_kind: "choice", choices: ["", ""], answer: "",
   };
@@ -127,7 +144,7 @@ const rpc = (fn: string, args?: Record<string, unknown>): Promise<RpcResult> =>
 const fail = (e: { message?: string } | null) => {
   if (!e) return;
   const m = e.message ?? "";
-  throw new PrivateHuntError(/hunt_locked/.test(m) ? "hunt_locked" : /not allowed|permission|can_create/i.test(m) ? "not_allowed" : "unknown");
+  throw new PrivateHuntError(/hunt_locked/.test(m) ? "hunt_locked" : /area_required/.test(m) ? "area_required" : /not allowed|permission|can_create/i.test(m) ? "not_allowed" : "unknown");
 };
 export const organizer = {
   /** Whether this account is on the server-owned organizer allow-list. */
@@ -152,7 +169,7 @@ export const organizer = {
     fail(error); return;
   },
   async saveQuest(userId: string, id: string, w: QuestDraft): Promise<void> {
-    const { error } = await rpc("private_hunt_quest_save", { p_hunt: id, p_quest: w });
+    const { error } = await rpc("private_hunt_quest_save", { p_hunt: id, p_quest: questForSave(w) });
     fail(error); return;
   },
   async deleteQuest(userId: string, id: string, questId: string): Promise<void> {

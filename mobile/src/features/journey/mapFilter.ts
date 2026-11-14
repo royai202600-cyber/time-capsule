@@ -12,6 +12,8 @@ const KINDS: Record<Exclude<MapFilter, "all">, LivePin["kind"][]> = {
 };
 
 export const shows = (filter: MapFilter, kind: LivePin["kind"]) => filter === "all" || KINDS[filter].includes(kind);
+/** A pin is shown under its kind's filter, or under the one it says it belongs to. */
+export const showsPin = (filter: MapFilter, pin: Pick<LivePin, "kind" | "filterAs">) => shows(filter, pin.filterAs ?? pin.kind);
 
-export const filterCounts = (pins: Pick<LivePin, "kind">[]) =>
-  Object.fromEntries(MAP_FILTERS.map((f) => [f, pins.filter((p) => shows(f, p.kind)).length])) as Record<MapFilter, number>;
+export const filterCounts = (pins: Pick<LivePin, "kind" | "filterAs">[]) =>
+  Object.fromEntries(MAP_FILTERS.map((f) => [f, pins.filter((p) => showsPin(f, p)).length])) as Record<MapFilter, number>;
