@@ -20,7 +20,7 @@ insert into public.profiles(id,name) values
   ('087e002a-3aee-4cb4-a1ad-a6d001dbba13','Daily Reset');
 insert into private.game_speed_allowlist(user_id) values
   ('087e002a-3aee-4cb4-a1ad-a6d001dbba13');
-update public.hunts set reset_timezone='Asia/Taipei' where id='xinyi-2026-11';
+update public.hunts set reset_timezone='Asia/Taipei',time_limit_min=null where id='xinyi-2026-11';
 select pg_temp.require_ok((select count(*)=1 from public.hunts
   where id='xinyi-2026-11' and reset_timezone='Asia/Taipei'), 'opt-in timezone');
 

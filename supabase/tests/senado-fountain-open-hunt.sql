@@ -1,5 +1,11 @@
 -- Hosted preflight: run the migration body and these assertions in one
--- transaction, then ROLLBACK. Use an existing disposable allow-listed user.
+-- transaction, then ROLLBACK. All fixtures are disposable.
+insert into auth.users(id,email) values
+  ('4d43fcfb-09d6-4557-9bc3-e2738852a4b3','senado-fountain@example.invalid');
+insert into public.profiles(id,name) values
+  ('4d43fcfb-09d6-4557-9bc3-e2738852a4b3','Fountain preflight');
+insert into private.game_speed_allowlist(user_id) values
+  ('4d43fcfb-09d6-4557-9bc3-e2738852a4b3');
 select set_config('request.jwt.claim.sub',
   '4d43fcfb-09d6-4557-9bc3-e2738852a4b3',true);
 do $$
