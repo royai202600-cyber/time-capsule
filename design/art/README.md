@@ -491,3 +491,18 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 [HKUST stamp review at 40/64/120px](_checks/hkust-stamp-review.png) · [Checks](_checks/hkust-stamp-audit.json) · [Exact prompt](_checks/hkust-stamp-prompts.json)
 
 [HKUST place/hunt beside Xinyi review](_checks/hkust-stamp-review.png) · [Triangle-only pixel proof](_checks/hkust-triangle-fix.json) · [Hunt prompt and references](_checks/hkust-hunt-stamp-prompts.json)
+
+## Private-hunt test art
+
+| PNG master | Size | Review |
+| --- | --- | --- |
+| `quest-templates/quest-template-park.png` | 1024×1024 | Opaque park quest picture for a 46 px circle and centered 16:9 banner. Template key `park`. |
+| `quest-templates/quest-template-garden.png` | 1024×1024 | Quest template key `garden`. |
+| `quest-templates/quest-template-waterfront.png` | 1024×1024 | Quest template key `waterfront`. |
+| `quest-templates/quest-template-square.png` | 1024×1024 | Quest template key `square`. |
+| `quest-templates/quest-template-public-art.png` | 1024×1024 | Quest template key `publicArt`. |
+| `quest-templates/quest-template-old-street.png` | 1024×1024 | Quest template key `oldStreet`. |
+| `stamps/stamp-private-hunt.png` | 1024×1024 | Transparent double-ring location-pin stamp in one brass ink (`#C9A15A`). |
+| `hunt-covers/hunt-cover-park.png` | 1280×720 | Opaque full-bleed cover for a fictional park. |
+
+[Six-template review](_checks/private-hunt-quest-templates-review.png) shows each WebP at 46 px over land and water and in a centered 16:9 crop. The 3D pin and original review sheet are preserved in commit `f55af42`. The stamp and park cover remain under review. Roy approved the park template as-is. The remaining five templates await set review. The backend needs to add `oldStreet` to its template allowlist.

@@ -140,3 +140,7 @@ In progress: fresh phone/browser recipients have no earned vessels; ready landma
 
 ### PR #66 — verified and merged
 Done: `d92f13f`, green CI 42366748860 on `b7b02b5`. Roy verified actual iPhone Expo Go first earn, Cabinet/no replay and iOS Reduce Motion on a fresh landmark. Test account began unowned and earned two distinct landmarks. Browser verifies first/owned/reopened cases, both languages, 390/375 px and no reduced-motion rays/ring/sparkles. TypeScript, 29 tests, Expo dependencies, iOS/web exports and root build pass. Owner-authored production release follows; production smoke and fixture cleanup finish the release. No backend migration/settings/dependency change.
+
+- City Orienteering private-hunt art: Roy approved the park quest template. PR #115 now includes all six [quest templates](../design/art/_checks/private-hunt-quest-templates-review.png) for review. The new `oldStreet` key needs backend allowlist support. The brass Passport stamp and park cover still await approval.
+
+- Roy approved all six quest templates, the Passport stamp and the park hunt cover in PR #115 at `bfdde0e`.

@@ -1,0 +1,160 @@
+{
+  "count": 8,
+  "passed": 8,
+  "failed": [],
+  "assets": [
+    {
+      "path": "hunt-covers/hunt-cover-park.png",
+      "size": [
+        1280,
+        720
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-templates/quest-template-garden.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-templates/quest-template-old-street.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-templates/quest-template-park.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-templates/quest-template-public-art.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-templates/quest-template-square.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-templates/quest-template-waterfront.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "stamps/stamp-private-hunt.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true,
+        "one_ink_color": true
+      },
+      "pass": true
+    }
+  ]
+}

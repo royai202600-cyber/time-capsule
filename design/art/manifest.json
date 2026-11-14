@@ -9391,5 +9391,150 @@
     986
   ],
   "web_export": "public/art/stamps/stamp-hunt-hkust-2026-11.webp"
-}
+},
+  {
+    "path": "design/art/stamps/stamp-private-hunt.png",
+    "what": "Brass double-ring private-hunt Passport stamp with location-pin motif",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nOne private-hunt Passport stamp, frontal flat print. Subject-specific exception: one ink color only, brass #C9A15A, stippled worn rubber-stamp texture sparingly along edges. Two distinct concentric round rings with generous separation and a bold simple centered classic location-pin silhouette with open round negative-space center. Clear at 24 pixels. Genuine transparent background including all uninked spaces. No type, no stars, no decoration. The second reference is for double-ring scale and weight only.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/stamps/stamp-hunt-xinyi-2026-11.png"
+    ],
+    "ink_rgb": [
+      201,
+      161,
+      90
+    ],
+    "postprocess": "Extract brass ink coverage and normalize selected stamp to palette brass.",
+    "web_export": "public/art/stamps/stamp-private-hunt.webp"
+  },
+  {
+    "path": "design/art/hunt-covers/hunt-cover-park.png",
+    "what": "Park cover for private hunts",
+    "size_px": [
+      1280,
+      720
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nDefault park-themed private orienteering hunt cover. Cover-specific exception to square transparent object guidance: landscape 16:9 with opaque full-bleed paper and illustration, enough image around edges for a modest crop to 1280×720. A winding public park footpath under leafy ink-blue trees, a quiet wooden bench, low blue foliage and warm cream light, inviting sense of a walk. Generic fictional place, no text or glyphs. Broad readable shapes, quiet drawn line, lightly grained cool paper, palette restrained and aligned to reference. No border.",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "postprocess": "Center crop to 16:9 and downscale to 1280×720.",
+    "web_export": "public/art/hunt-covers/hunt-cover-park.webp"
+  },
+  {
+    "path": "design/art/quest-templates/quest-template-park.png",
+    "what": "Park quest template for a circular map photo and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nMake one generic park quest template picture for a map marker and a detail banner. Picture-specific framing: opaque full-bleed square paper scene. The same master must work in a 46-pixel circular crop and a centered 16:9 crop. Keep a single large, easy-to-read group in the middle: a warm wooden park bench in front of one rounded ink-blue shade tree, beside a broad curving cream path. The tree canopy, enough of its trunk, and the entire bench must remain legible in the central 56% of the image height and within the inner two-thirds of the width. Use bold masses and clean contours with little internal detail. Soft blue park vegetation and warm paper light continue to all edges. No text, people, logos, pins, border, frames, labels, or additional focal objects. The bench and tree should read at a glance when the entire image is reduced to 46 pixels.",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "template_key": "park",
+    "postprocess": "Downscale to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-templates/quest-template-park.webp"
+  },
+  {
+    "path": "design/art/quest-templates/quest-template-garden.png",
+    "what": "Garden quest template for a circular map photo and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nMake one generic garden quest template for a map marker and a detail banner. First attached image is the approved style sheet. Second attached image is the approved park quest template, a reference for the scale, centered framing, ink weight, paper texture, and broad color masses. Picture-specific framing: opaque full-bleed square scene. The subject is a large rounded flowering shrub with five distinct wax-red and cream blossoms behind a low brass-edged rectangular planter, with a short cream garden path behind it. Keep the main group centered and similarly sized to the bench and tree in the park template. Put its identifying features within the middle 56% of the image height, with clear space to distinguish them at 46 pixels in a centered circular crop. Continue simple surroundings to all four edges. A centered 16:9 crop should show the identifying features clearly. Avoid small secondary objects and fine decoration. No people, text, signs, logos, frames, borders, or map pins. This is a fictional generic place.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-templates/quest-template-park.png"
+    ],
+    "template_key": "garden",
+    "postprocess": "Downscale to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-templates/quest-template-garden.webp"
+  },
+  {
+    "path": "design/art/quest-templates/quest-template-waterfront.png",
+    "what": "Waterfront quest template for a circular map photo and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nMake one generic waterfront quest template for a map marker and a detail banner. First attached image is the approved style sheet. Second attached image is the approved park quest template, a reference for the scale, centered framing, ink weight, paper texture, and broad color masses. Picture-specific framing: opaque full-bleed square scene. The subject is a short warm wooden pier leading from the center foreground into a broad blue waterfront, with two stout brass bollards and a simple curved shoreline clearly visible. Keep the main group centered and similarly sized to the bench and tree in the park template. Put its identifying features within the middle 56% of the image height, with clear space to distinguish them at 46 pixels in a centered circular crop. Continue simple surroundings to all four edges. A centered 16:9 crop should show the identifying features clearly. Avoid small secondary objects and fine decoration. No people, text, signs, logos, frames, borders, or map pins. This is a fictional generic place.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-templates/quest-template-park.png"
+    ],
+    "template_key": "waterfront",
+    "postprocess": "Downscale to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-templates/quest-template-waterfront.webp"
+  },
+  {
+    "path": "design/art/quest-templates/quest-template-square.png",
+    "what": "Square quest template for a circular map photo and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nMake one generic square quest template for a map marker and a detail banner. First attached image is the approved style sheet. Second attached image is the approved park quest template, a reference for the scale, centered framing, ink weight, paper texture, and broad color masses. Picture-specific framing: opaque full-bleed square scene. The subject is a low wide circular brass fountain with a simple glass-blue central jet, standing on open cream plaza paving with a few distant navy-blue building shapes. Keep the main group centered and similarly sized to the bench and tree in the park template. Put its identifying features within the middle 56% of the image height, with clear space to distinguish them at 46 pixels in a centered circular crop. Continue simple surroundings to all four edges. A centered 16:9 crop should show the identifying features clearly. Avoid small secondary objects and fine decoration. No people, text, signs, logos, frames, borders, or map pins. This is a fictional generic place.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-templates/quest-template-park.png"
+    ],
+    "template_key": "square",
+    "postprocess": "Downscale to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-templates/quest-template-square.webp"
+  },
+  {
+    "path": "design/art/quest-templates/quest-template-public-art.png",
+    "what": "Public art quest template for a circular map photo and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nMake one generic public art quest template for a map marker and a detail banner. First attached image is the approved style sheet. Second attached image is the approved park quest template, a reference for the scale, centered framing, ink weight, paper texture, and broad color masses. Picture-specific framing: opaque full-bleed square scene. The subject is one large abstract loop sculpture in wax red on a low cream stone plinth, set on blue-gray pavement with quiet blue foliage far behind it. Keep the main group centered and similarly sized to the bench and tree in the park template. Put its identifying features within the middle 56% of the image height, with clear space to distinguish them at 46 pixels in a centered circular crop. Continue simple surroundings to all four edges. A centered 16:9 crop should show the identifying features clearly. Avoid small secondary objects and fine decoration. No people, text, signs, logos, frames, borders, or map pins. This is a fictional generic place.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-templates/quest-template-park.png"
+    ],
+    "template_key": "publicArt",
+    "postprocess": "Downscale to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-templates/quest-template-public-art.webp"
+  },
+  {
+    "path": "design/art/quest-templates/quest-template-old-street.png",
+    "what": "Old street quest template for a circular map photo and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nMake one generic old street quest template for a map marker and a detail banner. First attached image is the approved style sheet. Second attached image is the approved park quest template, a reference for the scale, centered framing, ink weight, paper texture, and broad color masses. Picture-specific framing: opaque full-bleed square scene. The subject is two adjoining old shopfronts with warm wood doors and wax-red awnings, flanking a narrow cream cobbled lane, viewed from close enough that the doors and lane read as large shapes. Keep the main group centered and similarly sized to the bench and tree in the park template. Put its identifying features within the middle 56% of the image height, with clear space to distinguish them at 46 pixels in a centered circular crop. Continue simple surroundings to all four edges. A centered 16:9 crop should show the identifying features clearly. Avoid small secondary objects and fine decoration. No people, text, signs, logos, frames, borders, or map pins. This is a fictional generic place.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-templates/quest-template-park.png"
+    ],
+    "template_key": "oldStreet",
+    "postprocess": "Downscale to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-templates/quest-template-old-street.webp"
+  }
 ]
