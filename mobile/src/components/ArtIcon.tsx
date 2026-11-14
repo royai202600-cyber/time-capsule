@@ -2,7 +2,7 @@ import React from 'react';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { C } from '../theme';
 
-export type IconName = 'pin' | 'back' | 'close' | 'plus' | 'lock' | 'check' | 'shop' | 'user' | 'map' | 'cabinet' | 'share' | 'camera' | 'pen' | 'mic' | 'alarm' | 'up' | 'down' | 'locate' | 'passport' | 'album' | 'quest';
+export type IconName = 'pin' | 'back' | 'close' | 'plus' | 'lock' | 'check' | 'shop' | 'user' | 'map' | 'cabinet' | 'share' | 'camera' | 'pen' | 'mic' | 'alarm' | 'up' | 'down' | 'locate' | 'passport' | 'album' | 'quest' | 'filter';
 const lines: Record<IconName, string> = {
   locate: 'M12 5a7 7 0 1 0 0 14 7 7 0 0 0 0-14ZM12 2v3m0 14v3M2 12h3m14 0h3',
   quest: 'M6 3h12a1.5 1.5 0 0 1 0 3H6a1.5 1.5 0 0 1 0-3Zm0 15h12a1.5 1.5 0 0 1 0 3H6a1.5 1.5 0 0 1 0-3ZM7.5 6v12m9-12v12M10 9.5h4M10 12h4',
@@ -24,6 +24,7 @@ const lines: Record<IconName, string> = {
   alarm: 'M12 21a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm0-12v4l3 2M3.5 6.5l3-3m14 3-3-3M7 20l-1.5 2m11.5-2 1.5 2',
   up: 'M6 15l6-6 6 6',
   down: 'M6 9l6 6 6-6',
+  filter: 'M4 7h10m5 0h1M14 7a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0M4 17h1m5 0h10M5 17a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0',
   mic: 'M9 5a3 3 0 0 1 6 0v6a3 3 0 0 1-6 0V5ZM5 11a7 7 0 0 0 14 0M12 18v3m-4 0h8',
 };
 export function ArtIcon({ name, size = 24, color = C.ink }: { name: IconName; size?: number; color?: string }) {
