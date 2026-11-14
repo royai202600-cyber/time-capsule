@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 // The helpers under test are pure; these two keep the module's native imports out of the test run.
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: { getItem: vi.fn(), setItem: vi.fn() } }));
 vi.mock("./supabase", () => ({ supabase: { auth: { getSession: vi.fn() }, rpc: vi.fn() } }));
-import { byRank, cleanCode, doneCount, huntOpen, inOrder, locked, sameAnswer, totalPoints, waitLeft, type LeaderRow, type PrivateHunt, type Waypoint } from "./huntPrivate";
+import { byRank, cleanCode, doneCount, huntOpen, inOrder, locked, sameAnswer, totalPoints, waitLeft, type LeaderRow, type PrivateHunt, type Waypoint, questQr, questToken } from "./huntPrivate";
 
 const wp = (id: string, ordinal: number, points: number, done?: string | null): Waypoint =>
   ({ id, ordinal, points, name: id, lat: 25, lng: 121, mission_type: "arrive", done_at: done ?? null });
@@ -73,4 +73,15 @@ describe("open window", () => {
   it("is closed after it ends", () => expect(huntOpen(h, Date.parse("2028-01-01T00:00:00Z"))).toBe(false));
   it("treats infinity as never ending", () =>
     expect(huntOpen({ ...h, ends_at: "infinity" }, Date.parse("2099-01-01T00:00:00Z"))).toBe(true));
+});
+
+describe("quest QR codes", () => {
+  it("reads the token from a scanned QR or a typed code", () => {
+    expect(questToken(questQr("PARKGATE24"))).toBe("PARKGATE24");
+    expect(questToken(" park-gate 24 ")).toBe("PARKGATE24");
+  });
+  it("rejects things that can't be a token", () => {
+    expect(questToken("abc")).toBe("");
+    expect(questToken("https://example.com/some/very/long/path/that/is/not/ours")).toBe("");
+  });
 });

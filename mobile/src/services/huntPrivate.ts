@@ -42,7 +42,7 @@ export type PrivateHunt = {
 export type LeaderRow = { user: string; name: string; avatar?: Record<string, unknown> | null; points: number; duration_s?: number | null; you?: boolean };
 export type MissionResult = { hunt: PrivateHunt; points_gained: number; tries_left: number; wait_s: number };
 
-const CODES = ["bad_code", "too_far", "closed", "not_joined", "locked", "already_done", "wrong_answer", "no_tries", "not_started", "time_up", "not_allowed", "not_ready", "too_many", "unknown"] as const;
+const CODES = ["bad_code", "too_far", "closed", "not_joined", "locked", "already_done", "wrong_answer", "no_tries", "not_started", "time_up", "wrong_qr", "not_allowed", "not_ready", "too_many", "unknown"] as const;
 export type PrivateHuntErrorCode = typeof CODES[number];
 export class PrivateHuntError extends Error { constructor(public code: PrivateHuntErrorCode) { super(code); } }
 
@@ -74,6 +74,13 @@ export const sameAnswer = (a: string, b: string) => normalise(a) === normalise(b
 const normalise = (s: string) => s.toLowerCase().replace(/\s+/g, "").replace(/[，。、！？,.!?]/g, "");
 export const huntOpen = (h: PrivateHunt, now = Date.now()) =>
   now >= new Date(h.starts_at).getTime() && (h.ends_at === "infinity" || now <= new Date(h.ends_at).getTime());
+/** What a quest's on-site QR code carries: the server's secret for that quest. */
+export const questQr = (token: string) => `timecapsule://quest/${token}`;
+/** The token from a scanned QR or a typed code, in any case and with stray spaces or dashes; "" if it can't be one. */
+export function questToken(raw: string) {
+  const token = raw.trim().replace(/^timecapsule:\/\/quest\//i, "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  return token.length >= 6 && token.length <= 24 ? token : "";
+}
 /** A 6-character code, typed in any case and with stray spaces or dashes. */
 export const cleanCode = (raw: string) => raw.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
 
@@ -97,6 +104,8 @@ const near = (at: Coords | null, w: { lat: number; lng: number }) =>
 // the live path never sees an answer.
 const DEMO_CODE = "DEMO24";
 const DEMO_ANSWER = "1901";
+/** The demo's park-gate quest asks for this code, as if printed under a QR at the gate. */
+const DEMO_QR = "PARKGATE24";
 const DEMO_PUZZLE_CHOICES = ["1897", "1901", "1912"];
 type DemoProgress = { joined_at: string | null; started_at: string | null; finished_at: string | null; done: Record<string, string>; tries: Record<string, number>; wait: Record<string, string> };
 const emptyDemo = (): DemoProgress => ({ joined_at: null, started_at: null, finished_at: null, done: {}, tries: {}, wait: {} });
@@ -121,6 +130,7 @@ function demoHunt(at: Coords): PrivateHunt {
     return {
       id: `demo-wp-${i + 1}`, ordinal: i + 1, name, mission_type, points, description,
       lat: spot.lat, lng: spot.lng,
+      arrive_check: i === 0 ? "gps_qr" : mission_type === "arrive" ? "gps" : null,
       puzzle_kind: mission_type === "puzzle" ? "choice" : null,
       choices: mission_type === "puzzle" ? DEMO_PUZZLE_CHOICES : null,
       done_at: demo.done[`demo-wp-${i + 1}`] ?? null,
@@ -196,13 +206,14 @@ export const privateHunt = {
   },
   /**
    * Finish one mission. The server re-checks the distance, the route order and the answer; nothing here
-   * is trusted. `answer` is the player's text or chosen option, for puzzles only.
+   * is trusted. `answer` is the player's text or chosen option, for puzzles only; `qr` is the token
+   * scanned or typed at a GPS + QR quest.
    */
-  async complete(h: PrivateHunt, w: Waypoint, at: Coords | null, answer?: string): Promise<MissionResult> {
+  async complete(h: PrivateHunt, w: Waypoint, at: Coords | null, answer?: string, qr?: string): Promise<MissionResult> {
     if (!h.preview) {
       if (!at) throw new PrivateHuntError("too_far");
       const { data, error } = await rpc("hunt_mission_complete", {
-        p_waypoint: w.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10, p_answer: answer ?? null,
+        p_waypoint: w.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10, p_answer: answer ?? null, p_qr: qr ?? null,
       });
       fail(error); return data as MissionResult;
     }
@@ -215,6 +226,7 @@ export const privateHunt = {
     if (locked(h, w)) throw new PrivateHuntError("locked");
     if (!near(at, w)) throw new PrivateHuntError("too_far");
     if (waitLeft(w)) throw new PrivateHuntError("no_tries");
+    if (w.arrive_check === "gps_qr" && questToken(qr ?? "") !== DEMO_QR) throw new PrivateHuntError("wrong_qr");
     if (w.mission_type === "puzzle" && !sameAnswer(answer ?? "", DEMO_ANSWER)) {
       const tries = (demo.tries[w.id] ?? 0) + 1;
       demo.tries[w.id] = tries;

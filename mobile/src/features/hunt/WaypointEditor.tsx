@@ -8,7 +8,7 @@ import { searchPlaces, type PointPlace } from "../../services/places";
 import { LIMITS, waypointProblems, type WaypointDraft } from "../../services/huntOrganizer";
 import { GiftQr } from "../capsule/GiftQr";
 import { PinPicker } from "./PinPicker";
-import type { MissionType } from "../../services/huntPrivate";
+import { questQr, type MissionType } from "../../services/huntPrivate";
 import { Btn } from "./HuntViews";
 import { MissionGlyph } from "./PrivateHuntViews";
 import { useHuntText } from "./strings";
@@ -112,6 +112,8 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
             {w.arrive_check === "gps_qr" && <View style={{ alignItems: "center", gap: spacing.sm, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, padding: spacing.md }}>
               {w.qr_token
                 ? <><GiftQr value={questQr(w.qr_token)} label={o.qrForQuest(w.name || o.unnamedSpot)} />
+                  {/* Printed under the QR, so a player whose camera won't work can type it. */}
+                  <Text selectable style={{ fontFamily: serif, fontSize: 18, letterSpacing: 3, color: C.ink }}>{w.qr_token}</Text>
                   <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textAlign: "center" }}>{o.printQr}</Text></>
                 : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textAlign: "center" }}>{o.qrAfterSave}</Text>}
             </View>}
@@ -208,9 +210,6 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
       }} />}
   </Modal>;
 }
-
-/** What the on-site QR code carries: the server's secret for that quest, which a player's scan sends back. */
-export const questQr = (token: string) => `timecapsule://quest/${token}`;
 
 const Label = ({ text }: { text: string }) =>
   <Text style={{ fontFamily: sans, fontSize: 12, letterSpacing: 1, color: C.muted, marginBottom: -8 }}>{text}</Text>;

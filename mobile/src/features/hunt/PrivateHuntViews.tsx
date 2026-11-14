@@ -1,5 +1,5 @@
 // Private City Hunt screens for players (docs/design/city-orienteering.md, Part B).
-// Brass is the private hunt's colour throughout, as blue now belongs to our own system hunts.
+// Brass marks only what a private hunt leaves on the map and in the Passport; every control is the app's blue.
 import React, { useEffect, useState } from "react";
 import { Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import Svg, { Circle, Path, Rect } from "react-native-svg";
@@ -17,6 +17,7 @@ import {
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { Btn, HuntCard, huntWindow, type TaskRow } from "./HuntViews";
 import { useHuntText } from "./strings";
+import { QrScanner } from "./QrScanner";
 
 /** One glyph per mission type, matching the glyph drawn on its brass pin. */
 export function MissionGlyph({ type, size = 18, color = C.blue }: { type: MissionType; size?: number; color?: string }) {
@@ -152,10 +153,11 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenMission, onLeaderboar
 export function MissionSheet({ visible, hunt, waypoint, meters, busy, error, tries, onClose, onComplete }: {
   visible: boolean; hunt: PrivateHunt; waypoint: Waypoint; meters: number; busy: boolean;
   error?: string | null; tries?: number;
-  onClose: () => void; onComplete: (answer?: string) => void;
+  onClose: () => void; onComplete: (answer?: string, qr?: string) => void;
 }) {
   const t = useHuntText();
   const [answer, setAnswer] = useState("");
+  const [scanning, setScanning] = useState(false);
   const [, tick] = useState(0);
   useEffect(() => { if (visible) setAnswer(""); }, [visible, waypoint.id]);
   const near = meters <= GAME_ACTION_RADIUS_M;
@@ -168,6 +170,7 @@ export function MissionSheet({ visible, hunt, waypoint, meters, busy, error, tri
     return () => clearInterval(timer);
   }, [!wait]);
   const puzzle = waypoint.mission_type === "puzzle";
+  const needsQr = waypoint.mission_type === "arrive" && waypoint.arrive_check === "gps_qr";
   const canAct = near && !done && !shut && !wait && (!puzzle || !!answer.trim());
   return <Sheet visible={visible} title={waypoint.name} onClose={onClose}>
     <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
@@ -205,9 +208,10 @@ export function MissionSheet({ visible, hunt, waypoint, meters, busy, error, tri
       {!!wait && <Text style={{ fontFamily: sans, fontSize: 13, color: C.wax }}>{t.waitSeconds(wait)}</Text>}
       {!wait && tries != null && tries > 0 && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.triesLeft(tries)}</Text>}
 
-      {!done && <Btn disabled={!canAct || busy} onPress={() => onComplete(puzzle ? answer : undefined)}
-        title={puzzle ? t.answerSend : waypoint.mission_type === "spin" ? t.spinHere : t.checkInHere} />}
+      {!done && <Btn disabled={!canAct || busy} onPress={() => needsQr ? setScanning(true) : onComplete(puzzle ? answer : undefined)}
+        title={needsQr ? t.scanQr : puzzle ? t.answerSend : waypoint.mission_type === "spin" ? t.spinHere : t.checkInHere} />}
     </ScrollView>
+    {scanning && <QrScanner onClose={() => setScanning(false)} onScan={(token) => { setScanning(false); onComplete(undefined, token); }} />}
   </Sheet>;
 }
 
