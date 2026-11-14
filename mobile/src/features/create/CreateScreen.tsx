@@ -5,8 +5,7 @@ import { Animated, Easing, Image, ImageBackground, PanResponder, Keyboard, Platf
 import { GestureDetector, useNativeGesture, usePanGesture } from 'react-native-gesture-handler';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { goBack } from "../../navigation";
-import * as ImagePicker from 'expo-image-picker';
-import * as ImageManipulator from 'expo-image-manipulator';
+import { pickPhoto } from '../../components/pickPhoto';
 import { useSharedValue, withSpring } from 'react-native-reanimated';
 import { Avatar } from '../../components/Avatar';
 import { Vessel, type VesselKind } from '../../components/Vessel';
@@ -51,39 +50,6 @@ const PLACEHOLDER = '#A5AFBD';
 const card = { borderWidth: 1.5, borderColor: C.line, backgroundColor: C.white, borderRadius: 16, padding: 14 } as const;
 const label = { fontFamily: sans, color: C.ink } as const;
 // The letter's centre is at stage y=125; these drops meet each vessel's opening at stage y=270–325.
-
-// Expo SDK 58 currently prefixes its web file accept filter with a comma, which
-// leaves Chrome's macOS picker unable to select images. Use a plain image input.
-function pickWebPhoto(source: 'camera' | 'library'): Promise<string | null> {
-  return new Promise((resolve, reject) => {
-    const input = document.createElement('input');
-    input.type = 'file'; input.accept = 'image/*';
-    if (source === 'camera') input.capture = 'environment';
-    input.style.display = 'none';
-    input.oncancel = () => { input.remove(); resolve(null); };
-    input.onchange = () => {
-      const file = input.files?.[0]; input.remove();
-      if (!file) { resolve(null); return; }
-      const url = URL.createObjectURL(file);
-      const image = document.createElement('img');
-      image.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image load failed')); };
-      image.onload = () => {
-        const scale = Math.min(1, 1280 / Math.max(image.naturalWidth, image.naturalHeight));
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.round(image.naturalWidth * scale);
-        canvas.height = Math.round(image.naturalHeight * scale);
-        const context = canvas.getContext('2d');
-        if (!context) { URL.revokeObjectURL(url); reject(new Error('canvas unavailable')); return; }
-        context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        URL.revokeObjectURL(url);
-        resolve(canvas.toDataURL('image/jpeg', .78));
-      };
-      image.src = url;
-    };
-    document.body.appendChild(input);
-    input.click();
-  });
-}
 
 export default function CreateScreen() {
   const { t, language } = useLanguage();
@@ -231,20 +197,10 @@ export default function CreateScreen() {
   const next = async () => { const issue = validate(); if (issue) { setError(issue); void haptics.warn(); return; } if (step === 2 && hasHand) { saveDrawingDraft(); try { setDrawingData(drawing.current?.hasInk() ? await drawing.current.png() ?? null : null); } catch { setError(t('create.sendError')); return; } } setError(''); Keyboard.dismiss(); void haptics.tap(); if (step === 2 && predicting && !vessel) { const cookie = catalog.data?.find(v => v.id === 'fortune-cookie'); if (cookie && canUseVessel(cookie)) setVessel('fortune-cookie'); } if (stepIndex < flow.length) setStepIndex(stepIndex + 1); else setPhase('seal'); };
   const choosePhoto = async (source: 'camera' | 'library') => {
     setPhotoChoices(false); setError('');
-    if (Platform.OS !== 'web') { const permission = source === 'camera' ? await ImagePicker.requestCameraPermissionsAsync() : await ImagePicker.requestMediaLibraryPermissionsAsync(); if (!permission.granted) { setError(t('create.photoPermission')); return; } }
     try {
-      if (Platform.OS === 'web') {
-        const image = await pickWebPhoto(source);
-        if (image) { setPhoto(image); void haptics.tick(); }
-        return;
-      }
-      const result = source === 'camera' ? await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 1 }) : await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 1 });
-      if (result.canceled || !result.assets[0]) return;
-      const asset = result.assets[0], scale = Math.min(1, 1280 / Math.max(asset.width, asset.height));
-      const actions: ImageManipulator.Action[] = scale < 1 ? [{ resize: { width: Math.round(asset.width * scale), height: Math.round(asset.height * scale) } }] : [];
-      const image = await ImageManipulator.manipulateAsync(asset.uri, actions, { format: ImageManipulator.SaveFormat.JPEG, compress: .78, base64: true });
-      if (!image.base64) throw new Error('Missing JPEG bytes');
-      setPhoto(`data:image/jpeg;base64,${image.base64}`); void haptics.tick();
+      const image = await pickPhoto(source);
+      if (image === 'denied') { setError(t('create.photoPermission')); return; }
+      if (image) { setPhoto(image); void haptics.tick(); }
     } catch { setError(t('create.photoError')); void haptics.warn(); }
   };
   const finishAnimation = () => {

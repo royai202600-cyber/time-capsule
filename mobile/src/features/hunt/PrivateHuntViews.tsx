@@ -18,6 +18,7 @@ import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { Btn, HuntCard, huntWindow, type TaskRow } from "./HuntViews";
 import { useHuntText } from "./strings";
 import { QrScanner } from "./QrScanner";
+import { questImageSource } from "./questImage";
 
 /** One glyph per mission type, matching the glyph drawn on its brass pin. */
 export function MissionGlyph({ type, size = 18, color = C.blue }: { type: MissionType; size?: number; color?: string }) {
@@ -179,7 +180,7 @@ export function MissionSheet({ visible, hunt, waypoint, meters, busy, error, tri
         <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, color: C.blue, letterSpacing: .6 }}>{t.missionTypes[waypoint.mission_type]}</Text>
         <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{t.pointsShort(waypoint.points)}</Text>
       </View>
-      {!!waypoint.image && <Image source={{ uri: waypoint.image }} style={{ width: "100%", aspectRatio: 16 / 9, borderRadius: radii.md }} resizeMode="cover" />}
+      {!!waypoint.image && <Image source={questImageSource(waypoint.image)} style={{ width: "100%", aspectRatio: 16 / 9, borderRadius: radii.md }} resizeMode="cover" />}
       {!!waypoint.description && <Text style={{ fontFamily: sans, fontSize: 14, lineHeight: 22, color: C.ink }}>{waypoint.description}</Text>}
       <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{waypoint.mission_type === "arrive" && waypoint.arrive_check === "gps_qr" ? t.questHowQr : t.questHow[waypoint.mission_type]}</Text>
 

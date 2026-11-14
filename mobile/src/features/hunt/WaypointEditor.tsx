@@ -1,13 +1,15 @@
 // One quest and its waypoint, as the organizer sets it (docs/design/city-orienteering.md, Part B).
 // A puzzle's answer is typed here and sent to the server; it never travels back to a player.
 import React, { useEffect, useState } from "react";
-import { Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { ArtIcon } from "../../components/ArtIcon";
 import { useForegroundLocation } from "../journey/location";
 import { searchPlaces, type PointPlace } from "../../services/places";
 import { LIMITS, waypointProblems, type WaypointDraft } from "../../services/huntOrganizer";
 import { GiftQr } from "../capsule/GiftQr";
 import { PinPicker } from "./PinPicker";
+import { QUEST_TEMPLATES, questImageSource, templateImage } from "./questImage";
+import { pickPhoto } from "../../components/pickPhoto";
 import { questQr, type MissionType } from "../../services/huntPrivate";
 import { Btn } from "./HuntViews";
 import { MissionGlyph } from "./PrivateHuntViews";
@@ -33,6 +35,7 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
   const [results, setResults] = useState<PointPlace[]>([]);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [picking, setPicking] = useState(false);
+  const [pictureError, setPictureError] = useState("");
   useEffect(() => { setW(waypoint); setQuery(""); setResults([]); setConfirmDelete(false); }, [waypoint]);
 
   // The same place search the Create flow uses, so an organizer picks a spot the way a sender does.
@@ -46,6 +49,15 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
   }, [query]);
 
   const set = (patch: Partial<WaypointDraft>) => setW((old) => ({ ...old, ...patch }));
+  const upload = async () => {
+    setPictureError("");
+    try {
+      // Small: it is shown at most as a sheet banner and a 56 px pin.
+      const image = await pickPhoto("library", 800);
+      if (image === "denied") setPictureError(o.picturePermission);
+      else if (image) set({ image });
+    } catch { setPictureError(o.pictureError); }
+  };
   const problems = waypointProblems(w);
   const placed = !!(w.lat || w.lng);
 
@@ -83,6 +95,19 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
           <Label text={o.waypointName} />
           <TextInput accessibilityLabel={o.waypointName} value={w.name} onChangeText={(v) => set({ name: v })}
             maxLength={LIMITS.name} placeholder={o.waypointNamePlaceholder} placeholderTextColor={PLACEHOLDER} style={input} />
+
+          <Label text={o.pictureLabel} />
+          {/* Round like the pin it becomes, ringed in the quest's brass. */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm, paddingVertical: 4, paddingHorizontal: 2 }}>
+            <PictureChoice on={!w.image} label={o.pictureNone} onPress={() => set({ image: null })}><ArtIcon name="pin" size={24} color={C.brass} /></PictureChoice>
+            <PictureChoice on={false} label={o.pictureUpload} onPress={() => void upload()}><ArtIcon name="camera" size={22} color={C.blue} /></PictureChoice>
+            {!!w.image && !w.image.startsWith("tpl:") && <PictureChoice on label={o.pictureUpload} image={w.image} onPress={() => {}} />}
+            {QUEST_TEMPLATES.map((key, i) => {
+              const image = templateImage(key);
+              return <PictureChoice key={key} on={w.image === image} label={o.pictureTemplate(i + 1)} image={image} onPress={() => set({ image })} />;
+            })}
+          </ScrollView>
+          <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: pictureError ? C.wax : C.muted }}>{pictureError || o.pictureSub}</Text>
 
           <Label text={o.questLabel} />
           <View style={{ flexDirection: "row", gap: spacing.sm }}>
@@ -209,6 +234,13 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
         setPlaceName(pin.name); setPicking(false);
       }} />}
   </Modal>;
+}
+
+function PictureChoice({ on, label, image, onPress, children }: { on: boolean; label: string; image?: string; onPress: () => void; children?: React.ReactNode }) {
+  return <Pressable accessibilityRole="radio" accessibilityState={{ selected: on }} accessibilityLabel={label} onPress={onPress}
+    style={{ width: 60, height: 60, borderRadius: 30, borderWidth: on ? 3 : 1, borderColor: on ? C.brass : C.line, backgroundColor: C.white, alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+    {image ? <Image source={questImageSource(image)} style={{ width: "100%", height: "100%" }} resizeMode="cover" /> : children}
+  </Pressable>;
 }
 
 const Label = ({ text }: { text: string }) =>

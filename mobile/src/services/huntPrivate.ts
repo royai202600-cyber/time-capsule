@@ -129,6 +129,8 @@ function demoHunt(at: Coords): PrivateHunt {
     const spot = offset(at, north, east);
     return {
       id: `demo-wp-${i + 1}`, ordinal: i + 1, name, mission_type, points, description,
+      // Two quests carry a picture, so the demo shows both pin shapes.
+      image: i === 0 ? "tpl:park" : i === 2 ? "tpl:publicArt" : null,
       lat: spot.lat, lng: spot.lng,
       arrive_check: i === 0 ? "gps_qr" : mission_type === "arrive" ? "gps" : null,
       puzzle_kind: mission_type === "puzzle" ? "choice" : null,

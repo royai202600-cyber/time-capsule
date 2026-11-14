@@ -29,6 +29,8 @@ export type WaypointDraft = {
   arrive_check: "gps" | "gps_qr";
   /** Issued by the server once a GPS + QR quest is saved; the printed code carries it. Only the organizer sees it. */
   qr_token?: string;
+  /** A template ("tpl:park") or the organizer's own photo; it becomes the quest's pin on the map. */
+  image?: string | null;
   puzzle_kind: "text" | "choice"; choices: string[]; answer: string;
 };
 export type Review = {
@@ -117,7 +119,7 @@ export function blankDraft(): HuntDraft {
 export function blankWaypoint(ordinal: number, at: { lat: number; lng: number } | null): WaypointDraft {
   return {
     ordinal, name: "", lat: at?.lat ?? 0, lng: at?.lng ?? 0,
-    mission_type: "arrive", points: 10, description: "", arrive_check: "gps",
+    mission_type: "arrive", points: 10, description: "", arrive_check: "gps", image: null,
     puzzle_kind: "choice", choices: ["", ""], answer: "",
   };
 }
@@ -153,7 +155,7 @@ async function load(userId: string) {
 function asOwned(id: string, s: Stored): OwnedHunt {
   const waypoints: Waypoint[] = s.waypoints.map((w) => ({
     id: w.id ?? `${id}-${w.ordinal}`, ordinal: w.ordinal, name: w.name, lat: w.lat, lng: w.lng,
-    mission_type: w.mission_type, points: w.points, description: w.description || null,
+    mission_type: w.mission_type, points: w.points, description: w.description || null, image: w.image ?? null,
     arrive_check: w.mission_type === "arrive" ? w.arrive_check : null,
     puzzle_kind: w.mission_type === "puzzle" ? w.puzzle_kind : null,
     choices: w.mission_type === "puzzle" && w.puzzle_kind === "choice" ? w.choices.filter((c) => c.trim()) : null,
