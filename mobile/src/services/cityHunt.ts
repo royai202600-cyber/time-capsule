@@ -44,12 +44,12 @@ export const landmarkName = (h: Hunt, language: "zh" | "en") =>
   // Preserve the approved Xinyi Keeper line ("101") when the server adds the full Waypost name.
   (h.id === "xinyi-2026-11" ? KNOWN_NAMES[h.id].landmark[language] : null)
   || (language === "zh" ? h.landmark_name_zh : h.landmark_name_en) || KNOWN_NAMES[h.id]?.landmark[language] || null;
-/** A step's goal, for his lines. */
+/** A quest's goal, for his lines. */
 export const questGoal = (h: Hunt, key: CityHuntQuestType) => h.quests.find((s) => s.key === key)?.goal ?? 0;
 
 export const huntStatus = (h: Hunt, now = Date.now()) =>
   now < new Date(h.starts_at).getTime() ? "upcoming" : now > new Date(h.ends_at).getTime() ? "closed" : "open";
-const step = (h: Hunt, key: CityHuntQuestType) => h.quests.find((s) => s.key === key);
+const quest = (h: Hunt, key: CityHuntQuestType) => h.quests.find((s) => s.key === key);
 /** Steps between check-in and the return are all done: time to go back to the Keeper. */
 export const readyToReturn = (h: Hunt) => !!h.checked_in_at && !h.finished_at
   && h.quests.filter((s) => s.key !== "checkin" && s.key !== "return").every((s) => s.count >= s.goal);

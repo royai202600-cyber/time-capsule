@@ -86,7 +86,7 @@ try {
   assert(ok(await player.rpc('my_passport')).some(stamp => stamp.place === id && stamp.how_earned === 'private_hunt'));
   await player.auth.signOut();
   await owner.auth.signOut();
-  console.log('Real login passed: preview, join, three missions, errors, cooldown, time-up, leaderboard and stamp');
+  console.log('Real login passed: preview, join, three quests, errors, cooldown, time-up, leaderboard and stamp');
 } finally {
   const results = await Promise.all(fixtures.reverse().map(id => admin.auth.admin.deleteUser(id)));
   results.forEach(ok);

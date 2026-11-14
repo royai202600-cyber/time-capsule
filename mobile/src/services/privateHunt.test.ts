@@ -14,8 +14,8 @@ const hunt = (route: "any" | "ordered", quests: Quest[]): PrivateHunt => ({
 
 describe("points and progress", () => {
   const h = hunt("any", [wp("a", 1, 10, "2026-11-14T00:00:00Z"), wp("b", 2, 15), wp("c", 3, 25)]);
-  it("adds up every mission's points", () => expect(totalPoints(h)).toBe(50));
-  it("counts the finished missions", () => expect(doneCount(h)).toBe(1));
+  it("adds up every quest's points", () => expect(totalPoints(h)).toBe(50));
+  it("counts the finished quests", () => expect(doneCount(h)).toBe(1));
 });
 
 describe("route order", () => {
@@ -23,7 +23,7 @@ describe("route order", () => {
     const h = hunt("any", [wp("a", 1, 10), wp("b", 2, 10)]);
     expect(h.quests.map((w) => locked(h, w))).toEqual([false, false]);
   });
-  it("leaves only the next waypoint open in an ordered hunt", () => {
+  it("leaves only the next quest open in an ordered hunt", () => {
     const h = hunt("ordered", [wp("a", 1, 10, "2026-11-14T00:00:00Z"), wp("b", 2, 10), wp("c", 3, 10)]);
     expect(h.quests.map((w) => locked(h, w))).toEqual([false, false, true]);
   });

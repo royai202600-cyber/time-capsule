@@ -28,13 +28,13 @@ describe("share links", () => {
 });
 
 describe("what blocks publishing", () => {
-  it("passes a filled-in hunt with one waypoint", () => {
+  it("passes a filled-in hunt with one quest", () => {
     expect(huntProblems(draft(), [{ id: "a" }])).toEqual([]);
     expect(canPublish(draft(), [{ id: "a" }])).toBe(true);
   });
   it("needs a name", () => expect(huntProblems(draft({ name: "  " }), [{ id: "a" }])).toContain("name"));
-  it("needs at least one waypoint", () => expect(huntProblems(draft(), [])).toContain("quests"));
-  it("refuses more waypoints than the limit", () =>
+  it("needs at least one quest", () => expect(huntProblems(draft(), [])).toContain("quests"));
+  it("refuses more quests than the limit", () =>
     expect(huntProblems(draft(), Array.from({ length: LIMITS.quests + 1 }, (_, i) => ({ id: String(i) })))).toContain("tooManyQuests"));
   it("refuses an end before the start", () =>
     expect(huntProblems(draft({ starts_at: "2026-12-01T00:00:00Z", ends_at: "2026-11-01T00:00:00Z" }), [{ id: "a" }])).toContain("window"));
@@ -42,8 +42,8 @@ describe("what blocks publishing", () => {
     expect(huntProblems(draft({ ends_at: "infinity" }), [{ id: "a" }])).toContain("window"));
 });
 
-describe("what blocks a waypoint", () => {
-  it("passes a plain arrive mission", () => expect(questProblems(wp())).toEqual([]));
+describe("what blocks a quest", () => {
+  it("passes a plain arrive quest", () => expect(questProblems(wp())).toEqual([]));
   it("needs a name", () => expect(questProblems(wp({ name: "" }))).toContain("name"));
   it("needs a place", () => expect(questProblems(wp({ location_lat: 0, location_lng: 0 }))).toContain("place"));
   it("refuses points beyond the limit", () => expect(questProblems(wp({ points: LIMITS.points + 1 }))).toContain("points"));
@@ -62,7 +62,7 @@ describe("what blocks a waypoint", () => {
     expect(questProblems(wp({ id: "w1", quest_type: "puzzle", puzzle_kind: "choice", answer: "", choices: ["1897", "1901"] }))).toEqual([]);
     expect(questProblems(wp({ id: "w1", quest_type: "puzzle", puzzle_kind: "choice", answer: "", choices: ["1897", ""] }))).toContain("choices");
   });
-  it("ignores puzzle fields on a non-puzzle mission", () =>
+  it("ignores puzzle fields on a non-puzzle quest", () =>
     expect(questProblems(wp({ quest_type: "spin", answer: "", choices: [] }))).toEqual([]));
 });
 
