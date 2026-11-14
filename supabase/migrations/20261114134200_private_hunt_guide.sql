@@ -6,7 +6,9 @@ alter table public.hunts add column guide_mode text not null default 'near' chec
 alter table public.private_hunt_members alter column started_at drop not null,
  add column reward_collected_at timestamptz,
  add constraint private_reward_finished check (reward_collected_at is null or (finished_at is not null and reward_collected_at>=finished_at));
--- Preserve existing runs and earned stamps; only future joins wait for the guide.
+-- Old starts came from joining. Require a guide start for unfinished runs without touching progress.
+update public.private_hunt_members set started_at=null where finished_at is null;
+-- Finished runs keep their times, points and stamps. Record old stamps in the new column.
 update public.private_hunt_members set reward_collected_at=finished_at where finished_at is not null;
 alter table public.private_hunt_quests alter column location_lat drop not null, alter column location_lng drop not null,
  drop constraint hunt_waypoints_mission_type_check,
@@ -390,14 +392,14 @@ returns jsonb language plpgsql security definer set search_path='' as $$
 declare h public.hunts; m public.private_hunt_members;
 begin
  if auth.uid() is null then raise exception 'not_allowed'; end if;
- select * into h from public.hunts where id=p_hunt and kind='private' for share;
+ select * into h from public.hunts where id=p_hunt and kind='private' and hidden_at is null for share;
  if not found then raise exception 'not_joined'; end if;
  select * into m from public.private_hunt_members where hunt_id=h.id and user_id=auth.uid() for update;
  if not found then raise exception 'not_joined'; end if;
  if m.finished_at is null then raise exception 'not_finished'; end if;
  if m.reward_collected_at is null then
-  -- Once the hunt ends, closes or is hidden, the guide is gone; finished players may claim anywhere.
-  if clock_timestamp()<h.ends_at and h.status='published' and h.hidden_at is null
+  -- After the scheduled end or early close, finished players may claim anywhere.
+  if clock_timestamp()<h.ends_at and h.status<>'closed'
      and not private.private_hunt_at_guide(h,p_lat,p_lng,p_accuracy) then raise exception 'too_far'; end if;
   update public.private_hunt_members set reward_collected_at=clock_timestamp() where hunt_id=h.id and user_id=m.user_id returning * into m;
  end if;

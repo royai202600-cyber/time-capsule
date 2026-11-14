@@ -1,6 +1,6 @@
 # Task board
 
-Part C backend — review fixes ready on PR #126, `codex/hunt-guide`: fixed guides use the configured pickup radius; finished players can collect after early closure or hiding as well as after the scheduled end. Unfinished claims remain refused. Hosted rollback and real-JWT guide/player checks pass, including the new radius and closed/hidden cases. Migration `20261114134200_private_hunt_guide` remains held. Release later in this order: merge #125, #126 and Claude's guide UI PR; apply the migration; immediately release the app (the current app cannot start guide runs).
+Part C guide release — merge #125, #126, #128 in order, apply migration `20261114134200_private_hunt_guide`, then release immediately. Legacy unfinished members start at the guide with progress intact. Hidden hunts refuse reward claims until restored. Hosted rollback includes an existing member with completed progress.
 
 Private quest pins PR #127 — done (2026-11-14): the one-argument `huntStillOn` filter callback passed CI 43604296046 and owner-account squash merge `e7dcd1f`. Owner-authored release `568909d` is live. Production test hunt YBAWML shows `Private hunts 6` and all six quest pins at Taipa Central Park. No migration.
 

@@ -70,7 +70,7 @@ try {
   assert(ok(await player.rpc('my_passport')).some(s=>s.place===id));
   assert.equal((await owner.rpc('private_hunt_update',{p_hunt:id,p_draft:{...draft,guide_mode:mode==='near'?'fixed':'near',guide_lat:mode==='near'?25:null,guide_lng:mode==='near'?121:null}})).error!==null,true);
  }
- // A guide removed before the scheduled end cannot block a finished player's stamp.
+ // Closing releases the location check. Hiding blocks claims until the hunt is restored.
  for(const unavailable of ['closed','hidden']) {
   const draft={name:'Guide '+unavailable,description:'',route_mode:'any',leaderboard_visible:true,starts_at:new Date(Date.now()-60000).toISOString(),ends_at:new Date(Date.now()+3600000).toISOString(),guide_mode:'fixed',guide_lat:25,guide_lng:121};
   const {id}=ok(await owner.rpc('private_hunt_create',{p_draft:draft}));
@@ -86,9 +86,16 @@ try {
   if(unavailable==='closed')ok(await owner.rpc('private_hunt_close',{p_hunt:id}));
   else sql(`update public.hunts set hidden_at=now() where id='${id}'`);
   assert.equal(sql(`select ends_at>now() from public.hunts where id='${id}'`).trim(),'t');
+  if(unavailable==='hidden'){
+   assert(!ok(await player.rpc('private_hunt_joined')).some(h=>h.id===id));
+   for(const member of [player,outsider])assert.equal((await member.rpc('private_hunt_collect_reward',args)).error.message,'not_joined');
+   assert(!ok(await player.rpc('my_passport')).some(s=>s.place===id));
+   sql(`update public.hunts set hidden_at=null where id='${id}'`);
+   assert.equal((await player.rpc('private_hunt_collect_reward',{p_hunt:id})).error.message,'too_far');
+  }
   assert.equal((await outsider.rpc('private_hunt_collect_reward',{p_hunt:id})).error.message,'not_finished');
   assert(!ok(await outsider.rpc('my_passport')).some(s=>s.place===id));
-  const reward=ok(await player.rpc('private_hunt_collect_reward',{p_hunt:id}));
+  const reward=ok(await player.rpc('private_hunt_collect_reward',unavailable==='hidden'?args:{p_hunt:id}));
   assert(reward.reward_collected_at);
   assert.equal(ok(await player.rpc('private_hunt_collect_reward',{p_hunt:id})).reward_collected_at,reward.reward_collected_at);
   assert(ok(await player.rpc('my_passport')).some(s=>s.place===id));
@@ -123,7 +130,7 @@ try {
  assert(!ok(await player.rpc('my_passport')).some(s=>s.place===id));
  ok(await player.rpc('private_hunt_collect_reward',{p_hunt:id,...pos}));
  await Promise.all([owner,player,outsider].map(c=>c.auth.signOut()));
- console.log('PASS real JWT: both guide modes, wrapper joins/quests/catches, start gate, configured guide radius, accuracy/range, timer/idempotency, deferred stamp, expiry/closed/hidden claims, unfinished refusal and catch points');
+ console.log('PASS real JWT: both guide modes, wrapper joins/quests/catches, start gate, configured guide radius, accuracy/range, timer/idempotency, deferred stamp, expiry/closed claims, hidden refusal and restoration, unfinished refusal and catch points');
 } finally {
   const results = await Promise.all(fixtures.reverse().map(id => admin.auth.admin.deleteUser(id)));
   results.forEach(ok);
