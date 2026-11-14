@@ -1,6 +1,6 @@
 # City Orienteering: timed daily hunts and private hunts
 
-Claude, 2026-11-14, from Roy's brief. This extends [city-hunt.md](city-hunt.md); where the two disagree, this doc wins. "City Hunt" (城市定向; private ones 私人定向) is the name in the app, and "quest" (任務) is one thing to do at a waypoint. Never 城市尋寶 or 關卡. Items marked **Roy to confirm** use the default written here until he says otherwise, so work can start.
+Claude, 2026-11-14, from Roy's brief. This extends [city-hunt.md](city-hunt.md); where the two disagree, this doc wins. "City Hunt" (城市定向; private ones 私人定向) is the name in the app, and a "quest" (任務) is any task in a hunt: check in, arrive somewhere, spin a Waypost, solve a puzzle, catch Corrupted Capsules, defeat the Landmark capsule. A quest is not a place; a quest that has a place shows a **quest pin** on the map. Never 城市尋寶, 關卡, mission or waypoint (the shared glossary is in `AGENTS.md`). Items marked **Roy to confirm** use the default written here until he says otherwise, so work can start.
 
 ## What Roy asked for
 1. **System hunts** (ours: Xinyi, Senado, HKUST) stay, open **every day to everyone**, and become **timed** so they feel exciting.
@@ -18,13 +18,13 @@ Claude, 2026-11-14, from Roy's brief. This extends [city-hunt.md](city-hunt.md);
 - Screens: the Quest sheet shows the limit before joining, a running countdown after check-in, and best / today's time when finished. A small countdown chip sits on the map during a run. The Keeper gets two new lines (time's up, new record), zh and en.
 
 ## Part B: Private hunts
-A private hunt is made by an **organizer**, joined by **code, link or QR**, and seen only by people who joined. It has its own brass waypoints, each with one **quest (任務)**. It never touches the system game economy.
+A private hunt is made by an **organizer**, joined by **code, link or QR**, and seen only by people who joined. It has its own **quests (任務)**, shown as brass quest pins. It never touches the system game economy.
 
 ### Organizer: Create → Publish → Review (Goosechase mapped to v1)
 | Goosechase | v1 (this patch) | Later |
 |---|---|---|
 | Details: image, name, description, location, password, search visibility | Cover (upload or one of our illustrated covers), name, description. **No radius:** the hunt's area is derived from its quests (centre of the quests, reaching the furthest plus 25%, at least 200 m). Always hidden: join by code only | Public listing in search |
-| Missions: name, type, points, description, image, link | Each **waypoint** carries one quest: the organizer **drops its pin on a map** and the place name fills in the quest name; type; **points 1–999 typed freely**; description; optional image | Link, mission library |
+| Missions: name, type, points, description, image, link | Each **quest** gets a quest pin: the organizer **drops its pin on a map** and the place name fills in the quest name; type; **points 1–999 typed freely**; description; optional image | Link, mission library |
 | Availability: release / expiry rules, draft | Route mode for the whole hunt: **any order** or **in order**. The hunt itself is draft until published | Per-mission release and expiry, point-total unlocks |
 | Submission settings (feed, photo/video, sources) | Not needed for v1 mission types | With photo missions |
 | Broadcasts | — | Phase 2 |
@@ -51,17 +51,17 @@ A private hunt is made by an **organizer**, joined by **code, link or QR**, and 
 - **Other players never appear on the map.** The organizer sees names, points and finish times, never live locations.
 - Private hunts give **no XP, Gold, balls or vessels** (no farming). Finishing gives a **brass private-hunt stamp** in the Passport, in its own section, carrying the hunt's name. **Roy to confirm.**
 - **Who can create:** accounts with `profiles.can_create_hunts = true`, set by us for the pilot (Roy and chosen organizers). Opening it to everyone is one policy change later. **Roy to confirm.**
-- Limits (to tune): 30 waypoints per hunt, 500 participants, 3 unfinished hunts per organizer, name 60 and description 500 characters, puzzle answer 80.
+- Limits (to tune): 30 quests per hunt, 500 participants, 3 unfinished hunts per organizer, name 60 and description 500 characters, puzzle answer 80.
 - A **Report** button on every private hunt; 2 reports hide it until reviewed, like sea bottles. All text is the organizer's own; AI writes nothing.
-- Landmark fights and Corrupted Capsules stay in system hunts only.
+- Landmark fights stay in system hunts only. Catching Corrupted Capsules can be a private-hunt quest (Part C).
 
 ## Map look
 | Thing | Now | New |
 |---|---|---|
 | System Waypost | Blue gem (purple on cooldown) | Unchanged |
 | System Landmark monument | Brass fading to cream | **Blues:** navy `#16263F` base → ink blue `#2F5D8A` → light blue `#5A8FD0` → glass `#DCE8F2` top. Landmark seal in blue. Code only (`mapHtml.ts`) |
-| Private waypoint | — | **3D brass location pin** (art, see below) with a small glyph for its quest (flag, wheel, question mark). Done: **purple, like a spun Waypost**, with a tick. Locked (in-order route): dashed outline. Until the art lands, a flat code-drawn pin stands in |
-| Letter Keeper marker | Brass seal | Stays brass (he is a person, not a waypoint). **Roy to confirm** |
+| Private quest pin | — | **3D brass location pin** (art, see below) with a small glyph for its quest (flag, wheel, question mark). Done: **purple, like a spun Waypost**, with a tick. Locked (in-order route): dashed outline. Until the art lands, a flat code-drawn pin stands in |
+| Letter Keeper marker | Brass seal | Stays brass (he is a person, not a quest pin) |
 
 Brass pins scale with zoom like other pins and only joined players see them.
 
@@ -73,6 +73,8 @@ Brass pins scale with zoom like other pins and only joined players see them.
 No new art for Landmarks (code) or timers and mission icons (code-drawn, like `ArtIcon`).
 
 ## Backend contract (Codex)
+*Historical: the table and function names below were renamed in PR #124 (for example `hunt_waypoints` → `private_hunt_quests`, `mission_type` → `quest_type`). The live names are in the migrations and the glossary in `AGENTS.md`.*
+
 Keep hunt bookkeeping from ever failing the original action; every location and time check is on the server; content of puzzles stays unreadable by clients.
 
 **A. Timed daily** (`T` session)
@@ -132,9 +134,27 @@ Every session: repo https://github.com/royai202600-cyber/time-capsule, read `AGE
 **5 · `REL`** (after sessions 1–4 and Claude's U1–U3)
 > Release City Orienteering: review and merge Claude's PRs U1–U3, set `HUNT_PRIVATE_BACKEND = true`, run CI, the web and iOS exports, and a 375 px zh/en browser pass of: a timed Xinyi run, creating and publishing a private hunt with one mission of each type, joining it by code from a second account, finishing it, the leaderboard, the organizer review and the brass Passport stamp. Deploy, then update `docs/sop/city-hunt.md` for timed daily hunts and write `docs/sop/private-hunt.md`. Record the release in `AGENTS.md` and `docs/TASKS.md`.
 
-## Roy to confirm (defaults above are used meanwhile)
-1. System hunts: a countdown limit plus personal best, with no public ranking.
-2. Private hunts v1 has Arrive, Spin and Puzzle; Photo waits for the moderation decision.
-3. Only allow-listed accounts can create hunts during the pilot.
-4. Private hunts give a brass stamp and no XP, Gold or vessels.
-5. The Letter Keeper's marker stays brass.
+## Part C: Every hunt has a guide, and one quest editor (Roy, 2026-11-14)
+**One flow for every hunt**, City Hunt or private, so nothing is learned twice:
+1. **Discover.** City Hunts show on the map and in Quest. A private hunt is discovered by its code, link or QR. Joining only discovers it.
+2. **Start: talk to the guide.** The guide is an NPC, not a quest: it never appears in the quest list or counts toward points. The run timer starts when you talk to the guide, not when you join, so joining at home costs no time.
+3. **Quests.** The same checklist, clock and card as today.
+4. **Finish: the guide gives the reward** (stamp, points or prizes).
+
+**Where the guide stands.** The organizer chooses:
+- **Fixed spot:** dropped on the editor's map, like a meeting point at a park gate. Players come back here for the reward.
+- **Near you:** the guide appears about 30 m from the player, inside the hunt area, when they open the hunt, and again at the end. For big areas, or players who shouldn't have to walk back.
+- City Hunts always use a fixed spot: the Keeper's place is part of the story.
+
+**Who the guide is.** Our Letter Keeper for now. Later, an organizer's own character (a company mascot, or a licensed character such as a brand's IP) as a partner feature: only characters the organizer owns or has licensed, a line in the terms, and our review before it goes live. An uploaded character shows as a picture on a flat stand-up card with the usual dialogue box, so no new art is drawn per organizer.
+
+**The quest editor** (PR after #124). The organizer's Quests section has two tabs:
+- **Map:** every tap drops another quest (an Arrive quest worth 10 points, named after the place), so a whole route goes down in one go. Pins are numbered with their points; an in-order hunt draws a dotted brass line through them. Tapping a pin opens its form. Pins stay full size on this map and the organizer's own marker is hidden, so nothing covers the route.
+- **List:** every quest in order. **Add a quest** opens the form on the type picker first: Arrive, Spin, Puzzle, and **Catch Corrupted Capsules** (shown as "Coming soon" until the server can count catches in private hunts). The type decides which fields follow.
+- **Points:** a slider from 5 to 200 in steps of 5, plus a box for any exact number from 1 to 999.
+- The same editor is meant to become the place where Roy reviews AI-designed City Hunts (with the City Hunt types: check in with the guide, catch, Landmark). That review mode is a later step.
+
+**Catch Corrupted Capsules in a private hunt** (server work for Codex): "catch N Corrupted Capsules inside the hunt area". It has no quest pin. Catching keeps its normal game reward; the quest only adds the hunt's points. This updates the earlier rule that Corrupted Capsules belong to system hunts only.
+
+## Roy to confirm
+Roy confirmed all five earlier defaults on 2026-11-14: a countdown limit plus personal best with no public ranking on system hunts; Arrive, Spin and Puzzle first (Photo waits for moderation); allow-listed creators during the pilot; a brass stamp and no XP, Gold or vessels for private hunts; the Keeper's marker stays brass.

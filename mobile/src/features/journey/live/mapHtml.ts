@@ -138,7 +138,8 @@ function rasterStyle() {
   };
 }
 
-export function mapHtml({ pmtiles, center }: { pmtiles: string | null; center: { lat: number; lng: number } }) {
+/** follow: false keeps the camera where it starts instead of following the player (the quest editor). */
+export function mapHtml({ pmtiles, center, follow = true }: { pmtiles: string | null; center: { lat: number; lng: number }; follow?: boolean }) {
   const style = pmtiles ? vectorStyle(pmtiles) : rasterStyle();
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <link rel="stylesheet" href="${MAPLIBRE}/maplibre-gl.css">
@@ -173,10 +174,10 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin .tag{position:absolute;left:50%;bottom:-20px;transform:translateX(-50%);white-space:nowrap;font-size:10px;letter-spacing:.04em;padding:2px 7px;border-radius:9px;background:rgba(255,255,255,.92);color:${C.blue};box-shadow:0 1px 4px rgba(22,38,63,.15)}
 .pin.near .tag{background:${C.brass};color:#fff}
 .pin.place .tag{background:${C.ink};color:${C.brass}}
-/* Private capsules: the sender's picture wears a plum ring and a small wax seal; public ones never do. */
+/* Private capsules: the sender's picture wears a plum ring and a padlock badge; public ones never do. */
 .pin.private .who .face{border-color:${C.plum}}
-.pin .who .lock{position:absolute;left:-4px;bottom:-4px;width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#C4526B,${C.wax} 62%,#7E2438);box-shadow:0 1px 2px rgba(22,38,63,.35)}
-.pin .who .lock:after{content:"";position:absolute;left:5px;top:3px;width:3px;height:3px;border-radius:50%;background:#F3D9DF;box-shadow:0 2px 0 -.5px #F3D9DF}
+.pin .who .lock{position:absolute;left:-6px;bottom:-6px;width:17px;height:17px;border-radius:50%;background:${C.plum};border:1.5px solid #fff;box-shadow:0 1px 3px rgba(22,38,63,.4);display:flex;align-items:center;justify-content:center}
+.pin .who .lock svg{width:10px;height:10px}
 .pin .tag.timer{bottom:-16px;display:flex;align-items:center;gap:3px;font-size:10px;padding:1px 6px}
 .pin.opened .pin-body{opacity:.6}
 /* The player never blocks a tap on what is behind them (only their "this is you" label is tappable). */
@@ -255,8 +256,9 @@ const pickupZoom=(lat,r=100)=>Math.log2(40075016.686*Math.cos(lat*Math.PI/180)*M
 const cameraPadding={top:80,bottom:160,left:0,right:0};
 const map=new maplibregl.Map({container:'map',style:${JSON.stringify(style)},center:[${center.lng},${center.lat}],zoom:pickupZoom(${center.lat}),padding:cameraPadding,pitch:40,maxPitch:70,bearing:0,attributionControl:{compact:true},localIdeographFontFamily:'"PingFang TC","Noto Sans TC",sans-serif'});
 window.__tcmapInstance=map;
-let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
+let follow=${follow},you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 // Wayposts are floating gems, clearly not buildings and clearly not capsules.
+const PADLOCK='<svg viewBox="0 0 10 10"><path d="M3 4.4V3a2 2 0 0 1 4 0v1.4" fill="none" stroke="#fff" stroke-width="1.3"/><rect x="1.8" y="4.3" width="6.4" height="4.9" rx="1" fill="#fff"/></svg>';
 const HOURGLASS='<svg viewBox="0 0 10 12" width="8" height="10"><path d="M1 1h8M1 11h8M2 1c0 3 3 3.5 3 5S2 8 2 11M8 1c0 3-3 3.5-3 5s3 2 3 5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
 // The glyphs of a quest's kinds; on the map only the tick shows, as the badge of a finished quest.
 const QUEST_GLYPH={arrive:'M-4 5V-5l8 2-8 3',spin:'M0-5.4a5.4 5.4 0 1 0 0 10.8 5.4 5.4 0 0 0 0-10.8M0-5.4V5.4M-5.4 0H5.4',puzzle:'M-2.6-2.4a2.7 2.7 0 1 1 2.8 3.1V2.4M0 4.8v.1',done:'M-4 0 -1 3 4-3',locked:'M-3.2-.6h6.4V4h-6.4ZM-2-.6v-1.8a2 2 0 0 1 4 0v1.8'};
@@ -269,6 +271,9 @@ map.on('load',()=>{
   map.addSource('reach',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   map.addLayer({id:'reach-fill',type:'fill',source:'reach',paint:{'fill-color':'${C.brass}','fill-opacity':.12}});
   map.addLayer({id:'reach-line',type:'line',source:'reach',paint:{'line-color':'${C.brass}','line-width':1.5,'line-dasharray':[2,2]}});
+  // An ordered hunt's route: a dotted brass line from quest to quest, in the order players walk it.
+  map.addSource('route',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+  map.addLayer({id:'route',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'${C.brass}','line-width':3.5,'line-dasharray':[2,1.5]}});
   send({type:'ready'});render();rescale();
 });
 map.on('dragstart',()=>{if(follow){follow=false;send({type:'follow',follow:false})}});
@@ -276,7 +281,8 @@ map.on('dragstart',()=>{if(follow){follow=false;send({type:'follow',follow:false
 // three levels out they fade away. Recomputed on every zoom.
 const mapEl=document.getElementById('map');let zNow=1;
 const rescale=()=>{const base=pickupZoom(you?you.lat:map.getCenter().lat,state.reach||100),d=map.getZoom()-base;
-  zNow=Math.max(.4,Math.min(1,Math.pow(2,d)));mapEl.style.setProperty('--z',zNow.toFixed(3));mapEl.classList.toggle('tiny',d<-3)};
+  // The quest editor's maps (reach 0) keep every pin full size, so the organizer can read each number.
+  zNow=state.reach===0?1:Math.max(.4,Math.min(1,Math.pow(2,d)));mapEl.style.setProperty('--z',zNow.toFixed(3));mapEl.classList.toggle('tiny',state.reach!==0&&d<-3)};
 map.on('zoom',rescale);
 // Overlapping pins: the first tap on a stack fans it out around its spot (pins never move on the map itself);
 // tapping one then opens it. Tapping the map or moving it folds the fan back.
@@ -342,15 +348,18 @@ function render(){
     youMark.getElement().querySelector('.cone').style.transform='rotate('+((heading||0)-map.getBearing())+'deg)';
     // The figure faces right in the art: mirror it when walking toward the left of the screen.
     const me=yel.querySelector('.me');if(me)me.classList.toggle('left',walkLeft!==null?walkLeft:Math.sin(((heading||0)-map.getBearing())*Math.PI/180)<-.2);
-    map.getSource('reach')&&map.getSource('reach').setData({type:'FeatureCollection',features:[circle(you,state.reach||100)]});
+    // reach 0: no pickup circle (the quest editor's maps).
+    map.getSource('reach')&&map.getSource('reach').setData({type:'FeatureCollection',features:state.reach===0?[]:[circle(you,state.reach||100)]});
   }
+  const route=state.route||[];
+  map.getSource('route')&&map.getSource('route').setData({type:'FeatureCollection',features:route.length>1?[{type:'Feature',geometry:{type:'LineString',coordinates:route.map(p=>[p.lng,p.lat])}}]:[]});
   const want=new Set(state.pins.map(p=>p.id));
   for(const [id,m] of marks){if(!want.has(id)){m.marker.remove();marks.delete(id)}}
   for(const p of state.pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
       :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 1.5C12.8 8.2 15.8 11.2 22.5 12 15.8 12.8 12.8 15.8 12 22.5 11.2 15.8 8.2 12.8 1.5 12 8.2 11.2 11.2 8.2 12 1.5Z"/></svg></div></div>'
       :p.kind==='quest'?'<div class="pin-body"><div class="disc"></div><div class="photo"><div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>'+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
-      :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait!==undefined&&(p.portrait||p.private)?'<div class="who">'+face(p.portrait)+(p.private?'<div class="lock"></div>':'')+'</div>':'')+(p.timer?'<div class="tag timer">'+HOURGLASS+p.timer+'</div>':p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
+      :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait!==undefined&&(p.portrait||p.private)?'<div class="who">'+face(p.portrait)+(p.private?'<div class="lock">'+PADLOCK+'</div>':'')+'</div>':'')+(p.timer?'<div class="tag timer">'+HOURGLASS+p.timer+'</div>':p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
     const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'')+(p.private?' private':'')+(p.opened?' opened':'')+(p.locked?' locked':'');
     let m=marks.get(p.id);
     if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();tapPin(p.id)});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
@@ -366,6 +375,9 @@ function recv(m){
   if(m.type==='state'){if(fan&&m.pins.map(p=>p.id).join()!==state.pins.map(p=>p.id).join())fold();const moved=!you||!m.you||Math.abs(you.lat-m.you.lat)+Math.abs(you.lng-m.you.lng)>1e-6;if(walkFrom&&m.you&&metres(walkFrom,m.you)>10){you=m.you;walkHome()}you=m.you;state=m;heading=m.heading||heading;render();rescale();if(follow&&you&&moved)map.easeTo({center:[you.lng,you.lat],duration:you?900:0,padding:cameraPadding})}
   if(m.type==='recenter'&&you){follow=true;map.easeTo({center:[you.lng,you.lat],zoom:pickupZoom(you.lat,state.reach||100),pitch:40,bearing:0,duration:900,padding:cameraPadding})}
   if(m.type==='walk'&&you)walkTo({lat:m.lat,lng:m.lng});
+  if(m.type==='fit'&&m.points.length){follow=false;send({type:'follow',follow:false});
+    if(m.points.length===1)map.easeTo({center:[m.points[0].lng,m.points[0].lat],zoom:pickupZoom(m.points[0].lat,100)-1,duration:700});
+    else{const b=new maplibregl.LngLatBounds();for(const p of m.points)b.extend([p.lng,p.lat]);map.fitBounds(b,{padding:{top:70,bottom:70,left:50,right:50},maxZoom:pickupZoom(m.points[0].lat,100)-1,duration:700})}}
   if(m.type==='focus'){follow=false;send({type:'follow',follow:false});map.easeTo({center:[m.lng,m.lat],zoom:pickupZoom(m.lat,state.reach||100),duration:700})}
 }
 window.__tcmap=recv;

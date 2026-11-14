@@ -1,5 +1,6 @@
-// One quest and its quest, as the organizer sets it (docs/design/city-orienteering.md, Part B).
-// A puzzle's answer is typed here and sent to the server; it never travels back to a player.
+// One quest, as the organizer sets it (docs/design/city-orienteering.md, Part B). A new quest starts with
+// its type, because the type decides which fields it needs. A puzzle's answer is typed here and sent to the
+// server; it never travels back to a player.
 import React, { useEffect, useState } from "react";
 import { Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { ArtIcon } from "../../components/ArtIcon";
@@ -14,13 +15,13 @@ import { pickPhoto } from "../../components/pickPhoto";
 import { qrGroups, questQr, type PrivateHuntQuestType } from "../../services/privateHunt";
 import { Btn } from "./HuntViews";
 import { QuestGlyph } from "./PrivateHuntViews";
+import { PointsSlider } from "./PointsSlider";
 import { useHuntText } from "./strings";
 import { useOrganizerText } from "./organizerStrings";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 
 const PLACEHOLDER = "#A5AFBD";
 const TYPES: PrivateHuntQuestType[] = ["arrive", "spin", "puzzle"];
-const POINTS = [10, 25, 50, 99];
 const input = { fontFamily: sans, fontSize: 15, color: C.ink, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, paddingHorizontal: 14, paddingVertical: 12 } as const;
 
 export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: {
@@ -38,7 +39,10 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
   const [picking, setPicking] = useState(false);
   const [pictureError, setPictureError] = useState("");
   const [uploading, setUploading] = useState(false);
-  useEffect(() => { setW(quest); setQuery(""); setResults([]); setConfirmDelete(false); }, [quest]);
+  // A quest added from the list starts with nothing but the type picker; one dropped on the map is already an arrive quest.
+  const hasPlace = (q: QuestDraft) => !!(q.location_lat || q.location_lng);
+  const [typed, setTyped] = useState(!!quest.id || hasPlace(quest));
+  useEffect(() => { setW(quest); setTyped(!!quest.id || hasPlace(quest)); setQuery(""); setResults([]); setConfirmDelete(false); }, [quest]);
 
   // The same place search the Create flow uses, so an organizer picks a spot the way a sender does.
   useEffect(() => {
@@ -80,6 +84,26 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
         </View>
 
         <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
+          <Label text={typed ? o.questLabel : o.chooseType} />
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+            {TYPES.map((kind) => {
+              const on = typed && w.quest_type === kind;
+              return <Pressable key={kind} accessibilityRole="radio" accessibilityState={{ selected: on }} onPress={() => { set({ quest_type: kind }); setTyped(true); }}
+                style={{ flexBasis: "47%", flexGrow: 1, alignItems: "center", gap: 6, paddingVertical: 12, borderRadius: radii.md, backgroundColor: on ? C.glass : C.white, borderWidth: 1.5, borderColor: on ? C.blue : C.line }}>
+                <QuestGlyph type={kind} size={20} color={on ? C.blue : C.muted} />
+                <Text style={{ fontFamily: sans, fontSize: 13, color: on ? C.ink : C.muted }}>{h.questTypes[kind]}</Text>
+              </Pressable>;
+            })}
+            {/* Private hunts can't count catches on the server yet, so this one is shown but can't be chosen. */}
+            <View accessible accessibilityRole="radio" accessibilityState={{ disabled: true }} accessibilityLabel={`${o.catchType}, ${o.comingSoon}`}
+              style={{ flexBasis: "47%", flexGrow: 1, alignItems: "center", gap: 6, paddingVertical: 12, borderRadius: radii.md, backgroundColor: C.white, borderWidth: 1.5, borderColor: C.line, borderStyle: "dashed", opacity: .6 }}>
+              <QuestGlyph type="catch" size={20} color={C.muted} />
+              <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted, textAlign: "center" }}>{o.catchType}</Text>
+              <Text style={{ fontFamily: sans, fontSize: 10, letterSpacing: .6, color: C.brass }}>{o.comingSoon}</Text>
+            </View>
+          </View>
+          {typed && <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.questSub[w.quest_type]}</Text>}
+          {typed && <>
           <Label text={o.whereLabel} />
           <Pressable accessibilityRole="button" onPress={() => setPicking(true)}
             style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: pressed ? C.glass : C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, padding: spacing.md })}>
@@ -115,19 +139,6 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
           </ScrollView>
           <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: pictureError ? C.wax : C.muted }}>{pictureError || o.pictureSub}</Text>
 
-          <Label text={o.questLabel} />
-          <View style={{ flexDirection: "row", gap: spacing.sm }}>
-            {TYPES.map((kind) => {
-              const on = w.quest_type === kind;
-              return <Pressable key={kind} accessibilityRole="radio" accessibilityState={{ selected: on }} onPress={() => set({ quest_type: kind })}
-                style={{ flex: 1, alignItems: "center", gap: 6, paddingVertical: 12, borderRadius: radii.md, backgroundColor: on ? C.glass : C.white, borderWidth: 1.5, borderColor: on ? C.blue : C.line }}>
-                <QuestGlyph type={kind} size={20} color={on ? C.blue : C.muted} />
-                <Text style={{ fontFamily: sans, fontSize: 13, color: on ? C.ink : C.muted }}>{h.questTypes[kind]}</Text>
-              </Pressable>;
-            })}
-          </View>
-          <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.questSub[w.quest_type]}</Text>
-
           {w.quest_type === "arrive" && <>
             <Label text={o.arriveCheckLabel} />
             <View style={{ flexDirection: "row", gap: spacing.sm }}>
@@ -151,17 +162,7 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
           </>}
 
           <Label text={o.pointsLabel} />
-          <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-            <TextInput accessibilityLabel={o.pointsLabel} value={String(w.points)} keyboardType="number-pad"
-              onChangeText={(v) => set({ points: Math.min(LIMITS.points, Number(v.replace(/[^0-9]/g, "")) || 0) })}
-              style={[input, { width: 96, fontFamily: serif, fontSize: 18, textAlign: "center" }]} />
-            <View style={{ flex: 1, flexDirection: "row", gap: 6 }}>
-              {POINTS.map((p) => <Pressable key={p} accessibilityRole="button" onPress={() => set({ points: p })}
-                style={{ flex: 1, alignItems: "center", paddingVertical: 8, borderRadius: radii.sm, backgroundColor: C.white, borderWidth: 1, borderColor: w.points === p ? C.blue : C.line }}>
-                <Text style={{ fontFamily: sans, fontSize: 13, color: w.points === p ? C.blue : C.muted }}>{p}</Text>
-              </Pressable>)}
-            </View>
-          </View>
+          <PointsSlider value={w.points} max={LIMITS.points} label={o.pointsLabel} onChange={(points) => set({ points })} />
 
           <Label text={o.taskLabel} />
           <TextInput accessibilityLabel={o.taskLabel} value={w.description} onChangeText={(v) => set({ description: v })}
@@ -209,11 +210,13 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
             {!!w.id && <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.answerKeep}</Text>}
           </>}
 
-          {!!problems.length && <View style={{ gap: 4 }}>
+          </>}
+
+          {!!problems.length && typed && <View style={{ gap: 4 }}>
             {problems.map((p) => <Text key={p} style={{ fontFamily: sans, fontSize: 13, color: C.wax }}>· {o.questProblemText[p]}</Text>)}
           </View>}
 
-          <Btn title={o.save} disabled={busy || uploading || !!problems.length} onPress={() => onSave(w)} />
+          {typed && <Btn title={o.save} disabled={busy || uploading || !!problems.length} onPress={() => onSave(w)} />}
           {!!onDelete && (confirmDelete
             ? <View style={{ gap: spacing.sm, backgroundColor: C.white, borderWidth: 1, borderColor: C.wax, borderRadius: radii.md, padding: spacing.md, ...shadows.card }}>
               <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.ink }}>{o.deleteQuestAsk}</Text>
