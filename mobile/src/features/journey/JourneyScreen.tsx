@@ -92,6 +92,7 @@ export default function JourneyScreen() {
   const [fight, setFight] = useState<LandmarkAttempt | null>(null);
   const [passportStamps, setPassportStamps] = useState<Record<string, string>>({});
   const [huntStamps, setHuntStamps] = useState<PassportHunt[]>([]);
+  const [privateHuntStamps, setPrivateHuntStamps] = useState<Awaited<ReturnType<typeof game.passport>>["privateHunts"]>([]);
   const [huntList, setHuntList] = useState<Hunt[]>([]);
   const [questOpen, setQuestOpen] = useState(false);
   // Private hunts: the ones I joined, the join-by-code sheet, the mission I have open and the leaderboard.
@@ -165,6 +166,7 @@ export default function JourneyScreen() {
     try {
       const [state, around, stamps] = await Promise.all([game.state(), game.nearby({ lat: at.lat, lng: at.lng, accuracy: at.accuracy }), game.passport()]);
       setGameState(state); setNearby(around); nearbyRef.current = around; setPassportStamps(stamps.places); setHuntStamps(stamps.hunts);
+      setPrivateHuntStamps(stamps.privateHunts);
     } catch { /* the map still works without the game */ }
     const previewAllowed = __DEV__ || isTestLocationUser(userId);
     try {
@@ -563,7 +565,7 @@ export default function JourneyScreen() {
       onClose={() => { setThrowing(null); setFight(null); map.current?.recenter(); void loadGame(); }} />}
     <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows}
       hunts={[...huntStamps, ...hunts.previewStamps().filter((p) => !huntStamps.some((x) => x.id === p.id))]}
-      privateHunts={privateHunts.demoStamps()} />
+      privateHunts={[...privateHuntStamps, ...privateHunts.demoStamps()]} />
     <QuestSheet visible={questOpen} hunts={huntList} busy={busy} onClose={() => setQuestOpen(false)} onJoin={(x) => void joinHunt(x)} onShowOnMap={showHunt}
       privateTab={{
         count: privateList.length,

@@ -602,6 +602,7 @@ export type Database = {
           description: string
           ends_at: string
           first_joined_at: string | null
+          hidden_at: string | null
           id: string
           join_code: string | null
           keeper_lat: number | null
@@ -633,6 +634,7 @@ export type Database = {
           description?: string
           ends_at: string
           first_joined_at?: string | null
+          hidden_at?: string | null
           id: string
           join_code?: string | null
           keeper_lat?: number | null
@@ -664,6 +666,7 @@ export type Database = {
           description?: string
           ends_at?: string
           first_joined_at?: string | null
+          hidden_at?: string | null
           id?: string
           join_code?: string | null
           keeper_lat?: number | null
@@ -1271,8 +1274,14 @@ export type Database = {
         Returns: Json
       }
       hunt_join: { Args: { p_hunt: string }; Returns: Json }
+      hunt_join_code: { Args: { p_code: string }; Returns: Json }
+      hunt_leaderboard: { Args: { p_hunt: string }; Returns: Json }
       hunt_list: { Args: { p_lat: number; p_lng: number }; Returns: Json }
+      hunt_mission_complete: { Args: { p_waypoint: string; p_lat: number; p_lng: number; p_accuracy: number; p_answer: string | null; p_qr: string | null }; Returns: Json }
+      hunt_preview: { Args: { p_code: string }; Returns: Json }
+      hunt_private_mine: { Args: never; Returns: Json }
       hunt_publish: { Args: { p_hunt: string }; Returns: Json }
+      hunt_report: { Args: { p_hunt: string }; Returns: undefined }
       hunt_review: { Args: { p_hunt: string }; Returns: Json }
       hunt_update: { Args: { p_draft: Json; p_hunt: string }; Returns: undefined }
       hunt_waypoint_delete: { Args: { p_waypoint: string }; Returns: undefined }
