@@ -18,6 +18,8 @@ import { Passport } from "./Passport";
 import { CapsuleMapPage } from "./CapsuleMapPage";
 import { LiveMap } from "./live/LiveMap";
 import { JourneyViewport } from "./JourneyViewport";
+import { filterCounts, shows, type MapFilter } from "./mapFilter";
+import { MapFilterSheet } from "./MapFilterSheet";
 import { mapHtml, MONUMENTS, monumentTop } from "./live/mapHtml";
 import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
 import type { Tables } from "../../services/database.types";
@@ -40,6 +42,7 @@ import { organizer } from "../../services/huntOrganizer";
 import { KeeperCard, keeperPortrait, QuestSheet, RunChip } from "../hunt/HuntViews";
 import { JoinPrivateSheet, LeaderboardSheet, MissionSheet, PrivateHuntCard } from "../hunt/PrivateHuntViews";
 import { useHuntText } from "../hunt/strings";
+import { questImageUri, useQuestImages } from "../hunt/questImage";
 import type { PassportHunt } from "../../services/game";
 
 import { pointOpeningPlace } from "../capsule/model";
@@ -102,6 +105,8 @@ export default function JourneyScreen() {
   const { huntCode: huntCodeParam } = useLocalSearchParams<{ huntCode?: string }>();
   const [linkCode, setLinkCode] = useState<string | null>(null);
   const [keeperOpen, setKeeperOpen] = useState(false);
+  const [filter, setFilter] = useState<MapFilter>("all");
+  const [filterOpen, setFilterOpen] = useState(false);
   const [youLabel, setYouLabel] = useState(false);
   const h = useHuntText();
   // Private capsule pins show their sender's profile picture and a small countdown while still on a timer.
@@ -233,12 +238,13 @@ export default function JourneyScreen() {
     portrait: assetUri(keeperPortrait), figure: assetUri(characters.keeper), mark: keeperMark(activeHunt),
   }] : [], [activeHunt, showKeeper]);
   // A joined private hunt's waypoints: brass location pins, only ever visible to people who joined.
+  const questPhotos = useQuestImages(privateList.flatMap((ph) => ph.waypoints.map((w) => w.image)));
   const missionPins = useMemo<LivePin[]>(() => privateList.flatMap((ph) => inOrder(ph).map<LivePin>((w) => ({
     id: `mission-${ph.id}-${w.id}`, lat: w.lat, lng: w.lng, kind: "mission", vessel: "",
-    mission: w.mission_type, done: !!w.done_at, locked: missionLocked(ph, w),
+    mission: w.mission_type, done: !!w.done_at, locked: missionLocked(ph, w), photo: questImageUri(w.image),
     near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
     tag: w.done_at ? undefined : h.pointsShort(w.points),
-  }))), [privateList, you?.lat, you?.lng, h]);
+  }))), [privateList, you?.lat, you?.lng, h, questPhotos]);
   const cooling = (w: Waypost) => !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now();
   const gamePins = useMemo<LivePin[]>(() => [
     // Only what's inside the pickup circle shows, so capsules never crowd the map.
@@ -265,16 +271,25 @@ export default function JourneyScreen() {
       portrait: c ? portraitUri(senders[c.sender]) : null, near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId,
       timer: left > 0 ? timeLeftShort(left, language) : undefined };
   };
+  const allPins = useMemo<LivePin[]>(() => [...items.map<LivePin>((i) => i.kind === "sea"
+    ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri("bottle"), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
+    : placePin(i)), ...gamePins, ...huntPins, ...missionPins], [items, selectedId, language, gamePins, huntPins, missionPins, senders, now]);
   const mapState = useMemo(() => ({
     you, heading, reach: SEA_PICKUP_RADIUS_M,
     portrait: portraitUri(profile?.avatar),
     figure: assetUri(figureFor(profile?.avatar)),
     youLabel: youLabel && !throwing ? h.thisIsYou : null,
     // While throwing, the capsule is alone on the plain map.
-    pins: throwing ? [] : [...items.map<LivePin>((i) => i.kind === "sea"
-      ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri("bottle"), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
-      : placePin(i)), ...gamePins, ...huntPins, ...missionPins],
-  }), [you?.lat, you?.lng, heading, profile?.avatar, items, selectedId, language, gamePins, huntPins, missionPins, !!throwing, youLabel, h, senders, now]);
+    pins: throwing ? [] : allPins.filter((p) => shows(filter, p.kind)),
+  }), [you?.lat, you?.lng, heading, profile?.avatar, allPins, filter, !!throwing, youLabel, h]);
+  const counts = useMemo(() => filterCounts(allPins), [allPins]);
+  const pickFilter = (f: MapFilter) => {
+    setFilter(f); setFilterOpen(false);
+    // Close whatever card belongs to pins the new choice hides.
+    if (!shows(f, "sea")) setSelectedId(null);
+    if (!shows(f, "keeper")) setKeeperOpen(false);
+    if (!shows(f, "waypost")) setGameCard(null);
+  };
 
   const select = (id: string | null) => {
     setWalkTo(null);
@@ -469,7 +484,7 @@ export default function JourneyScreen() {
     <View style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, zIndex: 0 }}>
     {you
       ? <LiveMap ref={map} html={html} state={mapState} onSelect={onPin}
-        onTap={(lat, lng) => { if (keeperOpen) setKeeperOpen(false); else if (gameCard) setGameCard(null); else if (selectedId) setSelectedId(null);
+        onTap={(lat, lng) => { if (filterOpen) setFilterOpen(false); else if (keeperOpen) setKeeperOpen(false); else if (gameCard) setGameCard(null); else if (selectedId) setSelectedId(null);
           // Inside the pickup circle your figure walks there (only the picture moves); outside, only the test account can jump.
           else if (you && distanceMeters(you.lat, you.lng, lat, lng) <= SEA_PICKUP_RADIUS_M) { setWalkTo(null); map.current?.walk(lat, lng); }
           else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
@@ -492,8 +507,15 @@ export default function JourneyScreen() {
       <View pointerEvents="box-none" style={{ width: "100%", alignSelf: "center", paddingHorizontal: spacing.md, paddingBottom: spacing.md, gap: spacing.sm }}>
         <View pointerEvents="box-none" style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
           {walkTo ? <Pill onPress={() => { setFakeLocation(walkTo); setWalkTo(null); void haptics.tick(); }} label={s("devWalk")} /> : <View />}
-          {you && <Chip onPress={() => { setSelectedId(null); setWalkTo(null); map.current?.recenter(); void haptics.tick(); }} label={s("recenter")} translucent><ArtIcon name="locate" size={24} color={C.blue} /></Chip>}
+          {you && <View style={{ gap: spacing.sm }}>
+            <Chip onPress={() => { setSelectedId(null); setWalkTo(null); map.current?.recenter(); void haptics.tick(); }} label={s("recenter")} translucent><ArtIcon name="locate" size={24} color={C.blue} /></Chip>
+            {/* Filled blue while the map hides something, so a filtered map never looks like an empty one. */}
+            <Chip onPress={() => { setFilterOpen((o) => !o); void haptics.tick(); }} label={filter === "all" ? s("filter") : s("filterOn", s(FILTER_LABEL[filter]))} translucent active={filter !== "all"}>
+              <ArtIcon name="filter" size={22} color={filter === "all" ? C.blue : C.white} />
+            </Chip>
+          </View>}
         </View>
+        {you && filterOpen && <MapFilterSheet value={filter} counts={counts} onChange={pickFilter} onClose={() => setFilterOpen(false)} />}
         {!!toast && <Text accessibilityRole="alert" style={{ alignSelf: "center", backgroundColor: C.ink, color: C.white, fontFamily: sans, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, overflow: "hidden" }}>{toast}</Text>}
         {you && keeperOpen && activeHunt && <KeeperCard hunt={activeHunt} meters={keeperMeters} busy={busy}
           onJoin={() => void joinHunt(activeHunt)} onCheckIn={() => void huntAction(() => hunts.checkIn(activeHunt, at()), () => map.current?.recenter())}
@@ -655,9 +677,10 @@ function RoundButton({ children, label, onPress, dot }: { children: React.ReactN
     {dot && <View style={{ position: "absolute", top: 4, right: 4, width: 11, height: 11, borderRadius: 6, backgroundColor: C.wax, borderWidth: 2, borderColor: C.white }} />}
   </Pressable>;
 }
-function Chip({ children, onPress, label, translucent = false }: { children: React.ReactNode; onPress: () => void; label: string; translucent?: boolean }) {
+const FILTER_LABEL = { capsules: "filterCapsules", cityHunt: "filterCityHunt", privateHunt: "filterPrivateHunt" } as const;
+function Chip({ children, onPress, label, translucent = false, active = false }: { children: React.ReactNode; onPress: () => void; label: string; translucent?: boolean; active?: boolean }) {
   return <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
-    style={{ minWidth: 44, height: 44, paddingHorizontal: 8, borderRadius: 22, backgroundColor: translucent ? "rgba(246,248,251,.9)" : "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}>{children}</Pressable>;
+    style={{ minWidth: 44, height: 44, paddingHorizontal: 8, borderRadius: 22, backgroundColor: active ? C.blue : translucent ? "rgba(246,248,251,.9)" : "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}>{children}</Pressable>;
 }
 function Pill({ onPress, label }: { onPress: () => void; label: string }) {
   return <Pressable accessibilityRole="button" onPress={onPress} style={{ backgroundColor: C.ink, borderRadius: radii.pill, paddingHorizontal: 14, paddingVertical: 9, ...shadows.card }}>

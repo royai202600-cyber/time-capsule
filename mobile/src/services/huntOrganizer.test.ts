@@ -38,8 +38,8 @@ describe("what blocks publishing", () => {
     expect(huntProblems(draft(), Array.from({ length: LIMITS.waypoints + 1 }, (_, i) => ({ id: String(i) })))).toContain("tooManyWaypoints"));
   it("refuses an end before the start", () =>
     expect(huntProblems(draft({ starts_at: "2026-12-01T00:00:00Z", ends_at: "2026-11-01T00:00:00Z" }), [{ id: "a" }])).toContain("window"));
-  it("accepts a hunt that never ends", () =>
-    expect(huntProblems(draft({ ends_at: "infinity" }), [{ id: "a" }])).toEqual([]));
+  it("refuses a hunt that never ends", () =>
+    expect(huntProblems(draft({ ends_at: "infinity" }), [{ id: "a" }])).toContain("window"));
 });
 
 describe("what blocks a waypoint", () => {
@@ -57,6 +57,11 @@ describe("what blocks a waypoint", () => {
     expect(waypointProblems(wp({ mission_type: "puzzle", puzzle_kind: "choice", answer: "1912", choices: ["1897", "1901"] }))).toContain("choices"));
   it("accepts a multiple-choice puzzle whose answer is an option", () =>
     expect(waypointProblems(wp({ mission_type: "puzzle", puzzle_kind: "choice", answer: "1901", choices: ["1897", "1901", "1912"] }))).toEqual([]));
+  it("keeps a saved puzzle's answer when it is left blank", () => {
+    expect(waypointProblems(wp({ id: "w1", mission_type: "puzzle", puzzle_kind: "text", answer: "" }))).toEqual([]);
+    expect(waypointProblems(wp({ id: "w1", mission_type: "puzzle", puzzle_kind: "choice", answer: "", choices: ["1897", "1901"] }))).toEqual([]);
+    expect(waypointProblems(wp({ id: "w1", mission_type: "puzzle", puzzle_kind: "choice", answer: "", choices: ["1897", ""] }))).toContain("choices");
+  });
   it("ignores puzzle fields on a non-puzzle mission", () =>
     expect(waypointProblems(wp({ mission_type: "spin", answer: "", choices: [] }))).toEqual([]));
 });

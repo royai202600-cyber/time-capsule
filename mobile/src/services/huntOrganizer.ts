@@ -29,6 +29,8 @@ export type WaypointDraft = {
   arrive_check: "gps" | "gps_qr";
   /** Issued by the server once a GPS + QR quest is saved; the printed code carries it. Only the organizer sees it. */
   qr_token?: string;
+  /** A template ("tpl:park", the default) or the organizer's own photo; it fills the quest's pin on the map. */
+  image?: string | null;
   puzzle_kind: "text" | "choice"; choices: string[]; answer: string;
 };
 export type Review = {
@@ -81,7 +83,9 @@ export function huntProblems(draft: HuntDraft, waypoints: { id?: string }[]): Pr
   if (!draft.name.trim()) problems.push("name");
   if (!waypoints.length) problems.push("waypoints");
   if (waypoints.length > LIMITS.waypoints) problems.push("tooManyWaypoints");
-  if (draft.ends_at !== "infinity" && new Date(draft.ends_at).getTime() <= new Date(draft.starts_at).getTime()) problems.push("window");
+  // A private hunt always ends: the server refuses "infinity" (only daily City Hunts run without an end).
+  const end = new Date(draft.ends_at).getTime();
+  if (!Number.isFinite(end) || end <= new Date(draft.starts_at).getTime()) problems.push("window");
   return problems;
 }
 export type WaypointProblem = "name" | "place" | "answer" | "choices" | "points";
@@ -91,11 +95,13 @@ export function waypointProblems(w: WaypointDraft): WaypointProblem[] {
   if (!w.lat && !w.lng) problems.push("place");
   if (!Number.isInteger(w.points) || w.points < 1 || w.points > LIMITS.points) problems.push("points");
   if (w.mission_type === "puzzle") {
-    if (!w.answer.trim()) problems.push("answer");
+    // The server never sends a saved answer back, so a saved puzzle left blank keeps the answer it has.
+    const keeps = !!w.id && !w.answer.trim();
+    if (!w.answer.trim() && !keeps) problems.push("answer");
     // A multiple-choice puzzle needs at least two options, and the answer has to be one of them.
     if (w.puzzle_kind === "choice") {
       const filled = w.choices.map((c) => c.trim()).filter(Boolean);
-      if (filled.length < 2 || !filled.includes(w.answer.trim())) problems.push("choices");
+      if (filled.length < 2 || (!keeps && !filled.includes(w.answer.trim()))) problems.push("choices");
     }
   }
   return problems;
@@ -117,7 +123,7 @@ export function blankDraft(): HuntDraft {
 export function blankWaypoint(ordinal: number, at: { lat: number; lng: number } | null): WaypointDraft {
   return {
     ordinal, name: "", lat: at?.lat ?? 0, lng: at?.lng ?? 0,
-    mission_type: "arrive", points: 10, description: "", arrive_check: "gps",
+    mission_type: "arrive", points: 10, description: "", arrive_check: "gps", image: "tpl:park",
     puzzle_kind: "choice", choices: ["", ""], answer: "",
   };
 }
@@ -130,7 +136,7 @@ const rpc = (fn: string, args?: Record<string, unknown>): Promise<RpcResult> =>
 const fail = (e: { message?: string } | null) => {
   if (!e) return;
   const m = e.message ?? "";
-  throw new PrivateHuntError(/not allowed|permission|can_create/i.test(m) ? "not_allowed" : "unknown");
+  throw new PrivateHuntError(/hunt_locked/.test(m) ? "hunt_locked" : /not allowed|permission|can_create/i.test(m) ? "not_allowed" : "unknown");
 };
 const signedIn = async () => !!(await supabase.auth.getSession()).data.session;
 
@@ -153,7 +159,7 @@ async function load(userId: string) {
 function asOwned(id: string, s: Stored): OwnedHunt {
   const waypoints: Waypoint[] = s.waypoints.map((w) => ({
     id: w.id ?? `${id}-${w.ordinal}`, ordinal: w.ordinal, name: w.name, lat: w.lat, lng: w.lng,
-    mission_type: w.mission_type, points: w.points, description: w.description || null,
+    mission_type: w.mission_type, points: w.points, description: w.description || null, image: w.image ?? null,
     arrive_check: w.mission_type === "arrive" ? w.arrive_check : null,
     puzzle_kind: w.mission_type === "puzzle" ? w.puzzle_kind : null,
     choices: w.mission_type === "puzzle" && w.puzzle_kind === "choice" ? w.choices.filter((c) => c.trim()) : null,
@@ -188,10 +194,11 @@ export const organizer = {
       .sort((a, b) => b[1].created_at.localeCompare(a[1].created_at))
       .map(([id, s]) => asOwned(id, s));
   },
-  async get(userId: string, id: string): Promise<{ draft: HuntDraft; waypoints: WaypointDraft[]; status: HuntStatus; code: string | null }> {
+  /** `locked`: someone has joined, so the route, times and quests can no longer change (the server refuses with hunt_locked). */
+  async get(userId: string, id: string): Promise<{ draft: HuntDraft; waypoints: WaypointDraft[]; status: HuntStatus; code: string | null; locked?: boolean }> {
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
       const { data, error } = await rpc("hunt_edit_state", { p_hunt: id });
-      fail(error); return data as { draft: HuntDraft; waypoints: WaypointDraft[]; status: HuntStatus; code: string | null };
+      fail(error); return data as { draft: HuntDraft; waypoints: WaypointDraft[]; status: HuntStatus; code: string | null; locked: boolean };
     }
     await load(userId);
     const s = hunts[id];

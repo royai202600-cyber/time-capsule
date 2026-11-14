@@ -42,7 +42,8 @@ export type PrivateHunt = {
 export type LeaderRow = { user: string; name: string; avatar?: Record<string, unknown> | null; points: number; duration_s?: number | null; you?: boolean };
 export type MissionResult = { hunt: PrivateHunt; points_gained: number; tries_left: number; wait_s: number };
 
-const CODES = ["bad_code", "too_far", "closed", "not_joined", "locked", "already_done", "wrong_answer", "no_tries", "not_started", "time_up", "wrong_qr", "not_allowed", "not_ready", "too_many", "unknown"] as const;
+// "hunt_locked" comes before "locked", since codes are matched by substring.
+const CODES = ["bad_code", "too_far", "closed", "not_joined", "hunt_locked", "locked", "already_done", "wrong_answer", "no_tries", "not_started", "time_up", "wrong_qr", "not_allowed", "not_ready", "too_many", "unknown"] as const;
 export type PrivateHuntErrorCode = typeof CODES[number];
 export class PrivateHuntError extends Error { constructor(public code: PrivateHuntErrorCode) { super(code); } }
 
@@ -79,8 +80,11 @@ export const questQr = (token: string) => `timecapsule://quest/${token}`;
 /** The token from a scanned QR or a typed code, in any case and with stray spaces or dashes; "" if it can't be one. */
 export function questToken(raw: string) {
   const token = raw.trim().replace(/^timecapsule:\/\/quest\//i, "").toUpperCase().replace(/[^A-Z0-9]/g, "");
-  return token.length >= 6 && token.length <= 24 ? token : "";
+  // The server issues 32 hex characters and compares them ignoring case.
+  return token.length >= 6 && token.length <= 32 ? token : "";
 }
+/** The printed code in groups of four, so it can be read out and typed. */
+export const qrGroups = (token: string) => token.toUpperCase().match(/.{1,4}/g)?.join(" ") ?? "";
 /** A 6-character code, typed in any case and with stray spaces or dashes. */
 export const cleanCode = (raw: string) => raw.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
 
@@ -129,6 +133,8 @@ function demoHunt(at: Coords): PrivateHunt {
     const spot = offset(at, north, east);
     return {
       id: `demo-wp-${i + 1}`, ordinal: i + 1, name, mission_type, points, description,
+      // Two quests carry a picture, so the demo shows both pin shapes.
+      image: i === 0 ? "tpl:park" : i === 2 ? "tpl:publicArt" : null,
       lat: spot.lat, lng: spot.lng,
       arrive_check: i === 0 ? "gps_qr" : mission_type === "arrive" ? "gps" : null,
       puzzle_kind: mission_type === "puzzle" ? "choice" : null,
