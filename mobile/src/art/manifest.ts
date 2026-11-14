@@ -2012,6 +2012,15 @@ export const gameArt = {
     senado: require('../../../public/art/game/wheel/scene-landmark-macau.webp'),
   },
 };
+/** Private-hunt quest pictures (PR #115, approved by Roy): the organizer's choices, keyed as stored ("tpl:<key>"). */
+export const questTemplates = {
+  park: require('../../../public/art/quest-templates/quest-template-park.webp'),
+  garden: require('../../../public/art/quest-templates/quest-template-garden.webp'),
+  waterfront: require('../../../public/art/quest-templates/quest-template-waterfront.webp'),
+  square: require('../../../public/art/quest-templates/quest-template-square.webp'),
+  publicArt: require('../../../public/art/quest-templates/quest-template-public-art.webp'),
+  oldStreet: require('../../../public/art/quest-templates/quest-template-old-street.webp'),
+};
 export const sealWax = require('../../../public/art/seal-wax.webp');
 export const lightBurst = require('../../../public/art/fx/fx-light-burst.webp');
 // Idle glints (art A2, PR #32): a small sparkle for wax and brass (the dome's glass highlight is in its spec).
