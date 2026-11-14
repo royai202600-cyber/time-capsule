@@ -138,3 +138,15 @@ Every session: repo https://github.com/royai202600-cyber/time-capsule, read `AGE
 3. Only allow-listed accounts can create hunts during the pilot.
 4. Private hunts give a brass stamp and no XP, Gold or vessels.
 5. The Letter Keeper's marker stays brass.
+
+
+## Part C backend contract (Roy approved 2026-11-14; UI design in PR #125)
+
+- `guide_mode: 'fixed' | 'near'` defaults to `near`. `guide_lat/guide_lng` are required for fixed and null for near. `private_hunt_update` accepts these in `p_draft`; edit state and player objects expose them. Old callers omitting guide fields preserve them. Guide settings lock at first join, like route/timing.
+- `private_hunt_start(p_hunt, p_lat, p_lng, p_accuracy)` returns the player hunt object. Fixed: at most 50 m; near: inside derived area; valid accuracy is `(0, 200]` m. Refuses before the scheduled start, after closure/end, and for nonmembers. Retry preserves the original timer; no restart. New joins have null `started_at`, `run_started_at` and `run_ends_at` until this call. Existing runs retain their start.
+- Finishing all quests sets `finished_at`. `private_hunt_collect_reward(p_hunt, p_lat = null, p_lng = null, p_accuracy = null)` returns the hunt with `reward_collected_at`. Before `ends_at`, the same guide check applies, even after an early organizer close. At/after `ends_at`, finished members can claim from Passport without GPS. Unfinished members cannot claim. Retrying never duplicates a stamp. Existing earned stamps are backfilled; `my_passport` shows collected stamps only. `private_hunt_joined` includes ended hunts so Passport can find pending claims.
+- A `restore` quest has `catch_count` from 1 to 20 and null location fields; other quest types keep required locations and null `catch_count`. Save uses `private_hunt_quest_save`. Player quests expose `caught_count`, separate from the goal `catch_count`. Manual completion refuses `catch_required`; actual successful Corrupted Capsule catches update it. Both the player and the caught capsule must be inside the hunt area, during a started, unexpired run. Ordered routes count only unlocked quests. Each completed quest adds its points once, with no extra game rewards. Private bookkeeping is isolated from catches and City Hunt progress.
+- Area remains derived from located quests. For catch-only routes, a fixed guide anchors a 200 m area. Publishing a near-guide hunt without a located quest refuses `area_required` instead of silently using coordinates `(0,0)`.
+- Existing old-name wrappers remain callable and translate the original payload keys. New start/reward calls are required for new runs; clients must wire them before this held migration is released. City Hunt Keeper/timer behavior is unchanged.
+
+Validation: `supabase/tests/private-hunt-guide-api.mjs` (local real JWT), `supabase/tests/private-hunt-guide.sql` (transaction/rollback only), and the updated existing private-hunt player API suite. The SQL suite deliberately injects a bookkeeping failure and must always be wrapped in a rollback. Migration remains unapplied pending Claude review.
