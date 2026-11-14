@@ -161,10 +161,10 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
    A tapped stack fans out with --fx/--fy, kept separate from the scale so both can change smoothly. */
 .pin{pointer-events:none}.pin-body>*{pointer-events:auto}.pin .disc{pointer-events:none}
 .pin-body{scale:var(--z,1);translate:var(--fx,0) var(--fy,0);transition:translate .22s ease-out,opacity .25s}
-/* Wayposts and quest pins shrink but never fade, so a whole area or hunt can be seen zoomed out. */
+/* Quest pins shrink but never fade, so players can plan their route across the whole hunt. */
 .pin.keeper .pin-body{scale:1}
 .pin.fanned{z-index:30!important}
-#map.tiny .pin:not(.keeper,.waypost,.mission) .pin-body{opacity:0}#map.tiny .pin:not(.keeper,.waypost,.mission) .pin-body>*{pointer-events:none}
+#map.tiny .pin:not(.keeper,.mission) .pin-body{opacity:0}#map.tiny .pin:not(.keeper,.mission) .pin-body>*{pointer-events:none}
 .fan-dot{width:8px;height:8px;border-radius:50%;background:${C.ink};border:2px solid #fff;box-shadow:0 1px 3px rgba(22,38,63,.3);pointer-events:none}
 .pin .disc{position:absolute;left:18px;bottom:0;width:44px;height:12px;border-radius:50%;background:radial-gradient(${C.ink}40,transparent 70%)}
 .pin .v{position:absolute;left:0;bottom:2px;width:80px;height:80px;object-fit:contain;animation:bob 3.6s ease-in-out infinite}
