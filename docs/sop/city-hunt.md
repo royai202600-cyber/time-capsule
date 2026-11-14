@@ -1,6 +1,6 @@
 # SOP: Creating a City Hunt
 
-How Codex adds a new City Hunt on its own. A hunt is **data only**: one migration, one Passport stamp, no screen changes. The rules of the game are in [`docs/design/city-hunt.md`](../design/city-hunt.md); this SOP never changes them.
+How Codex adds a new City Hunt on its own. A hunt is **data only**: one migration, one Passport stamp, no screen changes. Use [City Orienteering](../design/city-orienteering.md) for the timed daily rules and the [City Hunt design](../design/city-hunt.md) for the original route and game steps.
 
 ## One-time setup (before the second hunt only)
 Completed in `20261110085702_hunt_keeper_names.sql` on 2026-11-10; use the fields below for every new hunt.
@@ -12,7 +12,7 @@ The app's Keeper lines read the meeting spot and the Landmark name from the hunt
 
 ## What Roy gives you
 - The area (for example "Marina Bay, Singapore").
-- The dates and times, in local time.
+- The first opening time and city time zone. The hunt opens daily from that date.
 - Anything different from the defaults below (usually nothing).
 
 ## Rules for choosing everything
@@ -25,10 +25,11 @@ Hunts can only be in areas we already cover: Taipei, Hong Kong, Singapore and Ma
 | **Keeper's spot** | A public square or park on footpaths, inside the area, 300–700 m from the Landmark. Never on a road, or at a school, place of worship or private property (the same exclusions as capsules). Short names for his line: 「我在{spot}等你」 / "I'm waiting at {spot}". |
 | **Steps** | Always all five, in this order: check-in 1, spin **3**, restore **5**, landmark 1, return 1. |
 | **Route** | A walk of about 2–2.5 km, 40–60 minutes, through the Wayposts. List a suggested route in the report, as in the design doc's Xinyi table. |
-| **Window** | Real hunts: 2–3 hours, for example Saturday 14:00–17:00 local time. Test hunts may be longer. Store times with the city's time zone. Publish it at least a few days ahead so people see it as upcoming. **Only one open hunt per city at a time.** |
-| **Reward** | +300 XP and 5 Gold Wax Balls. Never random, never ranked. |
+| **Window** | Set `starts_at` in local time, `ends_at = 'infinity'`, and `reset_timezone` to the city’s IANA time zone. Plan the launch so players can see the hunt as upcoming. **Only one open hunt per city at a time.** |
+| **Timer** | Set `time_limit_min` to 60 minutes unless Roy specifies a different limit. Check-in starts the run, and a return to the Keeper stops it. An unfinished run ends at the earlier of its limit and local midnight. |
+| **Reward** | +300 XP and 5 Gold Wax Balls. Award the first finish once. Set `repeat_xp = 50` for a later successful run, paid once per local day. Personal best and today’s time stay private. |
 | **Id** | `<area>-<yyyy>-<mm>`, lowercase ASCII, for example `marina-bay-2026-12`. Add `-<dd>` if the same area has two in a month. |
-| **Names** | `name_zh` 「<地區>城市尋寶」, `name_en` "<Area> City Hunt"; `city_zh` / `city_en` as the Waypost rows use them. |
+| **Names** | `name_zh` 「<地區>城市定向」, `name_en` "<Area> City Hunt"; `city_zh` / `city_en` as the Waypost rows use them. |
 
 ## Steps
 1. **Pick everything** with the rules above, using queries against the live database (read only). Check the Keeper's spot and the area on the real map.
@@ -42,7 +43,7 @@ Hunts can only be in areas we already cover: Taipei, Hong Kong, Singapore and Ma
 5. **Apply and verify with a real login** (a disposable account, moved by simulated location):
    - The hunt appears in `hunt_list` as upcoming before its start, and as open during it.
    - Join, check in at the Keeper, spin, restore, win the Landmark, finish: the reward arrives once and the stamp shows in `my_passport`.
-   - Outside the window, joining returns `closed`.
+   - Verify time-up, a same-day restart, the local midnight reset, today’s time, personal best, and the once-per-day repeat XP.
    - Then remove the disposable account and all its rows.
 6. **Check the app at 375 px**, in Chinese and English: the Quest sheet shows the hunt, its countdown and reward; the Keeper stands at his spot; his lines name the right spot, Landmark and counts.
 7. **Report** in the usual format, add a Decisions-log line in `AGENTS.md`, and update `docs/TASKS.md`.
