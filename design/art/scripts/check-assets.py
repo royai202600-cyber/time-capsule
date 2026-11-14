@@ -11,11 +11,14 @@ OPAQUE = {
     "style-sheet.png", "style-sheet-a.png", "style-sheet-b.png", "style-sheet-c.png",
     "map-asia.png", "app-icon.png", "icon-reference.png",
     "textures/paper.png", "textures/paper-letter.png",
+    "hunt-covers/hunt-cover-park.png",
     "journey/passport-cover.png", "journey/passport-page.png", "cabinet/cabinet-wall.png",
 }
 
 
 def expected_size(rel: str) -> tuple[int, int]:
+    if rel.startswith("hunt-covers/"):
+        return (1280, 720)
     tiles = {"cabinet/cabinet-crown.png": (1024, 256), "cabinet/cabinet-row.png": (1024, 384), "cabinet/cabinet-base.png": (1024, 192)}
     if rel in tiles:
         return tiles[rel]

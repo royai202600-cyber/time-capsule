@@ -491,3 +491,13 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 [HKUST stamp review at 40/64/120px](_checks/hkust-stamp-review.png) · [Checks](_checks/hkust-stamp-audit.json) · [Exact prompt](_checks/hkust-stamp-prompts.json)
 
 [HKUST place/hunt beside Xinyi review](_checks/hkust-stamp-review.png) · [Triangle-only pixel proof](_checks/hkust-triangle-fix.json) · [Hunt prompt and references](_checks/hkust-hunt-stamp-prompts.json)
+
+## Private-hunt test art
+
+| PNG master | Size | Review |
+| --- | --- | --- |
+| `game/quest-pin-brass.png` | 1024×1024 | Transparent 3D brass pin with a blank round face. Tip anchor (512, 960), glyph centre (512, 505). |
+| `stamps/stamp-private-hunt.png` | 1024×1024 | Transparent double-ring location-pin stamp in one brass ink (`#C9A15A`). |
+| `hunt-covers/hunt-cover-park.png` | 1280×720 | Opaque full-bleed cover for a fictional park. |
+
+[Display-size review](_checks/private-hunt-review.png) compares the pin at 40/64/96 px with the blue Waypost gem, and the stamp at 24/40/64/120 px with the Xinyi stamp. Exact generation prompts and WebP paths are in `manifest.json`. The done and locked treatments, five remaining covers and the empty My Hunts scene are awaiting Roy's review of this test batch.

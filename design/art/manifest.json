@@ -9391,5 +9391,68 @@
     986
   ],
   "web_export": "public/art/stamps/stamp-hunt-hkust-2026-11.webp"
-}
+},
+  {
+    "path": "design/art/game/quest-pin-brass.png",
+    "what": "3D brass private-hunt quest pin with blank circular glyph face",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nSingle dimensional brass location pin for a game map, using the second reference (blue Waypost gem) for physical depth and highlights only. Approved exception to the baseline flat shading: sculpted solid metal with visible bevel, thick sidewall and cream top-left specular edge, hand-illustrated. Compact upright classic map-pin silhouette ending at a single point, symmetrical as seen head-on with only subtle perspective so the glyph face is perfectly circular. The head contains one large clear smooth blank round pale brass face for glyphs drawn later in code; no engraving, no center dot, no icon, no cutout. Face visually dominates, thick brass edge hints at volume and depth. Isolated true transparent alpha, no cast shadow or fragments. Intended to read at 40 pixels; final 1024 canvas tip registered at x512 y960 in post.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/game/waypost-gem-blue.png"
+    ],
+    "anchor": {
+      "x": 512,
+      "y": 960
+    },
+    "glyph_center": {
+      "x": 512,
+      "y": 505
+    },
+    "postprocess": "Clean alpha fringe, downscale silhouette and translate tip to exact anchor.",
+    "web_export": "public/art/game/quest-pin-brass.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-private-hunt.png",
+    "what": "Brass double-ring private-hunt Passport stamp with location-pin motif",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nOne private-hunt Passport stamp, frontal flat print. Subject-specific exception: one ink color only, brass #C9A15A, stippled worn rubber-stamp texture sparingly along edges. Two distinct concentric round rings with generous separation and a bold simple centered classic location-pin silhouette with open round negative-space center. Clear at 24 pixels. Genuine transparent background including all uninked spaces. No type, no stars, no decoration. The second reference is for double-ring scale and weight only.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/stamps/stamp-hunt-xinyi-2026-11.png"
+    ],
+    "ink_rgb": [
+      201,
+      161,
+      90
+    ],
+    "postprocess": "Extract brass ink coverage and normalize selected stamp to palette brass.",
+    "web_export": "public/art/stamps/stamp-private-hunt.webp"
+  },
+  {
+    "path": "design/art/hunt-covers/hunt-cover-park.png",
+    "what": "Park cover for private hunts",
+    "size_px": [
+      1280,
+      720
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nDefault park-themed private orienteering hunt cover. Cover-specific exception to square transparent object guidance: landscape 16:9 with opaque full-bleed paper and illustration, enough image around edges for a modest crop to 1280×720. A winding public park footpath under leafy ink-blue trees, a quiet wooden bench, low blue foliage and warm cream light, inviting sense of a walk. Generic fictional place, no text or glyphs. Broad readable shapes, quiet drawn line, lightly grained cool paper, palette restrained and aligned to reference. No border.",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "postprocess": "Center crop to 16:9 and downscale to 1280×720.",
+    "web_export": "public/art/hunt-covers/hunt-cover-park.webp"
+  }
 ]
