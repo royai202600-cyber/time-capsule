@@ -11,7 +11,7 @@ import { PinPicker } from "./PinPicker";
 import { DEFAULT_QUEST_IMAGE, QUEST_TEMPLATES, questImageSource, templateImage, useQuestImages } from "./questImage";
 import { uploadQuestImage } from "../../services/huntMedia";
 import { pickPhoto } from "../../components/pickPhoto";
-import { questQr, type MissionType } from "../../services/huntPrivate";
+import { qrGroups, questQr, type MissionType } from "../../services/huntPrivate";
 import { Btn } from "./HuntViews";
 import { MissionGlyph } from "./PrivateHuntViews";
 import { useHuntText } from "./strings";
@@ -144,7 +144,7 @@ export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDele
               {w.qr_token
                 ? <><GiftQr value={questQr(w.qr_token)} label={o.qrForQuest(w.name || o.unnamedSpot)} />
                   {/* Printed under the QR, so a player whose camera won't work can type it. */}
-                  <Text selectable style={{ fontFamily: serif, fontSize: 18, letterSpacing: 3, color: C.ink }}>{w.qr_token}</Text>
+                  <Text selectable style={{ fontFamily: serif, fontSize: 16, letterSpacing: 1.5, color: C.ink, textAlign: "center" }}>{qrGroups(w.qr_token)}</Text>
                   <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textAlign: "center" }}>{o.printQr}</Text></>
                 : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textAlign: "center" }}>{o.qrAfterSave}</Text>}
             </View>}

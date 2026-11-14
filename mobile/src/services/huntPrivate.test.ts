@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 // The helpers under test are pure; these two keep the module's native imports out of the test run.
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: { getItem: vi.fn(), setItem: vi.fn() } }));
 vi.mock("./supabase", () => ({ supabase: { auth: { getSession: vi.fn() }, rpc: vi.fn() } }));
-import { byRank, cleanCode, doneCount, huntOpen, inOrder, locked, sameAnswer, totalPoints, waitLeft, type LeaderRow, type PrivateHunt, type Waypoint, questQr, questToken } from "./huntPrivate";
+import { byRank, cleanCode, doneCount, huntOpen, inOrder, locked, sameAnswer, totalPoints, waitLeft, type LeaderRow, type PrivateHunt, type Waypoint, questQr, questToken, qrGroups } from "./huntPrivate";
 
 const wp = (id: string, ordinal: number, points: number, done?: string | null): Waypoint =>
   ({ id, ordinal, points, name: id, lat: 25, lng: 121, mission_type: "arrive", done_at: done ?? null });
@@ -84,4 +84,13 @@ describe("quest QR codes", () => {
     expect(questToken("abc")).toBe("");
     expect(questToken("https://example.com/some/very/long/path/that/is/not/ours")).toBe("");
   });
+});
+
+describe("server QR tokens", () => {
+  const token = "9f86d081884c7d659a2feaa0c55ad015";
+  it("accepts the 32 hex characters the server issues, scanned or typed in groups", () => {
+    expect(questToken(questQr(token))).toBe(token.toUpperCase());
+    expect(questToken(qrGroups(token))).toBe(token.toUpperCase());
+  });
+  it("prints the code in groups of four", () => expect(qrGroups(token)).toBe("9F86 D081 884C 7D65 9A2F EAA0 C55A D015"));
 });

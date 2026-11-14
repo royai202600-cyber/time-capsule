@@ -80,8 +80,11 @@ export const questQr = (token: string) => `timecapsule://quest/${token}`;
 /** The token from a scanned QR or a typed code, in any case and with stray spaces or dashes; "" if it can't be one. */
 export function questToken(raw: string) {
   const token = raw.trim().replace(/^timecapsule:\/\/quest\//i, "").toUpperCase().replace(/[^A-Z0-9]/g, "");
-  return token.length >= 6 && token.length <= 24 ? token : "";
+  // The server issues 32 hex characters and compares them ignoring case.
+  return token.length >= 6 && token.length <= 32 ? token : "";
 }
+/** The printed code in groups of four, so it can be read out and typed. */
+export const qrGroups = (token: string) => token.toUpperCase().match(/.{1,4}/g)?.join(" ") ?? "";
 /** A 6-character code, typed in any case and with stray spaces or dashes. */
 export const cleanCode = (raw: string) => raw.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 6);
 

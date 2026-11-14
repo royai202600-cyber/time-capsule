@@ -47,7 +47,7 @@ export function QrScanner({ onClose, onScan }: { onClose: () => void; onScan: (t
         <Text style={{ fontFamily: sans, fontSize: 12, letterSpacing: 1, color: C.muted }}>{t.typeQrCode}</Text>
         <View style={{ flexDirection: "row", gap: spacing.sm }}>
           <TextInput accessibilityLabel={t.typeQrCode} value={typed} onChangeText={setTyped} autoCapitalize="characters" autoCorrect={false}
-            maxLength={24} style={{ flex: 1, fontFamily: serif, fontSize: 17, letterSpacing: 2, color: C.ink, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, paddingHorizontal: 14, paddingVertical: 10 }} />
+            maxLength={48} style={{ flex: 1, fontFamily: serif, fontSize: 15, letterSpacing: 1, color: C.ink, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, paddingHorizontal: 14, paddingVertical: 10 }} />
           <View style={{ width: 110 }}><Btn title={t.useQrCode} disabled={!questToken(typed)} onPress={() => scanned(typed)} /></View>
         </View>
         <Pressable accessibilityRole="button" onPress={onClose} style={{ alignSelf: "center", paddingVertical: 8 }}>
