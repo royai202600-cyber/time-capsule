@@ -1,6 +1,6 @@
 {
-  "count": 3,
-  "passed": 3,
+  "count": 8,
+  "passed": 8,
   "failed": [],
   "assets": [
     {
@@ -23,7 +23,102 @@
       "pass": true
     },
     {
+      "path": "quest-templates/quest-template-garden.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-templates/quest-template-old-street.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
       "path": "quest-templates/quest-template-park.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-templates/quest-template-public-art.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-templates/quest-template-square.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-templates/quest-template-waterfront.png",
       "size": [
         1024,
         1024

@@ -497,7 +497,12 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | PNG master | Size | Review |
 | --- | --- | --- |
 | `quest-templates/quest-template-park.png` | 1024×1024 | Opaque park quest picture for a 46 px circle and centered 16:9 banner. Template key `park`. |
+| `quest-templates/quest-template-garden.png` | 1024×1024 | Quest template key `garden`. |
+| `quest-templates/quest-template-waterfront.png` | 1024×1024 | Quest template key `waterfront`. |
+| `quest-templates/quest-template-square.png` | 1024×1024 | Quest template key `square`. |
+| `quest-templates/quest-template-public-art.png` | 1024×1024 | Quest template key `publicArt`. |
+| `quest-templates/quest-template-old-street.png` | 1024×1024 | Quest template key `oldStreet`. |
 | `stamps/stamp-private-hunt.png` | 1024×1024 | Transparent double-ring location-pin stamp in one brass ink (`#C9A15A`). |
 | `hunt-covers/hunt-cover-park.png` | 1280×720 | Opaque full-bleed cover for a fictional park. |
 
-[Park quest template review](_checks/private-hunt-park-template-review.png) shows both crops from the same WebP. The 3D pin and original review sheet are preserved in commit `f55af42`. The stamp and park cover remain under review. The additional quest templates await park approval.
+[Six-template review](_checks/private-hunt-quest-templates-review.png) shows each WebP at 46 px over land and water and in a centered 16:9 crop. The 3D pin and original review sheet are preserved in commit `f55af42`. The stamp and park cover remain under review. Roy approved the park template as-is. The remaining five templates await set review. The backend needs to add `oldStreet` to its template allowlist.
