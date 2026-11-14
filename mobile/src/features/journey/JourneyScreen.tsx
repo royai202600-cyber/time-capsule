@@ -42,7 +42,7 @@ import { organizer } from "../../services/huntOrganizer";
 import { KeeperCard, keeperPortrait, QuestSheet, RunChip } from "../hunt/HuntViews";
 import { JoinPrivateSheet, LeaderboardSheet, MissionSheet, PrivateHuntCard } from "../hunt/PrivateHuntViews";
 import { useHuntText } from "../hunt/strings";
-import { questImageUri } from "../hunt/questImage";
+import { questImageUri, useQuestImages } from "../hunt/questImage";
 import type { PassportHunt } from "../../services/game";
 
 import { pointOpeningPlace } from "../capsule/model";
@@ -238,12 +238,13 @@ export default function JourneyScreen() {
     portrait: assetUri(keeperPortrait), figure: assetUri(characters.keeper), mark: keeperMark(activeHunt),
   }] : [], [activeHunt, showKeeper]);
   // A joined private hunt's waypoints: brass location pins, only ever visible to people who joined.
+  const questPhotos = useQuestImages(privateList.flatMap((ph) => ph.waypoints.map((w) => w.image)));
   const missionPins = useMemo<LivePin[]>(() => privateList.flatMap((ph) => inOrder(ph).map<LivePin>((w) => ({
     id: `mission-${ph.id}-${w.id}`, lat: w.lat, lng: w.lng, kind: "mission", vessel: "",
     mission: w.mission_type, done: !!w.done_at, locked: missionLocked(ph, w), photo: questImageUri(w.image),
     near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
     tag: w.done_at ? undefined : h.pointsShort(w.points),
-  }))), [privateList, you?.lat, you?.lng, h]);
+  }))), [privateList, you?.lat, you?.lng, h, questPhotos]);
   const cooling = (w: Waypost) => !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now();
   const gamePins = useMemo<LivePin[]>(() => [
     // Only what's inside the pickup circle shows, so capsules never crowd the map.

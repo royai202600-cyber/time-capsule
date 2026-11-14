@@ -42,7 +42,8 @@ export type PrivateHunt = {
 export type LeaderRow = { user: string; name: string; avatar?: Record<string, unknown> | null; points: number; duration_s?: number | null; you?: boolean };
 export type MissionResult = { hunt: PrivateHunt; points_gained: number; tries_left: number; wait_s: number };
 
-const CODES = ["bad_code", "too_far", "closed", "not_joined", "locked", "already_done", "wrong_answer", "no_tries", "not_started", "time_up", "wrong_qr", "not_allowed", "not_ready", "too_many", "unknown"] as const;
+// "hunt_locked" comes before "locked", since codes are matched by substring.
+const CODES = ["bad_code", "too_far", "closed", "not_joined", "hunt_locked", "locked", "already_done", "wrong_answer", "no_tries", "not_started", "time_up", "wrong_qr", "not_allowed", "not_ready", "too_many", "unknown"] as const;
 export type PrivateHuntErrorCode = typeof CODES[number];
 export class PrivateHuntError extends Error { constructor(public code: PrivateHuntErrorCode) { super(code); } }
 

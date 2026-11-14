@@ -110,6 +110,7 @@ const strings = {
     closeHunt: "結束這場活動",
     closeHuntAsk: "結束之後就不能再參加了。",
     closed: "已結束",
+    lockedNote: "已經有人參加了。為了讓大家的分數可以比較，任務、順序和時間都不能再改；名稱和說明還可以改。",
     savedJustNow: "已儲存",
 
     review: "成績",
@@ -244,6 +245,7 @@ const strings = {
     closeHunt: "End this hunt",
     closeHuntAsk: "Once it ends, nobody else can join.",
     closed: "Ended",
+    lockedNote: "Someone has joined. So everyone's scores stay comparable, the quests, route and times can't change now. The name and description still can.",
     savedJustNow: "Saved",
 
     review: "How it's going",

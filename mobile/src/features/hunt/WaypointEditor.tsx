@@ -8,7 +8,8 @@ import { searchPlaces, type PointPlace } from "../../services/places";
 import { LIMITS, waypointProblems, type WaypointDraft } from "../../services/huntOrganizer";
 import { GiftQr } from "../capsule/GiftQr";
 import { PinPicker } from "./PinPicker";
-import { DEFAULT_QUEST_IMAGE, QUEST_TEMPLATES, questImageSource, templateImage } from "./questImage";
+import { DEFAULT_QUEST_IMAGE, QUEST_TEMPLATES, questImageSource, templateImage, useQuestImages } from "./questImage";
+import { uploadQuestImage } from "../../services/huntMedia";
 import { pickPhoto } from "../../components/pickPhoto";
 import { questQr, type MissionType } from "../../services/huntPrivate";
 import { Btn } from "./HuntViews";
@@ -22,8 +23,8 @@ const TYPES: MissionType[] = ["arrive", "spin", "puzzle"];
 const POINTS = [10, 25, 50, 99];
 const input = { fontFamily: sans, fontSize: 15, color: C.ink, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, paddingHorizontal: 14, paddingVertical: 12 } as const;
 
-export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
-  waypoint: WaypointDraft; busy: boolean;
+export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDelete }: {
+  huntId: string; waypoint: WaypointDraft; busy: boolean;
   onClose: () => void; onSave: (w: WaypointDraft) => void; onDelete?: () => void;
 }) {
   const o = useOrganizerText();
@@ -36,6 +37,7 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [picking, setPicking] = useState(false);
   const [pictureError, setPictureError] = useState("");
+  const [uploading, setUploading] = useState(false);
   useEffect(() => { setW(waypoint); setQuery(""); setResults([]); setConfirmDelete(false); }, [waypoint]);
 
   // The same place search the Create flow uses, so an organizer picks a spot the way a sender does.
@@ -54,11 +56,16 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
     try {
       // Small: it is shown at most as a sheet banner and a 56 px pin.
       const image = await pickPhoto("library", 800);
-      if (image === "denied") setPictureError(o.picturePermission);
-      else if (image) set({ image });
+      if (image === "denied") { setPictureError(o.picturePermission); return; }
+      if (!image) return;
+      // Straight into the hunt's private folder; the quest saves the path, never the photo itself.
+      setUploading(true);
+      set({ image: await uploadQuestImage(huntId, image) });
     } catch { setPictureError(o.pictureError); }
+    finally { setUploading(false); }
   };
   const problems = waypointProblems(w);
+  useQuestImages([w.image]);
   const placed = !!(w.lat || w.lng);
 
   return <Modal visible transparent animationType="slide" onRequestClose={onClose}>
@@ -99,7 +106,7 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
           <Label text={o.pictureLabel} />
           {/* Round like the pin it becomes, ringed in the quest's brass. */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm, paddingVertical: 4, paddingHorizontal: 2 }}>
-            <PictureChoice on={false} label={o.pictureUpload} onPress={() => void upload()}><ArtIcon name="camera" size={22} color={C.blue} /></PictureChoice>
+            <PictureChoice on={false} label={o.pictureUpload} onPress={() => { if (!uploading) void upload(); }}><ArtIcon name="camera" size={22} color={C.blue} /></PictureChoice>
             {!!w.image && !w.image.startsWith("tpl:") && <PictureChoice on label={o.pictureUpload} image={w.image} onPress={() => {}} />}
             {QUEST_TEMPLATES.map((key, i) => {
               const image = templateImage(key);
@@ -206,7 +213,7 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
             {problems.map((p) => <Text key={p} style={{ fontFamily: sans, fontSize: 13, color: C.wax }}>· {o.waypointProblemText[p]}</Text>)}
           </View>}
 
-          <Btn title={o.save} disabled={busy || !!problems.length} onPress={() => onSave(w)} />
+          <Btn title={o.save} disabled={busy || uploading || !!problems.length} onPress={() => onSave(w)} />
           {!!onDelete && (confirmDelete
             ? <View style={{ gap: spacing.sm, backgroundColor: C.white, borderWidth: 1, borderColor: C.wax, borderRadius: radii.md, padding: spacing.md, ...shadows.card }}>
               <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.ink }}>{o.deleteWaypointAsk}</Text>

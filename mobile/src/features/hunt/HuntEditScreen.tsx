@@ -43,6 +43,7 @@ export default function HuntEditScreen() {
   const [waypoints, setWaypoints] = useState<WaypointDraft[]>([]);
   const [status, setStatus] = useState<HuntStatus>("draft");
   const [code, setCode] = useState<string | null>(null);
+  const [locked, setLocked] = useState(false);
   const [editing, setEditing] = useState<WaypointDraft | null>(null);
   const [review, setReview] = useState<Review | null>(null);
   const [sheet, setSheet] = useState<"route" | "limit" | "start" | "end" | null>(null);
@@ -52,7 +53,7 @@ export default function HuntEditScreen() {
   const load = useCallback(() => {
     if (!userId || !id) return;
     organizer.get(userId, id)
-      .then((s) => { setDraft(s.draft); setWaypoints(s.waypoints); setStatus(s.status); setCode(s.code); })
+      .then((s) => { setDraft(s.draft); setWaypoints(s.waypoints); setStatus(s.status); setCode(s.code); setLocked(!!s.locked); })
       .catch(() => setToast(h.perr.unknown));
   }, [userId, id]);
   useFocusEffect(useCallback(() => { load(); }, [load]));
@@ -84,7 +85,11 @@ export default function HuntEditScreen() {
     if (busy) return;
     setBusy(true);
     try { await run(); void haptics.success(); after?.(); }
-    catch (e) { void haptics.warn(); setToast(h.perr[e instanceof PrivateHuntError ? e.code : "unknown"]); }
+    catch (e) {
+      void haptics.warn(); setToast(h.perr[e instanceof PrivateHuntError ? e.code : "unknown"]);
+      // Someone joined while this screen was open: reload, so the editor shows the lock.
+      if (e instanceof PrivateHuntError && e.code === "hunt_locked") { setEditing(null); load(); }
+    }
     finally { setBusy(false); }
   };
 
@@ -121,7 +126,7 @@ export default function HuntEditScreen() {
     sub: h.missionTypes[w.mission_type],
     right: h.pointsShort(w.points),
     glyph: <MissionGlyph type={w.mission_type} size={15} color={C.blue} />,
-    onPress: () => setEditing(w),
+    onPress: locked ? undefined : () => setEditing(w),
   }));
   const dateText = (iso: string) => new Date(iso).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US");
   const timeText = (iso: string) => new Date(iso).toLocaleTimeString(language === "zh" ? "zh-Hant" : "en-US", { hour: "2-digit", minute: "2-digit" });
@@ -141,6 +146,7 @@ export default function HuntEditScreen() {
     </View>
 
     {status === "closed" && <Note text={o.closed} />}
+    {locked && status !== "closed" && (section === "details" || section === "missions") && <Note text={o.lockedNote} />}
 
     {section === "details" && <>
       <Field label={o.nameLabel}>
@@ -160,6 +166,8 @@ export default function HuntEditScreen() {
         </Text>
       </View>
 
+      {/* After the first join these no longer change; they stay visible but can't be opened. */}
+      <View pointerEvents={locked ? "none" : "auto"} style={{ gap: spacing.md, opacity: locked ? .55 : 1 }}>
       <Field label={o.startLabel2}>
         <PickerRow label={o.startLabel2} icon={<Glyph><ToolIcon kind="calendar" /></Glyph>}
           title={o.timeAt(dateText(draft.starts_at), timeText(draft.starts_at))} onPress={() => setSheet("start")} />
@@ -174,6 +182,7 @@ export default function HuntEditScreen() {
       <PickerRow label={o.limitLabel} icon={<Glyph><ToolIcon kind="clock" /></Glyph>}
         title={draft.time_limit_min ? o.limitMinutes(draft.time_limit_min) : o.limitNone}
         sub={o.limitSub} onPress={() => setSheet("limit")} />
+      </View>
 
       <Toggle label={o.leaderboardLabel} on={draft.leaderboard_visible}
         onText={o.leaderboardOn} offText={o.leaderboardOff}
@@ -186,7 +195,7 @@ export default function HuntEditScreen() {
         <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{o.noWaypointsNote}</Text>
       </View>}
       {!!rows.length && <TaskList rows={rows} />}
-      {waypoints.length < LIMITS.waypoints
+      {locked ? null : waypoints.length < LIMITS.waypoints
         ? <Btn quiet title={o.addWaypoint} onPress={() => setEditing(blankWaypoint(nextOrdinal(waypoints), null))} />
         : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{o.waypointFull(LIMITS.waypoints)}</Text>}
     </>}
@@ -265,7 +274,7 @@ export default function HuntEditScreen() {
         onChange={(v) => edit({ ends_at: v })} o={o} />
     </Sheet>
 
-    {!!editing && <WaypointEditor waypoint={editing} busy={busy}
+    {!!editing && <WaypointEditor huntId={id} waypoint={editing} busy={busy}
       onClose={() => setEditing(null)} onSave={saveWaypoint}
       onDelete={editing.id ? () => deleteWaypoint(editing) : undefined} />}
   </Screen>;

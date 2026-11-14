@@ -18,7 +18,7 @@ import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { Btn, HuntCard, huntWindow, type TaskRow } from "./HuntViews";
 import { useHuntText } from "./strings";
 import { QrScanner } from "./QrScanner";
-import { questImageSource } from "./questImage";
+import { questImageSource, useQuestImages } from "./questImage";
 
 /** One glyph per mission type, matching the glyph drawn on its brass pin. */
 export function MissionGlyph({ type, size = 18, color = C.blue }: { type: MissionType; size?: number; color?: string }) {
@@ -170,6 +170,7 @@ export function MissionSheet({ visible, hunt, waypoint, meters, busy, error, tri
     const timer = setInterval(() => tick((n) => n + 1), 1000);
     return () => clearInterval(timer);
   }, [!wait]);
+  useQuestImages([waypoint.image]);
   const puzzle = waypoint.mission_type === "puzzle";
   const needsQr = waypoint.mission_type === "arrive" && waypoint.arrive_check === "gps_qr";
   const canAct = near && !done && !shut && !wait && (!puzzle || !!answer.trim());

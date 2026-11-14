@@ -136,7 +136,7 @@ const rpc = (fn: string, args?: Record<string, unknown>): Promise<RpcResult> =>
 const fail = (e: { message?: string } | null) => {
   if (!e) return;
   const m = e.message ?? "";
-  throw new PrivateHuntError(/not allowed|permission|can_create/i.test(m) ? "not_allowed" : "unknown");
+  throw new PrivateHuntError(/hunt_locked/.test(m) ? "hunt_locked" : /not allowed|permission|can_create/i.test(m) ? "not_allowed" : "unknown");
 };
 const signedIn = async () => !!(await supabase.auth.getSession()).data.session;
 
@@ -194,10 +194,11 @@ export const organizer = {
       .sort((a, b) => b[1].created_at.localeCompare(a[1].created_at))
       .map(([id, s]) => asOwned(id, s));
   },
-  async get(userId: string, id: string): Promise<{ draft: HuntDraft; waypoints: WaypointDraft[]; status: HuntStatus; code: string | null }> {
+  /** `locked`: someone has joined, so the route, times and quests can no longer change (the server refuses with hunt_locked). */
+  async get(userId: string, id: string): Promise<{ draft: HuntDraft; waypoints: WaypointDraft[]; status: HuntStatus; code: string | null; locked?: boolean }> {
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
       const { data, error } = await rpc("hunt_edit_state", { p_hunt: id });
-      fail(error); return data as { draft: HuntDraft; waypoints: WaypointDraft[]; status: HuntStatus; code: string | null };
+      fail(error); return data as { draft: HuntDraft; waypoints: WaypointDraft[]; status: HuntStatus; code: string | null; locked: boolean };
     }
     await load(userId);
     const s = hunts[id];
