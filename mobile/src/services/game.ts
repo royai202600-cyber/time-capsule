@@ -21,7 +21,10 @@ export type ThrowResult = {
 };
 export type LandmarkAttempt = { id: string; waypost: string; vessel: string; cracks: number; expires_at: string };
 export type LandmarkHit = { result: "hit" | "won"; cracks: number; vessel: string; copies: number; stars: number; is_new: boolean; xp_gained: number; state: GameState };
+// Normalize names from the old server until the timed-hunt migration ships.
+export const cityHuntNameZh = (name: string) => name.replace("城市尋寶", "城市定向");
 export type PassportHunt = { id: string; name_zh: string; name_en: string; at: string };
+export type PrivateHuntStamp = { id: string; name: string; at: string };
 export type DevLetter = { bottle: SeaBottle; message: string };
 export type GameErrorCode = "no_balls" | "expired" | "no_attempts" | "already_caught" | "too_far" | "too_fast" | "cooldown" | "active_attempt" | "unknown";
 export class GameError extends Error { constructor(public code: GameErrorCode) { super(code); } }
@@ -246,14 +249,15 @@ export const game = {
     return found;
   },
   /** Places stamped by a Landmark win or an opened capsule, with when they were first earned. */
-  async passport(): Promise<{ places: Record<string, string>; hunts: PassportHunt[] }> {
-    if (!await live()) return { places: {}, hunts: [] };
+  async passport(): Promise<{ places: Record<string, string>; hunts: PassportHunt[]; privateHunts: PrivateHuntStamp[] }> {
+    if (!await live()) return { places: {}, hunts: [], privateHunts: [] };
     const { data, error } = await supabase.rpc("my_passport");
     fail(error);
     const rows = data ?? [];
     return {
-      places: Object.fromEntries(rows.filter((row) => row.how_earned !== "hunt").map((row) => [row.place, row.first_at])),
-      hunts: rows.filter((row) => row.how_earned === "hunt").map((row) => ({ id: row.place, name_zh: row.name_zh, name_en: row.name_en, at: row.first_at })),
+      places: Object.fromEntries(rows.filter((row) => row.how_earned !== "hunt" && row.how_earned !== "private_hunt").map((row) => [row.place, row.first_at])),
+      hunts: rows.filter((row) => row.how_earned === "hunt").map((row) => ({ id: row.place, name_zh: cityHuntNameZh(row.name_zh), name_en: row.name_en, at: row.first_at })),
+      privateHunts: rows.filter((row) => row.how_earned === "private_hunt").map((row) => ({ id: row.place, name: row.name_zh, at: row.first_at })),
     };
   },
   async spin(id: string): Promise<{ wax: number; gold: number; state: GameState }> {

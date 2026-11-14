@@ -471,6 +471,41 @@ export type Database = {
           },
         ]
       }
+      hunt_runs: {
+        Row: {
+          day: string
+          duration_s: number
+          finished_at: string
+          hunt_id: string
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          day: string
+          duration_s: number
+          finished_at: string
+          hunt_id: string
+          started_at: string
+          user_id: string
+        }
+        Update: {
+          day?: string
+          duration_s?: number
+          finished_at?: string
+          hunt_id?: string
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hunt_runs_hunt_id_user_id_fkey"
+            columns: ["hunt_id", "user_id"]
+            isOneToOne: false
+            referencedRelation: "hunt_progress"
+            referencedColumns: ["hunt_id", "user_id"]
+          },
+        ]
+      }
       hunt_steps: {
         Row: {
           goal: number
@@ -580,6 +615,7 @@ export type Database = {
           name_en: string
           name_zh: string
           owner: string | null
+          repeat_xp: number
           reset_timezone: string | null
           reward_gold: number | null
           reward_xp: number | null
@@ -611,6 +647,7 @@ export type Database = {
           name_en: string
           name_zh: string
           owner?: string | null
+          repeat_xp?: number
           reset_timezone?: string | null
           reward_gold?: number | null
           reward_xp?: number | null
@@ -642,6 +679,7 @@ export type Database = {
           name_en?: string
           name_zh?: string
           owner?: string | null
+          repeat_xp?: number
           reset_timezone?: string | null
           reward_gold?: number | null
           reward_xp?: number | null

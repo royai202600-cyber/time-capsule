@@ -10,8 +10,8 @@ export const PMTILES = "https://unpkg.com/pmtiles@4.5.0/dist/pmtiles.js";
 const TOY_SCALE = 0.35;
 const TOY_MAX_M = 40;
 
-// Landmarks drawn in brass at their real spot (docs/sop/landmark-monument.md). Two ways, mixable:
-// - tile: the real building outline already in our map tiles, picked by feature id and repainted in brass;
+// Landmarks drawn in blues at their real spot (docs/sop/landmark-monument.md). Two ways, mixable:
+// - tile: the real building outline already in our map tiles, picked by feature id and repainted in ink blue;
 // - tiers: hand-stacked boxes for shapes the tiles don't have (fountains, statues, flared towers).
 /**
  * [half-width m, base m, top m, options]: a box centred on the monument. Options: `round` (a disc of that radius),
@@ -50,7 +50,7 @@ export const MONUMENTS: Monument[] = [
   ] },
   // HKUST: the curved academic building that wraps the Piazza, opening west towards the gate. The Piazza
   // (OSM way 235913807) is a ring centred here; the seal floats over the Piazza. Roy (2026-11-10): the whole
-  // campus is the landmark, so every tile building inside the campus outline (OSM way 40664120) is brass too.
+  // campus is the landmark, so every tile building inside the campus outline (OSM way 40664120) is blue too.
   { id: "hkust", lat: 22.3374255, lng: 114.2629606,
     tile: { realTop: 38, top: 14, ids: [
       35184588150781, 35184588150874, 35184588151507, 35184588151845, 35184604980730, 35184604980739, 35184605712876, 35184605712877,
@@ -101,7 +101,8 @@ function monumentGeoJson() {
   }));
   return { type: "FeatureCollection", features };
 }
-const BRASS_RAMP = (t: unknown) => ["interpolate", ["linear"], t, 0, "#B98F45", 0.6, C.brass, 1, "#F3E2BB"];
+// Everything of ours on the map is blue; brass is kept for private hunts (docs/design/city-orienteering.md).
+const MONUMENT_RAMP = (t: unknown) => ["interpolate", ["linear"], t, 0, C.ink, 0.35, C.blue, 0.75, C.lightBlue, 1, C.glass];
 export const mapPalette = {
   water: "#BCD3E6", waterLine: "#9DBBD6", land: "#F3EFE6", park: "#DCE6CF", sand: "#EFE3C6",
   building: "#E6E0D3", buildingTop: "#EEE9DE", road: "#FFFFFF", roadCase: "#D5DDE7", major: "#F1E2BF", label: C.blue, halo: "#F6F8FB",
@@ -122,8 +123,8 @@ function vectorStyle(pmtiles: string) {
       { id: "road-case", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": mapPalette.roadCase, "line-width": ["interpolate", ["linear"], ["zoom"], 13, 2, 17, 12, 19, 22] } },
       { id: "roads", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road", "path"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "kind"], ["highway", "major_road"], mapPalette.major, mapPalette.road], "line-width": ["interpolate", ["linear"], ["zoom"], 13, 1, 17, ["match", ["get", "kind"], "path", 2, 9], 19, ["match", ["get", "kind"], "path", 4, 18]] } },
       { id: "buildings", type: "fill-extrusion", source: "base", "source-layer": "buildings", minzoom: 15, filter: ["!", ["in", ["id"], ["literal", TILE_IDS]]], paint: { "fill-extrusion-color": mapPalette.building, "fill-extrusion-height": ["min", ["*", ["coalesce", ["get", "height"], 9], TOY_SCALE], TOY_MAX_M], "fill-extrusion-opacity": .82 } },
-      // Landmark buildings from the tiles, repainted in the monument brass (darker at the foot, cream at the top).
-      { id: "monument-tiles", type: "fill-extrusion", source: "base", "source-layer": "buildings", minzoom: 15, filter: ["in", ["id"], ["literal", TILE_IDS]], paint: { "fill-extrusion-base": ["*", ["coalesce", ["get", "min_height"], 0], tileScale()], "fill-extrusion-height": ["*", ["coalesce", ["get", "height"], 9], tileScale()], "fill-extrusion-color": C.brass, "fill-extrusion-opacity": 1, "fill-extrusion-vertical-gradient": true } },
+      // Landmark buildings from the tiles, repainted in the monument blue.
+      { id: "monument-tiles", type: "fill-extrusion", source: "base", "source-layer": "buildings", minzoom: 15, filter: ["in", ["id"], ["literal", TILE_IDS]], paint: { "fill-extrusion-base": ["*", ["coalesce", ["get", "min_height"], 0], tileScale()], "fill-extrusion-height": ["*", ["coalesce", ["get", "height"], 9], tileScale()], "fill-extrusion-color": C.blue, "fill-extrusion-opacity": 1, "fill-extrusion-vertical-gradient": true } },
       { id: "places", type: "symbol", source: "base", "source-layer": "places", filter: ["in", ["get", "kind"], ["literal", ["neighbourhood", "locality", "macrohood"]]], layout: { "text-field": ["coalesce", ["get", "name:zh-Hant"], ["get", "name"]], "text-font": ["Noto Sans Regular"], "text-size": 12, "text-letter-spacing": .08 }, paint: { "text-color": mapPalette.label, "text-halo-color": mapPalette.halo, "text-halo-width": 1.6 } },
     ],
   };
@@ -145,7 +146,8 @@ export function mapHtml({ pmtiles, center }: { pmtiles: string | null; center: {
 <style>
 html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hidden;-webkit-tap-highlight-color:transparent;font-family:-apple-system,"Noto Sans TC",sans-serif}
 .maplibregl-ctrl-attrib{font-size:9px;background:rgba(246,248,251,.7)!important}
-.you{position:absolute;width:52px;height:52px;z-index:9}
+/* The player always looks the same and stands above every pin, even a selected one (taps still pass through to it). */
+.you{position:absolute;width:52px;height:52px;z-index:25!important}
 .you .pulse{position:absolute;left:-14px;top:-14px;width:80px;height:80px;border-radius:50%;background:${C.lightBlue}33;animation:pulse 2.6s ease-out infinite}
 .you .cone{position:absolute;left:6px;top:-30px;width:40px;height:40px;background:conic-gradient(from -25deg at 50% 100%,${C.lightBlue}88 0deg,transparent 50deg);border-radius:50% 50% 0 0;transform-origin:50% 100%}
 .face{position:absolute;inset:0;border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 3px 10px rgba(22,38,63,.3);background:${C.cream}}
@@ -214,15 +216,29 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .you .label{animation:labelIn .3s ease-out;position:absolute;left:50%;bottom:66px;transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:600;letter-spacing:.04em;padding:5px 10px;border-radius:12px;background:${C.ink};color:${C.brass};box-shadow:0 2px 8px rgba(22,38,63,.3);cursor:pointer}
 .you .label:after{content:"";position:absolute;left:50%;top:100%;margin-left:-5px;border:5px solid transparent;border-top-color:${C.ink}}
 /* Landmark: a floating seal badge with a four-point star, the same for every Landmark (on top of its monument when it has one), never a gem. Plum once beaten. */
-.pin.landmark{width:40px;height:44px;--lm:${C.brass};--lm-hi:#E8D3A3;--lm-lo:#9C7B3C}
+.pin.landmark{width:40px;height:44px;--lm:${C.lightBlue};--lm-hi:#C3DAF5;--lm-lo:${C.blue}}
 .pin.landmark.done{--lm:${C.plum};--lm-hi:#B98494;--lm-lo:#4A1C2A}
 .pin.landmark .badge{position:absolute;left:6px;bottom:8px;width:28px;height:28px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--lm-hi),var(--lm) 62%,var(--lm-lo));box-shadow:0 2px 6px rgba(22,38,63,.35),inset 0 0 0 2px var(--lm-hi);display:flex;align-items:center;justify-content:center;animation:bob 3.6s ease-in-out infinite}
 .pin.landmark .badge svg{width:16px;height:16px}
 .pin.landmark.top{height:30px;width:28px}
 .pin.landmark.top .badge{bottom:1px;left:0}
-.pin.landmark.near .badge{box-shadow:0 0 10px var(--lm),inset 0 0 0 2px var(--lm-hi)}
+/* Private-hunt quest (docs/design/city-orienteering.md): its picture fills a brass teardrop pointing at the spot,
+   with its points below. Done: purple, like a Waypost after its spin, with a tick badge. Locked by an in-order route: faded. */
+.pin.mission{width:54px;height:72px;--mp:${C.brass};--mp-hi:#E2C58A;--mp-lo:#A9843F;--mg:#fff}
+.pin.mission.done{--mp:${C.plum};--mp-hi:#B98494;--mp-lo:#4A1C2A;--mg:#fff}
+.pin.mission .disc{left:15px;width:24px;height:7px;background:radial-gradient(${C.brass}66,transparent 70%)}
+.pin.mission .photo{position:absolute;left:4px;bottom:6px;width:46px;height:59px;animation:bob 3.6s ease-in-out infinite;filter:drop-shadow(0 3px 4px rgba(22,38,63,.32))}
+.pin.mission .drop{position:absolute;left:0;top:2px;width:46px;height:46px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,var(--mp-hi),var(--mp) 55%,var(--mp-lo))}
+.pin.mission .ph{position:absolute;inset:3px;border-radius:50%;border:2px solid #fff;transform:rotate(45deg);background:${C.cream} center/cover no-repeat}
+.pin.mission .badge{position:absolute;right:-6px;top:-4px;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--mp-hi),var(--mp) 62%,var(--mp-lo));box-shadow:0 1px 3px rgba(22,38,63,.35),inset 0 0 0 1.5px var(--mp-hi)}
+.pin.mission .badge svg{position:absolute;left:0;top:0;width:20px;height:20px}
+.pin.mission.locked .photo{opacity:.6}
+.pin.mission.done .ph{filter:saturate(.6)}
+.pin.mission.near:not(.done):not(.locked) .photo{filter:drop-shadow(0 0 7px ${C.brass})}
+.pin.mission.near:not(.done):not(.locked) .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
+.pin.mission .tag{bottom:-14px;background:${C.brass};color:#fff}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.pin .badge,.you .pulse,.pin.keeper .seal{animation:none}}
+@media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.pin .badge,.pin.mission .photo,.you .pulse,.pin.keeper .seal{animation:none}}
 </style></head><body><div id="map"></div>
 <script>
 const send=m=>{const s=JSON.stringify(m);if(window.ReactNativeWebView)window.ReactNativeWebView.postMessage(s);else parent.postMessage({__tcmap:s},'*')};
@@ -241,11 +257,14 @@ window.__tcmapInstance=map;
 let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 // Wayposts are floating gems, clearly not buildings and clearly not capsules.
 const HOURGLASS='<svg viewBox="0 0 10 12" width="8" height="10"><path d="M1 1h8M1 11h8M2 1c0 3 3 3.5 3 5S2 8 2 11M8 1c0 3-3 3.5-3 5s3 2 3 5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
+// The glyphs of a quest's kinds; on the map only the tick shows, as the badge of a finished quest.
+const MISSION_GLYPH={arrive:'M-4 5V-5l8 2-8 3',spin:'M0-5.4a5.4 5.4 0 1 0 0 10.8 5.4 5.4 0 0 0 0-10.8M0-5.4V5.4M-5.4 0H5.4',puzzle:'M-2.6-2.4a2.7 2.7 0 1 1 2.8 3.1V2.4M0 4.8v.1',done:'M-4 0 -1 3 4-3',locked:'M-3.2-.6h6.4V4h-6.4ZM-2-.6v-1.8a2 2 0 0 1 4 0v1.8'};
+const glyphBadge=kind=>'<svg viewBox="-12 -12 24 24"><g transform="scale(.82)"><path d="'+MISSION_GLYPH[kind]+'" fill="none" stroke="var(--mg)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>';
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
 map.on('load',()=>{
   map.addSource('monuments',{type:'geojson',data:${JSON.stringify(monumentGeoJson())}});
-  map.addLayer({id:'monuments',type:'fill-extrusion',source:'monuments',paint:{'fill-extrusion-base':['get','base'],'fill-extrusion-height':['get','top'],'fill-extrusion-color':${JSON.stringify(BRASS_RAMP(["get", "t"]))},'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}});
+  map.addLayer({id:'monuments',type:'fill-extrusion',source:'monuments',paint:{'fill-extrusion-base':['get','base'],'fill-extrusion-height':['get','top'],'fill-extrusion-color':${JSON.stringify(MONUMENT_RAMP(["get", "t"]))},'fill-extrusion-opacity':1,'fill-extrusion-vertical-gradient':true}});
   map.addSource('reach',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   map.addLayer({id:'reach-fill',type:'fill',source:'reach',paint:{'fill-color':'${C.brass}','fill-opacity':.12}});
   map.addLayer({id:'reach-line',type:'line',source:'reach',paint:{'line-color':'${C.brass}','line-width':1.5,'line-dasharray':[2,2]}});
@@ -329,8 +348,9 @@ function render(){
   for(const p of state.pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
       :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 1.5C12.8 8.2 15.8 11.2 22.5 12 15.8 12.8 12.8 15.8 12 22.5 11.2 15.8 8.2 12.8 1.5 12 8.2 11.2 11.2 8.2 12 1.5Z"/></svg></div></div>'
+      :p.kind==='mission'?'<div class="pin-body"><div class="disc"></div><div class="photo"><div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>'+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
       :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait!==undefined&&(p.portrait||p.private)?'<div class="who">'+face(p.portrait)+(p.private?'<div class="lock"></div>':'')+'</div>':'')+(p.timer?'<div class="tag timer">'+HOURGLASS+p.timer+'</div>':p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
-    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'')+(p.private?' private':'')+(p.opened?' opened':'');
+    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'')+(p.private?' private':'')+(p.opened?' opened':'')+(p.locked?' locked':'');
     let m=marks.get(p.id);
     if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();tapPin(p.id)});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
     const el=m.marker.getElement();
