@@ -37,7 +37,7 @@ import { errorKey, useGameText } from "../game/strings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { hunt as hunts, HuntError, huntStatus, keeperMark, onHuntChange, type Hunt } from "../../services/hunt";
 import { clockText } from "../../services/huntClock";
-import { inOrder, locked as missionLocked, onPrivateHuntChange, privateHunt as privateHunts, PrivateHuntError, type LeaderRow, type PrivateHunt, type Waypoint } from "../../services/huntPrivate";
+import { huntStillOn, inOrder, locked as missionLocked, onPrivateHuntChange, privateHunt as privateHunts, PrivateHuntError, type LeaderRow, type PrivateHunt, type Waypoint } from "../../services/huntPrivate";
 import { organizer } from "../../services/huntOrganizer";
 import { KeeperCard, keeperPortrait, QuestSheet, RunChip } from "../hunt/HuntViews";
 import { JoinPrivateSheet, LeaderboardSheet, MissionSheet, PrivateHuntCard } from "../hunt/PrivateHuntViews";
@@ -241,7 +241,8 @@ export default function JourneyScreen() {
   }] : [], [activeHunt, showKeeper]);
   // A joined private hunt's waypoints: brass location pins, only ever visible to people who joined.
   const questPhotos = useQuestImages(privateList.flatMap((ph) => ph.waypoints.map((w) => w.image)));
-  const missionPins = useMemo<LivePin[]>(() => privateList.flatMap((ph) => inOrder(ph).map<LivePin>((w) => ({
+  // Quest pins show only while the hunt is still on for you: gone once it closes, you finish, or your time runs out.
+  const missionPins = useMemo<LivePin[]>(() => privateList.filter(huntStillOn).flatMap((ph) => inOrder(ph).map<LivePin>((w) => ({
     id: `mission-${ph.id}-${w.id}`, lat: w.lat, lng: w.lng, kind: "mission", vessel: "",
     mission: w.mission_type, done: !!w.done_at, locked: missionLocked(ph, w), photo: questImageUri(w.image),
     near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
