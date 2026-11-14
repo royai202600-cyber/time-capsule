@@ -75,6 +75,9 @@ export const sameAnswer = (a: string, b: string) => normalise(a) === normalise(b
 const normalise = (s: string) => s.toLowerCase().replace(/\s+/g, "").replace(/[，。、！？,.!?]/g, "");
 export const huntOpen = (h: PrivateHunt, now = Date.now()) =>
   now >= new Date(h.starts_at).getTime() && (h.ends_at === "infinity" || now <= new Date(h.ends_at).getTime());
+/** Still on for this player: the hunt is open, they haven't finished, and their own time limit hasn't run out. */
+export const huntStillOn = (h: PrivateHunt, now = Date.now()) =>
+  huntOpen(h, now) && !h.finished_at && !(h.run_ends_at && now > new Date(h.run_ends_at).getTime());
 /** What a quest's on-site QR code carries: the server's secret for that quest. */
 export const questQr = (token: string) => `timecapsule://quest/${token}`;
 /** The token from a scanned QR or a typed code, in any case and with stray spaces or dashes; "" if it can't be one. */

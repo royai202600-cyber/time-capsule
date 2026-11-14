@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 // The helpers under test are pure; these two keep the module's native imports out of the test run.
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: { getItem: vi.fn(), setItem: vi.fn() } }));
 vi.mock("./supabase", () => ({ supabase: { auth: { getSession: vi.fn() }, rpc: vi.fn() } }));
-import { byRank, cleanCode, doneCount, huntOpen, inOrder, locked, sameAnswer, totalPoints, waitLeft, type LeaderRow, type PrivateHunt, type Waypoint, questQr, questToken, qrGroups } from "./huntPrivate";
+import { byRank, cleanCode, doneCount, huntOpen, huntStillOn, inOrder, locked, sameAnswer, totalPoints, waitLeft, type LeaderRow, type PrivateHunt, type Waypoint, questQr, questToken, qrGroups } from "./huntPrivate";
 
 const wp = (id: string, ordinal: number, points: number, done?: string | null): Waypoint =>
   ({ id, ordinal, points, name: id, lat: 25, lng: 121, mission_type: "arrive", done_at: done ?? null });
@@ -73,6 +73,14 @@ describe("open window", () => {
   it("is closed after it ends", () => expect(huntOpen(h, Date.parse("2028-01-01T00:00:00Z"))).toBe(false));
   it("treats infinity as never ending", () =>
     expect(huntOpen({ ...h, ends_at: "infinity" }, Date.parse("2099-01-01T00:00:00Z"))).toBe(true));
+});
+
+describe("quest pins on the map", () => {
+  const h = hunt("any", []), mid = Date.parse("2026-06-01T00:00:00Z");
+  it("show while the hunt is on", () => expect(huntStillOn(h, mid)).toBe(true));
+  it("go once the hunt has ended", () => expect(huntStillOn(h, Date.parse("2028-01-01T00:00:00Z"))).toBe(false));
+  it("go once you finish", () => expect(huntStillOn({ ...h, finished_at: "2026-05-31T00:00:00Z" }, mid)).toBe(false));
+  it("go once your own time runs out", () => expect(huntStillOn({ ...h, run_ends_at: "2026-05-31T00:00:00Z" }, mid)).toBe(false));
 });
 
 describe("quest QR codes", () => {
