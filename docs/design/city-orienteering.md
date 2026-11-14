@@ -1,6 +1,6 @@
 # City Orienteering: timed daily hunts and private hunts
 
-Claude, 2026-11-14, from Roy's brief. This extends [city-hunt.md](city-hunt.md); where the two disagree, this doc wins. "City Hunt" (城市尋寶) stays the name in the app and in code. Items marked **Roy to confirm** use the default written here until he says otherwise, so work can start.
+Claude, 2026-11-14, from Roy's brief. This extends [city-hunt.md](city-hunt.md); where the two disagree, this doc wins. "City Hunt" (城市定向; private ones 私人定向) is the name in the app, and "quest" (任務) is one thing to do at a waypoint. Never 城市尋寶 or 關卡. Items marked **Roy to confirm** use the default written here until he says otherwise, so work can start.
 
 ## What Roy asked for
 1. **System hunts** (ours: Xinyi, Senado, HKUST) stay, open **every day to everyone**, and become **timed** so they feel exciting.
@@ -18,33 +18,33 @@ Claude, 2026-11-14, from Roy's brief. This extends [city-hunt.md](city-hunt.md);
 - Screens: the Quest sheet shows the limit before joining, a running countdown after check-in, and best / today's time when finished. A small countdown chip sits on the map during a run. The Keeper gets two new lines (time's up, new record), zh and en.
 
 ## Part B: Private hunts
-A private hunt is made by an **organizer**, joined by **code, link or QR**, and seen only by people who joined. It has its own brass waypoints and missions. It never touches the system game economy.
+A private hunt is made by an **organizer**, joined by **code, link or QR**, and seen only by people who joined. It has its own brass waypoints, each with one **quest (任務)**. It never touches the system game economy.
 
 ### Organizer: Create → Publish → Review (Goosechase mapped to v1)
 | Goosechase | v1 (this patch) | Later |
 |---|---|---|
-| Details: image, name, description, location, password, search visibility | Cover (upload or one of our illustrated covers), name, description, area (centre + radius picked on the map). Always hidden: join by code only | Public listing in search |
-| Missions: name, type, points, description, image, link | Each **waypoint** carries one mission: name, type, points, description, optional image | Link, mission library |
+| Details: image, name, description, location, password, search visibility | Cover (upload or one of our illustrated covers), name, description. **No radius:** the hunt's area is derived from its quests (centre of the quests, reaching the furthest plus 25%, at least 200 m). Always hidden: join by code only | Public listing in search |
+| Missions: name, type, points, description, image, link | Each **waypoint** carries one quest: the organizer **drops its pin on a map** and the place name fills in the quest name; type; **points 1–999 typed freely**; description; optional image | Link, mission library |
 | Availability: release / expiry rules, draft | Route mode for the whole hunt: **any order** or **in order**. The hunt itself is draft until published | Per-mission release and expiry, point-total unlocks |
 | Submission settings (feed, photo/video, sources) | Not needed for v1 mission types | With photo missions |
 | Broadcasts | — | Phase 2 |
 | Branding, custom terms | Cover image only | Phase 2 |
 | Participants: link, QR, code; teams or individuals | Link, QR and a 6-character code. **Individuals only** | Teams |
-| Start & end | Start now or at a time. End at a time or after a length of time. Optional per-player time limit (the Part A clock) | — |
-| Review: feed, leaderboard, submissions, stats | **Leaderboard** (points, then time; organizer can hide it from players), participants with progress, stats (joined, finished, completion per mission) | Activity feed, adjust score, submissions review |
+| Start & end | **A start time and an end time, both required** (a coordinated event). Players may join before the start; nobody can complete a quest before it. Optional per-player time limit, timed from the later of joining and the start, and cut short by the end time | — |
+| Review: feed, leaderboard, submissions, stats | **Leaderboard** (points, then time; organizer can hide it from players), participants with progress, stats (joined, finished, completion per quest) | Activity feed, adjust score, submissions review |
 
-### Mission types (v1)
+### Quest types (v1)
 | Type | Player does | Server checks |
 |---|---|---|
-| **到達 Arrive** | Walks to the pin and taps Check in | Within 50 m, accuracy rule as elsewhere |
+| **到達 Arrive** | Walks to the pin and taps Check in. The organizer chooses **GPS** or **GPS + QR**: with QR, the player also scans a code the organizer printed and left at the spot | Within 50 m, accuracy rule as elsewhere; with QR, the scanned token must match that waypoint's secret `qr_token` |
 | **轉盤 Spin** | Spins the existing Waypost wheel at the pin | Within range; gives points only, **no balls or XP** |
 | **謎題 Puzzle** | Reads a question at the pin and answers: free text or multiple choice | Within range; answer compared on the server (case and spacing ignored); answers never sent to clients; 3 tries then a 60 s wait |
 | 拍照 Photo | Phase 2 | Needs storage, organizer review and Roy's moderation decision |
 
 ### Player
 - Joins from a link, QR or by typing the code in the Quest sheet (「輸入代碼」). Sees the cover, description, rules, time and Join.
-- After joining, the hunt's **brass pins** appear on Journey. Tapping one in range opens its mission. Points add up; finishing every mission (or the organizer's end time) ends it.
-- Quest sheet lists the missions with points and ticks, the clock if there is one, and the leaderboard if the organizer shows it.
+- After joining, the hunt's **brass pins** appear on Journey. Tapping one in range opens its quest. Points add up; finishing every quest (or the organizer's end time) ends it.
+- Quest sheet lists the quests with points and ticks, the clock if there is one, and the leaderboard if the organizer shows it.
 - One system hunt and one private hunt can be active at the same time; the Quest sheet has two tabs when both are.
 
 ### Rules and safety
@@ -60,13 +60,13 @@ A private hunt is made by an **organizer**, joined by **code, link or QR**, and 
 |---|---|---|
 | System Waypost | Blue gem (purple on cooldown) | Unchanged |
 | System Landmark monument | Brass fading to cream | **Blues:** navy `#16263F` base → ink blue `#2F5D8A` → light blue `#5A8FD0` → glass `#DCE8F2` top. Landmark seal in blue. Code only (`mapHtml.ts`) |
-| Private waypoint | — | **Brass location pin** with a small glyph for its mission (flag, wheel, puzzle piece). Done: cream with a tick. Locked (in-order route): dashed outline |
+| Private waypoint | — | **3D brass location pin** (art, see below) with a small glyph for its quest (flag, wheel, question mark). Done: **purple, like a spun Waypost**, with a tick. Locked (in-order route): dashed outline. Until the art lands, a flat code-drawn pin stands in |
 | Letter Keeper marker | Brass seal | Stays brass (he is a person, not a waypoint). **Roy to confirm** |
 
 Brass pins scale with zoom like other pins and only joined players see them.
 
 ## Art (one art session, `gpt-image-2`, follow `design/art/STYLE.md`; three test pieces for Roy first)
-1. **Brass location pin** master, 1024×1024 transparent, tip anchored at (512, 960), readable at 40–96 px. The done (cream + tick) and locked variants are made **by script** from the master. Mission glyphs are drawn in code on top.
+1. **3D brass location pin** master (Roy: the quest pins should look 3D, like the Wayposts' gems, not flat), 1024×1024 transparent, tip anchored at (512, 960), readable at 40–96 px. The **done variant is purple** (the spun-Waypost purple) and the locked variant is dimmed; both are made **by script** from the master. Quest glyphs are drawn in code on top, so leave a clear round face on the pin head.
 2. **Private-hunt Passport stamp:** round, one colour, **brass**, double ring, a location-pin motif, no lettering.
 3. **Six default hunt covers** (16:9, 1280×720): park, campus, old town, waterfront, city centre, museum quarter.
 4. **One scene:** an empty "my hunts" state (a folded map with brass pins).
@@ -81,13 +81,15 @@ Keep hunt bookkeeping from ever failing the original action; every location and 
 - `hunt_check_in` starts a run; `hunt_finish` refuses with hint `time_up` after the limit; expiry needs no scheduled job (computed on read, like the midnight reset).
 - Hunt objects from `hunt_list` / `hunt_join` gain `time_limit_min, run_started_at, run_ends_at, best_s, today_s, finished_today`.
 - All three system hunts set to daily, `ends_at = infinity`.
+- Data: rename existing hunt names from 城市尋寶 to 城市定向 (e.g. 信義城市尋寶 → 信義城市定向).
 
 **B. Private hunts** (`P1` organizer, `P2` player)
-- `hunts` gains `kind ('system'|'private') default 'system'`, `owner uuid`, `status ('draft'|'published'|'closed')`, `join_code` (unique, 6 chars, unambiguous alphabet), `description`, `cover`, `route_mode ('any'|'ordered')`, `leaderboard_visible`, `duration_min`, with system-only columns (keeper, landmark, rewards) nullable for private.
-- `hunt_waypoints(id, hunt_id, ordinal, lat, lng, name, mission_type ('arrive'|'spin'|'puzzle'), points, description, image, puzzle_kind ('text'|'choice'), choices jsonb)`; answers in a table clients can't read.
+- `hunts` gains `kind ('system'|'private') default 'system'`, `owner uuid`, `status ('draft'|'published'|'closed')`, `join_code` (unique, 6 chars, unambiguous alphabet), `description`, `cover`, `route_mode ('any'|'ordered')`, `leaderboard_visible`, and reuses `time_limit_min` for the optional per-player limit, with system-only columns (keeper, landmark, rewards) nullable for private. Private hunts require finite `starts_at < ends_at`. **No organizer-set area:** the server derives the private hunt's area from its waypoints when it returns a hunt.
+- `hunt_waypoints(id, hunt_id, ordinal, lat, lng, name, mission_type ('arrive'|'spin'|'puzzle'), points (1–999), description, image, puzzle_kind ('text'|'choice'), choices jsonb, arrive_check ('gps'|'gps_qr') default 'gps')`; answers and `qr_token` in a table clients can't read. `qr_token` is random and issued on save when `arrive_check = 'gps_qr'`; only the owner's `hunt_edit_state` returns it.
 - `hunt_members(hunt_id, user_id, joined_at, started_at, finished_at, points)`; `hunt_completions(waypoint_id, user_id, completed_at, tries)`.
-- Organizer RPCs: `hunt_create`, `hunt_update`, `hunt_waypoint_save`, `hunt_waypoint_delete`, `hunt_publish`, `hunt_close`, `my_hunts()`, `hunt_review(p_hunt)` → `{ members: [{ name, avatar, points, finished_at, duration_s }], stats: { joined, finished, per_waypoint: [{ id, done }] } }`. Owner only; `can_create_hunts` required to create.
-- Player RPCs: `hunt_preview(p_code)`, `hunt_join_code(p_code)`, `hunt_private_state(p_hunt)` → hunt + waypoints (no answers) + my completions, `hunt_mission_complete(p_waypoint, p_lat, p_lng, p_accuracy, p_answer)` → `{ ok, points, state, tries_left, wait_s }`, `hunt_leaderboard(p_hunt)` (members only, and only if visible or caller is owner), `hunt_report(p_hunt)`.
+- Organizer RPCs: `hunt_create`, `hunt_update`, `hunt_waypoint_save`, `hunt_waypoint_delete`, `hunt_publish`, `hunt_close`, `hunt_edit_state(p_hunt)` → `{ draft, waypoints, status, code }`, `my_hunts()`, `hunt_review(p_hunt)` → `{ members: [{ name, avatar, points, finished_at, duration_s }], stats: { joined, finished, per_waypoint: [{ id, done }] } }`. Owner only; `can_create_hunts` required to create.
+- Player RPCs: `hunt_preview(p_code)`, `hunt_join_code(p_code)`, `hunt_private_state(p_hunt)` → hunt + waypoints (no answers) + my completions, `hunt_mission_complete(p_waypoint, p_lat, p_lng, p_accuracy, p_answer, p_qr)` → `{ ok, points, state, tries_left, wait_s }` (refuses `not_started` before `starts_at`, `time_up` after the run ends, and a wrong or missing `p_qr` on a GPS + QR quest)., `hunt_leaderboard(p_hunt)` (members only, and only if visible or caller is owner), `hunt_report(p_hunt)`.
+- Player hunt objects carry `run_started_at = greatest(joined_at, starts_at)` and `run_ends_at = least(run_started_at + time_limit_min, ends_at)` (just `ends_at` with no limit). Joining is allowed any time before `ends_at`. Waypoints returned to players include `arrive_check` but never `qr_token`.
 - `my_passport()` returns private-hunt stamps with `how_earned = 'private_hunt'` and the hunt name.
 - Covers and mission images: a private Storage bucket readable only by the owner and members.
 - Client flags in `mobile/src/services/hunt.ts` style: `HUNT_TIMED_BACKEND`, `HUNT_PRIVATE_BACKEND`, false until applied.
@@ -98,7 +100,8 @@ Keep hunt bookkeeping from ever failing the original action; every location and 
 |---|---|---|
 | U1 | Blue Landmark monuments and seal; timer in Quest sheet and map chip; Keeper lines | Nothing (dev fallback until `T`) |
 | U2 | Private hunt for players: enter code / link, preview, brass pins on Journey, mission screens (arrive, spin, puzzle), Quest tab, leaderboard, Passport section | Pin art (placeholder until art lands) |
-| U3 | Organizer: My hunts, create and edit (details, waypoints on the map with the Create v2 place picker, missions), publish (code, link, QR), review | — |
+| U3 | Organizer: My hunts, create and edit (details with start and end, quests dropped on a map, GPS / GPS + QR, free points), publish (code, link, QR), review | — |
+| U4 | Player QR scanner for GPS + QR quests | A camera dependency (`expo-camera`), Roy to approve |
 
 **Codex: 5 sessions for this patch** (each its own branch and worktree)
 | # | Session | Branch | Can start | Size |
