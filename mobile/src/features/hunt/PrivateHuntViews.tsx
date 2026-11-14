@@ -127,7 +127,7 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenMission, onLeaderboar
     kicker={t.privateKicker} kickerTone={C.brass}
     title={hunt.name}
     subtitle={done ? t.privateFinished : huntWindow(hunt, language, t)}
-    clock={hunt} startNote={t.privateLimit}
+    clock={hunt} startNote={t.privateLimit} upNote={t.privateTimeUpNote}
     progress={`${t.missionCount(doneCount(hunt), hunt.waypoints.length)}　${t.pointsOf(hunt.points, totalPoints(hunt))}`}
     tasks={tasks}
     note={hunt.route_mode === "ordered" ? t.missionLockedNote : undefined}

@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase";
 import { distanceMeters } from "./data";
 import { GAME_ACTION_RADIUS_M, type Coords } from "./game";
+import { runClock } from "./huntClock";
 
 /** Flipped to true by Codex's `P2` session once the player RPCs are applied. */
 export const HUNT_PRIVATE_BACKEND = false;
@@ -39,7 +40,7 @@ export type PrivateHunt = {
 export type LeaderRow = { user: string; name: string; avatar?: Record<string, unknown> | null; points: number; duration_s?: number | null; you?: boolean };
 export type MissionResult = { hunt: PrivateHunt; points_gained: number; tries_left: number; wait_s: number };
 
-const CODES = ["bad_code", "too_far", "closed", "not_joined", "locked", "already_done", "wrong_answer", "no_tries", "not_started", "unknown"] as const;
+const CODES = ["bad_code", "too_far", "closed", "not_joined", "locked", "already_done", "wrong_answer", "no_tries", "not_started", "time_up", "not_allowed", "not_ready", "too_many", "unknown"] as const;
 export type PrivateHuntErrorCode = typeof CODES[number];
 export class PrivateHuntError extends Error { constructor(public code: PrivateHuntErrorCode) { super(code); } }
 
@@ -204,6 +205,8 @@ export const privateHunt = {
     if (!demo.joined_at) throw new PrivateHuntError("not_joined");
     if (!huntOpen(h)) throw new PrivateHuntError("closed");
     if (w.done_at) throw new PrivateHuntError("already_done");
+    // Out of time, the same answer the server gives: the run is over.
+    if (runClock(h).state === "up") throw new PrivateHuntError("time_up");
     if (locked(h, w)) throw new PrivateHuntError("locked");
     if (!near(at, w)) throw new PrivateHuntError("too_far");
     if (waitLeft(w)) throw new PrivateHuntError("no_tries");

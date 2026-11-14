@@ -55,7 +55,7 @@ export function RunChip({ hunt, tone = C.blue, onPress }: { hunt: RunTimes | nul
  * The clock inside a hunt's card: the limit, the countdown, or the finished times. Shared by City Hunts
  * and private hunts so a timed run looks the same whoever is running it.
  */
-export function HuntClock({ hunt, startNote }: { hunt: RunTimes; startNote: (min: number) => string }) {
+export function HuntClock({ hunt, startNote, upNote }: { hunt: RunTimes; startNote: (min: number) => string; upNote: string }) {
   const t = useHuntText();
   const clock = useRunClock(hunt);
   if (!hunt.time_limit_min) return null;
@@ -79,7 +79,7 @@ export function HuntClock({ hunt, startNote }: { hunt: RunTimes; startNote: (min
   }
   if (clock.state === "up") return <View style={box}>
     <Stopwatch color={C.wax} />
-    <View style={{ flex: 1 }}><Text style={{ fontFamily: serif, fontSize: 16, color: C.wax }}>{t.timeUp}</Text><Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.timeUpNote}</Text></View>
+    <View style={{ flex: 1 }}><Text style={{ fontFamily: serif, fontSize: 16, color: C.wax }}>{t.timeUp}</Text><Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{upNote}</Text></View>
   </View>;
   return <View style={box}>
     <Stopwatch color={C.blue} />
@@ -134,10 +134,10 @@ export const huntTasks = (hunt: Hunt, t: HuntText): TaskRow[] => hunt.steps.map(
  * The card both tabs use. A hunt run by us and a hunt run by an organizer are the same activity, so they
  * get one layout: who it is from, what it is, the clock, how far you are, the checklist, then the actions.
  */
-export function HuntCard({ kicker, kickerTone, portrait, title, subtitle, clock, startNote, progress, tasks, note, actions, footer }: {
+export function HuntCard({ kicker, kickerTone, portrait, title, subtitle, clock, startNote, upNote, progress, tasks, note, actions, footer }: {
   kicker: string; kickerTone: string; portrait?: ImageSourcePropType | null;
   title: string; subtitle: string;
-  clock?: RunTimes | null; startNote?: (min: number) => string;
+  clock?: RunTimes | null; startNote?: (min: number) => string; upNote?: string;
   progress?: string; tasks?: TaskRow[]; note?: string;
   actions?: React.ReactNode; footer?: React.ReactNode;
 }) {
@@ -150,7 +150,7 @@ export function HuntCard({ kicker, kickerTone, portrait, title, subtitle, clock,
         <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{subtitle}</Text>
       </View>
     </View>
-    {!!clock && !!startNote && <HuntClock hunt={clock} startNote={startNote} />}
+    {!!clock && !!startNote && <HuntClock hunt={clock} startNote={startNote} upNote={upNote ?? ""} />}
     {!!progress && <Text style={{ fontFamily: sans, fontSize: 13, color: C.ink }}>{progress}</Text>}
     {!!tasks?.length && <TaskList rows={tasks} />}
     {!!note && <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{note}</Text>}
@@ -168,7 +168,7 @@ export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap,
   visible: boolean; hunts: Hunt[]; busy: boolean;
   onClose: () => void; onJoin: (h: Hunt) => void; onShowOnMap: (h: Hunt) => void;
   /** The private-hunt tab's content and its "enter a code" button, or nothing to hide the tabs. */
-  privateTab?: { count: number; onEnterCode: () => void; children: React.ReactNode };
+  privateTab?: { count: number; onEnterCode: () => void; onMyHunts?: () => void; children: React.ReactNode };
 }) {
   const t = useHuntText();
   const { language } = useLanguage();
@@ -190,6 +190,8 @@ export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap,
         {privateTab && tab === "private"
           ? <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
             <Btn quiet title={t.enterCode} onPress={privateTab.onEnterCode} />
+            {/* Organizers get here too; everyone else never sees it. */}
+            {!!privateTab.onMyHunts && <Btn quiet title={t.myHunts} onPress={privateTab.onMyHunts} />}
             {privateTab.children}
             {!privateTab.count && <View style={{ alignItems: "center", gap: spacing.sm, paddingVertical: spacing.xl }}>
               <ArtIcon name="map" size={40} color={C.blue} />
@@ -213,7 +215,7 @@ export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap,
               subtitle={!done ? huntWindow(h, language, t)
                 : daily ? t.finishedToday
                   : t.finishedOn(new Date(h.finished_at!).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US"))}
-              clock={h} startNote={t.limit}
+              clock={h} startNote={t.limit} upNote={t.timeUpNote}
               progress={h.joined_at && !done ? t.missionCount(tasks.filter((x) => x.done).length, tasks.length) : undefined}
               // A finished daily hunt says when it comes back instead of listing the ticks again.
               tasks={done ? undefined : h.joined_at ? tasks : undefined}

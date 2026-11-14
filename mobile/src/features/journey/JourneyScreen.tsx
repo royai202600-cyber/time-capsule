@@ -36,6 +36,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { hunt as hunts, HuntError, huntStatus, keeperMark, onHuntChange, type Hunt } from "../../services/hunt";
 import { clockText } from "../../services/huntClock";
 import { inOrder, locked as missionLocked, onPrivateHuntChange, privateHunt as privateHunts, PrivateHuntError, type LeaderRow, type PrivateHunt, type Waypoint } from "../../services/huntPrivate";
+import { organizer } from "../../services/huntOrganizer";
 import { KeeperCard, keeperPortrait, QuestSheet, RunChip } from "../hunt/HuntViews";
 import { JoinPrivateSheet, LeaderboardSheet, MissionSheet, PrivateHuntCard } from "../hunt/PrivateHuntViews";
 import { useHuntText } from "../hunt/strings";
@@ -545,6 +546,7 @@ export default function JourneyScreen() {
       privateTab={{
         count: privateList.length,
         onEnterCode: () => { setQuestOpen(false); setLinkCode(null); setJoinFound(null); setJoinError(null); setJoinOpen(true); },
+        onMyHunts: organizer.canCreate(profile, __DEV__ || isTestLocationUser(userId)) ? () => { setQuestOpen(false); router.push("/hunts"); } : undefined,
         children: privateList.map((ph) => <PrivateHuntCard key={ph.id} hunt={ph}
           onShowOnMap={showMissions} onLeaderboard={showLeaderboard} onReport={reportPrivate}
           onOpenMission={(x, w) => { setQuestOpen(false); setMissionError(null); setMission({ hunt: x.id, waypoint: w.id }); map.current?.focus(w.lat, w.lng); }} />),
