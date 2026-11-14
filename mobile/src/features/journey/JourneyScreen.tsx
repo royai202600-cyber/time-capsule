@@ -34,7 +34,8 @@ import { ThrowScreen } from "../game/ThrowScreen";
 import { errorKey, useGameText } from "../game/strings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { hunt as hunts, HuntError, huntStatus, keeperMark, onHuntChange, type Hunt } from "../../services/hunt";
-import { KeeperCard, keeperPortrait, QuestSheet } from "../hunt/HuntViews";
+import { clockText } from "../../services/huntClock";
+import { KeeperCard, keeperPortrait, QuestSheet, RunChip } from "../hunt/HuntViews";
 import { useHuntText } from "../hunt/strings";
 import type { PassportHunt } from "../../services/game";
 
@@ -344,7 +345,8 @@ export default function JourneyScreen() {
   const finishHunt = (x: Hunt) => huntAction(() => hunts.finish(x, at()), (out) => {
     const r = out as { xp_gained: number; gold_gained: number };
     setKeeperOpen(false);
-    setToast(r.gold_gained || r.xp_gained ? h.gotReward(r.gold_gained, r.xp_gained) : h.gotStamp);
+    const took = (out as { hunt?: Hunt }).hunt?.today_s;
+    setToast([r.gold_gained || r.xp_gained ? h.gotReward(r.gold_gained, r.xp_gained) : h.gotStamp, took != null ? h.finishedIn(clockText(took)) : ""].filter(Boolean).join(" · "));
   });
   const showHunt = (x: Hunt) => {
     setQuestOpen(false); setSelectedId(null); setGameCard(null);
@@ -379,6 +381,7 @@ export default function JourneyScreen() {
       <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.sm }}>
         <Chip onPress={goBack} label={t("back")}><ArtIcon name="back" size={22} /></Chip>
         <View style={{ flex: 1 }} pointerEvents="none" />
+        <RunChip hunt={activeHunt} onPress={() => setQuestOpen(true)} />
         {GAME_ENABLED && gameState && <View accessibilityRole="text" style={{ height: 44, paddingHorizontal: 14, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", justifyContent: "center", ...shadows.card }}>
           <Text style={{ fontFamily: sans, fontSize: 12, color: C.ink }}>{g("level", gameState.level)} · {g("balls", gameState.wax_balls)}</Text>
         </View>}

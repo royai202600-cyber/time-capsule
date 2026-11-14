@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import Svg, { Circle, Path } from "react-native-svg";
 import { ArtIcon } from "../../components/ArtIcon";
 import { useLanguage } from "../../i18n";
 import { useReducedMotion } from "../../useReducedMotion";
@@ -7,6 +8,7 @@ import { characters } from "../../art/manifest";
 import { distanceText } from "../sea/strings";
 import { GAME_ACTION_RADIUS_M } from "../../services/game";
 import { huntStatus, keeperSpot, landmarkName, stepGoal, readyToReturn, type Hunt } from "../../services/hunt";
+import { clockText, runClock, runningLow, type RunClock } from "../../services/huntClock";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { timeUntil, useHuntText } from "./strings";
 
@@ -16,6 +18,70 @@ export const keeperPortrait = characters.keeperPortrait;
 const when = (h: Hunt, language: "zh" | "en", t: ReturnType<typeof useHuntText>) =>
   huntStatus(h) === "upcoming" ? t.opensIn(timeUntil(h.starts_at, language))
     : h.ends_at === "infinity" ? t.openDaily : t.endsIn(timeUntil(h.ends_at, language));
+
+/** The run's clock, re-read every second while it is running. */
+export function useRunClock(hunt: Hunt | null): RunClock {
+  const [, tick] = useState(0);
+  const clock: RunClock = hunt ? runClock(hunt) : { state: "none" };
+  const running = clock.state === "running";
+  useEffect(() => {
+    if (!running) return;
+    const timer = setInterval(() => tick((n) => n + 1), 1000);
+    return () => clearInterval(timer);
+  }, [running, hunt?.id]);
+  return clock;
+}
+
+const Stopwatch = ({ color, size = 18 }: { color: string; size?: number }) => <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+  <Circle cx={12} cy={13.5} r={7.5} stroke={color} strokeWidth={1.8} />
+  <Path d="M12 9.5v4l2.5 1.5M9.5 3h5M12 3v3" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+</Svg>;
+
+/** The countdown on the map during a timed run. Tapping it opens the Quest sheet. */
+export function RunChip({ hunt, onPress }: { hunt: Hunt | null; onPress: () => void }) {
+  const t = useHuntText();
+  const clock = useRunClock(hunt);
+  if (clock.state === "none") return null;
+  const low = clock.state === "up" || runningLow(clock), color = low ? C.wax : C.blue;
+  return <Pressable accessibilityRole="button" accessibilityLabel={clock.state === "up" ? t.timeUp : `${t.timeLeft} ${clockText(clock.left_s)}`} onPress={onPress}
+    style={{ height: 44, paddingHorizontal: 14, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", flexDirection: "row", alignItems: "center", gap: 6, borderWidth: 1.5, borderColor: color, ...shadows.card }}>
+    <Stopwatch color={color} />
+    <Text style={{ fontFamily: serif, fontSize: 16, color, fontVariant: ["tabular-nums"] }}>{clock.state === "up" ? t.timeUp : clockText(clock.left_s)}</Text>
+  </Pressable>;
+}
+
+/** The clock inside a hunt's card on the Quest sheet: the limit, the countdown, or the finished times. */
+function RunPanel({ hunt }: { hunt: Hunt }) {
+  const t = useHuntText();
+  const clock = useRunClock(hunt);
+  if (!hunt.time_limit_min) return null;
+  const box = { flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: C.glass, borderRadius: radii.md, paddingHorizontal: spacing.md, paddingVertical: 10 } as const;
+  if (hunt.finished_at) {
+    if (hunt.today_s == null && hunt.best_s == null) return null;
+    const record = hunt.today_s != null && hunt.today_s === hunt.best_s;
+    return <View style={box}>
+      <Stopwatch color={C.blue} />
+      {hunt.today_s != null && <Text style={{ fontFamily: sans, fontSize: 13, color: C.ink }}>{t.todayTime} <Text style={{ fontFamily: serif, fontSize: 16 }}>{clockText(hunt.today_s)}</Text></Text>}
+      {hunt.best_s != null && !record && <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{t.bestTime} {clockText(hunt.best_s)}</Text>}
+      {record && <Text style={{ fontFamily: sans, fontSize: 11, color: C.white, backgroundColor: C.wax, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2, overflow: "hidden" }}>{t.newRecord}</Text>}
+    </View>;
+  }
+  if (clock.state === "running") {
+    const low = runningLow(clock), color = low ? C.wax : C.blue;
+    return <View style={[box, { justifyContent: "space-between" }]}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}><Stopwatch color={color} /><Text style={{ fontFamily: sans, fontSize: 13, color: C.ink }}>{t.timeLeft}</Text></View>
+      <Text accessibilityRole="timer" style={{ fontFamily: serif, fontSize: 24, color, fontVariant: ["tabular-nums"] }}>{clockText(clock.left_s)}</Text>
+    </View>;
+  }
+  if (clock.state === "up") return <View style={box}>
+    <Stopwatch color={C.wax} />
+    <View style={{ flex: 1 }}><Text style={{ fontFamily: serif, fontSize: 16, color: C.wax }}>{t.timeUp}</Text><Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.timeUpNote}</Text></View>
+  </View>;
+  return <View style={box}>
+    <Stopwatch color={C.blue} />
+    <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, lineHeight: 19, color: C.ink }}>{t.limit(hunt.time_limit_min)}{hunt.best_s != null ? `　${t.bestTime} ${clockText(hunt.best_s)}` : ""}</Text>
+  </View>;
+}
 
 export function StepList({ hunt, compact = false }: { hunt: Hunt; compact?: boolean }) {
   const t = useHuntText();
@@ -64,6 +130,7 @@ export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap 
                 <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{h.finished_at ? t.finishedOn(new Date(h.finished_at).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US")) : when(h, language, t)}</Text>
               </View>
             </View>
+            <RunPanel hunt={h} />
             {h.joined_at ? <StepList hunt={h} /> : <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.ink }}>{t.reward(h.reward.gold, h.reward.xp)}</Text>}
             {!h.finished_at && (h.joined_at
               ? <Btn quiet title={t.showOnMap} onPress={() => onShowOnMap(h)} />
@@ -86,8 +153,11 @@ export function KeeperCard({ hunt, meters, busy, onJoin, onCheckIn, onFinish, on
   const near = meters <= GAME_ACTION_RADIUS_M;
   const spot = keeperSpot(hunt, language) ?? t.startSpot;
   const farNote = near ? "" : t.walkCloser(distanceText(meters - GAME_ACTION_RADIUS_M));
+  const clock = useRunClock(hunt);
   let line = t.lineDuring, action: { title: string; run: () => void } | null = null, steps = false, note = "";
-  if (hunt.finished_at) line = t.lineAfter;
+  if (hunt.finished_at) line = hunt.today_s != null && hunt.today_s === hunt.best_s ? t.lineRecord(clockText(hunt.today_s)) : t.lineAfter;
+  // Out of time: the run is over, and checking in again starts a new one.
+  else if (clock.state === "up") { line = t.lineTimeUp; if (near) action = { title: t.again, run: onCheckIn }; else note = farNote; }
   else if (!hunt.checked_in_at) {
     if (!hunt.joined_at) { line = t.lineBefore; action = { title: t.join, run: onJoin }; }
     else if (near) { line = t.lineCheckIn(stepGoal(hunt, "spin"), stepGoal(hunt, "restore"), landmarkName(hunt, language) ?? t.theLandmark); action = { title: t.go, run: onCheckIn }; }

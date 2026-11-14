@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase";
 import { distanceMeters } from "./data";
 import { GAME_ACTION_RADIUS_M, onGameEvent, type Coords, type Waypost } from "./game";
+import { runClock } from "./huntClock";
 
 export type HuntStepKey = "checkin" | "spin" | "restore" | "landmark" | "return";
 export type HuntStep = { key: HuntStepKey; goal: number; count: number };
@@ -20,6 +21,9 @@ export type Hunt = {
   reward: { xp: number; gold: number };
   steps: HuntStep[];
   joined_at: string | null; checked_in_at: string | null; finished_at: string | null;
+  /** Timed runs (docs/design/city-orienteering.md). Absent until the backend returns them: the hunt is then untimed. */
+  time_limit_min?: number | null; run_started_at?: string | null; run_ends_at?: string | null;
+  best_s?: number | null; today_s?: number | null;
   /** Counted on this device only, before the backend is live. */
   preview?: boolean;
 };
@@ -56,7 +60,7 @@ type RpcResult = { data: unknown; error: { message?: string; code?: string } | n
 const rpc = (fn: string, args?: Record<string, unknown>): Promise<RpcResult> =>
   (supabase as unknown as { rpc: (f: string, a?: Record<string, unknown>) => Promise<RpcResult> }).rpc(fn, args);
 const missing = (e: { message?: string; code?: string } | null) => !!e && (e.code === "PGRST202" || /could not find the function|does not exist/i.test(e.message ?? ""));
-const CODES = ["too_far", "closed", "not_joined", "not_checked_in", "incomplete", "already_finished", "too_fast"] as const;
+const CODES = ["too_far", "closed", "not_joined", "not_checked_in", "incomplete", "already_finished", "too_fast", "time_up"] as const;
 export type HuntErrorCode = typeof CODES[number] | "unknown";
 export class HuntError extends Error { constructor(public code: HuntErrorCode) { super(code); } }
 // The server's messages ("join first", "check in first", "already finished") mapped to our codes.
@@ -73,9 +77,9 @@ const XINYI = {
   id: "xinyi-2026-11", name_zh: "信義城市尋寶", name_en: "Xinyi City Hunt", city_zh: "台北", city_en: "Taipei",
   starts_at: "2026-11-10T00:00:00+08:00", ends_at: "2026-11-30T23:59:59+08:00",
   keeper: { lat: 25.037546, lng: 121.562754 }, area: { lat: 25.033263, lng: 121.564887, radius_m: 1200 },
-  landmark: "Taipei 101", reward: { xp: 300, gold: 5 },
+  landmark: "Taipei 101", reward: { xp: 300, gold: 5 }, time_limit_min: 60,
 };
-type Progress = { joined_at: string | null; checked_in_at: string | null; finished_at: string | null; spun: string[]; restored: number; won: number };
+type Progress = { joined_at: string | null; checked_in_at: string | null; finished_at: string | null; spun: string[]; restored: number; won: number; best_s?: number | null; today_s?: number | null };
 const empty = (): Progress => ({ joined_at: null, checked_in_at: null, finished_at: null, spun: [], restored: 0, won: 0 });
 let previewUser = "";
 let previewHunt: Hunt | null = null;
@@ -108,6 +112,7 @@ function withProgress(h: Hunt): Hunt {
   const goals = previewGoals(h);
   return {
     ...h, joined_at: progress.joined_at, checked_in_at: progress.checked_in_at, finished_at: progress.finished_at,
+    run_started_at: progress.checked_in_at, best_s: progress.best_s ?? null, today_s: progress.today_s ?? null,
     steps: [
       { key: "checkin", goal: 1, count: progress.checked_in_at ? 1 : 0 },
       { key: "spin", goal: goals.spin, count: Math.min(goals.spin, progress.spun.length) },
@@ -119,7 +124,8 @@ function withProgress(h: Hunt): Hunt {
 }
 // The signed-out stand-in has only two common Wayposts.
 const previewGoals = (h: Hunt) => h.id === "dev-hunt" ? { spin: 2, restore: 3 } : { spin: 3, restore: 5 };
-const counting = () => !!previewHunt && !!progress.checked_in_at && !progress.finished_at && huntStatus(previewHunt) === "open";
+const counting = () => !!previewHunt && !!progress.checked_in_at && !progress.finished_at && huntStatus(previewHunt) === "open"
+  && runClock({ ...previewHunt, checked_in_at: progress.checked_in_at, finished_at: null }).state !== "up";
 onGameEvent((e) => {
   const h = previewHunt;
   if (!h || !counting()) return;
@@ -171,6 +177,8 @@ export const hunt = {
     if (huntStatus(h) !== "open") throw new HuntError("closed");
     if (!near(at, h.keeper)) throw new HuntError("too_far");
     progress.joined_at ??= new Date().toISOString();
+    // Out of time: checking in again starts a fresh run.
+    if (runClock(withProgress(previewHunt!)).state === "up") progress = { ...empty(), joined_at: progress.joined_at, best_s: progress.best_s };
     progress.checked_in_at ??= new Date().toISOString(); save();
     return withProgress(previewHunt!);
   },
@@ -182,7 +190,13 @@ export const hunt = {
     }
     if (!near(at, h.keeper)) throw new HuntError("too_far");
     if (!readyToReturn(h)) throw new HuntError("incomplete");
-    progress.finished_at = new Date().toISOString(); save();
+    if (runClock(h).state === "up") throw new HuntError("time_up");
+    progress.finished_at = new Date().toISOString();
+    if (h.time_limit_min && progress.checked_in_at) {
+      progress.today_s = Math.round((Date.now() - new Date(progress.checked_in_at).getTime()) / 1000);
+      progress.best_s = Math.min(progress.best_s ?? Infinity, progress.today_s);
+    }
+    save();
     // The preview grants nothing: rewards only ever come from the server.
     return { hunt: withProgress(previewHunt!), xp_gained: 0, gold_gained: 0 };
   },
