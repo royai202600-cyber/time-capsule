@@ -34,7 +34,7 @@ export default function MyHuntsScreen() {
     if (busy) return;
     setBusy(true);
     try {
-      const id = await organizer.create(userId, blankDraft());
+      const id = await organizer.create(userId, { ...blankDraft(), name: o.untitled });
       router.push({ pathname: "/hunts/[id]", params: { id } });
     } catch (e) {
       setToast(h.perr[e instanceof PrivateHuntError ? e.code : "unknown"]);
