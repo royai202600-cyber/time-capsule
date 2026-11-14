@@ -11,7 +11,7 @@ export function usePrivateQuestPins(privateList: PrivateHunt[], you: { lat: numb
   // A joined private hunt's quests: brass location pins, only ever visible to people who joined.
   const questPhotos = useQuestImages(privateList.flatMap((ph) => ph.quests.map((w) => w.image)));
   // Quest pins show only while the hunt is still on for you: gone once it closes, you finish, or your time runs out.
-  const questPins = useMemo<LivePin[]>(() => privateList.filter(huntStillOn).flatMap((ph) => inOrder(ph).map<LivePin>((w) => ({
+  const questPins = useMemo<LivePin[]>(() => privateList.filter((ph) => huntStillOn(ph)).flatMap((ph) => inOrder(ph).map<LivePin>((w) => ({
     id: `quest-${ph.id}-${w.id}`, lat: w.location_lat, lng: w.location_lng, kind: "quest", vessel: "",
     quest: w.quest_type, done: !!w.done_at, locked: questLocked(ph, w), photo: questImageUri(w.image),
     near: metersTo(w.location_lat, w.location_lng) <= GAME_ACTION_RADIUS_M,
