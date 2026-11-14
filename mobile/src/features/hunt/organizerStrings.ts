@@ -1,7 +1,7 @@
 // The organizer's own wording (docs/design/city-orienteering.md, Part B). Kept apart from strings.ts so
 // the player's side stays readable; both are plain tables and neither is ever generated.
 import { useLanguage } from "../../i18n";
-import type { PrivateHuntQuestType } from "../../services/privateHunt";
+import type { GuideMode, PrivateHuntQuestType } from "../../services/privateHunt";
 import type { HuntStatus, Problem, QuestProblem } from "../../services/privateHuntOrganizer";
 
 const strings = {
@@ -35,7 +35,7 @@ const strings = {
     timeAt: (d: string, t: string) => `${d} ${t}`,
     dateLabel: "日期",
     timeLabel: "時間",
-    limitSub: "另外再限制每個人自己的時間，從他加入那一刻開始算。",
+    limitSub: "另外再限制每個人自己的時間，從他跟守信人說話那一刻開始算。",
     arriveCheckLabel: "怎麼確認到了",
     arriveCheck: { gps: "用 GPS", gps_qr: "GPS 加掃 QR 碼" } as Record<"gps" | "gps_qr", string>,
     arriveCheckSub: {
@@ -72,7 +72,18 @@ const strings = {
     chooseType: "先選這個任務要做什麼",
     catchType: "抓破損膠囊",
     catchSub: "在活動範圍裡抓到指定數量的破損膠囊。",
-    comingSoon: "即將推出",
+    catchCount: "要抓幾個",
+    catchNoPin: "這種任務沒有圖釘：在活動範圍裡任何地方抓到都算。",
+    guideLabel: "守信人在哪裡",
+    guide: { near: "出現在玩家附近", fixed: "固定地點" } satisfies Record<GuideMode, string>,
+    guideSub: {
+      near: "玩家走進活動範圍，守信人就會出現在他附近約 30 公尺，不用走遠。",
+      fixed: "大家都到同一個地點找守信人，開始和領獎都在那裡。",
+    } satisfies Record<GuideMode, string>,
+    guidePlaceHint: "點地圖放守信人。",
+    guideMove: "移動守信人",
+    guidePlaced: "守信人放好了",
+    guideNote: "每場定向都由守信人開始：跟他說話才開始計時，完成後也回去找他領獎。",
     editQuest: "編輯任務",
     newQuest: "新任務",
     questName: "任務名稱",
@@ -86,11 +97,13 @@ const strings = {
       arrive: "走到這裡按打卡就好。",
       spin: "走到這裡轉一次轉盤。",
       puzzle: "走到這裡回答一個問題。",
+      restore: "在活動範圍裡抓到指定數量的破損膠囊。",
     } satisfies Record<PrivateHuntQuestType, string>,
     pointsLabel: "分數",
     taskLabel: "給參加者看的說明",
     pictureLabel: "圖片",
     pictureSub: "這張圖片就是任務在地圖上的圖釘。",
+    pictureSubCatch: "這張圖片會顯示在任務的最上面。",
     pictureUpload: "上傳照片",
     pictureTemplate: (n: number) => `範本圖片 ${n}`,
     pictureError: "這張照片打不開，換一張試試。",
@@ -135,6 +148,7 @@ const strings = {
       quests: "至少要有一個任務",
       window: "結束時間要在開始之後",
       tooManyQuests: "任務太多了",
+      guideArea: "守信人出現在玩家附近時，至少要有一個有地點的任務",
     } satisfies Record<Problem, string>,
     questProblemText: {
       name: "還沒取名字",
@@ -142,12 +156,12 @@ const strings = {
       answer: "謎題要有答案",
       choices: "選擇題要有兩個以上的選項，答案要是其中一個",
       points: "分數超過上限",
+      catches: "要抓 1 到 20 個",
     } satisfies Record<QuestProblem, string>,
     save: "儲存",
     cancel: "取消",
     delete: "刪掉",
     back: "返回",
-    previewNote: "預覽：這場活動只存在這支手機，別人還看不到。",
   },
   en: {
     myHunts: "My hunts",
@@ -179,7 +193,7 @@ const strings = {
     timeAt: (d: string, t: string) => `${d} at ${t}`,
     dateLabel: "Date",
     timeLabel: "Time",
-    limitSub: "On top of that, cap each person's own run, timed from when they join.",
+    limitSub: "On top of that, cap each person's own run, timed from when they talk to the Letter Keeper.",
     arriveCheckLabel: "How arriving is checked",
     arriveCheck: { gps: "GPS", gps_qr: "GPS and a QR code" } as Record<"gps" | "gps_qr", string>,
     arriveCheckSub: {
@@ -216,7 +230,18 @@ const strings = {
     chooseType: "First, choose what this quest is",
     catchType: "Catch Corrupted Capsules",
     catchSub: "Catch a set number of Corrupted Capsules inside the hunt area.",
-    comingSoon: "Coming soon",
+    catchCount: "How many to catch",
+    catchNoPin: "This kind has no pin: catches anywhere in the hunt area count.",
+    guideLabel: "Where the Letter Keeper waits",
+    guide: { near: "Appears near each player", fixed: "At a fixed spot" } satisfies Record<GuideMode, string>,
+    guideSub: {
+      near: "Once a player steps into the hunt area, the Letter Keeper appears about 30 m away, so nobody walks far.",
+      fixed: "Everyone meets the Letter Keeper at one spot, to begin and to collect.",
+    } satisfies Record<GuideMode, string>,
+    guidePlaceHint: "Tap the map where the Letter Keeper should wait.",
+    guideMove: "Move the Letter Keeper",
+    guidePlaced: "The Letter Keeper is in place",
+    guideNote: "Every hunt begins with the Letter Keeper: talking to him starts the clock, and players come back to him for the reward.",
     editQuest: "Edit quest",
     newQuest: "New quest",
     questName: "Quest name",
@@ -230,11 +255,13 @@ const strings = {
       arrive: "Walk here and tap Check in.",
       spin: "Walk here and spin the wheel once.",
       puzzle: "Walk here and answer a question.",
+      restore: "Catch a set number of Corrupted Capsules inside the hunt area.",
     } satisfies Record<PrivateHuntQuestType, string>,
     pointsLabel: "Points",
     taskLabel: "What players see",
     pictureLabel: "Picture",
     pictureSub: "This picture is the quest's pin on the map.",
+    pictureSubCatch: "This picture shows at the top of the quest.",
     pictureUpload: "Upload a photo",
     pictureTemplate: (n: number) => `Template picture ${n}`,
     pictureError: "That photo couldn't be opened. Try another one.",
@@ -279,6 +306,7 @@ const strings = {
       quests: "It needs at least one quest",
       window: "The end has to come after the start",
       tooManyQuests: "Too many quests",
+      guideArea: "With the Letter Keeper appearing near players, at least one quest needs a spot",
     } satisfies Record<Problem, string>,
     questProblemText: {
       name: "It needs a name",
@@ -286,12 +314,12 @@ const strings = {
       answer: "A puzzle needs an answer",
       choices: "Multiple choice needs two or more options, and the answer has to be one of them",
       points: "Too many points",
+      catches: "Catch between 1 and 20",
     } satisfies Record<QuestProblem, string>,
     save: "Save",
     cancel: "Cancel",
     delete: "Delete",
     back: "Back",
-    previewNote: "Preview: this hunt lives on this phone only, so nobody else can see it yet.",
   },
 };
 

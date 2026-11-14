@@ -1,7 +1,7 @@
-// One private hunt, as its organizer edits it (docs/design/city-orienteering.md, Part B): its details,
-// its quests on the map, the code and link it goes out as, and how everyone is doing.
+// One private hunt, as its organizer edits it (docs/design/city-orienteering.md, Parts B and C): its details
+// and guide, its quests on the map, the code and link it goes out as, and how everyone is doing.
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Platform, Pressable, ScrollView, Share, Text, TextInput, View } from "react-native";
+import { Image, Platform, Pressable, ScrollView, Share, Text, TextInput, View } from "react-native";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import * as Clipboard from "expo-clipboard";
 import { goBack } from "../../navigation";
@@ -16,10 +16,10 @@ import { Sheet, SheetOption, PickerRow, Glyph, ToolIcon, MonthCalendar } from ".
 import { clockText } from "../../services/huntClock";
 import { PrivateHuntError } from "../../services/privateHunt";
 import {
-  LIMITS, appLink, blankQuest, canPublish, huntArea, huntProblems, nextOrdinal, organizer, shareLink,
+  LIMITS, appLink, blankQuest, canPublish, hasSpot, huntArea, huntProblems, nextOrdinal, organizer, shareLink,
   type HuntDraft, type HuntStatus, type Review, type QuestDraft,
 } from "../../services/privateHuntOrganizer";
-import { Btn, TaskList, type TaskRow } from "./HuntViews";
+import { Btn, TaskList, keeperPortrait, type TaskRow } from "./HuntViews";
 import { QuestGlyph } from "./PrivateHuntViews";
 import { useHuntText } from "./strings";
 import { useOrganizerText, type OrganizerText } from "./organizerStrings";
@@ -52,7 +52,9 @@ export default function HuntEditScreen() {
   const [locked, setLocked] = useState(false);
   const [editing, setEditing] = useState<QuestDraft | null>(null);
   const [review, setReview] = useState<Review | null>(null);
-  const [sheet, setSheet] = useState<"route" | "limit" | "start" | "end" | null>(null);
+  const [sheet, setSheet] = useState<"route" | "limit" | "start" | "end" | "guide" | null>(null);
+  // The next tap on the quest map puts a fixed guide there.
+  const [placingGuide, setPlacingGuide] = useState(false);
   const [busy, setBusy] = useState(false);
   const [toast, setToast] = useState("");
 
@@ -137,14 +139,18 @@ export default function HuntEditScreen() {
   const rows: TaskRow[] = [...quests].sort((a, b) => a.ordinal - b.ordinal).map((w) => ({
     key: w.id ?? String(w.ordinal),
     label: w.name || o.newQuest,
-    sub: h.questTypes[w.quest_type],
+    sub: h.questTypes[w.quest_type] + (w.quest_type === "restore" && w.catch_count ? ` × ${w.catch_count}` : ""),
     right: h.pointsShort(w.points),
     glyph: <QuestGlyph type={w.quest_type} size={15} color={C.blue} />,
     onPress: locked ? undefined : () => setEditing(w),
   }));
   const dateText = (iso: string) => new Date(iso).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US");
   const timeText = (iso: string) => new Date(iso).toLocaleTimeString(language === "zh" ? "zh-Hant" : "en-US", { hour: "2-digit", minute: "2-digit" });
-  const area = huntArea(quests.map(q => ({ lat: q.location_lat, lng: q.location_lng })));
+  // A fixed guide sets the area only when no quest has a spot, as on the server.
+  const guide = draft.guide_mode === "fixed" && draft.guide_lat != null && draft.guide_lng != null ? { lat: draft.guide_lat, lng: draft.guide_lng } : null;
+  const spots = quests.filter(hasSpot).map((q) => ({ lat: q.location_lat!, lng: q.location_lng! }));
+  const area = huntArea(spots.length ? spots : guide ? [guide] : []);
+  const placeGuide = () => { setSheet(null); setSection("quests"); setQuestView("map"); setPlacingGuide(true); };
 
   return <Screen>
     <Bar><BackButton label={o.back} onPress={goBack} /><Heading>{draft.name || o.untitled}</Heading></Bar>
@@ -196,7 +202,12 @@ export default function HuntEditScreen() {
       <PickerRow label={o.limitLabel} icon={<Glyph><ToolIcon kind="clock" /></Glyph>}
         title={draft.time_limit_min ? o.limitMinutes(draft.time_limit_min) : o.limitNone}
         sub={o.limitSub} onPress={() => setSheet("limit")} />
+      <Field label={o.guideLabel}>
+        <PickerRow label={o.guideLabel} icon={<Image source={keeperPortrait} style={{ width: 34, height: 34, borderRadius: 17, borderWidth: 2, borderColor: C.brass }} />}
+          title={o.guide[draft.guide_mode ?? "near"]} sub={o.guideSub[draft.guide_mode ?? "near"]} onPress={() => setSheet("guide")} />
+      </Field>
       </View>
+      <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.guideNote}</Text>
 
       <Toggle label={o.leaderboardLabel} on={draft.leaderboard_visible}
         onText={o.leaderboardOn} offText={o.leaderboardOff}
@@ -214,9 +225,17 @@ export default function HuntEditScreen() {
       </View>
 
       {questView === "map" && <QuestMap quests={quests} ordered={draft.route_mode === "ordered"} you={you}
-        hint={locked ? o.mapHintLocked : quests.length >= LIMITS.quests ? o.questFull(LIMITS.quests) : o.mapHint}
+        guide={guide} placingGuide={placingGuide && !locked}
+        hint={locked ? o.mapHintLocked : placingGuide ? o.guidePlaceHint : quests.length >= LIMITS.quests ? o.questFull(LIMITS.quests) : o.mapHint}
         onDrop={locked || quests.length >= LIMITS.quests ? null : drop}
-        onOpen={(q) => { if (!locked) setEditing(q); }} />}
+        onOpen={(q) => { if (!locked) setEditing(q); }}
+        onGuide={locked ? null : {
+          move: () => setPlacingGuide(true),
+          place: (lat, lng) => { edit({ guide_mode: "fixed", guide_lat: lat, guide_lng: lng }); setPlacingGuide(false); void haptics.success(); setToast(o.guidePlaced); },
+        }} />}
+      {questView === "map" && !locked && draft.guide_mode === "fixed" && !placingGuide && <Pressable accessibilityRole="button" onPress={() => setPlacingGuide(true)} style={{ alignSelf: "flex-start", paddingVertical: 4 }}>
+        <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue, textDecorationLine: "underline" }}>{o.guideMove}</Text>
+      </Pressable>}
 
       {questView === "list" && <>
       {!rows.length && <View style={{ gap: 4, paddingVertical: spacing.sm }}>
@@ -283,13 +302,20 @@ export default function HuntEditScreen() {
       </View>}
     </>}
 
-    <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{o.previewNote}</Text>
     {!!toast && <Text accessibilityRole="alert" style={{ fontFamily: sans, fontSize: 13, color: C.blue, textAlign: "center" }}>{toast}</Text>}
 
     <Sheet open={sheet === "route"} title={o.routeLabel} onClose={() => setSheet(null)}>
       {(["any", "ordered"] as const).map((m) => <SheetOption key={m} selected={draft.route_mode === m}
         icon={<Glyph><ToolIcon kind={m === "ordered" ? "landmark" : "anywhere"} /></Glyph>}
         title={o.route[m]} sub={o.routeSub[m]} onPress={() => { edit({ route_mode: m }); setSheet(null); }} />)}
+    </Sheet>
+    <Sheet open={sheet === "guide"} title={o.guideLabel} onClose={() => setSheet(null)}>
+      <SheetOption selected={draft.guide_mode !== "fixed"} icon={<Glyph><ToolIcon kind="anywhere" /></Glyph>}
+        title={o.guide.near} sub={o.guideSub.near}
+        onPress={() => { edit({ guide_mode: "near", guide_lat: null, guide_lng: null }); setPlacingGuide(false); setSheet(null); }} />
+      {/* A fixed guide needs his spot first: the map opens for it, and he only becomes fixed once placed. */}
+      <SheetOption selected={draft.guide_mode === "fixed"} icon={<Glyph><ToolIcon kind="landmark" /></Glyph>}
+        title={o.guide.fixed} sub={o.guideSub.fixed} onPress={placeGuide} />
     </Sheet>
     <Sheet open={sheet === "limit"} title={o.limitLabel} onClose={() => setSheet(null)}>
       {LIMIT_MINUTES.map((m) => <SheetOption key={String(m)} selected={draft.time_limit_min === m}

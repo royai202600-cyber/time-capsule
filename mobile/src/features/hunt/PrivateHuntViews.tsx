@@ -11,23 +11,22 @@ import { distanceText } from "../publicCapsule/strings";
 import { GAME_ACTION_RADIUS_M } from "../../services/game";
 import { clockText } from "../../services/huntClock";
 import {
-  cleanCode, doneCount, inOrder, locked, totalPoints, waitLeft,
+  cleanCode, collectAnywhere, doneCount, guideStage, inOrder, locked, totalPoints, waitLeft,
   type LeaderRow, type PrivateHuntQuestType, type PrivateHunt, type Quest,
 } from "../../services/privateHunt";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
-import { Btn, HuntCard, huntWindow, type TaskRow } from "./HuntViews";
-import { useHuntText } from "./strings";
+import { Btn, HuntCard, TaskList, huntWindow, keeperPortrait, type TaskRow } from "./HuntViews";
+import { timeUntil, useHuntText, type HuntText } from "./strings";
 import { QrScanner } from "./QrScanner";
 import { questImageSource, useQuestImages } from "./questImage";
 
-/** One glyph per quest type, matching the glyph drawn on its brass pin. */
-/** "catch" is drawn for the editor's type picker before private hunts can count catches. */
-export function QuestGlyph({ type, size = 18, color = C.blue }: { type: PrivateHuntQuestType | "catch"; size?: number; color?: string }) {
+/** One glyph per quest type, matching the glyph drawn on its brass pin. A catch quest's is a capsule. */
+export function QuestGlyph({ type, size = 18, color = C.blue }: { type: PrivateHuntQuestType; size?: number; color?: string }) {
   return <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
     {type === "arrive" && <Path d="M7 21V4m0 0 10 2.5L7 11" />}
     {type === "spin" && <><Circle cx={12} cy={12} r={7.5} /><Path d="M12 4.5v15M4.5 12h15" /></>}
     {type === "puzzle" && <Path d="M8.6 9a3.5 3.5 0 1 1 3.6 4v2.4M12 19v.1" />}
-    {type === "catch" && <><Rect x={4} y={8.5} width={16} height={7} rx={3.5} transform="rotate(-35 12 12)" /><Path d="m10.6 9.4 1.6 2.4-1.2 1.4 1.4 1.6" /></>}
+    {type === "restore" && <><Rect x={4} y={8.5} width={16} height={7} rx={3.5} transform="rotate(-35 12 12)" /><Path d="m10.6 9.4 1.6 2.4-1.2 1.4 1.4 1.6" /></>}
   </Svg>;
 }
 
@@ -107,9 +106,11 @@ function PrivatePreview({ hunt, busy, onJoin }: { hunt: PrivateHunt; busy: boole
  * A joined private hunt on the Quest sheet. It uses the same card, clock and checklist as a City Hunt,
  * so nothing has to be learned twice; only the kicker colour says who is running it.
  */
-export function PrivateHuntCard({ hunt, onShowOnMap, onOpenQuest, onLeaderboard, onReport }: {
-  hunt: PrivateHunt;
+export function PrivateHuntCard({ hunt, busy, onShowOnMap, onCollect, onOpenQuest, onLeaderboard, onReport }: {
+  hunt: PrivateHunt; busy: boolean;
   onShowOnMap: (h: PrivateHunt) => void;
+  /** Take the stamp here, once the hunt has ended and its guide has gone home. */
+  onCollect: (h: PrivateHunt) => void;
   onOpenQuest: (h: PrivateHunt, w: Quest) => void;
   onLeaderboard: (h: PrivateHunt) => void;
   onReport: (h: PrivateHunt) => void;
@@ -117,16 +118,10 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenQuest, onLeaderboard,
   const t = useHuntText();
   const { language } = useLanguage();
   const done = !!hunt.finished_at;
-  const tasks: TaskRow[] = inOrder(hunt).map((w) => {
-    const shut = locked(hunt, w);
-    return {
-      key: w.id, label: w.name, done: !!w.done_at, locked: shut,
-      sub: t.questTypes[w.quest_type] + (shut ? `　${t.questLocked}` : ""),
-      right: t.pointsShort(w.points),
-      glyph: <QuestGlyph type={w.quest_type} size={15} color={C.blue} />,
-      onPress: () => onOpenQuest(hunt, w),
-    };
-  });
+  const stage = guideStage(hunt);
+  const tasks = privateTasks(hunt, t, (w) => onOpenQuest(hunt, w));
+  // What the guide is waiting for, said on the card too, so the Quest sheet alone is enough to know what's next.
+  const guideNote = stage === "start" ? t.talkToGuide : stage === "collect" ? (collectAnywhere(hunt) ? t.collectHere : t.backToGuide) : "";
   return <HuntCard
     kicker={t.privateKicker} kickerTone={C.brass}
     title={hunt.name}
@@ -134,9 +129,11 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenQuest, onLeaderboard,
     clock={hunt} startNote={t.privateLimit} upNote={t.privateTimeUpNote}
     progress={`${t.questCount(doneCount(hunt), hunt.quests.length)}　${t.pointsOf(hunt.points, totalPoints(hunt))}`}
     tasks={tasks}
-    note={hunt.route_mode === "ordered" ? t.questLockedNote : undefined}
+    note={guideNote || (hunt.route_mode === "ordered" ? t.questLockedNote : undefined)}
     actions={<View style={{ gap: spacing.sm }}>
-      <Btn quiet title={t.showQuests} onPress={() => onShowOnMap(hunt)} />
+      {stage === "collect" && collectAnywhere(hunt)
+        ? <Btn title={t.collectStamp} disabled={busy} onPress={() => onCollect(hunt)} />
+        : stage !== "done" && stage !== "over" && <Btn quiet title={stage === "playing" ? t.showQuests : t.findGuide} onPress={() => onShowOnMap(hunt)} />}
       {hunt.leaderboard_visible
         ? <Btn quiet title={t.leaderboard} onPress={() => onLeaderboard(hunt)} />
         : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.leaderboardHidden}</Text>}
@@ -147,6 +144,59 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenQuest, onLeaderboard,
       </Pressable>
       {hunt.preview && <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{t.preview}</Text>}
     </View>} />;
+}
+
+/** A hunt's quests as checklist rows; a catch quest shows how many are caught so far. */
+function privateTasks(hunt: PrivateHunt, t: HuntText, onPress?: (w: Quest) => void): TaskRow[] {
+  return inOrder(hunt).map((w) => {
+    const shut = locked(hunt, w);
+    const catching = w.quest_type === "restore" && !w.done_at && !!w.catch_count;
+    return {
+      key: w.id, label: w.name, done: !!w.done_at, locked: shut,
+      sub: (catching ? t.caught(w.caught_count ?? 0, w.catch_count!) : t.questTypes[w.quest_type]) + (shut ? `　${t.questLocked}` : ""),
+      right: t.pointsShort(w.points),
+      glyph: <QuestGlyph type={w.quest_type} size={15} color={C.blue} />,
+      onPress: onPress ? () => onPress(w) : undefined,
+    };
+  });
+}
+
+/**
+ * The card that opens when you tap a private hunt's guide (docs/design/city-orienteering.md, Part C).
+ * Talking to him starts the run; coming back with every quest done earns the stamp. The server checks
+ * the distance both times; `near` only decides which line he says.
+ */
+export function GuideCard({ hunt, near, busy, onStart, onCollect, onClose }: {
+  hunt: PrivateHunt; near: boolean; busy: boolean;
+  onStart: () => void; onCollect: () => void; onClose: () => void;
+}) {
+  const t = useHuntText();
+  const { language } = useLanguage();
+  const stage = guideStage(hunt);
+  const fixed = hunt.guide_mode === "fixed";
+  const notYet = Date.now() < new Date(hunt.starts_at).getTime();
+  let line = t.guidePlaying, action: { title: string; run: () => void } | null = null, sub = "";
+  if (stage === "start") {
+    if (notYet) line = t.guideOpensIn(timeUntil(hunt.starts_at, language));
+    else if (near) { line = t.guideStart; action = { title: t.guideBegin, run: onStart }; if (hunt.time_limit_min) sub = t.privateLimit(hunt.time_limit_min); }
+    else line = fixed ? t.guideWaiting : t.guideFindArea;
+  } else if (stage === "collect") {
+    if (near || collectAnywhere(hunt)) { line = t.guideCollect; action = { title: t.collectStamp, run: onCollect }; }
+    else line = t.guideCollectFar;
+  } else if (stage === "over") line = t.guideOver;
+  return <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", gap: spacing.md, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
+    <View style={{ flexDirection: "row", gap: spacing.md, alignItems: "flex-start" }}>
+      <Image source={keeperPortrait} style={{ width: 60, height: 60, borderRadius: 30, borderWidth: 3, borderColor: C.brass }} />
+      <View style={{ flex: 1, gap: 4 }}>
+        <Text style={{ fontFamily: sans, fontSize: 11, letterSpacing: 1.2, color: C.brass }}>{t.keeper} · {hunt.name}</Text>
+        <Text style={{ fontFamily: serif, fontSize: 16, lineHeight: 25, color: C.ink }}>{line}</Text>
+      </View>
+      <Pressable accessibilityRole="button" accessibilityLabel={t.close} onPress={onClose} hitSlop={8} style={{ width: 32, height: 32, alignItems: "center", justifyContent: "center" }}><ArtIcon name="close" size={18} color={C.muted} /></Pressable>
+    </View>
+    {stage === "playing" && <TaskList rows={privateTasks(hunt, t)} compact />}
+    {!!sub && <Text style={{ fontFamily: sans, fontSize: 13, color: C.ink }}>{sub}</Text>}
+    {action && <Btn title={action.title} disabled={busy} onPress={action.run} />}
+  </View>;
 }
 
 /**
@@ -174,8 +224,10 @@ export function QuestSheet({ visible, hunt, quest, meters, busy, error, tries, o
   }, [!wait]);
   useQuestImages([quest.image]);
   const puzzle = quest.quest_type === "puzzle";
+  const catching = quest.quest_type === "restore";
+  const started = guideStage(hunt) !== "start";
   const needsQr = quest.quest_type === "arrive" && quest.arrive_check === "gps_qr";
-  const canAct = near && !done && !shut && !wait && (!puzzle || !!answer.trim());
+  const canAct = started && near && !done && !shut && !wait && (!puzzle || !!answer.trim());
   return <Sheet visible={visible} title={quest.name} onClose={onClose}>
     <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
@@ -188,8 +240,11 @@ export function QuestSheet({ visible, hunt, quest, meters, busy, error, tries, o
       <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{quest.quest_type === "arrive" && quest.arrive_check === "gps_qr" ? t.questHowQr : t.questHow[quest.quest_type]}</Text>
 
       {done && <Note icon="check" tone={C.blue} text={t.questDone} />}
-      {!done && shut && <Note icon="lock" tone={C.muted} text={t.questLocked} />}
-      {!done && !shut && !near && <Note icon="pin" tone={C.blue} text={t.walkCloser(distanceText(meters - GAME_ACTION_RADIUS_M))} />}
+      {!done && !started && <Note icon="lock" tone={C.muted} text={t.talkToGuide} />}
+      {!done && started && shut && <Note icon="lock" tone={C.muted} text={t.questLocked} />}
+      {/* A catch quest counts by itself as capsules are caught in the hunt area; there is nothing to press. */}
+      {!done && started && !shut && catching && <Note icon="check" tone={C.blue} text={t.caught(quest.caught_count ?? 0, quest.catch_count ?? 0)} />}
+      {!done && started && !shut && !catching && !near && <Note icon="pin" tone={C.blue} text={t.walkCloser(distanceText(meters - GAME_ACTION_RADIUS_M))} />}
 
       {!done && !shut && puzzle && <View style={{ gap: spacing.sm }}>
         {quest.puzzle_kind === "choice" && !!quest.choices?.length
@@ -212,7 +267,7 @@ export function QuestSheet({ visible, hunt, quest, meters, busy, error, tries, o
       {!!wait && <Text style={{ fontFamily: sans, fontSize: 13, color: C.wax }}>{t.waitSeconds(wait)}</Text>}
       {!wait && tries != null && tries > 0 && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.triesLeft(tries)}</Text>}
 
-      {!done && <Btn disabled={!canAct || busy} onPress={() => needsQr ? setScanning(true) : onComplete(puzzle ? answer : undefined)}
+      {!done && !catching && <Btn disabled={!canAct || busy} onPress={() => needsQr ? setScanning(true) : onComplete(puzzle ? answer : undefined)}
         title={needsQr ? t.scanQr : puzzle ? t.answerSend : quest.quest_type === "spin" ? t.spinHere : t.checkInHere} />}
     </ScrollView>
     {scanning && <QrScanner onClose={() => setScanning(false)} onScan={(token) => { setScanning(false); onComplete(undefined, token); }} />}

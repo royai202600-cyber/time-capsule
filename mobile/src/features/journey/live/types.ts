@@ -1,8 +1,12 @@
 import { Image, type ImageSourcePropType } from "react-native";
+import type { PrivateHuntQuestType } from "../../../services/questTypes";
 
-export type LivePin = { id: string; lat: number; lng: number; vessel: string; cracks?: string; portrait?: string | null; tag?: string; kind: "publicCapsule" | "place" | "corrupted" | "waypost" | "landmark" | "keeper" | "quest"; hunt?: boolean;
+export type PinKind = "publicCapsule" | "place" | "corrupted" | "waypost" | "landmark" | "keeper" | "quest";
+export type LivePin = { id: string; lat: number; lng: number; vessel: string; cracks?: string; portrait?: string | null; tag?: string; kind: PinKind; hunt?: boolean;
+  /** Which map filter shows this pin, when not its kind's (a private hunt's guide is drawn as a Keeper but belongs to private hunts). */
+  filterAs?: PinKind;
   /** Private-hunt quests (kind "quest"): which glyph the brass pin carries, and whether the route still locks it. */
-  quest?: "arrive" | "spin" | "puzzle"; locked?: boolean; /** A quest's picture: shown as a big round photo pin instead of the brass pin. */ photo?: string | null; mark?: string | null; figure?: string | null; lift?: number; rarity?: "common" | "uncommon" | "rare"; done?: boolean; near?: boolean; far?: boolean; selected?: boolean; sealed?: boolean; private?: boolean; opened?: boolean; timer?: string };
+  quest?: PrivateHuntQuestType; locked?: boolean; /** A quest's picture: shown as a big round photo pin instead of the brass pin. */ photo?: string | null; mark?: string | null; figure?: string | null; lift?: number; rarity?: "common" | "uncommon" | "rare"; done?: boolean; near?: boolean; far?: boolean; selected?: boolean; sealed?: boolean; private?: boolean; opened?: boolean; timer?: string };
 export type LiveState = { you: { lat: number; lng: number } | null; heading?: number | null; portrait?: string | null; figure?: string | null; youLabel?: string | null; reach: number; pins: LivePin[];
   /** A dotted line through these points, in order (an ordered hunt's route in the quest editor). */
   route?: { lat: number; lng: number }[] };
