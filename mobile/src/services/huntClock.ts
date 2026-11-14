@@ -15,14 +15,28 @@ export type RunClock =
   | { state: "running"; left_s: number; total_s: number }
   | { state: "up" };
 
-/** Where the run stands. Hunts with no time limit, not checked in, or already finished have no clock. */
+/**
+ * Where the run stands. A run ends at `run_ends_at` when the server gives one (a private hunt's own limit,
+ * cut short by the organizer's end time), else after the time limit. A run with neither, not started yet,
+ * or already finished has no clock.
+ */
 export function runClock(h: RunTimes, now = Date.now()): RunClock {
   const limit = h.time_limit_min ?? 0;
   const started = h.run_started_at ?? h.checked_in_at;
-  if (!limit || !started || h.finished_at) return { state: "none" };
-  const ends = h.run_ends_at ? new Date(h.run_ends_at).getTime() : new Date(started).getTime() + limit * 60_000;
+  if (!started || h.finished_at) return { state: "none" };
+  const start = new Date(started).getTime();
+  const ends = h.run_ends_at ? new Date(h.run_ends_at).getTime() : limit ? start + limit * 60_000 : NaN;
+  if (!Number.isFinite(ends) || now < start) return { state: "none" };
   const left = Math.ceil((ends - now) / 1000);
-  return left > 0 ? { state: "running", left_s: left, total_s: limit * 60 } : { state: "up" };
+  return left > 0 ? { state: "running", left_s: left, total_s: Math.max(1, Math.round((ends - start) / 1000)) } : { state: "up" };
+}
+
+/** A private run starts at the later of joining and the hunt's start, and stops at the earlier of its limit and the hunt's end. */
+export function privateRun(joined: string, starts_at: string, ends_at: string, limit_min: number | null | undefined) {
+  const start = Math.max(new Date(joined).getTime(), new Date(starts_at).getTime());
+  const cap = ends_at === "infinity" ? Infinity : new Date(ends_at).getTime();
+  const end = Math.min(limit_min ? start + limit_min * 60_000 : Infinity, cap);
+  return { run_started_at: new Date(start).toISOString(), run_ends_at: Number.isFinite(end) ? new Date(end).toISOString() : null };
 }
 
 /** 754 → "12:34", 3725 → "1:02:05". */

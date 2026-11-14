@@ -88,7 +88,7 @@ function PrivatePreview({ hunt, busy, onJoin }: { hunt: PrivateHunt; busy: boole
       <Text style={{ fontFamily: sans, fontSize: 11, letterSpacing: 1.2, color: C.brass }}>{t.privateKicker}</Text>
       <Text style={{ fontFamily: serif, fontSize: 20, color: C.ink }}>{hunt.name}</Text>
       {!!hunt.description && <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.ink }}>{hunt.description}</Text>}
-      <Text style={{ fontFamily: sans, fontSize: 13, color: C.ink }}>{t.missionCount(0, hunt.waypoints.length)}　{t.pointsShort(totalPoints(hunt))}</Text>
+      <Text style={{ fontFamily: sans, fontSize: 13, color: C.ink }}>{t.questCount(0, hunt.waypoints.length)}　{t.pointsShort(totalPoints(hunt))}</Text>
       {!!hunt.time_limit_min && <Text style={{ fontFamily: sans, fontSize: 13, color: C.ink }}>{t.privateLimit(hunt.time_limit_min)}</Text>}
       <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{t.privateRules}</Text>
       <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{t.privateNoOthers}</Text>
@@ -117,7 +117,7 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenMission, onLeaderboar
     const shut = locked(hunt, w);
     return {
       key: w.id, label: w.name, done: !!w.done_at, locked: shut,
-      sub: t.missionTypes[w.mission_type] + (shut ? `　${t.missionLocked}` : ""),
+      sub: t.missionTypes[w.mission_type] + (shut ? `　${t.questLocked}` : ""),
       right: t.pointsShort(w.points),
       glyph: <MissionGlyph type={w.mission_type} size={15} color={C.blue} />,
       onPress: () => onOpenMission(hunt, w),
@@ -127,12 +127,12 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenMission, onLeaderboar
     kicker={t.privateKicker} kickerTone={C.brass}
     title={hunt.name}
     subtitle={done ? t.privateFinished : huntWindow(hunt, language, t)}
-    clock={hunt} startNote={t.privateLimit}
-    progress={`${t.missionCount(doneCount(hunt), hunt.waypoints.length)}　${t.pointsOf(hunt.points, totalPoints(hunt))}`}
+    clock={hunt} startNote={t.privateLimit} upNote={t.privateTimeUpNote}
+    progress={`${t.questCount(doneCount(hunt), hunt.waypoints.length)}　${t.pointsOf(hunt.points, totalPoints(hunt))}`}
     tasks={tasks}
-    note={hunt.route_mode === "ordered" ? t.missionLockedNote : undefined}
+    note={hunt.route_mode === "ordered" ? t.questLockedNote : undefined}
     actions={<View style={{ gap: spacing.sm }}>
-      <Btn quiet title={t.showMissions} onPress={() => onShowOnMap(hunt)} />
+      <Btn quiet title={t.showQuests} onPress={() => onShowOnMap(hunt)} />
       {hunt.leaderboard_visible
         ? <Btn quiet title={t.leaderboard} onPress={() => onLeaderboard(hunt)} />
         : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.leaderboardHidden}</Text>}
@@ -178,10 +178,10 @@ export function MissionSheet({ visible, hunt, waypoint, meters, busy, error, tri
       </View>
       {!!waypoint.image && <Image source={{ uri: waypoint.image }} style={{ width: "100%", aspectRatio: 16 / 9, borderRadius: radii.md }} resizeMode="cover" />}
       {!!waypoint.description && <Text style={{ fontFamily: sans, fontSize: 14, lineHeight: 22, color: C.ink }}>{waypoint.description}</Text>}
-      <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{t.missionHow[waypoint.mission_type]}</Text>
+      <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{waypoint.mission_type === "arrive" && waypoint.arrive_check === "gps_qr" ? t.questHowQr : t.questHow[waypoint.mission_type]}</Text>
 
-      {done && <Note icon="check" tone={C.blue} text={t.missionDone} />}
-      {!done && shut && <Note icon="lock" tone={C.muted} text={t.missionLocked} />}
+      {done && <Note icon="check" tone={C.blue} text={t.questDone} />}
+      {!done && shut && <Note icon="lock" tone={C.muted} text={t.questLocked} />}
       {!done && !shut && !near && <Note icon="pin" tone={C.blue} text={t.walkCloser(distanceText(meters - GAME_ACTION_RADIUS_M))} />}
 
       {!done && !shut && puzzle && <View style={{ gap: spacing.sm }}>

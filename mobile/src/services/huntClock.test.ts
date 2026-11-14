@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { clockText, runClock, runningLow } from "./huntClock";
+import { clockText, privateRun, runClock, runningLow } from "./huntClock";
 
 const start = "2026-11-14T10:00:00Z", t0 = new Date(start).getTime();
 const run = { time_limit_min: 60, checked_in_at: start, finished_at: null };
@@ -23,6 +23,26 @@ describe("runClock", () => {
   it("runs low in the last five minutes", () => {
     expect(runningLow(runClock(run, t0 + 54 * 60_000))).toBe(false);
     expect(runningLow(runClock(run, t0 + 56 * 60_000))).toBe(true);
+  });
+});
+
+describe("private runs", () => {
+  const starts = "2026-11-14T12:00:00Z", ends = "2026-11-14T15:00:00Z";
+  it("start at the hunt's start when joined early, and stop at the limit", () => {
+    expect(privateRun("2026-11-14T09:00:00Z", starts, ends, 45)).toEqual({ run_started_at: "2026-11-14T12:00:00.000Z", run_ends_at: "2026-11-14T12:45:00.000Z" });
+  });
+  it("are cut short by the hunt's end", () => {
+    expect(privateRun("2026-11-14T14:40:00Z", starts, ends, 45).run_ends_at).toBe("2026-11-14T15:00:00.000Z");
+  });
+  it("count down to the hunt's end when there is no limit", () => {
+    const r = privateRun("2026-11-14T13:00:00Z", starts, ends, null);
+    expect(r.run_ends_at).toBe("2026-11-14T15:00:00.000Z");
+    expect(runClock({ ...r, time_limit_min: null, finished_at: null }, new Date("2026-11-14T14:00:00Z").getTime())).toMatchObject({ state: "running", left_s: 3600 });
+  });
+  it("have no clock before they start, or with no limit and no end", () => {
+    const r = privateRun("2026-11-14T09:00:00Z", starts, ends, 45);
+    expect(runClock({ ...r, finished_at: null }, new Date("2026-11-14T10:00:00Z").getTime()).state).toBe("none");
+    expect(privateRun(starts, starts, "infinity", null).run_ends_at).toBeNull();
   });
 });
 

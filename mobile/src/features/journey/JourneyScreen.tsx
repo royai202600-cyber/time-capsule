@@ -36,6 +36,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { hunt as hunts, HuntError, huntStatus, keeperMark, onHuntChange, type Hunt } from "../../services/hunt";
 import { clockText } from "../../services/huntClock";
 import { inOrder, locked as missionLocked, onPrivateHuntChange, privateHunt as privateHunts, PrivateHuntError, type LeaderRow, type PrivateHunt, type Waypoint } from "../../services/huntPrivate";
+import { organizer } from "../../services/huntOrganizer";
 import { KeeperCard, keeperPortrait, QuestSheet, RunChip } from "../hunt/HuntViews";
 import { JoinPrivateSheet, LeaderboardSheet, MissionSheet, PrivateHuntCard } from "../hunt/PrivateHuntViews";
 import { useHuntText } from "../hunt/strings";
@@ -422,7 +423,7 @@ export default function JourneyScreen() {
     void privateAction(
       async () => {
         const out = await privateHunts.complete(ph, w, at(), answer);
-        // Back to the map, where the pin turns cream and the toast says what the mission was worth.
+        // Back to the map, where the pin turns purple and the toast says what the mission was worth.
         setMission(null);
         setToast([h.gotPoints(out.points_gained), out.hunt.finished_at ? h.privateStamp : ""].filter(Boolean).join(" · "));
       },
@@ -480,7 +481,7 @@ export default function JourneyScreen() {
         <Chip onPress={goBack} label={t("back")}><ArtIcon name="back" size={22} /></Chip>
         <View style={{ flex: 1 }} pointerEvents="none" />
         <RunChip hunt={activeHunt} onPress={() => setQuestOpen(true)} />
-        {privateList.map((ph) => <RunChip key={ph.id} hunt={ph} tone={C.brass} onPress={() => setQuestOpen(true)} />)}
+        {privateList.map((ph) => <RunChip key={ph.id} hunt={ph} onPress={() => setQuestOpen(true)} />)}
         {GAME_ENABLED && gameState && <View accessibilityRole="text" style={{ height: 44, paddingHorizontal: 14, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", justifyContent: "center", ...shadows.card }}>
           <Text style={{ fontFamily: sans, fontSize: 12, color: C.ink }}>{g("level", gameState.level)} · {g("balls", gameState.wax_balls)}</Text>
         </View>}
@@ -545,6 +546,7 @@ export default function JourneyScreen() {
       privateTab={{
         count: privateList.length,
         onEnterCode: () => { setQuestOpen(false); setLinkCode(null); setJoinFound(null); setJoinError(null); setJoinOpen(true); },
+        onMyHunts: organizer.canCreate(profile, __DEV__ || isTestLocationUser(userId)) ? () => { setQuestOpen(false); router.push("/hunts"); } : undefined,
         children: privateList.map((ph) => <PrivateHuntCard key={ph.id} hunt={ph}
           onShowOnMap={showMissions} onLeaderboard={showLeaderboard} onReport={reportPrivate}
           onOpenMission={(x, w) => { setQuestOpen(false); setMissionError(null); setMission({ hunt: x.id, waypoint: w.id }); map.current?.focus(w.lat, w.lng); }} />),

@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase";
 import { distanceMeters } from "./data";
 import { GAME_ACTION_RADIUS_M, type Coords } from "./game";
+import { privateRun, runClock } from "./huntClock";
 
 /** Flipped to true by Codex's `P2` session once the player RPCs are applied. */
 export const HUNT_PRIVATE_BACKEND = false;
@@ -15,6 +16,8 @@ export type Waypoint = {
   id: string; ordinal: number; lat: number; lng: number; name: string;
   mission_type: MissionType; points: number;
   description?: string | null; image?: string | null;
+  /** Arrive quests only: "gps_qr" also needs the QR code the organizer left at the spot. */
+  arrive_check?: "gps" | "gps_qr" | null;
   /** Puzzles only. The answer itself never leaves the server. */
   puzzle_kind?: "text" | "choice" | null; choices?: string[] | null;
   /** Mine, not anyone else's. */
@@ -39,7 +42,7 @@ export type PrivateHunt = {
 export type LeaderRow = { user: string; name: string; avatar?: Record<string, unknown> | null; points: number; duration_s?: number | null; you?: boolean };
 export type MissionResult = { hunt: PrivateHunt; points_gained: number; tries_left: number; wait_s: number };
 
-const CODES = ["bad_code", "too_far", "closed", "not_joined", "locked", "already_done", "wrong_answer", "no_tries", "not_started", "unknown"] as const;
+const CODES = ["bad_code", "too_far", "closed", "not_joined", "locked", "already_done", "wrong_answer", "no_tries", "not_started", "time_up", "not_allowed", "not_ready", "too_many", "unknown"] as const;
 export type PrivateHuntErrorCode = typeof CODES[number];
 export class PrivateHuntError extends Error { constructor(public code: PrivateHuntErrorCode) { super(code); } }
 
@@ -125,12 +128,13 @@ function demoHunt(at: Coords): PrivateHunt {
       wait_until: demo.wait[`demo-wp-${i + 1}`] ?? null,
     };
   });
+  const starts_at = new Date(Date.now() - 3_600_000).toISOString(), ends_at = new Date(Date.now() + 6 * 3_600_000).toISOString();
   return {
+    ...(demo.started_at ? privateRun(demo.started_at, starts_at, ends_at, 45) : {}),
     id: "demo-private-hunt", name: "示範定向 Demo Hunt", join_code: DEMO_CODE,
     description: "這是一場示範的私人定向，用來試走畫面。進度只存在這支手機。\nA demo private hunt for walking through the screens. Progress stays on this phone.",
     area: { ...at, radius_m: 1200 }, route_mode: "any", leaderboard_visible: true,
-    starts_at: new Date(Date.now() - 3_600_000).toISOString(), ends_at: new Date(Date.now() + 6 * 3_600_000).toISOString(),
-    time_limit_min: 45, run_started_at: demo.started_at,
+    starts_at, ends_at, time_limit_min: 45,
     joined_at: demo.joined_at, finished_at: demo.finished_at,
     points: waypoints.filter((w) => w.done_at).reduce((sum, w) => sum + w.points, 0),
     waypoints, preview: true,
@@ -183,7 +187,8 @@ export const privateHunt = {
       const { data, error } = await rpc("hunt_join_code", { p_code: h.join_code });
       fail(error); return data as PrivateHunt;
     }
-    if (!huntOpen(h)) throw new PrivateHuntError("closed");
+    // People join ahead of a coordinated start; only an ended hunt refuses them.
+    if (h.ends_at !== "infinity" && Date.now() > new Date(h.ends_at).getTime()) throw new PrivateHuntError("closed");
     demo.joined_at ??= new Date().toISOString();
     demo.started_at ??= demo.joined_at;
     saveDemo();
@@ -202,8 +207,11 @@ export const privateHunt = {
       fail(error); return data as MissionResult;
     }
     if (!demo.joined_at) throw new PrivateHuntError("not_joined");
+    if (Date.now() < new Date(h.starts_at).getTime()) throw new PrivateHuntError("not_started");
     if (!huntOpen(h)) throw new PrivateHuntError("closed");
     if (w.done_at) throw new PrivateHuntError("already_done");
+    // Out of time, the same answer the server gives: the run is over.
+    if (runClock(h).state === "up") throw new PrivateHuntError("time_up");
     if (locked(h, w)) throw new PrivateHuntError("locked");
     if (!near(at, w)) throw new PrivateHuntError("too_far");
     if (waitLeft(w)) throw new PrivateHuntError("no_tries");
