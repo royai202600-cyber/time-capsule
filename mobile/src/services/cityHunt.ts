@@ -9,8 +9,9 @@ import { runClock } from "./huntClock";
 
 export const HUNT_TIMED_BACKEND = true;
 
-export type HuntStepKey = "checkin" | "spin" | "restore" | "landmark" | "return";
-export type HuntStep = { key: HuntStepKey; goal: number; count: number };
+import type { CityHuntQuestType } from "./questTypes";
+export type { CityHuntQuestType } from "./questTypes";
+export type CityHuntQuest = { key: CityHuntQuestType; goal: number; count: number };
 export type Hunt = {
   id: string; name_zh: string; name_en: string; city_zh: string; city_en: string;
   starts_at: string; ends_at: string;
@@ -21,7 +22,7 @@ export type Hunt = {
   keeper_spot_zh?: string; keeper_spot_en?: string;
   landmark_name_zh?: string; landmark_name_en?: string;
   reward: { xp: number; gold: number };
-  steps: HuntStep[];
+  quests: CityHuntQuest[];
   joined_at: string | null; checked_in_at: string | null; finished_at: string | null;
   /** Timed runs (docs/design/city-orienteering.md). Absent until the backend returns them: the hunt is then untimed. */
   time_limit_min?: number | null; run_started_at?: string | null; run_ends_at?: string | null;
@@ -44,14 +45,14 @@ export const landmarkName = (h: Hunt, language: "zh" | "en") =>
   (h.id === "xinyi-2026-11" ? KNOWN_NAMES[h.id].landmark[language] : null)
   || (language === "zh" ? h.landmark_name_zh : h.landmark_name_en) || KNOWN_NAMES[h.id]?.landmark[language] || null;
 /** A step's goal, for his lines. */
-export const stepGoal = (h: Hunt, key: HuntStepKey) => h.steps.find((s) => s.key === key)?.goal ?? 0;
+export const questGoal = (h: Hunt, key: CityHuntQuestType) => h.quests.find((s) => s.key === key)?.goal ?? 0;
 
 export const huntStatus = (h: Hunt, now = Date.now()) =>
   now < new Date(h.starts_at).getTime() ? "upcoming" : now > new Date(h.ends_at).getTime() ? "closed" : "open";
-const step = (h: Hunt, key: HuntStepKey) => h.steps.find((s) => s.key === key);
+const step = (h: Hunt, key: CityHuntQuestType) => h.quests.find((s) => s.key === key);
 /** Steps between check-in and the return are all done: time to go back to the Keeper. */
 export const readyToReturn = (h: Hunt) => !!h.checked_in_at && !h.finished_at
-  && h.steps.filter((s) => s.key !== "checkin" && s.key !== "return").every((s) => s.count >= s.goal);
+  && h.quests.filter((s) => s.key !== "checkin" && s.key !== "return").every((s) => s.count >= s.goal);
 /** The seal over the Keeper's head: ! (a quest for you), ✓ (come back) or nothing. */
 export const keeperMark = (h: Hunt): "!" | "✓" | null =>
   h.finished_at ? null : readyToReturn(h) ? "✓" : !h.checked_in_at ? "!" : null;
@@ -113,14 +114,14 @@ function buildPreview(at: Coords, known: Waypost[], live: boolean): Hunt | null 
     landmark: known.find((w) => w.kind === "landmark")?.id ?? ""
   });
 }
-type Base = Omit<Hunt, "steps" | "joined_at" | "checked_in_at" | "finished_at" | "preview">;
-const asPreview = (h: Base): Hunt => ({ ...h, preview: true, joined_at: null, checked_in_at: null, finished_at: null, steps: [] });
+type Base = Omit<Hunt, "quests" | "joined_at" | "checked_in_at" | "finished_at" | "preview">;
+const asPreview = (h: Base): Hunt => ({ ...h, preview: true, joined_at: null, checked_in_at: null, finished_at: null, quests: [] });
 function withProgress(h: Hunt): Hunt {
   const goals = previewGoals(h);
   return {
     ...h, joined_at: progress.joined_at, checked_in_at: progress.checked_in_at, finished_at: progress.finished_at,
     run_started_at: progress.checked_in_at, best_s: progress.best_s ?? null, today_s: progress.today_s ?? null,
-    steps: [
+    quests: [
       { key: "checkin", goal: 1, count: progress.checked_in_at ? 1 : 0 },
       { key: "spin", goal: goals.spin, count: Math.min(goals.spin, progress.spun.length) },
       { key: "restore", goal: goals.restore, count: Math.min(goals.restore, progress.restored) },
@@ -162,7 +163,7 @@ export const hunt = {
   async list(args: { userId: string; at: Coords; known: Waypost[]; previewAllowed: boolean }): Promise<Hunt[]> {
     const live = await signedIn();
     if (live && !liveMissing) {
-      const { data, error } = await rpc("hunt_list", { p_lat: args.at.lat, p_lng: args.at.lng });
+      const { data, error } = await rpc("city_hunt_list", { p_lat: args.at.lat, p_lng: args.at.lng });
       if (!error) { previewHunt = null; return ((data as Hunt[] | null) ?? []).map(fromServer); }
       if (!missing(error)) fail(error);
       liveMissing = true;
@@ -170,7 +171,7 @@ export const hunt = {
     return args.previewAllowed ? loadPreview(args.userId, args.at, args.known, live) : [];
   },
   async join(h: Hunt): Promise<Hunt> {
-    if (!h.preview) { const { data, error } = await rpc("hunt_join", { p_hunt: h.id }); fail(error); return fromServer(data as Hunt); }
+    if (!h.preview) { const { data, error } = await rpc("city_hunt_join", { p_hunt: h.id }); fail(error); return fromServer(data as Hunt); }
     if (huntStatus(h) === "closed") throw new HuntError("closed");
     progress.joined_at ??= new Date().toISOString(); save();
     return withProgress(previewHunt!);
@@ -178,7 +179,7 @@ export const hunt = {
   async checkIn(h: Hunt, at: Coords | null): Promise<Hunt> {
     if (!h.preview) {
       if (!at) throw new HuntError("too_far");
-      const { data, error } = await rpc("hunt_check_in", { p_hunt: h.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10 });
+      const { data, error } = await rpc("city_hunt_check_in", { p_hunt: h.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10 });
       fail(error); return fromServer(data as Hunt);
     }
     if (huntStatus(h) !== "open") throw new HuntError("closed");
@@ -192,7 +193,7 @@ export const hunt = {
   async finish(h: Hunt, at: Coords | null): Promise<HuntFinish> {
     if (!h.preview) {
       if (!at) throw new HuntError("too_far");
-      const { data, error } = await rpc("hunt_finish", { p_hunt: h.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10 });
+      const { data, error } = await rpc("city_hunt_finish", { p_hunt: h.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10 });
       fail(error);
       const result = data as HuntFinish;
       return { ...result, hunt: fromServer(result.hunt) };

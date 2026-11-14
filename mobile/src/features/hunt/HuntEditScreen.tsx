@@ -14,16 +14,16 @@ import { useAuth } from "../../services/auth";
 import { GiftQr } from "../capsule/GiftQr";
 import { Sheet, SheetOption, PickerRow, Glyph, ToolIcon, MonthCalendar } from "../create/CreateParts";
 import { clockText } from "../../services/huntClock";
-import { PrivateHuntError } from "../../services/huntPrivate";
+import { PrivateHuntError } from "../../services/privateHunt";
 import {
-  LIMITS, appLink, blankWaypoint, canPublish, huntArea, huntProblems, nextOrdinal, organizer, shareLink,
-  type HuntDraft, type HuntStatus, type Review, type WaypointDraft,
-} from "../../services/huntOrganizer";
+  LIMITS, appLink, blankQuest, canPublish, huntArea, huntProblems, nextOrdinal, organizer, shareLink,
+  type HuntDraft, type HuntStatus, type Review, type QuestDraft,
+} from "../../services/privateHuntOrganizer";
 import { Btn, TaskList, type TaskRow } from "./HuntViews";
-import { MissionGlyph } from "./PrivateHuntViews";
+import { QuestGlyph } from "./PrivateHuntViews";
 import { useHuntText } from "./strings";
 import { useOrganizerText, type OrganizerText } from "./organizerStrings";
-import { WaypointEditor } from "./WaypointEditor";
+import { QuestEditor } from "./QuestEditor";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 
 const PLACEHOLDER = "#A5AFBD";
@@ -40,11 +40,11 @@ export default function HuntEditScreen() {
 
   const [section, setSection] = useState<Section>("details");
   const [draft, setDraft] = useState<HuntDraft | null>(null);
-  const [waypoints, setWaypoints] = useState<WaypointDraft[]>([]);
+  const [quests, setQuests] = useState<QuestDraft[]>([]);
   const [status, setStatus] = useState<HuntStatus>("draft");
   const [code, setCode] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
-  const [editing, setEditing] = useState<WaypointDraft | null>(null);
+  const [editing, setEditing] = useState<QuestDraft | null>(null);
   const [review, setReview] = useState<Review | null>(null);
   const [sheet, setSheet] = useState<"route" | "limit" | "start" | "end" | null>(null);
   const [busy, setBusy] = useState(false);
@@ -53,7 +53,7 @@ export default function HuntEditScreen() {
   const load = useCallback(() => {
     if (!userId || !id) return;
     return organizer.get(userId, id)
-      .then((s) => { setDraft(s.draft); setWaypoints(s.waypoints); setStatus(s.status); setCode(s.code); setLocked(!!s.locked); })
+      .then((s) => { setDraft(s.draft); setQuests(s.quests); setStatus(s.status); setCode(s.code); setLocked(!!s.locked); })
       .catch(() => setToast(h.perr.unknown));
   }, [userId, id]);
   useFocusEffect(useCallback(() => { load(); }, [load]));
@@ -93,12 +93,12 @@ export default function HuntEditScreen() {
     finally { setBusy(false); }
   };
 
-  const saveWaypoint = (w: WaypointDraft) => void act(
-    () => organizer.saveWaypoint(userId, id, w),
+  const saveQuest = (w: QuestDraft) => void act(
+    () => organizer.saveQuest(userId, id, w),
     async () => { await load(); setEditing(null); },
   );
-  const deleteWaypoint = (w: WaypointDraft) => void act(
-    () => organizer.deleteWaypoint(userId, id, w.id!),
+  const deleteQuest = (w: QuestDraft) => void act(
+    () => organizer.deleteQuest(userId, id, w.id!),
     async () => { await load(); setEditing(null); },
   );
   const publish = () => void act(
@@ -118,19 +118,19 @@ export default function HuntEditScreen() {
 
   if (!draft) return <Screen><Bar><BackButton label={o.back} onPress={goBack} /><Heading>{o.myHunts}</Heading></Bar></Screen>;
 
-  const problems = huntProblems(draft, waypoints);
-  const ready = canPublish(draft, waypoints);
-  const rows: TaskRow[] = [...waypoints].sort((a, b) => a.ordinal - b.ordinal).map((w) => ({
+  const problems = huntProblems(draft, quests);
+  const ready = canPublish(draft, quests);
+  const rows: TaskRow[] = [...quests].sort((a, b) => a.ordinal - b.ordinal).map((w) => ({
     key: w.id ?? String(w.ordinal),
-    label: w.name || o.newWaypoint,
-    sub: h.missionTypes[w.mission_type],
+    label: w.name || o.newQuest,
+    sub: h.questTypes[w.quest_type],
     right: h.pointsShort(w.points),
-    glyph: <MissionGlyph type={w.mission_type} size={15} color={C.blue} />,
+    glyph: <QuestGlyph type={w.quest_type} size={15} color={C.blue} />,
     onPress: locked ? undefined : () => setEditing(w),
   }));
   const dateText = (iso: string) => new Date(iso).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US");
   const timeText = (iso: string) => new Date(iso).toLocaleTimeString(language === "zh" ? "zh-Hant" : "en-US", { hour: "2-digit", minute: "2-digit" });
-  const area = huntArea(waypoints);
+  const area = huntArea(quests.map(q => ({ lat: q.location_lat, lng: q.location_lng })));
 
   return <Screen>
     <Bar><BackButton label={o.back} onPress={goBack} /><Heading>{draft.name || o.untitled}</Heading></Bar>
@@ -140,7 +140,7 @@ export default function HuntEditScreen() {
         accessibilityState={{ selected: section === s }} onPress={() => setSection(s)}
         style={{ paddingVertical: 7, paddingHorizontal: 13, borderRadius: radii.pill, backgroundColor: section === s ? C.blue : C.white, borderWidth: 1.5, borderColor: section === s ? C.blue : C.line }}>
         <Text style={{ fontFamily: serif, fontSize: 13, color: section === s ? C.white : C.muted }}>
-          {s === "details" ? o.details : s === "missions" ? o.waypoints : s === "share" ? o.share : o.review}
+          {s === "details" ? o.details : s === "missions" ? o.quests : s === "share" ? o.share : o.review}
         </Text>
       </Pressable>)}
     </View>
@@ -191,13 +191,13 @@ export default function HuntEditScreen() {
 
     {section === "missions" && <>
       {!rows.length && <View style={{ gap: 4, paddingVertical: spacing.sm }}>
-        <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{o.noWaypoints}</Text>
-        <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{o.noWaypointsNote}</Text>
+        <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{o.noQuests}</Text>
+        <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{o.noQuestsNote}</Text>
       </View>}
       {!!rows.length && <TaskList rows={rows} />}
-      {locked ? null : waypoints.length < LIMITS.waypoints
-        ? <Btn quiet title={o.addWaypoint} disabled={busy} onPress={() => setEditing(blankWaypoint(nextOrdinal(waypoints), null))} />
-        : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{o.waypointFull(LIMITS.waypoints)}</Text>}
+      {locked ? null : quests.length < LIMITS.quests
+        ? <Btn quiet title={o.addQuest} disabled={busy} onPress={() => setEditing(blankQuest(nextOrdinal(quests), null))} />
+        : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{o.questFull(LIMITS.quests)}</Text>}
     </>}
 
     {section === "share" && <>
@@ -241,10 +241,10 @@ export default function HuntEditScreen() {
         </View>
         <Text style={{ fontFamily: serif, fontSize: 15, color: C.ink }}>{h.rankPoints(m.points)}</Text>
       </View>)}
-      {!!review?.stats.per_waypoint.length && !!review.stats.joined && <View style={{ gap: 6 }}>
-        <Text style={{ fontFamily: sans, fontSize: 12, letterSpacing: 1, color: C.muted }}>{o.perWaypoint}</Text>
-        {review.stats.per_waypoint.map((s) => {
-          const w = waypoints.find((x) => x.id === s.id);
+      {!!review?.stats.per_quest.length && !!review.stats.joined && <View style={{ gap: 6 }}>
+        <Text style={{ fontFamily: sans, fontSize: 12, letterSpacing: 1, color: C.muted }}>{o.perQuest}</Text>
+        {review.stats.per_quest.map((s) => {
+          const w = quests.find((x) => x.id === s.id);
           return <View key={s.id} style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
             <Text numberOfLines={1} style={{ flex: 1, fontFamily: sans, fontSize: 13, color: C.ink }}>{w?.name ?? s.id}</Text>
             <Text style={{ fontFamily: serif, fontSize: 13, color: C.blue }}>{s.done} / {review.stats.joined}</Text>
@@ -274,9 +274,9 @@ export default function HuntEditScreen() {
         onChange={(v) => edit({ ends_at: v })} o={o} />
     </Sheet>
 
-    {!!editing && <WaypointEditor huntId={id} waypoint={editing} busy={busy}
-      onClose={() => setEditing(null)} onSave={saveWaypoint}
-      onDelete={editing.id ? () => deleteWaypoint(editing) : undefined} />}
+    {!!editing && <QuestEditor huntId={id} quest={editing} busy={busy}
+      onClose={() => setEditing(null)} onSave={saveQuest}
+      onDelete={editing.id ? () => deleteQuest(editing) : undefined} />}
   </Screen>;
 }
 

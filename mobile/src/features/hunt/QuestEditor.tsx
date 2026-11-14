@@ -1,36 +1,36 @@
-// One quest and its waypoint, as the organizer sets it (docs/design/city-orienteering.md, Part B).
+// One quest and its quest, as the organizer sets it (docs/design/city-orienteering.md, Part B).
 // A puzzle's answer is typed here and sent to the server; it never travels back to a player.
 import React, { useEffect, useState } from "react";
 import { Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { ArtIcon } from "../../components/ArtIcon";
 import { useForegroundLocation } from "../journey/location";
 import { searchPlaces, type PointPlace } from "../../services/places";
-import { LIMITS, waypointProblems, type WaypointDraft } from "../../services/huntOrganizer";
+import { LIMITS, questProblems, type QuestDraft } from "../../services/privateHuntOrganizer";
 import { GiftQr } from "../capsule/GiftQr";
 import { PinPicker } from "./PinPicker";
 import { DEFAULT_QUEST_IMAGE, QUEST_TEMPLATES, questImageSource, templateImage, useQuestImages } from "./questImage";
 import { uploadQuestImage } from "../../services/huntMedia";
 import { pickPhoto } from "../../components/pickPhoto";
-import { qrGroups, questQr, type MissionType } from "../../services/huntPrivate";
+import { qrGroups, questQr, type PrivateHuntQuestType } from "../../services/privateHunt";
 import { Btn } from "./HuntViews";
-import { MissionGlyph } from "./PrivateHuntViews";
+import { QuestGlyph } from "./PrivateHuntViews";
 import { useHuntText } from "./strings";
 import { useOrganizerText } from "./organizerStrings";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 
 const PLACEHOLDER = "#A5AFBD";
-const TYPES: MissionType[] = ["arrive", "spin", "puzzle"];
+const TYPES: PrivateHuntQuestType[] = ["arrive", "spin", "puzzle"];
 const POINTS = [10, 25, 50, 99];
 const input = { fontFamily: sans, fontSize: 15, color: C.ink, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, paddingHorizontal: 14, paddingVertical: 12 } as const;
 
-export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDelete }: {
-  huntId: string; waypoint: WaypointDraft; busy: boolean;
-  onClose: () => void; onSave: (w: WaypointDraft) => void; onDelete?: () => void;
+export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: {
+  huntId: string; quest: QuestDraft; busy: boolean;
+  onClose: () => void; onSave: (w: QuestDraft) => void; onDelete?: () => void;
 }) {
   const o = useOrganizerText();
   const h = useHuntText();
   const location = useForegroundLocation(true);
-  const [w, setW] = useState<WaypointDraft>(waypoint);
+  const [w, setW] = useState<QuestDraft>(quest);
   const [placeName, setPlaceName] = useState("");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PointPlace[]>([]);
@@ -38,7 +38,7 @@ export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDele
   const [picking, setPicking] = useState(false);
   const [pictureError, setPictureError] = useState("");
   const [uploading, setUploading] = useState(false);
-  useEffect(() => { setW(waypoint); setQuery(""); setResults([]); setConfirmDelete(false); }, [waypoint]);
+  useEffect(() => { setW(quest); setQuery(""); setResults([]); setConfirmDelete(false); }, [quest]);
 
   // The same place search the Create flow uses, so an organizer picks a spot the way a sender does.
   useEffect(() => {
@@ -50,7 +50,7 @@ export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDele
     return () => { live = false; clearTimeout(timer); };
   }, [query]);
 
-  const set = (patch: Partial<WaypointDraft>) => setW((old) => ({ ...old, ...patch }));
+  const set = (patch: Partial<QuestDraft>) => setW((old) => ({ ...old, ...patch }));
   const upload = async () => {
     setPictureError("");
     try {
@@ -64,9 +64,9 @@ export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDele
     } catch { setPictureError(o.pictureError); }
     finally { setUploading(false); }
   };
-  const problems = waypointProblems(w);
+  const problems = questProblems(w);
   useQuestImages([w.image]);
-  const placed = !!(w.lat || w.lng);
+  const placed = !!(w.location_lat || w.location_lng);
 
   return <Modal visible transparent animationType="slide" onRequestClose={onClose}>
     <View style={{ flex: 1, justifyContent: "flex-end" }}>
@@ -75,7 +75,7 @@ export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDele
         style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, backgroundColor: "rgba(22,38,63,.38)" }} />
       <View style={{ width: "100%", maxWidth: 640, alignSelf: "center", maxHeight: "92%", backgroundColor: C.paper, borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg, overflow: "hidden" }}>
         <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.sm }}>
-          <Text style={{ flex: 1, fontFamily: serif, fontSize: 20, color: C.ink }}>{w.id ? o.editWaypoint : o.newWaypoint}</Text>
+          <Text style={{ flex: 1, fontFamily: serif, fontSize: 20, color: C.ink }}>{w.id ? o.editQuest : o.newQuest}</Text>
           <Pressable accessibilityRole="button" accessibilityLabel={o.cancel} onPress={onClose} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><ArtIcon name="close" /></Pressable>
         </View>
 
@@ -86,22 +86,22 @@ export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDele
             <ArtIcon name="pin" size={18} color={placed ? C.blue : C.muted} />
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: serif, fontSize: 15, color: placed ? C.ink : C.muted }}>{placed ? (placeName || w.name || o.unnamedSpot) : o.pickOnMap}</Text>
-              {placed && <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{w.lat.toFixed(5)}, {w.lng.toFixed(5)}</Text>}
+              {placed && <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{w.location_lat.toFixed(5)}, {w.location_lng.toFixed(5)}</Text>}
             </View>
             {placed && <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue }}>{o.movePin}</Text>}
           </Pressable>
           <TextInput accessibilityLabel={o.whereSearch} value={query} onChangeText={setQuery}
             placeholder={o.whereSearchPlaceholder} placeholderTextColor={PLACEHOLDER} style={input} />
           {results.map((p) => <Pressable key={`${p.lat},${p.lng}`} accessibilityRole="button"
-            onPress={() => { set({ lat: p.lat, lng: p.lng, name: w.name.trim() || p.name }); setPlaceName(p.name); setQuery(""); setResults([]); }}
+            onPress={() => { set({ location_lat: p.lat, location_lng: p.lng, name: w.name.trim() || p.name }); setPlaceName(p.name); setQuery(""); setResults([]); }}
             style={({ pressed }) => ({ padding: spacing.md, borderRadius: radii.md, backgroundColor: pressed ? C.glass : C.white, borderWidth: 1, borderColor: C.line })}>
             <Text style={{ fontFamily: serif, fontSize: 15, color: C.ink }}>{p.name}</Text>
             {!!p.detail && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{p.detail}</Text>}
           </Pressable>)}
 
-          <Label text={o.waypointName} />
-          <TextInput accessibilityLabel={o.waypointName} value={w.name} onChangeText={(v) => set({ name: v })}
-            maxLength={LIMITS.name} placeholder={o.waypointNamePlaceholder} placeholderTextColor={PLACEHOLDER} style={input} />
+          <Label text={o.questName} />
+          <TextInput accessibilityLabel={o.questName} value={w.name} onChangeText={(v) => set({ name: v })}
+            maxLength={LIMITS.name} placeholder={o.questNamePlaceholder} placeholderTextColor={PLACEHOLDER} style={input} />
 
           <Label text={o.pictureLabel} />
           {/* Round like the pin it becomes, ringed in the quest's brass. */}
@@ -118,17 +118,17 @@ export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDele
           <Label text={o.questLabel} />
           <View style={{ flexDirection: "row", gap: spacing.sm }}>
             {TYPES.map((kind) => {
-              const on = w.mission_type === kind;
-              return <Pressable key={kind} accessibilityRole="radio" accessibilityState={{ selected: on }} onPress={() => set({ mission_type: kind })}
+              const on = w.quest_type === kind;
+              return <Pressable key={kind} accessibilityRole="radio" accessibilityState={{ selected: on }} onPress={() => set({ quest_type: kind })}
                 style={{ flex: 1, alignItems: "center", gap: 6, paddingVertical: 12, borderRadius: radii.md, backgroundColor: on ? C.glass : C.white, borderWidth: 1.5, borderColor: on ? C.blue : C.line }}>
-                <MissionGlyph type={kind} size={20} color={on ? C.blue : C.muted} />
-                <Text style={{ fontFamily: sans, fontSize: 13, color: on ? C.ink : C.muted }}>{h.missionTypes[kind]}</Text>
+                <QuestGlyph type={kind} size={20} color={on ? C.blue : C.muted} />
+                <Text style={{ fontFamily: sans, fontSize: 13, color: on ? C.ink : C.muted }}>{h.questTypes[kind]}</Text>
               </Pressable>;
             })}
           </View>
-          <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.missionSub[w.mission_type]}</Text>
+          <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.questSub[w.quest_type]}</Text>
 
-          {w.mission_type === "arrive" && <>
+          {w.quest_type === "arrive" && <>
             <Label text={o.arriveCheckLabel} />
             <View style={{ flexDirection: "row", gap: spacing.sm }}>
               {(["gps", "gps_qr"] as const).map((kind) => {
@@ -168,7 +168,7 @@ export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDele
             maxLength={LIMITS.description} multiline placeholder={o.taskPlaceholder} placeholderTextColor={PLACEHOLDER}
             style={[input, { minHeight: 80, textAlignVertical: "top" }]} />
 
-          {w.mission_type === "puzzle" && <>
+          {w.quest_type === "puzzle" && <>
             <View style={{ flexDirection: "row", gap: spacing.sm }}>
               {(["choice", "text"] as const).map((kind) => {
                 const on = w.puzzle_kind === kind;
@@ -210,13 +210,13 @@ export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDele
           </>}
 
           {!!problems.length && <View style={{ gap: 4 }}>
-            {problems.map((p) => <Text key={p} style={{ fontFamily: sans, fontSize: 13, color: C.wax }}>· {o.waypointProblemText[p]}</Text>)}
+            {problems.map((p) => <Text key={p} style={{ fontFamily: sans, fontSize: 13, color: C.wax }}>· {o.questProblemText[p]}</Text>)}
           </View>}
 
           <Btn title={o.save} disabled={busy || uploading || !!problems.length} onPress={() => onSave(w)} />
           {!!onDelete && (confirmDelete
             ? <View style={{ gap: spacing.sm, backgroundColor: C.white, borderWidth: 1, borderColor: C.wax, borderRadius: radii.md, padding: spacing.md, ...shadows.card }}>
-              <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.ink }}>{o.deleteWaypointAsk}</Text>
+              <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.ink }}>{o.deleteQuestAsk}</Text>
               <View style={{ flexDirection: "row", gap: spacing.sm }}>
                 <View style={{ flex: 1 }}><Btn quiet title={o.cancel} onPress={() => setConfirmDelete(false)} /></View>
                 <Pressable accessibilityRole="button" disabled={busy} onPress={onDelete}
@@ -226,18 +226,18 @@ export function WaypointEditor({ huntId, waypoint, busy, onClose, onSave, onDele
               </View>
             </View>
             : <Pressable accessibilityRole="button" onPress={() => setConfirmDelete(true)} style={{ alignSelf: "center", paddingVertical: 8 }}>
-              <Text style={{ fontFamily: sans, fontSize: 13, color: C.wax, textDecorationLine: "underline" }}>{o.deleteWaypoint}</Text>
+              <Text style={{ fontFamily: sans, fontSize: 13, color: C.wax, textDecorationLine: "underline" }}>{o.deleteQuest}</Text>
             </Pressable>)}
         </ScrollView>
       </View>
     </View>
-    {picking && <PinPicker mission={w.mission_type} image={w.image}
-      at={placed ? { lat: w.lat, lng: w.lng } : null}
+    {picking && <PinPicker quest={w.quest_type} image={w.image}
+      at={placed ? { lat: w.location_lat, lng: w.location_lng } : null}
       you={location.fix ? { lat: location.fix.lat, lng: location.fix.lng } : null}
       onClose={() => setPicking(false)}
       onPick={(pin) => {
         // A dropped pin names the quest when the organizer has not named it themselves.
-        set({ lat: pin.lat, lng: pin.lng, name: w.name.trim() || pin.name });
+        set({ location_lat: pin.lat, location_lng: pin.lng, name: w.name.trim() || pin.name });
         setPlaceName(pin.name); setPicking(false);
       }} />}
   </Modal>;

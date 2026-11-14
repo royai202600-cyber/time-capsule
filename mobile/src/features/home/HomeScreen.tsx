@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { isSeaCapsule, SEA_AVATAR } from "../../services/sea";
-import { seaText } from "../sea/strings";
+import { isPublicCapsule, PUBLIC_CAPSULE_AVATAR } from "../../services/publicCapsule";
+import { seaText } from "../publicCapsule/strings";
 import { Animated, FlatList, Image, Pressable, Text, View, useWindowDimensions } from "react-native";
 import { SealLoader } from "../../components/SealLoader";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
@@ -85,7 +85,7 @@ export default function HomeScreen() {
   const person = (c: Row) => {
     const id = side === "inbox" ? c.sender : c.recipient;
     if (side === "sent" && id === session?.user.id) return { name: t("home.future"), avatar: { set: "illus", id: "future" } };
-    if (side === "sent" && isSeaCapsule(c) && !c.recipient) return { name: seaText(language)("toTheSea"), avatar: SEA_AVATAR };
+    if (side === "sent" && isPublicCapsule(c) && !c.recipient) return { name: seaText(language)("toTheSea"), avatar: PUBLIC_CAPSULE_AVATAR };
     return (id ? bundle.people[id] : undefined) ?? { name: t("home.future"), avatar: null };
   };
   const headline = (c: Row) => {

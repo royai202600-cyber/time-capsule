@@ -11,10 +11,11 @@ import { privateRun, runClock } from "./huntClock";
 /** Flipped to true by Codex's `P2` session once the player RPCs are applied. */
 export const HUNT_PRIVATE_BACKEND = true;
 
-export type MissionType = "arrive" | "spin" | "puzzle";
-export type Waypoint = {
-  id: string; ordinal: number; lat: number; lng: number; name: string;
-  mission_type: MissionType; points: number;
+import type { PrivateHuntQuestType } from "./questTypes";
+export type { PrivateHuntQuestType } from "./questTypes";
+export type Quest = {
+  id: string; ordinal: number; location_lat: number; location_lng: number; name: string;
+  quest_type: PrivateHuntQuestType; points: number;
   description?: string | null; image?: string | null;
   /** Arrive quests only: "gps_qr" also needs the QR code the organizer left at the spot. */
   arrive_check?: "gps" | "gps_qr" | null;
@@ -34,13 +35,13 @@ export type PrivateHunt = {
   join_code?: string | null;
   joined_at: string | null; finished_at: string | null;
   points: number;
-  waypoints: Waypoint[];
+  quests: Quest[];
   /** Counted on this device only, before the backend is live. */
   preview?: boolean;
 };
 /** `avatar` is the player's profile avatar record, the same shape the Avatar component takes. */
 export type LeaderRow = { user: string; name: string; avatar?: Record<string, unknown> | null; points: number; duration_s?: number | null; you?: boolean };
-export type MissionResult = { hunt: PrivateHunt; points_gained: number; tries_left: number; wait_s: number };
+export type QuestResult = { hunt: PrivateHunt; points_gained: number; tries_left: number; wait_s: number };
 
 // "hunt_locked" comes before "locked", since codes are matched by substring.
 const CODES = ["bad_code", "too_far", "closed", "not_joined", "hunt_locked", "locked", "already_done", "wrong_answer", "no_tries", "not_started", "time_up", "wrong_qr", "not_allowed", "not_ready", "too_many", "unknown"] as const;
@@ -48,22 +49,22 @@ export type PrivateHuntErrorCode = typeof CODES[number];
 export class PrivateHuntError extends Error { constructor(public code: PrivateHuntErrorCode) { super(code); } }
 
 // ---------- pure helpers (shared by the live path and the demo) ----------
-/** Points on offer across every mission. */
-export const totalPoints = (h: PrivateHunt) => h.waypoints.reduce((sum, w) => sum + w.points, 0);
-export const doneCount = (h: PrivateHunt) => h.waypoints.filter((w) => w.done_at).length;
-/** Waypoints in the order a player meets them: the organizer's order, then by name for a tidy list. */
-export const inOrder = (h: PrivateHunt) => [...h.waypoints].sort((a, b) => a.ordinal - b.ordinal || a.name.localeCompare(b.name));
+/** Points on offer across every quest. */
+export const totalPoints = (h: PrivateHunt) => h.quests.reduce((sum, w) => sum + w.points, 0);
+export const doneCount = (h: PrivateHunt) => h.quests.filter((w) => w.done_at).length;
+/** Quests in the order a player meets them: the organizer's order, then by name for a tidy list. */
+export const inOrder = (h: PrivateHunt) => [...h.quests].sort((a, b) => a.ordinal - b.ordinal || a.name.localeCompare(b.name));
 /**
- * An "in order" route hides nothing, but only the next unfinished waypoint can be completed; its pin is
+ * An "in order" route hides nothing, but only the next unfinished quest can be completed; its pin is
  * drawn with a dashed outline until then. An "any order" route locks nothing.
  */
-export function locked(h: PrivateHunt, w: Waypoint) {
+export function locked(h: PrivateHunt, w: Quest) {
   if (h.route_mode !== "ordered" || w.done_at) return false;
   const next = inOrder(h).find((x) => !x.done_at);
   return next?.id !== w.id;
 }
 /** Seconds left of a wrong-answer wait, or 0. */
-export const waitLeft = (w: Waypoint, now = Date.now()) =>
+export const waitLeft = (w: Quest, now = Date.now()) =>
   w.wait_until ? Math.max(0, Math.ceil((new Date(w.wait_until).getTime() - now) / 1000)) : 0;
 /** Points first, then the faster finish, then whoever finished at all. */
 export const byRank = (rows: LeaderRow[]) => [...rows].sort((a, b) =>
@@ -127,21 +128,21 @@ const offset = (at: Coords, north: number, east: number) =>
   ({ lat: at.lat + north / 110540, lng: at.lng + east / (111320 * Math.cos(at.lat * Math.PI / 180)) });
 
 function demoHunt(at: Coords): PrivateHunt {
-  const spots: [string, MissionType, number, number, number, string][] = [
+  const spots: [string, PrivateHuntQuestType, number, number, number, string][] = [
     ["公園入口 Park gate", "arrive", 10, 60, 30, "走到公園門口的石牌旁。\nWalk to the stone sign by the gate."],
     ["老樹驛站 Old tree", "spin", 15, -50, 70, "在老樹旁轉一次驛站。\nSpin the Waypost beside the old tree."],
     ["紀念碑 Monument", "puzzle", 25, 20, -80, "碑上刻的年份是哪一年？\nWhich year is carved on the monument?"],
   ];
-  const waypoints: Waypoint[] = spots.map(([name, mission_type, points, north, east, description], i) => {
+  const quests: Quest[] = spots.map(([name, quest_type, points, north, east, description], i) => {
     const spot = offset(at, north, east);
     return {
-      id: `demo-wp-${i + 1}`, ordinal: i + 1, name, mission_type, points, description,
+      id: `demo-wp-${i + 1}`, ordinal: i + 1, name, quest_type, points, description,
       // Two quests carry a picture, so the demo shows both pin shapes.
       image: i === 0 ? "tpl:park" : i === 2 ? "tpl:publicArt" : null,
-      lat: spot.lat, lng: spot.lng,
-      arrive_check: i === 0 ? "gps_qr" : mission_type === "arrive" ? "gps" : null,
-      puzzle_kind: mission_type === "puzzle" ? "choice" : null,
-      choices: mission_type === "puzzle" ? DEMO_PUZZLE_CHOICES : null,
+      location_lat: spot.lat, location_lng: spot.lng,
+      arrive_check: i === 0 ? "gps_qr" : quest_type === "arrive" ? "gps" : null,
+      puzzle_kind: quest_type === "puzzle" ? "choice" : null,
+      choices: quest_type === "puzzle" ? DEMO_PUZZLE_CHOICES : null,
       done_at: demo.done[`demo-wp-${i + 1}`] ?? null,
       tries: demo.tries[`demo-wp-${i + 1}`] ?? 0,
       wait_until: demo.wait[`demo-wp-${i + 1}`] ?? null,
@@ -155,8 +156,8 @@ function demoHunt(at: Coords): PrivateHunt {
     area: { ...at, radius_m: 1200 }, route_mode: "any", leaderboard_visible: true,
     starts_at, ends_at, time_limit_min: 45,
     joined_at: demo.joined_at, finished_at: demo.finished_at,
-    points: waypoints.filter((w) => w.done_at).reduce((sum, w) => sum + w.points, 0),
-    waypoints, preview: true,
+    points: quests.filter((w) => w.done_at).reduce((sum, w) => sum + w.points, 0),
+    quests, preview: true,
   };
 }
 const DEMO_RIVALS: LeaderRow[] = [
@@ -177,7 +178,7 @@ export const privateHunt = {
   async mine(args: { userId: string; at: Coords | null; previewAllowed: boolean }): Promise<PrivateHunt[]> {
     demoAt = args.at;
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { data, error } = await rpc("hunt_private_mine");
+      const { data, error } = await rpc("private_hunt_joined");
       fail(error); return (data as PrivateHunt[] | null) ?? [];
     }
     if (!args.previewAllowed || !args.at) return [];
@@ -193,7 +194,7 @@ export const privateHunt = {
     if (at) demoAt = at;
     if (clean.length !== 6) throw new PrivateHuntError("bad_code");
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { data, error } = await rpc("hunt_preview", { p_code: clean });
+      const { data, error } = await rpc("private_hunt_preview", { p_code: clean });
       fail(error);
       if (!data) throw new PrivateHuntError("bad_code");
       return data as PrivateHunt;
@@ -203,7 +204,7 @@ export const privateHunt = {
   },
   async join(h: PrivateHunt): Promise<PrivateHunt> {
     if (!h.preview) {
-      const { data, error } = await rpc("hunt_join_code", { p_code: h.join_code });
+      const { data, error } = await rpc("private_hunt_join_code", { p_code: h.join_code });
       fail(error); return data as PrivateHunt;
     }
     // People join ahead of a coordinated start; only an ended hunt refuses them.
@@ -214,17 +215,17 @@ export const privateHunt = {
     return demoOrThrow();
   },
   /**
-   * Finish one mission. The server re-checks the distance, the route order and the answer; nothing here
+   * Finish one quest. The server re-checks the distance, the route order and the answer; nothing here
    * is trusted. `answer` is the player's text or chosen option, for puzzles only; `qr` is the token
    * scanned or typed at a GPS + QR quest.
    */
-  async complete(h: PrivateHunt, w: Waypoint, at: Coords | null, answer?: string, qr?: string): Promise<MissionResult> {
+  async complete(h: PrivateHunt, w: Quest, at: Coords | null, answer?: string, qr?: string): Promise<QuestResult> {
     if (!h.preview) {
       if (!at) throw new PrivateHuntError("too_far");
-      const { data, error } = await rpc("hunt_mission_complete", {
-        p_waypoint: w.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10, p_answer: answer ?? null, p_qr: qr ?? null,
+      const { data, error } = await rpc("private_hunt_quest_complete", {
+        p_quest: w.id, p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy ?? 10, p_answer: answer ?? null, p_qr: qr ?? null,
       });
-      fail(error); return data as MissionResult;
+      fail(error); return data as QuestResult;
     }
     if (!demo.joined_at) throw new PrivateHuntError("not_joined");
     if (Date.now() < new Date(h.starts_at).getTime()) throw new PrivateHuntError("not_started");
@@ -233,10 +234,10 @@ export const privateHunt = {
     // Out of time, the same answer the server gives: the run is over.
     if (runClock(h).state === "up") throw new PrivateHuntError("time_up");
     if (locked(h, w)) throw new PrivateHuntError("locked");
-    if (!near(at, w)) throw new PrivateHuntError("too_far");
+    if (!near(at, { lat: w.location_lat, lng: w.location_lng })) throw new PrivateHuntError("too_far");
     if (waitLeft(w)) throw new PrivateHuntError("no_tries");
     if (w.arrive_check === "gps_qr" && questToken(qr ?? "") !== DEMO_QR) throw new PrivateHuntError("wrong_qr");
-    if (w.mission_type === "puzzle" && !sameAnswer(answer ?? "", DEMO_ANSWER)) {
+    if (w.quest_type === "puzzle" && !sameAnswer(answer ?? "", DEMO_ANSWER)) {
       const tries = (demo.tries[w.id] ?? 0) + 1;
       demo.tries[w.id] = tries;
       // Three tries, then a minute's wait, as on the server.
@@ -247,14 +248,14 @@ export const privateHunt = {
     demo.done[w.id] = new Date().toISOString();
     delete demo.wait[w.id];
     const next = demoHunt(demoAt!);
-    if (next.waypoints.every((x) => x.done_at)) demo.finished_at = new Date().toISOString();
+    if (next.quests.every((x) => x.done_at)) demo.finished_at = new Date().toISOString();
     saveDemo();
     return { hunt: demoOrThrow(), points_gained: w.points, tries_left: 3, wait_s: 0 };
   },
   /** The organizer can hide this; the server then refuses it. */
   async leaderboard(h: PrivateHunt): Promise<LeaderRow[]> {
     if (!h.preview) {
-      const { data, error } = await rpc("hunt_leaderboard", { p_hunt: h.id });
+      const { data, error } = await rpc("private_hunt_leaderboard", { p_hunt: h.id });
       fail(error); return byRank((data as LeaderRow[] | null) ?? []);
     }
     const duration = demo.finished_at && demo.started_at
@@ -263,7 +264,7 @@ export const privateHunt = {
   },
   async report(h: PrivateHunt): Promise<void> {
     if (h.preview) return;
-    const { error } = await rpc("hunt_report", { p_hunt: h.id });
+    const { error } = await rpc("private_hunt_report", { p_hunt: h.id });
     fail(error);
   },
   /** Private-hunt stamps finished in the demo, shown in the Passport alongside the server's. */

@@ -3,25 +3,25 @@ import { Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
 import { haptics } from "../../components/haptics";
 import { C, sans, serif, spacing } from "../../theme";
-import { sea } from "../../services/sea";
-import { useSeaText } from "./strings";
+import { publicCapsule } from "../../services/publicCapsule";
+import { usePublicCapsuleText } from "./strings";
 
 // Shown under an opened sea bottle's letter, in place of Reply (the sender is a stranger).
 // Keeping needs no call: picking it up already made you its recipient.
-export function SeaLetterActions({ capsuleId }: { capsuleId: string }) {
-  const s = useSeaText();
+export function PublicCapsuleLetterActions({ capsuleId }: { capsuleId: string }) {
+  const s = usePublicCapsuleText();
   const [busy, setBusy] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [note, setNote] = useState("");
   const leave = (message: string) => { setNote(message); setTimeout(() => router.replace({ pathname: "/journey" }), 1400); };
   const giveBack = async () => {
     setBusy(true);
-    try { await sea.returnToSea(capsuleId); void haptics.page(); leave(s("returned")); }
+    try { await publicCapsule.returnPublicCapsule(capsuleId); void haptics.page(); leave(s("returned")); }
     catch { setNote(s("errUnknown")); void haptics.warn(); setBusy(false); }
   };
   const report = async (reason: "unkind" | "personal" | "spam" | "other") => {
     setBusy(true);
-    try { await sea.report(capsuleId, reason); void haptics.tap(); leave(s("reported")); }
+    try { await publicCapsule.report(capsuleId, reason); void haptics.tap(); leave(s("reported")); }
     catch { setNote(s("errUnknown")); void haptics.warn(); setBusy(false); }
   };
   return <View style={{ gap: spacing.sm }}>

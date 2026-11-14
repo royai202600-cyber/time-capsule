@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 // Only the pure helper is tested; these keep the module's native imports out of the test run.
 vi.mock("expo-crypto", () => ({ randomUUID: () => "00000000-0000-4000-8000-000000000000" }));
 vi.mock("./supabase", () => ({ supabase: { auth: { getSession: vi.fn() }, storage: { from: vi.fn() } } }));
-vi.mock("./huntPrivate", () => ({ HUNT_PRIVATE_BACKEND: false }));
+vi.mock("./privateHunt", () => ({ HUNT_PRIVATE_BACKEND: false }));
 import { isMediaPath } from "./huntMedia";
 
 describe("quest photos", () => {

@@ -24,10 +24,10 @@ const { user } = ok(await admin.auth.admin.createUser({ email, password, email_c
 const uuid = user.id;
 const id = 'xinyi-2026-11';
 const keeper = { p_hunt: id, p_lat: 25.037546, p_lng: 121.562754, p_accuracy: 10 };
-const list = async () => (await rpc('hunt_list', { p_lat: keeper.p_lat, p_lng: keeper.p_lng }));
+const list = async () => (await rpc('city_hunt_list', { p_lat: keeper.p_lat, p_lng: keeper.p_lng }));
 const hunt = async () => (await list()).find(h => h.id === id);
-const finish = () => rpc('hunt_finish', keeper);
-const checkIn = () => rpc('hunt_check_in', keeper);
+const finish = () => rpc('city_hunt_finish', keeper);
+const checkIn = () => rpc('city_hunt_check_in', keeper);
 const profile = `hunt_id='${id}' and user_id='${uuid}'`;
 const goals = 'spin_count=3, restore_count=5, landmark_count=1';
 const roster = {
@@ -52,7 +52,7 @@ try {
     assert.equal(h.ends_at, 'infinity');
     assert.match(h.name_zh, /城市定向$/);
   }
-  const joined = await rpc('hunt_join', { p_hunt: id });
+  const joined = await rpc('city_hunt_join', { p_hunt: id });
   assert.equal(joined.run_started_at, null);
   assert.equal(joined.finished_today, false);
   const started = await checkIn();
@@ -61,10 +61,10 @@ try {
   assert((await player.from('hunt_runs').select('*')).error, 'run history unavailable directly');
 
   const coords = ({ lat, lng }) => ({ p_lat: lat, p_lng: lng, p_accuracy: 10 });
-  const nearby = await rpc('corrupted_nearby', { p_lat: 25.033263, p_lng: 121.564887, p_accuracy: 10 });
+  const nearby = await rpc('game_nearby', { p_lat: 25.033263, p_lng: 121.564887, p_accuracy: 10 });
   const posts = JSON.parse(sql(`
     select json_agg(s) from (
-      select p.id,p.lat,p.lng from public.sea_shores p, public.hunts h
+      select p.id,p.lat,p.lng from public.public_capsule_spots p, public.hunts h
       where h.id='${id}' and p.kind='common' and p.game_enabled
         and public.distance_m(p.lat,p.lng,h.area_lat,h.area_lng)<=h.area_radius_m
       order by p.id limit 4
@@ -83,7 +83,7 @@ try {
   `));
   assert.equal(spawns.length, 5);
   for (const s of spawns) {
-    const [out] = await rpc('corrupted_throw', {
+    const [out] = await rpc('capsule_throw', {
       p_spawn: s.spawn_id, ...coords(s), p_ball: 'wax', p_ring: 1, p_hit: true,
     });
     assert.equal(out.result, 'restored');
@@ -103,13 +103,13 @@ try {
   assert.equal(first.gold_gained, 5);
   assert(first.hunt.finished_today && first.hunt.today_s >= 0);
   assert.equal(first.hunt.best_s, first.hunt.today_s);
-  assert.equal((await player.rpc('hunt_finish', keeper)).error?.message, 'already finished');
+  assert.equal((await player.rpc('city_hunt_finish', keeper)).error?.message, 'already finished');
 
   // Move the successful fixture to yesterday to exercise next-day and same-day timeout paths.
   sql(`
-    update public.hunt_runs set day=day-1, started_at=started_at-interval '1 day',
+    update public.city_hunt_runs set day=day-1, started_at=started_at-interval '1 day',
       finished_at=finished_at-interval '1 day', duration_s=25 where ${profile};
-    update public.hunt_progress set joined_at=joined_at-interval '1 day',
+    update public.city_hunt_quest_progress set joined_at=joined_at-interval '1 day',
       checked_in_at=checked_in_at-interval '1 day', finished_at=finished_at-interval '1 day' where ${profile};
   `);
   const nextDay = await hunt();
@@ -120,25 +120,25 @@ try {
   await checkIn();
   // Shorten only the local fixture's time limit to make the same-day test independent of wall time.
   sql(`update public.hunts set time_limit_min=1 where id='${id}';
-    update public.hunt_progress set checked_in_at=now()-interval '2 minutes', ${goals} where ${profile};`);
+    update public.city_hunt_quest_progress set checked_in_at=now()-interval '2 minutes', ${goals} where ${profile};`);
   const expired = await hunt();
   assert.equal(expired.checked_in_at, null);
   assert(Date.parse(expired.run_ends_at) < Date.now());
-  assert(expired.steps.every(s => s.count === 0));
-  const denied = (await player.rpc('hunt_finish', keeper)).error;
+  assert(expired.quests.every(s => s.count === 0));
+  const denied = (await player.rpc('city_hunt_finish', keeper)).error;
   assert.equal(denied?.hint, 'time_up');
   assert.equal(denied?.message, 'time_up');
   assert((await rpc('waypost_spin', { p_id: posts[3].id, ...coords(posts[3]) })).length);
-  assert.equal(sql(`select spin_count from public.hunt_progress where ${profile};`), '3');
+  assert.equal(sql(`select spin_count from public.city_hunt_quest_progress where ${profile};`), '3');
   const restarted = await checkIn();
   assert(Date.parse(restarted.run_started_at) > Date.parse(expired.run_started_at));
-  assert.equal(restarted.steps.find(s => s.key === 'spin').count, 0);
-  sql(`update public.hunt_progress set ${goals} where ${profile};`);
+  assert.equal(restarted.quests.find(s => s.key === 'spin').count, 0);
+  sql(`update public.city_hunt_quest_progress set ${goals} where ${profile};`);
   const repeat = await finish();
   assert.equal(repeat.xp_gained, 50);
   assert.equal(repeat.gold_gained, 0);
   assert(repeat.hunt.finished_today && repeat.hunt.best_s < 25);
-  assert.equal((await player.rpc('hunt_finish', keeper)).error?.message, 'already finished');
+  assert.equal((await player.rpc('city_hunt_finish', keeper)).error?.message, 'already finished');
   assert.equal((await rpc('my_passport')).filter(s => s.how_earned === 'hunt').length, 1);
   console.log('PASS: real JWT Xinyi route, first finish, midnight reset, time_up, fresh run and daily repeat XP');
 } finally {

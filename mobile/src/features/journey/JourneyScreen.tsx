@@ -23,8 +23,8 @@ import { MapFilterSheet } from "./MapFilterSheet";
 import { mapHtml, MONUMENTS, monumentTop } from "./live/mapHtml";
 import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
 import type { Tables } from "../../services/database.types";
-import { MAP_PMTILES_URL, sea, SeaError, SEA_ENABLED, SEA_PICKUP_RADIUS_M, type SeaBottle } from "../../services/sea";
-import { daysSince, distanceText, timeLeftShort, useSeaText } from "../sea/strings";
+import { MAP_PMTILES_URL, publicCapsule, PublicCapsuleError, PUBLIC_CAPSULE_ENABLED, PUBLIC_CAPSULE_PICKUP_RADIUS_M, type PublicCapsule } from "../../services/publicCapsule";
+import { daysSince, distanceText, timeLeftShort, usePublicCapsuleText } from "../publicCapsule/strings";
 import { supabase } from "../../services/supabase";
 import { game, GameError, GAME_ACTION_RADIUS_M, GAME_ENABLED, type GameState, type CorruptedCapsule, type DevLetter, type LandmarkAttempt, type Nearby, type Waypost } from "../../services/game";
 import { characters, gameArt } from "../../art/manifest";
@@ -35,12 +35,12 @@ import { sceneKey } from "../game/waypostScene";
 import { ThrowScreen } from "../game/ThrowScreen";
 import { errorKey, useGameText } from "../game/strings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { hunt as hunts, HuntError, huntStatus, keeperMark, onHuntChange, type Hunt } from "../../services/hunt";
+import { hunt as hunts, HuntError, huntStatus, keeperMark, onHuntChange, type Hunt } from "../../services/cityHunt";
 import { clockText } from "../../services/huntClock";
-import { huntStillOn, inOrder, locked as missionLocked, onPrivateHuntChange, privateHunt as privateHunts, PrivateHuntError, type LeaderRow, type PrivateHunt, type Waypoint } from "../../services/huntPrivate";
-import { organizer } from "../../services/huntOrganizer";
+import { huntStillOn, inOrder, locked as questLocked, onPrivateHuntChange, privateHunt as privateHunts, PrivateHuntError, type LeaderRow, type PrivateHunt, type Quest } from "../../services/privateHunt";
+import { organizer } from "../../services/privateHuntOrganizer";
 import { KeeperCard, keeperPortrait, QuestSheet, RunChip } from "../hunt/HuntViews";
-import { JoinPrivateSheet, LeaderboardSheet, MissionSheet, PrivateHuntCard } from "../hunt/PrivateHuntViews";
+import { JoinPrivateSheet, LeaderboardSheet, QuestSheet as PrivateQuestSheet, PrivateHuntCard } from "../hunt/PrivateHuntViews";
 import { useHuntText } from "../hunt/strings";
 import { questImageUri, useQuestImages } from "../hunt/questImage";
 import type { PassportHunt } from "../../services/game";
@@ -51,7 +51,7 @@ type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "othe
 
 const FALLBACK = { lat: 22.19358, lng: 113.53917 }; // Senado Square, Macau (development only)
 type Item =
-  | { kind: "sea"; id: string; lat: number; lng: number; meters: number; bottle: SeaBottle }
+  | { kind: "publicCapsule"; id: string; lat: number; lng: number; meters: number; publicCapsule: PublicCapsule }
   | { kind: "place"; id: string; lat: number; lng: number; meters: number; pin: JourneyPin; capsuleId: string };
 
 const portraitUri = (avatar: unknown) => {
@@ -65,7 +65,7 @@ export default function JourneyScreen() {
   const { session, profile } = useAuth();
   const userId = session?.user.id ?? "";
   const { t, language } = useLanguage();
-  const s = useSeaText();
+  const s = usePublicCapsuleText();
   const g = useGameText();
   const placeData = usePlaces();
   const capsuleData = useCapsules(userId, "inbox");
@@ -75,7 +75,7 @@ export default function JourneyScreen() {
   latestFix.current = fix;
   const you = fix ? { lat: fix.lat, lng: fix.lng } : null;
   const map = useRef<LiveMapHandle>(null);
-  const [bottles, setBottles] = useState<SeaBottle[]>([]);
+  const [publicCapsules, setPublicCapsules] = useState<PublicCapsule[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [walkTo, setWalkTo] = useState<{ lat: number; lng: number } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -95,13 +95,13 @@ export default function JourneyScreen() {
   const [privateHuntStamps, setPrivateHuntStamps] = useState<Awaited<ReturnType<typeof game.passport>>["privateHunts"]>([]);
   const [huntList, setHuntList] = useState<Hunt[]>([]);
   const [questOpen, setQuestOpen] = useState(false);
-  // Private hunts: the ones I joined, the join-by-code sheet, the mission I have open and the leaderboard.
+  // Private hunts: the ones I joined, the join-by-code sheet, the quest I have open and the leaderboard.
   const [privateList, setPrivateList] = useState<PrivateHunt[]>([]);
   const [joinOpen, setJoinOpen] = useState(false);
   const [joinFound, setJoinFound] = useState<PrivateHunt | null>(null);
   const [joinError, setJoinError] = useState<string | null>(null);
-  const [mission, setMission] = useState<{ hunt: string; waypoint: string } | null>(null);
-  const [missionError, setMissionError] = useState<string | null>(null);
+  const [quest, setQuest] = useState<{ hunt: string; quest: string } | null>(null);
+  const [questError, setQuestError] = useState<string | null>(null);
   const [board, setBoard] = useState<{ hunt: PrivateHunt; rows: LeaderRow[] | null } | null>(null);
   const { huntCode: huntCodeParam } = useLocalSearchParams<{ huntCode?: string }>();
   const [linkCode, setLinkCode] = useState<string | null>(null);
@@ -152,12 +152,12 @@ export default function JourneyScreen() {
     if (!prev || distanceMeters(prev.lat, prev.lng, you.lat, you.lng) > 4) last.current = you;
   }, [you?.lat, you?.lng]);
   const cell = you ? `${you.lat.toFixed(3)},${you.lng.toFixed(3)}` : "";
-  const loadSea = useCallback(async () => {
-    if (!SEA_ENABLED || !you) return;
-    const test = __DEV__ && GAME_ENABLED ? game.devBottles(you) : [];
-    setBottles(test);
+  const loadPublicCapsules = useCallback(async () => {
+    if (!PUBLIC_CAPSULE_ENABLED || !you) return;
+    const test = __DEV__ && GAME_ENABLED ? game.devPublicCapsules(you) : [];
+    setPublicCapsules(test);
     try {
-      setBottles([...test, ...await sea.nearby(fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null)]);
+      setPublicCapsules([...test, ...await publicCapsule.nearby(fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null)]);
     } catch { /* the map still works without the sea */ }
   }, [cell]);
   const loadGame = useCallback(async () => {
@@ -195,8 +195,8 @@ export default function JourneyScreen() {
   useEffect(() => { if (fix) game.setPosition({ lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy }); }, [fix?.lat, fix?.lng, fix?.accuracy]);
   useFocusEffect(useCallback(() => {
     if (userId) { void placeData.refresh(); void capsuleData.refresh(); }
-    void loadSea();
-  }, [userId, placeData.refresh, capsuleData.refresh, loadSea]));
+    void loadPublicCapsules();
+  }, [userId, placeData.refresh, capsuleData.refresh, loadPublicCapsules]));
   useEffect(() => { if (!toast) return; const id = setTimeout(() => setToast(""), 3600); return () => clearTimeout(id); }, [toast]);
 
   const capsules = capsuleData.data ?? [];
@@ -216,7 +216,7 @@ export default function JourneyScreen() {
   const items = useMemo<Item[]>(() => {
     if (!you) return [];
     const m = (lat: number, lng: number) => distanceMeters(you.lat, you.lng, lat, lng);
-    const seaItems: Item[] = bottles.map((b) => ({ kind: "sea", id: b.id, lat: b.lat, lng: b.lng, meters: m(b.lat, b.lng), bottle: b }));
+    const publicCapsuleItems: Item[] = publicCapsules.map((b) => ({ kind: "publicCapsule", id: b.id, lat: b.lat, lng: b.lng, meters: m(b.lat, b.lng), publicCapsule: b }));
     const placeItems: Item[] = capsules.flatMap((capsule) => {
       const point = pointOpeningPlace(capsule);
       const pin: JourneyPin | undefined = point
@@ -225,8 +225,8 @@ export default function JourneyScreen() {
       return pin ? [{ kind: "place" as const, id: `place-${capsule.id}`, lat: pin.place.lat, lng: pin.place.lng,
         meters: m(pin.place.lat, pin.place.lng), pin: { ...pin, vessel: capsule.vessel }, capsuleId: capsule.id }] : [];
     });
-    return [...seaItems, ...placeItems].sort((a, b) => a.meters - b.meters);
-  }, [bottles, pins, capsules, you?.lat, you?.lng]);
+    return [...publicCapsuleItems, ...placeItems].sort((a, b) => a.meters - b.meters);
+  }, [publicCapsules, pins, capsules, you?.lat, you?.lng]);
   const selected = items.find((i) => i.id === selectedId) ?? null;
 
   const metersTo = (lat: number, lng: number) => you ? distanceMeters(you.lat, you.lng, lat, lng) : Infinity;
@@ -239,13 +239,13 @@ export default function JourneyScreen() {
     id: `keeper-${activeHunt.id}`, lat: activeHunt.keeper.lat, lng: activeHunt.keeper.lng, kind: "keeper", vessel: "",
     portrait: assetUri(keeperPortrait), figure: assetUri(characters.keeper), mark: keeperMark(activeHunt),
   }] : [], [activeHunt, showKeeper]);
-  // A joined private hunt's waypoints: brass location pins, only ever visible to people who joined.
-  const questPhotos = useQuestImages(privateList.flatMap((ph) => ph.waypoints.map((w) => w.image)));
+  // A joined private hunt's quests: brass location pins, only ever visible to people who joined.
+  const questPhotos = useQuestImages(privateList.flatMap((ph) => ph.quests.map((w) => w.image)));
   // Quest pins show only while the hunt is still on for you: gone once it closes, you finish, or your time runs out.
-  const missionPins = useMemo<LivePin[]>(() => privateList.filter(huntStillOn).flatMap((ph) => inOrder(ph).map<LivePin>((w) => ({
-    id: `mission-${ph.id}-${w.id}`, lat: w.lat, lng: w.lng, kind: "mission", vessel: "",
-    mission: w.mission_type, done: !!w.done_at, locked: missionLocked(ph, w), photo: questImageUri(w.image),
-    near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
+  const questPins = useMemo<LivePin[]>(() => privateList.filter(huntStillOn).flatMap((ph) => inOrder(ph).map<LivePin>((w) => ({
+    id: `quest-${ph.id}-${w.id}`, lat: w.location_lat, lng: w.location_lng, kind: "quest", vessel: "",
+    quest: w.quest_type, done: !!w.done_at, locked: questLocked(ph, w), photo: questImageUri(w.image),
+    near: metersTo(w.location_lat, w.location_lng) <= GAME_ACTION_RADIUS_M,
     tag: w.done_at ? undefined : h.pointsShort(w.points),
   }))), [privateList, you?.lat, you?.lng, h, questPhotos]);
   const cooling = (w: Waypost) => !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now();
@@ -271,14 +271,14 @@ export default function JourneyScreen() {
     const c = capsules.find((x) => x.id === i.capsuleId);
     const left = c && !c.opened_at ? new Date(c.open_at).getTime() - now : 0;
     return { id: i.id, lat: i.lat, lng: i.lng, kind: "place", private: true, opened: !!c?.opened_at, vessel: vesselUri(i.pin.vessel ?? "dome"),
-      portrait: c ? portraitUri(senders[c.sender]) : null, near: i.meters <= SEA_PICKUP_RADIUS_M, selected: i.id === selectedId,
+      portrait: c ? portraitUri(senders[c.sender]) : null, near: i.meters <= PUBLIC_CAPSULE_PICKUP_RADIUS_M, selected: i.id === selectedId,
       timer: left > 0 ? timeLeftShort(left, language) : undefined };
   };
-  const allPins = useMemo<LivePin[]>(() => [...items.map<LivePin>((i) => i.kind === "sea"
-    ? { id: i.id, lat: i.lat, lng: i.lng, kind: "sea", vessel: vesselUri("bottle"), portrait: portraitUri(i.bottle.sender.avatar), near: i.meters <= SEA_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= SEA_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
-    : placePin(i)), ...gamePins, ...huntPins, ...missionPins], [items, selectedId, language, gamePins, huntPins, missionPins, senders, now]);
+  const allPins = useMemo<LivePin[]>(() => [...items.map<LivePin>((i) => i.kind === "publicCapsule"
+    ? { id: i.id, lat: i.lat, lng: i.lng, kind: "publicCapsule", vessel: vesselUri("bottle"), portrait: portraitUri(i.publicCapsule.sender.avatar), near: i.meters <= PUBLIC_CAPSULE_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= PUBLIC_CAPSULE_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
+    : placePin(i)), ...gamePins, ...huntPins, ...questPins], [items, selectedId, language, gamePins, huntPins, questPins, senders, now]);
   const mapState = useMemo(() => ({
-    you, heading, reach: SEA_PICKUP_RADIUS_M,
+    you, heading, reach: PUBLIC_CAPSULE_PICKUP_RADIUS_M,
     portrait: portraitUri(profile?.avatar),
     figure: assetUri(figureFor(profile?.avatar)),
     youLabel: youLabel && !throwing ? h.thisIsYou : null,
@@ -289,7 +289,7 @@ export default function JourneyScreen() {
   const pickFilter = (f: MapFilter) => {
     setFilter(f); setFilterOpen(false);
     // Close whatever card belongs to pins the new choice hides.
-    if (!shows(f, "sea")) setSelectedId(null);
+    if (!shows(f, "publicCapsule")) setSelectedId(null);
     if (!shows(f, "keeper")) setKeeperOpen(false);
     if (!shows(f, "waypost")) setGameCard(null);
   };
@@ -305,27 +305,27 @@ export default function JourneyScreen() {
     const index = selected ? items.findIndex((i) => i.id === selected.id) : -1;
     select(items[(index + dir + items.length) % items.length].id);
   };
-  const pickUp = async (item: Extract<Item, { kind: "sea" }>) => {
+  const pickUp = async (item: Extract<Item, { kind: "publicCapsule" }>) => {
     if (busy) return;
     if (item.id.startsWith("dev-bottle-")) {
       const letter = game.devPickUp(item.id);
       void haptics.success();
       setSelectedId(null); setDevLetter(letter);
-      void loadSea();
+      void loadPublicCapsules();
       return;
     }
     setBusy(true);
     try {
-      const capsuleId = await sea.pickUp(item.id, fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null);
+      const capsuleId = await publicCapsule.pickUp(item.id, fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null);
       void haptics.success();
       setSelectedId(null);
       router.push({ pathname: "/capsule/[id]", params: { id: capsuleId } });
-      void loadSea();
+      void loadPublicCapsules();
     } catch (e) {
       void haptics.warn();
-      const code = e instanceof SeaError ? e.code : "unknown";
+      const code = e instanceof PublicCapsuleError ? e.code : "unknown";
       setToast(code === "too_far" ? s("errTooFar") : code === "taken" ? s("errTaken") : code === "own_bottle" ? s("errOwn") : s("errUnknown"));
-      if (code === "taken") void loadSea();
+      if (code === "taken") void loadPublicCapsules();
     } finally { setBusy(false); }
   };
   const onPin = (id: string) => {
@@ -336,13 +336,13 @@ export default function JourneyScreen() {
       return;
     }
     setKeeperOpen(false);
-    if (id.startsWith("mission-")) {
-      const pin = missionPins.find((p) => p.id === id);
-      const found = findMission(id);
+    if (id.startsWith("quest-")) {
+      const pin = questPins.find((p) => p.id === id);
+      const found = findQuest(id);
       if (!pin || !found) return;
       setSelectedId(null); setGameCard(null); void haptics.tick();
       map.current?.focus(pin.lat, pin.lng);
-      setMissionError(null); setMission({ hunt: found.hunt.id, waypoint: found.waypoint.id });
+      setQuestError(null); setQuest({ hunt: found.hunt.id, quest: found.quest.id });
       return;
     }
     if (id.startsWith("corrupted-")) {
@@ -407,11 +407,11 @@ export default function JourneyScreen() {
   };
 
   // ---- private hunts ----
-  // The open mission is held by id, so it follows the hunt as the server (or the demo) refreshes it.
-  const openMission = mission ? privateList.find((p) => p.id === mission.hunt) ?? null : null;
-  const openWaypoint = openMission?.waypoints.find((w) => w.id === mission?.waypoint) ?? null;
-  const findMission = (pinId: string) => {
-    for (const ph of privateList) for (const w of ph.waypoints) if (`mission-${ph.id}-${w.id}` === pinId) return { hunt: ph, waypoint: w };
+  // The open quest is held by id, so it follows the hunt as the server (or the demo) refreshes it.
+  const openPrivateHunt = quest ? privateList.find((p) => p.id === quest.hunt) ?? null : null;
+  const openQuest = openPrivateHunt?.quests.find((w) => w.id === quest?.quest) ?? null;
+  const findQuest = (pinId: string) => {
+    for (const ph of privateList) for (const w of ph.quests) if (`quest-${ph.id}-${w.id}` === pinId) return { hunt: ph, quest: w };
     return null;
   };
   const privateAction = async (run: () => Promise<unknown>, fail: (message: string) => void, done?: () => void) => {
@@ -436,16 +436,16 @@ export default function JourneyScreen() {
     setJoinError,
     () => { setJoinOpen(false); setToast(h.joined); },
   );
-  const completeMission = (ph: PrivateHunt, w: Waypoint, answer?: string, qr?: string) => {
-    setMissionError(null);
+  const completeQuest = (ph: PrivateHunt, w: Quest, answer?: string, qr?: string) => {
+    setQuestError(null);
     void privateAction(
       async () => {
         const out = await privateHunts.complete(ph, w, at(), answer, qr);
-        // Back to the map, where the pin turns purple and the toast says what the mission was worth.
-        setMission(null);
+        // Back to the map, where the pin turns purple and the toast says what the quest was worth.
+        setQuest(null);
         setToast([h.gotPoints(out.points_gained), out.hunt.finished_at ? h.privateStamp : ""].filter(Boolean).join(" · "));
       },
-      setMissionError,
+      setQuestError,
     );
   };
   const showLeaderboard = (ph: PrivateHunt) => {
@@ -454,10 +454,10 @@ export default function JourneyScreen() {
       .then((rows) => setBoard({ hunt: ph, rows }))
       .catch(() => { setBoard(null); setToast(h.leaderboardHidden); });
   };
-  const showMissions = (ph: PrivateHunt) => {
+  const showQuests = (ph: PrivateHunt) => {
     setQuestOpen(false); setSelectedId(null); setGameCard(null); setKeeperOpen(false);
     const next = inOrder(ph).find((w) => !w.done_at) ?? inOrder(ph)[0];
-    if (next) map.current?.focus(next.lat, next.lng);
+    if (next) map.current?.focus(next.location_lat, next.location_lng);
   };
   const reportPrivate = (ph: PrivateHunt) => {
     setQuestOpen(false);
@@ -489,7 +489,7 @@ export default function JourneyScreen() {
       ? <LiveMap ref={map} html={html} state={mapState} onSelect={onPin}
         onTap={(lat, lng) => { if (filterOpen) setFilterOpen(false); else if (keeperOpen) setKeeperOpen(false); else if (gameCard) setGameCard(null); else if (selectedId) setSelectedId(null);
           // Inside the pickup circle your figure walks there (only the picture moves); outside, only the test account can jump.
-          else if (you && distanceMeters(you.lat, you.lng, lat, lng) <= SEA_PICKUP_RADIUS_M) { setWalkTo(null); map.current?.walk(lat, lng); }
+          else if (you && distanceMeters(you.lat, you.lng, lat, lng) <= PUBLIC_CAPSULE_PICKUP_RADIUS_M) { setWalkTo(null); map.current?.walk(lat, lng); }
           else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
       : <LocationGate status={status} onAllow={() => void location.request()} onSettings={() => void location.openSettings()} />}
     </View>
@@ -540,8 +540,8 @@ export default function JourneyScreen() {
           <RoundButton label={s("passport")} onPress={() => setPassport(true)}><ArtIcon name="passport" size={27} color={C.blue} /></RoundButton>
           {GAME_ENABLED && <RoundButton label={h.quest} dot={questDot} onPress={() => setQuestOpen(true)}><ArtIcon name="quest" size={26} color={C.blue} /></RoundButton>}
         </View>
-        {SEA_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
-          onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: "sea" } }); }}
+        {PUBLIC_CAPSULE_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
+          onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: "publicCapsule" } }); }}
           style={({ pressed }) => ({ alignSelf: "center", flexShrink: 0, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: C.wax, borderRadius: radii.pill, paddingLeft: 8, paddingRight: 20, paddingVertical: 7, opacity: pressed ? .9 : 1, ...shadows.card })}>
           <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}><Vessel kind="hourglass" size={26} /></View>
           <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("throwCta")}</Text>
@@ -553,8 +553,8 @@ export default function JourneyScreen() {
 
     {devLetter && <View style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, zIndex: 35, gap: spacing.sm, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.lg, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-        <Avatar avatar={devLetter.bottle.sender.avatar} size={36} />
-        <Text style={{ flex: 1, fontFamily: sans, fontSize: 12, color: C.brass }}>{s("seaBottle", devLetter.bottle.sender.name)}</Text>
+        <Avatar avatar={devLetter.publicCapsule.sender.avatar} size={36} />
+        <Text style={{ flex: 1, fontFamily: sans, fontSize: 12, color: C.brass }}>{s("seaPublicCapsule", devLetter.publicCapsule.sender.name)}</Text>
       </View>
       <Text style={{ fontFamily: serif, fontSize: 17, lineHeight: 26, color: C.ink }}>{devLetter.message}</Text>
       <Pressable accessibilityRole="button" onPress={() => setDevLetter(null)} style={{ alignItems: "center", backgroundColor: C.blue, borderRadius: radii.pill, paddingVertical: 11 }}>
@@ -573,16 +573,16 @@ export default function JourneyScreen() {
         onEnterCode: () => { setQuestOpen(false); setLinkCode(null); setJoinFound(null); setJoinError(null); setJoinOpen(true); },
         onMyHunts: organizer.canCreate(profile, __DEV__ || isTestLocationUser(userId)) ? () => { setQuestOpen(false); router.push("/hunts"); } : undefined,
         children: privateList.map((ph) => <PrivateHuntCard key={ph.id} hunt={ph}
-          onShowOnMap={showMissions} onLeaderboard={showLeaderboard} onReport={reportPrivate}
-          onOpenMission={(x, w) => { setQuestOpen(false); setMissionError(null); setMission({ hunt: x.id, waypoint: w.id }); map.current?.focus(w.lat, w.lng); }} />),
+          onShowOnMap={showQuests} onLeaderboard={showLeaderboard} onReport={reportPrivate}
+          onOpenQuest={(x, w) => { setQuestOpen(false); setQuestError(null); setQuest({ hunt: x.id, quest: w.id }); map.current?.focus(w.location_lat, w.location_lng); }} />),
       }} />
     <JoinPrivateSheet visible={joinOpen} initialCode={linkCode} found={joinFound} busy={busy} error={joinError}
       onClose={() => setJoinOpen(false)} onFind={findCode} onJoin={joinPrivate} />
-    {openMission && openWaypoint && <MissionSheet visible hunt={openMission} waypoint={openWaypoint}
-      meters={metersTo(openWaypoint.lat, openWaypoint.lng)} busy={busy} error={missionError}
-      tries={openWaypoint.tries ? 3 - (openWaypoint.tries % 3) : undefined}
-      onClose={() => { setMission(null); setMissionError(null); }}
-      onComplete={(answer, qr) => completeMission(openMission, openWaypoint, answer, qr)} />}
+    {openPrivateHunt && openQuest && <PrivateQuestSheet visible hunt={openPrivateHunt} quest={openQuest}
+      meters={metersTo(openQuest.location_lat, openQuest.location_lng)} busy={busy} error={questError}
+      tries={openQuest.tries ? 3 - (openQuest.tries % 3) : undefined}
+      onClose={() => { setQuest(null); setQuestError(null); }}
+      onComplete={(answer, qr) => completeQuest(openPrivateHunt, openQuest, answer, qr)} />}
     <LeaderboardSheet visible={!!board} hunt={board?.hunt ?? null} rows={board?.rows ?? null} onClose={() => setBoard(null)} />
   </JourneyViewport>;
 }
@@ -608,12 +608,12 @@ function GameCard({ card, busy, g, language, onChallenge }: {
 
 function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections, onView, onMap }: {
   item: Item; busy: boolean; count: number; index: number; onStep: (d: 1 | -1) => void;
-  onPickUp: (i: Extract<Item, { kind: "sea" }>) => void; onDirections: (lat: number, lng: number) => void;
+  onPickUp: (i: Extract<Item, { kind: "publicCapsule" }>) => void; onDirections: (lat: number, lng: number) => void;
   onView: (i: Extract<Item, { kind: "place" }>) => void; onMap: (i: Extract<Item, { kind: "place" }>) => void;
 }) {
-  const s = useSeaText();
+  const s = usePublicCapsuleText();
   const { t, language } = useLanguage();
-  const near = item.meters <= SEA_PICKUP_RADIUS_M;
+  const near = item.meters <= PUBLIC_CAPSULE_PICKUP_RADIUS_M;
   const nav = <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
     <Small onPress={() => onStep(-1)} label="‹" />
     <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{index + 1} / {count}</Text>
@@ -637,7 +637,7 @@ function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections
       </View>
     </View>;
   }
-  const b = item.bottle;
+  const b = item.publicCapsule;
   return <View style={{ gap: spacing.sm }}>
     <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
       <View>
@@ -645,7 +645,7 @@ function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections
         <View style={{ position: "absolute", right: -6, top: -4, borderRadius: 14, borderWidth: 2, borderColor: C.white }}><Avatar avatar={b.sender.avatar} size={24} /></View>
       </View>
       <View style={{ flex: 1 }}>
-        <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 11, color: C.brass }}>{s("seaBottle", b.sender.name)}</Text>
+        <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 11, color: C.brass }}>{s("seaPublicCapsule", b.sender.name)}</Text>
         <Text numberOfLines={2} style={{ fontFamily: serif, fontSize: 17, color: C.ink }}>「{b.hint}」</Text>
         <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>
           {[b.sender.city ? s("fromCity", b.sender.city) : null, s("drifted", daysSince(b.sealed_at)), b.returns ? s("returns", b.returns) : null].filter(Boolean).join(" · ")}
@@ -656,14 +656,14 @@ function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections
     {near
       ? <Btn title={busy ? s("picking") : s("pickUp")} disabled={busy} onPress={() => onPickUp(item)} />
       : <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-        <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, color: C.blue }}>{s("walkCloser", distanceText(item.meters - SEA_PICKUP_RADIUS_M))}</Text>
+        <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, color: C.blue }}>{s("walkCloser", distanceText(item.meters - PUBLIC_CAPSULE_PICKUP_RADIUS_M))}</Text>
         <Btn quiet title={s("navigate")} onPress={() => onDirections(item.lat, item.lng)} />
       </View>}
   </View>;
 }
 
 function LocationGate({ status, onAllow, onSettings }: { status: string; onAllow: () => void; onSettings: () => void }) {
-  const s = useSeaText();
+  const s = usePublicCapsuleText();
   const { t } = useLanguage();
   return <SafeAreaView style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.lg, gap: spacing.md, backgroundColor: C.glass }}>
     <Vessel kind="hourglass" size={130} idle />

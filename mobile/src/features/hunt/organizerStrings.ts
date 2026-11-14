@@ -1,8 +1,8 @@
 // The organizer's own wording (docs/design/city-orienteering.md, Part B). Kept apart from strings.ts so
 // the player's side stays readable; both are plain tables and neither is ever generated.
 import { useLanguage } from "../../i18n";
-import type { MissionType } from "../../services/huntPrivate";
-import type { HuntStatus, Problem, WaypointProblem } from "../../services/huntOrganizer";
+import type { PrivateHuntQuestType } from "../../services/privateHunt";
+import type { HuntStatus, Problem, QuestProblem } from "../../services/privateHuntOrganizer";
 
 const strings = {
   zh: {
@@ -12,7 +12,7 @@ const strings = {
     noHunts: "還沒有開過定向活動",
     noHuntsNote: "開一場，放幾個任務，再把代碼給參加的人。",
     status: { draft: "草稿", published: "進行中", closed: "已結束" } satisfies Record<HuntStatus, string>,
-    waypointCount: (n: number) => `${n} 個任務`,
+    questCount: (n: number) => `${n} 個任務`,
     joinedCount: (n: number) => `${n} 人參加`,
     notPublished: "還沒發佈",
 
@@ -59,25 +59,25 @@ const strings = {
     leaderboardOn: "參加的人看得到",
     leaderboardOff: "只有我看得到",
 
-    waypoints: "任務",
-    addWaypoint: "加一個任務",
-    noWaypoints: "還沒有任務",
-    noWaypointsNote: "每個任務是一個地點加一件要做的事：到達、轉盤或謎題。",
-    waypointFull: (n: number) => `最多 ${n} 個任務`,
-    editWaypoint: "編輯任務",
-    newWaypoint: "新任務",
-    waypointName: "任務名稱",
-    waypointNamePlaceholder: "例如：公園入口",
+    quests: "任務",
+    addQuest: "加一個任務",
+    noQuests: "還沒有任務",
+    noQuestsNote: "每個任務是一個地點加一件要做的事：到達、轉盤或謎題。",
+    questFull: (n: number) => `最多 ${n} 個任務`,
+    editQuest: "編輯任務",
+    newQuest: "新任務",
+    questName: "任務名稱",
+    questNamePlaceholder: "例如：公園入口",
     whereLabel: "地點",
     whereHere: "回到我的位置",
     whereSearch: "搜尋地點",
     whereSearchPlaceholder: "輸入地名或地址",
     questLabel: "任務類型",
-    missionSub: {
+    questSub: {
       arrive: "走到這裡按打卡就好。",
       spin: "走到這裡轉一次轉盤。",
       puzzle: "走到這裡回答一個問題。",
-    } satisfies Record<MissionType, string>,
+    } satisfies Record<PrivateHuntQuestType, string>,
     pointsLabel: "分數",
     taskLabel: "給參加者看的說明",
     pictureLabel: "圖片",
@@ -93,8 +93,8 @@ const strings = {
     answerKeep: "已存的答案不會再顯示。留空就保留原本的答案。",
     choicesLabel: "選項",
     addChoice: "加一個選項",
-    deleteWaypoint: "刪掉這個任務",
-    deleteWaypointAsk: "刪掉這個任務？這不能復原。",
+    deleteQuest: "刪掉這個任務",
+    deleteQuestAsk: "刪掉這個任務？這不能復原。",
 
     share: "分享",
     publish: "發佈",
@@ -118,22 +118,22 @@ const strings = {
     reviewFinished: "完成",
     reviewNobody: "還沒有人參加",
     reviewNobodyNote: "把代碼或連結給他們就可以開始了。",
-    perWaypoint: "各任務完成人數",
+    perQuest: "各任務完成人數",
     stillGoing: "還沒完成",
 
     problems: {
       name: "還沒取名字",
-      waypoints: "至少要有一個任務",
+      quests: "至少要有一個任務",
       window: "結束時間要在開始之後",
-      tooManyWaypoints: "任務太多了",
+      tooManyQuests: "任務太多了",
     } satisfies Record<Problem, string>,
-    waypointProblemText: {
+    questProblemText: {
       name: "還沒取名字",
       place: "還沒選地點",
       answer: "謎題要有答案",
       choices: "選擇題要有兩個以上的選項，答案要是其中一個",
       points: "分數超過上限",
-    } satisfies Record<WaypointProblem, string>,
+    } satisfies Record<QuestProblem, string>,
     save: "儲存",
     cancel: "取消",
     delete: "刪掉",
@@ -147,7 +147,7 @@ const strings = {
     noHunts: "You haven't run a hunt yet",
     noHuntsNote: "Start one, drop a few quests on the map, then give people the code.",
     status: { draft: "Draft", published: "Running", closed: "Ended" } satisfies Record<HuntStatus, string>,
-    waypointCount: (n: number) => `${n} quest${n === 1 ? "" : "s"}`,
+    questCount: (n: number) => `${n} quest${n === 1 ? "" : "s"}`,
     joinedCount: (n: number) => `${n} joined`,
     notPublished: "Not published yet",
 
@@ -194,25 +194,25 @@ const strings = {
     leaderboardOn: "Players can see it",
     leaderboardOff: "Only I can see it",
 
-    waypoints: "Quests",
-    addWaypoint: "Add a quest",
-    noWaypoints: "No quests yet",
-    noWaypointsNote: "Each quest is a place plus something to do there: arrive, spin or a puzzle.",
-    waypointFull: (n: number) => `${n} quests is the most`,
-    editWaypoint: "Edit quest",
-    newWaypoint: "New quest",
-    waypointName: "Quest name",
-    waypointNamePlaceholder: "Park gate, say",
+    quests: "Quests",
+    addQuest: "Add a quest",
+    noQuests: "No quests yet",
+    noQuestsNote: "Each quest is a place plus something to do there: arrive, spin or a puzzle.",
+    questFull: (n: number) => `${n} quests is the most`,
+    editQuest: "Edit quest",
+    newQuest: "New quest",
+    questName: "Quest name",
+    questNamePlaceholder: "Park gate, say",
     whereLabel: "Where",
     whereHere: "Back to me",
     whereSearch: "Search for a place",
     whereSearchPlaceholder: "A place name or address",
     questLabel: "Type",
-    missionSub: {
+    questSub: {
       arrive: "Walk here and tap Check in.",
       spin: "Walk here and spin the wheel once.",
       puzzle: "Walk here and answer a question.",
-    } satisfies Record<MissionType, string>,
+    } satisfies Record<PrivateHuntQuestType, string>,
     pointsLabel: "Points",
     taskLabel: "What players see",
     pictureLabel: "Picture",
@@ -228,8 +228,8 @@ const strings = {
     answerKeep: "A saved answer isn't shown again. Leave it blank to keep it.",
     choicesLabel: "Options",
     addChoice: "Add an option",
-    deleteWaypoint: "Delete this quest",
-    deleteWaypointAsk: "Delete this quest? It can't be undone.",
+    deleteQuest: "Delete this quest",
+    deleteQuestAsk: "Delete this quest? It can't be undone.",
 
     share: "Share",
     publish: "Publish",
@@ -253,22 +253,22 @@ const strings = {
     reviewFinished: "Finished",
     reviewNobody: "Nobody has joined yet",
     reviewNobodyNote: "Give them the code or the link and they can start.",
-    perWaypoint: "Finished each quest",
+    perQuest: "Finished each quest",
     stillGoing: "Still going",
 
     problems: {
       name: "It needs a name",
-      waypoints: "It needs at least one quest",
+      quests: "It needs at least one quest",
       window: "The end has to come after the start",
-      tooManyWaypoints: "Too many quests",
+      tooManyQuests: "Too many quests",
     } satisfies Record<Problem, string>,
-    waypointProblemText: {
+    questProblemText: {
       name: "It needs a name",
       place: "It needs a place",
       answer: "A puzzle needs an answer",
       choices: "Multiple choice needs two or more options, and the answer has to be one of them",
       points: "Too many points",
-    } satisfies Record<WaypointProblem, string>,
+    } satisfies Record<QuestProblem, string>,
     save: "Save",
     cancel: "Cancel",
     delete: "Delete",

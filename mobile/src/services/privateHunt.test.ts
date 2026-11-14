@@ -2,14 +2,14 @@ import { describe, expect, it, vi } from "vitest";
 // The helpers under test are pure; these two keep the module's native imports out of the test run.
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: { getItem: vi.fn(), setItem: vi.fn() } }));
 vi.mock("./supabase", () => ({ supabase: { auth: { getSession: vi.fn() }, rpc: vi.fn() } }));
-import { byRank, cleanCode, doneCount, huntOpen, huntStillOn, inOrder, locked, sameAnswer, totalPoints, waitLeft, type LeaderRow, type PrivateHunt, type Waypoint, questQr, questToken, qrGroups } from "./huntPrivate";
+import { byRank, cleanCode, doneCount, huntOpen, huntStillOn, inOrder, locked, sameAnswer, totalPoints, waitLeft, type LeaderRow, type PrivateHunt, type Quest, questQr, questToken, qrGroups } from "./privateHunt";
 
-const wp = (id: string, ordinal: number, points: number, done?: string | null): Waypoint =>
-  ({ id, ordinal, points, name: id, lat: 25, lng: 121, mission_type: "arrive", done_at: done ?? null });
-const hunt = (route: "any" | "ordered", waypoints: Waypoint[]): PrivateHunt => ({
+const wp = (id: string, ordinal: number, points: number, done?: string | null): Quest =>
+  ({ id, ordinal, points, name: id, location_lat: 25, location_lng: 121, quest_type: "arrive", done_at: done ?? null });
+const hunt = (route: "any" | "ordered", quests: Quest[]): PrivateHunt => ({
   id: "h", name: "Hunt", area: { lat: 25, lng: 121, radius_m: 500 }, route_mode: route,
   leaderboard_visible: true, starts_at: "2026-01-01T00:00:00Z", ends_at: "2027-01-01T00:00:00Z",
-  joined_at: null, finished_at: null, points: 0, waypoints,
+  joined_at: null, finished_at: null, points: 0, quests,
 });
 
 describe("points and progress", () => {
@@ -21,11 +21,11 @@ describe("points and progress", () => {
 describe("route order", () => {
   it("locks nothing in an any-order hunt", () => {
     const h = hunt("any", [wp("a", 1, 10), wp("b", 2, 10)]);
-    expect(h.waypoints.map((w) => locked(h, w))).toEqual([false, false]);
+    expect(h.quests.map((w) => locked(h, w))).toEqual([false, false]);
   });
   it("leaves only the next waypoint open in an ordered hunt", () => {
     const h = hunt("ordered", [wp("a", 1, 10, "2026-11-14T00:00:00Z"), wp("b", 2, 10), wp("c", 3, 10)]);
-    expect(h.waypoints.map((w) => locked(h, w))).toEqual([false, false, true]);
+    expect(h.quests.map((w) => locked(h, w))).toEqual([false, false, true]);
   });
   it("sorts by the organizer's ordinal", () => {
     const h = hunt("ordered", [wp("c", 3, 10), wp("a", 1, 10), wp("b", 2, 10)]);

@@ -11,7 +11,7 @@ const strings = {
     drifted: (n: number) => n <= 0 ? "今天剛到" : `在路上 ${n} 天`,
     fromCity: (c: string) => `從${c}出發`,
     returns: (n: number) => `已傳過 ${n} 個人`,
-    seaBottle: (name: string) => `${name} 留給路過的人`,
+    seaPublicCapsule: (name: string) => `${name} 留給路過的人`,
     yourCapsule: "你的膠囊在這裡等你",
     canPick: "可以撿起",
     pickUp: "撿起膠囊",
@@ -43,7 +43,7 @@ const strings = {
     // Create
     toSea: "給路過的人",
     toSeaNote: "一位你不認識的人會撿到它",
-    bottleOnly: "公開放下的膠囊都會用瓶子，大家一眼就知道這是別人留下的。",
+    publicCapsuleOnly: "公開放下的膠囊都會用瓶子，大家一眼就知道這是別人留下的。",
     seaTypedOnly: "給路過的人的信只能打字（不能手寫、附照片或錄音），放下前會做安全檢查。",
     driftLabel: "要等多久才出現？",
     washesUp: (d: string) => `將於 ${d} 出現`,
@@ -82,7 +82,7 @@ const strings = {
     drifted: (n: number) => n <= 0 ? "Arrived today" : `On its way for ${n} day${n === 1 ? "" : "s"}`,
     fromCity: (c: string) => `From ${c}`,
     returns: (n: number) => `Passed on by ${n} ${n === 1 ? "person" : "people"}`,
-    seaBottle: (name: string) => `Left by ${name} for whoever passes by`,
+    seaPublicCapsule: (name: string) => `Left by ${name} for whoever passes by`,
     yourCapsule: "Your capsule is waiting here",
     canPick: "Pick up",
     pickUp: "Pick up the capsule",
@@ -113,7 +113,7 @@ const strings = {
     errUnknown: "No answer just now. Please try again.",
     toSea: "To whoever passes by",
     toSeaNote: "A stranger will find it",
-    bottleOnly: "Capsules left in public always use a bottle, so everyone can tell a person left them.",
+    publicCapsuleOnly: "Capsules left in public always use a bottle, so everyone can tell a person left them.",
     seaTypedOnly: "Letters to whoever passes by are typed only (no handwriting, photos or voice) and safety-checked before they're left.",
     driftLabel: "How long before it appears?",
     washesUp: (d: string) => `Appears on ${d}`,
@@ -151,7 +151,7 @@ export function seaText(language: "zh" | "en") {
     return typeof v === "function" ? (v as (...a: any[]) => string)(...args) : (v as string);
   };
 }
-export function useSeaText() {
+export function usePublicCapsuleText() {
   const { language } = useLanguage();
   return seaText(language);
 }

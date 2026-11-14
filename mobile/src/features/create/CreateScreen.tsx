@@ -29,8 +29,8 @@ import { PREDICTION_ENABLED, predictionSendArgs, type CapsuleKind } from '../../
 import { PredictionInput } from '../prediction/PredictionParts';
 import { Chip, Glyph, MonthCalendar, PickerRow, Sheet, SheetGroup, SheetOption, ToolIcon, VESSEL_CATEGORIES, vesselCategory, type ToolKind, type VesselCategory } from './CreateParts';
 import { usePredictionText } from '../prediction/strings';
-import { DRIFT_CHOICES, sea, SeaError, SEA_BACKEND, SEA_ENABLED, SEA_MESSAGE_MAX, SEA_AVATAR, SEA_RECIPIENT, type DriftDays, type ThrowResult } from '../../services/sea';
-import { shortDate, useSeaText } from '../sea/strings';
+import { DRIFT_CHOICES, publicCapsule, PublicCapsuleError, PUBLIC_CAPSULE_BACKEND, PUBLIC_CAPSULE_ENABLED, PUBLIC_CAPSULE_MESSAGE_MAX, PUBLIC_CAPSULE_AVATAR, PUBLIC_CAPSULE_RECIPIENT, type DriftDays, type ThrowResult } from '../../services/publicCapsule';
+import { shortDate, usePublicCapsuleText } from '../publicCapsule/strings';
 import { openingCoordinates, useForegroundLocation } from '../journey/location';
 import { ANY_PLACE_BACKEND, placeLabel, pointPlaceArgs, reversePlace, searchPlaces, type PointPlace } from '../../services/places';
 
@@ -56,12 +56,12 @@ export default function CreateScreen() {
   const { session, profile, loading: authLoading } = useAuth();
   const params = useLocalSearchParams<{ to?: string; recipient?: string; kind?: string }>();
   const p = usePredictionText();
-  const st = useSeaText();
+  const st = usePublicCapsuleText();
   // A prediction is a block on the page; a capsule holding one is sent as a prediction capsule.
   const [blocks, setBlocks] = useState<Block[]>(PREDICTION_ENABLED && params.kind === 'prediction' ? ['predict'] : ['text']), [prediction, setPrediction] = useState('');
   const predicting = PREDICTION_ENABLED && blocks.includes('predict');
   const kind: CapsuleKind = predicting ? 'prediction' : 'letter';
-  const startsAtSea = SEA_ENABLED && params.to === SEA_RECIPIENT;
+  const startsAtSea = PUBLIC_CAPSULE_ENABLED && params.to === PUBLIC_CAPSULE_RECIPIENT;
   const id = session?.user.id ?? '';
   const friends = useFriends(id), catalog = useVessels(), owned = useOwnedVessels(id), places = usePlaces();
   const reduced = useReducedMotion();
@@ -160,7 +160,7 @@ export default function CreateScreen() {
   const selectedPlace = places.data?.find(p => p.id === place);
   const recipientRow = friends.data?.find(f => f.friend_id === recipient);
   // A sea bottle is an ordinary capsule addressed to the sea: typed only, washes up after its drift time.
-  const toSea = SEA_ENABLED && recipient === SEA_RECIPIENT;
+  const toSea = PUBLIC_CAPSULE_ENABLED && recipient === PUBLIC_CAPSULE_RECIPIENT;
   // Everything left in public is a bottle, so it can't be mistaken for a Corrupted Capsule.
   const wasToSea = useRef(toSea);
   useEffect(() => {
@@ -179,7 +179,7 @@ export default function CreateScreen() {
     if (!recipient) return t('create.needRecipient');
     if (step >= 2 && predicting && !prediction.trim()) return p('need');
     if (step >= 2 && toSea && !message.trim()) return t('create.needMessage');
-    if (step >= 4 && toSea && SEA_BACKEND && !openingCoordinates()) return st('needLocation');
+    if (step >= 4 && toSea && PUBLIC_CAPSULE_BACKEND && !openingCoordinates()) return st('needLocation');
     // Text and handwriting can sit together; one of them (or a prediction) must have content.
     const inked = hasHand && (step === 2 ? !!drawing.current?.hasInk() : !!drawingData);
     if (step >= 2 && !predicting && !(hasText && message.trim()) && !inked) return t('create.needMessage');
@@ -244,10 +244,10 @@ export default function CreateScreen() {
     ]); contactMotion.start(() => resolve()); });
     try {
       if (toSea) {
-        const thrown = await sea.throwBottle({ message, hint: hint.trim() || t('create.hintDefault'), vessel, driftDays, at: openingCoordinates() });
+        const thrown = await publicCapsule.dropPublicCapsule({ message, hint: hint.trim() || t('create.hintDefault'), vessel, driftDays, at: openingCoordinates() });
         setSeaResult(thrown);
         sentOnce.current = true;
-        setSealedAt(new Date(thrown.washes_up_at));
+        setSealedAt(new Date(thrown.available_at));
         await contact;
         setStamped(true);
         finishAnimation();
@@ -281,7 +281,7 @@ export default function CreateScreen() {
       contactMotion?.stop();
       wax.stopAnimation(); waxScale.stopAnimation();
       const msg = String((e as any)?.message ?? e).toLowerCase(), code = String((e as any)?.hint ?? '');
-      if (e instanceof SeaError) setError(e.code === 'rejected' ? st('errRejected') : e.code === 'no_shore' ? st('errNoShore') : t('create.sendError'));
+      if (e instanceof PublicCapsuleError) setError(e.code === 'rejected' ? st('errRejected') : e.code === 'no_shore' ? st('errNoShore') : t('create.sendError'));
       else setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('open time must be in the future') ? t('create.badDate') : msg.includes('voice') ? t('voice.uploadError') : t('create.sendError'));
       if (reduced) wax.setValue({ x: 0, y: 0 });
       else Animated.parallel([
@@ -386,7 +386,7 @@ export default function CreateScreen() {
     </View>
     <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
   </Screen>;
-  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={toSea ? scenes.seaSealed : scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{toSea && seaResult ? st('sealedSea', language === 'zh' ? seaResult.shore_zh : seaResult.shore_en, shortDate(seaResult.washes_up_at, language)) : predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
+  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={toSea ? scenes.seaSealed : scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{toSea && seaResult ? st('sealedSea', language === 'zh' ? seaResult.spot_zh : seaResult.spot_en, shortDate(seaResult.available_at, language)) : predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
   const last = stepIndex === flow.length;
   const goTo = (n: number) => { saveDrawingDraft(); Keyboard.dismiss(); setStepIndex(n); setError(''); void haptics.tap(); };
   const blockOff = (b: Block) => blocks.includes(b) || (toSea && b !== 'text') || (b === 'voice' && !VOICE_ENABLED) || (b === 'predict' && !PREDICTION_ENABLED);
@@ -465,7 +465,7 @@ export default function CreateScreen() {
             <Text style={{ flex: 1, fontFamily: sans, fontSize: 11.5, letterSpacing: .5, color: C.muted }}>{t(BLOCK_LABEL[b])}</Text>
             <Pressable accessibilityRole='button' accessibilityLabel={t('create2.remove', t(BLOCK_LABEL[b]))} onPress={() => removeBlock(b)} hitSlop={8} style={{ paddingHorizontal: 6 }}><Text style={{ color: C.muted, fontSize: 14 }}>✕</Text></Pressable>
           </View>
-          {b === 'text' && <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} placeholderTextColor={PLACEHOLDER} maxLength={toSea ? SEA_MESSAGE_MAX : 500} multiline textAlignVertical='top' style={{ minHeight: 120, fontFamily: serif, fontSize: 18, lineHeight: 30, color: C.ink, padding: 0 }} /><Text style={{ color: C.muted, textAlign: 'right', fontSize: 12 }}>{message.length} / {toSea ? SEA_MESSAGE_MAX : 500}</Text></>}
+          {b === 'text' && <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} placeholderTextColor={PLACEHOLDER} maxLength={toSea ? PUBLIC_CAPSULE_MESSAGE_MAX : 500} multiline textAlignVertical='top' style={{ minHeight: 120, fontFamily: serif, fontSize: 18, lineHeight: 30, color: C.ink, padding: 0 }} /><Text style={{ color: C.muted, textAlign: 'right', fontSize: 12 }}>{message.length} / {toSea ? PUBLIC_CAPSULE_MESSAGE_MAX : 500}</Text></>}
           {b === 'hand' && <><DrawingPad initialStrokes={drawingStrokes.current} scrollGesture={drawScrollGesture} ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
           {b === 'predict' && <><PredictionInput value={prediction} onChange={setPrediction} /><Text style={{ fontFamily: sans, fontSize: 12, color: C.plum }}>{t('create2.predictNote')}</Text></>}
           {b === 'voice' && <VoiceRecorder value={voice} onChange={setVoice} active={step === 2 && phase === 'steps'} />}

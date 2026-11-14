@@ -1,13 +1,13 @@
 // The organizer's side of a private hunt (docs/design/city-orienteering.md, Part B): create a hunt, put
-// its waypoints and missions on the map, publish it as a code, then review how people are doing.
+// its quests and quests on the map, publish it as a code, then review how people are doing.
 // Signed-in organizers use the server functions in the backend contract; until those are live, a
 // device-only draft lets the screens be walked through. Nothing here grants any game reward.
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase";
 import {
   HUNT_PRIVATE_BACKEND, PrivateHuntError, byRank, cleanCode, totalPoints,
-  type LeaderRow, type MissionType, type PrivateHunt, type Waypoint,
-} from "./huntPrivate";
+  type LeaderRow, type PrivateHuntQuestType, type PrivateHunt, type Quest,
+} from "./privateHunt";
 
 export type HuntStatus = "draft" | "published" | "closed";
 /** A hunt as its owner sees it: the player's view plus what only the owner may know. */
@@ -21,10 +21,10 @@ export type HuntDraft = {
   time_limit_min: number | null;
 };
 /** One quest being edited. `answer` only ever travels organizer → server, never back to players. */
-export type WaypointDraft = {
+export type QuestDraft = {
   id?: string; ordinal: number; name: string;
-  lat: number; lng: number;
-  mission_type: MissionType; points: number; description: string;
+  location_lat: number; location_lng: number;
+  quest_type: PrivateHuntQuestType; points: number; description: string;
   /** Arrive quests check GPS, or GPS plus a QR code the organizer prints and leaves at the spot. */
   arrive_check: "gps" | "gps_qr";
   /** Issued by the server once a GPS + QR quest is saved; the printed code carries it. Only the organizer sees it. */
@@ -35,12 +35,12 @@ export type WaypointDraft = {
 };
 export type Review = {
   members: LeaderRow[];
-  stats: { joined: number; finished: number; per_waypoint: { id: string; done: number }[] };
+  stats: { joined: number; finished: number; per_quest: { id: string; done: number }[] };
 };
 
 /** The limits in "Rules and safety"; the server enforces them too. */
 export const LIMITS = {
-  waypoints: 30, participants: 500, unfinishedHunts: 3,
+  quests: 30, participants: 500, unfinishedHunts: 3,
   name: 60, description: 500, answer: 80, choices: 6, points: 999,
 } as const;
 
@@ -59,8 +59,8 @@ export const appLink = (code: string) => `timecapsule://hunt/${cleanCode(code)}`
  * A hunt is as wide as the quests in it, so the organizer never guesses a radius. The centre is the
  * middle of the spread and the radius reaches the furthest quest with a little room to spare.
  */
-export function huntArea(waypoints: { lat: number; lng: number }[]): { lat: number; lng: number; radius_m: number } {
-  const placed = waypoints.filter((w) => w.lat || w.lng);
+export function huntArea(quests: { lat: number; lng: number }[]): { lat: number; lng: number; radius_m: number } {
+  const placed = quests.filter((w) => w.lat || w.lng);
   if (!placed.length) return { lat: 0, lng: 0, radius_m: 0 };
   const lat = placed.reduce((sum, w) => sum + w.lat, 0) / placed.length;
   const lng = placed.reduce((sum, w) => sum + w.lng, 0) / placed.length;
@@ -73,28 +73,28 @@ const metres = (aLat: number, aLng: number, bLat: number, bLng: number) => {
   return Math.hypot(north, east);
 };
 
-export const nextOrdinal = (waypoints: { ordinal: number }[]) =>
-  waypoints.reduce((top, w) => Math.max(top, w.ordinal), 0) + 1;
+export const nextOrdinal = (quests: { ordinal: number }[]) =>
+  quests.reduce((top, w) => Math.max(top, w.ordinal), 0) + 1;
 
 /** What still has to be filled in before a hunt can go out. Empty means it is ready. */
-export type Problem = "name" | "waypoints" | "window" | "tooManyWaypoints";
-export function huntProblems(draft: HuntDraft, waypoints: { id?: string }[]): Problem[] {
+export type Problem = "name" | "quests" | "window" | "tooManyQuests";
+export function huntProblems(draft: HuntDraft, quests: { id?: string }[]): Problem[] {
   const problems: Problem[] = [];
   if (!draft.name.trim()) problems.push("name");
-  if (!waypoints.length) problems.push("waypoints");
-  if (waypoints.length > LIMITS.waypoints) problems.push("tooManyWaypoints");
+  if (!quests.length) problems.push("quests");
+  if (quests.length > LIMITS.quests) problems.push("tooManyQuests");
   // A private hunt always ends: the server refuses "infinity" (only daily City Hunts run without an end).
   const end = new Date(draft.ends_at).getTime();
   if (!Number.isFinite(end) || end <= new Date(draft.starts_at).getTime()) problems.push("window");
   return problems;
 }
-export type WaypointProblem = "name" | "place" | "answer" | "choices" | "points";
-export function waypointProblems(w: WaypointDraft): WaypointProblem[] {
-  const problems: WaypointProblem[] = [];
+export type QuestProblem = "name" | "place" | "answer" | "choices" | "points";
+export function questProblems(w: QuestDraft): QuestProblem[] {
+  const problems: QuestProblem[] = [];
   if (!w.name.trim()) problems.push("name");
-  if (!w.lat && !w.lng) problems.push("place");
+  if (!w.location_lat && !w.location_lng) problems.push("place");
   if (!Number.isInteger(w.points) || w.points < 1 || w.points > LIMITS.points) problems.push("points");
-  if (w.mission_type === "puzzle") {
+  if (w.quest_type === "puzzle") {
     // The server never sends a saved answer back, so a saved puzzle left blank keeps the answer it has.
     const keeps = !!w.id && !w.answer.trim();
     if (!w.answer.trim() && !keeps) problems.push("answer");
@@ -106,7 +106,7 @@ export function waypointProblems(w: WaypointDraft): WaypointProblem[] {
   }
   return problems;
 }
-export const canPublish = (draft: HuntDraft, waypoints: { id?: string }[]) => huntProblems(draft, waypoints).length === 0;
+export const canPublish = (draft: HuntDraft, quests: { id?: string }[]) => huntProblems(draft, quests).length === 0;
 
 /** A fresh hunt, starting on the hour and running for a week. */
 export function blankDraft(): HuntDraft {
@@ -120,10 +120,10 @@ export function blankDraft(): HuntDraft {
     time_limit_min: null,
   };
 }
-export function blankWaypoint(ordinal: number, at: { lat: number; lng: number } | null): WaypointDraft {
+export function blankQuest(ordinal: number, at: { lat: number; lng: number } | null): QuestDraft {
   return {
-    ordinal, name: "", lat: at?.lat ?? 0, lng: at?.lng ?? 0,
-    mission_type: "arrive", points: 10, description: "", arrive_check: "gps", image: "tpl:park",
+    ordinal, name: "", location_lat: at?.lat ?? 0, location_lng: at?.lng ?? 0,
+    quest_type: "arrive", points: 10, description: "", arrive_check: "gps", image: "tpl:park",
     puzzle_kind: "choice", choices: ["", ""], answer: "",
   };
 }
@@ -143,7 +143,7 @@ const signedIn = async () => !!(await supabase.auth.getSession()).data.session;
 // ---------- device-only drafts ----------
 // Until the organizer RPCs land, hunts an organizer makes live on this device so the screens can be
 // walked through end to end. They are never visible to anyone else, and no player can join them.
-type Stored = { draft: HuntDraft; waypoints: WaypointDraft[]; status: HuntStatus; code: string | null; created_at: string };
+type Stored = { draft: HuntDraft; quests: QuestDraft[]; status: HuntStatus; code: string | null; created_at: string };
 let user = "";
 let hunts: Record<string, Stored> = {};
 const changed = new Set<() => void>();
@@ -157,20 +157,20 @@ async function load(userId: string) {
 }
 /** A stored draft as the rest of the app sees a hunt. */
 function asOwned(id: string, s: Stored): OwnedHunt {
-  const waypoints: Waypoint[] = s.waypoints.map((w) => ({
-    id: w.id ?? `${id}-${w.ordinal}`, ordinal: w.ordinal, name: w.name, lat: w.lat, lng: w.lng,
-    mission_type: w.mission_type, points: w.points, description: w.description || null, image: w.image ?? null,
-    arrive_check: w.mission_type === "arrive" ? w.arrive_check : null,
-    puzzle_kind: w.mission_type === "puzzle" ? w.puzzle_kind : null,
-    choices: w.mission_type === "puzzle" && w.puzzle_kind === "choice" ? w.choices.filter((c) => c.trim()) : null,
+  const quests: Quest[] = s.quests.map((w) => ({
+    id: w.id ?? `${id}-${w.ordinal}`, ordinal: w.ordinal, name: w.name, location_lat: w.location_lat, location_lng: w.location_lng,
+    quest_type: w.quest_type, points: w.points, description: w.description || null, image: w.image ?? null,
+    arrive_check: w.quest_type === "arrive" ? w.arrive_check : null,
+    puzzle_kind: w.quest_type === "puzzle" ? w.puzzle_kind : null,
+    choices: w.quest_type === "puzzle" && w.puzzle_kind === "choice" ? w.choices.filter((c) => c.trim()) : null,
     done_at: null,
   }));
   return {
     id, status: s.status, joined: 0, join_code: s.code,
     name: s.draft.name, description: s.draft.description, cover: s.draft.cover,
-    area: huntArea(s.waypoints), route_mode: s.draft.route_mode, leaderboard_visible: s.draft.leaderboard_visible,
+    area: huntArea(s.quests.map(q => ({ lat: q.location_lat, lng: q.location_lng }))), route_mode: s.draft.route_mode, leaderboard_visible: s.draft.leaderboard_visible,
     starts_at: s.draft.starts_at, ends_at: s.draft.ends_at, time_limit_min: s.draft.time_limit_min,
-    joined_at: null, finished_at: null, points: 0, waypoints, preview: true,
+    joined_at: null, finished_at: null, points: 0, quests, preview: true,
   };
 }
 
@@ -186,7 +186,7 @@ export const organizer = {
   },
   async mine(userId: string): Promise<OwnedHunt[]> {
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { data, error } = await rpc("my_hunts");
+      const { data, error } = await rpc("private_hunt_organized");
       fail(error); return (data as OwnedHunt[] | null) ?? [];
     }
     await load(userId);
@@ -195,82 +195,82 @@ export const organizer = {
       .map(([id, s]) => asOwned(id, s));
   },
   /** `locked`: someone has joined, so the route, times and quests can no longer change (the server refuses with hunt_locked). */
-  async get(userId: string, id: string): Promise<{ draft: HuntDraft; waypoints: WaypointDraft[]; status: HuntStatus; code: string | null; locked?: boolean }> {
+  async get(userId: string, id: string): Promise<{ draft: HuntDraft; quests: QuestDraft[]; status: HuntStatus; code: string | null; locked?: boolean }> {
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { data, error } = await rpc("hunt_edit_state", { p_hunt: id });
-      fail(error); return data as { draft: HuntDraft; waypoints: WaypointDraft[]; status: HuntStatus; code: string | null; locked: boolean };
+      const { data, error } = await rpc("private_hunt_edit_state", { p_hunt: id });
+      fail(error); return data as { draft: HuntDraft; quests: QuestDraft[]; status: HuntStatus; code: string | null; locked: boolean };
     }
     await load(userId);
     const s = hunts[id];
     if (!s) throw new PrivateHuntError("unknown");
-    return { draft: s.draft, waypoints: s.waypoints, status: s.status, code: s.code };
+    return { draft: s.draft, quests: s.quests, status: s.status, code: s.code };
   },
   async create(userId: string, draft: HuntDraft): Promise<string> {
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { data, error } = await rpc("hunt_create", { p_draft: draft });
+      const { data, error } = await rpc("private_hunt_create", { p_draft: draft });
       fail(error); return (data as { id: string }).id;
     }
     await load(userId);
     const open = Object.values(hunts).filter((h) => h.status !== "closed").length;
     if (open >= LIMITS.unfinishedHunts) throw new PrivateHuntError("too_many");
     const id = `draft-${Date.now()}`;
-    hunts[id] = { draft, waypoints: [], status: "draft", code: null, created_at: new Date().toISOString() };
+    hunts[id] = { draft, quests: [], status: "draft", code: null, created_at: new Date().toISOString() };
     save();
     return id;
   },
   async update(userId: string, id: string, draft: HuntDraft): Promise<void> {
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { error } = await rpc("hunt_update", { p_hunt: id, p_draft: draft });
+      const { error } = await rpc("private_hunt_update", { p_hunt: id, p_draft: draft });
       fail(error); return;
     }
     await load(userId);
     if (!hunts[id]) throw new PrivateHuntError("unknown");
     hunts[id].draft = draft; save();
   },
-  async saveWaypoint(userId: string, id: string, w: WaypointDraft): Promise<void> {
+  async saveQuest(userId: string, id: string, w: QuestDraft): Promise<void> {
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { error } = await rpc("hunt_waypoint_save", { p_hunt: id, p_waypoint: w });
+      const { error } = await rpc("private_hunt_quest_save", { p_hunt: id, p_quest: w });
       fail(error); return;
     }
     await load(userId);
     const s = hunts[id];
     if (!s) throw new PrivateHuntError("unknown");
-    const at = s.waypoints.findIndex((x) => x.id && x.id === w.id);
+    const at = s.quests.findIndex((x) => x.id && x.id === w.id);
     if (w.arrive_check === "gps_qr" && !w.qr_token) w = { ...w, qr_token: makeCode() + makeCode() };
-    if (at >= 0) s.waypoints[at] = w;
+    if (at >= 0) s.quests[at] = w;
     else {
-      if (s.waypoints.length >= LIMITS.waypoints) throw new PrivateHuntError("too_many");
-      s.waypoints.push({ ...w, id: `${id}-wp-${Date.now()}` });
+      if (s.quests.length >= LIMITS.quests) throw new PrivateHuntError("too_many");
+      s.quests.push({ ...w, id: `${id}-wp-${Date.now()}` });
     }
     save();
   },
-  async deleteWaypoint(userId: string, id: string, waypointId: string): Promise<void> {
+  async deleteQuest(userId: string, id: string, questId: string): Promise<void> {
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { error } = await rpc("hunt_waypoint_delete", { p_waypoint: waypointId });
+      const { error } = await rpc("private_hunt_quest_delete", { p_quest: questId });
       fail(error); return;
     }
     await load(userId);
     const s = hunts[id];
     if (!s) throw new PrivateHuntError("unknown");
-    s.waypoints = s.waypoints.filter((w) => w.id !== waypointId);
+    s.quests = s.quests.filter((w) => w.id !== questId);
     save();
   },
   /** Publishing mints the join code. The server owns the real one; the draft makes a local stand-in. */
   async publish(userId: string, id: string): Promise<string> {
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { data, error } = await rpc("hunt_publish", { p_hunt: id });
+      const { data, error } = await rpc("private_hunt_publish", { p_hunt: id });
       fail(error); return (data as { join_code: string }).join_code;
     }
     await load(userId);
     const s = hunts[id];
     if (!s) throw new PrivateHuntError("unknown");
-    if (!canPublish(s.draft, s.waypoints)) throw new PrivateHuntError("not_ready");
+    if (!canPublish(s.draft, s.quests)) throw new PrivateHuntError("not_ready");
     s.status = "published"; s.code ??= makeCode(); save();
     return s.code;
   },
   async close(userId: string, id: string): Promise<void> {
     if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { error } = await rpc("hunt_close", { p_hunt: id });
+      const { error } = await rpc("private_hunt_close", { p_hunt: id });
       fail(error); return;
     }
     await load(userId);
@@ -280,14 +280,14 @@ export const organizer = {
   /** How everyone is doing. The organizer sees names, points and times, never live positions. */
   async review(userId: string, hunt: OwnedHunt): Promise<Review> {
     if (!hunt.preview) {
-      const { data, error } = await rpc("hunt_review", { p_hunt: hunt.id });
+      const { data, error } = await rpc("private_hunt_review", { p_hunt: hunt.id });
       fail(error);
       const r = data as Review;
       return { ...r, members: byRank(r.members) };
     }
     await load(userId);
     // A device-only draft has no players yet, so the review is honestly empty.
-    return { members: [], stats: { joined: 0, finished: 0, per_waypoint: hunt.waypoints.map((w) => ({ id: w.id, done: 0 })) } };
+    return { members: [], stats: { joined: 0, finished: 0, per_quest: hunt.quests.map((w) => ({ id: w.id, done: 0 })) } };
   },
   /** Points on offer, for the editor's summary line. */
   totalPoints,

@@ -164,7 +164,7 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 /* Quest pins shrink but never fade, so players can plan their route across the whole hunt. */
 .pin.keeper .pin-body{scale:1}
 .pin.fanned{z-index:30!important}
-#map.tiny .pin:not(.keeper,.mission) .pin-body{opacity:0}#map.tiny .pin:not(.keeper,.mission) .pin-body>*{pointer-events:none}
+#map.tiny .pin:not(.keeper,.quest) .pin-body{opacity:0}#map.tiny .pin:not(.keeper,.quest) .pin-body>*{pointer-events:none}
 .fan-dot{width:8px;height:8px;border-radius:50%;background:${C.ink};border:2px solid #fff;box-shadow:0 1px 3px rgba(22,38,63,.3);pointer-events:none}
 .pin .disc{position:absolute;left:18px;bottom:0;width:44px;height:12px;border-radius:50%;background:radial-gradient(${C.ink}40,transparent 70%)}
 .pin .v{position:absolute;left:0;bottom:2px;width:80px;height:80px;object-fit:contain;animation:bob 3.6s ease-in-out infinite}
@@ -225,21 +225,21 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.landmark.top .badge{bottom:1px;left:0}
 /* Private-hunt quest (docs/design/city-orienteering.md): its picture fills a brass teardrop pointing at the spot,
    with its points below. Done: purple, like a Waypost after its spin, with a tick badge. Locked by an in-order route: faded. */
-.pin.mission{width:54px;height:72px;--mp:${C.brass};--mp-hi:#E2C58A;--mp-lo:#A9843F;--mg:#fff}
-.pin.mission.done{--mp:${C.plum};--mp-hi:#B98494;--mp-lo:#4A1C2A;--mg:#fff}
-.pin.mission .disc{left:15px;width:24px;height:7px;background:radial-gradient(${C.brass}66,transparent 70%)}
-.pin.mission .photo{position:absolute;left:4px;bottom:6px;width:46px;height:59px;animation:bob 3.6s ease-in-out infinite;filter:drop-shadow(0 3px 4px rgba(22,38,63,.32))}
-.pin.mission .drop{position:absolute;left:0;top:2px;width:46px;height:46px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,var(--mp-hi),var(--mp) 55%,var(--mp-lo))}
-.pin.mission .ph{position:absolute;inset:3px;border-radius:50%;border:2px solid #fff;transform:rotate(45deg);background:${C.cream} center/cover no-repeat}
-.pin.mission .badge{position:absolute;right:-6px;top:-4px;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--mp-hi),var(--mp) 62%,var(--mp-lo));box-shadow:0 1px 3px rgba(22,38,63,.35),inset 0 0 0 1.5px var(--mp-hi)}
-.pin.mission .badge svg{position:absolute;left:0;top:0;width:20px;height:20px}
-.pin.mission.locked .photo{opacity:.6}
-.pin.mission.done .ph{filter:saturate(.6)}
-.pin.mission.near:not(.done):not(.locked) .photo{filter:drop-shadow(0 0 7px ${C.brass})}
-.pin.mission.near:not(.done):not(.locked) .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
-.pin.mission .tag{bottom:-14px;background:${C.brass};color:#fff}
+.pin.quest{width:54px;height:72px;--mp:${C.brass};--mp-hi:#E2C58A;--mp-lo:#A9843F;--mg:#fff}
+.pin.quest.done{--mp:${C.plum};--mp-hi:#B98494;--mp-lo:#4A1C2A;--mg:#fff}
+.pin.quest .disc{left:15px;width:24px;height:7px;background:radial-gradient(${C.brass}66,transparent 70%)}
+.pin.quest .photo{position:absolute;left:4px;bottom:6px;width:46px;height:59px;animation:bob 3.6s ease-in-out infinite;filter:drop-shadow(0 3px 4px rgba(22,38,63,.32))}
+.pin.quest .drop{position:absolute;left:0;top:2px;width:46px;height:46px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,var(--mp-hi),var(--mp) 55%,var(--mp-lo))}
+.pin.quest .ph{position:absolute;inset:3px;border-radius:50%;border:2px solid #fff;transform:rotate(45deg);background:${C.cream} center/cover no-repeat}
+.pin.quest .badge{position:absolute;right:-6px;top:-4px;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--mp-hi),var(--mp) 62%,var(--mp-lo));box-shadow:0 1px 3px rgba(22,38,63,.35),inset 0 0 0 1.5px var(--mp-hi)}
+.pin.quest .badge svg{position:absolute;left:0;top:0;width:20px;height:20px}
+.pin.quest.locked .photo{opacity:.6}
+.pin.quest.done .ph{filter:saturate(.6)}
+.pin.quest.near:not(.done):not(.locked) .photo{filter:drop-shadow(0 0 7px ${C.brass})}
+.pin.quest.near:not(.done):not(.locked) .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
+.pin.quest .tag{bottom:-14px;background:${C.brass};color:#fff}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.pin .badge,.pin.mission .photo,.you .pulse,.pin.keeper .seal{animation:none}}
+@media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.pin .badge,.pin.quest .photo,.you .pulse,.pin.keeper .seal{animation:none}}
 </style></head><body><div id="map"></div>
 <script>
 const send=m=>{const s=JSON.stringify(m);if(window.ReactNativeWebView)window.ReactNativeWebView.postMessage(s);else parent.postMessage({__tcmap:s},'*')};
@@ -349,7 +349,7 @@ function render(){
   for(const p of state.pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
       :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 1.5C12.8 8.2 15.8 11.2 22.5 12 15.8 12.8 12.8 15.8 12 22.5 11.2 15.8 8.2 12.8 1.5 12 8.2 11.2 11.2 8.2 12 1.5Z"/></svg></div></div>'
-      :p.kind==='mission'?'<div class="pin-body"><div class="disc"></div><div class="photo"><div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>'+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
+      :p.kind==='quest'?'<div class="pin-body"><div class="disc"></div><div class="photo"><div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>'+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
       :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait!==undefined&&(p.portrait||p.private)?'<div class="who">'+face(p.portrait)+(p.private?'<div class="lock"></div>':'')+'</div>':'')+(p.timer?'<div class="tag timer">'+HOURGLASS+p.timer+'</div>':p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
     const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'')+(p.private?' private':'')+(p.opened?' opened':'')+(p.locked?' locked':'');
     let m=marks.get(p.id);

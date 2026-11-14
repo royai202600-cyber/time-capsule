@@ -4,7 +4,7 @@
 import React, { useRef, useState } from "react";
 import { Modal, Pressable, Text, TextInput, View } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { questToken } from "../../services/huntPrivate";
+import { questToken } from "../../services/privateHunt";
 import { Btn } from "./HuntViews";
 import { useHuntText } from "./strings";
 import { C, radii, sans, serif, spacing } from "../../theme";

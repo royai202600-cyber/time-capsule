@@ -36,28 +36,28 @@ try {
   const { session: owner, id: ownerId } = await login('P2 organizer');
   const { session: player, id: playerId } = await login('P2 player');
   sql(`update public.profiles set can_create_hunts = true where id = '${ownerId}'`);
-  const { id } = ok(await owner.rpc('hunt_create', { p_draft: {
+  const { id } = ok(await owner.rpc('private_hunt_create', { p_draft: {
     name: 'P2 real login', description: 'GPS, QR, spin and puzzle', cover: null, route_mode: 'ordered',
     leaderboard_visible: true, starts_at: new Date(Date.now() - 60_000).toISOString(),
     ends_at: new Date(Date.now() + 3_600_000).toISOString(), time_limit_min: 15,
   } }));
-  const base = { name: 'Fixture', lat: 25, lng: 121, points: 10 };
+  const base = { name: 'Fixture', location_lat: 25, location_lng: 121, points: 10 };
   const quests = [
-    { mission_type: 'arrive', arrive_check: 'gps_qr' },
-    { mission_type: 'spin' },
-    { mission_type: 'puzzle', puzzle_kind: 'text', answer: 'Blue Door' },
+    { quest_type: 'arrive', arrive_check: 'gps_qr' },
+    { quest_type: 'spin' },
+    { quest_type: 'puzzle', puzzle_kind: 'text', answer: 'Blue Door' },
   ];
   for (const [index, quest] of quests.entries()) {
-    ok(await owner.rpc('hunt_waypoint_save', { p_hunt: id, p_waypoint: { ...base, ...quest, ordinal: index + 1 } }));
+    ok(await owner.rpc('private_hunt_quest_save', { p_hunt: id, p_quest: { ...base, ...quest, ordinal: index + 1 } }));
   }
-  const { waypoints: ownerWaypoints } = ok(await owner.rpc('hunt_edit_state', { p_hunt: id }));
-  const { join_code: code } = ok(await owner.rpc('hunt_publish', { p_hunt: id }));
-  assert.deepEqual(ok(await player.rpc('hunt_preview', { p_code: code })).waypoints, []);
-  const hunt = ok(await player.rpc('hunt_join_code', { p_code: code }));
-  const [arrive, spin, puzzle] = hunt.waypoints;
+  const { quests: ownerWaypoints } = ok(await owner.rpc('private_hunt_edit_state', { p_hunt: id }));
+  const { join_code: code } = ok(await owner.rpc('private_hunt_publish', { p_hunt: id }));
+  assert.deepEqual(ok(await player.rpc('private_hunt_preview', { p_code: code })).quests, []);
+  const hunt = ok(await player.rpc('private_hunt_join_code', { p_code: code }));
+  const [arrive, spin, puzzle] = hunt.quests;
   assert(!('qr_token' in arrive) && !('answer' in puzzle));
-  const finish = (w, answer = null, qr = null) => player.rpc('hunt_mission_complete', {
-    p_waypoint: w.id, p_lat: 25, p_lng: 121, p_accuracy: 15, p_answer: answer, p_qr: qr,
+  const finish = (w, answer = null, qr = null) => player.rpc('private_hunt_quest_complete', {
+    p_quest: w.id, p_lat: 25, p_lng: 121, p_accuracy: 15, p_answer: answer, p_qr: qr,
   });
   assert.equal((await finish(spin)).error.message, 'locked');
   assert.equal((await finish(arrive, null, 'wrong')).error.message, 'wrong_qr');
@@ -71,16 +71,16 @@ try {
     if (i === 2) assert.equal(JSON.parse(failure.error.details).wait_s, 60);
   }
   assert.equal((await finish(puzzle, 'Blue Door')).error.message, 'no_tries');
-  sql(`update public.hunt_members set joined_at = now() - interval '16 minutes',
+  sql(`update public.private_hunt_members set joined_at = now() - interval '16 minutes',
     started_at = now() - interval '16 minutes' where hunt_id = '${id}' and user_id = '${playerId}'`);
   assert.equal((await finish(puzzle, 'Blue Door')).error.message, 'time_up');
-  sql(`update public.hunt_members set joined_at = now(), started_at = now() where hunt_id = '${id}' and user_id = '${playerId}';
-    update public.hunt_completions set wait_until = now() - interval '1 second'
-      where waypoint_id = '${puzzle.id}' and user_id = '${playerId}'`);
+  sql(`update public.private_hunt_members set joined_at = now(), started_at = now() where hunt_id = '${id}' and user_id = '${playerId}';
+    update public.private_hunt_quest_progress set wait_until = now() - interval '1 second'
+      where quest_id = '${puzzle.id}' and user_id = '${playerId}'`);
   const finished = ok(await finish(puzzle, '  BLUE Door！ '));
   assert(finished.hunt.finished_at);
   assert.equal(finished.hunt.points, 30);
-  const board = ok(await player.rpc('hunt_leaderboard', { p_hunt: id }));
+  const board = ok(await player.rpc('private_hunt_leaderboard', { p_hunt: id }));
   assert.equal(board[0].points, 30);
   assert.equal(board[0].you, true);
   assert(ok(await player.rpc('my_passport')).some(stamp => stamp.place === id && stamp.how_earned === 'private_hunt'));

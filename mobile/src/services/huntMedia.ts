@@ -3,7 +3,7 @@
 // the organizer and the hunt's members read it through short-lived signed URLs.
 import * as Crypto from "expo-crypto";
 import { supabase } from "./supabase";
-import { HUNT_PRIVATE_BACKEND } from "./huntPrivate";
+import { HUNT_PRIVATE_BACKEND } from "./privateHunt";
 
 export const HUNT_MEDIA_BUCKET = "hunt-media";
 const SIGNED_SECONDS = 3600;

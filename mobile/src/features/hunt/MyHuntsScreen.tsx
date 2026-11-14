@@ -6,8 +6,8 @@ import { goBack } from "../../navigation";
 import { Screen, Bar, BackButton, Heading } from "../../components/Screen";
 import { ArtIcon } from "../../components/ArtIcon";
 import { useAuth } from "../../services/auth";
-import { PrivateHuntError } from "../../services/huntPrivate";
-import { blankDraft, LIMITS, organizer, type OwnedHunt } from "../../services/huntOrganizer";
+import { PrivateHuntError } from "../../services/privateHunt";
+import { blankDraft, LIMITS, organizer, type OwnedHunt } from "../../services/privateHuntOrganizer";
 import { Btn } from "./HuntViews";
 import { useHuntText } from "./strings";
 import { useOrganizerText } from "./organizerStrings";
@@ -60,7 +60,7 @@ export default function MyHuntsScreen() {
       </View>
       <Text style={{ fontFamily: serif, fontSize: 19, color: C.ink }}>{x.name || o.untitled}</Text>
       <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>
-        {o.waypointCount(x.waypoints.length)}　{x.status === "draft" ? o.notPublished : o.joinedCount(x.joined)}
+        {o.questCount(x.quests.length)}　{x.status === "draft" ? o.notPublished : o.joinedCount(x.joined)}
       </Text>
     </Pressable>)}
 
