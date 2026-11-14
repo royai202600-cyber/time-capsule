@@ -1,5 +1,7 @@
 # Task board
 
+2026-11-14 release: Waypost discovery now reaches 5 km, the Expo test account has organizer access, the Civic Square placeholder place name was fixed, and PR #123 was merged after green CI. The naming refactor is a separate review before migration.
+
 Owner per task: **Claude** (UI, design, planning) or **Codex** (backend, merging, deploy, setup).
 Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move a task by editing this file in the same PR as the work.
 
