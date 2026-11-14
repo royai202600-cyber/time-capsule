@@ -26,7 +26,7 @@ import { SpinScreen } from "../game/SpinScreen";
 import { errorKey, useGameText } from "../game/strings";
 import { ThrowScreen } from "../game/ThrowScreen";
 import { KeeperCard, QuestSheet, RunChip } from "../hunt/HuntViews";
-import { GuideCard, JoinPrivateSheet, LeaderboardSheet, PrivateHuntCard, QuestSheet as PrivateQuestSheet } from "../hunt/PrivateHuntViews";
+import { GuideCard, JoinPrivateSheet, LeaderboardSheet, PrivateHuntCard, QuestScreen } from "../hunt/PrivateHuntViews";
 import { useHuntText } from "../hunt/strings";
 import { distanceText, timeLeftShort, usePublicCapsuleText } from "../publicCapsule/strings";
 import { CapsuleMapPage } from "./CapsuleMapPage";
@@ -91,6 +91,7 @@ export default function JourneyScreen() {
   const [joinError, setJoinError] = useState<string | null>(null);
   const [quest, setQuest] = useState<{ hunt: string; quest: string } | null>(null);
   const [questError, setQuestError] = useState<string | null>(null);
+  const [questResult, setQuestResult] = useState<{ points: number; finished: boolean } | null>(null);
   const [board, setBoard] = useState<{ hunt: PrivateHunt; rows: LeaderRow[] | null } | null>(null);
   const { huntCode: huntCodeParam } = useLocalSearchParams<{ huntCode?: string }>();
   const [linkCode, setLinkCode] = useState<string | null>(null);
@@ -286,7 +287,7 @@ export default function JourneyScreen() {
       if (!pin || !found) return;
       setSelectedId(null); setGameCard(null); void haptics.tick();
       map.current?.focus(pin.lat, pin.lng);
-      setQuestError(null); setQuest({ hunt: found.hunt.id, quest: found.quest.id });
+      setQuestError(null); setQuestResult(null); setQuest({ hunt: found.hunt.id, quest: found.quest.id });
       return;
     }
     if (id.startsWith("corrupted-")) {
@@ -402,9 +403,8 @@ export default function JourneyScreen() {
     void privateAction(
       async () => {
         const out = await privateHunts.complete(ph, w, at(), answer, qr);
-        // Back to the map, where the pin turns purple and the toast says what the quest was worth.
-        setQuest(null);
-        setToast([h.gotPoints(out.points_gained), out.hunt.finished_at ? h.backToGuide : ""].filter(Boolean).join(" · "));
+        // The quest's page stays open with what it was worth, as a Waypost does after a spin.
+        setQuestResult({ points: out.points_gained, finished: !!out.hunt.finished_at });
       },
       setQuestError,
     );
@@ -544,14 +544,14 @@ export default function JourneyScreen() {
         onMyHunts: organizer.canCreate(profile) ? () => { setQuestOpen(false); router.push("/hunts"); } : undefined,
         children: privateList.map((ph) => <PrivateHuntCard key={ph.id} hunt={ph} busy={busy}
           onShowOnMap={showQuests} onCollect={collectPrivate} onLeaderboard={showLeaderboard} onReport={reportPrivate}
-          onOpenQuest={(x, w) => { setQuestOpen(false); setQuestError(null); setQuest({ hunt: x.id, quest: w.id }); if (placed(w)) map.current?.focus(w.location_lat, w.location_lng); }} />),
+          onOpenQuest={(x, w) => { setQuestOpen(false); setQuestError(null); setQuestResult(null); setQuest({ hunt: x.id, quest: w.id }); if (placed(w)) map.current?.focus(w.location_lat, w.location_lng); }} />),
       }} />
     <JoinPrivateSheet visible={joinOpen} initialCode={linkCode} found={joinFound} busy={busy} error={joinError}
       onClose={() => setJoinOpen(false)} onFind={findCode} onJoin={joinPrivate} />
-    {openPrivateHunt && openQuest && <PrivateQuestSheet visible hunt={openPrivateHunt} quest={openQuest}
+    {openPrivateHunt && openQuest && <QuestScreen hunt={openPrivateHunt} quest={openQuest} result={questResult}
       meters={placed(openQuest) ? metersTo(openQuest.location_lat, openQuest.location_lng) : Infinity} busy={busy} error={questError}
       tries={openQuest.tries ? 3 - (openQuest.tries % 3) : undefined}
-      onClose={() => { setQuest(null); setQuestError(null); }}
+      onClose={() => { setQuest(null); setQuestError(null); setQuestResult(null); }}
       onComplete={(answer, qr) => completeQuest(openPrivateHunt, openQuest, answer, qr)} />}
     <LeaderboardSheet visible={!!board} hunt={board?.hunt ?? null} rows={board?.rows ?? null} onClose={() => setBoard(null)} />
   </JourneyViewport>;
