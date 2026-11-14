@@ -1,15 +1,12 @@
 // Private City Hunts (docs/design/city-orienteering.md, Part B): a hunt made by an organizer and joined
-// by code, link or QR. Signed-in players use the server functions in the backend contract. Until those
-// are live, development and the test account get a demo hunt that counts progress on this device only.
+// by code, link or QR. Signed-in players use the server functions. Signed-out development
+// keeps a demo hunt that counts progress on this device only.
 // Private hunts never grant XP, Gold, balls or vessels, here or on the server.
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase";
 import { distanceMeters } from "./data";
 import { GAME_ACTION_RADIUS_M, type Coords } from "./game";
 import { privateRun, runClock } from "./huntClock";
-
-/** Flipped to true by Codex's `P2` session once the player RPCs are applied. */
-export const HUNT_PRIVATE_BACKEND = true;
 
 import type { PrivateHuntQuestType } from "./questTypes";
 export type { PrivateHuntQuestType } from "./questTypes";
@@ -36,7 +33,7 @@ export type PrivateHunt = {
   joined_at: string | null; finished_at: string | null;
   points: number;
   quests: Quest[];
-  /** Counted on this device only, before the backend is live. */
+  /** Signed-out development preview, counted on this device only. */
   preview?: boolean;
 };
 /** `avatar` is the player's profile avatar record, the same shape the Avatar component takes. */
@@ -102,13 +99,17 @@ const fail = (e: { message?: string } | null) => {
   const m = e.message ?? "";
   throw new PrivateHuntError(CODES.find((c) => m.includes(c)) ?? "unknown");
 };
-const signedIn = async () => !!(await supabase.auth.getSession()).data.session;
+const signedIn = async () => {
+  const present = !!(await supabase.auth.getSession()).data.session;
+  if (!present && !__DEV__) throw new PrivateHuntError("not_allowed");
+  return present;
+};
 const near = (at: Coords | null, w: { lat: number; lng: number }) =>
   !!at && distanceMeters(at.lat, at.lng, w.lat, w.lng) <= GAME_ACTION_RADIUS_M;
 
 // ---------- demo (device-only) ----------
-// One made-up hunt around wherever the player is, so the screens can be walked through before the
-// backend lands. Its puzzle answer lives here because there is no server to keep it from the client;
+// One made-up hunt around the signed-out development player for walking through the screens.
+// Its puzzle answer is local to this preview;
 // the live path never sees an answer.
 const DEMO_CODE = "DEMO24";
 const DEMO_ANSWER = "1901";
@@ -177,7 +178,7 @@ export const privateHunt = {
   /** Hunts I have joined, newest first. `previewAllowed` is dev or the test account. */
   async mine(args: { userId: string; at: Coords | null; previewAllowed: boolean }): Promise<PrivateHunt[]> {
     demoAt = args.at;
-    if (HUNT_PRIVATE_BACKEND && await signedIn()) {
+    if (await signedIn()) {
       const { data, error } = await rpc("private_hunt_joined");
       fail(error); return (data as PrivateHunt[] | null) ?? [];
     }
@@ -193,7 +194,7 @@ export const privateHunt = {
     const clean = cleanCode(code);
     if (at) demoAt = at;
     if (clean.length !== 6) throw new PrivateHuntError("bad_code");
-    if (HUNT_PRIVATE_BACKEND && await signedIn()) {
+    if (await signedIn()) {
       const { data, error } = await rpc("private_hunt_preview", { p_code: clean });
       fail(error);
       if (!data) throw new PrivateHuntError("bad_code");

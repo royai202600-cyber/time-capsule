@@ -30,7 +30,7 @@ export type ArtLayer = {
   openReady?: OpenKey[];
   /** Resting motion of this layer alone. */
   idle?: IdleMotion[];
-  /** Stays put while the rest of the vessel idles (e.g. the sea under a bobbing bottle). Ground layers come first. */
+  /** Stays put while the rest of the vessel idles (e.g. the water under a bobbing vessel). Ground layers come first. */
   ground?: boolean;
 };
 export type OpeningCode = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'J' | 'K';
@@ -1969,7 +1969,7 @@ export const portraits: Record<string, ImageSourcePropType> = {
   '07': require('../../../public/art/portraits/portrait-07.webp'), '08': require('../../../public/art/portraits/portrait-08.webp'),
   future: require('../../../public/art/portraits/portrait-future.webp'),
   // "To whoever passes by" recipient: not a person preset, so the profile picker never lists it.
-  sea: require('../../../public/art/portraits/portrait-passerby.webp'),
+  publicCapsule: require('../../../public/art/portraits/portrait-passerby.webp'),
 };
 /** Full-body map figures (City Hunt art, PR #92): portrait NN → figure NN; old SVG avatars use 01.
  * Square canvas, feet at (0.5, 0.879) of it, standing height ≈ 0.72 of its height; they face the viewer's right. */
@@ -1991,7 +1991,7 @@ export const scenes = {
   emptyInbox: require('../../../public/art/scenes/scene-empty-inbox.webp'),
   emptySent: require('../../../public/art/scenes/scene-empty-sent.webp'),
   sealed: require('../../../public/art/scenes/scene-sealed.webp'),
-  seaSealed: require('../../../public/art/scenes/scene-passerby-sealed.webp'),
+  publicCapsuleSealed: require('../../../public/art/scenes/scene-passerby-sealed.webp'),
 };
 export const gameArt = {
   ball: { wax: require('../../../public/art/game/ball-wax.webp'), gold: require('../../../public/art/game/ball-gold.webp') },

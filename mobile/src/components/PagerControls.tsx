@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Animated, Platform, Pressable, View, useWindowDimensions } from 'react-native';
-import { useF1Text } from '../i18n/f1';
+import { useScreenText } from '../i18n/useScreenText';
 import { C } from '../theme';
 import Svg, { Path } from 'react-native-svg';
 
@@ -28,7 +28,7 @@ export function PagerArrows({ count, index, onSelect, contentWidth = 600 }: Pick
   const [pointer, setPointer] = useState(false);
   const { width } = useWindowDimensions();
   const [hover, setHover] = useState<number | null>(null);
-  const t = useF1Text();
+  const t = useScreenText();
   useEffect(() => {
     if (Platform.OS !== 'web') return;
     const query = window.matchMedia('(hover: hover) and (pointer: fine)');

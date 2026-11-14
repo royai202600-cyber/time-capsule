@@ -50,7 +50,7 @@ try {
   for (const [index, quest] of quests.entries()) {
     ok(await owner.rpc('private_hunt_quest_save', { p_hunt: id, p_quest: { ...base, ...quest, ordinal: index + 1 } }));
   }
-  const { quests: ownerWaypoints } = ok(await owner.rpc('private_hunt_edit_state', { p_hunt: id }));
+  const { quests: ownerQuests } = ok(await owner.rpc('private_hunt_edit_state', { p_hunt: id }));
   const { join_code: code } = ok(await owner.rpc('private_hunt_publish', { p_hunt: id }));
   assert.deepEqual(ok(await player.rpc('private_hunt_preview', { p_code: code })).quests, []);
   const hunt = ok(await player.rpc('private_hunt_join_code', { p_code: code }));
@@ -61,7 +61,7 @@ try {
   });
   assert.equal((await finish(spin)).error.message, 'locked');
   assert.equal((await finish(arrive, null, 'wrong')).error.message, 'wrong_qr');
-  assert.equal(ok(await finish(arrive, null, ownerWaypoints[0].qr_token.toUpperCase())).points_gained, 10);
+  assert.equal(ok(await finish(arrive, null, ownerQuests[0].qr_token.toUpperCase())).points_gained, 10);
   assert.equal(ok(await finish(spin)).points_gained, 10);
   for (let i = 0; i < 3; i++) {
     const failure = await finish(puzzle, 'wrong');

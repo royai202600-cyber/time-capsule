@@ -28,7 +28,7 @@ import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 
 const PLACEHOLDER = "#A5AFBD";
 const LIMIT_MINUTES = [null, 30, 45, 60, 90, 120];
-type Section = "details" | "missions" | "share" | "review";
+type Section = "details" | "quests" | "share" | "review";
 
 export default function HuntEditScreen() {
   const o = useOrganizerText();
@@ -136,17 +136,17 @@ export default function HuntEditScreen() {
     <Bar><BackButton label={o.back} onPress={goBack} /><Heading>{draft.name || o.untitled}</Heading></Bar>
 
     <View style={{ flexDirection: "row", gap: 6, flexWrap: "wrap" }}>
-      {(["details", "missions", "share", "review"] as Section[]).map((s) => <Pressable key={s} accessibilityRole="tab"
+      {(["details", "quests", "share", "review"] as Section[]).map((s) => <Pressable key={s} accessibilityRole="tab"
         accessibilityState={{ selected: section === s }} onPress={() => setSection(s)}
         style={{ paddingVertical: 7, paddingHorizontal: 13, borderRadius: radii.pill, backgroundColor: section === s ? C.blue : C.white, borderWidth: 1.5, borderColor: section === s ? C.blue : C.line }}>
         <Text style={{ fontFamily: serif, fontSize: 13, color: section === s ? C.white : C.muted }}>
-          {s === "details" ? o.details : s === "missions" ? o.quests : s === "share" ? o.share : o.review}
+          {s === "details" ? o.details : s === "quests" ? o.quests : s === "share" ? o.share : o.review}
         </Text>
       </Pressable>)}
     </View>
 
     {status === "closed" && <Note text={o.closed} />}
-    {locked && status !== "closed" && (section === "details" || section === "missions") && <Note text={o.lockedNote} />}
+    {locked && status !== "closed" && (section === "details" || section === "quests") && <Note text={o.lockedNote} />}
 
     {section === "details" && <>
       <Field label={o.nameLabel}>
@@ -189,7 +189,7 @@ export default function HuntEditScreen() {
         onPress={() => edit({ leaderboard_visible: !draft.leaderboard_visible })} />
     </>}
 
-    {section === "missions" && <>
+    {section === "quests" && <>
       {!rows.length && <View style={{ gap: 4, paddingVertical: spacing.sm }}>
         <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{o.noQuests}</Text>
         <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{o.noQuestsNote}</Text>

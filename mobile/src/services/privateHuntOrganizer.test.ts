@@ -2,25 +2,10 @@ import { describe, expect, it, vi } from "vitest";
 // The rules under test are pure; these two keep the module's native imports out of the test run.
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: { getItem: vi.fn(), setItem: vi.fn() } }));
 vi.mock("./supabase", () => ({ supabase: { auth: { getSession: vi.fn() }, rpc: vi.fn() } }));
-import { LIMITS, appLink, blankDraft, huntArea, blankQuest, canPublish, huntProblems, makeCode, nextOrdinal, shareLink, questProblems, type HuntDraft, type QuestDraft } from "./privateHuntOrganizer";
+import { LIMITS, appLink, blankDraft, huntArea, blankQuest, canPublish, huntProblems, nextOrdinal, shareLink, questProblems, type HuntDraft, type QuestDraft } from "./privateHuntOrganizer";
 
 const draft = (over: Partial<HuntDraft> = {}): HuntDraft => ({ ...blankDraft(), name: "Park hunt", ...over });
 const wp = (over: Partial<QuestDraft> = {}): QuestDraft => ({ ...blankQuest(1, { lat: 25, lng: 121 }), name: "Gate", ...over });
-
-describe("join codes", () => {
-  it("is six characters", () => expect(makeCode()).toHaveLength(6));
-  it("never uses characters that can be misread", () => {
-    // 600 codes is plenty to catch a stray 0/O/1/I in the alphabet.
-    const all = Array.from({ length: 600 }, () => makeCode()).join("");
-    expect(all).not.toMatch(/[01OI]/);
-    expect(all).toMatch(/^[A-Z2-9]+$/);
-  });
-  it("spans the whole alphabet", () => {
-    // 2000 codes is 12000 characters; missing one of 32 would mean the alphabet is wrong, not bad luck.
-    const seen = new Set(Array.from({ length: 2000 }, () => makeCode()).join(""));
-    expect(seen.size).toBe(32);
-  });
-});
 
 describe("share links", () => {
   it("builds a web link from a loosely typed code", () => expect(shareLink(" park-24 ")).toBe("https://time-capsule-pi-two.vercel.app/hunt/PARK24"));

@@ -24,15 +24,15 @@ import { ArtIcon } from '../../components/ArtIcon';
 import { SealLoader } from '../../components/SealLoader';
 import { WaxSteps } from '../../components/WaxSteps';
 import { VoiceRecorder } from '../voice/VoiceRecorder';
-import { stubAttachVoice, uploadVoice, VOICE_BACKEND, VOICE_ENABLED, type VoiceClip } from '../../services/voice';
+import { uploadVoice, VOICE_ENABLED, type VoiceClip } from '../../services/voice';
 import { PREDICTION_ENABLED, predictionSendArgs, type CapsuleKind } from '../../services/prediction';
 import { PredictionInput } from '../prediction/PredictionParts';
 import { Chip, Glyph, MonthCalendar, PickerRow, Sheet, SheetGroup, SheetOption, ToolIcon, VESSEL_CATEGORIES, vesselCategory, type ToolKind, type VesselCategory } from './CreateParts';
 import { usePredictionText } from '../prediction/strings';
-import { DRIFT_CHOICES, publicCapsule, PublicCapsuleError, PUBLIC_CAPSULE_BACKEND, PUBLIC_CAPSULE_ENABLED, PUBLIC_CAPSULE_MESSAGE_MAX, PUBLIC_CAPSULE_AVATAR, PUBLIC_CAPSULE_RECIPIENT, type DriftDays, type ThrowResult } from '../../services/publicCapsule';
+import { DRIFT_CHOICES, publicCapsule, PublicCapsuleError, PUBLIC_CAPSULE_ENABLED, PUBLIC_CAPSULE_MESSAGE_MAX, PUBLIC_CAPSULE_AVATAR, PUBLIC_CAPSULE_RECIPIENT, type DriftDays, type ThrowResult } from '../../services/publicCapsule';
 import { shortDate, usePublicCapsuleText } from '../publicCapsule/strings';
 import { openingCoordinates, useForegroundLocation } from '../journey/location';
-import { ANY_PLACE_BACKEND, placeLabel, pointPlaceArgs, reversePlace, searchPlaces, type PointPlace } from '../../services/places';
+import { placeLabel, pointPlaceArgs, reversePlace, searchPlaces, type PointPlace } from '../../services/places';
 
 type Quick = 'd1' | 'w1' | 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
 // The blocks a capsule can hold. Today's backend keeps one of each, and text or handwriting (docs/design/create-v2.md).
@@ -40,9 +40,9 @@ type Block = 'text' | 'voice' | 'photo' | 'hand' | 'predict';
 const BLOCKS: Block[] = ['text', 'voice', 'photo', 'hand', 'predict'];
 const BLOCK_ICON: Record<Block, ToolKind> = { text: 'text', voice: 'voice', photo: 'photo', hand: 'hand', predict: 'predict' };
 const BLOCK_LABEL: Record<Block, string> = { text: 'create2.tText', voice: 'create2.tVoice', photo: 'create2.tPhoto', hand: 'create2.tHand', predict: 'create2.tPredict' };
-// Public capsules still use the sea's drift days, so their time list maps onto them.
-const SEA_QUICK: Quick[] = ['d1', 'w1', 'm1', 'y1'];
-const SEA_DRIFT: Partial<Record<Quick, DriftDays>> = { d1: 1, w1: 7, m1: 30, y1: 365 };
+// Public capsules still use public-capsule availability delays, so their time list maps onto them.
+const PUBLIC_CAPSULE_QUICK: Quick[] = ['d1', 'w1', 'm1', 'y1'];
+const PUBLIC_CAPSULE_DELAY: Partial<Record<Quick, DriftDays>> = { d1: 1, w1: 7, m1: 30, y1: 365 };
 const quickDate = (q: Quick) => { const d = new Date(); if (q === 'd1') d.setDate(d.getDate() + 1); if (q === 'w1') d.setDate(d.getDate() + 7); if (q === 'm1') d.setMonth(d.getMonth() + 1); if (q === 'm6') d.setMonth(d.getMonth() + 6); if (q === 'y1') d.setFullYear(d.getFullYear() + 1); if (q === 'y5') d.setFullYear(d.getFullYear() + 5); if (q === 'dev') d.setMinutes(d.getMinutes() + 2); return d; };
 const dateValue = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 const customDate = (s: string) => { if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return null; const d = new Date(`${s}T12:00:00`); return dateValue(d) === s && d.getTime() > Date.now() ? d : null; };
@@ -61,7 +61,7 @@ export default function CreateScreen() {
   const [blocks, setBlocks] = useState<Block[]>(PREDICTION_ENABLED && params.kind === 'prediction' ? ['predict'] : ['text']), [prediction, setPrediction] = useState('');
   const predicting = PREDICTION_ENABLED && blocks.includes('predict');
   const kind: CapsuleKind = predicting ? 'prediction' : 'letter';
-  const startsAtSea = PUBLIC_CAPSULE_ENABLED && params.to === PUBLIC_CAPSULE_RECIPIENT;
+  const startsWithPublicCapsule = PUBLIC_CAPSULE_ENABLED && params.to === PUBLIC_CAPSULE_RECIPIENT;
   const id = session?.user.id ?? '';
   const friends = useFriends(id), catalog = useVessels(), owned = useOwnedVessels(id), places = usePlaces();
   const reduced = useReducedMotion();
@@ -71,9 +71,9 @@ export default function CreateScreen() {
   const voicePath = useRef<{ uri: string; path: string } | null>(null);
   const [vessel, setVessel] = useState<VesselKind | null>(null), [place, setPlace] = useState<string | null>(null);
   const hasText = blocks.includes('text'), hasHand = blocks.includes('hand');
-  const [quick, setQuick] = useState<Quick>(startsAtSea ? 'd1' : 'y1'), [dateText, setDateText] = useState('');
-  const driftDays: DriftDays = SEA_DRIFT[quick] ?? 7;
-  const [seaResult, setSeaResult] = useState<ThrowResult | null>(null);
+  const [quick, setQuick] = useState<Quick>(startsWithPublicCapsule ? 'd1' : 'y1'), [dateText, setDateText] = useState('');
+  const driftDays: DriftDays = PUBLIC_CAPSULE_DELAY[quick] ?? 7;
+  const [publicCapsuleResult, setPublicCapsuleResult] = useState<ThrowResult | null>(null);
   // Where: anywhere, the sender's current spot, or a specific place (one of our landmarks or a searched address).
   const [placeMode, setPlaceMode] = useState<'anywhere' | 'current' | 'specific'>('anywhere'), [point, setPoint] = useState<PointPlace | null>(null);
   const [placeQuery, setPlaceQuery] = useState(''), [placeResults, setPlaceResults] = useState<PointPlace[]>([]), [searching, setSearching] = useState(false);
@@ -159,36 +159,35 @@ export default function CreateScreen() {
   const canUseVessel = (v: { id: string; price_mop: number }) => GAME_ENABLED ? isCollected(v, ownsVessel(v.id), true) : canAccessVessel(v, ownsVessel(v.id));
   const selectedPlace = places.data?.find(p => p.id === place);
   const recipientRow = friends.data?.find(f => f.friend_id === recipient);
-  // A sea bottle is an ordinary capsule addressed to the sea: typed only, washes up after its drift time.
-  const toSea = PUBLIC_CAPSULE_ENABLED && recipient === PUBLIC_CAPSULE_RECIPIENT;
+  // A public capsule is an ordinary capsule addressed to whoever passes by: typed only, available after its delay.
+  const toPublicCapsule = PUBLIC_CAPSULE_ENABLED && recipient === PUBLIC_CAPSULE_RECIPIENT;
   // Everything left in public is a bottle, so it can't be mistaken for a Corrupted Capsule.
-  const wasToSea = useRef(toSea);
+  const wasPublicCapsule = useRef(toPublicCapsule);
   useEffect(() => {
-    if (toSea) setVessel('bottle');
-    else if (wasToSea.current) setVessel(null);
-    wasToSea.current = toSea;
-  }, [toSea]);
+    if (toPublicCapsule) setVessel('bottle');
+    else if (wasPublicCapsule.current) setVessel(null);
+    wasPublicCapsule.current = toPublicCapsule;
+  }, [toPublicCapsule]);
   // Private: To → Message → Vessel → When & where. Public (from the map): Message → When & where.
-  const flow = toSea ? [2, 4] : [1, 2, 3, 4];
+  const flow = toPublicCapsule ? [2, 4] : [1, 2, 3, 4];
   const step = flow[stepIndex - 1] ?? flow[0];
-  const recipientName = toSea ? st('toSea') : recipient === id ? t('create.self') : ((recipientRow as any)?.profiles?.name ?? '');
-  const openAt = toSea ? new Date(Date.now() + driftDays * 86_400_000) : quick === 'custom' ? customDate(dateText) : quickDate(quick);
+  const recipientName = toPublicCapsule ? st('toPublicCapsule') : recipient === id ? t('create.self') : ((recipientRow as any)?.profiles?.name ?? '');
+  const openAt = toPublicCapsule ? new Date(Date.now() + driftDays * 86_400_000) : quick === 'custom' ? customDate(dateText) : quickDate(quick);
   const formatted = (sealedAt ?? openAt)?.toLocaleDateString(language === 'zh' ? 'zh-Hant' : 'en', { year: 'numeric', month: 'long', day: 'numeric', hour: quick === 'dev' ? 'numeric' : undefined, minute: quick === 'dev' ? '2-digit' : undefined }) ?? dateText;
   const placeName = selectedPlace ? (language === 'zh' ? selectedPlace.name_zh : selectedPlace.name_en) : '';
   const validate = () => {
     if (!recipient) return t('create.needRecipient');
     if (step >= 2 && predicting && !prediction.trim()) return p('need');
-    if (step >= 2 && toSea && !message.trim()) return t('create.needMessage');
-    if (step >= 4 && toSea && PUBLIC_CAPSULE_BACKEND && !openingCoordinates()) return st('needLocation');
+    if (step >= 2 && toPublicCapsule && !message.trim()) return t('create.needMessage');
+    if (step >= 4 && toPublicCapsule && !openingCoordinates()) return st('needLocation');
     // Text and handwriting can sit together; one of them (or a prediction) must have content.
     const inked = hasHand && (step === 2 ? !!drawing.current?.hasInk() : !!drawingData);
     if (step >= 2 && !predicting && !(hasText && message.trim()) && !inked) return t('create.needMessage');
     if (step >= 3 && !vessel) return t('create.chooseFirst');
     if (step >= 3 && chosenVessel && !canUseVessel(chosenVessel)) return t('create.notOwned');
     if (step >= 4 && !openAt) return t('create.badDate');
-    if (step >= 4 && !toSea && placeMode === 'current' && !point) return t('create2.needHere');
-    if (step >= 4 && !toSea && placeMode === 'specific' && !place && !point) return t('create2.needPlace');
-    if (step >= 4 && !toSea && placeMode !== 'anywhere' && point && !ANY_PLACE_BACKEND) return t('create2.placeSoon');
+    if (step >= 4 && !toPublicCapsule && placeMode === 'current' && !point) return t('create2.needHere');
+    if (step >= 4 && !toPublicCapsule && placeMode === 'specific' && !place && !point) return t('create2.needPlace');
     return '';
   };
   const saveDrawingDraft = () => {
@@ -243,9 +242,9 @@ export default function CreateScreen() {
       ]),
     ]); contactMotion.start(() => resolve()); });
     try {
-      if (toSea) {
+      if (toPublicCapsule) {
         const thrown = await publicCapsule.dropPublicCapsule({ message, hint: hint.trim() || t('create.hintDefault'), vessel, driftDays, at: openingCoordinates() });
-        setSeaResult(thrown);
+        setPublicCapsuleResult(thrown);
         sentOnce.current = true;
         setSealedAt(new Date(thrown.available_at));
         await contact;
@@ -257,7 +256,7 @@ export default function CreateScreen() {
       if (!ink && !(hasText && message.trim()) && !predicting) throw new Error('empty drawing');
       // Upload once per recording; a retried send reuses the same pending path.
       let voiceArgs = {};
-      if (voice && VOICE_BACKEND) {
+      if (voice) {
         if (voicePath.current?.uri !== voice.uri) {
           try { voicePath.current = { uri: voice.uri, path: await uploadVoice(id, voice) }; }
           catch { throw new Error('voice upload'); }
@@ -271,7 +270,6 @@ export default function CreateScreen() {
       }
       const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: hasText ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), ...(placeMode !== 'anywhere' && sendPoint ? pointPlaceArgs(sendPoint) : { p_place: place ?? undefined }), ...voiceArgs, ...predictionSendArgs(kind, prediction) });
       if (rpcError) throw rpcError;
-      if (voice && capsuleId) stubAttachVoice(String(capsuleId), voice);
       sentOnce.current = true;
       setSealedAt(openAt);
       await contact;
@@ -281,7 +279,7 @@ export default function CreateScreen() {
       contactMotion?.stop();
       wax.stopAnimation(); waxScale.stopAnimation();
       const msg = String((e as any)?.message ?? e).toLowerCase(), code = String((e as any)?.hint ?? '');
-      if (e instanceof PublicCapsuleError) setError(e.code === 'rejected' ? st('errRejected') : e.code === 'no_shore' ? st('errNoShore') : t('create.sendError'));
+      if (e instanceof PublicCapsuleError) setError(e.code === 'rejected' ? st('errRejected') : e.code === 'no_spot' ? st('errNoSpot') : t('create.sendError'));
       else setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('open time must be in the future') ? t('create.badDate') : msg.includes('voice') ? t('voice.uploadError') : t('create.sendError'));
       if (reduced) wax.setValue({ x: 0, y: 0 });
       else Animated.parallel([
@@ -386,10 +384,10 @@ export default function CreateScreen() {
     </View>
     <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
   </Screen>;
-  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={toSea ? scenes.seaSealed : scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{toSea && seaResult ? st('sealedSea', language === 'zh' ? seaResult.spot_zh : seaResult.spot_en, shortDate(seaResult.available_at, language)) : predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
+  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={toPublicCapsule ? scenes.publicCapsuleSealed : scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{toPublicCapsule && publicCapsuleResult ? st('publicCapsuleSealed', language === 'zh' ? publicCapsuleResult.spot_zh : publicCapsuleResult.spot_en, shortDate(publicCapsuleResult.available_at, language)) : predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
   const last = stepIndex === flow.length;
   const goTo = (n: number) => { saveDrawingDraft(); Keyboard.dismiss(); setStepIndex(n); setError(''); void haptics.tap(); };
-  const blockOff = (b: Block) => blocks.includes(b) || (toSea && b !== 'text') || (b === 'voice' && !VOICE_ENABLED) || (b === 'predict' && !PREDICTION_ENABLED);
+  const blockOff = (b: Block) => blocks.includes(b) || (toPublicCapsule && b !== 'text') || (b === 'voice' && !VOICE_ENABLED) || (b === 'predict' && !PREDICTION_ENABLED);
   const addBlock = (b: Block) => { if (blockOff(b)) return; setBlocks([...blocks, b]); setError(''); void haptics.tick(); if (b === 'photo') setPhotoChoices(true); };
   const removeBlock = (b: Block) => {
     setBlocks(blocks.filter(x => x !== b)); void haptics.tap();
@@ -399,7 +397,7 @@ export default function CreateScreen() {
     if (b === 'voice') setVoice(null);
     if (b === 'predict') setPrediction('');
   };
-  const quickList: Quick[] = toSea ? SEA_QUICK : ['d1', 'm1', 'm6', 'y1', 'y5', 'custom', ...(__DEV__ ? ['dev' as Quick] : [])];
+  const quickList: Quick[] = toPublicCapsule ? PUBLIC_CAPSULE_QUICK : ['d1', 'm1', 'm6', 'y1', 'y5', 'custom', ...(__DEV__ ? ['dev' as Quick] : [])];
   const quickLabel = (q: Quick) => t(q === 'd1' || q === 'w1' ? `create2.${q}` : `create.${q}`);
   const dateLabel = (d: Date | null) => d?.toLocaleDateString(language === 'zh' ? 'zh-Hant' : 'en', { year: 'numeric', month: 'long', day: 'numeric' }) ?? '';
   const friendName = (f: any) => f?.profiles?.name ?? '';
@@ -416,19 +414,19 @@ export default function CreateScreen() {
   const whereLabel = placeMode === 'anywhere' ? '' : selectedPlace ? placeName : point?.name ?? '';
   const placeCard = (name: string, detail: string) => <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 12 }}>
     <Glyph><ToolIcon kind="landmark" color={C.wax} /></Glyph>
-    <View style={{ flex: 1, gap: 2 }}><Text style={{ fontFamily: serif, color: C.ink, fontSize: 16 }}>{name}</Text>{!!detail && <Text style={muted}>{detail}</Text>}<Text style={{ fontFamily: sans, color: C.plum, fontSize: 12 }}>{t('create2.radius')}</Text>{!!point && !ANY_PLACE_BACKEND && <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12 }}>{t('create2.placeSoon')}</Text>}</View>
+    <View style={{ flex: 1, gap: 2 }}><Text style={{ fontFamily: serif, color: C.ink, fontSize: 16 }}>{name}</Text>{!!detail && <Text style={muted}>{detail}</Text>}<Text style={{ fontFamily: sans, color: C.plum, fontSize: 12 }}>{t('create2.radius')}</Text></View>
   </View>;
   const header = <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 6, gap: 8, backgroundColor: C.paper }}><View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
     <Pressable accessibilityRole='button' accessibilityLabel={stepIndex > 1 ? t('create.back') : t('create2.close')} onPress={() => { if (stepIndex > 1) goTo(stepIndex - 1); else goBack(); }}
       style={{ width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: C.line, backgroundColor: C.white, alignItems: 'center', justifyContent: 'center' }}>
       <ArtIcon name={stepIndex > 1 ? 'back' : 'close'} size={20} color={stepIndex > 1 ? C.ink : C.plum} />
     </Pressable>
-    <Text numberOfLines={1} style={{ flex: 1, textAlign: 'center', fontFamily: serif, fontSize: 18, color: C.ink }}>{toSea ? t('create2.pubTitle') : t('create.title')}</Text>
+    <Text numberOfLines={1} style={{ flex: 1, textAlign: 'center', fontFamily: serif, fontSize: 18, color: C.ink }}>{toPublicCapsule ? t('create2.pubTitle') : t('create.title')}</Text>
     <Pressable accessibilityRole='button' onPress={next} style={({ pressed }) => ({ borderRadius: 999, backgroundColor: last ? C.wax : C.blue, paddingHorizontal: 16, paddingVertical: 10, opacity: pressed ? .85 : 1 })}>
       <Text style={{ fontFamily: sans, color: C.white, fontSize: 15 }}>{last ? t('create2.send') : t('create.next')}</Text>
     </Pressable>
   </View>
-    <View style={{ alignSelf: 'center', width: '100%', maxWidth: toSea ? 220 : 400 }}>
+    <View style={{ alignSelf: 'center', width: '100%', maxWidth: toPublicCapsule ? 220 : 400 }}>
       <WaxSteps step={stepIndex} label={t('create2.step', stepIndex, flow.length)} labels={flow.map(n => t(`create2.s${n}`))} onBack={goTo} labelSize={13} />
     </View>
     {/* Errors sit under the header, next to the Next / Send button that caused them. */}
@@ -457,7 +455,7 @@ export default function CreateScreen() {
 
     <View style={{ gap: 16, display: step === 2 ? 'flex' : 'none' }}>
       {title(t('create.write'))}
-      <Text style={[muted, { marginTop: -8 }]}>{toSea ? t('create2.pubLede') : t('create2.writeLede')}</Text>
+      <Text style={[muted, { marginTop: -8 }]}>{toPublicCapsule ? t('create2.pubLede') : t('create2.writeLede')}</Text>
       <ImageBackground source={paperLetter} resizeMode='cover' imageStyle={{ borderRadius: 6 }} style={{ borderRadius: 6, borderWidth: 1, borderColor: C.line, padding: 16, gap: 14, minHeight: 280, overflow: 'hidden' }}>
         {!blocks.length && <Text style={{ fontFamily: handwriting, color: C.muted, fontSize: 16, lineHeight: 27, textAlign: 'center', marginVertical: 'auto', paddingVertical: 40 }}>{t('create2.empty')}</Text>}
         {blocks.map(b => <View key={b} style={{ gap: 6 }}>
@@ -465,7 +463,7 @@ export default function CreateScreen() {
             <Text style={{ flex: 1, fontFamily: sans, fontSize: 11.5, letterSpacing: .5, color: C.muted }}>{t(BLOCK_LABEL[b])}</Text>
             <Pressable accessibilityRole='button' accessibilityLabel={t('create2.remove', t(BLOCK_LABEL[b]))} onPress={() => removeBlock(b)} hitSlop={8} style={{ paddingHorizontal: 6 }}><Text style={{ color: C.muted, fontSize: 14 }}>✕</Text></Pressable>
           </View>
-          {b === 'text' && <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} placeholderTextColor={PLACEHOLDER} maxLength={toSea ? PUBLIC_CAPSULE_MESSAGE_MAX : 500} multiline textAlignVertical='top' style={{ minHeight: 120, fontFamily: serif, fontSize: 18, lineHeight: 30, color: C.ink, padding: 0 }} /><Text style={{ color: C.muted, textAlign: 'right', fontSize: 12 }}>{message.length} / {toSea ? PUBLIC_CAPSULE_MESSAGE_MAX : 500}</Text></>}
+          {b === 'text' && <><TextInput value={message} onChangeText={setMessage} placeholder={predicting ? p('letterPlaceholder') : t('create.message')} placeholderTextColor={PLACEHOLDER} maxLength={toPublicCapsule ? PUBLIC_CAPSULE_MESSAGE_MAX : 500} multiline textAlignVertical='top' style={{ minHeight: 120, fontFamily: serif, fontSize: 18, lineHeight: 30, color: C.ink, padding: 0 }} /><Text style={{ color: C.muted, textAlign: 'right', fontSize: 12 }}>{message.length} / {toPublicCapsule ? PUBLIC_CAPSULE_MESSAGE_MAX : 500}</Text></>}
           {b === 'hand' && <><DrawingPad initialStrokes={drawingStrokes.current} scrollGesture={drawScrollGesture} ref={drawing} label={t('create.pad')} /><Pressable onPress={() => { drawing.current?.clear(); void haptics.tap(); }}><Text style={{ color: C.blue }}>{t('create.clear')}</Text></Pressable></>}
           {b === 'predict' && <><PredictionInput value={prediction} onChange={setPrediction} /><Text style={{ fontFamily: sans, fontSize: 12, color: C.plum }}>{t('create2.predictNote')}</Text></>}
           {b === 'voice' && <VoiceRecorder value={voice} onChange={setVoice} active={step === 2 && phase === 'steps'} />}
@@ -481,7 +479,7 @@ export default function CreateScreen() {
           <ToolIcon kind={BLOCK_ICON[b]} color={b === 'predict' ? C.brass : C.blue} /><Text style={{ fontFamily: sans, fontSize: 12, color: C.ink }}>{t(BLOCK_LABEL[b])}</Text>
         </Pressable>; })}
       </View>
-      <Text style={muted}>{toSea ? t('create2.textOnly') : t('create2.oneEach')}</Text>
+      <Text style={muted}>{toPublicCapsule ? t('create2.textOnly') : t('create2.oneEach')}</Text>
       <View style={{ gap: 8 }}>
         <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12, letterSpacing: .7 }}>{t('create.hint')}</Text>
         <TextInput value={hint} onChangeText={setHint} maxLength={40} placeholder={t('create.hintPlaceholder')} placeholderTextColor={PLACEHOLDER} style={[card, { color: C.ink, padding: 12 }]} />
@@ -519,16 +517,16 @@ export default function CreateScreen() {
     </View>}
 
     {step === 4 && <View style={{ gap: 16 }}>
-      {title(toSea ? t('create2.pubWhen') : t('create.whenWhere'))}
-      {sectionLabel(toSea ? t('create2.appears') : t('create.when'))}
-      <PickerRow label={toSea ? t('create2.appears') : t('create.when')} icon={<Glyph><ToolIcon kind={quick === 'custom' ? 'calendar' : 'clock'} /></Glyph>} title={quickLabel(quick)} sub={quick === 'custom' ? (openAt ? dateLabel(openAt) : t('create2.customSub')) : dateLabel(openAt)} onPress={() => setSheet('when')} />
+      {title(toPublicCapsule ? t('create2.pubWhen') : t('create.whenWhere'))}
+      {sectionLabel(toPublicCapsule ? t('create2.appears') : t('create.when'))}
+      <PickerRow label={toPublicCapsule ? t('create2.appears') : t('create.when')} icon={<Glyph><ToolIcon kind={quick === 'custom' ? 'calendar' : 'clock'} /></Glyph>} title={quickLabel(quick)} sub={quick === 'custom' ? (openAt ? dateLabel(openAt) : t('create2.customSub')) : dateLabel(openAt)} onPress={() => setSheet('when')} />
       {quick === 'custom' && <MonthCalendar value={dateText} onChange={setDateText} language={language} />}
-      {!!openAt && <Text style={{ fontFamily: serif, color: C.blue, fontSize: 15 }}>{toSea ? t('create2.appearsOn', formatted) : t('create2.opensOn', formatted)}</Text>}
+      {!!openAt && <Text style={{ fontFamily: serif, color: C.blue, fontSize: 15 }}>{toPublicCapsule ? t('create2.appearsOn', formatted) : t('create2.opensOn', formatted)}</Text>}
       {sectionLabel(t('create.where'))}
-      {toSea ? <View style={{ gap: 10 }}>
+      {toPublicCapsule ? <View style={{ gap: 10 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 12 }}>
           <Glyph><ToolIcon kind="here" /></Glyph>
-          <View style={{ flex: 1, gap: 2 }}><Text style={{ fontFamily: serif, color: C.ink, fontSize: 17 }}>{t('create2.here')}</Text><Text style={muted}>{st('shoreNote')}</Text></View>
+          <View style={{ flex: 1, gap: 2 }}><Text style={{ fontFamily: serif, color: C.ink, fontSize: 17 }}>{t('create2.here')}</Text><Text style={muted}>{st('spotNote')}</Text></View>
         </View>
         <Text style={muted}>{st('rules')}</Text>
       </View> : <>
@@ -556,7 +554,7 @@ export default function CreateScreen() {
       <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center', backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 14 }}>
         {vessel ? <Vessel kind={vessel} size={64} /> : null}
         <View style={{ flex: 1, gap: 8 }}>
-          {([['create2.sumTo', toSea ? t('create2.anyone') : recipientName], ['create2.sumBody', insideSummary], ['create2.sumVessel', vessel ? t(`shop.vessel.${vessel}`) : '—'], ['create2.sumWhen', openAt ? formatted : '—'], ['create2.sumWhere', toSea ? t('create2.nearShore') : whereLabel || t('create.anywhere')]] as const).map(([k, v]) => <View key={k}>
+          {([['create2.sumTo', toPublicCapsule ? t('create2.anyone') : recipientName], ['create2.sumBody', insideSummary], ['create2.sumVessel', vessel ? t(`shop.vessel.${vessel}`) : '—'], ['create2.sumWhen', openAt ? formatted : '—'], ['create2.sumWhere', toPublicCapsule ? t('create2.nearPublicSpot') : whereLabel || t('create.anywhere')]] as const).map(([k, v]) => <View key={k}>
             <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12 }}>{t(k)}</Text><Text style={{ fontFamily: sans, color: C.ink, fontSize: 14 }}>{v}</Text>
           </View>)}
         </View>
@@ -572,7 +570,7 @@ export default function CreateScreen() {
       {!friends.loading && !friends.data?.length && <Text style={[muted, { marginHorizontal: 10 }]}>{t('create.noFriends')}</Text>}
       <SheetOption accent icon={<Glyph><ArtIcon name="plus" color={C.blue} /></Glyph>} title={t('create.invite')} sub={t('create2.inviteSub')} onPress={() => { setSheet(null); router.push('/invite'); }} />
     </Sheet>
-    <Sheet open={sheet === 'when'} title={toSea ? t('create2.appears') : t('create.when')} onClose={() => setSheet(null)}>
+    <Sheet open={sheet === 'when'} title={toPublicCapsule ? t('create2.appears') : t('create.when')} onClose={() => setSheet(null)}>
       {quickList.map(q => <SheetOption key={q} selected={quick === q} icon={<Glyph><ToolIcon kind={q === 'custom' ? 'calendar' : 'clock'} /></Glyph>} title={quickLabel(q)} sub={q === 'custom' ? t('create2.customSub') : dateLabel(quickDate(q))} onPress={() => { setQuick(q); setSheet(null); setError(''); void haptics.tick(); }} />)}
     </Sheet>
     <Sheet open={sheet === 'where'} title={t('create.where')} onClose={() => setSheet(null)}>

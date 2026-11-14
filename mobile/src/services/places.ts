@@ -1,5 +1,4 @@
 // Opening places beyond our landmark list: the sender's current spot or any searched address.
-export const ANY_PLACE_BACKEND = true;
 
 /** `area` is the city and country ("臺北市, 臺灣"), so a saved place name says where in the world it is. */
 export type PointPlace = { name: string; detail: string; area?: string; lat: number; lng: number };

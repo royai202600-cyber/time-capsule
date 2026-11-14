@@ -3,7 +3,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { runInNewContext } from 'node:vm';
 import ts from 'typescript';
-import { f2Strings } from '../i18n/f2Strings';
+import { shopStrings } from '../features/shop/strings';
 
 const root = resolve(import.meta.dirname, '../../..');
 const ids = ['hot-air-balloon', 'bubble-tea', 'dim-sum-steamer', 'bento', 'paper-cranes', 'heart-locket', 'suitcase', 'postbox', 'camp-lantern', 'treasure-chest', 'spellbook', 'escape-pod', 'crystal-ball', 'wishing-lamp', 'potion', 'pocket-watch', 'diploma-tube', 'baby-shoes', 'memorial-candle', 'rocket-tin'];
@@ -38,8 +38,8 @@ describe('final 20 vessel release contract', () => {
 
   it('has short names and descriptions in both languages', () => {
     for (const lang of ['zh', 'en'] as const) for (const id of ids) {
-      expect((f2Strings[lang] as any)[`shop.vessel.${id}`]).toBeTruthy();
-      expect((f2Strings[lang] as any)[`shop.desc.${id}`]).toBeTruthy();
+      expect((shopStrings[lang] as any)[`shop.vessel.${id}`]).toBeTruthy();
+      expect((shopStrings[lang] as any)[`shop.desc.${id}`]).toBeTruthy();
     }
   });
 

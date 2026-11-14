@@ -26,8 +26,8 @@ function rememberBrowserLocation(approved: boolean) {
     else localStorage.removeItem(WEB_LOCATION_CHOICE);
   } catch { /* Storage may be unavailable; the browser still controls permission. */ }
 }
-// Roy's dedicated test account can explore Taipei shores in production.
-// This is a client-side test fix; all Sea RPCs still perform their distance checks.
+// Roy's dedicated test account can explore Taipei public capsule spots in production.
+// This is a client-side test fix; all public-capsule RPCs still perform their distance checks.
 const TAIPEI_TEST_USER_ID = "1ca3f9b3-c405-4daa-a05a-22cbc3689774";
 const TAIPEI_TEST_FIX = { lat: 25.037546, lng: 121.562754 }; // Taipei Civic Square
 let testLocationEnabled = false;

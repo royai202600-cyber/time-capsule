@@ -83,7 +83,7 @@ try {
   `));
   assert.equal(spawns.length, 5);
   for (const s of spawns) {
-    const [out] = await rpc('capsule_throw', {
+    const [out] = await rpc('corrupted_capsule_throw', {
       p_spawn: s.spawn_id, ...coords(s), p_ball: 'wax', p_ring: 1, p_hit: true,
     });
     assert.equal(out.result, 'restored');

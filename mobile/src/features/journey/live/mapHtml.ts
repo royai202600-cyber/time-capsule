@@ -119,7 +119,7 @@ function vectorStyle(pmtiles: string) {
       { id: "parks", type: "fill", source: "base", "source-layer": "landuse", filter: ["in", ["get", "kind"], ["literal", ["park", "garden", "grass", "wood", "forest", "recreation_ground", "nature_reserve", "playground", "cemetery"]]], paint: { "fill-color": mapPalette.park } },
       { id: "beach", type: "fill", source: "base", "source-layer": "landuse", filter: ["in", ["get", "kind"], ["literal", ["beach", "sand"]]], paint: { "fill-color": mapPalette.sand } },
       { id: "water", type: "fill", source: "base", "source-layer": "water", paint: { "fill-color": mapPalette.water } },
-      { id: "shore", type: "line", source: "base", "source-layer": "water", paint: { "line-color": mapPalette.waterLine, "line-width": 1.2 } },
+      { id: "spot", type: "line", source: "base", "source-layer": "water", paint: { "line-color": mapPalette.waterLine, "line-width": 1.2 } },
       { id: "road-case", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": mapPalette.roadCase, "line-width": ["interpolate", ["linear"], ["zoom"], 13, 2, 17, 12, 19, 22] } },
       { id: "roads", type: "line", source: "base", "source-layer": "roads", filter: ["in", ["get", "kind"], ["literal", ["highway", "major_road", "minor_road", "path"]]], layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": ["match", ["get", "kind"], ["highway", "major_road"], mapPalette.major, mapPalette.road], "line-width": ["interpolate", ["linear"], ["zoom"], 13, 1, 17, ["match", ["get", "kind"], "path", 2, 9], 19, ["match", ["get", "kind"], "path", 4, 18]] } },
       { id: "buildings", type: "fill-extrusion", source: "base", "source-layer": "buildings", minzoom: 15, filter: ["!", ["in", ["id"], ["literal", TILE_IDS]]], paint: { "fill-extrusion-color": mapPalette.building, "fill-extrusion-height": ["min", ["*", ["coalesce", ["get", "height"], 9], TOY_SCALE], TOY_MAX_M], "fill-extrusion-opacity": .82 } },
@@ -259,8 +259,8 @@ let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 // Wayposts are floating gems, clearly not buildings and clearly not capsules.
 const HOURGLASS='<svg viewBox="0 0 10 12" width="8" height="10"><path d="M1 1h8M1 11h8M2 1c0 3 3 3.5 3 5S2 8 2 11M8 1c0 3-3 3.5-3 5s3 2 3 5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
 // The glyphs of a quest's kinds; on the map only the tick shows, as the badge of a finished quest.
-const MISSION_GLYPH={arrive:'M-4 5V-5l8 2-8 3',spin:'M0-5.4a5.4 5.4 0 1 0 0 10.8 5.4 5.4 0 0 0 0-10.8M0-5.4V5.4M-5.4 0H5.4',puzzle:'M-2.6-2.4a2.7 2.7 0 1 1 2.8 3.1V2.4M0 4.8v.1',done:'M-4 0 -1 3 4-3',locked:'M-3.2-.6h6.4V4h-6.4ZM-2-.6v-1.8a2 2 0 0 1 4 0v1.8'};
-const glyphBadge=kind=>'<svg viewBox="-12 -12 24 24"><g transform="scale(.82)"><path d="'+MISSION_GLYPH[kind]+'" fill="none" stroke="var(--mg)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>';
+const QUEST_GLYPH={arrive:'M-4 5V-5l8 2-8 3',spin:'M0-5.4a5.4 5.4 0 1 0 0 10.8 5.4 5.4 0 0 0 0-10.8M0-5.4V5.4M-5.4 0H5.4',puzzle:'M-2.6-2.4a2.7 2.7 0 1 1 2.8 3.1V2.4M0 4.8v.1',done:'M-4 0 -1 3 4-3',locked:'M-3.2-.6h6.4V4h-6.4ZM-2-.6v-1.8a2 2 0 0 1 4 0v1.8'};
+const glyphBadge=kind=>'<svg viewBox="-12 -12 24 24"><g transform="scale(.82)"><path d="'+QUEST_GLYPH[kind]+'" fill="none" stroke="var(--mg)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>';
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
 map.on('load',()=>{

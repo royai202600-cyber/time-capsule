@@ -27,7 +27,7 @@ const strings = {
     finishedToday: "今天完成了",
     backTomorrow: "明天再開放，進度重新開始",
     preview: "預覽：進度只存在這支手機，不會發放獎勵",
-    steps: {
+    quests: {
       checkin: "找到守信人",
       spin: "轉動區內的驛站",
       restore: "修復破損膠囊",
@@ -164,7 +164,7 @@ const strings = {
     finishedToday: "Finished today",
     backTomorrow: "Opens again tomorrow, with a fresh run",
     preview: "Preview: progress is kept on this phone only, with no reward",
-    steps: {
+    quests: {
       checkin: "Meet the Letter Keeper",
       spin: "Spin Wayposts in the area",
       restore: "Restore Corrupted Capsules",

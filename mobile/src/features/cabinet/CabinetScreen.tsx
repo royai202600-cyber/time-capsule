@@ -15,7 +15,7 @@ import { game, GAME_ENABLED } from "../../services/game";
 import { useGameText } from "../game/strings";
 import { isCollected } from "../../services/vesselAccess";
 import { capsules, vessels } from "../../services/data";
-import { VESSELS } from "../../i18n/webStrings";
+import { VESSELS } from "../../features/shop/strings";
 import { useReducedMotion } from "../../useReducedMotion";
 import { C, motion, sans, serif } from "../../theme";
 

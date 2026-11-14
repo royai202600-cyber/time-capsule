@@ -12,10 +12,8 @@ import type { Database } from "./database.types";
 //    server's time (and place) check. Only then does the storage read policy let the recipient
 //    create a short-lived signed URL for it. The sender can never read it back.
 
-/** Codex sets this to true once the bucket, policies and `send_capsule`/`open_capsule` changes are live. */
-export const VOICE_BACKEND = true;
-/** Recording UI: live with the backend; in development it runs against an in-memory stub. */
-export const VOICE_ENABLED = VOICE_BACKEND || __DEV__;
+/** Recording is available with the live voice-note backend. */
+export const VOICE_ENABLED = true;
 export const VOICE_BUCKET = "voice-notes";
 export const VOICE_MAX_MS = 60_000;
 export const VOICE_MAX_BYTES = 2 * 1024 * 1024;
@@ -33,12 +31,6 @@ export function webVoiceMime() {
 }
 const extFor = (mime: string) => (mime.includes("webm") ? "webm" : "m4a");
 
-// ---- Development stub (until Codex ships the backend) --------------------------------------
-// Keeps the recording in memory, keyed by the capsule id `send_capsule` returns, so a capsule
-// sent with the dev "in 2 minutes" option can be opened and played back in the same session.
-const stubByCapsule = new Map<string, VoiceClip>();
-export function stubAttachVoice(capsuleId: string, clip: VoiceClip) { if (!VOICE_BACKEND && __DEV__) stubByCapsule.set(capsuleId, clip); }
-
 /** Upload the recording to the sender's own folder. Returns the storage path to pass as `p_voice`. */
 export async function uploadVoice(userId: string, clip: VoiceClip): Promise<string> {
   const response = await fetch(clip.uri);
@@ -55,7 +47,6 @@ export async function uploadVoice(userId: string, clip: VoiceClip): Promise<stri
 
 /** A short-lived URL for an opened capsule's voice note (recipient only; enforced by storage policy). */
 export async function voiceUrl(capsuleId: string, content: OpenedVoice | null | undefined): Promise<string | null> {
-  if (!VOICE_BACKEND) return stubByCapsule.get(capsuleId)?.uri ?? null;
   if (!content?.voice_path) return null;
   const { data, error } = await supabase.storage.from(VOICE_BUCKET).createSignedUrl(content.voice_path, SIGNED_URL_SECONDS);
   if (error) throw error;
@@ -68,7 +59,6 @@ export async function voiceUrl(capsuleId: string, content: OpenedVoice | null | 
  * 10-minute URL. Download/cache the file right away if it must play later.
  */
 export async function voiceNoteForCapsule(capsuleId: string): Promise<{ url: string; durationMs: number | null } | null> {
-  if (!VOICE_BACKEND) { const clip = stubByCapsule.get(capsuleId); return clip ? { url: clip.uri, durationMs: clip.durationMs } : null; }
   const { data, error } = await supabase.rpc("open_capsule", { p_id: capsuleId });
   if (error) throw error;
   const row = data?.[0];

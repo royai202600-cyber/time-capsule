@@ -5,7 +5,7 @@ const LANDMARKS: Record<string, WaypostScene> = { taipei101: "taipei101", merlio
 const BY_NAME: [RegExp, WaypostScene][] = [
   [/garden|botanic|花園|植物園/i, "garden"],
   [/sculpture|statue|public art|museum|雕塑|藝術|美術/i, "publicArt"],
-  [/water|river|harbou?r|bay|pier|wharf|shore|beach|quay|marina|lake|pond|河|港|灣|碼頭|海|湖|濱|岸/i, "waterfront"],
+  [/water|river|harbou?r|bay|pier|wharf|spot|beach|quay|marina|lake|pond|河|港|灣|碼頭|海|湖|濱|岸/i, "waterfront"],
   [/square|plaza|praça|largo|廣場|前地/i, "square"],
 ];
 

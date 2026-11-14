@@ -6,7 +6,7 @@ import { C, sans, serif, spacing } from "../../theme";
 import { publicCapsule } from "../../services/publicCapsule";
 import { usePublicCapsuleText } from "./strings";
 
-// Shown under an opened sea bottle's letter, in place of Reply (the sender is a stranger).
+// Shown under an opened public capsule's letter, in place of Reply (the sender is a stranger).
 // Keeping needs no call: picking it up already made you its recipient.
 export function PublicCapsuleLetterActions({ capsuleId }: { capsuleId: string }) {
   const s = usePublicCapsuleText();

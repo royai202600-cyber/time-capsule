@@ -1,9 +1,8 @@
 // The collecting game's data. Signed-in players use the live server functions; signed-out
-// development falls back to an in-memory stand-in. The game stays hidden in production until launch.
+// development falls back to an in-memory stand-in.
 import type { PublicCapsule } from "./publicCapsule";
 import { supabase } from "./supabase";
 
-export const GAME_BACKEND = true;
 export const GAME_ENABLED = true;
 export const GAME_ACTION_RADIUS_M = 100;
 
@@ -36,7 +35,7 @@ const fail = (error: { message?: string } | null) => {
 // Landmark Wayposts only return their place; each place has one earned vessel.
 const LANDMARK_VESSEL: Record<string, string> = { taipei101: "bamboo-tower", merlion: "lionfish-fountain", senado: "senado-fountain", hkust: "red-bird" };
 let position: Coords | null = null;
-/** Successful game actions, so a City Hunt can count them on the device while its backend is not live. */
+/** Successful game actions, also counted by the signed-out development City Hunt preview. */
 export type GameEvent = { kind: "spin"; waypost: string; lat: number; lng: number } | { kind: "restore"; lat: number; lng: number } | { kind: "landmark"; waypost: string };
 const listeners = new Set<(e: GameEvent) => void>();
 const emit = (e: GameEvent) => { listeners.forEach((l) => { try { l(e); } catch { /* never break the game */ } }); };
@@ -44,7 +43,11 @@ export const onGameEvent = (l: (e: GameEvent) => void) => { listeners.add(l); re
 const spots = new Map<string, { lat: number; lng: number }>();
 const posts = new Map<string, { lat: number; lng: number }>();
 const attemptPost = new Map<string, string>();
-const live = async () => GAME_BACKEND && !!(await supabase.auth.getSession()).data.session;
+const live = async () => {
+  const present = !!(await supabase.auth.getSession()).data.session;
+  if (!present && !__DEV__) throw new GameError("unknown");
+  return present;
+};
 const coords = () => {
   if (!position) throw new GameError("too_far");
   return { p_lat: position.lat, p_lng: position.lng, p_accuracy: position.accuracy ?? 10 };
@@ -96,7 +99,7 @@ function seed(at: Coords) {
   ];
   dev.publicCapsules = publicCapsules.map(([name, avatar, hint, message, vessel, n, e], i) => ({
     message,
-    publicCapsule: { id: `dev-bottle-${i}`, hint, vessel, ...offset(at, n, e), spot_zh: "公園驛站", spot_en: "Park Waypost", sealed_at: sealed, available_at: sealed, returns: 0, sender: { id: `dev-sender-${i}`, name, avatar: { set: "illus", id: avatar }, city: "台北" } },
+    publicCapsule: { id: `dev-public-capsule-${i}`, hint, vessel, ...offset(at, n, e), spot_zh: "公園驛站", spot_en: "Park Waypost", sealed_at: sealed, available_at: sealed, returns: 0, sender: { id: `dev-sender-${i}`, name, avatar: { set: "illus", id: avatar }, city: "台北" } },
   }));
 }
 
@@ -155,7 +158,7 @@ export const game = {
   },
   async throwOnce(args: { id: string; ball: BallKind; ring: number; hit: boolean }): Promise<ThrowResult> {
     if (!args.id.startsWith("dev-") && await live()) {
-      const { data, error } = await supabase.rpc("capsule_throw", { p_spawn: args.id, ...coords(), p_ball: args.ball, p_ring: args.ring, p_hit: args.hit });
+      const { data, error } = await supabase.rpc("corrupted_capsule_throw", { p_spawn: args.id, ...coords(), p_ball: args.ball, p_ring: args.ring, p_hit: args.hit });
       fail(error);
       const row = data?.[0];
       if (!row) throw new GameError("unknown");

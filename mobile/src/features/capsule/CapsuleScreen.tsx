@@ -14,9 +14,9 @@ import { Countdown } from "../../components/Countdown";
 import { Vessel } from "../../components/Vessel";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
-import { useF1Text } from "../../i18n/f1";
-import { VESSELS } from "../../i18n/webStrings";
-import { STR } from "../../i18n/webStrings";
+import { useScreenText } from "../../i18n/useScreenText";
+import { VESSELS } from "../../features/shop/strings";
+import { strings as STR } from "../../i18n/strings";
 import { useAuth } from "../../services/auth";
 import { capsules, vessels } from "../../services/data";
 import { LandmarkReveal } from "./LandmarkReveal";
@@ -29,7 +29,7 @@ import { GiftQr } from "./GiftQr";
 import { LightBurst } from "./LightBurst";
 import { isPublicCapsule } from "../../services/publicCapsule";
 import { PublicCapsuleLetterActions } from "../publicCapsule/PublicCapsuleLetterActions";
-import { seaText } from "../publicCapsule/strings";
+import { publicCapsuleText } from "../publicCapsule/strings";
 import { RitualHold } from "./RitualHold";
 import { SealedLines } from "./SealedLines";
 import { useAlarmText } from "../alarm/strings";
@@ -56,7 +56,7 @@ export default function CapsuleScreen() {
   const side = sideParam === "sent" ? "sent" : "inbox";
   const { session } = useAuth();
   const { language } = useLanguage();
-  const t = useF1Text();
+  const t = useScreenText();
   const reduced = useReducedMotion();
   const { width } = useWindowDimensions();
   const pageWidth = width;
@@ -95,7 +95,7 @@ export default function CapsuleScreen() {
   const v = c ? bundle.vessels[c.vessel] : undefined;
   const sender = c ? bundle.people[c.sender] : undefined;
   const receiver = c?.recipient ? bundle.people[c.recipient] : undefined;
-  const name = side === "sent" && c && isPublicCapsule(c) && !c.recipient ? seaText(language)("toTheSea") : side === "sent" && c?.recipient === session?.user.id ? t("home.future") : (side === "sent" ? receiver?.name : sender?.name) ?? t("home.future");
+  const name = side === "sent" && c && isPublicCapsule(c) && !c.recipient ? publicCapsuleText(language)("toPassersBy") : side === "sent" && c?.recipient === session?.user.id ? t("home.future") : (side === "sent" ? receiver?.name : sender?.name) ?? t("home.future");
   const placeName = pl ? pl[language === "zh" ? "name_zh" : "name_en"] : "";
   const state = c ? status(c, side, pl && fix ? openingCoordinates() : null, pl, now) : "time";
   const waitMs = c ? Math.max(0, new Date(c.open_at).getTime() - now) : 0;
@@ -220,7 +220,7 @@ function Checklist({ label, value, done }: { label: string; value: string; done:
   return <View style={{ flexDirection: "row", gap: 12, alignItems: "center", borderBottomWidth: 1, borderColor: C.line, paddingBottom: 8 }}><ArtIcon name={done ? "check" : "lock"} size={22} color={done ? C.blue : C.muted} /><View><Text style={{ color: C.ink, fontFamily: sans }}>{label}</Text><Text style={{ color: C.muted, fontSize: 12 }}>{value}</Text></View></View>;
 }
 
-function SenderView({ c, name, placeName, language, t }: { c: Row; name: string; placeName: string; language: "zh" | "en"; t: ReturnType<typeof useF1Text> }) {
+function SenderView({ c, name, placeName, language, t }: { c: Row; name: string; placeName: string; language: "zh" | "en"; t: ReturnType<typeof useScreenText> }) {
   const predicted = isPrediction(c);
   const [own, setOwn] = useState<SenderPrediction | null>(null);
   useEffect(() => {
@@ -242,7 +242,7 @@ function SenderView({ c, name, placeName, language, t }: { c: Row; name: string;
   </ScrollView>;
 }
 
-function LetterView({ c, content, name, placeName, self, language, t }: { c: Row; content: Opened; name: string; placeName: string; self: boolean; language: "zh" | "en"; t: ReturnType<typeof useF1Text> }) {
+function LetterView({ c, content, name, placeName, self, language, t }: { c: Row; content: Opened; name: string; placeName: string; self: boolean; language: "zh" | "en"; t: ReturnType<typeof useScreenText> }) {
   const brand = c.edition_no ? "Maison Aurèle" : "";
   const p = usePredictionText();
   const predicted = openedPrediction(c.id, content as Record<string, unknown>);

@@ -11,7 +11,7 @@ const strings = {
     drifted: (n: number) => n <= 0 ? "今天剛到" : `在路上 ${n} 天`,
     fromCity: (c: string) => `從${c}出發`,
     returns: (n: number) => `已傳過 ${n} 個人`,
-    seaPublicCapsule: (name: string) => `${name} 留給路過的人`,
+    publicCapsuleFrom: (name: string) => `${name} 留給路過的人`,
     yourCapsule: "你的膠囊在這裡等你",
     canPick: "可以撿起",
     pickUp: "撿起膠囊",
@@ -41,18 +41,18 @@ const strings = {
     errOwn: "這是你自己放下的膠囊。",
     errUnknown: "暫時沒有回應，請再試一次。",
     // Create
-    toSea: "給路過的人",
-    toSeaNote: "一位你不認識的人會撿到它",
+    toPublicCapsule: "給路過的人",
+    toPublicCapsuleNote: "一位你不認識的人會撿到它",
     publicCapsuleOnly: "公開放下的膠囊都會用瓶子，大家一眼就知道這是別人留下的。",
-    seaTypedOnly: "給路過的人的信只能打字（不能手寫、附照片或錄音），放下前會做安全檢查。",
+    publicTypedOnly: "給路過的人的信只能打字（不能手寫、附照片或錄音），放下前會做安全檢查。",
     driftLabel: "要等多久才出現？",
     washesUp: (d: string) => `將於 ${d} 出現`,
     drift: (d: number) => d === 1 ? "明天" : d === 7 ? "一星期" : d === 30 ? "一個月" : "一年",
-    shoreNote: "膠囊會放在你附近的公共驛站（公園、海旁、廣場），不會顯示你的確切位置。",
+    spotNote: "膠囊會放在你附近的公共驛站（公園、海旁、廣場），不會顯示你的確切位置。",
     rules: "撿到的人會看到你的名字和頭像 · 不要寫電話、地址等個人資料 · 只有一位陌生人能撿到它",
-    sealedSea: (shore: string, date: string) => `膠囊放下了。它會在 ${date} 出現在「${shore}」，等一位路過的人撿起。`,
+    publicCapsuleSealed: (spot: string, date: string) => `膠囊放下了。它會在 ${date} 出現在「${spot}」，等一位路過的人撿起。`,
     errRejected: "這封信沒有通過安全檢查。請拿走電話、電郵等個人資料，或改得溫和一點。",
-    errNoShore: "你附近暫時還沒有驛站。",
+    errNoSpot: "你附近暫時還沒有驛站。",
     needLocation: "要找到最近的驛站，請先允許位置。",
     // Capsule pages
     keep: "留下它",
@@ -68,9 +68,9 @@ const strings = {
     reasonOther: "其他",
     reported: "謝謝你。這個膠囊不會再出現在你的地圖上。",
     cancel: "取消",
-    toTheSea: "路過的人",
+    toPassersBy: "路過的人",
     drifting: (date: string) => `在路上 · ${date} 出現`,
-    ashore: (shore: string) => `已到${shore}，等待有人撿起`,
+    atSpot: (spot: string) => `已到${spot}，等待有人撿起`,
     foundBy: (name: string) => `被 ${name} 撿到了`,
   },
   en: {
@@ -82,7 +82,7 @@ const strings = {
     drifted: (n: number) => n <= 0 ? "Arrived today" : `On its way for ${n} day${n === 1 ? "" : "s"}`,
     fromCity: (c: string) => `From ${c}`,
     returns: (n: number) => `Passed on by ${n} ${n === 1 ? "person" : "people"}`,
-    seaPublicCapsule: (name: string) => `Left by ${name} for whoever passes by`,
+    publicCapsuleFrom: (name: string) => `Left by ${name} for whoever passes by`,
     yourCapsule: "Your capsule is waiting here",
     canPick: "Pick up",
     pickUp: "Pick up the capsule",
@@ -111,18 +111,18 @@ const strings = {
     errTaken: "Just missed it: someone else picked this capsule up.",
     errOwn: "This is a capsule you dropped.",
     errUnknown: "No answer just now. Please try again.",
-    toSea: "To whoever passes by",
-    toSeaNote: "A stranger will find it",
+    toPublicCapsule: "To whoever passes by",
+    toPublicCapsuleNote: "A stranger will find it",
     publicCapsuleOnly: "Capsules left in public always use a bottle, so everyone can tell a person left them.",
-    seaTypedOnly: "Letters to whoever passes by are typed only (no handwriting, photos or voice) and safety-checked before they're left.",
+    publicTypedOnly: "Letters to whoever passes by are typed only (no handwriting, photos or voice) and safety-checked before they're left.",
     driftLabel: "How long before it appears?",
     washesUp: (d: string) => `Appears on ${d}`,
     drift: (d: number) => d === 1 ? "A day" : d === 7 ? "A week" : d === 30 ? "A month" : "A year",
-    shoreNote: "It's left at a public Waypost near you (a park, waterfront or square), never your exact spot.",
+    spotNote: "It's left at a public Waypost near you (a park, waterfront or square), never your exact spot.",
     rules: "The finder sees your name and picture · no phone numbers, addresses or other personal details · only one stranger can find it",
-    sealedSea: (shore: string, date: string) => `It's on its way. It appears at ${shore} on ${date}, waiting for whoever passes by.`,
+    publicCapsuleSealed: (spot: string, date: string) => `It's on its way. It appears at ${spot} on ${date}, waiting for whoever passes by.`,
     errRejected: "This letter didn't pass the safety check. Remove phone numbers, emails or other personal details, or make it gentler.",
-    errNoShore: "There's no Waypost near you yet.",
+    errNoSpot: "There's no Waypost near you yet.",
     needLocation: "To find your nearest Waypost, allow location first.",
     keep: "Keep it",
     keepNote: "It stays in your Inbox.",
@@ -137,23 +137,23 @@ const strings = {
     reasonOther: "Something else",
     reported: "Thank you. This capsule won't appear on your map again.",
     cancel: "Cancel",
-    toTheSea: "Whoever passes by",
+    toPassersBy: "Whoever passes by",
     drifting: (date: string) => `On its way · appears ${date}`,
-    ashore: (shore: string) => `At ${shore}, waiting to be found`,
+    atSpot: (spot: string) => `At ${spot}, waiting to be found`,
     foundBy: (name: string) => `Found by ${name}`,
   },
 } as const;
 
-export type SeaKey = keyof typeof strings.zh;
-export function seaText(language: "zh" | "en") {
-  return (key: SeaKey, ...args: any[]): string => {
+export type PublicCapsuleKey = keyof typeof strings.zh;
+export function publicCapsuleText(language: "zh" | "en") {
+  return (key: PublicCapsuleKey, ...args: any[]): string => {
     const v = strings[language][key] as unknown;
     return typeof v === "function" ? (v as (...a: any[]) => string)(...args) : (v as string);
   };
 }
 export function usePublicCapsuleText() {
   const { language } = useLanguage();
-  return seaText(language);
+  return publicCapsuleText(language);
 }
 export const distanceText = (m: number) => m < 1000 ? `${Math.max(10, Math.round(m / 10) * 10)} m` : `${(m / 1000).toFixed(1)} km`;
 /** A compact time left for a map pin: 3天 / 5小時 / 12分, or 3d / 5h / 12m. */

@@ -1244,7 +1244,27 @@ export type Database = {
     Functions: {
       accept_invite: { Args: { p_code: string }; Returns: string };
       acquire_vessel: { Args: { p_vessel: string }; Returns: number };
-      capsule_throw: {
+      city_hunt_check_in: {
+        Args: {
+          p_accuracy: number;
+          p_hunt: string;
+          p_lat: number;
+          p_lng: number;
+        };
+        Returns: Json;
+      };
+      city_hunt_finish: {
+        Args: {
+          p_accuracy: number;
+          p_hunt: string;
+          p_lat: number;
+          p_lng: number;
+        };
+        Returns: Json;
+      };
+      city_hunt_join: { Args: { p_hunt: string }; Returns: Json };
+      city_hunt_list: { Args: { p_lat: number; p_lng: number }; Returns: Json };
+      corrupted_capsule_throw: {
         Args: {
           p_accuracy: number;
           p_ball: string;
@@ -1266,26 +1286,6 @@ export type Database = {
           xp_gained: number;
         }[];
       };
-      city_hunt_check_in: {
-        Args: {
-          p_accuracy: number;
-          p_hunt: string;
-          p_lat: number;
-          p_lng: number;
-        };
-        Returns: Json;
-      };
-      city_hunt_finish: {
-        Args: {
-          p_accuracy: number;
-          p_hunt: string;
-          p_lat: number;
-          p_lng: number;
-        };
-        Returns: Json;
-      };
-      city_hunt_join: { Args: { p_hunt: string }; Returns: Json };
-      city_hunt_list: { Args: { p_lat: number; p_lng: number }; Returns: Json };
       corrupted_nearby: {
         Args: { p_accuracy: number; p_lat: number; p_lng: number };
         Returns: Json;

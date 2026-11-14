@@ -80,7 +80,7 @@ alter function private.lock_owned_hunt(p_hunt text) rename to private_hunt_lock_
 
 alter function private.hunt_apply_draft(p_hunt text, p_draft jsonb) rename to private_hunt_apply_draft;
 
-alter function private.hunt_action(p_kind text, p_id uuid, p_lat double precision, p_lng double precision) rename to city_hunt_quest_progress;
+alter function private.hunt_action(p_kind text, p_id uuid, p_lat double precision, p_lng double precision) rename to city_hunt_record_quest;
 
 alter function private.hunt_object(p_hunt text, p_user uuid) rename to city_hunt_object;
 
@@ -460,7 +460,7 @@ revoke all on function public.city_hunt_finish(p_hunt text, p_lat double precisi
 
 grant execute on function public.city_hunt_finish(p_hunt text, p_lat double precision, p_lng double precision, p_accuracy double precision) to authenticated;
 
-CREATE OR REPLACE FUNCTION private.city_hunt_quest_progress(p_kind text, p_id uuid, p_lat double precision, p_lng double precision)
+CREATE OR REPLACE FUNCTION private.city_hunt_record_quest(p_kind text, p_id uuid, p_lat double precision, p_lng double precision)
  RETURNS void
  LANGUAGE plpgsql
  SECURITY DEFINER
@@ -536,20 +536,20 @@ CREATE OR REPLACE FUNCTION public.public_capsule_return(p_id uuid)
  SECURITY DEFINER
  SET search_path TO ''
 AS $function$
-declare c public.capsules; old_shore public.public_capsule_spots; next_shore public.public_capsule_spots;
+declare c public.capsules; previous_spot public.public_capsule_spots; next_spot public.public_capsule_spots;
 begin
   if auth.uid() is null then raise exception 'not signed in'; end if;
   select * into c from public.capsules where id = p_id for update;
   if c.id is null or not c.is_public or c.recipient is distinct from auth.uid() or c.opened_at is null then
     raise exception 'taken';
   end if;
-  select * into old_shore from public.public_capsule_spots where id = c.public_capsule_spot;
-  select * into next_shore from public.public_capsule_spots s
-    where s.id <> old_shore.id
-      and public.distance_m(s.lat, s.lng, old_shore.lat, old_shore.lng) >= 1000
-    order by case when s.city_en = old_shore.city_en then 0 else 1 end, random() limit 1;
-  if next_shore.id is null then raise exception 'no_shore'; end if;
-  update public.capsules set recipient = null, public_capsule_spot = next_shore.id,
+  select * into previous_spot from public.public_capsule_spots where id = c.public_capsule_spot;
+  select * into next_spot from public.public_capsule_spots s
+    where s.id <> previous_spot.id
+      and public.distance_m(s.lat, s.lng, previous_spot.lat, previous_spot.lng) >= 1000
+    order by case when s.city_en = previous_spot.city_en then 0 else 1 end, random() limit 1;
+  if next_spot.id is null then raise exception 'no_shore'; end if;
+  update public.capsules set recipient = null, public_capsule_spot = next_spot.id,
     open_at = now() + interval '1 day', public_capsule_returns = public_capsule_returns + 1,
     opened_at = null, seen_at = null, opened_lat = null, opened_lng = null,
     opened_distance_m = null, gift_code = null
@@ -633,7 +633,7 @@ begin
   insert into public.public_capsule_reports (capsule_id, reporter, reason)
     values (p_id, auth.uid(), p_reason) on conflict (capsule_id, reporter) do nothing;
   -- Reporting an opened bottle removes it from this finder's Inbox at once.
-  -- One report leaves it ashore for others; two reports hide it globally.
+  -- One report leaves it available for others; two reports hide it globally.
   if c.recipient = auth.uid() then
     update public.capsules set recipient = null, opened_at = null, seen_at = null,
       opened_lat = null, opened_lng = null, opened_distance_m = null,
@@ -748,7 +748,7 @@ revoke all on function public.game_nearby(p_lat double precision, p_lng double p
 
 grant execute on function public.game_nearby(p_lat double precision, p_lng double precision, p_accuracy double precision) to authenticated;
 
-CREATE OR REPLACE FUNCTION public.capsule_throw(p_spawn text, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text, p_ring double precision, p_hit boolean)
+CREATE OR REPLACE FUNCTION public.corrupted_capsule_throw(p_spawn text, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text, p_ring double precision, p_hit boolean)
  RETURNS TABLE(result text, vessel text, copies integer, stars integer, is_new boolean, xp_gained integer, wax_balls integer, gold_balls integer, attempts_left integer)
  LANGUAGE plpgsql
  SECURITY DEFINER
@@ -804,7 +804,7 @@ begin
       update public.corrupted_catches set result='caught',caught_at=now()
         where user_id=auth.uid() and spawn_id=p_spawn;
       is_new := not exists (select 1 from public.owned_vessels
-        where user_id=auth.uid() and public.owned_vessels.vessel=capsule_throw.vessel);
+        where user_id=auth.uid() and public.owned_vessels.vessel=corrupted_capsule_throw.vessel);
       insert into public.owned_vessels(user_id,vessel,copies)
         values(auth.uid(),vessel,1)
         on conflict on constraint owned_vessels_pkey do update
@@ -819,7 +819,7 @@ begin
         (now() at time zone 'UTC')::date::text,cfg.xp_first_daily_catch);
       result := 'restored';
       begin
-        perform private.city_hunt_quest_progress('restore',spot.id,p_lat,p_lng);
+        perform private.city_hunt_record_quest('restore',spot.id,p_lat,p_lng);
       exception when others then
         raise warning 'hunt restore bookkeeping failed: %',sqlerrm;
       end;
@@ -835,9 +835,9 @@ begin
 end $function$
 ;
 
-revoke all on function public.capsule_throw(p_spawn text, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text, p_ring double precision, p_hit boolean) from public,anon,authenticated;
+revoke all on function public.corrupted_capsule_throw(p_spawn text, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text, p_ring double precision, p_hit boolean) from public,anon,authenticated;
 
-grant execute on function public.capsule_throw(p_spawn text, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text, p_ring double precision, p_hit boolean) to authenticated;
+grant execute on function public.corrupted_capsule_throw(p_spawn text, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text, p_ring double precision, p_hit boolean) to authenticated;
 
 CREATE OR REPLACE FUNCTION public.landmark_start(p_waypost uuid, p_lat double precision, p_lng double precision, p_accuracy double precision)
  RETURNS TABLE(attempt_id uuid, cracks integer, expires_at timestamp with time zone)
@@ -926,7 +926,7 @@ begin
     xp_gained:=private.award_xp(auth.uid(),'landmark_win',post.place,cfg.xp_landmark);
     result:='won';
     begin
-      perform private.city_hunt_quest_progress('landmark',post.id,p_lat,p_lng);
+      perform private.city_hunt_record_quest('landmark',post.id,p_lat,p_lng);
     exception when others then
       raise warning 'hunt landmark bookkeeping failed: %',sqlerrm;
     end;
@@ -1044,7 +1044,7 @@ begin
   xp_gained:=private.award_xp(auth.uid(),'spin',spin_id::text,cfg.xp_spin);
   wax_balls:=pg.wax_balls; gold_balls:=pg.gold_balls;
   begin
-    perform private.city_hunt_quest_progress('spin',post.id,p_lat,p_lng);
+    perform private.city_hunt_record_quest('spin',post.id,p_lat,p_lng);
   exception when others then
     raise warning 'hunt spin bookkeeping failed: %',sqlerrm;
   end;
@@ -1532,7 +1532,7 @@ create or replace function public.sea_pick_up(p_id uuid, p_lat double precision,
 
 create or replace function public.corrupted_nearby(p_lat double precision, p_lng double precision, p_accuracy double precision) returns jsonb language sql set search_path='' as $wrapper$ select private.legacy_hunt_keys(public.game_nearby(p_lat, p_lng, p_accuracy)) $wrapper$;
 
-create or replace function public.corrupted_throw(p_spawn text, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text, p_ring double precision, p_hit boolean) returns TABLE(result text, vessel text, copies integer, stars integer, is_new boolean, xp_gained integer, wax_balls integer, gold_balls integer, attempts_left integer) language sql set search_path='' as $wrapper$ select * from public.capsule_throw(p_spawn, p_lat, p_lng, p_accuracy, p_ball, p_ring, p_hit) $wrapper$;
+create or replace function public.corrupted_throw(p_spawn text, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text, p_ring double precision, p_hit boolean) returns TABLE(result text, vessel text, copies integer, stars integer, is_new boolean, xp_gained integer, wax_balls integer, gold_balls integer, attempts_left integer) language sql set search_path='' as $wrapper$ select * from public.corrupted_capsule_throw(p_spawn, p_lat, p_lng, p_accuracy, p_ball, p_ring, p_hit) $wrapper$;
 
 create or replace function public.hunt_list(p_lat double precision, p_lng double precision) returns jsonb language sql set search_path='' as $wrapper$ select private.legacy_hunt_keys(public.city_hunt_list(p_lat, p_lng)) $wrapper$;
 

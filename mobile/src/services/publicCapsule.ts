@@ -1,11 +1,10 @@
 import { supabase } from "./supabase";
 
 // Public capsules use the normal capsule opening path after a server-checked pickup.
-export const PUBLIC_CAPSULE_BACKEND = true;
 export const PUBLIC_CAPSULE_ENABLED = true;
 export const PUBLIC_CAPSULE_RECIPIENT = "public-capsule";
 /** Existing portrait asset used by the public-capsule recipient. */
-export const PUBLIC_CAPSULE_AVATAR = { set: "illus", id: "sea" } as const;
+export const PUBLIC_CAPSULE_AVATAR = { set: "illus", id: "publicCapsule" } as const;
 export const PUBLIC_CAPSULE_MESSAGE_MAX = 280;
 export const PUBLIC_CAPSULE_PICKUP_RADIUS_M = 100;
 export const PUBLIC_CAPSULE_VISIBLE_RADIUS_M = 5000;
@@ -21,11 +20,15 @@ export type PublicCapsule = {
   returns: number; sender: PublicCapsuleSender;
 };
 export type ThrowResult = { id: string; spot_zh: string; spot_en: string; available_at: string };
-export type PublicCapsuleErrorCode = "too_far" | "taken" | "no_shore" | "rejected" | "own_bottle" | "unknown";
+export type PublicCapsuleErrorCode = "too_far" | "taken" | "no_spot" | "rejected" | "own_capsule" | "unknown";
 export class PublicCapsuleError extends Error { constructor(public code: PublicCapsuleErrorCode) { super(code); } }
-const CODES: PublicCapsuleErrorCode[] = ["too_far", "taken", "no_shore", "rejected", "own_bottle"];
+const CODES: PublicCapsuleErrorCode[] = ["too_far", "taken", "no_spot", "rejected", "own_capsule"];
 const fail = (error: { message?: string } | null) => {
-  if (error) throw new PublicCapsuleError(CODES.find((c) => error.message?.includes(c)) ?? "unknown");
+  if (error) {
+    // Preserve the previous server error protocol at this boundary.
+    const message = error.message?.replace("no_shore", "no_spot").replace("own_bottle", "own_capsule");
+    throw new PublicCapsuleError(CODES.find(c => message?.includes(c)) ?? "unknown");
+  }
 };
 const coords = (at: Coords) => ({ p_lat: at.lat, p_lng: at.lng, p_accuracy: at.accuracy });
 
@@ -47,7 +50,7 @@ export const publicCapsule = {
     fail(error);
   },
   async dropPublicCapsule(args: { message: string; hint: string; vessel: string; driftDays: DriftDays; at: Coords | null }): Promise<ThrowResult> {
-    if (!args.at) throw new PublicCapsuleError("no_shore");
+    if (!args.at) throw new PublicCapsuleError("no_spot");
     const { data, error } = await supabase.rpc("public_capsule_drop", {
       p_message: args.message.trim(), p_hint: args.hint.trim(), p_vessel: args.vessel,
       p_drift_days: args.driftDays, ...coords(args.at),

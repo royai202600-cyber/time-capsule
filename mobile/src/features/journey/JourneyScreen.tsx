@@ -1,65 +1,54 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Image, Linking, Platform, Pressable, Text, View } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { goBack } from "../../navigation";
-import { useAuth } from "../../services/auth";
-import { useCapsules, usePlaces } from "../../services/hooks";
-import { distanceMeters } from "../../services/data";
-import { useLanguage } from "../../i18n";
-import { haptics } from "../../components/haptics";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Linking, Platform, Pressable, Text, View } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { ArtIcon } from "../../components/ArtIcon";
 import { Avatar } from "../../components/Avatar";
+import { figureFor } from "../../components/Figure";
+import { haptics } from "../../components/haptics";
 import { Vessel, type VesselKind } from "../../components/Vessel";
-import { portraits, vesselParts } from "../../art/manifest";
+import { useLanguage } from "../../i18n";
+import { goBack } from "../../navigation";
+import { useAuth } from "../../services/auth";
+import { HuntError, hunt as hunts, keeperMark, onHuntChange, type Hunt } from "../../services/cityHunt";
+import { distanceMeters } from "../../services/data";
+import type { PassportHunt } from "../../services/game";
+import { game, GAME_ACTION_RADIUS_M, GAME_ENABLED, GameError, type CorruptedCapsule, type DevLetter, type GameState, type LandmarkAttempt, type Nearby, type Waypost } from "../../services/game";
+import { useCapsules, usePlaces } from "../../services/hooks";
+import { clockText } from "../../services/huntClock";
+import { inOrder, onPrivateHuntChange, PrivateHuntError, privateHunt as privateHunts, type LeaderRow, type PrivateHunt, type Quest } from "../../services/privateHunt";
+import { organizer } from "../../services/privateHuntOrganizer";
+import { MAP_PMTILES_URL, PUBLIC_CAPSULE_ENABLED, PUBLIC_CAPSULE_PICKUP_RADIUS_M, PUBLIC_CAPSULE_RECIPIENT, publicCapsule, PublicCapsuleError, type PublicCapsule } from "../../services/publicCapsule";
+import { supabase } from "../../services/supabase";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
-import { isTestLocationUser, setFakeLocation, useForegroundLocation } from "./location";
-import { Passport } from "./Passport";
+import { SpinScreen } from "../game/SpinScreen";
+import { errorKey, useGameText } from "../game/strings";
+import { ThrowScreen } from "../game/ThrowScreen";
+import { KeeperCard, QuestSheet, RunChip } from "../hunt/HuntViews";
+import { JoinPrivateSheet, LeaderboardSheet, PrivateHuntCard, QuestSheet as PrivateQuestSheet } from "../hunt/PrivateHuntViews";
+import { useHuntText } from "../hunt/strings";
+import { distanceText, timeLeftShort, usePublicCapsuleText } from "../publicCapsule/strings";
 import { CapsuleMapPage } from "./CapsuleMapPage";
-import { LiveMap } from "./live/LiveMap";
+import { GameCard } from "./GameCard";
+import { Chip, Pill, RoundButton } from "./JourneyControls";
+import { Item, portraitUri, vesselUri } from "./journeyModel";
 import { JourneyViewport } from "./JourneyViewport";
+import { LiveMap } from "./live/LiveMap";
+import { mapHtml } from "./live/mapHtml";
+import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
+import { isTestLocationUser, setFakeLocation, useForegroundLocation } from "./location";
+import { LocationGate } from "./LocationGate";
 import { filterCounts, shows, type MapFilter } from "./mapFilter";
 import { MapFilterSheet } from "./MapFilterSheet";
-import { mapHtml, MONUMENTS, monumentTop } from "./live/mapHtml";
-import { assetUri, type LiveMapHandle, type LivePin } from "./live/types";
-import type { Tables } from "../../services/database.types";
-import { MAP_PMTILES_URL, publicCapsule, PublicCapsuleError, PUBLIC_CAPSULE_ENABLED, PUBLIC_CAPSULE_PICKUP_RADIUS_M, type PublicCapsule } from "../../services/publicCapsule";
-import { daysSince, distanceText, timeLeftShort, usePublicCapsuleText } from "../publicCapsule/strings";
-import { supabase } from "../../services/supabase";
-import { game, GameError, GAME_ACTION_RADIUS_M, GAME_ENABLED, type GameState, type CorruptedCapsule, type DevLetter, type LandmarkAttempt, type Nearby, type Waypost } from "../../services/game";
-import { characters, gameArt } from "../../art/manifest";
-import { figureFor } from "../../components/Figure";
-import { crackOverlays } from "../../art/crackOverlays";
-import { SpinScreen } from "../game/SpinScreen";
-import { sceneKey } from "../game/waypostScene";
-import { ThrowScreen } from "../game/ThrowScreen";
-import { errorKey, useGameText } from "../game/strings";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { hunt as hunts, HuntError, huntStatus, keeperMark, onHuntChange, type Hunt } from "../../services/cityHunt";
-import { clockText } from "../../services/huntClock";
-import { huntStillOn, inOrder, locked as questLocked, onPrivateHuntChange, privateHunt as privateHunts, PrivateHuntError, type LeaderRow, type PrivateHunt, type Quest } from "../../services/privateHunt";
-import { organizer } from "../../services/privateHuntOrganizer";
-import { KeeperCard, keeperPortrait, QuestSheet, RunChip } from "../hunt/HuntViews";
-import { JoinPrivateSheet, LeaderboardSheet, QuestSheet as PrivateQuestSheet, PrivateHuntCard } from "../hunt/PrivateHuntViews";
-import { useHuntText } from "../hunt/strings";
-import { questImageUri, useQuestImages } from "../hunt/questImage";
-import type { PassportHunt } from "../../services/game";
+import { Passport } from "./Passport";
+import { SelectedCard } from "./SelectedCard";
+import { useCapsuleItems } from './useCapsuleItems';
+import { useCityHuntPins } from './useCityHuntPins';
+import { useGamePins } from "./useGamePins";
+import { usePrivateQuestPins } from "./usePrivateQuestPins";
 
-import { pointOpeningPlace } from "../capsule/model";
-
-type JourneyPin = { place: Tables<"places">; kind: "visited" | "waiting" | "other"; vessel?: string; waiting?: boolean };
-
-const FALLBACK = { lat: 22.19358, lng: 113.53917 }; // Senado Square, Macau (development only)
-type Item =
-  | { kind: "publicCapsule"; id: string; lat: number; lng: number; meters: number; publicCapsule: PublicCapsule }
-  | { kind: "place"; id: string; lat: number; lng: number; meters: number; pin: JourneyPin; capsuleId: string };
-
-const portraitUri = (avatar: unknown) => {
-  const a = avatar as { set?: string; id?: string } | null;
-  return assetUri(a?.set === "illus" && a.id ? portraits[a.id] : portraits["01"]);
-};
-const vesselUri = (kind: string) => assetUri(vesselParts[kind as VesselKind]?.assembled ?? vesselParts.bottle.assembled) ?? "";
-
+const FALLBACK = { lat: 22.19358, lng: 113.53917 };
 export default function JourneyScreen() {
   const insets = useSafeAreaInsets();
   const { session, profile } = useAuth();
@@ -154,12 +143,12 @@ export default function JourneyScreen() {
   const cell = you ? `${you.lat.toFixed(3)},${you.lng.toFixed(3)}` : "";
   const loadPublicCapsules = useCallback(async () => {
     if (!PUBLIC_CAPSULE_ENABLED || !you) return;
-    const test = __DEV__ && GAME_ENABLED ? game.devPublicCapsules(you) : [];
+    const test = __DEV__ && !userId && GAME_ENABLED ? game.devPublicCapsules(you) : [];
     setPublicCapsules(test);
     try {
       setPublicCapsules([...test, ...await publicCapsule.nearby(fix ? { lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy } : null)]);
-    } catch { /* the map still works without the sea */ }
-  }, [cell]);
+    } catch { /* the map still works without public capsules */ }
+  }, [cell, userId]);
   const loadGame = useCallback(async () => {
     const at = latestFix.current;
     if (!GAME_ENABLED || !at) return;
@@ -175,7 +164,7 @@ export default function JourneyScreen() {
     try {
       setPrivateList(await privateHunts.mine({ userId, at, previewAllowed }));
     } catch (e) { if (__DEV__) console.warn("private hunt list failed", e); }
-  }, [cell]);
+  }, [cell, userId]);
   useEffect(() => onHuntChange(() => { void loadGame(); }), [loadGame]);
   useEffect(() => onPrivateHuntChange(() => { void loadGame(); }), [loadGame]);
   useFocusEffect(useCallback(() => {
@@ -201,68 +190,13 @@ export default function JourneyScreen() {
 
   const capsules = capsuleData.data ?? [];
   const places = placeData.data ?? [];
-  const pins = useMemo<JourneyPin[]>(() => places.map((place) => {
-    const here = capsules.filter((capsule) => capsule.place === place.id);
-    const visited = here.some((capsule) => !!capsule.opened_at);
-    const waiting = here.find((capsule) => !capsule.opened_at);
-    return { place, kind: visited ? "visited" : waiting ? "waiting" : "other", vessel: waiting?.vessel, waiting: !!waiting };
-  }), [places, capsules]);
-  const stampRows = useMemo(() => places.map((place) => {
-    const openedAt = capsules.filter((capsule) => capsule.place === place.id && capsule.opened_at).map((capsule) => capsule.opened_at!).sort().at(-1) ?? passportStamps[place.id] ?? null;
-    return { place, openedAt };
-  }), [places, capsules, passportStamps]);
-
-  // Nearby Sea bottles and every received place capsule, including distant/opened ones.
-  const items = useMemo<Item[]>(() => {
-    if (!you) return [];
-    const m = (lat: number, lng: number) => distanceMeters(you.lat, you.lng, lat, lng);
-    const publicCapsuleItems: Item[] = publicCapsules.map((b) => ({ kind: "publicCapsule", id: b.id, lat: b.lat, lng: b.lng, meters: m(b.lat, b.lng), publicCapsule: b }));
-    const placeItems: Item[] = capsules.flatMap((capsule) => {
-      const point = pointOpeningPlace(capsule);
-      const pin: JourneyPin | undefined = point
-        ? { place: point, kind: capsule.opened_at ? "visited" : "waiting" }
-        : pins.find((p) => p.place.id === capsule.place);
-      return pin ? [{ kind: "place" as const, id: `place-${capsule.id}`, lat: pin.place.lat, lng: pin.place.lng,
-        meters: m(pin.place.lat, pin.place.lng), pin: { ...pin, vessel: capsule.vessel }, capsuleId: capsule.id }] : [];
-    });
-    return [...publicCapsuleItems, ...placeItems].sort((a, b) => a.meters - b.meters);
-  }, [publicCapsules, pins, capsules, you?.lat, you?.lng]);
+  const { items, stampRows } = useCapsuleItems(places, capsules, publicCapsules, you, passportStamps);
   const selected = items.find((i) => i.id === selectedId) ?? null;
 
   const metersTo = (lat: number, lng: number) => you ? distanceMeters(you.lat, you.lng, lat, lng) : Infinity;
-  // The open City Hunt, if any. The Letter Keeper stands only at its starting point.
-  const activeHunt = huntList.find((x) => huntStatus(x) === "open") ?? null;
-  const keeperMeters = activeHunt ? metersTo(activeHunt.keeper.lat, activeHunt.keeper.lng) : Infinity;
-  const showKeeper = !!activeHunt && (!!activeHunt.joined_at || keeperMeters <= 1500);
-  const questDot = !!activeHunt && (!activeHunt.joined_at || keeperMark(activeHunt) === "✓");
-  const huntPins = useMemo<LivePin[]>(() => activeHunt && showKeeper ? [{
-    id: `keeper-${activeHunt.id}`, lat: activeHunt.keeper.lat, lng: activeHunt.keeper.lng, kind: "keeper", vessel: "",
-    portrait: assetUri(keeperPortrait), figure: assetUri(characters.keeper), mark: keeperMark(activeHunt),
-  }] : [], [activeHunt, showKeeper]);
-  // A joined private hunt's quests: brass location pins, only ever visible to people who joined.
-  const questPhotos = useQuestImages(privateList.flatMap((ph) => ph.quests.map((w) => w.image)));
-  // Quest pins show only while the hunt is still on for you: gone once it closes, you finish, or your time runs out.
-  const questPins = useMemo<LivePin[]>(() => privateList.filter(huntStillOn).flatMap((ph) => inOrder(ph).map<LivePin>((w) => ({
-    id: `quest-${ph.id}-${w.id}`, lat: w.location_lat, lng: w.location_lng, kind: "quest", vessel: "",
-    quest: w.quest_type, done: !!w.done_at, locked: questLocked(ph, w), photo: questImageUri(w.image),
-    near: metersTo(w.location_lat, w.location_lng) <= GAME_ACTION_RADIUS_M,
-    tag: w.done_at ? undefined : h.pointsShort(w.points),
-  }))), [privateList, you?.lat, you?.lng, h, questPhotos]);
-  const cooling = (w: Waypost) => !!w.cooldown_until && new Date(w.cooldown_until).getTime() > Date.now();
-  const gamePins = useMemo<LivePin[]>(() => [
-    // Only what's inside the pickup circle shows, so capsules never crowd the map.
-    ...nearby.corrupted.filter((c) => c.id !== throwing?.id && metersTo(c.lat, c.lng) <= GAME_ACTION_RADIUS_M).map<LivePin>((c) => (
-      { id: `corrupted-${c.id}`, lat: c.lat, lng: c.lng, kind: "corrupted", vessel: vesselUri(c.vessel), cracks: assetUri(crackOverlays[c.vessel]) ?? undefined, rarity: c.rarity, near: true }
-    )),
-    ...nearby.wayposts.map<LivePin>((w) => {
-      // A Landmark with a monument is the building itself: its seal floats on top, at the real spot.
-      const monument = w.kind === "landmark" ? MONUMENTS.find((m) => m.id === w.place) : undefined;
-      return {
-      id: `way-${w.id}`, lat: monument?.lat ?? w.lat, lng: monument?.lng ?? w.lng, lift: monument ? monumentTop(monument) + 4 : undefined, kind: w.kind === "landmark" ? "landmark" : "waypost", vessel: assetUri(w.kind === "landmark" ? gameArt.landmarkGem : cooling(w) ? gameArt.waypostGem : gameArt.waypostGemBlue) ?? "",
-      done: cooling(w),
-      near: metersTo(w.lat, w.lng) <= GAME_ACTION_RADIUS_M,
-    }; }),
-  ], [nearby, throwing?.id, you?.lat, you?.lng]);
+  const { activeHunt, keeperMeters, questDot, huntPins } = useCityHuntPins(huntList, you);
+  const questPins = usePrivateQuestPins(privateList, you, h);
+  const gamePins = useGamePins(nearby, throwing, you);
 
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: you ?? FALLBACK }), [!!you]);
   // A private capsule: its own vessel, the sender's picture with a wax seal (public ones are always the bottle,
@@ -307,7 +241,7 @@ export default function JourneyScreen() {
   };
   const pickUp = async (item: Extract<Item, { kind: "publicCapsule" }>) => {
     if (busy) return;
-    if (item.id.startsWith("dev-bottle-")) {
+    if (item.id.startsWith("dev-public-capsule-")) {
       const letter = game.devPickUp(item.id);
       void haptics.success();
       setSelectedId(null); setDevLetter(letter);
@@ -324,7 +258,7 @@ export default function JourneyScreen() {
     } catch (e) {
       void haptics.warn();
       const code = e instanceof PublicCapsuleError ? e.code : "unknown";
-      setToast(code === "too_far" ? s("errTooFar") : code === "taken" ? s("errTaken") : code === "own_bottle" ? s("errOwn") : s("errUnknown"));
+      setToast(code === "too_far" ? s("errTooFar") : code === "taken" ? s("errTaken") : code === "own_capsule" ? s("errOwn") : s("errUnknown"));
       if (code === "taken") void loadPublicCapsules();
     } finally { setBusy(false); }
   };
@@ -541,7 +475,7 @@ export default function JourneyScreen() {
           {GAME_ENABLED && <RoundButton label={h.quest} dot={questDot} onPress={() => setQuestOpen(true)}><ArtIcon name="quest" size={26} color={C.blue} /></RoundButton>}
         </View>
         {PUBLIC_CAPSULE_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
-          onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: "publicCapsule" } }); }}
+          onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: PUBLIC_CAPSULE_RECIPIENT } }); }}
           style={({ pressed }) => ({ alignSelf: "center", flexShrink: 0, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: C.wax, borderRadius: radii.pill, paddingLeft: 8, paddingRight: 20, paddingVertical: 7, opacity: pressed ? .9 : 1, ...shadows.card })}>
           <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}><Vessel kind="hourglass" size={26} /></View>
           <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("throwCta")}</Text>
@@ -554,7 +488,7 @@ export default function JourneyScreen() {
     {devLetter && <View style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, zIndex: 35, gap: spacing.sm, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.lg, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
         <Avatar avatar={devLetter.publicCapsule.sender.avatar} size={36} />
-        <Text style={{ flex: 1, fontFamily: sans, fontSize: 12, color: C.brass }}>{s("seaPublicCapsule", devLetter.publicCapsule.sender.name)}</Text>
+        <Text style={{ flex: 1, fontFamily: sans, fontSize: 12, color: C.brass }}>{s("publicCapsuleFrom", devLetter.publicCapsule.sender.name)}</Text>
       </View>
       <Text style={{ fontFamily: serif, fontSize: 17, lineHeight: 26, color: C.ink }}>{devLetter.message}</Text>
       <Pressable accessibilityRole="button" onPress={() => setDevLetter(null)} style={{ alignItems: "center", backgroundColor: C.blue, borderRadius: radii.pill, paddingVertical: 11 }}>
@@ -565,13 +499,13 @@ export default function JourneyScreen() {
     {throwing && gameState && <ThrowScreen capsule={throwing} landmark={fight ?? undefined} state={gameState} onState={setGameState}
       onClose={() => { setThrowing(null); setFight(null); map.current?.recenter(); void loadGame(); }} />}
     <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows}
-      hunts={[...huntStamps, ...hunts.previewStamps().filter((p) => !huntStamps.some((x) => x.id === p.id))]}
-      privateHunts={[...privateHuntStamps, ...privateHunts.demoStamps()]} />
+      hunts={[...huntStamps, ...(__DEV__ && !userId ? hunts.previewStamps() : []).filter((p) => !huntStamps.some((x) => x.id === p.id))]}
+      privateHunts={[...privateHuntStamps, ...(__DEV__ && !userId ? privateHunts.demoStamps() : [])]} />
     <QuestSheet visible={questOpen} hunts={huntList} busy={busy} onClose={() => setQuestOpen(false)} onJoin={(x) => void joinHunt(x)} onShowOnMap={showHunt}
       privateTab={{
         count: privateList.length,
         onEnterCode: () => { setQuestOpen(false); setLinkCode(null); setJoinFound(null); setJoinError(null); setJoinOpen(true); },
-        onMyHunts: organizer.canCreate(profile, __DEV__ || isTestLocationUser(userId)) ? () => { setQuestOpen(false); router.push("/hunts"); } : undefined,
+        onMyHunts: organizer.canCreate(profile) ? () => { setQuestOpen(false); router.push("/hunts"); } : undefined,
         children: privateList.map((ph) => <PrivateHuntCard key={ph.id} hunt={ph}
           onShowOnMap={showQuests} onLeaderboard={showLeaderboard} onReport={reportPrivate}
           onOpenQuest={(x, w) => { setQuestOpen(false); setQuestError(null); setQuest({ hunt: x.id, quest: w.id }); map.current?.focus(w.location_lat, w.location_lng); }} />),
@@ -587,117 +521,4 @@ export default function JourneyScreen() {
   </JourneyViewport>;
 }
 
-type GameCardValue = { waypost: Waypost; meters: number };
-function GameCard({ card, busy, g, language, onChallenge }: {
-  card: GameCardValue; busy: boolean; g: ReturnType<typeof useGameText>; language: "zh" | "en"; onChallenge: (w: Waypost) => void;
-}) {
-  const near = card.meters <= GAME_ACTION_RADIUS_M;
-  const left = distanceText(Math.max(0, card.meters - GAME_ACTION_RADIUS_M));
-  const landmark = card.waypost.kind === "landmark";
-  const title = language === "zh" ? card.waypost.name_zh : card.waypost.name_en;
-  const note = near ? "" : landmark ? g("challengeWalkCloser", left) : g("spinWalkCloser", left);
-  return <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", gap: spacing.sm, backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
-    {landmark && <Image source={gameArt.wheel[sceneKey(card.waypost)]} resizeMode="cover" style={{ width: 112, height: 112, borderRadius: 56, borderWidth: 4, borderColor: C.brass, alignSelf: "center" }} />}
-    <Text style={{ fontFamily: serif, fontSize: 18, color: C.ink, textAlign: landmark ? "center" : "left" }}>{title}</Text>
-    {!!note && <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{note}</Text>}
-    {landmark && near && <Pressable accessibilityRole="button" disabled={busy} onPress={() => onChallenge(card.waypost)} style={{ alignItems: "center", backgroundColor: C.plum, borderRadius: radii.pill, paddingVertical: 11, opacity: busy ? .6 : 1 }}>
-      <Text style={{ fontFamily: serif, fontSize: 15, color: C.white }}>{g("challenge")}</Text>
-    </Pressable>}
-  </View>;
-}
-
-function SelectedCard({ item, busy, count, index, onStep, onPickUp, onDirections, onView, onMap }: {
-  item: Item; busy: boolean; count: number; index: number; onStep: (d: 1 | -1) => void;
-  onPickUp: (i: Extract<Item, { kind: "publicCapsule" }>) => void; onDirections: (lat: number, lng: number) => void;
-  onView: (i: Extract<Item, { kind: "place" }>) => void; onMap: (i: Extract<Item, { kind: "place" }>) => void;
-}) {
-  const s = usePublicCapsuleText();
-  const { t, language } = useLanguage();
-  const near = item.meters <= PUBLIC_CAPSULE_PICKUP_RADIUS_M;
-  const nav = <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-    <Small onPress={() => onStep(-1)} label="‹" />
-    <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{index + 1} / {count}</Text>
-    <Small onPress={() => onStep(1)} label="›" />
-  </View>;
-  if (item.kind === "place") {
-    const name = language === "zh" ? item.pin.place.name_zh : item.pin.place.name_en;
-    return <View style={{ gap: spacing.sm }}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-        <Vessel kind={(item.pin.vessel ?? "dome") as VesselKind} size={48} idle />
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontFamily: sans, fontSize: 11, color: C.brass }}>{s("yourCapsule")}</Text>
-          <Text style={{ fontFamily: serif, fontSize: 17, color: C.ink }}>{name}</Text>
-          <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{near ? s("here") : s("away", distanceText(item.meters))}</Text>
-        </View>
-        {nav}
-      </View>
-      <View style={{ flexDirection: "row", gap: spacing.sm }}>
-        <Btn flex title={t("journey.viewCapsule")} onPress={() => onView(item)} />
-        <Btn flex quiet title={t("journey.viewMap")} onPress={() => onMap(item)} />
-      </View>
-    </View>;
-  }
-  const b = item.publicCapsule;
-  return <View style={{ gap: spacing.sm }}>
-    <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-      <View>
-        <Vessel kind="bottle" size={52} idle />
-        <View style={{ position: "absolute", right: -6, top: -4, borderRadius: 14, borderWidth: 2, borderColor: C.white }}><Avatar avatar={b.sender.avatar} size={24} /></View>
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 11, color: C.brass }}>{s("seaPublicCapsule", b.sender.name)}</Text>
-        <Text numberOfLines={2} style={{ fontFamily: serif, fontSize: 17, color: C.ink }}>「{b.hint}」</Text>
-        <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>
-          {[b.sender.city ? s("fromCity", b.sender.city) : null, s("drifted", daysSince(b.sealed_at)), b.returns ? s("returns", b.returns) : null].filter(Boolean).join(" · ")}
-        </Text>
-      </View>
-      {nav}
-    </View>
-    {near
-      ? <Btn title={busy ? s("picking") : s("pickUp")} disabled={busy} onPress={() => onPickUp(item)} />
-      : <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-        <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, color: C.blue }}>{s("walkCloser", distanceText(item.meters - PUBLIC_CAPSULE_PICKUP_RADIUS_M))}</Text>
-        <Btn quiet title={s("navigate")} onPress={() => onDirections(item.lat, item.lng)} />
-      </View>}
-  </View>;
-}
-
-function LocationGate({ status, onAllow, onSettings }: { status: string; onAllow: () => void; onSettings: () => void }) {
-  const s = usePublicCapsuleText();
-  const { t } = useLanguage();
-  return <SafeAreaView style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.lg, gap: spacing.md, backgroundColor: C.glass }}>
-    <Vessel kind="hourglass" size={130} idle />
-    <Text style={{ fontFamily: sans, color: C.ink, textAlign: "center", lineHeight: 22, maxWidth: 360 }}>{status === "denied" ? (Platform.OS === "web" ? t("journey.locationDeniedWeb") : s("locationDenied")) : status === "checking" || status === "granted" ? s("locationWaiting") : s("locationAsk")}</Text>
-    {status === "denied" && <Btn title={Platform.OS === "web" ? t("retry") : s("openSettings")} onPress={Platform.OS === "web" ? onAllow : onSettings} />}
-    {(status === "explain" || status === "unavailable") && <Btn title={s("locationAllow")} onPress={onAllow} />}
-  </SafeAreaView>;
-}
-
-function RoundButton({ children, label, onPress, dot }: { children: React.ReactNode; label: string; onPress: () => void; dot?: boolean }) {
-  return <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={() => { void haptics.tap(); onPress(); }}
-    style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}>
-    {children}
-    {dot && <View style={{ position: "absolute", top: 4, right: 4, width: 11, height: 11, borderRadius: 6, backgroundColor: C.wax, borderWidth: 2, borderColor: C.white }} />}
-  </Pressable>;
-}
 const FILTER_LABEL = { capsules: "filterCapsules", cityHunt: "filterCityHunt", privateHunt: "filterPrivateHunt" } as const;
-function Chip({ children, onPress, label, translucent = false, active = false }: { children: React.ReactNode; onPress: () => void; label: string; translucent?: boolean; active?: boolean }) {
-  return <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress}
-    style={{ minWidth: 44, height: 44, paddingHorizontal: 8, borderRadius: 22, backgroundColor: active ? C.blue : translucent ? "rgba(246,248,251,.9)" : "rgba(246,248,251,.94)", alignItems: "center", justifyContent: "center", ...shadows.card }}>{children}</Pressable>;
-}
-function Pill({ onPress, label }: { onPress: () => void; label: string }) {
-  return <Pressable accessibilityRole="button" onPress={onPress} style={{ backgroundColor: C.ink, borderRadius: radii.pill, paddingHorizontal: 14, paddingVertical: 9, ...shadows.card }}>
-    <Text style={{ fontFamily: sans, fontSize: 13, color: C.brass }}>{label}</Text>
-  </Pressable>;
-}
-function Small({ onPress, label }: { onPress: () => void; label: string }) {
-  return <Pressable accessibilityRole="button" onPress={onPress} hitSlop={8} style={{ width: 28, height: 28, borderRadius: 14, borderWidth: 1, borderColor: C.line, alignItems: "center", justifyContent: "center" }}>
-    <Text style={{ fontFamily: serif, fontSize: 16, color: C.blue, marginTop: -2 }}>{label}</Text>
-  </Pressable>;
-}
-function Btn({ title, onPress, quiet, disabled, flex }: { title: string; onPress: () => void; quiet?: boolean; disabled?: boolean; flex?: boolean }) {
-  return <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress}
-    style={({ pressed }) => ({ flex: flex ? 1 : undefined, borderRadius: 14, paddingVertical: 12, paddingHorizontal: spacing.md, alignItems: "center", backgroundColor: quiet ? C.white : C.blue, borderWidth: quiet ? 1.5 : 0, borderColor: C.blue, opacity: disabled ? .5 : pressed ? .85 : 1 })}>
-    <Text style={{ fontFamily: sans, fontWeight: "600", color: quiet ? C.blue : C.white }}>{title}</Text>
-  </Pressable>;
-}

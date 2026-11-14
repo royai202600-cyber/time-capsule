@@ -1,13 +1,12 @@
-// City Hunt (docs/design/city-hunt.md). Signed-in players use the server functions in the backend
-// contract. Until those are live, development and the test account get a preview that counts
-// progress on this device only and grants no reward.
+// City Hunt (docs/design/city-hunt.md). Signed-in players use the server functions.
+// Signed-out development retains a preview that counts progress on this device only
+// and grants no reward.
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { supabase } from "./supabase";
 import { distanceMeters } from "./data";
 import { GAME_ACTION_RADIUS_M, cityHuntNameZh, onGameEvent, type Coords, type Waypost } from "./game";
 import { runClock } from "./huntClock";
 
-export const HUNT_TIMED_BACKEND = true;
 
 import type { CityHuntQuestType } from "./questTypes";
 export type { CityHuntQuestType } from "./questTypes";
@@ -27,7 +26,7 @@ export type Hunt = {
   /** Timed runs (docs/design/city-orienteering.md). Absent until the backend returns them: the hunt is then untimed. */
   time_limit_min?: number | null; run_started_at?: string | null; run_ends_at?: string | null;
   best_s?: number | null; today_s?: number | null; finished_today?: boolean;
-  /** Counted on this device only, before the backend is live. */
+  /** Signed-out development preview, counted on this device only. */
   preview?: boolean;
 };
 export type HuntFinish = { hunt: Hunt; xp_gained: number; gold_gained: number };
@@ -50,7 +49,7 @@ export const questGoal = (h: Hunt, key: CityHuntQuestType) => h.quests.find((s) 
 export const huntStatus = (h: Hunt, now = Date.now()) =>
   now < new Date(h.starts_at).getTime() ? "upcoming" : now > new Date(h.ends_at).getTime() ? "closed" : "open";
 const quest = (h: Hunt, key: CityHuntQuestType) => h.quests.find((s) => s.key === key);
-/** Steps between check-in and the return are all done: time to go back to the Keeper. */
+/** Quests between check-in and the return are all done: time to go back to the Keeper. */
 export const readyToReturn = (h: Hunt) => !!h.checked_in_at && !h.finished_at
   && h.quests.filter((s) => s.key !== "checkin" && s.key !== "return").every((s) => s.count >= s.goal);
 /** The seal over the Keeper's head: ! (a quest for you), ✓ (come back) or nothing. */
@@ -75,8 +74,7 @@ const fail = (e: { message?: string } | null) => {
 };
 const fromServer = (hunt: Hunt): Hunt => {
   const named = { ...hunt, name_zh: cityHuntNameZh(hunt.name_zh) };
-  if (HUNT_TIMED_BACKEND) return named;
-  return { ...named, time_limit_min: null, run_started_at: null, run_ends_at: null, best_s: null, today_s: null, finished_today: undefined };
+  return named;
 };
 const signedIn = async () => !!(await supabase.auth.getSession()).data.session;
 
@@ -98,13 +96,7 @@ const key = () => `tc-hunt-preview-${previewUser}-${previewHunt?.id}`;
 const save = () => { void AsyncStorage.setItem(key(), JSON.stringify(progress)).catch(() => {}); changed.forEach((l) => l()); };
 const offset = (at: Coords, north: number, east: number) => ({ lat: at.lat + north / 110540, lng: at.lng + east / (111320 * Math.cos(at.lat * Math.PI / 180)) });
 
-function buildPreview(at: Coords, known: Waypost[], live: boolean): Hunt | null {
-  const name = (w: Waypost) => w.name_en;
-  if (live) {
-    // The real Xinyi hunt, matched to the live Wayposts by name.
-    const landmark = known.find((w) => w.kind === "landmark" && name(w) === XINYI.landmark)?.id ?? previewHunt?.landmark ?? "";
-    return asPreview({ ...XINYI, landmark });
-  }
+function buildPreview(at: Coords, known: Waypost[]): Hunt {
   // Signed out in development: a small hunt around wherever you are, using the stand-in Wayposts.
   if (previewHunt && previewHunt.id === "dev-hunt") return previewHunt;
   return asPreview({
@@ -145,8 +137,8 @@ onGameEvent((e) => {
 // Live hunts: the server counts. Tell the screen to refresh after any counted action.
 onGameEvent(() => { if (!previewHunt) changed.forEach((l) => l()); });
 
-async function loadPreview(userId: string, at: Coords, known: Waypost[], live: boolean): Promise<Hunt[]> {
-  const next = buildPreview(at, known, live);
+async function loadPreview(userId: string, at: Coords, known: Waypost[]): Promise<Hunt[]> {
+  const next = buildPreview(at, known);
   if (!next) return [];
   if (previewUser !== userId || previewHunt?.id !== next.id) {
     previewUser = userId; previewHunt = next;
@@ -168,7 +160,7 @@ export const hunt = {
       if (!missing(error)) fail(error);
       liveMissing = true;
     }
-    return args.previewAllowed ? loadPreview(args.userId, args.at, args.known, live) : [];
+    return __DEV__ && !live && args.previewAllowed ? loadPreview(args.userId, args.at, args.known) : [];
   },
   async join(h: Hunt): Promise<Hunt> {
     if (!h.preview) { const { data, error } = await rpc("city_hunt_join", { p_hunt: h.id }); fail(error); return fromServer(data as Hunt); }

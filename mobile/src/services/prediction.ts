@@ -3,8 +3,7 @@ import type { Database } from "./database.types";
 
 // Prediction text stays in capsule_contents. Only the recipient can open it;
 // after opening, the sender gets the prediction alone through its narrow RPC.
-export const PREDICTION_BACKEND = true;
-export const PREDICTION_ENABLED = PREDICTION_BACKEND || __DEV__;
+export const PREDICTION_ENABLED = true;
 export const PREDICTION_MAX = 140;
 
 export type CapsuleKind = "letter" | "prediction";

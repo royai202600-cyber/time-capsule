@@ -1,11 +1,9 @@
 // The organizer's side of a private hunt (docs/design/city-orienteering.md, Part B): create a hunt, put
-// its quests and quests on the map, publish it as a code, then review how people are doing.
-// Signed-in organizers use the server functions in the backend contract; until those are live, a
-// device-only draft lets the screens be walked through. Nothing here grants any game reward.
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// its quest pins on the map, publish it as a code, then review how people are doing.
+// Organizers use the server functions. Nothing here grants any game reward.
 import { supabase } from "./supabase";
 import {
-  HUNT_PRIVATE_BACKEND, PrivateHuntError, byRank, cleanCode, totalPoints,
+  PrivateHuntError, byRank, cleanCode, totalPoints,
   type LeaderRow, type PrivateHuntQuestType, type PrivateHunt, type Quest,
 } from "./privateHunt";
 
@@ -44,13 +42,6 @@ export const LIMITS = {
   name: 60, description: 500, answer: 80, choices: 6, points: 999,
 } as const;
 
-/** Six characters with no 0/O or 1/I, so a code read aloud or off a poster cannot be mistyped. */
-const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-export function makeCode(random: () => number = Math.random) {
-  let code = "";
-  for (let i = 0; i < 6; i++) code += ALPHABET[Math.floor(random() * ALPHABET.length)];
-  return code;
-}
 /** The link an organizer shares. The app and the website both open it. */
 export const shareLink = (code: string) => `https://time-capsule-pi-two.vercel.app/hunt/${cleanCode(code)}`;
 export const appLink = (code: string) => `timecapsule://hunt/${cleanCode(code)}`;
@@ -138,156 +129,51 @@ const fail = (e: { message?: string } | null) => {
   const m = e.message ?? "";
   throw new PrivateHuntError(/hunt_locked/.test(m) ? "hunt_locked" : /not allowed|permission|can_create/i.test(m) ? "not_allowed" : "unknown");
 };
-const signedIn = async () => !!(await supabase.auth.getSession()).data.session;
-
-// ---------- device-only drafts ----------
-// Until the organizer RPCs land, hunts an organizer makes live on this device so the screens can be
-// walked through end to end. They are never visible to anyone else, and no player can join them.
-type Stored = { draft: HuntDraft; quests: QuestDraft[]; status: HuntStatus; code: string | null; created_at: string };
-let user = "";
-let hunts: Record<string, Stored> = {};
-const changed = new Set<() => void>();
-export const onOwnedHuntsChange = (l: () => void) => { changed.add(l); return () => { changed.delete(l); }; };
-const key = () => `tc-hunt-organizer-${user}`;
-const save = () => { void AsyncStorage.setItem(key(), JSON.stringify(hunts)).catch(() => {}); changed.forEach((l) => l()); };
-async function load(userId: string) {
-  if (user === userId) return;
-  user = userId; hunts = {};
-  try { const raw = await AsyncStorage.getItem(key()); if (raw) hunts = JSON.parse(raw); } catch { /* start fresh */ }
-}
-/** A stored draft as the rest of the app sees a hunt. */
-function asOwned(id: string, s: Stored): OwnedHunt {
-  const quests: Quest[] = s.quests.map((w) => ({
-    id: w.id ?? `${id}-${w.ordinal}`, ordinal: w.ordinal, name: w.name, location_lat: w.location_lat, location_lng: w.location_lng,
-    quest_type: w.quest_type, points: w.points, description: w.description || null, image: w.image ?? null,
-    arrive_check: w.quest_type === "arrive" ? w.arrive_check : null,
-    puzzle_kind: w.quest_type === "puzzle" ? w.puzzle_kind : null,
-    choices: w.quest_type === "puzzle" && w.puzzle_kind === "choice" ? w.choices.filter((c) => c.trim()) : null,
-    done_at: null,
-  }));
-  return {
-    id, status: s.status, joined: 0, join_code: s.code,
-    name: s.draft.name, description: s.draft.description, cover: s.draft.cover,
-    area: huntArea(s.quests.map(q => ({ lat: q.location_lat, lng: q.location_lng }))), route_mode: s.draft.route_mode, leaderboard_visible: s.draft.leaderboard_visible,
-    starts_at: s.draft.starts_at, ends_at: s.draft.ends_at, time_limit_min: s.draft.time_limit_min,
-    joined_at: null, finished_at: null, points: 0, quests, preview: true,
-  };
-}
-
 export const organizer = {
-  /**
-   * Whether this account may create hunts. During the pilot it is an allow-list the server owns
-   * (`profiles.can_create_hunts`); development and the test account may always try.
-   */
-  // Read loosely: `profiles.can_create_hunts` arrives with Codex's P1, so the generated types
-  // do not carry it yet.
-  canCreate(profile: Record<string, unknown> | null | undefined, previewAllowed: boolean) {
-    return HUNT_PRIVATE_BACKEND ? profile?.can_create_hunts === true : previewAllowed;
+  /** Whether this account is on the server-owned organizer allow-list. */
+  canCreate(profile: Record<string, unknown> | null | undefined) {
+    return profile?.can_create_hunts === true;
   },
   async mine(userId: string): Promise<OwnedHunt[]> {
-    if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { data, error } = await rpc("private_hunt_organized");
-      fail(error); return (data as OwnedHunt[] | null) ?? [];
-    }
-    await load(userId);
-    return Object.entries(hunts)
-      .sort((a, b) => b[1].created_at.localeCompare(a[1].created_at))
-      .map(([id, s]) => asOwned(id, s));
+    const { data, error } = await rpc("private_hunt_organized");
+    fail(error); return (data as OwnedHunt[] | null) ?? [];
   },
   /** `locked`: someone has joined, so the route, times and quests can no longer change (the server refuses with hunt_locked). */
   async get(userId: string, id: string): Promise<{ draft: HuntDraft; quests: QuestDraft[]; status: HuntStatus; code: string | null; locked?: boolean }> {
-    if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { data, error } = await rpc("private_hunt_edit_state", { p_hunt: id });
-      fail(error); return data as { draft: HuntDraft; quests: QuestDraft[]; status: HuntStatus; code: string | null; locked: boolean };
-    }
-    await load(userId);
-    const s = hunts[id];
-    if (!s) throw new PrivateHuntError("unknown");
-    return { draft: s.draft, quests: s.quests, status: s.status, code: s.code };
+    const { data, error } = await rpc("private_hunt_edit_state", { p_hunt: id });
+    fail(error); return data as { draft: HuntDraft; quests: QuestDraft[]; status: HuntStatus; code: string | null; locked: boolean };
   },
   async create(userId: string, draft: HuntDraft): Promise<string> {
-    if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { data, error } = await rpc("private_hunt_create", { p_draft: draft });
-      fail(error); return (data as { id: string }).id;
-    }
-    await load(userId);
-    const open = Object.values(hunts).filter((h) => h.status !== "closed").length;
-    if (open >= LIMITS.unfinishedHunts) throw new PrivateHuntError("too_many");
-    const id = `draft-${Date.now()}`;
-    hunts[id] = { draft, quests: [], status: "draft", code: null, created_at: new Date().toISOString() };
-    save();
-    return id;
+    const { data, error } = await rpc("private_hunt_create", { p_draft: draft });
+    fail(error); return (data as { id: string }).id;
   },
   async update(userId: string, id: string, draft: HuntDraft): Promise<void> {
-    if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { error } = await rpc("private_hunt_update", { p_hunt: id, p_draft: draft });
-      fail(error); return;
-    }
-    await load(userId);
-    if (!hunts[id]) throw new PrivateHuntError("unknown");
-    hunts[id].draft = draft; save();
+    const { error } = await rpc("private_hunt_update", { p_hunt: id, p_draft: draft });
+    fail(error); return;
   },
   async saveQuest(userId: string, id: string, w: QuestDraft): Promise<void> {
-    if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { error } = await rpc("private_hunt_quest_save", { p_hunt: id, p_quest: w });
-      fail(error); return;
-    }
-    await load(userId);
-    const s = hunts[id];
-    if (!s) throw new PrivateHuntError("unknown");
-    const at = s.quests.findIndex((x) => x.id && x.id === w.id);
-    if (w.arrive_check === "gps_qr" && !w.qr_token) w = { ...w, qr_token: makeCode() + makeCode() };
-    if (at >= 0) s.quests[at] = w;
-    else {
-      if (s.quests.length >= LIMITS.quests) throw new PrivateHuntError("too_many");
-      s.quests.push({ ...w, id: `${id}-wp-${Date.now()}` });
-    }
-    save();
+    const { error } = await rpc("private_hunt_quest_save", { p_hunt: id, p_quest: w });
+    fail(error); return;
   },
   async deleteQuest(userId: string, id: string, questId: string): Promise<void> {
-    if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { error } = await rpc("private_hunt_quest_delete", { p_quest: questId });
-      fail(error); return;
-    }
-    await load(userId);
-    const s = hunts[id];
-    if (!s) throw new PrivateHuntError("unknown");
-    s.quests = s.quests.filter((w) => w.id !== questId);
-    save();
+    const { error } = await rpc("private_hunt_quest_delete", { p_quest: questId });
+    fail(error); return;
   },
-  /** Publishing mints the join code. The server owns the real one; the draft makes a local stand-in. */
+  /** Publishing mints the join code on the server. */
   async publish(userId: string, id: string): Promise<string> {
-    if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { data, error } = await rpc("private_hunt_publish", { p_hunt: id });
-      fail(error); return (data as { join_code: string }).join_code;
-    }
-    await load(userId);
-    const s = hunts[id];
-    if (!s) throw new PrivateHuntError("unknown");
-    if (!canPublish(s.draft, s.quests)) throw new PrivateHuntError("not_ready");
-    s.status = "published"; s.code ??= makeCode(); save();
-    return s.code;
+    const { data, error } = await rpc("private_hunt_publish", { p_hunt: id });
+    fail(error); return (data as { join_code: string }).join_code;
   },
   async close(userId: string, id: string): Promise<void> {
-    if (HUNT_PRIVATE_BACKEND && await signedIn()) {
-      const { error } = await rpc("private_hunt_close", { p_hunt: id });
-      fail(error); return;
-    }
-    await load(userId);
-    if (!hunts[id]) throw new PrivateHuntError("unknown");
-    hunts[id].status = "closed"; save();
+    const { error } = await rpc("private_hunt_close", { p_hunt: id });
+    fail(error); return;
   },
   /** How everyone is doing. The organizer sees names, points and times, never live positions. */
   async review(userId: string, hunt: OwnedHunt): Promise<Review> {
-    if (!hunt.preview) {
-      const { data, error } = await rpc("private_hunt_review", { p_hunt: hunt.id });
-      fail(error);
-      const r = data as Review;
-      return { ...r, members: byRank(r.members) };
-    }
-    await load(userId);
-    // A device-only draft has no players yet, so the review is honestly empty.
-    return { members: [], stats: { joined: 0, finished: 0, per_quest: hunt.quests.map((w) => ({ id: w.id, done: 0 })) } };
+    const { data, error } = await rpc("private_hunt_review", { p_hunt: hunt.id });
+    fail(error);
+    const r = data as Review;
+    return { ...r, members: byRank(r.members) };
   },
   /** Points on offer, for the editor's summary line. */
   totalPoints,

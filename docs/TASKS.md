@@ -1,6 +1,6 @@
 # Task board
 
-Part B PR #124 progress (2026-11-14): B1+B2 server/app vocabulary and compatibility are implemented and locally verified, with hosted rollback only. Migration 20261114080044 is held for Claude. B4 is complete. B3 switches, B5 translations, B6 Journey and the final full browser matrix remain.
+Part B PR #124 (2026-11-14): Claude’s four review corrections and B1–B6 are implemented on `codex/tidy-names`. All seven permanent backend switches and unreachable organizer/voice stubs are removed; only signed-out development Journey demos remain. Feature dictionaries preserve all 744 screen keys’ zh/en values and have bilingual coverage; Journey layers/cards are separate modules. TypeScript, 168 tests, Expo dependency check, web/iOS exports, real-JWT suites and the 375 px zh/en interaction matrix pass. Production UI comparisons use disposable local data through the old-name wrappers; no layout or copy regression was found. Hosted rollback preserved all table security and RLS policies and found no helper/table collisions. Migration `20261114080044` is still unapplied. Await Claude’s final review; no merge or deployment.
 
 2026-11-14 release: Waypost discovery now reaches 5 km, the Expo test account has organizer access, the Civic Square placeholder place name was fixed, and PR #123 was merged after green CI. The naming refactor is a separate review before migration.
 

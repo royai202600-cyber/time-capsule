@@ -1,13 +1,13 @@
 # Time Capsule mobile foundation
 
-Expo SDK 58 / React Native / TypeScript. The Expo web export is the production web app; the root Vite app remains in the repository.
+Expo SDK 58 / React Native / TypeScript. The Expo web export is the production web app. The retired root Vite app is preserved in Git history.
 
 ## Run
 
 1. Install Node LTS and run `npm install` in `mobile/`.
 2. Copy `.env.example` to `.env` and fill in the Supabase **publishable** URL and key. Never put a service key here.
-3. Run `npm start` (which selects Expo Go) and scan the QR code with Expo Go on a phone on the same network. Use `npx expo start --go --tunnel` when LAN is unavailable. Press `w` for web or run `npm run web`.
-4. Use `npm run typecheck` for TypeScript. The root web app still builds with `npm run build` from the repository root.
+3. Run `npm start` (which selects Expo Go) and scan the QR code with Expo Go on a phone on the same network. Use `npm start -- --tunnel` when LAN is unavailable. Expo Go uses port 8087. For web, run `npm run web` and open http://localhost:8088.
+4. Use `npm run typecheck` for TypeScript. The app has no separate root build.
 
 The bilingual privacy, terms and support pages live in `public/` and are copied into the web export. On Vercel they are served at `/privacy`, `/terms` and `/support` before the Expo app fallback route.
 
@@ -15,7 +15,7 @@ Expo Go cannot support the app-specific OAuth scheme; Google sign-in requires an
 
 ## Checks
 
-From `mobile/`, run `npm ci`, `npm test`, `npm run typecheck`, `npx expo install --check`, and `npx expo export --platform web`. From the repository root, run `npm ci` and `npm run build`. CI runs these on pull requests and cancels superseded runs for the same PR.
+From `mobile/`, run `npm ci`, `npm test`, `npm run typecheck`, `npx expo install --check`, and `npx expo export --platform web`. Also run `npx expo export --platform ios` for native export verification. CI runs the mobile checks and web export on pull requests and cancels superseded runs for the same PR.
 
 ## Layout and conventions
 
@@ -24,13 +24,13 @@ From `mobile/`, run `npm ci`, `npm test`, `npm run typecheck`, `npx expo install
 - `src/components/`: shared UI; `src/art/manifest.ts` registers WebP illustrations from the repository's `public/art/` through Metro. Legacy SVG vessels and avatars remain available as fallbacks.
 - `src/services/`: Supabase client, auth state, and existing table/RPC access. Do not read `capsule_contents` directly.
 - `src/theme.ts`: colours, font names, spacing, shadows, motion; `src/components/haptics.ts` is the haptic vocabulary.
-- `src/i18n/webStrings.ts` mirrors the web keys; add translations to both languages and use `useLanguage().t` in UI.
+- `src/features/*/strings.ts` owns each feature’s bilingual copy. `src/i18n/strings.ts` combines the shared screen lookup; `useLanguage().t` and `useScreenText` keep the existing keys and formatting. The bilingual-key test covers every feature dictionary.
 
 Metro watches the repository root and resolves packages from `mobile/node_modules`. This keeps one copy of each art file. The feel demo playground and CanvasKit bundle were removed after the app screens took over.
 
 ## Opening the project on a phone
 
-Use Expo Go rather than the phone browser for an `exp://` or `exps://` link. If a LAN QR times out, start a separate tunnel with `npx expo start --go --tunnel --port 8085` and scan its new QR. Expo may install its ngrok helper for the tunnel. Keep the terminal process running. Each Expo Go build supports a matching SDK; this project uses SDK 58. On physical iOS, Expo may also require Expo CLI and Expo Go to be signed into the same Expo account (`npx expo login`, then the account menu on the phone).
+Use Expo Go rather than the phone browser for an `exp://` or `exps://` link. If a LAN QR times out, start a separate tunnel with `npm start -- --tunnel` and scan its new QR. Expo may install its ngrok helper for the tunnel. Keep the terminal process running. Each Expo Go build supports a matching SDK; this project uses SDK 58. On physical iOS, Expo may also require Expo CLI and Expo Go to be signed into the same Expo account (`npx expo login`, then the account menu on the phone).
 
 ## F0 verification and remaining checks
 
