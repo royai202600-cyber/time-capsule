@@ -418,11 +418,11 @@ export default function JourneyScreen() {
     setJoinError,
     () => { setJoinOpen(false); setToast(h.joined); },
   );
-  const completeMission = (ph: PrivateHunt, w: Waypoint, answer?: string) => {
+  const completeMission = (ph: PrivateHunt, w: Waypoint, answer?: string, qr?: string) => {
     setMissionError(null);
     void privateAction(
       async () => {
-        const out = await privateHunts.complete(ph, w, at(), answer);
+        const out = await privateHunts.complete(ph, w, at(), answer, qr);
         // Back to the map, where the pin turns purple and the toast says what the mission was worth.
         setMission(null);
         setToast([h.gotPoints(out.points_gained), out.hunt.finished_at ? h.privateStamp : ""].filter(Boolean).join(" · "));
@@ -557,7 +557,7 @@ export default function JourneyScreen() {
       meters={metersTo(openWaypoint.lat, openWaypoint.lng)} busy={busy} error={missionError}
       tries={openWaypoint.tries ? 3 - (openWaypoint.tries % 3) : undefined}
       onClose={() => { setMission(null); setMissionError(null); }}
-      onComplete={(answer) => completeMission(openMission, openWaypoint, answer)} />}
+      onComplete={(answer, qr) => completeMission(openMission, openWaypoint, answer, qr)} />}
     <LeaderboardSheet visible={!!board} hunt={board?.hunt ?? null} rows={board?.rows ?? null} onClose={() => setBoard(null)} />
   </JourneyViewport>;
 }
