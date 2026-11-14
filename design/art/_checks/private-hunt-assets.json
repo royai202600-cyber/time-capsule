@@ -4,17 +4,17 @@
   "failed": [],
   "assets": [
     {
-      "path": "game/quest-pin-brass.png",
+      "path": "hunt-covers/hunt-cover-park.png",
       "size": [
-        1024,
-        1024
+        1280,
+        720
       ],
-      "transparent": true,
+      "transparent": false,
       "corners_alpha": [
-        0,
-        0,
-        0,
-        0
+        255,
+        255,
+        255,
+        255
       ],
       "checks": {
         "size": true,
@@ -23,10 +23,10 @@
       "pass": true
     },
     {
-      "path": "hunt-covers/hunt-cover-park.png",
+      "path": "quest-templates/quest-template-park.png",
       "size": [
-        1280,
-        720
+        1024,
+        1024
       ],
       "transparent": false,
       "corners_alpha": [

@@ -9393,31 +9393,6 @@
   "web_export": "public/art/stamps/stamp-hunt-hkust-2026-11.webp"
 },
   {
-    "path": "design/art/game/quest-pin-brass.png",
-    "what": "3D brass private-hunt quest pin with blank circular glyph face",
-    "size_px": [
-      1024,
-      1024
-    ],
-    "transparent": true,
-    "model": "gpt-image-2",
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nSingle dimensional brass location pin for a game map, using the second reference (blue Waypost gem) for physical depth and highlights only. Approved exception to the baseline flat shading: sculpted solid metal with visible bevel, thick sidewall and cream top-left specular edge, hand-illustrated. Compact upright classic map-pin silhouette ending at a single point, symmetrical as seen head-on with only subtle perspective so the glyph face is perfectly circular. The head contains one large clear smooth blank round pale brass face for glyphs drawn later in code; no engraving, no center dot, no icon, no cutout. Face visually dominates, thick brass edge hints at volume and depth. Isolated true transparent alpha, no cast shadow or fragments. Intended to read at 40 pixels; final 1024 canvas tip registered at x512 y960 in post.",
-    "references": [
-      "design/art/style-sheet.png",
-      "design/art/game/waypost-gem-blue.png"
-    ],
-    "anchor": {
-      "x": 512,
-      "y": 960
-    },
-    "glyph_center": {
-      "x": 512,
-      "y": 505
-    },
-    "postprocess": "Clean alpha fringe, downscale silhouette and translate tip to exact anchor.",
-    "web_export": "public/art/game/quest-pin-brass.webp"
-  },
-  {
     "path": "design/art/stamps/stamp-private-hunt.png",
     "what": "Brass double-ring private-hunt Passport stamp with location-pin motif",
     "size_px": [
@@ -9454,5 +9429,22 @@
     ],
     "postprocess": "Center crop to 16:9 and downscale to 1280×720.",
     "web_export": "public/art/hunt-covers/hunt-cover-park.webp"
+  },
+  {
+    "path": "design/art/quest-templates/quest-template-park.png",
+    "what": "Park quest template for a circular map photo and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nMake one generic park quest template picture for a map marker and a detail banner. Picture-specific framing: opaque full-bleed square paper scene. The same master must work in a 46-pixel circular crop and a centered 16:9 crop. Keep a single large, easy-to-read group in the middle: a warm wooden park bench in front of one rounded ink-blue shade tree, beside a broad curving cream path. The tree canopy, enough of its trunk, and the entire bench must remain legible in the central 56% of the image height and within the inner two-thirds of the width. Use bold masses and clean contours with little internal detail. Soft blue park vegetation and warm paper light continue to all edges. No text, people, logos, pins, border, frames, labels, or additional focal objects. The bench and tree should read at a glance when the entire image is reduced to 46 pixels.",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "template_key": "park",
+    "postprocess": "Downscale to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-templates/quest-template-park.webp"
   }
 ]

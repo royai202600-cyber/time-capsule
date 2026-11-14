@@ -47,7 +47,7 @@ def main() -> None:
         alpha = image.getchannel("A")
         corners = [alpha.getpixel(p) for p in ((0, 0), (image.width - 1, 0),
                                                (0, image.height - 1), (image.width - 1, image.height - 1))]
-        opaque = rel in OPAQUE
+        opaque = rel in OPAQUE or rel.startswith("quest-templates/")
         checks = {
             "size": image.size == expected_size(rel),
             "alpha": all(v == 255 for v in alpha.getextrema()) if opaque else all(v == 0 for v in corners),
