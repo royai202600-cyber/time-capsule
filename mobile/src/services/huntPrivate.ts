@@ -126,8 +126,8 @@ function demoHunt(at: Coords): PrivateHunt {
     };
   });
   return {
-    id: "demo-private-hunt", name: "示範尋寶 Demo Hunt", join_code: DEMO_CODE,
-    description: "這是一場示範的私人尋寶，用來試走畫面。進度只存在這支手機。\nA demo private hunt for walking through the screens. Progress stays on this phone.",
+    id: "demo-private-hunt", name: "示範定向 Demo Hunt", join_code: DEMO_CODE,
+    description: "這是一場示範的私人定向，用來試走畫面。進度只存在這支手機。\nA demo private hunt for walking through the screens. Progress stays on this phone.",
     area: { ...at, radius_m: 1200 }, route_mode: "any", leaderboard_visible: true,
     starts_at: new Date(Date.now() - 3_600_000).toISOString(), ends_at: new Date(Date.now() + 6 * 3_600_000).toISOString(),
     time_limit_min: 45, run_started_at: demo.started_at,

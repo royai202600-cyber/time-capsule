@@ -15,26 +15,16 @@ import {
   type LeaderRow, type MissionType, type PrivateHunt, type Waypoint,
 } from "../../services/huntPrivate";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
-import { useHuntText, type HuntText } from "./strings";
+import { Btn, HuntCard, huntWindow, type TaskRow } from "./HuntViews";
+import { useHuntText } from "./strings";
 
 /** One glyph per mission type, matching the glyph drawn on its brass pin. */
-export function MissionGlyph({ type, size = 18, color = C.brass }: { type: MissionType; size?: number; color?: string }) {
+export function MissionGlyph({ type, size = 18, color = C.blue }: { type: MissionType; size?: number; color?: string }) {
   return <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
     {type === "arrive" && <Path d="M7 21V4m0 0 10 2.5L7 11" />}
     {type === "spin" && <><Circle cx={12} cy={12} r={7.5} /><Path d="M12 4.5v15M4.5 12h15" /></>}
     {type === "puzzle" && <Path d="M8.6 9a3.5 3.5 0 1 1 3.6 4v2.4M12 19v.1" />}
   </Svg>;
-}
-
-const brassBtn = (quiet?: boolean, disabled?: boolean) => ({ pressed }: { pressed: boolean }) => ({
-  borderRadius: radii.pill, paddingVertical: 12, paddingHorizontal: spacing.lg, alignItems: "center" as const,
-  backgroundColor: quiet ? C.white : C.brass, borderWidth: quiet ? 1.5 : 0, borderColor: C.brass,
-  opacity: disabled ? .5 : pressed ? .85 : 1,
-});
-function Btn({ title, onPress, quiet, disabled }: { title: string; onPress: () => void; quiet?: boolean; disabled?: boolean }) {
-  return <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress} style={brassBtn(quiet, disabled)}>
-    <Text style={{ fontFamily: serif, fontSize: 15, color: quiet ? C.brass : C.white }}>{title}</Text>
-  </Pressable>;
 }
 
 /** The bottom sheet every private-hunt screen sits in. The shade is a sibling, so its content isn't nested in a button. */
@@ -79,7 +69,7 @@ export function JoinPrivateSheet({ visible, initialCode, found, busy, error, onC
       <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{t.codeNote}</Text>
       <TextInput accessibilityLabel={t.codeLabel} value={code} onChangeText={(v) => setCode(cleanCode(v))}
         autoCapitalize="characters" autoCorrect={false} maxLength={6} placeholder="ABC123" placeholderTextColor="#A5AFBD"
-        style={{ fontFamily: serif, fontSize: 26, letterSpacing: 6, textAlign: "center", color: C.ink, backgroundColor: C.white, borderWidth: 1.5, borderColor: ready ? C.brass : C.line, borderRadius: radii.md, paddingVertical: 14 }} />
+        style={{ fontFamily: serif, fontSize: 26, letterSpacing: 6, textAlign: "center", color: C.ink, backgroundColor: C.white, borderWidth: 1.5, borderColor: ready ? C.blue : C.line, borderRadius: radii.md, paddingVertical: 14 }} />
       <Btn title={t.codeFind} disabled={!ready || busy} onPress={() => onFind(cleanCode(code))} />
       {!!error && <Text style={{ fontFamily: sans, fontSize: 13, color: C.wax }}>{error}</Text>}
       {found && <PrivatePreview hunt={found} busy={busy} onJoin={() => onJoin(found)} />}
@@ -93,7 +83,7 @@ function PrivatePreview({ hunt, busy, onJoin }: { hunt: PrivateHunt; busy: boole
   return <View style={{ gap: spacing.md, backgroundColor: C.white, borderRadius: radii.md, borderWidth: 1, borderColor: C.line, overflow: "hidden", ...shadows.card }}>
     {hunt.cover
       ? <Image source={{ uri: hunt.cover }} style={{ width: "100%", aspectRatio: 16 / 9 }} resizeMode="cover" />
-      : <View style={{ width: "100%", aspectRatio: 16 / 9, backgroundColor: C.cream, alignItems: "center", justifyContent: "center" }}><ArtIcon name="map" size={40} color={C.brass} /></View>}
+      : <View style={{ width: "100%", aspectRatio: 16 / 9, backgroundColor: C.glass, alignItems: "center", justifyContent: "center" }}><ArtIcon name="map" size={40} color={C.blue} /></View>}
     <View style={{ padding: spacing.md, paddingTop: 0, gap: spacing.sm }}>
       <Text style={{ fontFamily: sans, fontSize: 11, letterSpacing: 1.2, color: C.brass }}>{t.privateKicker}</Text>
       <Text style={{ fontFamily: serif, fontSize: 20, color: C.ink }}>{hunt.name}</Text>
@@ -103,13 +93,16 @@ function PrivatePreview({ hunt, busy, onJoin }: { hunt: PrivateHunt; busy: boole
       <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{t.privateRules}</Text>
       <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{t.privateNoOthers}</Text>
       {hunt.joined_at
-        ? <Text style={{ fontFamily: serif, fontSize: 15, color: C.brass }}>{t.joined}</Text>
+        ? <Text style={{ fontFamily: serif, fontSize: 15, color: C.blue }}>{t.joined}</Text>
         : <Btn title={t.joinPrivate} disabled={busy} onPress={onJoin} />}
     </View>
   </View>;
 }
 
-/** A joined private hunt on the Quest sheet: its missions, points, clock and leaderboard. */
+/**
+ * A joined private hunt on the Quest sheet. It uses the same card, clock and checklist as a City Hunt,
+ * so nothing has to be learned twice; only the kicker colour says who is running it.
+ */
 export function PrivateHuntCard({ hunt, onShowOnMap, onOpenMission, onLeaderboard, onReport }: {
   hunt: PrivateHunt;
   onShowOnMap: (h: PrivateHunt) => void;
@@ -118,47 +111,38 @@ export function PrivateHuntCard({ hunt, onShowOnMap, onOpenMission, onLeaderboar
   onReport: (h: PrivateHunt) => void;
 }) {
   const t = useHuntText();
-  const total = totalPoints(hunt);
-  return <View style={{ gap: spacing.md, backgroundColor: C.white, borderRadius: radii.md, borderWidth: 1, borderColor: C.line, padding: spacing.md, ...shadows.card }}>
-    <View style={{ gap: 2 }}>
-      <Text style={{ fontFamily: sans, fontSize: 11, letterSpacing: 1.2, color: C.brass }}>{t.privateKicker}</Text>
-      <Text style={{ fontFamily: serif, fontSize: 20, color: C.ink }}>{hunt.name}</Text>
-      <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>
-        {t.missionCount(doneCount(hunt), hunt.waypoints.length)}　{t.pointsOf(hunt.points, total)}
-      </Text>
-    </View>
-    {hunt.finished_at && <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: C.cream, borderRadius: radii.md, paddingHorizontal: spacing.md, paddingVertical: 10 }}>
-      <ArtIcon name="check" size={18} color={C.brass} />
-      <Text style={{ flex: 1, fontFamily: serif, fontSize: 15, color: C.ink }}>{t.privateFinished}</Text>
+  const { language } = useLanguage();
+  const done = !!hunt.finished_at;
+  const tasks: TaskRow[] = inOrder(hunt).map((w) => {
+    const shut = locked(hunt, w);
+    return {
+      key: w.id, label: w.name, done: !!w.done_at, locked: shut,
+      sub: t.missionTypes[w.mission_type] + (shut ? `　${t.missionLocked}` : ""),
+      right: t.pointsShort(w.points),
+      glyph: <MissionGlyph type={w.mission_type} size={15} color={C.blue} />,
+      onPress: () => onOpenMission(hunt, w),
+    };
+  });
+  return <HuntCard
+    kicker={t.privateKicker} kickerTone={C.brass}
+    title={hunt.name}
+    subtitle={done ? t.privateFinished : huntWindow(hunt, language, t)}
+    clock={hunt} startNote={t.privateLimit}
+    progress={`${t.missionCount(doneCount(hunt), hunt.waypoints.length)}　${t.pointsOf(hunt.points, totalPoints(hunt))}`}
+    tasks={tasks}
+    note={hunt.route_mode === "ordered" ? t.missionLockedNote : undefined}
+    actions={<View style={{ gap: spacing.sm }}>
+      <Btn quiet title={t.showMissions} onPress={() => onShowOnMap(hunt)} />
+      {hunt.leaderboard_visible
+        ? <Btn quiet title={t.leaderboard} onPress={() => onLeaderboard(hunt)} />
+        : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.leaderboardHidden}</Text>}
     </View>}
-    <View style={{ gap: spacing.sm }}>
-      {inOrder(hunt).map((w) => <MissionRow key={w.id} hunt={hunt} waypoint={w} t={t} onPress={() => onOpenMission(hunt, w)} />)}
-    </View>
-    {hunt.route_mode === "ordered" && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.missionLockedNote}</Text>}
-    <Btn quiet title={t.showMissions} onPress={() => onShowOnMap(hunt)} />
-    {hunt.leaderboard_visible
-      ? <Btn quiet title={t.leaderboard} onPress={() => onLeaderboard(hunt)} />
-      : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{t.leaderboardHidden}</Text>}
-    <Pressable accessibilityRole="button" onPress={() => onReport(hunt)} style={{ alignSelf: "flex-start", paddingVertical: 6 }}>
-      <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textDecorationLine: "underline" }}>{t.reportHunt}</Text>
-    </Pressable>
-    {hunt.preview && <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{t.preview}</Text>}
-  </View>;
-}
-
-function MissionRow({ hunt, waypoint, t, onPress }: { hunt: PrivateHunt; waypoint: Waypoint; t: HuntText; onPress: () => void }) {
-  const done = !!waypoint.done_at, shut = locked(hunt, waypoint);
-  return <Pressable accessibilityRole="button" disabled={shut} onPress={onPress}
-    style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingVertical: 8, paddingHorizontal: spacing.sm, borderRadius: radii.sm, backgroundColor: pressed ? C.glass : "transparent", opacity: shut ? .55 : 1 })}>
-    <View style={{ width: 28, height: 28, borderRadius: 14, alignItems: "center", justifyContent: "center", backgroundColor: done ? C.brass : "transparent", borderWidth: done ? 0 : 1.5, borderColor: C.brass, borderStyle: shut ? "dashed" : "solid" }}>
-      {done ? <ArtIcon name="check" size={15} color={C.white} /> : shut ? <ArtIcon name="lock" size={14} color={C.brass} /> : <MissionGlyph type={waypoint.mission_type} size={16} />}
-    </View>
-    <View style={{ flex: 1 }}>
-      <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 14, color: done ? C.muted : C.ink }}>{waypoint.name}</Text>
-      <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{t.missionTypes[waypoint.mission_type]}{shut ? `　${t.missionLocked}` : ""}</Text>
-    </View>
-    <Text style={{ fontFamily: serif, fontSize: 14, color: done ? C.muted : C.brass }}>{t.pointsShort(waypoint.points)}</Text>
-  </Pressable>;
+    footer={<View style={{ gap: spacing.sm }}>
+      <Pressable accessibilityRole="button" onPress={() => onReport(hunt)} style={{ alignSelf: "flex-start" }}>
+        <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textDecorationLine: "underline" }}>{t.reportHunt}</Text>
+      </Pressable>
+      {hunt.preview && <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{t.preview}</Text>}
+    </View>} />;
 }
 
 /**
@@ -189,14 +173,14 @@ export function MissionSheet({ visible, hunt, waypoint, meters, busy, error, tri
     <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
         <MissionGlyph type={waypoint.mission_type} size={20} />
-        <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, color: C.brass, letterSpacing: .6 }}>{t.missionTypes[waypoint.mission_type]}</Text>
-        <Text style={{ fontFamily: serif, fontSize: 16, color: C.brass }}>{t.pointsShort(waypoint.points)}</Text>
+        <Text style={{ flex: 1, fontFamily: sans, fontSize: 13, color: C.blue, letterSpacing: .6 }}>{t.missionTypes[waypoint.mission_type]}</Text>
+        <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{t.pointsShort(waypoint.points)}</Text>
       </View>
       {!!waypoint.image && <Image source={{ uri: waypoint.image }} style={{ width: "100%", aspectRatio: 16 / 9, borderRadius: radii.md }} resizeMode="cover" />}
       {!!waypoint.description && <Text style={{ fontFamily: sans, fontSize: 14, lineHeight: 22, color: C.ink }}>{waypoint.description}</Text>}
       <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{t.missionHow[waypoint.mission_type]}</Text>
 
-      {done && <Note icon="check" tone={C.brass} text={t.missionDone} />}
+      {done && <Note icon="check" tone={C.blue} text={t.missionDone} />}
       {!done && shut && <Note icon="lock" tone={C.muted} text={t.missionLocked} />}
       {!done && !shut && !near && <Note icon="pin" tone={C.blue} text={t.walkCloser(distanceText(meters - GAME_ACTION_RADIUS_M))} />}
 
@@ -205,9 +189,9 @@ export function MissionSheet({ visible, hunt, waypoint, meters, busy, error, tri
           ? waypoint.choices.map((choice) => {
             const picked = choice === answer;
             return <Pressable key={choice} accessibilityRole="radio" accessibilityState={{ selected: picked }} onPress={() => setAnswer(choice)}
-              style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: picked ? C.cream : C.white, borderWidth: 1.5, borderColor: picked ? C.brass : C.line, borderRadius: radii.md, paddingVertical: 12, paddingHorizontal: spacing.md }}>
-              <View style={{ width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: picked ? C.brass : C.line, alignItems: "center", justifyContent: "center" }}>
-                {picked && <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: C.brass }} />}
+              style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, backgroundColor: picked ? C.glass : C.white, borderWidth: 1.5, borderColor: picked ? C.blue : C.line, borderRadius: radii.md, paddingVertical: 12, paddingHorizontal: spacing.md }}>
+              <View style={{ width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: picked ? C.blue : C.line, alignItems: "center", justifyContent: "center" }}>
+                {picked && <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: C.blue }} />}
               </View>
               <Text style={{ flex: 1, fontFamily: sans, fontSize: 15, color: C.ink }}>{choice}</Text>
             </Pressable>;
@@ -244,14 +228,14 @@ export function LeaderboardSheet({ visible, hunt, rows, onClose }: {
   return <Sheet visible={visible} title={t.leaderboard} onClose={onClose}>
     <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.sm }}>
       <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{hunt.name}</Text>
-      {rows?.map((row, i) => <View key={row.user} style={{ flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: row.you ? C.cream : C.white, borderWidth: 1, borderColor: row.you ? C.brass : C.line, borderRadius: radii.md, paddingVertical: 10, paddingHorizontal: spacing.md }}>
-        <Text style={{ width: 24, fontFamily: serif, fontSize: 17, color: i < 3 ? C.brass : C.muted, textAlign: "center" }}>{i + 1}</Text>
+      {rows?.map((row, i) => <View key={row.user} style={{ flexDirection: "row", alignItems: "center", gap: spacing.md, backgroundColor: row.you ? C.glass : C.white, borderWidth: 1, borderColor: row.you ? C.blue : C.line, borderRadius: radii.md, paddingVertical: 10, paddingHorizontal: spacing.md }}>
+        <Text style={{ width: 24, fontFamily: serif, fontSize: 17, color: i < 3 ? C.blue : C.muted, textAlign: "center" }}>{i + 1}</Text>
         <Avatar avatar={row.avatar} size={32} />
         <View style={{ flex: 1 }}>
           <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 14, color: C.ink }}>{row.name}</Text>
           <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{row.duration_s != null ? t.finishedIn(clockText(row.duration_s)) : t.notFinishedYet}</Text>
         </View>
-        <Text style={{ fontFamily: serif, fontSize: 16, color: C.brass }}>{t.rankPoints(row.points)}</Text>
+        <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{t.rankPoints(row.points)}</Text>
       </View>)}
       {!rows?.length && <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted, textAlign: "center", paddingVertical: spacing.xl }}>
         {language === "zh" ? "還沒有人上榜。" : "Nobody on the board yet."}

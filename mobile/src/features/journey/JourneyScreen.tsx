@@ -480,6 +480,7 @@ export default function JourneyScreen() {
         <Chip onPress={goBack} label={t("back")}><ArtIcon name="back" size={22} /></Chip>
         <View style={{ flex: 1 }} pointerEvents="none" />
         <RunChip hunt={activeHunt} onPress={() => setQuestOpen(true)} />
+        {privateList.map((ph) => <RunChip key={ph.id} hunt={ph} tone={C.brass} onPress={() => setQuestOpen(true)} />)}
         {GAME_ENABLED && gameState && <View accessibilityRole="text" style={{ height: 44, paddingHorizontal: 14, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", justifyContent: "center", ...shadows.card }}>
           <Text style={{ fontFamily: sans, fontSize: 12, color: C.ink }}>{g("level", gameState.level)} · {g("balls", gameState.wax_balls)}</Text>
         </View>}

@@ -58,7 +58,7 @@ export function Passport({ visible, onClose, userId, stamps, hunts = [], private
           {shown !== null && stamps.map((stamp) => <StampSlot key={stamp.place.id} stamp={stamp} language={language} animate={!!stamp.openedAt && !shown.includes(stamp.place.id)} reduced={reduced} onStamped={() => remember(stamp.place.id)} />)}
           {shown !== null && hunts.length > 0 && <Text style={{ width: "100%", fontFamily: serif, fontSize: 17, color: C.plum, marginTop: spacing.sm }}>{t("journey.huntStamps")}</Text>}
           {shown !== null && hunts.map((hunt) => <HuntStamp key={hunt.id} hunt={hunt} language={language} />)}
-          {shown !== null && privateHunts.length > 0 && <Text style={{ width: "100%", fontFamily: serif, fontSize: 17, color: "#A9843F", marginTop: spacing.sm }}>{t("journey.privateHuntStamps")}</Text>}
+          {shown !== null && privateHunts.length > 0 && <Text style={{ width: "100%", fontFamily: serif, fontSize: 17, color: C.plum, marginTop: spacing.sm }}>{t("journey.privateHuntStamps")}</Text>}
           {shown !== null && privateHunts.map((hunt) => <PrivateHuntStamp key={hunt.id} hunt={hunt} language={language} />)}
         </ScrollView>
       </View>
