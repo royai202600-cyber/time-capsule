@@ -1,3 +1,4 @@
+begin;
 -- Run inside a transaction; caller rolls back all fixtures.
 do $$
 declare u uuid:=gen_random_uuid(); outsider uuid:=gen_random_uuid(); h text; q uuid; code text; draft jsonb; state jsonb; mode text; spot uuid; started timestamptz;
@@ -48,3 +49,5 @@ begin
  perform private.city_hunt_record_quest('restore',spot,25,121);
 end $$;
 select 'guide rollback assertions passed' as result;
+
+rollback;
