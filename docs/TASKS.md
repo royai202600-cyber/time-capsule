@@ -1,6 +1,6 @@
 # Task board
 
-Part B progress (2026-11-14): B1+B2 server/app vocabulary and compatibility are implemented and locally verified, with hosted rollback only. Migration 20261114080044 is held for Claude. B4 is complete. B3 switches, B5 translations, B6 Journey and the final full browser matrix remain.
+Part B PR #124 progress (2026-11-14): B1+B2 server/app vocabulary and compatibility are implemented and locally verified, with hosted rollback only. Migration 20261114080044 is held for Claude. B4 is complete. B3 switches, B5 translations, B6 Journey and the final full browser matrix remain.
 
 2026-11-14 release: Waypost discovery now reaches 5 km, the Expo test account has organizer access, the Civic Square placeholder place name was fixed, and PR #123 was merged after green CI. The naming refactor is a separate review before migration.
 
