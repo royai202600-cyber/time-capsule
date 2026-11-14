@@ -13,15 +13,16 @@ import type { MissionType } from "../../services/huntPrivate";
 import { Btn } from "./HuntViews";
 import { useOrganizerText } from "./organizerStrings";
 import { useLanguage } from "../../i18n";
+import { questImageUri } from "./questImage";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 
 export type PickedPin = { lat: number; lng: number; name: string; detail: string };
 
-export function PinPicker({ at, you, mission, onClose, onPick }: {
+export function PinPicker({ at, you, mission, image, onClose, onPick }: {
   /** Where the pin starts, or null to start on the player's own position. */
   at: { lat: number; lng: number } | null;
   you: { lat: number; lng: number } | null;
-  mission: MissionType;
+  mission: MissionType; image?: string | null;
   onClose: () => void;
   onPick: (pin: PickedPin) => void;
 }) {
@@ -36,8 +37,8 @@ export function PinPicker({ at, you, mission, onClose, onPick }: {
   // The map page is built once; rebuilding it would reload the tiles under the organizer.
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: start }), []);
   const pins = useMemo<LivePin[]>(() => [{
-    id: "picked", lat: point.lat, lng: point.lng, kind: "mission", vessel: "", mission, near: true,
-  }], [point.lat, point.lng, mission]);
+    id: "picked", lat: point.lat, lng: point.lng, kind: "mission", vessel: "", mission, photo: questImageUri(image), near: true,
+  }], [point.lat, point.lng, mission, image]);
   const state = useMemo(() => ({ you, reach: 0, pins }), [you?.lat, you?.lng, pins]);
 
   // Whatever is at the pin names the quest, so the organizer rarely types a name at all.

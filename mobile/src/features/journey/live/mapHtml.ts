@@ -178,19 +178,6 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin .who .lock:after{content:"";position:absolute;left:5px;top:3px;width:3px;height:3px;border-radius:50%;background:#F3D9DF;box-shadow:0 2px 0 -.5px #F3D9DF}
 .pin .tag.timer{bottom:-16px;display:flex;align-items:center;gap:3px;font-size:10px;padding:1px 6px}
 .pin.opened .pin-body{opacity:.6}
-/* A quest with a picture (docs/design/city-orienteering.md): the picture fills a brass teardrop pin (purple once done,
-   with a tick badge then). Its points sit below it as on every quest. Quests without one keep the brass pin. */
-.pin.mission.pic{width:48px;height:62px}
-.pin.mission.pic .disc{left:12px}
-.pin.mission.pic .photo{position:absolute;left:4px;bottom:6px;width:40px;height:51px;animation:bob 3.6s ease-in-out infinite;filter:drop-shadow(0 3px 4px rgba(22,38,63,.32))}
-.pin.mission.pic .drop{position:absolute;left:0;top:2px;width:40px;height:40px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,var(--mp-hi),var(--mp) 55%,var(--mp-lo))}
-.pin.mission.pic .ph{position:absolute;inset:3px;border-radius:50%;border:2px solid #fff;transform:rotate(45deg);background:${C.cream} center/cover no-repeat}
-.pin.mission.pic .badge{position:absolute;right:-6px;top:-4px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--mp-hi),var(--mp) 62%,var(--mp-lo));box-shadow:0 1px 3px rgba(22,38,63,.35),inset 0 0 0 1.5px var(--mp-hi)}
-.pin.mission.pic .badge svg{position:absolute;left:0;top:0;width:18px;height:18px}
-.pin.mission.pic.locked .photo{opacity:.6}
-.pin.mission.pic.done .ph{filter:saturate(.6)}
-.pin.mission.pic.near:not(.done):not(.locked) .photo{filter:drop-shadow(0 0 7px ${C.brass})}
-.pin.mission.pic .tag{bottom:-14px}
 /* The player never blocks a tap on what is behind them (only their "this is you" label is tappable). */
 .you.walking .me{animation:stride .36s ease-in-out infinite}
 @keyframes stride{0%,100%{translate:0 0}50%{translate:0 -3px}}
@@ -235,19 +222,23 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.landmark .badge svg{width:16px;height:16px}
 .pin.landmark.top{height:30px;width:28px}
 .pin.landmark.top .badge{bottom:1px;left:0}
-/* Private-hunt waypoint: a brass location pin, not a gem, so it never reads as one of ours
-   (docs/design/city-orienteering.md). Done: cream with a tick. Locked by an in-order route: dashed. */
-.pin.mission{width:36px;height:52px;--mp:${C.brass};--mp-hi:#E2C58A;--mp-lo:#A9843F;--mg:#fff}
-/* A finished quest turns purple, like a Waypost after its spin. */
+/* Private-hunt quest (docs/design/city-orienteering.md): its picture fills a brass teardrop pointing at the spot,
+   with its points below. Done: purple, like a Waypost after its spin, with a tick badge. Locked by an in-order route: faded. */
+.pin.mission{width:54px;height:72px;--mp:${C.brass};--mp-hi:#E2C58A;--mp-lo:#A9843F;--mg:#fff}
 .pin.mission.done{--mp:${C.plum};--mp-hi:#B98494;--mp-lo:#4A1C2A;--mg:#fff}
-.pin.mission .disc{left:6px;width:24px;height:7px;background:radial-gradient(${C.brass}66,transparent 70%)}
-.pin.mission .loc{position:absolute;left:0;bottom:4px;width:36px;height:46px;filter:drop-shadow(0 2px 4px rgba(22,38,63,.3));animation:bob 3.6s ease-in-out infinite}
-.pin.mission.locked .loc{opacity:.6}
-.pin.mission.near:not(.done):not(.locked) .loc{filter:drop-shadow(0 0 7px ${C.brass})}
+.pin.mission .disc{left:15px;width:24px;height:7px;background:radial-gradient(${C.brass}66,transparent 70%)}
+.pin.mission .photo{position:absolute;left:4px;bottom:6px;width:46px;height:59px;animation:bob 3.6s ease-in-out infinite;filter:drop-shadow(0 3px 4px rgba(22,38,63,.32))}
+.pin.mission .drop{position:absolute;left:0;top:2px;width:46px;height:46px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:linear-gradient(135deg,var(--mp-hi),var(--mp) 55%,var(--mp-lo))}
+.pin.mission .ph{position:absolute;inset:3px;border-radius:50%;border:2px solid #fff;transform:rotate(45deg);background:${C.cream} center/cover no-repeat}
+.pin.mission .badge{position:absolute;right:-6px;top:-4px;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--mp-hi),var(--mp) 62%,var(--mp-lo));box-shadow:0 1px 3px rgba(22,38,63,.35),inset 0 0 0 1.5px var(--mp-hi)}
+.pin.mission .badge svg{position:absolute;left:0;top:0;width:20px;height:20px}
+.pin.mission.locked .photo{opacity:.6}
+.pin.mission.done .ph{filter:saturate(.6)}
+.pin.mission.near:not(.done):not(.locked) .photo{filter:drop-shadow(0 0 7px ${C.brass})}
 .pin.mission.near:not(.done):not(.locked) .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
 .pin.mission .tag{bottom:-14px;background:${C.brass};color:#fff}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.pin .badge,.pin.mission .loc,.pin.mission.pic .photo,.you .pulse,.pin.keeper .seal{animation:none}}
+@media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.pin .badge,.pin.mission .photo,.you .pulse,.pin.keeper .seal{animation:none}}
 </style></head><body><div id="map"></div>
 <script>
 const send=m=>{const s=JSON.stringify(m);if(window.ReactNativeWebView)window.ReactNativeWebView.postMessage(s);else parent.postMessage({__tcmap:s},'*')};
@@ -266,12 +257,8 @@ window.__tcmapInstance=map;
 let follow=true,you=null,state={pins:[]},marks=new Map(),youMark=null,heading=0;
 // Wayposts are floating gems, clearly not buildings and clearly not capsules.
 const HOURGLASS='<svg viewBox="0 0 10 12" width="8" height="10"><path d="M1 1h8M1 11h8M2 1c0 3 3 3.5 3 5S2 8 2 11M8 1c0 3-3 3.5-3 5s3 2 3 5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
-// A private hunt's brass location pin, with one glyph per mission type (a tick once it is done, a padlock while the route locks it).
+// The glyphs of a quest's kinds; on the map only the tick shows, as the badge of a finished quest.
 const MISSION_GLYPH={arrive:'M-4 5V-5l8 2-8 3',spin:'M0-5.4a5.4 5.4 0 1 0 0 10.8 5.4 5.4 0 0 0 0-10.8M0-5.4V5.4M-5.4 0H5.4',puzzle:'M-2.6-2.4a2.7 2.7 0 1 1 2.8 3.1V2.4M0 4.8v.1',done:'M-4 0 -1 3 4-3',locked:'M-3.2-.6h6.4V4h-6.4ZM-2-.6v-1.8a2 2 0 0 1 4 0v1.8'};
-const locPin=(kind,fill)=>'<svg class="loc" viewBox="0 0 36 46" fill="none">'
-  +'<path d="M18 45C18 45 4.5 28 4.5 17.5a13.5 13.5 0 0 1 27 0C31.5 28 18 45 18 45Z" fill="'+(fill||'var(--mp)')+'" stroke="var(--mp-lo)" stroke-width="1.6"'+(kind==='locked'?' stroke-dasharray="4 3"':'')+'/>'
-  +'<path d="M18 7.5a10 10 0 0 1 8.4 4.6" stroke="var(--mp-hi)" stroke-width="2" stroke-linecap="round"/>'
-  +'<g transform="translate(18 17.5)"><path d="'+MISSION_GLYPH[kind]+'" fill="none" stroke="var(--mg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>';
 const glyphBadge=kind=>'<svg viewBox="-12 -12 24 24"><g transform="scale(.82)"><path d="'+MISSION_GLYPH[kind]+'" fill="none" stroke="var(--mg)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>';
 const face=src=>src?'<div class="face"><img src="'+src+'"></div>':'<div class="face"></div>';
 const circle=(c,r)=>{const pts=[];for(let i=0;i<=48;i++){const a=i/48*Math.PI*2;pts.push([c.lng+r*Math.cos(a)/(111320*Math.cos(c.lat*Math.PI/180)),c.lat+r*Math.sin(a)/110540])}return{type:'Feature',geometry:{type:'Polygon',coordinates:[pts]}}};
@@ -361,10 +348,9 @@ function render(){
   for(const p of state.pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
       :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 1.5C12.8 8.2 15.8 11.2 22.5 12 15.8 12.8 12.8 15.8 12 22.5 11.2 15.8 8.2 12.8 1.5 12 8.2 11.2 11.2 8.2 12 1.5Z"/></svg></div></div>'
-      :p.kind==='mission'&&p.photo?'<div class="pin-body"><div class="disc"></div><div class="photo"><div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>'+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
-      :p.kind==='mission'?'<div class="pin-body"><div class="disc"></div>'+locPin(p.done?'done':p.locked?'locked':(p.mission||'arrive'))+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
+      :p.kind==='mission'?'<div class="pin-body"><div class="disc"></div><div class="photo"><div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>'+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
       :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait!==undefined&&(p.portrait||p.private)?'<div class="who">'+face(p.portrait)+(p.private?'<div class="lock"></div>':'')+'</div>':'')+(p.timer?'<div class="tag timer">'+HOURGLASS+p.timer+'</div>':p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
-    const cls='pin '+(p.kind||'')+(p.kind==='mission'&&p.photo?' pic':'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'')+(p.private?' private':'')+(p.opened?' opened':'')+(p.locked?' locked':'');
+    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'')+(p.private?' private':'')+(p.opened?' opened':'')+(p.locked?' locked':'');
     let m=marks.get(p.id);
     if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();tapPin(p.id)});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
     const el=m.marker.getElement();

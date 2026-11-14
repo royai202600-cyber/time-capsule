@@ -29,7 +29,7 @@ export type WaypointDraft = {
   arrive_check: "gps" | "gps_qr";
   /** Issued by the server once a GPS + QR quest is saved; the printed code carries it. Only the organizer sees it. */
   qr_token?: string;
-  /** A template ("tpl:park") or the organizer's own photo; it becomes the quest's pin on the map. */
+  /** A template ("tpl:park", the default) or the organizer's own photo; it fills the quest's pin on the map. */
   image?: string | null;
   puzzle_kind: "text" | "choice"; choices: string[]; answer: string;
 };
@@ -83,7 +83,9 @@ export function huntProblems(draft: HuntDraft, waypoints: { id?: string }[]): Pr
   if (!draft.name.trim()) problems.push("name");
   if (!waypoints.length) problems.push("waypoints");
   if (waypoints.length > LIMITS.waypoints) problems.push("tooManyWaypoints");
-  if (draft.ends_at !== "infinity" && new Date(draft.ends_at).getTime() <= new Date(draft.starts_at).getTime()) problems.push("window");
+  // A private hunt always ends: the server refuses "infinity" (only daily City Hunts run without an end).
+  const end = new Date(draft.ends_at).getTime();
+  if (!Number.isFinite(end) || end <= new Date(draft.starts_at).getTime()) problems.push("window");
   return problems;
 }
 export type WaypointProblem = "name" | "place" | "answer" | "choices" | "points";
@@ -93,11 +95,13 @@ export function waypointProblems(w: WaypointDraft): WaypointProblem[] {
   if (!w.lat && !w.lng) problems.push("place");
   if (!Number.isInteger(w.points) || w.points < 1 || w.points > LIMITS.points) problems.push("points");
   if (w.mission_type === "puzzle") {
-    if (!w.answer.trim()) problems.push("answer");
+    // The server never sends a saved answer back, so a saved puzzle left blank keeps the answer it has.
+    const keeps = !!w.id && !w.answer.trim();
+    if (!w.answer.trim() && !keeps) problems.push("answer");
     // A multiple-choice puzzle needs at least two options, and the answer has to be one of them.
     if (w.puzzle_kind === "choice") {
       const filled = w.choices.map((c) => c.trim()).filter(Boolean);
-      if (filled.length < 2 || !filled.includes(w.answer.trim())) problems.push("choices");
+      if (filled.length < 2 || (!keeps && !filled.includes(w.answer.trim()))) problems.push("choices");
     }
   }
   return problems;
@@ -119,7 +123,7 @@ export function blankDraft(): HuntDraft {
 export function blankWaypoint(ordinal: number, at: { lat: number; lng: number } | null): WaypointDraft {
   return {
     ordinal, name: "", lat: at?.lat ?? 0, lng: at?.lng ?? 0,
-    mission_type: "arrive", points: 10, description: "", arrive_check: "gps", image: null,
+    mission_type: "arrive", points: 10, description: "", arrive_check: "gps", image: "tpl:park",
     puzzle_kind: "choice", choices: ["", ""], answer: "",
   };
 }

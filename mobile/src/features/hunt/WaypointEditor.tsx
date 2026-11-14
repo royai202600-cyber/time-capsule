@@ -8,7 +8,7 @@ import { searchPlaces, type PointPlace } from "../../services/places";
 import { LIMITS, waypointProblems, type WaypointDraft } from "../../services/huntOrganizer";
 import { GiftQr } from "../capsule/GiftQr";
 import { PinPicker } from "./PinPicker";
-import { QUEST_TEMPLATES, questImageSource, templateImage } from "./questImage";
+import { DEFAULT_QUEST_IMAGE, QUEST_TEMPLATES, questImageSource, templateImage } from "./questImage";
 import { pickPhoto } from "../../components/pickPhoto";
 import { questQr, type MissionType } from "../../services/huntPrivate";
 import { Btn } from "./HuntViews";
@@ -99,12 +99,11 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
           <Label text={o.pictureLabel} />
           {/* Round like the pin it becomes, ringed in the quest's brass. */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm, paddingVertical: 4, paddingHorizontal: 2 }}>
-            <PictureChoice on={!w.image} label={o.pictureNone} onPress={() => set({ image: null })}><ArtIcon name="pin" size={24} color={C.brass} /></PictureChoice>
             <PictureChoice on={false} label={o.pictureUpload} onPress={() => void upload()}><ArtIcon name="camera" size={22} color={C.blue} /></PictureChoice>
             {!!w.image && !w.image.startsWith("tpl:") && <PictureChoice on label={o.pictureUpload} image={w.image} onPress={() => {}} />}
             {QUEST_TEMPLATES.map((key, i) => {
               const image = templateImage(key);
-              return <PictureChoice key={key} on={w.image === image} label={o.pictureTemplate(i + 1)} image={image} onPress={() => set({ image })} />;
+              return <PictureChoice key={key} on={(w.image || DEFAULT_QUEST_IMAGE) === image} label={o.pictureTemplate(i + 1)} image={image} onPress={() => set({ image })} />;
             })}
           </ScrollView>
           <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: pictureError ? C.wax : C.muted }}>{pictureError || o.pictureSub}</Text>
@@ -200,6 +199,7 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
                 maxLength={LIMITS.answer} style={input} />
             </>}
             <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.answerNote}</Text>
+            {!!w.id && <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.answerKeep}</Text>}
           </>}
 
           {!!problems.length && <View style={{ gap: 4 }}>
@@ -224,7 +224,7 @@ export function WaypointEditor({ waypoint, busy, onClose, onSave, onDelete }: {
         </ScrollView>
       </View>
     </View>
-    {picking && <PinPicker mission={w.mission_type}
+    {picking && <PinPicker mission={w.mission_type} image={w.image}
       at={placed ? { lat: w.lat, lng: w.lng } : null}
       you={location.fix ? { lat: location.fix.lat, lng: location.fix.lng } : null}
       onClose={() => setPicking(false)}
