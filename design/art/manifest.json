@@ -9536,5 +9536,137 @@
     "template_key": "oldStreet",
     "postprocess": "Downscale to 1024 square with Lanczos. Both display crops use the center.",
     "web_export": "public/art/quest-templates/quest-template-old-street.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-pineapple-cake.png",
+    "what": "Pineapple-cake box — assembled",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nCreate the closed assembled Pineapple-cake box / 鳳梨酥禮盒 game asset. The attached image is the mandatory style reference. On a square 1024-style transparent canvas show ONE clean, completely closed, original Taipei pineapple-cake souvenir gift box. Construct it as a cream cardstock slipcase open only at its right end, holding a separate drawer tray sitting flush there. This is a drawer, not a lid box. Clear drawer seam, a completely closed narrow ink-blue tray end at the right and a small cream half-moon finger notch on the sleeve lip; food is hidden. The broad cream top has a single small hand-inked botanical sketch of a pineapple in ink blue, blue edge bands and a small plain round brass foil seal sticker away from the seam. Use a strong plum/navy contour and subtle paper texture like the envelope and tin in the reference. No lettering, typography, emblems, real logos, flags, branding, copying retail packaging, pedestal, floor, or cast shadow. Only the box pixels on true transparency.\n\nUse a shallow front three-quarter view from above. The long edges that run along the drawer axis point almost horizontally slightly down to the right (about an 8 degree slope). The short front-to-back edges are steeper and angle up and right. Show us the long front face and the small right drawer end. A compact almost-square footprint, with room later to slide the tray toward the right, so keep the closed box about 58% of total square canvas width; centred left-to-right and with its lowest pixel near 88% of canvas height (all above the bottom margin). Leave more than 100 px clear above the artwork; do not fill the top of the square. If the renderer recenters it vertically, preserve the proportions and clear margins. Visible edges must be crisp and legible at pin size.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "bb0c0b6db547313fdc7dc5014d06dff5328e926809740c49b7fa1b1b93599501"
+    },
+    "postprocess": "Same 1254→640 downscale and placement for both registered parts. Assembled from the closed keyframe over transparent pixels; the sleeve follows the isolated edit and the visible ink-blue end uses the first closed illustration.",
+    "vessel": {
+      "id": "pineapple-cake",
+      "opening": "F",
+      "idleMs": 4000,
+      "idle": [
+        {
+          "type": "breathe",
+          "amount": 0.03
+        }
+      ],
+      "layers": [
+        {
+          "name": "tray",
+          "file": "vessel-pineapple-cake-tray.png",
+          "role": "slide",
+          "pivot": {
+            "x": 726,
+            "y": 777
+          },
+          "open": [
+            {
+              "at": 0,
+              "x": 0.0,
+              "y": 0.0
+            },
+            {
+              "at": 0.5,
+              "x": 0.109375,
+              "y": 0.01171875
+            },
+            {
+              "at": 1,
+              "x": 0.21875,
+              "y": 0.0234375
+            }
+          ]
+        },
+        {
+          "name": "sleeve",
+          "file": "vessel-pineapple-cake-sleeve.png",
+          "role": "static",
+          "open": [
+            {
+              "at": 0
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 707,
+        "y": 735
+      },
+      "baseY": 899,
+      "sparkle": {
+        "x": 670,
+        "y": 676
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "web_export": "public/art/vessels/vessel-pineapple-cake.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-pineapple-cake-sleeve.png",
+    "what": "Pineapple-cake box — hollow slipcase sleeve",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference. Image 2 is the closed assembled box and the edit target. Keep ONLY the outer cream paper slipcase sleeve in the exact same location, size, orientation and view as image 2. Preserve the original cream top and front panels, blue bands, pineapple illustration, brass circle, and all their edges in place. Remove the solid ink-blue right end which is the drawer front. The right end is now an open aperture with a slim paper rim and a small thumb scoop on the upper right lip. Make the space of the opening fully transparent so a separate moving tray behind it can fill it; thin ink plum contour only around this aperture's rim. The cream top and front should remain completely opaque. Everything else fully transparent. Canvas stays square and objects stay exactly registered with image 2. No tray, food, shadows, ground, extra objects or type.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "ab126231a46a45ad5dc3b4080cc195a8761ca12eadc40232303ffebf397d826b"
+    },
+    "postprocess": "Isolated edit of the closed source. Trimmed the hidden rear rim and stray alpha, then applied the shared downscale and placement.",
+    "web_export": "public/art/vessels/vessel-pineapple-cake-sleeve.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-pineapple-cake-tray.png",
+    "what": "Pineapple-cake box — complete sliding pastry tray with letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference. Image 2 is the closed assembled Pineapple-cake box and the edit target. Edit image 2 to show only its complete shallow rectangular slide-out inner drawer tray, in the exact same place, scale and perspective that the hidden tray occupies inside the box. The camera and canvas must remain fixed. REMOVE the cream decorated outer sleeve altogether, revealing the complete open-top tray underneath. The visible right-facing dark ink-blue rectangular end of the original is the ORIGINAL FRONT WALL OF THE TRAY; keep this wall at its exact location, footprint and angle. Add the open tray receding to the LEFT from that end, enclosed by low thin paper side walls and a visible interior surface. Its footprint closely fits just inside the cream box footprint of image 2, reaching approximately all the way back to the left. Its rim is slightly below the closed cream lid. It is a single 3D rectangular drawer, NOT a box with a lid. One flat cream folded letter with a little wax-red sealing dot lies in the rightmost third of the tray, next to two distinctly square, muted golden Taiwanese pineapple cakes. Cluster these contents at the RIGHT front of the drawer and below the low rim so they appear as soon as the drawer half slides out. The left half has two similar golden cakes, complete sides, an insert and a floor. Simple, bold shapes to read at 120 pixels; the square cakes have a matte gently browned crust. Cream and ink-blue tray with plum or navy outlines, brass allowed on trim. Completely transparent outside the drawer; no sleeve, no ground or shadow, no text, numbers, lettering, emblems, flag, brand or logo.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "9067940f617bd68c4cf618bb94e7b519f5766e5dcb03fa22846f76b5cba88cbc"
+    },
+    "postprocess": "Isolated edit of the closed source. Registered the tray to the sleeve opening and aligned its exterior wall to the original closed blue end. Removed stray alpha and used the shared downscale and placement.",
+    "web_export": "public/art/vessels/vessel-pineapple-cake-tray.webp"
   }
 ]

@@ -460,6 +460,9 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-red-bird-shadow.png` | Red Bird Sundial Box — shadow | 1024×1024 | pending Roy; see manifest |
 | `stamps/stamp-hkust.png` | HKUST curved academic building / Piazza Passport stamp | 1024×1024 | ink blue; pending Roy |
 | `stamps/stamp-hunt-hkust-2026-11.png` | HKUST City Hunt stamp; double ring, curved academic building | 1024×1024 | ink blue; pending Roy |
+| `vessels/vessel-pineapple-cake.png` | Pineapple-cake box — closed assembly | 1024×1024 | RV-R1 test; see manifest |
+| `vessels/vessel-pineapple-cake-sleeve.png` | Pineapple-cake box — hollow cream slipcase | 1024×1024 | RV-R1 test; see manifest |
+| `vessels/vessel-pineapple-cake-tray.png` | Pineapple-cake box — sliding tray with pastries and letter | 1024×1024 | RV-R1 test; see manifest |
 
 ## Review
 
@@ -506,3 +509,11 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `hunt-covers/hunt-cover-park.png` | 1280×720 | Opaque full-bleed cover for a fictional park. |
 
 [Six-template review](_checks/private-hunt-quest-templates-review.png) shows each WebP at 46 px over land and water and in a centered 16:9 crop. The 3D pin and original review sheet are preserved in commit `f55af42`. The stamp and park cover remain under review. Roy approved the park template as-is. The remaining five templates await set review. The backend needs to add `oldStreet` to its template allowlist.
+
+### Regional vessels R1 test — Pineapple-cake box
+
+The original cream and ink-blue paper sleeve has an inked pineapple and a plain brass sticker. The drawer slides along the sleeve’s seam and reveals a letter and a complete tray of square pastries. The 4-second idle loop uses 3% breathing, with a sparkle on the sticker. The 1024 px closed canvas uses baseY 899 and the lower-to-upper stack is tray, then sleeve.
+
+- Pastry shape and crust reference inspected on 2026-11-15. Photo by Ocdp, CC0. [Taiwanese_Pineapple_Cake_001.jpg](https://commons.wikimedia.org/wiki/File:Taiwanese_Pineapple_Cake_001.jpg) · [Exact source file](https://upload.wikimedia.org/wikipedia/commons/e/e2/Taiwanese_Pineapple_Cake_001.jpg)
+- Approved design and batch order. [Regional vessels spec at PR #132](https://github.com/royai202600-cyber/time-capsule/blob/152813ed156011afab14f1c4e75295fe6b563789/docs/design/regional-vessels.md#1-new-regional-vessels-12)
+- Review sheets and stack proof. [Motion and anchors](_checks/pineapple-cake-motion.png) · [40/120 px](_checks/pineapple-cake-silhouette.png) · [Exact stack](_checks/pineapple-cake-check.json) · [Full contact sheet](_checks/contact-sheet.png)

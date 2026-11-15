@@ -1,0 +1,28 @@
+{
+  "full_rgba_closed_match": true,
+  "baseY": 899,
+  "bounds_max_exclusive": {
+    "closed": [
+      255,
+      593,
+      767,
+      901
+    ],
+    "half": [
+      255,
+      593,
+      879,
+      912
+    ],
+    "open": [
+      255,
+      593,
+      991,
+      924
+    ]
+  },
+  "tray_translation_px": [
+    224,
+    24
+  ]
+}
