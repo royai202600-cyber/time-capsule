@@ -55,6 +55,10 @@ def fireflies(im):
  return out
 
 def transform(im,key,pivot=None):
+ # Skip resampling at rest to preserve the RGB of partially transparent edges.
+ if (all(key.get(field, 0) == 0 for field in ('x', 'y', 'rotate'))
+     and all(key.get(field, 1) == 1 for field in ('scale', 'scaleX', 'scaleY', 'opacity'))):
+  return im
  # Coordinates follow PR42: fractions for translations, px for pivot, clockwise degrees.
  px,py=(pivot or {'x':512,'y':512}).values();sx=key.get('scaleX',1)*key.get('scale',1);sy=key.get('scaleY',1)*key.get('scale',1);angle=math.radians(key.get('rotate',0));cs,sn=math.cos(angle),math.sin(angle)
  sx=sx if abs(sx)>.002 else .002;sy=sy if abs(sy)>.002 else .002

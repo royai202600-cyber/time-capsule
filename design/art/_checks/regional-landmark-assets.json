@@ -1,0 +1,548 @@
+{
+  "count": 18,
+  "passed": 18,
+  "failed": [],
+  "assets": [
+    {
+      "path": "stamps/stamp-beimen.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true,
+        "one_ink_color": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "stamps/stamp-esplanade.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true,
+        "one_ink_color": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "stamps/stamp-guia.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true,
+        "one_ink_color": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-durian-left-pith.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-durian-left.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-durian-pods.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-durian-right-pith.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-durian-right.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-durian.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-lighthouse-beam.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-lighthouse-cap.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-lighthouse-letter.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-lighthouse-tower.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-lighthouse.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-north-gate-base.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-north-gate-interior.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-north-gate-roof.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    },
+    {
+      "path": "vessels/vessel-north-gate.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true,
+      "webp": {
+        "size_px": [
+          512,
+          512
+        ],
+        "transparent_corners": true
+      }
+    }
+  ],
+  "vessels": {
+    "north-gate": {
+      "bbox_xyxy_exclusive": [
+        144,
+        240,
+        881,
+        901
+      ],
+      "base_y": 900,
+      "closed_stack_different_rgba_pixels": 0,
+      "idle_start_and_end_different_rgba_pixels": 0,
+      "idle_ms": 4200,
+      "opening": "B",
+      "peak_roof_lift_px": 26
+    },
+    "durian": {
+      "bbox_xyxy_exclusive": [
+        210,
+        119,
+        814,
+        901
+      ],
+      "base_y": 900,
+      "closed_stack_different_rgba_pixels": 0,
+      "idle_start_and_end_different_rgba_pixels": 0,
+      "idle_ms": 4100,
+      "opening": "H",
+      "stock_preview_rgba_resampling_note": "The stock preview resamples identity transforms. Exact checks above compare unmoved RGBA layers directly."
+    },
+    "lighthouse": {
+      "bbox_xyxy_exclusive": [
+        254,
+        119,
+        770,
+        902
+      ],
+      "base_y": 901,
+      "closed_stack_different_rgba_pixels": 0,
+      "idle_start_and_end_different_rgba_pixels": 0,
+      "idle_ms": 4200,
+      "opening": "C",
+      "stock_preview_rgba_resampling_note": "The stock preview resamples identity transforms. Exact checks above compare unmoved RGBA layers directly."
+    }
+  },
+  "preexisting_art": {
+    "main": {
+      "base": "a1a6d022547d405b2bb3484a7263211eb9ef2dbb",
+      "matching_git_blobs": 1551,
+      "path_and_blob_id_list_sha256": "af250cb51dc5b689af27b32abfccf89757f64347a8c61dd14226869bff4c3482"
+    },
+    "north_gate_approved_head": {
+      "base": "0b08e6db643e4111a6b929e3bff5f88db58acbe4",
+      "matching_git_blobs": 1563,
+      "path_and_blob_id_list_sha256": "5dc5e4312a5dbfd79d9a6205f89586d863221fe916eaa4b0cd1ef50cabca2eb5"
+    },
+    "excluded_shared_files": [
+      "design/art/README.md",
+      "design/art/_checks/contact-sheet.png",
+      "design/art/manifest.json"
+    ]
+  },
+  "chrome_preview": {
+    "viewport_width_px": 375,
+    "webp_placements": 72,
+    "checked": [
+      "Vessel silhouettes at 40 and 120 px",
+      "Closed, half-open, open, and idle poses",
+      "Three Passport stamps"
+    ]
+  }
+}

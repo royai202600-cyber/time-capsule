@@ -9538,6 +9538,1688 @@
     "web_export": "public/art/quest-templates/quest-template-old-street.webp"
   },
   {
+    "path": "design/art/vessels/vessel-north-gate.png",
+    "what": "Miniature North Gate (北門城樓), closed souvenir",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nDraw a single assembled, closed collectible souvenir miniature loosely inspired by Taipei's historic North Gate (Cheng'en Gate). The attached image is the style reference. Architectural cues observed in the real photo: broad squat blue-gray ashlar base, one deep semicircular arch with sturdy rectangular piers, wax-red rectangular upper wall with two tiny dark square openings and a central oculus, one swept single-eave tiled roof with a raised central ridge and restrained upturned corners. Use wax-red/plum roof tiles and a small brass or cream ridge highlight. Simple readable shapes at 40 px, predominantly frontal with a little of the right side visible. One continuous eave separates the detachable tile roof from the wall with a clear seam; the miniature is still closed and there is no rolled paper visible yet. The arch is dark with a recessed back wall in the closed state. No plaque or plaque outlines, no lettering or glyphs, flags, finial symbols or emblems. No environment, floor, shadow outside silhouette or extra objects. Set the object about 70% of square canvas width and height, horizontally centered, base close to 88% down and clear space above the ridge for lifting.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_reference": "https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg",
+    "postprocess": "One shared Lanczos 1254 to 1003 resize and (16, 7) canvas offset. Discard alpha below 20. Closed pixels divided between base and roof by the edited roof mask. Crop and feather the edited open recess and letter into a separate reveal layer.",
+    "web_export": "public/art/vessels/vessel-north-gate.webp",
+    "vessel": {
+      "id": "north-gate",
+      "assembled": "vessel-north-gate.png",
+      "opening": "B",
+      "idleMs": 4200,
+      "idle": [],
+      "layers": [
+        {
+          "name": "base",
+          "file": "vessel-north-gate-base.png",
+          "role": "static"
+        },
+        {
+          "name": "interior",
+          "file": "vessel-north-gate-interior.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.16,
+              "opacity": 0
+            },
+            {
+              "at": 0.7,
+              "opacity": 1
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0
+            }
+          ]
+        },
+        {
+          "name": "roof",
+          "file": "vessel-north-gate-roof.png",
+          "role": "lift",
+          "open": [
+            {
+              "at": 0,
+              "y": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": -0.157,
+              "opacity": 1
+            }
+          ],
+          "idle": [
+            {
+              "type": "float",
+              "amount": 0.025
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 520,
+        "y": 437
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 640,
+        "y": 288
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-north-gate-base.png",
+    "what": "Miniature North Gate, stationary stone and wax-red gate",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact assembled Miniature North Gate to edit. Make its complete opened base for the B lift-off animation. Remove ONLY the wax-red tiled roof and its brass eave above the horizontal seam along the top of the wax-red upper wall. Reveal a shallow, entirely drawn inset beneath the roof with a cream rim, navy interior wall, visible continuous floor and sides, occupying the narrow footprint directly behind the existing top edge of the red wall. It should be just a little visible from the same camera angle. The opening lets a soft warm light into the lower stone archway, revealing one clearly legible cream rolled parchment tucked horizontally at the bottom of the arch on its existing stone threshold, inside the opening, no writing or ribbon needed. Draw the whole rolled parchment, recessed stone arch walls, chamber back, and threshold with no gaps. Keep all remaining surfaces of the existing upper wax-red wall and blue ashlar building precisely in place, including every window, round oculus, ashlar seam and silhouette, at the reference's original pixel positions, proportions, outlined style and palette. No roof, no background, no legible characters, no shadow outside the silhouette. Do not rescale, zoom, center, rotate, widen, or shift the base. Same exact square canvas as Image 2.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "assembled North Gate generation"
+    ],
+    "landmark_reference": "https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg",
+    "postprocess": "One shared Lanczos 1254 to 1003 resize and (16, 7) canvas offset. Discard alpha below 20. Closed pixels divided between base and roof by the edited roof mask. Crop and feather the edited open recess and letter into a separate reveal layer.",
+    "web_export": "public/art/vessels/vessel-north-gate-base.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-north-gate-interior.png",
+    "what": "Miniature North Gate, revealed roof recess and lit letter in the arch",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact assembled Miniature North Gate to edit. Make its complete opened base for the B lift-off animation. Remove ONLY the wax-red tiled roof and its brass eave above the horizontal seam along the top of the wax-red upper wall. Reveal a shallow, entirely drawn inset beneath the roof with a cream rim, navy interior wall, visible continuous floor and sides, occupying the narrow footprint directly behind the existing top edge of the red wall. It should be just a little visible from the same camera angle. The opening lets a soft warm light into the lower stone archway, revealing one clearly legible cream rolled parchment tucked horizontally at the bottom of the arch on its existing stone threshold, inside the opening, no writing or ribbon needed. Draw the whole rolled parchment, recessed stone arch walls, chamber back, and threshold with no gaps. Keep all remaining surfaces of the existing upper wax-red wall and blue ashlar building precisely in place, including every window, round oculus, ashlar seam and silhouette, at the reference's original pixel positions, proportions, outlined style and palette. No roof, no background, no legible characters, no shadow outside the silhouette. Do not rescale, zoom, center, rotate, widen, or shift the base. Same exact square canvas as Image 2.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "assembled North Gate generation"
+    ],
+    "landmark_reference": "https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg",
+    "postprocess": "One shared Lanczos 1254 to 1003 resize and (16, 7) canvas offset. Discard alpha below 20. Closed pixels divided between base and roof by the edited roof mask. Crop and feather the edited open recess and letter into a separate reveal layer.",
+    "web_export": "public/art/vessels/vessel-north-gate-interior.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-north-gate-roof.png",
+    "what": "Miniature North Gate, lift-off tiled roof with brass ridge",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact assembled Miniature North Gate to edit. Keep ONLY its existing swept wax-red tiled roof with its brass ridge and brass eave trim and the thin dark outlined join right underneath the trim. Preserve the exact pixel position, outer silhouette and scale, curvature of the ridge and eave, highlights, every tile and scene framing. Remove the entire wax-red window wall and stone gate below the eave to true transparency. Keep the same exact square canvas and leave the roof floating in its original upper position. No shadow, background, borders or other objects. Do not recenter or expand the roof.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "assembled North Gate generation"
+    ],
+    "landmark_reference": "https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg",
+    "postprocess": "One shared Lanczos 1254 to 1003 resize and (16, 7) canvas offset. Discard alpha below 20. Closed pixels divided between base and roof by the edited roof mask. Crop and feather the edited open recess and letter into a separate reveal layer.",
+    "web_export": "public/art/vessels/vessel-north-gate-roof.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-durian.png",
+    "what": "Durian / 榴槤, whole closed fruit",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved regional palette exception for this durian: muted natural food colours, specifically desaturated leafy olive-green and tea-brown for the husk and stem, egg-yellow and rice-white for the fruit. Ink lines stay plum or navy.\nDraw one whole closed durian as a hand-inked collectible vessel, the fruit itself that inspired the nickname of Singapore’s Esplanade. One broadly oval fruit with a gently tapered lower tip, upright and slightly tilted, a short woody stem centered near the top. Fairly large, distinct green pyramidal thorns with selected brass-tinted sunlit tips. Include one subtle, narrow curved center seam tracking from just beside the stem to the bottom point, closed flat with identical green color on each side along the seam, no flesh or parchment visible. Use an even three-quarter view with little perspective distortion, silhouette about 68% of the square width and height, horizontal center at 50%, ground at 88%. It should fill the canvas and read as a durian at 40 px. Keep large groupings of light, shade and thorns. Isolated true transparent background. No packaging, separate fruit, scenery, earth, shadow, leaf, text, labels or logo. The reference image is the mandatory illustration style sheet.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian.webp",
+    "vessel": {
+      "id": "durian",
+      "assembled": "vessel-durian.png",
+      "opening": "H",
+      "idleMs": 4100,
+      "idle": [
+        {
+          "type": "breathe",
+          "amount": 0.027
+        }
+      ],
+      "layers": [
+        {
+          "name": "pods",
+          "file": "vessel-durian-pods.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0,
+              "x": 0.065,
+              "y": 0.06,
+              "scale": 0.75
+            },
+            {
+              "at": 0.18,
+              "opacity": 0,
+              "x": 0.065,
+              "y": 0.06,
+              "scale": 0.75
+            },
+            {
+              "at": 0.72,
+              "opacity": 1,
+              "x": 0.065,
+              "y": 0.06,
+              "scale": 0.75
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0
+            }
+          ]
+        },
+        {
+          "name": "left-pith",
+          "file": "vessel-durian-left-pith.png",
+          "role": "split",
+          "pivot": {
+            "x": 464,
+            "y": 828
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.42,
+              "opacity": 0.6,
+              "x": -0.039,
+              "y": 0,
+              "rotate": -7
+            },
+            {
+              "at": 1,
+              "opacity": 1,
+              "x": -0.097,
+              "y": 0.012,
+              "rotate": -16
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0
+            }
+          ]
+        },
+        {
+          "name": "right-pith",
+          "file": "vessel-durian-right-pith.png",
+          "role": "split",
+          "pivot": {
+            "x": 499,
+            "y": 833
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.42,
+              "opacity": 0.6,
+              "x": 0.03,
+              "y": 0,
+              "rotate": 7
+            },
+            {
+              "at": 1,
+              "opacity": 1,
+              "x": 0.071,
+              "y": 0.02,
+              "rotate": 18
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0
+            }
+          ]
+        },
+        {
+          "name": "left",
+          "file": "vessel-durian-left.png",
+          "role": "split",
+          "pivot": {
+            "x": 464,
+            "y": 828
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 1
+            },
+            {
+              "at": 0.42,
+              "opacity": 1,
+              "x": -0.039,
+              "y": 0,
+              "rotate": -7
+            },
+            {
+              "at": 1,
+              "opacity": 1,
+              "x": -0.097,
+              "y": 0.012,
+              "rotate": -16
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "file": "vessel-durian-right.png",
+          "role": "split",
+          "pivot": {
+            "x": 499,
+            "y": 833
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 1
+            },
+            {
+              "at": 0.42,
+              "opacity": 1,
+              "x": 0.03,
+              "y": 0,
+              "rotate": 7
+            },
+            {
+              "at": 1,
+              "opacity": 1,
+              "x": 0.071,
+              "y": 0.02,
+              "rotate": 18
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 570,
+        "y": 530
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 462,
+        "y": 391
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-durian-left.png",
+    "what": "Left spiky husk with stem",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nundefined\nImage 1 is the style sheet. Image 2 is the exact aligned, assembled durian being edited. Isolate only its viewer-left, broader husk half, including the entire short stem. Follow the existing thin curved seam, dividing at the seams from the stem's right edge down to the pointed bottom. Remove the entire viewer-right husk. Keep the same wide contour to the left, the same thorns, lighting, scale, pixel positions, crop, center, and original projection. Paint a modest, continuous pale pith lip just beyond the cut line to the right, as the extra inner rind that will become visible during opening. Keep the pith lip narrow (about 30–45 px relative to an output about 1254 px wide) with one defined dark edge; it hugs the pre-existing curved seam along its full height and has only one solid rice-white fill tone with sparse hatching. A softly ragged natural cut surface. No paper, fruit flesh, stem duplication, shadow or separate objects. Give the rest true alpha. Canvas must not zoom or recenter.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-durian.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian-left.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-durian-right.png",
+    "what": "Right spiky husk",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nundefined\nImage 1 is the style sheet. Image 2 is the exact aligned, assembled durian being edited. Isolate only its viewer-right narrower spiky husk half. Follow the existing curved forward seam, dividing just to the right of the woody stem at the top and following the curve toward the pointed bottom. Remove the entire left piece including the woody stem. Keep the same original right thumbnail contour, waxy thorns, color, light, scale, orientation and positions. Paint a modest continuous pale pith lip on the left edge of the isolated piece, just beyond the cut; about 35–45 px of solid rice-white pith with one defined dark edge that hugs the original seam at all heights. The rest of the canvas truly transparent. No flesh, letter, shadow, or other object. Same square canvas, no recentering and no rotation.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-durian.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian-right.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-durian-left-pith.png",
+    "what": "Left cut pith lining",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nundefined\nImage 1 is the style sheet. Image 2 is the exact aligned, assembled durian being edited. Isolate only its viewer-left, broader husk half, including the entire short stem. Follow the existing thin curved seam, dividing at the seams from the stem's right edge down to the pointed bottom. Remove the entire viewer-right husk. Keep the same wide contour to the left, the same thorns, lighting, scale, pixel positions, crop, center, and original projection. Paint a modest, continuous pale pith lip just beyond the cut line to the right, as the extra inner rind that will become visible during opening. Keep the pith lip narrow (about 30–45 px relative to an output about 1254 px wide) with one defined dark edge; it hugs the pre-existing curved seam along its full height and has only one solid rice-white fill tone with sparse hatching. A softly ragged natural cut surface. No paper, fruit flesh, stem duplication, shadow or separate objects. Give the rest true alpha. Canvas must not zoom or recenter.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-durian.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian-left-pith.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-durian-right-pith.png",
+    "what": "Right cut pith lining",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nundefined\nImage 1 is the style sheet. Image 2 is the exact aligned, assembled durian being edited. Isolate only its viewer-right narrower spiky husk half. Follow the existing curved forward seam, dividing just to the right of the woody stem at the top and following the curve toward the pointed bottom. Remove the entire left piece including the woody stem. Keep the same original right thumbnail contour, waxy thorns, color, light, scale, orientation and positions. Paint a modest continuous pale pith lip on the left edge of the isolated piece, just beyond the cut; about 35–45 px of solid rice-white pith with one defined dark edge that hugs the original seam at all heights. The rest of the canvas truly transparent. No flesh, letter, shadow, or other object. Same square canvas, no recentering and no rotation.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-durian.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian-right-pith.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-durian-pods.png",
+    "what": "Complete durian pods, pith bed and rolled letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nundefined\nImage 1 is the style sheet. Image 2 is the aligned assembled durian being edited. Keep its framing and create only the complete exposed center contents that sit behind the split husk: one compact center cluster of two or three plump yellow cream durian pods cradled in a slightly pointed ivory natural pith bed. Lay one small horizontal rolled cream parchment with a legible spiral end across the front of the pods, an actual whole little scroll with no marks, darker at its outline than the pods. Bunched fleshy folds, warm yellow shadows, profile different enough from the parchment to see both at 120 px. Show the complete surrounding pith bed including curved sides and front and back, no gaps. Place this cluster in central lower half where the interior cavity is in Image 2, approximately native coordinates x 480–815, y 530–1020 of a 1254 px square. The contents only; remove the entire exterior peel, spikes and stem. Genuine transparent background. No extra objects, no floor, no shadow outside the cluster, no packaging or text. No zoom or reframing.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-durian.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian-pods.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lighthouse.png",
+    "what": "Guia Lighthouse / 東望洋燈塔, closed miniature",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nDraw one miniature white painted lighthouse loosely inspired by the Guia Lighthouse in Macau, as an original tabletop souvenir. Use a squat, subtly tapered round porcelain-white tower on a low circular foot that is part of the tower base. Warm brass-yellow accents around one small curved doorway and two small staggered arched windows. Two small circular trims or balconies beneath the lantern room, simplified navy rails, topmost lantern room with a wax-red domed cap above 3 muted lit cream and warm-brass inset panes. Treat the panes as opaque enamel or a solid illuminated lens, not transparent glass. Use a fine crisp, separable seam between the cap and the room. Cap closed and flush. Hint at Macau's modest historic lighthouse silhouette with a broad stance and wax-red rounded dome. Prefer a compact stout toy with a base width about 62–68% and a height about 74% of a square canvas. Horizontally centered; base near 88% down. No scenery, seawall, sea, flag, antenna, chapel, crosses, emblems, lettering or symbols, text or extra decoration. No light beam in this closed master. Isolated true alpha, no outside shadow. The reference image is the mandatory illustration style sheet.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "All registered parts use the shared uniform downscale and offset. The isolated cap is registered as a seam guide and the closed paint divided exactly; the letter and recess use the edited tower. The beam alpha is softened and tapered from the pane outward.",
+    "web_export": "public/art/vessels/vessel-lighthouse.webp",
+    "vessel": {
+      "id": "lighthouse",
+      "assembled": "vessel-lighthouse.png",
+      "opening": "C",
+      "idleMs": 4200,
+      "idle": [],
+      "layers": [
+        {
+          "name": "tower",
+          "file": "vessel-lighthouse-tower.png",
+          "role": "static"
+        },
+        {
+          "name": "letter",
+          "file": "vessel-lighthouse-letter.png",
+          "role": "fade",
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0
+            }
+          ],
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.08,
+              "opacity": 0
+            },
+            {
+              "at": 0.65,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "name": "beam",
+          "file": "vessel-lighthouse-beam.png",
+          "role": "fade",
+          "pivot": {
+            "x": 593,
+            "y": 314
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.52,
+              "opacity": 0.7
+            },
+            {
+              "at": 1,
+              "opacity": 0.32
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0.92
+            },
+            {
+              "type": "sway",
+              "deg": 9,
+              "pivot": {
+                "x": 593,
+                "y": 314
+              }
+            }
+          ]
+        },
+        {
+          "name": "cap",
+          "file": "vessel-lighthouse-cap.png",
+          "role": "lift",
+          "pivot": {
+            "x": 512,
+            "y": 270
+          },
+          "open": [
+            {
+              "at": 0,
+              "y": 0
+            },
+            {
+              "at": 1,
+              "y": -0.1
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 508,
+        "y": 238
+      },
+      "baseY": 901,
+      "sparkle": null,
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-lighthouse-tower.png",
+    "what": "Stationary white tower and two balconies",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact fully assembled miniature Guia Lighthouse to edit. Remove only the wax-red cap and its brass finial. Replace the area immediately above the seal at the TOP of the lantern room with a complete shallow round elliptical cavity, solid inner sides, brass rim, dark cream shadowed floor and one very readable rolled cream letter with a rolled spiral end sitting on the lip. Let the top of the letter rise slightly out of the open aperture. The opening and the rolled letter must both fit horizontally within the original cap's footprint. The illuminated panels on the exterior lantern room remain opaque enamel. Keep the entire tower, its windows, doors, two brass circular deck trims, railing and bottom in exactly the same locations with the same colors and size. No redesign, rescale, reposition, rotate, crop, background or added shadow. Same square canvas and genuine transparency.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-lighthouse.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "All registered parts use the shared uniform downscale and offset. The isolated cap is registered as a seam guide and the closed paint divided exactly; the letter and recess use the edited tower. The beam alpha is softened and tapered from the pane outward.",
+    "web_export": "public/art/vessels/vessel-lighthouse-tower.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lighthouse-letter.png",
+    "what": "Lantern-room rim, complete recess and rolled letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact fully assembled miniature Guia Lighthouse to edit. Remove only the wax-red cap and its brass finial. Replace the area immediately above the seal at the TOP of the lantern room with a complete shallow round elliptical cavity, solid inner sides, brass rim, dark cream shadowed floor and one very readable rolled cream letter with a rolled spiral end sitting on the lip. Let the top of the letter rise slightly out of the open aperture. The opening and the rolled letter must both fit horizontally within the original cap's footprint. The illuminated panels on the exterior lantern room remain opaque enamel. Keep the entire tower, its windows, doors, two brass circular deck trims, railing and bottom in exactly the same locations with the same colors and size. No redesign, rescale, reposition, rotate, crop, background or added shadow. Same square canvas and genuine transparency.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-lighthouse.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "All registered parts use the shared uniform downscale and offset. The isolated cap is registered as a seam guide and the closed paint divided exactly; the letter and recess use the edited tower. The beam alpha is softened and tapered from the pane outward.",
+    "web_export": "public/art/vessels/vessel-lighthouse-letter.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lighthouse-cap.png",
+    "what": "Wax-red lantern cap with brass finial",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact aligned assembled Guia Lighthouse being edited. Isolate ONLY its wax-red domed lantern-room cap with the single round brass finial. Preserve the exact cap silhouette, thin rounded lower seam, line work, colors, and location, size, canvas and camera from the source. Remove the entire tower, balcony, panes and background to transparency. The cap should float at the same x/y as before the edit. No new perspective, content, shadow, symbol, border, or other object.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-lighthouse.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "All registered parts use the shared uniform downscale and offset. The isolated cap is registered as a seam guide and the closed paint divided exactly; the letter and recess use the edited tower. The beam alpha is softened and tapered from the pane outward.",
+    "web_export": "public/art/vessels/vessel-lighthouse-cap.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lighthouse-beam.png",
+    "what": "Soft amber lantern beam",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the mandatory style sheet. Image 2 is the exact aligned assembled Guia Lighthouse and shows the anchor. Make ONLY a transparent warm cream/brass-yellow lighthouse beam extending to the RIGHT from the center of its existing illuminated lantern-room window, with source near (646, 374) on the 1254 canvas and a softly spreading tapered cone fading fully to transparent by x1160 before reaching the right edge. Direction is horizontally right. A very soft, simple streak of light with a glow diminishing over its length, not a solid shape. Narrow near the window. No hard lines or outlines, no opaque objects, no texture, no extra marks, no rays in another direction, no lettering, no tower particle or building visible at all. Beam only. Keep a truly transparent background with nothing but the beam. Keep the same framing and positions.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-lighthouse.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "All registered parts use the shared uniform downscale and offset. The isolated cap is registered as a seam guide and the closed paint divided exactly; the letter and recess use the edited tower. The beam alpha is softened and tapered from the pane outward.",
+    "web_export": "public/art/vessels/vessel-lighthouse-beam.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-beimen.png",
+    "what": "Beimen Passport stamp · Taipei North Gate",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nPassport place stamp icon for Taipei North Gate (Beimen), ROUND in ink blue #2F5D8A ONLY, transparent outside AND between ink marks, rubber stamp with one broad mildly uneven circular rim. Inside the circle centered is a simplified front three-quarter profile of the Taiwan North Gate landmark itself: a wide single upward-swept tiled roof with its raised center ridge above a squat solid rectangular upper wall with a small round central opening and two square ones, base of large ashlar blocks with one clear deep rounded arch beneath, no plaques. The bold locally recognizable silhouette should have strong negative spaces at 40 px. Use only blue ink with transparency for line breaks and texture. No background or paper disc, shadows, words, labels, names, flags, letters, numbers, plaques, official insignia, skyline, or second ring. Reference image is the mandatory illustration style sheet. Stamp outer ring diameter about 74% of the square canvas.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg"
+    ],
+    "postprocess": "Centered original mark and normalized only this batch to exact ink blue via normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-beimen.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-esplanade.png",
+    "what": "Esplanade Passport stamp · Twin louvered domes",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nPassport place stamp for Singapore’s Esplanade (Theatres on the Bay). ROUND, ink blue #2F5D8A ONLY, one broad slightly imperfect circular rim and an original simplified single-color hand-inked depiction of the two low rounded domes, one slightly behind the larger one, with large, rhythmic triangle louver lines and distinct roof silhouettes that give the Esplanade its durian nickname. Use no real logo, type, names, symbols, flags, words, or signage. A minimal horizontal foundation only, no surrounding city. Broad ink and generous negative space for 40px legibility, transparent outside and inside in the paper/negative spaces. Slightly imperfect rubber-stamp texture, sparse. One ring only at about 74% diameter. The attached reference image is the mandatory illustration style sheet.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg"
+    ],
+    "postprocess": "Centered original mark and normalized only this batch to exact ink blue via normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-esplanade.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-guia.png",
+    "what": "Guia Passport stamp · Guia Lighthouse tower",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nPassport place stamp of Macau’s Guia Lighthouse itself. ROUND ink-stamp style, ink blue #2F5D8A ONLY. One broad slightly imperfect circular border. Inside the circle a short, slightly tapered cylindrical tower, two layered circular balcony lines below the small domed lantern room, sparse arched windows and a small arched door; use bold strokes and open negative space at 40 px. One tiny arc of ground if needed. No chapel, cross, flag, weather vane, seal, rays, lettering, logo, symbols, brands, decorative type, text, hill scenery, or landscape. Background between strokes and outside the stamp is true transparency, not a white paper disc. Outer ring about 74% of width. The attached reference image is the mandatory illustration style sheet.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "Centered original mark and normalized only this batch to exact ink blue via normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-guia.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-pineapple-cake.png",
+    "what": "Pineapple cake pastry — closed assembly",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: muted natural baked-pastry egg yellow and tea brown, and muted amber pineapple filling, only for the food itself.\n\nCreate the CLOSED assembled game vessel: ONE plump golden Taiwanese pineapple cake pastry (鳳梨酥), the square baked shortcake from the second reference photograph. Image 1 is the approved style reference; image 2 is reference for food shape and crust only, use the intact pastry, not both pieces or the photo background. One soft-cornered square, puffy thick sides, slightly irregular baked surface with a few visible crumb pores and softly toasted edges. Warm baked biscuit, simple recognizable silhouette at 40 px, visibly hand drawn like the style sheet. Front three-quarter from mildly above, oriented with broad front side visible and small right side. Keep it whole, no gash, no cut sides and no visible filling yet. No plate, shadow outside the footprint, detached crumbs, decorations, leaves, stamps, packaging, wrapper, box, text, symbols or props. Centre horizontally, widest span ~71% of square, low enough that base sits ~88% down. Keep genuine transparent alpha around the object. One image, no panels.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-pineapple-cake.webp",
+    "reference_photo": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Taiwanese_Pineapple_Cake_001.jpg",
+    "vessel": {
+      "id": "pineapple-cake",
+      "opening": "H",
+      "idleMs": 4000,
+      "idle": [
+        {
+          "type": "bob",
+          "amount": 0.03
+        }
+      ],
+      "layers": [
+        {
+          "name": "right-filling",
+          "file": "vessel-pineapple-cake-right-filling.png",
+          "role": "split",
+          "pivot": {
+            "x": 396,
+            "y": 836
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.08,
+              "x": 0.0021875,
+              "y": -0.0040625,
+              "rotate": 1.2,
+              "opacity": 0
+            },
+            {
+              "at": 0.2,
+              "x": 0.0054687500000000005,
+              "y": -0.01015625,
+              "rotate": 3.0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "x": 0.02734375,
+              "y": -0.05078125,
+              "rotate": 15,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "name": "left-filling",
+          "file": "vessel-pineapple-cake-left-filling.png",
+          "role": "split",
+          "pivot": {
+            "x": 393,
+            "y": 834
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.08,
+              "x": -0.005,
+              "y": -0.003046875,
+              "rotate": -1.12,
+              "opacity": 0
+            },
+            {
+              "at": 0.2,
+              "x": -0.0125,
+              "y": -0.007617187500000001,
+              "rotate": -2.8000000000000003,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "x": -0.0625,
+              "y": -0.0380859375,
+              "rotate": -14,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "name": "left",
+          "file": "vessel-pineapple-cake-left.png",
+          "role": "split",
+          "pivot": {
+            "x": 393,
+            "y": 834
+          },
+          "open": [
+            {
+              "at": 0
+            },
+            {
+              "at": 1,
+              "x": -0.0625,
+              "y": -0.0380859375,
+              "rotate": -14
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "file": "vessel-pineapple-cake-right.png",
+          "role": "split",
+          "pivot": {
+            "x": 396,
+            "y": 836
+          },
+          "open": [
+            {
+              "at": 0
+            },
+            {
+              "at": 1,
+              "x": 0.02734375,
+              "y": -0.05078125,
+              "rotate": 15
+            }
+          ]
+        },
+        {
+          "name": "letter",
+          "file": "vessel-pineapple-cake-letter.png",
+          "role": "lift",
+          "open": [
+            {
+              "at": 0,
+              "y": 0.19,
+              "scale": 0.71,
+              "opacity": 0
+            },
+            {
+              "at": 0.19,
+              "y": 0.19,
+              "scale": 0.71,
+              "opacity": 0
+            },
+            {
+              "at": 0.54,
+              "y": 0.06,
+              "scale": 0.93,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": 0,
+              "scale": 1,
+              "opacity": 1
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 473,
+        "y": 552
+      },
+      "baseY": 904,
+      "sparkle": {
+        "x": 482,
+        "y": 436
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-pineapple-cake-left.png",
+    "what": "Pineapple cake — left half crust",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: muted natural baked-pastry egg yellow and tea brown, and muted amber pineapple filling, only for the food itself.\n\nCreate the CLOSED assembled game vessel: ONE plump golden Taiwanese pineapple cake pastry (鳳梨酥), the square baked shortcake from the second reference photograph. Image 1 is the approved style reference; image 2 is reference for food shape and crust only, use the intact pastry, not both pieces or the photo background. One soft-cornered square, puffy thick sides, slightly irregular baked surface with a few visible crumb pores and softly toasted edges. Warm baked biscuit, simple recognizable silhouette at 40 px, visibly hand drawn like the style sheet. Front three-quarter from mildly above, oriented with broad front side visible and small right side. Keep it whole, no gash, no cut sides and no visible filling yet. No plate, shadow outside the footprint, detached crumbs, decorations, leaves, stamps, packaging, wrapper, box, text, symbols or props. Centre horizontally, widest span ~71% of square, low enough that base sits ~88% down. Keep genuine transparent alpha around the object. One image, no panels.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-pineapple-cake-left.webp",
+    "production": "Pixel partition of the assembled image along the break seam; preserves exact closed stack."
+  },
+  {
+    "path": "design/art/vessels/vessel-pineapple-cake-right.png",
+    "what": "Pineapple cake — right half crust",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: muted natural baked-pastry egg yellow and tea brown, and muted amber pineapple filling, only for the food itself.\n\nCreate the CLOSED assembled game vessel: ONE plump golden Taiwanese pineapple cake pastry (鳳梨酥), the square baked shortcake from the second reference photograph. Image 1 is the approved style reference; image 2 is reference for food shape and crust only, use the intact pastry, not both pieces or the photo background. One soft-cornered square, puffy thick sides, slightly irregular baked surface with a few visible crumb pores and softly toasted edges. Warm baked biscuit, simple recognizable silhouette at 40 px, visibly hand drawn like the style sheet. Front three-quarter from mildly above, oriented with broad front side visible and small right side. Keep it whole, no gash, no cut sides and no visible filling yet. No plate, shadow outside the footprint, detached crumbs, decorations, leaves, stamps, packaging, wrapper, box, text, symbols or props. Centre horizontally, widest span ~71% of square, low enough that base sits ~88% down. Keep genuine transparent alpha around the object. One image, no panels.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-pineapple-cake-right.webp",
+    "production": "Pixel partition of the assembled image along the break seam; preserves exact closed stack."
+  },
+  {
+    "path": "design/art/vessels/vessel-pineapple-cake-left-filling.png",
+    "what": "Pineapple cake — full left cut face with pineapple filling",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: muted natural baked-pastry egg yellow and tea brown, and muted amber pineapple filling, only for the food itself.\n\nEdit input image 2, the assembled golden Taiwanese pineapple pastry. Image 1 is the required style-sheet reference. Make same-scale parts for a hand-inked animation: the SAME pastry broken into two complementary chunky halves, slid to the left and right just enough to see the cut surfaces. Keep the exact pastry's buttery golden crumb crust, soft shaded three-quarter perspective, proportions, plum ink contour and texture. The two matching broken halves should still obviously fit back together into one soft-cornered square pastry. Left half at left, right half at right, both broken faces turned so the viewer can see a thin pale baked crust around a broad interior of dense muted amber pineapple jam with a few fine fruit fibres. Both halves must have complete ends (no transparent holes). Show a plain rolled cream paper letter with a simple plum ribbon band and visible curl, suspended in the centre ABOVE the two halves so it is a separate, easily isolated third component. It is small, about one third the width of the original uncut pastry; no marks or writing. All three components MUST be fully separated by genuine completely transparent space, no touching or overlap and no exterior shadow or loose crumbs. Three parts only; one square transparent sprite sheet, all fully inside the frame.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-pineapple-cake-left-filling.webp",
+    "production": "Cut surface from the assembled-image edit, registered under the corresponding crust. Same split pivot and motion as its crust."
+  },
+  {
+    "path": "design/art/vessels/vessel-pineapple-cake-right-filling.png",
+    "what": "Pineapple cake — full right cut face with pineapple filling",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: muted natural baked-pastry egg yellow and tea brown, and muted amber pineapple filling, only for the food itself.\n\nEdit input image 2, the assembled golden Taiwanese pineapple pastry. Image 1 is the required style-sheet reference. Make same-scale parts for a hand-inked animation: the SAME pastry broken into two complementary chunky halves, slid to the left and right just enough to see the cut surfaces. Keep the exact pastry's buttery golden crumb crust, soft shaded three-quarter perspective, proportions, plum ink contour and texture. The two matching broken halves should still obviously fit back together into one soft-cornered square pastry. Left half at left, right half at right, both broken faces turned so the viewer can see a thin pale baked crust around a broad interior of dense muted amber pineapple jam with a few fine fruit fibres. Both halves must have complete ends (no transparent holes). Show a plain rolled cream paper letter with a simple plum ribbon band and visible curl, suspended in the centre ABOVE the two halves so it is a separate, easily isolated third component. It is small, about one third the width of the original uncut pastry; no marks or writing. All three components MUST be fully separated by genuine completely transparent space, no touching or overlap and no exterior shadow or loose crumbs. Three parts only; one square transparent sprite sheet, all fully inside the frame.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-pineapple-cake-right-filling.webp",
+    "production": "Cut surface from the assembled-image edit, registered under the corresponding crust. Same split pivot and motion as its crust."
+  },
+  {
+    "path": "design/art/vessels/vessel-pineapple-cake-letter.png",
+    "what": "Pineapple cake — rolled cream letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: muted natural baked-pastry egg yellow and tea brown, and muted amber pineapple filling, only for the food itself.\n\nEdit input image 2, the assembled golden Taiwanese pineapple pastry. Image 1 is the required style-sheet reference. Make same-scale parts for a hand-inked animation: the SAME pastry broken into two complementary chunky halves, slid to the left and right just enough to see the cut surfaces. Keep the exact pastry's buttery golden crumb crust, soft shaded three-quarter perspective, proportions, plum ink contour and texture. The two matching broken halves should still obviously fit back together into one soft-cornered square pastry. Left half at left, right half at right, both broken faces turned so the viewer can see a thin pale baked crust around a broad interior of dense muted amber pineapple jam with a few fine fruit fibres. Both halves must have complete ends (no transparent holes). Show a plain rolled cream paper letter with a simple plum ribbon band and visible curl, suspended in the centre ABOVE the two halves so it is a separate, easily isolated third component. It is small, about one third the width of the original uncut pastry; no marks or writing. All three components MUST be fully separated by genuine completely transparent space, no touching or overlap and no exterior shadow or loose crumbs. Three parts only; one square transparent sprite sheet, all fully inside the frame.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-pineapple-cake-letter.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rwb-bag.png",
+    "what": "Red-white-blue bag — assembled",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nCreate the CLOSED assembled sprite of the traditional plain Hong Kong Red-white-blue bag (紅白藍袋), a soft-sided rectangular reusable woven-nylon carry-all. Image 1 is the mandatory style reference. Give it a single front-facing broad panel with a narrow visible side gusset, fine fabric grain, and repeating woven wax-red, paper-white and ink-blue vertical bands with subtle woven cross-stripes. Strong silhouette at 40 px, two short navy webbing loop handles visible above the bag and angled subtly toward the outside left and right so the middle can later admit a letter. Across the top is a straight, almost horizontal ink-blue zipper seam, seen very slightly from above, with a tiny brass pull near the right quarter. Completely zipped closed, softly filled, with simple heavy navy outline. Everyday market carry-all, free of all labels, tags, logos, emblems, lettering, stickers, flags, patterned trademarks or designer detailing. No ground or cast shadow, true alpha outside. Use a square canvas with about 70% width occupancy, bottom y about 88% of image height and above 100 px top margin. Keep the bag generously tall and full rather than a thin satchel.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "844cc7f81f9bfe999947a0d0a799814f5d7908aea3f9b705df06072991bc5eeb"
+    },
+    "postprocess": "Composited at the initial keyframes. Original closed weave and brass zipper detail are preserved. Shared native 1254→939 downscale to the common 1024 canvas.",
+    "vessel": {
+      "id": "rwb-bag",
+      "opening": "K",
+      "idleMs": 4100,
+      "idle": [
+        {
+          "type": "sway",
+          "deg": 3.5,
+          "pivot": {
+            "x": 512,
+            "y": 894
+          }
+        }
+      ],
+      "layers": [
+        {
+          "name": "bag",
+          "file": "vessel-rwb-bag-bag.png",
+          "role": "static",
+          "open": [
+            {
+              "at": 0
+            }
+          ]
+        },
+        {
+          "name": "letter",
+          "file": "vessel-rwb-bag-letter.png",
+          "role": "pop",
+          "open": [
+            {
+              "at": 0,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 0,
+              "scale": 0.93
+            },
+            {
+              "at": 0.29,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 0,
+              "scale": 0.93
+            },
+            {
+              "at": 0.37,
+              "x": 0.0,
+              "y": -0.04296875,
+              "opacity": 1,
+              "scale": 0.98
+            },
+            {
+              "at": 0.6,
+              "x": 0.0,
+              "y": -0.1259765625,
+              "opacity": 1,
+              "scale": 1.045
+            },
+            {
+              "at": 0.78,
+              "x": 0.0,
+              "y": -0.1533203125,
+              "opacity": 1,
+              "scale": 1.035
+            },
+            {
+              "at": 1,
+              "x": 0.0,
+              "y": -0.1328125,
+              "opacity": 1,
+              "scale": 1
+            }
+          ],
+          "pivot": {
+            "x": 508,
+            "y": 490
+          }
+        },
+        {
+          "name": "front",
+          "file": "vessel-rwb-bag-front.png",
+          "role": "static",
+          "open": [
+            {
+              "at": 0
+            }
+          ]
+        },
+        {
+          "name": "zip",
+          "file": "vessel-rwb-bag-zip.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 1
+            },
+            {
+              "at": 0.3,
+              "opacity": 0
+            },
+            {
+              "at": 1,
+              "opacity": 0
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 508,
+        "y": 357
+      },
+      "sparkle": {
+        "x": 773,
+        "y": 333
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null,
+      "baseY": 897
+    },
+    "web_export": "public/art/vessels/vessel-rwb-bag.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rwb-bag-bag.png",
+    "what": "Red-white-blue bag — bag",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference. Image 2 is the closed assembled Hong Kong nylon bag and edit target. Keep its exact two handles, exact camera, exact size, exact position, exact stripe registration, identical bottom and sides. Only edit the narrow top opening between both handles: the brass slider pull disappears and the zipper is unzipped. Dark navy lined interior clearly visible as a slim open slot running from left to right, with a slightly scooped near fabric lip and narrow far zipper lip. Make interior complete with navy lining and no holes. Do not go above the existing top contour or change the exterior silhouette. Keep the handles in their original position. Do not add letters/envelopes/contents, other props, cast shadow or ground. True transparency elsewhere.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "01abd54d6d7741475846057c8dd3ff008bd8a6318832d7eb953f8cd46edb6e3d"
+    },
+    "postprocess": "Registered the generated complete navy-lined opening onto the original lower bag panel at the zipper band. Shared native 1254→939 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-rwb-bag-bag.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rwb-bag-letter.png",
+    "what": "Red-white-blue bag — letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference; image 2 is the closed Hong Kong market bag and this is an isolated animation-part edit from it. Replace the bag with ONLY a small cream sealed envelope, at the exact horizontal midpoint of the bag zipper, centered around x=610 y=483 at the size of image 2 (1254 square). It should be approximately 260 pixels wide and 170 pixels tall on that 1254 canvas. Show the front of the envelope nearly face-on and level, with a plum ink outline, simple back-flap diagonals, muted red plain round wax seal. No text or marks, no wing, no ribbon, no hand. Preserve the original canvas and view; every other pixel fully transparent including where the bag used to be. No floor, shadow or props.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "fbc57b2029504dcbf7175c250e05b8079736b93338f4eb792f97a5356f5b107b"
+    },
+    "postprocess": "Isolated envelope downscaled and registered within the handle gap. K pop-up overshoots and settles inside the opening. Shared native 1254→939 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-rwb-bag-letter.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rwb-bag-front.png",
+    "what": "Red-white-blue bag — front",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference. Image 2 is the closed assembled Hong Kong nylon bag and edit target. Keep its exact two handles, exact camera, exact size, exact position, exact stripe registration, identical bottom and sides. Only edit the narrow top opening between both handles: the brass slider pull disappears and the zipper is unzipped. Dark navy lined interior clearly visible as a slim open slot running from left to right, with a slightly scooped near fabric lip and narrow far zipper lip. Make interior complete with navy lining and no holes. Do not go above the existing top contour or change the exterior silhouette. Keep the handles in their original position. Do not add letters/envelopes/contents, other props, cast shadow or ground. True transparency elsewhere.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "01abd54d6d7741475846057c8dd3ff008bd8a6318832d7eb953f8cd46edb6e3d"
+    },
+    "postprocess": "Extracted the interior edit’s near lip to occlude the rising envelope. Shared native 1254→939 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-rwb-bag-front.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rwb-bag-zip.png",
+    "what": "Red-white-blue bag — zip",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nCreate the CLOSED assembled sprite of the traditional plain Hong Kong Red-white-blue bag (紅白藍袋), a soft-sided rectangular reusable woven-nylon carry-all. Image 1 is the mandatory style reference. Give it a single front-facing broad panel with a narrow visible side gusset, fine fabric grain, and repeating woven wax-red, paper-white and ink-blue vertical bands with subtle woven cross-stripes. Strong silhouette at 40 px, two short navy webbing loop handles visible above the bag and angled subtly toward the outside left and right so the middle can later admit a letter. Across the top is a straight, almost horizontal ink-blue zipper seam, seen very slightly from above, with a tiny brass pull near the right quarter. Completely zipped closed, softly filled, with simple heavy navy outline. Everyday market carry-all, free of all labels, tags, logos, emblems, lettering, stickers, flags, patterned trademarks or designer detailing. No ground or cast shadow, true alpha outside. Use a square canvas with about 70% width occupancy, bottom y about 88% of image height and above 100 px top margin. Keep the bag generously tall and full rather than a thin satchel.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "844cc7f81f9bfe999947a0d0a799814f5d7908aea3f9b705df06072991bc5eeb"
+    },
+    "postprocess": "Isolated the original closed seam and brass pull in the matching zipper band; fades before the envelope rises. Shared native 1254→939 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-rwb-bag-zip.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-tiffin.png",
+    "what": "Tingkat tiffin carrier — assembled",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference. Create the CLOSED assembled sprite of an original Singapore Straits/Peranakan enamel tingkat carrier (錫格飯盒). Show three broad shallow stacked round enamel food tiers of identical diameter, defined by two strong slightly curved seams, with a domed lid and a very short sturdy brass carry handle on the TOP TIER, and small brass side clips. Keep clips clear of the middle/lower tier opening seam or use two separated clasps. Traditional painted enamel character: strong glass-blue and ink-blue bands, paper-white flower silhouettes and very simple leafy stems rendered exclusively in the approved blues and paper, with the enamel rims cream/paper. Original decoration, a few large readable flowers only, no text, emblems, logos, trade dress or extra props. Show complete closed object in a shallow three-quarter, slightly elevated angle, looking down enough to see the broad ellipse of the top, and use a squat wide silhouette so at 40 px all three tiers and the short handle read. Width and height each about 69–72% of a square transparent canvas, centered horizontally with bottom about 88%; leave space above for lifting the top tier. Outline in navy/plum, storybook ink and low sheen enamel, fine grain. No cast shadow or ground, true alpha outside entire silhouette. Entirely closed, no visible food or letter.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "26c2f969474226fb9b0a98e2c4445b8396d8ff624e40c47f6c4bfef9c89967c9"
+    },
+    "postprocess": "Composited at the initial keyframes from the three registered layers. Shared native 1254→1091 downscale to the common 1024 canvas.",
+    "vessel": {
+      "id": "tiffin",
+      "opening": "B",
+      "idleMs": 4200,
+      "idle": [],
+      "layers": [
+        {
+          "name": "stack",
+          "file": "vessel-tiffin-stack.png",
+          "role": "static",
+          "open": [
+            {
+              "at": 0
+            }
+          ]
+        },
+        {
+          "name": "top",
+          "file": "vessel-tiffin-top.png",
+          "role": "lift",
+          "open": [
+            {
+              "at": 0,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 1
+            },
+            {
+              "at": 0.23,
+              "x": 0.0,
+              "y": -0.0478515625,
+              "opacity": 1
+            },
+            {
+              "at": 0.5,
+              "x": 0.0,
+              "y": -0.0859375,
+              "opacity": 0.56
+            },
+            {
+              "at": 0.73,
+              "x": 0.0,
+              "y": -0.091796875,
+              "opacity": 0
+            },
+            {
+              "at": 1,
+              "x": 0.0,
+              "y": -0.091796875,
+              "opacity": 0
+            }
+          ],
+          "pivot": {
+            "x": 515,
+            "y": 145
+          }
+        },
+        {
+          "name": "steam",
+          "file": "vessel-tiffin-steam.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 0.55
+            },
+            {
+              "at": 0.3,
+              "x": 0.0,
+              "y": -0.01171875,
+              "opacity": 0.66
+            },
+            {
+              "at": 1,
+              "x": 0.0,
+              "y": -0.0498046875,
+              "opacity": 1
+            }
+          ],
+          "idle": [
+            {
+              "type": "drift",
+              "amount": 0.04
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 515,
+        "y": 510
+      },
+      "sparkle": {
+        "x": 405,
+        "y": 144
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null,
+      "baseY": 897
+    },
+    "web_export": "public/art/vessels/vessel-tiffin.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-tiffin-stack.png",
+    "what": "Tingkat tiffin carrier — stack",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference; image 2 is the edit target. Remove the entire top tier, lid, handle and its two gold clips from the enamel food carrier. The artwork should show exactly the original bottom TWO blue tiers below the first blue-to-cream curved seam, at their original coordinates and size, with their original flowers and curves. Do not move the bottom. Add a physically complete open enamel food bowl at their top, looking down into a visible ellipse that ends exactly at the retained cream rim. Draw its full interior with a little rice, leafy greens, carrot-orange vegetables and a small folded cream note/envelope with wax-red sealing dot on the food, all separated cleanly and low in the bowl. No steam in this edit. No other objects, shadow, text, emblems or ground. Keep everything above this original seam fully transparent outside the open ellipse.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "d747850cd44122c8b71362f22b76c668746022f75f4ccfd85d43a7baf5d7af61"
+    },
+    "postprocess": "Registered the complete open two-tier edit to the source base, including enamel lining, food and envelope. Shared native 1254→1091 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-tiffin-stack.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-tiffin-top.png",
+    "what": "Tingkat tiffin carrier — top",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference; image 2 is the assembled carrier and this is an isolation edit. Keep only the top tier of the pictured Peranakan tingkat at the exact same original size and position: brass carry handle, blue domed lid and its side clips, and the topmost blue enamel body band with its white flower down through its lower dark-blue edge. Remove both lower tiers completely, ending at the curved line between the top blue band and the middle tier's cream rim. The retained top-tier unit has a finished lower edge suitable for when it lifts off. Do not redraw its motifs or move it on the canvas. Fully transparent everywhere else. No food, ground, lettering, logos, emblems or props.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "e6318996e5e0151a538e3c7dee49f62fd1b59e440e86b2c1fb6e3b574e64399b"
+    },
+    "postprocess": "Complete isolated top tier, handle and small side clips, registered over the stack. Shared native 1254→1091 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-tiffin-top.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-tiffin-steam.png",
+    "what": "Tingkat tiffin carrier — steam",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference; image 2 is the standing enamel food carrier, the edit target. Remove all of the carrier and retain only a tiny cluster of three independent gently curling, soft translucent watercolor wisps rising off warm rice, around the center of the square, in cool glass-blue and paper white. Wisps should each be narrow and have tapered ends, visible on cool paper but naturally fading to real alpha. Separate the wisps with clear transparent gaps. Overall shape approximately 300 px wide and 220 px tall on the 1254 px square. No outline, no dark or grey shadow, no solid block of fog or glow, no container, no backdrop, no text. True transparency around everything.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "9bf7bdeb82f601765fd60dc6fd282fea16c83e9adc305c48d5b60ec5f5fe1ac1"
+    },
+    "postprocess": "Kept independent steam alpha, softened edges and registered the glass-blue steam over the open enamel bowl. Shared native 1254→1091 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-tiffin-steam.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-teapot.png",
+    "what": "Oolong teapot — closed assembly",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: warm brown unglazed clay as in the regional vessel plan. Brass knob and ink-blue/cream cup are from the standard palette.\n\nImage 1 is the mandatory style sheet. Image 2 is a real gongfu tea service; use only the short rounded clay pot and tiny cup as shape cues. Draw one CLOSED Taiwan oolong tea vessel, a generous round cocoa-brown clay pot, short clear left spout, bold loop handle at right, shallow removable round lid with a distinct simple brass knob, and one tiny low handleless indigo ceramic cup beside the pot at lower right. A lid seam should be clearly inked; the perspective looks slightly down into the cup. Exactly flat illustrated fills and broad discrete color shapes, one discrete soft shade, plum ink outlines, a few sparse parallel hatching marks at the shadow edge. Near-zero grain, no painterly stipple or complex gradients, no gloss. No floral pattern, table, exterior shadow, steam, scenery or markings. True alpha transparency. Square, use about 70% of canvas width, centered, lowest edge ~89% down. Leave generous room above for lid travel.",
+    "model": "gpt-image-2",
+    "reference_photo": "https://upload.wikimedia.org/wikipedia/commons/8/89/Gong_fu_cha.jpg",
+    "vessel": {
+      "id": "teapot",
+      "opening": "B",
+      "idleMs": 4100,
+      "idle": [],
+      "layers": [
+        {
+          "name": "pot",
+          "file": "vessel-teapot-pot.png",
+          "role": "static"
+        },
+        {
+          "name": "lid",
+          "file": "vessel-teapot-lid.png",
+          "role": "lift",
+          "pivot": {
+            "x": 478,
+            "y": 523
+          },
+          "open": [
+            {
+              "at": 0
+            },
+            {
+              "at": 1,
+              "y": -0.242
+            }
+          ]
+        },
+        {
+          "name": "steam",
+          "file": "vessel-teapot-steam.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.23,
+              "y": -0.018,
+              "opacity": 0.8
+            },
+            {
+              "at": 0.52,
+              "y": -0.06,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": -0.11,
+              "opacity": 0
+            }
+          ],
+          "idle": [
+            {
+              "type": "drift",
+              "amount": 0.046
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 478,
+        "y": 524
+      },
+      "baseY": 903,
+      "sparkle": {
+        "x": 455,
+        "y": 419
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "production": "Closed reference generated first. Registered layers are composited to produce the exact closed art.",
+    "web_export": "public/art/vessels/vessel-teapot.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-teapot-pot.png",
+    "what": "Oolong teapot — clay pot and small cup with complete interior and rolled letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: warm brown unglazed clay per the regional-vessels plan. Use standard palette for brass knob, cup, cream rolled paper, ribbon and pale blue steam.\n\nImage 1 is the style sheet; image 2 is the actual closed master to edit. Make the OPEN state of the EXACT SAME round pot and cup. Keep pot silhouette, dimensions, profile, perspective, body registration and cup position pixel-for-pixel as close as possible. Fill, outline and shading flat, with a few sparse ink hatches only. Lift only the entire round lid and its brass knob straight upward so there is a gap to the pot. At the original lid location draw a clearly visible complete dark oval interior with a clay rim and a small horizontally rolled cream letter tied with a simple plum band seated inside, the far rim behind the letter, near rim in front. The cup stays alongside. Change the existing pale spout to the same red-brown clay as the pot, with inked opening. Make genuinely transparent background. No shadow or other props. Draw two tiny very soft detached pale-blue steam wisps floating to the left of the lifted lid with clear transparent gap, so they can be cropped separately. One isolated scene on square transparent canvas.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-teapot-pot.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-teapot-lid.png",
+    "what": "Oolong teapot — lift-off clay lid with brass knob",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: warm brown unglazed clay as in the regional vessel plan. Brass knob and ink-blue/cream cup are from the standard palette.\n\nImage 1 is the mandatory style sheet. Image 2 is a real gongfu tea service; use only the short rounded clay pot and tiny cup as shape cues. Draw one CLOSED Taiwan oolong tea vessel, a generous round cocoa-brown clay pot, short clear left spout, bold loop handle at right, shallow removable round lid with a distinct simple brass knob, and one tiny low handleless indigo ceramic cup beside the pot at lower right. A lid seam should be clearly inked; the perspective looks slightly down into the cup. Exactly flat illustrated fills and broad discrete color shapes, one discrete soft shade, plum ink outlines, a few sparse parallel hatching marks at the shadow edge. Near-zero grain, no painterly stipple or complex gradients, no gloss. No floral pattern, table, exterior shadow, steam, scenery or markings. True alpha transparency. Square, use about 70% of canvas width, centered, lowest edge ~89% down. Leave generous room above for lid travel.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-teapot-lid.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-teapot-steam.png",
+    "what": "Oolong teapot — soft steam curls",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: warm brown unglazed clay per the regional-vessels plan. Use standard palette for brass knob, cup, cream rolled paper, ribbon and pale blue steam.\n\nImage 1 is the style sheet; image 2 is the actual closed master to edit. Make the OPEN state of the EXACT SAME round pot and cup. Keep pot silhouette, dimensions, profile, perspective, body registration and cup position pixel-for-pixel as close as possible. Fill, outline and shading flat, with a few sparse ink hatches only. Lift only the entire round lid and its brass knob straight upward so there is a gap to the pot. At the original lid location draw a clearly visible complete dark oval interior with a clay rim and a small horizontally rolled cream letter tied with a simple plum band seated inside, the far rim behind the letter, near rim in front. The cup stays alongside. Change the existing pale spout to the same red-brown clay as the pot, with inked opening. Make genuinely transparent background. No shadow or other props. Draw two tiny very soft detached pale-blue steam wisps floating to the left of the lifted lid with clear transparent gap, so they can be cropped separately. One isolated scene on square transparent canvas.",
+    "model": "gpt-image-2",
+    "production": "Generated effect isolated, its alpha softened and registered to the vessel canvas.",
+    "web_export": "public/art/vessels/vessel-teapot-steam.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-sky-lantern.png",
+    "what": "Pingxi sky lantern — closed assembly with wax-red and cream panels",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the required style sheet. Image 2 is the existing CLOSED Pingxi sky lantern master and is the exact edit target. Keep that master’s outer paper contour, all positions, scale, camera, page margins, existing oval bamboo base, and plum #6E2B3F outline. Change only the paper coloring. Color its vertical paper gores in alternating wax red #A3364F and cream #F3E2BB. Make a substantial wax-red paper panel occupying the central left area (roughly one third of the width), an equally substantial cream panel in the central right, with a narrow cream section on the left flank and narrow wax red on the right flank, following the curved seams all the way from crown to the bottom hem. Rich alternating blocks should still read at 40 px. Keep edges of the big color fills crisp, use one flat shading tone and a handful of ink hatch marks. Add a visibly generous warm internal glow like a lit lantern, centered in the lower half, using broad cream and light brass tones fading into the red and the cream; the upper half retains saturated solid wax red and cream. Internal glow only, no outer halo; don't let it wash out the red. No visual redesign, graphics, horizontal bands, round badges, flag, punctuation or markings. The paper shell fully conceals the ring's fuel and letter in this closed image. Leave the ring as it is. Exactly one lantern, transparent square canvas.",
+    "model": "gpt-image-2",
+    "reference_photo": "https://upload.wikimedia.org/wikipedia/commons/6/6a/SkyLanternFestivalPic.jpg",
+    "vessel": {
+      "id": "sky-lantern",
+      "opening": "B",
+      "idleMs": 4400,
+      "idle": [
+        {
+          "type": "bob",
+          "amount": 0.029
+        }
+      ],
+      "layers": [
+        {
+          "name": "ring",
+          "file": "vessel-sky-lantern-ring.png",
+          "role": "static"
+        },
+        {
+          "name": "paper",
+          "file": "vessel-sky-lantern-paper.png",
+          "role": "lift",
+          "pivot": {
+            "x": 509,
+            "y": 492
+          },
+          "open": [
+            {
+              "at": 0
+            },
+            {
+              "at": 0.35,
+              "y": -0.078,
+              "scale": 0.94
+            },
+            {
+              "at": 1,
+              "y": -0.169,
+              "scale": 0.83
+            }
+          ]
+        },
+        {
+          "name": "glow",
+          "file": "vessel-sky-lantern-glow.png",
+          "role": "fade",
+          "pivot": {
+            "x": 509,
+            "y": 492
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0.46
+            },
+            {
+              "at": 0.35,
+              "y": -0.078,
+              "scale": 0.94,
+              "opacity": 0.39
+            },
+            {
+              "at": 1,
+              "y": -0.169,
+              "scale": 0.83,
+              "opacity": 0.17
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0.46,
+              "range": 0.24,
+              "flicker": 0.09
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 577,
+        "y": 832
+      },
+      "baseY": 903,
+      "sparkle": {
+        "x": 501,
+        "y": 897
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "production": "Edited closed master. Exact prior paper alpha and closed footprint. Reassembled from the registered parts.",
+    "web_export": "public/art/vessels/vessel-sky-lantern.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-sky-lantern-ring.png",
+    "what": "Pingxi sky lantern — bamboo ring, fuel cake, flame and upright rolled letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the approved style sheet. Image 2 is the newly edited CLOSED Pingxi lantern, the target for this edit. Image 3 is the prior bamboo ring layer, for exact shallow perspective and bamboo materials. Create the revealed LOWER layer of image 2 only (leave out the red and cream paper balloon and remove any glow outside the flame). ONE full bamboo hoop, intact, with a wide shallow ellipse and clear open alpha holes, thin bamboo cross supports, and a small dark brass-brown square fuel cake sitting at the exact center of the hoop and a small distinct golden flame atop it, outlined in plum. To the right of center, separated from the flame by a clear gap, place one LARGE UPRIGHT rolled cream letter with a clear spiral opening at the top, plum outline and slim wax-red ribbon around the middle. The scroll stands vertically on the cross supports with its top well above the rear ring. Its height should be about 50–55% of the outer ring's diameter and its width about 20–25%, with large simple inked shapes so it reads at 120 px. Do not let flame touch the letter. Keep the ring horizontal with the same shallow camera perspective as in image 3: ellipse outer height about 23% of its width (around a 4.3:1 ellipse), don't make the ring deeper or taller. All objects appear together on one layer with flame and letter visually separate. Flat fills and one shading tone, light hatching only, no backdrop, paper shade, text, logo, branding, tassels or unrelated decoration. Transparent alpha.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-sky-lantern-ring.webp",
+    "production": "Revealed layer edited from the closed art. Ring registered to the prior width and shelf base."
+  },
+  {
+    "path": "design/art/vessels/vessel-sky-lantern-paper.png",
+    "what": "Pingxi sky lantern — wax-red and cream lift-off paper shell",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the required style sheet. Image 2 is the existing CLOSED Pingxi sky lantern master and is the exact edit target. Keep that master’s outer paper contour, all positions, scale, camera, page margins, existing oval bamboo base, and plum #6E2B3F outline. Change only the paper coloring. Color its vertical paper gores in alternating wax red #A3364F and cream #F3E2BB. Make a substantial wax-red paper panel occupying the central left area (roughly one third of the width), an equally substantial cream panel in the central right, with a narrow cream section on the left flank and narrow wax red on the right flank, following the curved seams all the way from crown to the bottom hem. Rich alternating blocks should still read at 40 px. Keep edges of the big color fills crisp, use one flat shading tone and a handful of ink hatch marks. Add a visibly generous warm internal glow like a lit lantern, centered in the lower half, using broad cream and light brass tones fading into the red and the cream; the upper half retains saturated solid wax red and cream. Internal glow only, no outer halo; don't let it wash out the red. No visual redesign, graphics, horizontal bands, round badges, flag, punctuation or markings. The paper shell fully conceals the ring's fuel and letter in this closed image. Leave the ring as it is. Exactly one lantern, transparent square canvas.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-sky-lantern-paper.webp",
+    "production": "Paper isolated from the assembled edit. Its alpha matches the previous paper silhouette exactly."
+  },
+  {
+    "path": "design/art/vessels/vessel-sky-lantern-glow.png",
+    "what": "Pingxi sky lantern — soft internal glow",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the required style sheet. Image 2 is the existing CLOSED Pingxi sky lantern master and is the exact edit target. Keep that master’s outer paper contour, all positions, scale, camera, page margins, existing oval bamboo base, and plum #6E2B3F outline. Change only the paper coloring. Color its vertical paper gores in alternating wax red #A3364F and cream #F3E2BB. Make a substantial wax-red paper panel occupying the central left area (roughly one third of the width), an equally substantial cream panel in the central right, with a narrow cream section on the left flank and narrow wax red on the right flank, following the curved seams all the way from crown to the bottom hem. Rich alternating blocks should still read at 40 px. Keep edges of the big color fills crisp, use one flat shading tone and a handful of ink hatch marks. Add a visibly generous warm internal glow like a lit lantern, centered in the lower half, using broad cream and light brass tones fading into the red and the cream; the upper half retains saturated solid wax red and cream. Internal glow only, no outer halo; don't let it wash out the red. No visual redesign, graphics, horizontal bands, round badges, flag, punctuation or markings. The paper shell fully conceals the ring's fuel and letter in this closed image. Leave the ring as it is. Exactly one lantern, transparent square canvas.",
+    "model": "gpt-image-2",
+    "production": "The existing generated glow alpha was repositioned inside the edited lower paper for a stronger flicker.",
+    "web_export": "public/art/vessels/vessel-sky-lantern-glow.webp",
+    "source_prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is approved style; image 2 is the actual Pingxi paper lantern master. Edit that exact lantern into separate parts on one transparent square sprite sheet, separated vertically. At top left, the paper balloon alone, flat cream with only seams, slight brass shading and sparse hatching; accurately match the shape and unmarked paper from image 2. Finish its lower hem as a clean narrow ellipse, with its underside closed visually by warm cream from inside the paper. There is no bamboo hoop attached to it. At bottom by itself, with clear alpha gap, isolate the same bamboo ring from the bottom of the lantern, seen in the same shallow perspective, complete edge and all bindings. Make its opening visibly transparent away from a small cream rolled letter with curled ends and a simple plum ribbon, lying across middle on just two fine bamboo supports. The drawing has no writing, marks, flag, religious symbols, flames or tassel. No exterior shadow. At top right, well separated from both inked parts, one small soft diffuse brass-gold glow on true transparent, feathered to zero before its edges, no outline. Flat color fills with one shading tone, very spare hatches, negligible grain, and genuine transparent background."
+  },
+  {
     "path": "design/art/vessels/vessel-kamcheng.png",
     "what": "Peranakan kamcheng — closed pink porcelain jar with phoenix and peonies",
     "size_px": [

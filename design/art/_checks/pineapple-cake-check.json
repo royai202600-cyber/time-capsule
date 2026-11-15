@@ -1,0 +1,135 @@
+{
+  "style_reference": "design/art/style-sheet.png",
+  "layer_order": [
+    "right-filling",
+    "left-filling",
+    "left",
+    "right",
+    "letter"
+  ],
+  "assembled_vs_stack_mae_rgb_on_paper_0_to_255": 0.0,
+  "exact_pixel_match": true,
+  "all_corners_alpha_zero": true,
+  "layer_checks": {
+    "assembled": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 252,
+      "visible_bbox_alpha_gt_20": [
+        150,
+        313,
+        874,
+        905
+      ]
+    },
+    "right-filling": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        350,
+        334,
+        580,
+        832
+      ]
+    },
+    "left-filling": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 255,
+      "visible_bbox_alpha_gt_20": [
+        383,
+        325,
+        585,
+        840
+      ]
+    },
+    "left": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        150,
+        313,
+        570,
+        871
+      ]
+    },
+    "right": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 252,
+      "visible_bbox_alpha_gt_20": [
+        388,
+        335,
+        874,
+        905
+      ]
+    },
+    "letter": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        382,
+        389,
+        606,
+        522
+      ]
+    }
+  }
+}

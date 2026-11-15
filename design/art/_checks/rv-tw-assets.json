@@ -1,0 +1,159 @@
+{
+  "count": 8,
+  "passed": 8,
+  "failed": [],
+  "assets": [
+    {
+      "path": "vessels/vessel-sky-lantern-glow.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-sky-lantern-paper.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-sky-lantern-ring.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-sky-lantern.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-teapot-lid.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-teapot-pot.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-teapot-steam.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-teapot.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    }
+  ]
+}
