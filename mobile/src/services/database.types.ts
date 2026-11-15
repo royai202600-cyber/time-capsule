@@ -54,6 +54,7 @@ export type Database = {
       }
       capsules: {
         Row: {
+          corrupted_drop_spot: string | null
           edition_no: number | null
           gift_code: string | null
           handwritten: boolean
@@ -85,6 +86,7 @@ export type Database = {
           vessel: string
         }
         Insert: {
+          corrupted_drop_spot?: string | null
           edition_no?: number | null
           gift_code?: string | null
           handwritten?: boolean
@@ -116,6 +118,7 @@ export type Database = {
           vessel: string
         }
         Update: {
+          corrupted_drop_spot?: string | null
           edition_no?: number | null
           gift_code?: string | null
           handwritten?: boolean
@@ -147,6 +150,13 @@ export type Database = {
           vessel?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "capsules_corrupted_drop_spot_fkey"
+            columns: ["corrupted_drop_spot"]
+            isOneToOne: false
+            referencedRelation: "corrupted_spots"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "capsules_place_fkey"
             columns: ["place"]

@@ -52,7 +52,7 @@ const strings = {
     rules: "撿到的人會看到你的名字和頭像 · 不要寫電話、地址等個人資料 · 只有一位陌生人能撿到它",
     publicCapsuleSealed: (spot: string, date: string) => `膠囊放下了。它會在 ${date} 出現在「${spot}」，等一位路過的人撿起。`,
     errRejected: "這封信沒有通過安全檢查。請拿走電話、電郵等個人資料，或改得溫和一點。",
-    errNoSpot: "你附近暫時還沒有驛站。",
+    errNoSpot: "100 米內沒有可以放膠囊的公共地點。走到附近的公園或廣場再試試。",
     needLocation: "要找到最近的驛站，請先允許位置。",
     // Capsule pages
     keep: "留下它",
@@ -122,7 +122,7 @@ const strings = {
     rules: "The finder sees your name and picture · no phone numbers, addresses or other personal details · only one stranger can find it",
     publicCapsuleSealed: (spot: string, date: string) => `It's on its way. It appears at ${spot} on ${date}, waiting for whoever passes by.`,
     errRejected: "This letter didn't pass the safety check. Remove phone numbers, emails or other personal details, or make it gentler.",
-    errNoSpot: "There's no Waypost near you yet.",
+    errNoSpot: "There's no public spot within 100 m. Walk to a nearby park or square and try again.",
     needLocation: "To find your nearest Waypost, allow location first.",
     keep: "Keep it",
     keepNote: "It stays in your Inbox.",
