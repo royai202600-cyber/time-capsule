@@ -55,6 +55,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - V1 cleanup follow-up: remove unattached `voice-notes` uploads older than 24 hours through the Storage API, with an attachment re-check. Pending uploads remain unreadable. Never delete attached recordings or manipulate Storage metadata to delete blobs.
 | ID | Task | Owner | Done when |
 |---|---|---|---|
+| RV-W | Wire all 15 approved regional vessels, including 3 app-only Landmark vessels | Codex | App registrations and 12 regional catalogue and spawn entries prepared. Publish the app before applying `20261115102750`, then verify pools, real-JWT restores and letters, and 375 px bilingual surfaces. RV-L holds Landmark catalogue rows and places. |
 | RV-TW | Taiwan regional vessel art, wave 1 | Codex art | Roy approved all five vessels in [PR #134](https://github.com/royai202600-cyber/time-capsule/pull/134): pineapple cake, oolong teapot, Pingxi sky lantern, red-white-blue bag and tingkat. Approved art is preserved through the main refresh. Green CI gates owner-account squash merge. RV-W is held. |
 | O1 | City Orienteering: timed daily system hunts | Codex `T` + Claude U1 | Live with migration `20261114033941`. Xinyi check-in, countdown, time-up, same-day restart, return and both time records were verified. |
 | O2 | Private hunts: organizer and player | Codex + Claude | Live. Both accounts passed the 375 px browser checks. Phone camera QR and photo upload in Expo Go remain for Roy. |
