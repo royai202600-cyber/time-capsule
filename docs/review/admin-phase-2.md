@@ -1,6 +1,6 @@
 # Admin phase 2 backend
 
-The edit RPCs and existing read RPCs follow the screen contract in PR #145. The backend release leaves `ADMIN_EDIT_BACKEND` off.
+The edit RPCs and existing read RPCs follow the screen contract in PR #145. Supabase recorded migration `20261115153118`. The backend release leaves `ADMIN_EDIT_BACKEND` off.
 
 - Waypost edits check coverage, 250 m spacing and live City Hunt spin goals. Landmarks remain view-only. An override for a nearby Waypost requires a note.
 - Hidden Wayposts and Corrupted Capsule spots remain available for existing capsules that reference them. They leave the new drop and pass-on pool. A hidden Corrupted Capsule spot also stops spawning. The 124,741 independent drop locations are outside the admin map and edit RPCs.
