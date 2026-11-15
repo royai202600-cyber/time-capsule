@@ -41,6 +41,8 @@ Each coverage column uses today's eligible sources plus the modeled addition at 
 
 Hosted rollback measured 9,306,112 bytes for the table and 13,328,384 bytes for its indexes, or 22.63 MB (21.59 MiB) combined.
 
+Production recorded migration `20261115145631` with 124,741 new places. Its total relation size is 22,642,688 bytes. The database still has 438 Wayposts, 3,026 Corrupted Capsule spots and 3,509 eligible original drop points.
+
 ## Verification
 
 Run the migration body and `supabase/tests/public-drop-places.sql` inside one transaction, replacing the migration's final commit with the test and rollback. The hosted run checked the Taipei sidewalk, Da'an Junior High School refusal, the stored Journey location, 70 m pickup, 150 m refusal, pass-on, two-report hiding and admin Remove after opening. The maximum of 20 hosted SQL drops was 3.54 ms. The local query plan used the GiST index.
