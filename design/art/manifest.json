@@ -9646,5 +9646,403 @@
     "secondary_subject_reference": "https://www.roots.gov.sg/api/media/8e926041-9e91-445d-a9a9-c24f9cebb8d5/1143330.jpg",
     "web_export": "public/art/vessels/vessel-kamcheng-lid.webp",
     "postprocess": "Re-derived from the registered recolour using the original isolated lid alpha. Brass peach knob retains its original colour; opacity and position are unchanged."
+  },
+  {
+    "path": "design/art/vessels/vessel-orchid.png",
+    "what": "Orchid bloom — closed orchid bud in a brass-footed glass-blue pot",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: use the same muted teal-green foliage as the dome rose for the orchid leaves and stem only. The flower uses plum and lighter tints of plum mixed with paper, with a small wax-red accent and a little brass on the pot. No other palette exception.\n\nDraw the assembled, fully closed Orchid bloom vessel, inspired by the flower morphology and slender foliage of Singapore's Papilionanthe Miss Joaquim. The physical botanical reference was inspected. This is an original stylized natural potted orchid, never a flag, logo, crest, insignia or emblem. One plump large closed orchid bud at the top, with clearly overlapping left and right tapered plum/mauve petals folded together, two narrow pale outer sepals visible along the margins. Make the bud generously shaped and prominently readable at 40 px, recognizably orchid rather than rose, with about 35–40% of overall plant height occupied by the bud. A naturally curved central teal stem, fan of four long narrow tapering leaves, and a small, squat, plain glazed glass-blue ceramic pot, opaque, with thin brass trim near its foot. Use a slightly asymmetric plant gesture. Compact, broad enough to read at icon size, clean flat ink shapes, texture kept very fine and restrained. Entire object sits on one true transparent alpha square canvas and fills around 72% of the height with room for the bud to open outward at the top. Center horizontally, bottom near y=88%. No open flowers, no additional buds, no lettering, no other props, no cast shadow, no ground.",
+    "model": "gpt-image-2",
+    "style_reference": "design/art/style-sheet.png",
+    "subject_reference": "https://www.nparks.gov.sg/-/media/ffw/migrated/round2/flora/2539/0ae6d864a6c74f288c035f07418a4dc4.jpg",
+    "secondary_subject_reference": "https://commons.wikimedia.org/wiki/File:Papilionanthe_(Vanda)_Miss_Joaquim_%27Agnes%27.jpg",
+    "web_export": "public/art/vessels/vessel-orchid.webp",
+    "postprocess": "Exact at=0 stack; common downscale/translation applied to all layers.",
+    "vessel": {
+      "id": "orchid",
+      "opening": "H",
+      "idleMs": 4200,
+      "idle": [
+        {
+          "type": "sway",
+          "deg": 3.25,
+          "pivot": {
+            "x": 503,
+            "y": 722
+          }
+        }
+      ],
+      "layers": [
+        {
+          "name": "pot",
+          "file": "vessel-orchid-pot.png",
+          "role": "static",
+          "ground": true
+        },
+        {
+          "name": "stem",
+          "file": "vessel-orchid-stem.png",
+          "role": "static"
+        },
+        {
+          "name": "left",
+          "file": "vessel-orchid-left.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 516,
+            "y": 409
+          },
+          "open": [
+            {
+              "at": 0,
+              "scaleX": 0.002,
+              "scaleY": 0.002,
+              "rotate": 32,
+              "opacity": 0
+            },
+            {
+              "at": 0.18,
+              "scaleX": 0.22,
+              "scaleY": 0.42,
+              "rotate": 24,
+              "opacity": 0
+            },
+            {
+              "at": 0.34,
+              "scaleX": 0.72,
+              "scaleY": 0.85,
+              "rotate": 9,
+              "opacity": 1
+            },
+            {
+              "at": 0.55,
+              "scaleX": 0.88,
+              "scaleY": 0.96,
+              "rotate": 3,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "scaleX": 1,
+              "scaleY": 1,
+              "rotate": 0,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "file": "vessel-orchid-right.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 539,
+            "y": 409
+          },
+          "open": [
+            {
+              "at": 0,
+              "scaleX": 0.002,
+              "scaleY": 0.002,
+              "rotate": -32,
+              "opacity": 0
+            },
+            {
+              "at": 0.18,
+              "scaleX": 0.22,
+              "scaleY": 0.42,
+              "rotate": -24,
+              "opacity": 0
+            },
+            {
+              "at": 0.34,
+              "scaleX": 0.72,
+              "scaleY": 0.85,
+              "rotate": -9,
+              "opacity": 1
+            },
+            {
+              "at": 0.55,
+              "scaleX": 0.88,
+              "scaleY": 0.96,
+              "rotate": -3,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "scaleX": 1,
+              "scaleY": 1,
+              "rotate": 0,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "name": "throat",
+          "file": "vessel-orchid-throat.png",
+          "role": "fade",
+          "pivot": {
+            "x": 527,
+            "y": 412
+          },
+          "open": [
+            {
+              "at": 0,
+              "scale": 0.002,
+              "opacity": 0
+            },
+            {
+              "at": 0.18,
+              "scale": 0.3,
+              "opacity": 0
+            },
+            {
+              "at": 0.38,
+              "scale": 0.88,
+              "opacity": 1
+            },
+            {
+              "at": 0.58,
+              "scale": 0.97,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "scale": 1,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "name": "bud-right",
+          "file": "vessel-orchid-bud-right.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 543,
+            "y": 485
+          },
+          "open": [
+            {
+              "at": 0,
+              "x": 0,
+              "y": 0,
+              "rotate": 0,
+              "scale": 1,
+              "opacity": 1
+            },
+            {
+              "at": 0.2,
+              "x": 0.005,
+              "y": 0.003,
+              "rotate": 14,
+              "scale": 0.94,
+              "opacity": 1
+            },
+            {
+              "at": 0.34,
+              "x": 0.008,
+              "y": 0.004,
+              "rotate": 27,
+              "scale": 0.83,
+              "opacity": 0.4
+            },
+            {
+              "at": 0.45,
+              "x": 0.017,
+              "y": 0.012,
+              "rotate": 46,
+              "scale": 0.7,
+              "opacity": 0
+            },
+            {
+              "at": 1,
+              "x": 0.026,
+              "y": 0.025,
+              "rotate": 60,
+              "scale": 0.64,
+              "opacity": 0
+            }
+          ]
+        },
+        {
+          "name": "bud-left",
+          "file": "vessel-orchid-bud-left.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 510,
+            "y": 485
+          },
+          "open": [
+            {
+              "at": 0,
+              "x": 0,
+              "y": 0,
+              "rotate": 0,
+              "scale": 1,
+              "opacity": 1
+            },
+            {
+              "at": 0.2,
+              "x": -0.005,
+              "y": 0.003,
+              "rotate": -14,
+              "scale": 0.94,
+              "opacity": 1
+            },
+            {
+              "at": 0.34,
+              "x": -0.008,
+              "y": 0.004,
+              "rotate": -27,
+              "scale": 0.83,
+              "opacity": 0.4
+            },
+            {
+              "at": 0.45,
+              "x": -0.017,
+              "y": 0.012,
+              "rotate": -46,
+              "scale": 0.7,
+              "opacity": 0
+            },
+            {
+              "at": 1,
+              "x": -0.026,
+              "y": 0.025,
+              "rotate": -60,
+              "scale": 0.64,
+              "opacity": 0
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 527,
+        "y": 412
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 515,
+        "y": 511
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-orchid-pot.png",
+    "what": "Orchid bloom — glazed pot with completed inner rim, held steady during sway",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: muted teal green matching the dome rose for stem and leaves only. Petals use lighter tints of plum with paper, and the small cord, brass fitting, and ceramic pot use the standard palette.\n\nThe first attached image is the approved style reference only. The second image is the closed assembled vessel and the edit target. Edit the second image, the closed single-bud orchid. Keep only the blue ceramic pot with brass foot, the original teal stem and its four slender leaves, and the small brass calyx just above the stem. Completely remove the magenta bud and its cream sepals from above this brass calyx, leaving transparent pixels. Complete the brass calyx lip subtly where it attaches to the stalk. Preserve the exact positions, thickness, shape of foliage, glaze and scale of the pot and stem in the original; do not add a stem extension or new foliage. Transparent square, no shadow or labels.",
+    "model": "gpt-image-2",
+    "style_reference": "design/art/style-sheet.png",
+    "subject_reference": "https://www.nparks.gov.sg/-/media/ffw/migrated/round2/flora/2539/0ae6d864a6c74f288c035f07418a4dc4.jpg",
+    "secondary_subject_reference": "https://commons.wikimedia.org/wiki/File:Papilionanthe_(Vanda)_Miss_Joaquim_%27Agnes%27.jpg",
+    "web_export": "public/art/vessels/vessel-orchid-pot.webp",
+    "postprocess": "Isolation edit of the same closed image, split at the grounded pot rim. Hidden rim join completed by script."
+  },
+  {
+    "path": "design/art/vessels/vessel-orchid-stem.png",
+    "what": "Orchid bloom — teal stem, tapered leaves and brass calyx",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: muted teal green matching the dome rose for stem and leaves only. Petals use lighter tints of plum with paper, and the small cord, brass fitting, and ceramic pot use the standard palette.\n\nThe first attached image is the approved style reference only. The second image is the closed assembled vessel and the edit target. Edit the second image, the closed single-bud orchid. Keep only the blue ceramic pot with brass foot, the original teal stem and its four slender leaves, and the small brass calyx just above the stem. Completely remove the magenta bud and its cream sepals from above this brass calyx, leaving transparent pixels. Complete the brass calyx lip subtly where it attaches to the stalk. Preserve the exact positions, thickness, shape of foliage, glaze and scale of the pot and stem in the original; do not add a stem extension or new foliage. Transparent square, no shadow or labels.",
+    "model": "gpt-image-2",
+    "style_reference": "design/art/style-sheet.png",
+    "subject_reference": "https://www.nparks.gov.sg/-/media/ffw/migrated/round2/flora/2539/0ae6d864a6c74f288c035f07418a4dc4.jpg",
+    "secondary_subject_reference": "https://commons.wikimedia.org/wiki/File:Papilionanthe_(Vanda)_Miss_Joaquim_%27Agnes%27.jpg",
+    "web_export": "public/art/vessels/vessel-orchid-stem.webp",
+    "postprocess": "Isolation edit of the same closed image, split at the grounded pot rim. Hidden rim join completed by script."
+  },
+  {
+    "path": "design/art/vessels/vessel-orchid-left.png",
+    "what": "Orchid bloom — left side petals and sepal, unfolded face",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: muted teal green matching the dome rose for stem and leaves only. Petals use lighter tints of plum with paper, and the small cord, brass fitting, and ceramic pot use the standard palette.\n\nThe first attached image is the approved style reference only. The second image is the closed assembled vessel and the edit target. Edit the second image, the closed single-bud orchid. Preserve its position and scale. Replace only the large closed bud with the same flower fully open at the same junction with the brass calyx and central teal stalk. Output ONLY the fully open orchid blossom on genuine transparency; omit the brass calyx, pot, foliage and stem. An original flat-faced tropical orchid like Papilionanthe Miss Joaquim: five surrounding gentle sepals and petals in light-to-mid dusty plum, with two broad side wings swept out left and right and an unmistakable long, broader dark plum labellum (lip) hanging below the throat. Keep the blossom lively and organic with an asymmetrical hand-inked line. Do not make a heraldic or graphic emblem, lotus, or six identical radial petals. Centre throat at approximately x=625 y=485 on a 1254 square; broad petal tips x=250–1000, short upper sepal about y=220, pointed labellum below around y=625. The throat cradles a short cream paper scroll tied in wax-red cord, horizontal, at x=625 y=470. Make the scroll recognisable and complete, about 155px wide, clean uncovered ends, blank paper with no text. The lip and five sepals fully rendered beneath it, with no transparent holes. Use soft muted lighter plum tints, one restrained darker plum shade, no white keyline, just clean ink outlines and flat art. No other objects. No table or shadow.",
+    "model": "gpt-image-2",
+    "style_reference": "design/art/style-sheet.png",
+    "subject_reference": "https://www.nparks.gov.sg/-/media/ffw/migrated/round2/flora/2539/0ae6d864a6c74f288c035f07418a4dc4.jpg",
+    "secondary_subject_reference": "https://commons.wikimedia.org/wiki/File:Papilionanthe_(Vanda)_Miss_Joaquim_%27Agnes%27.jpg",
+    "web_export": "public/art/vessels/vessel-orchid-left.webp",
+    "postprocess": "Fully opened blossom edited from the closed bud, registered to the same stem. Overlapping hinge masks keep the petal joins covered while unfolding."
+  },
+  {
+    "path": "design/art/vessels/vessel-orchid-right.png",
+    "what": "Orchid bloom — right side petals and sepal, unfolded face",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: muted teal green matching the dome rose for stem and leaves only. Petals use lighter tints of plum with paper, and the small cord, brass fitting, and ceramic pot use the standard palette.\n\nThe first attached image is the approved style reference only. The second image is the closed assembled vessel and the edit target. Edit the second image, the closed single-bud orchid. Preserve its position and scale. Replace only the large closed bud with the same flower fully open at the same junction with the brass calyx and central teal stalk. Output ONLY the fully open orchid blossom on genuine transparency; omit the brass calyx, pot, foliage and stem. An original flat-faced tropical orchid like Papilionanthe Miss Joaquim: five surrounding gentle sepals and petals in light-to-mid dusty plum, with two broad side wings swept out left and right and an unmistakable long, broader dark plum labellum (lip) hanging below the throat. Keep the blossom lively and organic with an asymmetrical hand-inked line. Do not make a heraldic or graphic emblem, lotus, or six identical radial petals. Centre throat at approximately x=625 y=485 on a 1254 square; broad petal tips x=250–1000, short upper sepal about y=220, pointed labellum below around y=625. The throat cradles a short cream paper scroll tied in wax-red cord, horizontal, at x=625 y=470. Make the scroll recognisable and complete, about 155px wide, clean uncovered ends, blank paper with no text. The lip and five sepals fully rendered beneath it, with no transparent holes. Use soft muted lighter plum tints, one restrained darker plum shade, no white keyline, just clean ink outlines and flat art. No other objects. No table or shadow.",
+    "model": "gpt-image-2",
+    "style_reference": "design/art/style-sheet.png",
+    "subject_reference": "https://www.nparks.gov.sg/-/media/ffw/migrated/round2/flora/2539/0ae6d864a6c74f288c035f07418a4dc4.jpg",
+    "secondary_subject_reference": "https://commons.wikimedia.org/wiki/File:Papilionanthe_(Vanda)_Miss_Joaquim_%27Agnes%27.jpg",
+    "web_export": "public/art/vessels/vessel-orchid-right.webp",
+    "postprocess": "Fully opened blossom edited from the closed bud, registered to the same stem. Overlapping hinge masks keep the petal joins covered while unfolding."
+  },
+  {
+    "path": "design/art/vessels/vessel-orchid-throat.png",
+    "what": "Orchid bloom — central sepal, plum lip and complete cream scroll",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: muted teal green matching the dome rose for stem and leaves only. Petals use lighter tints of plum with paper, and the small cord, brass fitting, and ceramic pot use the standard palette.\n\nThe first attached image is the approved style reference only. The second image is the closed assembled vessel and the edit target. Edit the second image, the closed single-bud orchid. Preserve its position and scale. Replace only the large closed bud with the same flower fully open at the same junction with the brass calyx and central teal stalk. Output ONLY the fully open orchid blossom on genuine transparency; omit the brass calyx, pot, foliage and stem. An original flat-faced tropical orchid like Papilionanthe Miss Joaquim: five surrounding gentle sepals and petals in light-to-mid dusty plum, with two broad side wings swept out left and right and an unmistakable long, broader dark plum labellum (lip) hanging below the throat. Keep the blossom lively and organic with an asymmetrical hand-inked line. Do not make a heraldic or graphic emblem, lotus, or six identical radial petals. Centre throat at approximately x=625 y=485 on a 1254 square; broad petal tips x=250–1000, short upper sepal about y=220, pointed labellum below around y=625. The throat cradles a short cream paper scroll tied in wax-red cord, horizontal, at x=625 y=470. Make the scroll recognisable and complete, about 155px wide, clean uncovered ends, blank paper with no text. The lip and five sepals fully rendered beneath it, with no transparent holes. Use soft muted lighter plum tints, one restrained darker plum shade, no white keyline, just clean ink outlines and flat art. No other objects. No table or shadow.",
+    "model": "gpt-image-2",
+    "style_reference": "design/art/style-sheet.png",
+    "subject_reference": "https://www.nparks.gov.sg/-/media/ffw/migrated/round2/flora/2539/0ae6d864a6c74f288c035f07418a4dc4.jpg",
+    "secondary_subject_reference": "https://commons.wikimedia.org/wiki/File:Papilionanthe_(Vanda)_Miss_Joaquim_%27Agnes%27.jpg",
+    "web_export": "public/art/vessels/vessel-orchid-throat.webp",
+    "postprocess": "Fully opened blossom edited from the closed bud, registered to the same stem. Overlapping hinge masks keep the petal joins covered while unfolding."
+  },
+  {
+    "path": "design/art/vessels/vessel-orchid-bud-left.png",
+    "what": "Orchid bloom — left curled outside bud petals, isolated along the original ink seam",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: use the same muted teal-green foliage as the dome rose for the orchid leaves and stem only. The flower uses plum and lighter tints of plum mixed with paper, with a small wax-red accent and a little brass on the pot. No other palette exception.\n\nDraw the assembled, fully closed Orchid bloom vessel, inspired by the flower morphology and slender foliage of Singapore's Papilionanthe Miss Joaquim. The physical botanical reference was inspected. This is an original stylized natural potted orchid, never a flag, logo, crest, insignia or emblem. One plump large closed orchid bud at the top, with clearly overlapping left and right tapered plum/mauve petals folded together, two narrow pale outer sepals visible along the margins. Make the bud generously shaped and prominently readable at 40 px, recognizably orchid rather than rose, with about 35–40% of overall plant height occupied by the bud. A naturally curved central teal stem, fan of four long narrow tapering leaves, and a small, squat, plain glazed glass-blue ceramic pot, opaque, with thin brass trim near its foot. Use a slightly asymmetric plant gesture. Compact, broad enough to read at icon size, clean flat ink shapes, texture kept very fine and restrained. Entire object sits on one true transparent alpha square canvas and fills around 72% of the height with room for the bud to open outward at the top. Center horizontally, bottom near y=88%. No open flowers, no additional buds, no lettering, no other props, no cast shadow, no ground.",
+    "model": "gpt-image-2",
+    "style_reference": "design/art/style-sheet.png",
+    "subject_reference": "https://www.nparks.gov.sg/-/media/ffw/migrated/round2/flora/2539/0ae6d864a6c74f288c035f07418a4dc4.jpg",
+    "secondary_subject_reference": "https://commons.wikimedia.org/wiki/File:Papilionanthe_(Vanda)_Miss_Joaquim_%27Agnes%27.jpg",
+    "web_export": "public/art/vessels/vessel-orchid-bud-left.webp",
+    "postprocess": "Exact isolation of the closed bud along its original curved plum seam. The exterior curls rotate outward into the unfolded faces."
+  },
+  {
+    "path": "design/art/vessels/vessel-orchid-bud-right.png",
+    "what": "Orchid bloom — right curled outside bud petals, isolated along the original ink seam",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: use the same muted teal-green foliage as the dome rose for the orchid leaves and stem only. The flower uses plum and lighter tints of plum mixed with paper, with a small wax-red accent and a little brass on the pot. No other palette exception.\n\nDraw the assembled, fully closed Orchid bloom vessel, inspired by the flower morphology and slender foliage of Singapore's Papilionanthe Miss Joaquim. The physical botanical reference was inspected. This is an original stylized natural potted orchid, never a flag, logo, crest, insignia or emblem. One plump large closed orchid bud at the top, with clearly overlapping left and right tapered plum/mauve petals folded together, two narrow pale outer sepals visible along the margins. Make the bud generously shaped and prominently readable at 40 px, recognizably orchid rather than rose, with about 35–40% of overall plant height occupied by the bud. A naturally curved central teal stem, fan of four long narrow tapering leaves, and a small, squat, plain glazed glass-blue ceramic pot, opaque, with thin brass trim near its foot. Use a slightly asymmetric plant gesture. Compact, broad enough to read at icon size, clean flat ink shapes, texture kept very fine and restrained. Entire object sits on one true transparent alpha square canvas and fills around 72% of the height with room for the bud to open outward at the top. Center horizontally, bottom near y=88%. No open flowers, no additional buds, no lettering, no other props, no cast shadow, no ground.",
+    "model": "gpt-image-2",
+    "style_reference": "design/art/style-sheet.png",
+    "subject_reference": "https://www.nparks.gov.sg/-/media/ffw/migrated/round2/flora/2539/0ae6d864a6c74f288c035f07418a4dc4.jpg",
+    "secondary_subject_reference": "https://commons.wikimedia.org/wiki/File:Papilionanthe_(Vanda)_Miss_Joaquim_%27Agnes%27.jpg",
+    "web_export": "public/art/vessels/vessel-orchid-bud-right.webp",
+    "postprocess": "Exact isolation of the closed bud along its original curved plum seam. The exterior curls rotate outward into the unfolded faces."
   }
 ]
