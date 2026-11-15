@@ -9582,6 +9582,13 @@
               "at": 0.7,
               "opacity": 1
             }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0
+            }
           ]
         },
         {
@@ -9598,6 +9605,12 @@
               "at": 1,
               "y": -0.157,
               "opacity": 1
+            }
+          ],
+          "idle": [
+            {
+              "type": "float",
+              "amount": 0.025
             }
           ]
         }
@@ -9669,5 +9682,590 @@
     "landmark_reference": "https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg",
     "postprocess": "One shared Lanczos 1254 to 1003 resize and (16, 7) canvas offset. Discard alpha below 20. Closed pixels divided between base and roof by the edited roof mask. Crop and feather the edited open recess and letter into a separate reveal layer.",
     "web_export": "public/art/vessels/vessel-north-gate-roof.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-durian.png",
+    "what": "Durian / 榴槤, whole closed fruit",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved regional palette exception for this durian: muted natural food colours, specifically desaturated leafy olive-green and tea-brown for the husk and stem, egg-yellow and rice-white for the fruit. Ink lines stay plum or navy.\nDraw one whole closed durian as a hand-inked collectible vessel, the fruit itself that inspired the nickname of Singapore’s Esplanade. One broadly oval fruit with a gently tapered lower tip, upright and slightly tilted, a short woody stem centered near the top. Fairly large, distinct green pyramidal thorns with selected brass-tinted sunlit tips. Include one subtle, narrow curved center seam tracking from just beside the stem to the bottom point, closed flat with identical green color on each side along the seam, no flesh or parchment visible. Use an even three-quarter view with little perspective distortion, silhouette about 68% of the square width and height, horizontal center at 50%, ground at 88%. It should fill the canvas and read as a durian at 40 px. Keep large groupings of light, shade and thorns. Isolated true transparent background. No packaging, separate fruit, scenery, earth, shadow, leaf, text, labels or logo. The reference image is the mandatory illustration style sheet.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian.webp",
+    "vessel": {
+      "id": "durian",
+      "assembled": "vessel-durian.png",
+      "opening": "H",
+      "idleMs": 4100,
+      "idle": [
+        {
+          "type": "breathe",
+          "amount": 0.027
+        }
+      ],
+      "layers": [
+        {
+          "name": "pods",
+          "file": "vessel-durian-pods.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0,
+              "x": 0.065,
+              "y": 0.06,
+              "scale": 0.75
+            },
+            {
+              "at": 0.18,
+              "opacity": 0,
+              "x": 0.065,
+              "y": 0.06,
+              "scale": 0.75
+            },
+            {
+              "at": 0.72,
+              "opacity": 1,
+              "x": 0.065,
+              "y": 0.06,
+              "scale": 0.75
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0
+            }
+          ]
+        },
+        {
+          "name": "left-pith",
+          "file": "vessel-durian-left-pith.png",
+          "role": "split",
+          "pivot": {
+            "x": 464,
+            "y": 828
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.42,
+              "opacity": 0.6,
+              "x": -0.039,
+              "y": 0,
+              "rotate": -7
+            },
+            {
+              "at": 1,
+              "opacity": 1,
+              "x": -0.097,
+              "y": 0.012,
+              "rotate": -16
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0
+            }
+          ]
+        },
+        {
+          "name": "right-pith",
+          "file": "vessel-durian-right-pith.png",
+          "role": "split",
+          "pivot": {
+            "x": 499,
+            "y": 833
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.42,
+              "opacity": 0.6,
+              "x": 0.03,
+              "y": 0,
+              "rotate": 7
+            },
+            {
+              "at": 1,
+              "opacity": 1,
+              "x": 0.071,
+              "y": 0.02,
+              "rotate": 18
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0
+            }
+          ]
+        },
+        {
+          "name": "left",
+          "file": "vessel-durian-left.png",
+          "role": "split",
+          "pivot": {
+            "x": 464,
+            "y": 828
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 1
+            },
+            {
+              "at": 0.42,
+              "opacity": 1,
+              "x": -0.039,
+              "y": 0,
+              "rotate": -7
+            },
+            {
+              "at": 1,
+              "opacity": 1,
+              "x": -0.097,
+              "y": 0.012,
+              "rotate": -16
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "file": "vessel-durian-right.png",
+          "role": "split",
+          "pivot": {
+            "x": 499,
+            "y": 833
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 1
+            },
+            {
+              "at": 0.42,
+              "opacity": 1,
+              "x": 0.03,
+              "y": 0,
+              "rotate": 7
+            },
+            {
+              "at": 1,
+              "opacity": 1,
+              "x": 0.071,
+              "y": 0.02,
+              "rotate": 18
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 570,
+        "y": 530
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 462,
+        "y": 391
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-durian-left.png",
+    "what": "Left spiky husk with stem",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nundefined\nImage 1 is the style sheet. Image 2 is the exact aligned, assembled durian being edited. Isolate only its viewer-left, broader husk half, including the entire short stem. Follow the existing thin curved seam, dividing at the seams from the stem's right edge down to the pointed bottom. Remove the entire viewer-right husk. Keep the same wide contour to the left, the same thorns, lighting, scale, pixel positions, crop, center, and original projection. Paint a modest, continuous pale pith lip just beyond the cut line to the right, as the extra inner rind that will become visible during opening. Keep the pith lip narrow (about 30–45 px relative to an output about 1254 px wide) with one defined dark edge; it hugs the pre-existing curved seam along its full height and has only one solid rice-white fill tone with sparse hatching. A softly ragged natural cut surface. No paper, fruit flesh, stem duplication, shadow or separate objects. Give the rest true alpha. Canvas must not zoom or recenter.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-durian.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian-left.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-durian-right.png",
+    "what": "Right spiky husk",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nundefined\nImage 1 is the style sheet. Image 2 is the exact aligned, assembled durian being edited. Isolate only its viewer-right narrower spiky husk half. Follow the existing curved forward seam, dividing just to the right of the woody stem at the top and following the curve toward the pointed bottom. Remove the entire left piece including the woody stem. Keep the same original right thumbnail contour, waxy thorns, color, light, scale, orientation and positions. Paint a modest continuous pale pith lip on the left edge of the isolated piece, just beyond the cut; about 35–45 px of solid rice-white pith with one defined dark edge that hugs the original seam at all heights. The rest of the canvas truly transparent. No flesh, letter, shadow, or other object. Same square canvas, no recentering and no rotation.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-durian.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian-right.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-durian-left-pith.png",
+    "what": "Left cut pith lining",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nundefined\nImage 1 is the style sheet. Image 2 is the exact aligned, assembled durian being edited. Isolate only its viewer-left, broader husk half, including the entire short stem. Follow the existing thin curved seam, dividing at the seams from the stem's right edge down to the pointed bottom. Remove the entire viewer-right husk. Keep the same wide contour to the left, the same thorns, lighting, scale, pixel positions, crop, center, and original projection. Paint a modest, continuous pale pith lip just beyond the cut line to the right, as the extra inner rind that will become visible during opening. Keep the pith lip narrow (about 30–45 px relative to an output about 1254 px wide) with one defined dark edge; it hugs the pre-existing curved seam along its full height and has only one solid rice-white fill tone with sparse hatching. A softly ragged natural cut surface. No paper, fruit flesh, stem duplication, shadow or separate objects. Give the rest true alpha. Canvas must not zoom or recenter.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-durian.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian-left-pith.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-durian-right-pith.png",
+    "what": "Right cut pith lining",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nundefined\nImage 1 is the style sheet. Image 2 is the exact aligned, assembled durian being edited. Isolate only its viewer-right narrower spiky husk half. Follow the existing curved forward seam, dividing just to the right of the woody stem at the top and following the curve toward the pointed bottom. Remove the entire left piece including the woody stem. Keep the same original right thumbnail contour, waxy thorns, color, light, scale, orientation and positions. Paint a modest continuous pale pith lip on the left edge of the isolated piece, just beyond the cut; about 35–45 px of solid rice-white pith with one defined dark edge that hugs the original seam at all heights. The rest of the canvas truly transparent. No flesh, letter, shadow, or other object. Same square canvas, no recentering and no rotation.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-durian.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian-right-pith.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-durian-pods.png",
+    "what": "Complete durian pods, pith bed and rolled letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nundefined\nImage 1 is the style sheet. Image 2 is the aligned assembled durian being edited. Keep its framing and create only the complete exposed center contents that sit behind the split husk: one compact center cluster of two or three plump yellow cream durian pods cradled in a slightly pointed ivory natural pith bed. Lay one small horizontal rolled cream parchment with a legible spiral end across the front of the pods, an actual whole little scroll with no marks, darker at its outline than the pods. Bunched fleshy folds, warm yellow shadows, profile different enough from the parchment to see both at 120 px. Show the complete surrounding pith bed including curved sides and front and back, no gaps. Place this cluster in central lower half where the interior cavity is in Image 2, approximately native coordinates x 480–815, y 530–1020 of a 1254 px square. The contents only; remove the entire exterior peel, spikes and stem. Genuine transparent background. No extra objects, no floor, no shadow outside the cluster, no packaging or text. No zoom or reframing.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-durian.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg"
+    ],
+    "postprocess": "All edits use the shared uniform downscale and offset. The seam partitions the original exterior for the exact closed stack. The generated pale pith strips are registered to the same seam and revealed with the split. The complete pods and letter are one reveal layer.",
+    "web_export": "public/art/vessels/vessel-durian-pods.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lighthouse.png",
+    "what": "Guia Lighthouse / 東望洋燈塔, closed miniature",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nDraw one miniature white painted lighthouse loosely inspired by the Guia Lighthouse in Macau, as an original tabletop souvenir. Use a squat, subtly tapered round porcelain-white tower on a low circular foot that is part of the tower base. Warm brass-yellow accents around one small curved doorway and two small staggered arched windows. Two small circular trims or balconies beneath the lantern room, simplified navy rails, topmost lantern room with a wax-red domed cap above 3 muted lit cream and warm-brass inset panes. Treat the panes as opaque enamel or a solid illuminated lens, not transparent glass. Use a fine crisp, separable seam between the cap and the room. Cap closed and flush. Hint at Macau's modest historic lighthouse silhouette with a broad stance and wax-red rounded dome. Prefer a compact stout toy with a base width about 62–68% and a height about 74% of a square canvas. Horizontally centered; base near 88% down. No scenery, seawall, sea, flag, antenna, chapel, crosses, emblems, lettering or symbols, text or extra decoration. No light beam in this closed master. Isolated true alpha, no outside shadow. The reference image is the mandatory illustration style sheet.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "All registered parts use the shared uniform downscale and offset. The isolated cap is registered as a seam guide and the closed paint divided exactly; the letter and recess use the edited tower. The beam alpha is softened and tapered from the pane outward.",
+    "web_export": "public/art/vessels/vessel-lighthouse.webp",
+    "vessel": {
+      "id": "lighthouse",
+      "assembled": "vessel-lighthouse.png",
+      "opening": "C",
+      "idleMs": 4200,
+      "idle": [],
+      "layers": [
+        {
+          "name": "tower",
+          "file": "vessel-lighthouse-tower.png",
+          "role": "static"
+        },
+        {
+          "name": "letter",
+          "file": "vessel-lighthouse-letter.png",
+          "role": "fade",
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0
+            }
+          ],
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.08,
+              "opacity": 0
+            },
+            {
+              "at": 0.65,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "name": "beam",
+          "file": "vessel-lighthouse-beam.png",
+          "role": "fade",
+          "pivot": {
+            "x": 593,
+            "y": 314
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.52,
+              "opacity": 0.7
+            },
+            {
+              "at": 1,
+              "opacity": 0.32
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0,
+              "range": 0.92
+            },
+            {
+              "type": "sway",
+              "deg": 9,
+              "pivot": {
+                "x": 593,
+                "y": 314
+              }
+            }
+          ]
+        },
+        {
+          "name": "cap",
+          "file": "vessel-lighthouse-cap.png",
+          "role": "lift",
+          "pivot": {
+            "x": 512,
+            "y": 270
+          },
+          "open": [
+            {
+              "at": 0,
+              "y": 0
+            },
+            {
+              "at": 1,
+              "y": -0.1
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 508,
+        "y": 238
+      },
+      "baseY": 901,
+      "sparkle": null,
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-lighthouse-tower.png",
+    "what": "Stationary white tower and two balconies",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact fully assembled miniature Guia Lighthouse to edit. Remove only the wax-red cap and its brass finial. Replace the area immediately above the seal at the TOP of the lantern room with a complete shallow round elliptical cavity, solid inner sides, brass rim, dark cream shadowed floor and one very readable rolled cream letter with a rolled spiral end sitting on the lip. Let the top of the letter rise slightly out of the open aperture. The opening and the rolled letter must both fit horizontally within the original cap's footprint. The illuminated panels on the exterior lantern room remain opaque enamel. Keep the entire tower, its windows, doors, two brass circular deck trims, railing and bottom in exactly the same locations with the same colors and size. No redesign, rescale, reposition, rotate, crop, background or added shadow. Same square canvas and genuine transparency.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-lighthouse.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "All registered parts use the shared uniform downscale and offset. The isolated cap is registered as a seam guide and the closed paint divided exactly; the letter and recess use the edited tower. The beam alpha is softened and tapered from the pane outward.",
+    "web_export": "public/art/vessels/vessel-lighthouse-tower.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lighthouse-letter.png",
+    "what": "Lantern-room rim, complete recess and rolled letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact fully assembled miniature Guia Lighthouse to edit. Remove only the wax-red cap and its brass finial. Replace the area immediately above the seal at the TOP of the lantern room with a complete shallow round elliptical cavity, solid inner sides, brass rim, dark cream shadowed floor and one very readable rolled cream letter with a rolled spiral end sitting on the lip. Let the top of the letter rise slightly out of the open aperture. The opening and the rolled letter must both fit horizontally within the original cap's footprint. The illuminated panels on the exterior lantern room remain opaque enamel. Keep the entire tower, its windows, doors, two brass circular deck trims, railing and bottom in exactly the same locations with the same colors and size. No redesign, rescale, reposition, rotate, crop, background or added shadow. Same square canvas and genuine transparency.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-lighthouse.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "All registered parts use the shared uniform downscale and offset. The isolated cap is registered as a seam guide and the closed paint divided exactly; the letter and recess use the edited tower. The beam alpha is softened and tapered from the pane outward.",
+    "web_export": "public/art/vessels/vessel-lighthouse-letter.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lighthouse-cap.png",
+    "what": "Wax-red lantern cap with brass finial",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact aligned assembled Guia Lighthouse being edited. Isolate ONLY its wax-red domed lantern-room cap with the single round brass finial. Preserve the exact cap silhouette, thin rounded lower seam, line work, colors, and location, size, canvas and camera from the source. Remove the entire tower, balcony, panes and background to transparency. The cap should float at the same x/y as before the edit. No new perspective, content, shadow, symbol, border, or other object.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-lighthouse.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "All registered parts use the shared uniform downscale and offset. The isolated cap is registered as a seam guide and the closed paint divided exactly; the letter and recess use the edited tower. The beam alpha is softened and tapered from the pane outward.",
+    "web_export": "public/art/vessels/vessel-lighthouse-cap.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-lighthouse-beam.png",
+    "what": "Soft amber lantern beam",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the mandatory style sheet. Image 2 is the exact aligned assembled Guia Lighthouse and shows the anchor. Make ONLY a transparent warm cream/brass-yellow lighthouse beam extending to the RIGHT from the center of its existing illuminated lantern-room window, with source near (646, 374) on the 1254 canvas and a softly spreading tapered cone fading fully to transparent by x1160 before reaching the right edge. Direction is horizontally right. A very soft, simple streak of light with a glow diminishing over its length, not a solid shape. Narrow near the window. No hard lines or outlines, no opaque objects, no texture, no extra marks, no rays in another direction, no lettering, no tower particle or building visible at all. Beam only. Keep a truly transparent background with nothing but the beam. Keep the same framing and positions.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-lighthouse.png (edit input before normalization)"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "All registered parts use the shared uniform downscale and offset. The isolated cap is registered as a seam guide and the closed paint divided exactly; the letter and recess use the edited tower. The beam alpha is softened and tapered from the pane outward.",
+    "web_export": "public/art/vessels/vessel-lighthouse-beam.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-beimen.png",
+    "what": "Beimen Passport stamp · Taipei North Gate",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nPassport place stamp icon for Taipei North Gate (Beimen), ROUND in ink blue #2F5D8A ONLY, transparent outside AND between ink marks, rubber stamp with one broad mildly uneven circular rim. Inside the circle centered is a simplified front three-quarter profile of the Taiwan North Gate landmark itself: a wide single upward-swept tiled roof with its raised center ridge above a squat solid rectangular upper wall with a small round central opening and two square ones, base of large ashlar blocks with one clear deep rounded arch beneath, no plaques. The bold locally recognizable silhouette should have strong negative spaces at 40 px. Use only blue ink with transparency for line breaks and texture. No background or paper disc, shadows, words, labels, names, flags, letters, numbers, plaques, official insignia, skyline, or second ring. Reference image is the mandatory illustration style sheet. Stamp outer ring diameter about 74% of the square canvas.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg"
+    ],
+    "postprocess": "Centered original mark and normalized only this batch to exact ink blue via normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-beimen.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-esplanade.png",
+    "what": "Esplanade Passport stamp · Twin louvered domes",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nPassport place stamp for Singapore’s Esplanade (Theatres on the Bay). ROUND, ink blue #2F5D8A ONLY, one broad slightly imperfect circular rim and an original simplified single-color hand-inked depiction of the two low rounded domes, one slightly behind the larger one, with large, rhythmic triangle louver lines and distinct roof silhouettes that give the Esplanade its durian nickname. Use no real logo, type, names, symbols, flags, words, or signage. A minimal horizontal foundation only, no surrounding city. Broad ink and generous negative space for 40px legibility, transparent outside and inside in the paper/negative spaces. Slightly imperfect rubber-stamp texture, sparse. One ring only at about 74% diameter. The attached reference image is the mandatory illustration style sheet.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_references": [
+      "https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg",
+      "https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg"
+    ],
+    "postprocess": "Centered original mark and normalized only this batch to exact ink blue via normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-esplanade.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-guia.png",
+    "what": "Guia Passport stamp · Guia Lighthouse tower",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nPassport place stamp of Macau’s Guia Lighthouse itself. ROUND ink-stamp style, ink blue #2F5D8A ONLY. One broad slightly imperfect circular border. Inside the circle a short, slightly tapered cylindrical tower, two layered circular balcony lines below the small domed lantern room, sparse arched windows and a small arched door; use bold strokes and open negative space at 40 px. One tiny arc of ground if needed. No chapel, cross, flag, weather vane, seal, rays, lettering, logo, symbols, brands, decorative type, text, hill scenery, or landscape. Background between strokes and outside the stamp is true transparency, not a white paper disc. Outer ring about 74% of width. The attached reference image is the mandatory illustration style sheet.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_references": [
+      "https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg"
+    ],
+    "postprocess": "Centered original mark and normalized only this batch to exact ink blue via normalize-stamps.py.",
+    "web_export": "public/art/stamps/stamp-guia.webp"
   }
 ]

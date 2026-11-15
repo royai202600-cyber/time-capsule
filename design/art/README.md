@@ -458,10 +458,24 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-red-bird-box.png` | Red Bird Sundial Box — box | 1024×1024 | pending Roy; see manifest |
 | `vessels/vessel-red-bird-lid.png` | Red Bird Sundial Box — lid | 1024×1024 | pending Roy; see manifest |
 | `vessels/vessel-red-bird-shadow.png` | Red Bird Sundial Box — shadow | 1024×1024 | pending Roy; see manifest |
-| `vessels/vessel-north-gate.png` | Miniature North Gate / 北門城樓, closed | 1024×1024 | RV-L-art test |
+| `vessels/vessel-north-gate.png` | Miniature North Gate / 北門城樓, closed | 1024×1024 | Roy approved test · idle roof peek added |
 | `vessels/vessel-north-gate-base.png` | Miniature North Gate, stationary stone and wax-red gate | 1024×1024 | see manifest |
 | `vessels/vessel-north-gate-interior.png` | Miniature North Gate, roof recess and lit parchment reveal | 1024×1024 | see manifest |
 | `vessels/vessel-north-gate-roof.png` | Miniature North Gate, lift-off roof | 1024×1024 | see manifest |
+| `vessels/vessel-durian.png` | Durian / 榴槤, closed | 1024×1024 | RV-L-art |
+| `vessels/vessel-durian-left.png` | Durian, left husk with stem | 1024×1024 | see manifest |
+| `vessels/vessel-durian-right.png` | Durian, right husk | 1024×1024 | see manifest |
+| `vessels/vessel-durian-left-pith.png` | Durian, left cut pith lining | 1024×1024 | see manifest |
+| `vessels/vessel-durian-right-pith.png` | Durian, right cut pith lining | 1024×1024 | see manifest |
+| `vessels/vessel-durian-pods.png` | Durian, pods, complete pith bed and rolled letter | 1024×1024 | see manifest |
+| `vessels/vessel-lighthouse.png` | Guia Lighthouse / 東望洋燈塔, closed | 1024×1024 | RV-L-art |
+| `vessels/vessel-lighthouse-tower.png` | Guia Lighthouse, white tower and balconies | 1024×1024 | see manifest |
+| `vessels/vessel-lighthouse-letter.png` | Guia Lighthouse, lantern room recess and letter | 1024×1024 | see manifest |
+| `vessels/vessel-lighthouse-cap.png` | Guia Lighthouse, lift-off wax-red cap | 1024×1024 | see manifest |
+| `vessels/vessel-lighthouse-beam.png` | Guia Lighthouse, amber lantern beam | 1024×1024 | see manifest |
+| `stamps/stamp-beimen.png` | Beimen Passport stamp, Taipei North Gate | 1024×1024 | ink blue |
+| `stamps/stamp-esplanade.png` | Esplanade Passport stamp, twin louvered domes | 1024×1024 | ink blue |
+| `stamps/stamp-guia.png` | Guia Passport stamp, lighthouse tower | 1024×1024 | ink blue |
 | `stamps/stamp-hkust.png` | HKUST curved academic building / Piazza Passport stamp | 1024×1024 | ink blue; pending Roy |
 | `stamps/stamp-hunt-hkust-2026-11.png` | HKUST City Hunt stamp; double ring, curved academic building | 1024×1024 | ink blue; pending Roy |
 
@@ -483,9 +497,23 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 
 ### Miniature North Gate
 
-[Motion overlay](_checks/north-gate-motion.png) · [40/120 px](_checks/north-gate-sizes.png) · [Exact rest stack](_checks/north-gate-stack.png) · [Audit](_checks/north-gate-assets.json)
+[Motion overlay](_checks/north-gate-motion.png) · [Idle peek](_checks/north-gate-idle.png) · [40/120 px](_checks/north-gate-sizes.png) · [Exact rest stack](_checks/north-gate-stack.png) · [Audit](_checks/north-gate-assets.json)
 
-The roof lifts above a shallow recess, revealing the rolled letter in the arch. The brass ridge sparkles once per 4200 ms loop. The gate is a simplified souvenir with an enlarged arch, enlarged roof tiles and brass accents. Its three small openings and single swept roof come from the north-side view inspected on 2026-11-15. [North Side of Taipei City North Gate 20221122.jpg, Yu tptw](https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg)
+The roof lifts above a shallow recess, revealing the rolled letter in the arch. The roof rises 2.5% of the canvas height and settles over 4.2 seconds. The brass ridge sparkles on the same loop. The gate is a simplified souvenir with an enlarged arch, enlarged roof tiles and brass accents. Its three small openings and single swept roof come from the north-side view inspected on 2026-11-15. [North Side of Taipei City North Gate 20221122.jpg, Yu tptw](https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg)
+
+### Durian and Esplanade
+
+[Motion overlay](_checks/durian-motion.png) · [40/120 px](_checks/durian-sizes.png) · [Exact rest stack](_checks/durian-stack.png)
+
+The whole fruit splits along its natural seam, showing pale pith, golden pods and a rolled letter. The idle loop pairs a 2.7% breathe with a glint on one of the spikes. The stamp shows the two theatre domes and their triangular sunshades, while the vessel uses the fruit behind the nickname. References inspected on 2026-11-15. [Esplanade Theatres on the Bay Singapore1.jpg, Philip Nalangan](https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg) · [Esplanade_Singapore.jpg, aerial view of both domes](https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg) · [Whole and sectioned durian, Wellcome Collection V0044772](https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg)
+
+### Guia Lighthouse
+
+[Motion overlay](_checks/lighthouse-motion.png) · [Idle beam](_checks/lighthouse-idle.png) · [40/120 px](_checks/lighthouse-sizes.png) · [Exact rest stack](_checks/lighthouse-stack.png)
+
+The wax-red cap lifts above the lantern room and reveals a rolled letter on the brass rim. A soft beam sweeps from the lens during idle. The miniature and the stamp use the tower's tapered white walls, stacked balconies and domed lantern cap. Reference inspected on 2026-11-15. [Guia Lighthouse, Macao World Heritage photograph 163113-19.jpg](https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg)
+
+[Three Passport stamps at 40/120 px](_checks/regional-landmark-stamp-sizes.png) · [Batch asset audit](_checks/regional-landmark-assets.json)
 
 ### Red Bird reference
 
