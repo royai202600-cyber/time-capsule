@@ -84,9 +84,9 @@ export function QuestEditor({ huntId, eventName, mapNumber, quest, busy, onClose
         </View>
 
         <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
-          {w.quest_type === "arrive" && w.arrive_check === "gps_qr" && w.qr_token &&
-            <QuestQrCard eventName={eventName} name={w.name || o.unnamedSpot} ordinal={mapNumber}
-              lat={w.location_lat} lng={w.location_lng} token={w.qr_token} />}
+          {w.quest_type === "arrive" && w.arrive_check === "gps_qr" && quest.qr_token &&
+            <QuestQrCard eventName={eventName} name={quest.name || o.unnamedSpot} ordinal={mapNumber}
+              lat={quest.location_lat} lng={quest.location_lng} token={quest.qr_token} />}
           <Label text={typed ? o.questLabel : o.chooseType} />
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
             {TYPES.map((kind) => {
