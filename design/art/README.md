@@ -464,14 +464,16 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-egg-tart-cup.png` | Fluted foil cup with complete interior and folded letter | 1024×1024 | Static |
 | `vessels/vessel-egg-tart-tart.png` | Complete puff-pastry shell and caramel-spotted custard | 1024×1024 | B lift-off |
 | `vessels/vessel-egg-tart-steam.png` | Soft blue steam wisps | 1024×1024 | Upward drift and fade |
-| `vessels/vessel-rooster.png` | 葡國公雞 / Portuguese rooster | 1024×1024 | Whole-PR review |
+| `vessels/vessel-rooster.png` | 葡國公雞 / Portuguese rooster | 1024×1024 | Roy approved at `dc5c66c` |
 | `vessels/vessel-rooster-body.png` | Ceramic body with complete letter recess | 1024×1024 | Static |
 | `vessels/vessel-rooster-back.png` | Painted tail and back cap | 1024×1024 | C cap lift |
 | `vessels/vessel-pedicab.png` | 澳門三輪車 / Macau pedicab | 1024×1024 | Whole-PR review |
 | `vessels/vessel-pedicab-cab.png` | Cab frame, fork and complete bench with folded letter | 1024×1024 | Static |
 | `vessels/vessel-pedicab-canopy.png` | Wax-red canvas roof and brass piping | 1024×1024 | A hinge |
 | `vessels/vessel-pedicab-wheel.png` | Front tire and spokes | 1024×1024 | Wheel tick |
-| `vessels/vessel-pedicab-hinge-pin.png` | Fixed brass hinge button | 1024×1024 | Static |
+| `vessels/vessel-pedicab-hinge-pin.png` | Upper brass button travelling with the roof bow | 1024×1024 | Hinge |
+| `vessels/vessel-pedicab-rear-bow.png` | Rear canopy bow and lower seat-frame pivot | 1024×1024 | Hinge |
+| `vessels/vessel-pedicab-folded-hood.png` | Gathered wax-red cloth and nested brass-piped pleats | 1024×1024 | Folds down behind the bench |
 
 ## Review
 
@@ -531,6 +533,8 @@ The pastry uses the regional plan’s approved muted food colours. Paper and gla
 
 The Portuguese rooster has a wax-red comb and original heart and flower painting on navy ceramic. The back cap lifts to reveal a finished recess with a rolled letter. The whole figure rocks 4° over 4.2 seconds. The silhouette draws on the flared base, upright comb and rounded swept tail in the [Wikimedia Commons photo `PA2900302_galo_emiliarocha_medio.jpg`](https://commons.wikimedia.org/wiki/File:PA2900302_galo_emiliarocha_medio.jpg), inspected on 2026-11-15.
 
-The Macau pedicab shows the bicycle front end, a rear two-wheel axle and a covered passenger bench. The wax-red cloth folds around a fixed brass hinge to reveal a folded letter on the seat. Its front wheel ticks as the whole pedicab bobs over 3.9 seconds. The frame and canopy structure draw on the [Wikimedia Commons photo `Macau_rickshaw_13-02-2019.jpg`](https://commons.wikimedia.org/wiki/File:Macau_rickshaw_13-02-2019.jpg), inspected on 2026-11-15.
+The Macau pedicab layout was checked again against two photographs on 2026-11-15. The Hotel Lisboa view shows the pedalling rider ahead of the passenger bench and one central front wheel. The stand view shows the empty forward-facing bench behind the rider’s saddle and the rear axle beneath the bench, with the far rear wheel partly obscured. The drawing has that same arrangement. [LN9267, `Macau_rickshaw_13-02-2019.jpg`](https://upload.wikimedia.org/wikipedia/commons/f/f1/Macau_rickshaw_13-02-2019.jpg) · [`3wheelscar.jpg`](https://upload.wikimedia.org/wikipedia/commons/3/32/3wheelscar.jpg)
 
-[Rooster motion](_checks/rooster-motion.png) · [Rooster at 40/120 px](_checks/rooster-silhouette.png) · [Pedicab motion](_checks/pedicab-motion.png) · [Pedicab at 40/120 px](_checks/pedicab-silhouette.png) · [Hash and geometry audit](_checks/rv-mo-wave-1-audit.json)
+The wax-red canopy and upper bow swing rearward. The pleats gather, then the stack rotates down around the lower seat-frame hinge and rests behind the blue bench. The folded letter is fully visible in the open pose. The closed PNG and WebP are byte-identical to `dc5c66c`. The front wheel still ticks as the cab bobs over 3.9 seconds.
+
+[Rooster motion](_checks/rooster-motion.png) · [Rooster at 40/120 px](_checks/rooster-silhouette.png) · [Pedicab motion](_checks/pedicab-motion.png) · [Animated fold](_checks/pedicab-fold.gif) · [Pedicab at 40/120 px](_checks/pedicab-silhouette.png) · [Hash and geometry audit](_checks/rv-mo-wave-1-audit.json)

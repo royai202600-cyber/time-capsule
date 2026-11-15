@@ -9847,9 +9847,147 @@
           ]
         },
         {
+          "name": "folded-hood",
+          "file": "vessel-pedicab-folded-hood.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 822,
+            "y": 598
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0,
+              "x": -0.16,
+              "y": -0.141,
+              "rotate": 0,
+              "scale": 0
+            },
+            {
+              "at": 0.52,
+              "opacity": 0,
+              "x": 0.02,
+              "y": -0.137,
+              "rotate": -56,
+              "scale": 1
+            },
+            {
+              "at": 0.56,
+              "opacity": 0.9,
+              "x": 0.028,
+              "y": -0.111,
+              "rotate": -52,
+              "scale": 1
+            },
+            {
+              "at": 0.6,
+              "opacity": 1,
+              "x": 0.037,
+              "y": -0.092,
+              "rotate": -44,
+              "scale": 1
+            },
+            {
+              "at": 0.64,
+              "opacity": 1,
+              "x": 0.042,
+              "y": -0.067,
+              "rotate": -34,
+              "scale": 1
+            },
+            {
+              "at": 0.77,
+              "opacity": 1,
+              "x": 0.025,
+              "y": -0.033,
+              "rotate": -13,
+              "scale": 1
+            },
+            {
+              "at": 1,
+              "opacity": 1,
+              "x": 0,
+              "y": 0,
+              "rotate": 10,
+              "scale": 1
+            }
+          ]
+        },
+        {
           "name": "cab",
           "file": "vessel-pedicab-cab.png",
           "role": "static"
+        },
+        {
+          "name": "rear-bow",
+          "file": "vessel-pedicab-rear-bow.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 822,
+            "y": 598
+          },
+          "open": [
+            {
+              "at": 0,
+              "rotate": 0,
+              "scaleY": 1,
+              "opacity": 1
+            },
+            {
+              "at": 0.18,
+              "rotate": 0,
+              "scaleY": 1,
+              "opacity": 1
+            },
+            {
+              "at": 0.38,
+              "rotate": 12,
+              "scaleY": 0.94,
+              "opacity": 1
+            },
+            {
+              "at": 0.52,
+              "rotate": 28,
+              "scaleY": 0.72,
+              "opacity": 1
+            },
+            {
+              "at": 0.56,
+              "rotate": 32,
+              "scaleY": 0.65,
+              "opacity": 0.86
+            },
+            {
+              "at": 0.6,
+              "rotate": 36,
+              "scaleY": 0.58,
+              "opacity": 0.53
+            },
+            {
+              "at": 0.64,
+              "rotate": 40,
+              "scaleY": 0.51,
+              "opacity": 0.12
+            },
+            {
+              "at": 0.69,
+              "rotate": 46,
+              "scaleY": 0.41,
+              "opacity": 0
+            },
+            {
+              "at": 0.77,
+              "rotate": 52,
+              "scaleY": 0.32,
+              "opacity": 0
+            },
+            {
+              "at": 1,
+              "rotate": 65,
+              "scaleY": 0.18,
+              "opacity": 0
+            }
+          ]
         },
         {
           "name": "canopy",
@@ -9861,26 +9999,167 @@
           },
           "open": [
             {
-              "at": 0
+              "at": 0,
+              "x": 0.0,
+              "y": 0.0,
+              "rotate": 0,
+              "scaleX": 1,
+              "scaleY": 1,
+              "opacity": 1
             },
             {
-              "at": 0.5,
-              "rotate": 55,
-              "scaleX": 0.51,
-              "scaleY": 0.53
+              "at": 0.18,
+              "x": 0.0,
+              "y": 0.0,
+              "rotate": 23,
+              "scaleX": 0.8,
+              "scaleY": 0.87,
+              "opacity": 1
+            },
+            {
+              "at": 0.38,
+              "x": 0.033757,
+              "y": 0.019843,
+              "rotate": 54,
+              "scaleX": 0.5,
+              "scaleY": 0.71,
+              "opacity": 1
+            },
+            {
+              "at": 0.52,
+              "x": 0.056217,
+              "y": 0.07687,
+              "rotate": 79,
+              "scaleX": 0.37,
+              "scaleY": 0.65,
+              "opacity": 1
+            },
+            {
+              "at": 0.56,
+              "x": 0.056392,
+              "y": 0.093375,
+              "rotate": 87,
+              "scaleX": 0.35,
+              "scaleY": 0.6,
+              "opacity": 0.9
+            },
+            {
+              "at": 0.6,
+              "x": 0.054704,
+              "y": 0.109372,
+              "rotate": 96,
+              "scaleX": 0.32,
+              "scaleY": 0.56,
+              "opacity": 0.14
+            },
+            {
+              "at": 0.64,
+              "x": 0.051228,
+              "y": 0.124683,
+              "rotate": 105,
+              "scaleX": 0.3,
+              "scaleY": 0.53,
+              "opacity": 0
+            },
+            {
+              "at": 0.69,
+              "x": 0.043494,
+              "y": 0.145386,
+              "rotate": 121,
+              "scaleX": 0.26,
+              "scaleY": 0.48,
+              "opacity": 0
+            },
+            {
+              "at": 0.77,
+              "x": 0.033816,
+              "y": 0.162697,
+              "rotate": 139,
+              "scaleX": 0.23,
+              "scaleY": 0.43,
+              "opacity": 0
             },
             {
               "at": 1,
-              "rotate": 142,
-              "scaleX": 0.2,
-              "scaleY": 0.39
+              "x": 0.012888,
+              "y": 0.187191,
+              "rotate": 155,
+              "scaleX": 0.22,
+              "scaleY": 0.38,
+              "opacity": 0
             }
           ]
         },
         {
           "name": "hinge-pin",
           "file": "vessel-pedicab-hinge-pin.png",
-          "role": "static"
+          "role": "hinge",
+          "pivot": {
+            "x": 850,
+            "y": 418
+          },
+          "open": [
+            {
+              "at": 0,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 1
+            },
+            {
+              "at": 0.18,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 1
+            },
+            {
+              "at": 0.38,
+              "x": 0.033757,
+              "y": 0.019843,
+              "opacity": 1
+            },
+            {
+              "at": 0.52,
+              "x": 0.056217,
+              "y": 0.07687,
+              "opacity": 1
+            },
+            {
+              "at": 0.56,
+              "x": 0.056392,
+              "y": 0.093375,
+              "opacity": 0.86
+            },
+            {
+              "at": 0.6,
+              "x": 0.054704,
+              "y": 0.109372,
+              "opacity": 0.53
+            },
+            {
+              "at": 0.64,
+              "x": 0.051228,
+              "y": 0.124683,
+              "opacity": 0.12
+            },
+            {
+              "at": 0.69,
+              "x": 0.043494,
+              "y": 0.145386,
+              "opacity": 0
+            },
+            {
+              "at": 0.77,
+              "x": 0.033816,
+              "y": 0.162697,
+              "opacity": 0
+            },
+            {
+              "at": 1,
+              "x": 0.012888,
+              "y": 0.187191,
+              "opacity": 0
+            }
+          ]
         }
       ],
       "mouth": {
@@ -9918,7 +10197,7 @@
   },
   {
     "path": "design/art/vessels/vessel-pedicab-cab.png",
-    "what": "Macau pedicab — frame, fork and complete passenger bench with letter",
+    "what": "Macau pedicab — frame, fork and passenger bench with folded letter",
     "size_px": [
       1024,
       1024
@@ -9931,7 +10210,7 @@
       "Assembled GPT Image 2 pedicab edit target"
     ],
     "source_sha256": "b3ab5c95ef433f29d5a5d31f3d18247c42f083db0018af249e49bd1f1d20aee1",
-    "processing": "Aligned rear pivot to the canopy. Removed the old front wheel behind the retained fork and fender.",
+    "processing": "Aligned rear pivot to the canopy. Removed the old front wheel behind the retained fork and fender. Separated the rear bow along its keyline with complementary masks, preserving the exact closed stack.",
     "web_export": "public/art/vessels/vessel-pedicab-cab.webp"
   },
   {
@@ -9969,5 +10248,42 @@
     "source_sha256": "b3ab5c95ef433f29d5a5d31f3d18247c42f083db0018af249e49bd1f1d20aee1",
     "processing": "Isolated the stationary brass hinge as the top layer.",
     "web_export": "public/art/vessels/vessel-pedicab-hinge-pin.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-pedicab-rear-bow.png",
+    "what": "Macau pedicab — rear canopy bow and lower pivot",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nEdit image 2, the closed Macau pedicab, with image 1 as its style guide. Erase only the wax-red soft roof, wax-red drop curtain, brass piping attached to them and their thin front roof strut. Keep the entire navy and brass bicycle frame, rider saddle, handlebars, front and both rear wheels, footrest, cream seat edge and brass rear-side pivot in the same positions and scale. Reveal the complete rear passenger bench behind the former curtain, with cream seat cushion, broad ink blue backrest and a small folded cream envelope with a wax-red dot resting on the passenger cushion. The folded letter is around the middle of the seat, tucked inside the prior curtain silhouette. The vehicle MUST remain a single connected triangle front bike plus rear bench on two wheels. Bench stays small and no passenger or driver, no replacement hood, no flag, no writing. Clean transparent holes around the frame. Keep flat matte single-shade material rendering, and only light hatching. All unchanged parts exactly as image 2.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "Assembled GPT Image 2 pedicab edit target"
+    ],
+    "source_sha256": "b3ab5c95ef433f29d5a5d31f3d18247c42f083db0018af249e49bd1f1d20aee1",
+    "processing": "Isolated the existing rear canopy bow in the original canopy assembly from the cab edit, using the complementary pixel mask.",
+    "web_export": "public/art/vessels/vessel-pedicab-rear-bow.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-pedicab-folded-hood.png",
+    "what": "Macau pedicab — gathered wax-red concertina hood",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nTime Capsule vessel part edit. Image 1 is the mandatory style sheet. Image 2 is the exact closed Macau pedicab illustration. Image 3 is the same chassis with its bench and folded paper letter exposed, for alignment only. Edit the canopy of image 2 into its FULLY FOLDED and STOWED state like the concertina hood of a vintage pram. Output ONLY the loose folded canopy cloth, its gathered bows and small brass pivots. Remove the whole rest of the vehicle, long upright pole, seat, wheel, letter, and everything else to true alpha. The new piece is a substantial stack in three-quarter perspective, a nested series of three or four curved wax-red cloth pleats with dark plum folds and narrow aged brass piping on the hoops, about 190–215 px wide, 125–155 px tall on the 1024 px edit canvas. It is a bundle of folded cloth, no flag, flap, loose piece, roll, cushion, box or collapsed polygon, and no tall upright pole. Shape: a low swept fan of nested U-shaped cloth arcs lying down and back, turned to the right towards the rear of the tricycle. The left side has a short lower tapered hinge arm and the cloth spreads to the right, substantial and full. It nests against the outside back of the blue passenger seat in image 3. Position: from roughly x=774–1000 and y=496–657 on the canvas. Left lower fastening point at x=817 y=602 where the original tall rear strut meets the cream seat edge; the main fabric mass to the right of the blue seat (x≥836) extends to x~980. Let a little of the left edge go behind the seat for overlap. The fully open piece does not touch or cover the folded letter at x=590–682 and y=595–640. Keep the same muted wax red, plum ink outlines, flat fills and one discrete shade, simplified shapes and very light hatching. Transparent and empty beyond the isolated folded piece. No shadow outside the part, letters, numbers, markings, emblem or branding.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-pedicab.png",
+      "design/art/vessels/vessel-pedicab-cab.png at dc5c66c"
+    ],
+    "source_sha256": "be8c6632153009b1c423e948a8efd52d85c38406019c2f84219416de0934ef18",
+    "processing": "Removed faint alpha outside the part, downscaled the isolated fabric stack and aligned its lower brass fastening eye to the seat-frame hinge.",
+    "web_export": "public/art/vessels/vessel-pedicab-folded-hood.webp"
   }
 ]
