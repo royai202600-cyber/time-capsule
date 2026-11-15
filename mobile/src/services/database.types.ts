@@ -1083,6 +1083,7 @@ export type Database = {
           name_en: string
           name_zh: string
           place: string | null
+          public_drop: boolean
           scene: string | null
           source_ref: string | null
         }
@@ -1097,6 +1098,7 @@ export type Database = {
           name_en: string
           name_zh: string
           place?: string | null
+          public_drop?: boolean
           scene?: string | null
           source_ref?: string | null
         }
@@ -1111,6 +1113,7 @@ export type Database = {
           name_en?: string
           name_zh?: string
           place?: string | null
+          public_drop?: boolean
           scene?: string | null
           source_ref?: string | null
         }
