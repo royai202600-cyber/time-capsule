@@ -1,0 +1,203 @@
+{
+  "base_commit": "a1a6d022547d405b2bb3484a7263211eb9ef2dbb",
+  "existing_art_paths_compared": 1551,
+  "comparison": "SHA-256 of each tracked file under design/art and public/art, except the three shared editable files. Aggregate is SHA-256 of sorted digest, two spaces, path, LF records.",
+  "shared_files_excluded": [
+    "design/art/README.md",
+    "design/art/_checks/contact-sheet.png",
+    "design/art/manifest.json"
+  ],
+  "base_aggregate_sha256": "e6133ef5c685bd5daef8c71247c202b27d5a655137719bbf0d0fb4cb56d46575",
+  "worktree_aggregate_sha256": "e6133ef5c685bd5daef8c71247c202b27d5a655137719bbf0d0fb4cb56d46575",
+  "differences": [],
+  "preexisting_manifest_entries_equal": 344,
+  "masters_and_exports": {
+    "design/art/vessels/vessel-egg-tart.png": {
+      "sha256": "72cfb166570b0be5977a2d6f7db6df7cf07a61e3f53537efd17592f19850f71a",
+      "alpha_corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visible_alpha_bbox_20": [
+        151,
+        324,
+        876,
+        903
+      ],
+      "size_px": [
+        1024,
+        1024
+      ]
+    },
+    "public/art/vessels/vessel-egg-tart.webp": {
+      "sha256": "d78fb019092891a386fc19097e77d1839048d47248a4443c8524757f2ff1491f",
+      "alpha_corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visible_alpha_bbox_20": [
+        75,
+        162,
+        438,
+        452
+      ],
+      "size_px": [
+        512,
+        512
+      ]
+    },
+    "design/art/vessels/vessel-egg-tart-cup.png": {
+      "sha256": "10aff98617d52a59d7397c1602ba7b57b993d5c8c692def218b387fba0573358",
+      "alpha_corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visible_alpha_bbox_20": [
+        159,
+        453,
+        864,
+        903
+      ],
+      "size_px": [
+        1024,
+        1024
+      ]
+    },
+    "public/art/vessels/vessel-egg-tart-cup.webp": {
+      "sha256": "c9aa9c7f9bf726531e1e59b73c67bad8bc6f5d6d6d5438a0b88e052ef8309513",
+      "alpha_corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visible_alpha_bbox_20": [
+        79,
+        226,
+        432,
+        452
+      ],
+      "size_px": [
+        512,
+        512
+      ]
+    },
+    "design/art/vessels/vessel-egg-tart-tart.png": {
+      "sha256": "1f57e610d40741008e8146323ae417a97a891b496194f83920450a7986d7e815",
+      "alpha_corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visible_alpha_bbox_20": [
+        151,
+        324,
+        876,
+        803
+      ],
+      "size_px": [
+        1024,
+        1024
+      ]
+    },
+    "public/art/vessels/vessel-egg-tart-tart.webp": {
+      "sha256": "8ec04c290636be7176b1ee26c7eecdbd8703fbc840e45c977a2499da97872237",
+      "alpha_corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visible_alpha_bbox_20": [
+        75,
+        162,
+        438,
+        402
+      ],
+      "size_px": [
+        512,
+        512
+      ]
+    },
+    "design/art/vessels/vessel-egg-tart-steam.png": {
+      "sha256": "fb53b47baa7985c29b0ef88a072c5f40dd48b28b132dc15204d192b00de69cee",
+      "alpha_corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visible_alpha_bbox_20": [
+        427,
+        210,
+        610,
+        370
+      ],
+      "size_px": [
+        1024,
+        1024
+      ]
+    },
+    "public/art/vessels/vessel-egg-tart-steam.webp": {
+      "sha256": "0f16d5b56f60d3f3d3fe644d599c36dccd613fd0ff56a1401d1427a4129e21f1",
+      "alpha_corners": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "visible_alpha_bbox_20": [
+        213,
+        105,
+        305,
+        185
+      ],
+      "size_px": [
+        512,
+        512
+      ]
+    }
+  },
+  "closed_stack_exact_rgba": true,
+  "visible_width_px": 723,
+  "base_y": 901,
+  "viewport_samples_inside_canvas": 41,
+  "pose_samples": [
+    {
+      "at": 0.0,
+      "alpha_bbox": [
+        148,
+        322,
+        878,
+        906
+      ]
+    },
+    {
+      "at": 0.5,
+      "alpha_bbox": [
+        157,
+        110,
+        867,
+        906
+      ]
+    },
+    {
+      "at": 1.0,
+      "alpha_bbox": [
+        157,
+        66,
+        867,
+        906
+      ]
+    }
+  ],
+  "open_cup_fully_clear_of_tart": true,
+  "letter_max_transmission_at_rest_alpha_255": 4
+}

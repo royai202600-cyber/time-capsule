@@ -9536,5 +9536,159 @@
     "template_key": "oldStreet",
     "postprocess": "Downscale to 1024 square with Lanczos. Both display crops use the center.",
     "web_export": "public/art/quest-templates/quest-template-old-street.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-egg-tart.png",
+    "what": "Macau Portuguese egg tart in fluted foil — assembled",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: illustration-story. Make the assembled, closed Egg tart (葡撻) vessel, a single plump Macau Portuguese egg tart seated completely in its own shallow fluted foil cup. First attached image is the required style reference only. Second is a real Macau egg-tart photo for food anatomy only. Draw one original unbranded pastry, with a generous unmistakable toasted yellow custard ellipse and three irregular caramel blisters, a warm flaky puff-pastry rim with a few wide inked strata, and a clearly separate close-fitting blue-white metallic foil cup with large, easy to read flutes and thin rolled rim. The custard is visible from above in a front three-quarter view. Use firm navy/plum outlines and simple flat shading at map-pin scale. Match the line character, shading and top-left lighting of the attached reference sheet. The tart is closed and fills the cup, so no letter can be seen. The whole tart should look plump, with a substantial top ellipse and pastry depth, but still look like a real Macau egg tart. Object about 70% of the full square width, horizontally centered, base around 88% of height. Leave large clear headroom for the opening animation. True alpha outside the object. No steam yet, no shadow outside the silhouette, no plate, no bakery box, no packaging or decoration beyond the little fluted foil cup. No photo realism, text, marks or branding.\n\nApproved palette exception: muted natural egg yellow, tea brown and warm golden pastry tones for the baked food per the regional-vessels palette rule. Foil stays paper #F6F8FB and glass blue #DCE8F2 with navy ink.\n\nThe third image is an unapproved composition study. Match its single tart composition and refine the over-bright yellow into muted custard and its oversized mould into shallower fluted foil. Keep the high-contrast features and flaky rim. The tart is the main mass.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "https://d3h1lg3ksw6i6b.cloudfront.net/media/image/2023/09/20/d806e1fb0eb24176a7dbd990292ad5a7_Portuguese_Egg_Tart.JPG",
+      "Unapproved GPT Image 2 composition study"
+    ],
+    "source_sha256": "5218d965f9d354c6f7a6c35cd742a6db91a2b0912492fa2e736e1fbcb3ba8f70",
+    "processing": "Exact at:0 composite of the registered edited cup and tart, with steam at zero opacity.",
+    "web_export": "public/art/vessels/vessel-egg-tart.webp",
+    "vessel": {
+      "id": "egg-tart",
+      "opening": "B",
+      "idleMs": 4200,
+      "idle": [],
+      "layers": [
+        {
+          "name": "cup",
+          "file": "vessel-egg-tart-cup.png",
+          "role": "static"
+        },
+        {
+          "name": "tart",
+          "file": "vessel-egg-tart-tart.png",
+          "role": "lift",
+          "pivot": {
+            "x": 512,
+            "y": 611
+          },
+          "open": [
+            {
+              "at": 0
+            },
+            {
+              "at": 0.5,
+              "y": -0.23,
+              "scale": 0.85
+            },
+            {
+              "at": 1,
+              "y": -0.36,
+              "scale": 0.61
+            }
+          ]
+        },
+        {
+          "name": "steam",
+          "file": "vessel-egg-tart-steam.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.18,
+              "opacity": 0.72,
+              "y": -0.024
+            },
+            {
+              "at": 0.52,
+              "opacity": 0,
+              "y": -0.1
+            },
+            {
+              "at": 1,
+              "opacity": 0,
+              "y": -0.1
+            }
+          ],
+          "idle": [
+            {
+              "type": "drift",
+              "amount": 0.065
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 511,
+        "y": 646
+      },
+      "baseY": 901,
+      "sparkle": {
+        "x": 237,
+        "y": 742
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-egg-tart-cup.png",
+    "what": "Egg tart — fluted foil cup and folded letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the approved style sheet. Image 2 is the closed egg-tart vessel edit target. Use its exact square framing, coordinates, scale, perspective, and three-quarter view. Preserve any retained pixel positions as closely as possible. Output a single isolated editing layer in true alpha. No background or cast shadow. No text, logo, brand or emblem.\n\nEdit target: remove only the pastry from the cup, leaving the entire original shallow fluted foil cup in its same spot and same scale. The already visible front lip, side outline and fluted panels are immutable. Complete the missing back half of the rolled foil rim, the blue-white inner fluted wall and closed inner floor in perspective, below the pastry’s former silhouette. The front lip hides the very bottom of the interior. In the hollow lies one folded cream paper letter, tilted across the floor, with a tiny plain wax-red wax dot. Keep the letter entirely inside the rim and clearly visible from above. No pastries or steam. Paper #F6F8FB and glass blue #DCE8F2 foil with navy ink for shadows. Match the existing forward elliptical edge at roughly 0.13–0.87 of canvas width and its lowest rim about 0.75 of canvas height. Cup bottom stays around 0.85 of canvas height. No ornate decoration. The existing outside silhouette must fit the original cup exactly.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "Assembled GPT Image 2 egg tart edit target"
+    ],
+    "source_sha256": "783d836788b517d67ad66a0a73eb2c83eaea8ce3f267b915f8f1d11a2bd343b4",
+    "processing": "Removed low-alpha flecks and applied common 1024 canvas transform.",
+    "web_export": "public/art/vessels/vessel-egg-tart-cup.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-egg-tart-tart.png",
+    "what": "Egg tart — complete puff pastry and caramel-spotted custard",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the approved style sheet. Image 2 is the closed egg-tart vessel edit target. Use its exact square framing, coordinates, scale, perspective, and three-quarter view. Preserve any retained pixel positions as closely as possible. Output a single isolated editing layer in true alpha. No background or cast shadow. No text, logo, brand or emblem.\n\nEdit target: keep only the whole pastry/custard tart, at its exact current position and scale, and remove the foil cup. Lock the three caramel blisters, layered rim, and outer silhouette exactly. Complete the last thin sliver of baked pastry at its underside where it touched foil so that the tart looks complete when lifted. No foil, letter or steam. Approved palette exception: muted natural egg yellow, tea brown and golden baked pastry tones for the food per the regional-vessels palette rule.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "Assembled GPT Image 2 egg tart edit target"
+    ],
+    "source_sha256": "448960f562d93bdadedc673d7c672f21009eb8a0d4bb9a43b523cf3ec95cf810",
+    "processing": "Registered the lower pastry edge to the foil lip and restored the closed edit target custard and upper crust with a feathered transition. Applied the common 1024 canvas transform.",
+    "web_export": "public/art/vessels/vessel-egg-tart-tart.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-egg-tart-steam.png",
+    "what": "Egg tart — separate soft steam wisps",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the approved style sheet. Image 2 is the closed egg-tart vessel edit target. Use its exact square framing, coordinates, scale, perspective, and three-quarter view. Preserve any retained pixel positions as closely as possible. Output a single isolated editing layer in true alpha. No background or cast shadow. No text, logo, brand or emblem.\n\nEdit target: remove the entire egg tart and cup. On their former central upper surface, make only two short staggered loose wisps of gently curling steam, starting above the baked custard (place around 46% and 57% of the canvas width and between 17% and 37% of canvas height). Wisps should be translucent glass-blue and cream with smooth feathered soft edges, individually visible at 120 px against #F6F8FB, a simple painterly gradient and no outline. Leave the rest of the square fully transparent. No food, objects or cast shadow. Steam is an independent drifting particle layer.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "Assembled GPT Image 2 egg tart edit target"
+    ],
+    "source_sha256": "331887d928e7929b0b013f7583c25990aa87fa9e07e0c996a379f0fbf7a1321d",
+    "processing": "Isolated the two wisps, downscaled, softened alpha, tinted glass-blue shading and registered above the pastry.",
+    "web_export": "public/art/vessels/vessel-egg-tart-steam.webp"
   }
 ]

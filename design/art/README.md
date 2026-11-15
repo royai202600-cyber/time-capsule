@@ -460,6 +460,10 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-red-bird-shadow.png` | Red Bird Sundial Box — shadow | 1024×1024 | pending Roy; see manifest |
 | `stamps/stamp-hkust.png` | HKUST curved academic building / Piazza Passport stamp | 1024×1024 | ink blue; pending Roy |
 | `stamps/stamp-hunt-hkust-2026-11.png` | HKUST City Hunt stamp; double ring, curved academic building | 1024×1024 | ink blue; pending Roy |
+| `vessels/vessel-egg-tart.png` | 葡撻 / Egg tart in its fluted foil cup | 1024×1024 | RV-MO test, awaiting Roy |
+| `vessels/vessel-egg-tart-cup.png` | Fluted foil cup with complete interior and folded letter | 1024×1024 | Static |
+| `vessels/vessel-egg-tart-tart.png` | Complete puff-pastry shell and caramel-spotted custard | 1024×1024 | B lift-off |
+| `vessels/vessel-egg-tart-steam.png` | Soft blue steam wisps | 1024×1024 | Upward drift and fade |
 
 ## Review
 
@@ -506,3 +510,11 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `hunt-covers/hunt-cover-park.png` | 1280×720 | Opaque full-bleed cover for a fictional park. |
 
 [Six-template review](_checks/private-hunt-quest-templates-review.png) shows each WebP at 46 px over land and water and in a centered 16:9 crop. The 3D pin and original review sheet are preserved in commit `f55af42`. The stamp and park cover remain under review. Roy approved the park template as-is. The remaining five templates await set review. The backend needs to add `oldStreet` to its template allowlist.
+
+## Macau egg tart
+
+Inspected the fluted foil cups, layered pastry and toasted custard in the [MICHELIN Guide photo, `d806e1fb0eb24176a7dbd990292ad5a7_Portuguese_Egg_Tart.JPG`](https://d3h1lg3ksw6i6b.cloudfront.net/media/image/2023/09/20/d806e1fb0eb24176a7dbd990292ad5a7_Portuguese_Egg_Tart.JPG) on 2026-11-15. The art shows a single generic Macau tart. The reference informed the tart and cup shapes and the caramel blisters.
+
+The pastry uses the regional plan’s approved muted food colours. Paper and glass blue are used for the foil. As the tart lifts, the cup reveals a folded letter. Only the steam drifts during the 4.2 s idle loop. Measured anchors and the exact prompts are in the manifest.
+
+[Motion overlay](_checks/egg-tart-motion.png) · [40/120 px sheet](_checks/egg-tart-silhouette.png) · [Exact rest stack](_checks/egg-tart-stack.png) · [Hash and geometry audit](_checks/egg-tart-audit.json)
