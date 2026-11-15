@@ -470,10 +470,10 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-teapot-pot.png` | Oolong teapot — clay pot and small cup with complete interior and rolled letter | 1024×1024 | RV-TW; see manifest |
 | `vessels/vessel-teapot-lid.png` | Oolong teapot — lift-off clay lid with brass knob | 1024×1024 | RV-TW; see manifest |
 | `vessels/vessel-teapot-steam.png` | Oolong teapot — soft steam curls | 1024×1024 | RV-TW; see manifest |
-| `vessels/vessel-sky-lantern.png` | Pingxi sky lantern — closed assembly | 1024×1024 | RV-TW; see manifest |
-| `vessels/vessel-sky-lantern-ring.png` | Pingxi sky lantern — bamboo ring and rolled letter | 1024×1024 | RV-TW; see manifest |
-| `vessels/vessel-sky-lantern-paper.png` | Pingxi sky lantern — lift-off cream paper shell | 1024×1024 | RV-TW; see manifest |
-| `vessels/vessel-sky-lantern-glow.png` | Pingxi sky lantern — soft paper glow | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern.png` | Pingxi sky lantern — closed assembly with wax-red and cream panels | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern-ring.png` | Pingxi sky lantern — bamboo ring, fuel cake, flame and upright rolled letter | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern-paper.png` | Pingxi sky lantern — wax-red and cream lift-off paper shell | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern-glow.png` | Pingxi sky lantern — soft internal glow | 1024×1024 | RV-TW; see manifest |
 | `vessels/vessel-rwb-bag.png` | Red-white-blue bag — assembled | 1024×1024 | RV-R1; see manifest |
 | `vessels/vessel-rwb-bag-bag.png` | Red-white-blue bag — bag | 1024×1024 | RV-R1; see manifest |
 | `vessels/vessel-rwb-bag-letter.png` | Red-white-blue bag — letter | 1024×1024 | RV-R1; see manifest |
@@ -536,7 +536,7 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 |---|---|---:|---|
 | Pineapple cake (鳳梨酥) | H: the two halves swivel apart, revealing pineapple filling and a rolled letter. The pastry bobs by 3% over 4 s; sparkle on the crust. | 724 px | [Motion](_checks/pineapple-cake-motion.png) · [40/120 px](_checks/pineapple-cake-silhouette.png) |
 | Oolong teapot (台灣茶壺) | B: the brass-knob lid lifts to reveal a rolled letter inside. Soft steam drifts above the spout over 4.1 s. | 724 px | [Motion](_checks/teapot-motion.png) · [40/120 px](_checks/teapot-silhouette.png) |
-| Pingxi sky lantern (平溪天燈) | B: the cream paper shell rises and leaves the letter on the bamboo hoop. The paper glows and the closed vessel bobs over 4.4 s. | 638 px | [Motion](_checks/sky-lantern-motion.png) · [40/120 px](_checks/sky-lantern-silhouette.png) |
+| Pingxi sky lantern (平溪天燈) | B: the cream and wax-red paper shell rises to uncover an upright letter and the central flame on a fuel cake. The warm lower glow flickers as the vessel bobs over 4.4 s. | 638 px | [Motion](_checks/sky-lantern-motion.png) · [40/120 px](_checks/sky-lantern-silhouette.png) |
 | Red-white-blue bag (紅白藍袋) | Zip fades, then the letter springs up behind the near lip. The bag sways 3.5° on a 4.1 s loop. | 720 px | [Motion](_checks/rwb-bag-motion.png) · [40/120 px](_checks/rwb-bag-silhouette.png) |
 | Tingkat tiffin carrier (錫格飯盒) | The clipped top tier lifts by its brass handle to reveal an open enamel bowl. Steam drifts on a 4.2 s loop. | 721 px | [Motion](_checks/tiffin-motion.png) · [40/120 px](_checks/tiffin-silhouette.png) |
 

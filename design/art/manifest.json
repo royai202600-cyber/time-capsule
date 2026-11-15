@@ -10347,13 +10347,13 @@
   },
   {
     "path": "design/art/vessels/vessel-sky-lantern.png",
-    "what": "Pingxi sky lantern — closed assembly",
+    "what": "Pingxi sky lantern — closed assembly with wax-red and cream panels",
     "size_px": [
       1024,
       1024
     ],
     "transparent": true,
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the mandatory style sheet. Image 2 is a real Pingxi sky lantern release; use the traditional inflated balloon form and oval base opening, never any real-world marks. Draw one tall Pingxi sky lantern as a CLOSED game vessel: a restrained squared-off inflated lantern, dome-like paper shoulders, broad upper third, tapered lower third, one or two delicate vertical paper seams and a small oval flat bamboo hoop visibly supporting and protruding just under the bottom hem. More like a tall bag of air than a sphere or a round ribbed Chinese festival lantern. Warm cream paper, one soft brass-tinted shade low down, plum outline, bamboo from brass/cream. Light emanates from inside with one small soft warm area on the lower paper, no flame, no beam, no outer halo. Flat color fills, one discrete shading tone, just a little sparse hatching at the shade edge, almost no grain or painterly rendering. No flag, wishes, lettering, tassel, strings, frame outside the paper, branding, scenery or cast shadow. Genuine transparent alpha. Square, center the iconic shape, balloon width about 61% of canvas and height ~69%, lowest edge ~89% down, with headroom for upward travel.",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the required style sheet. Image 2 is the existing CLOSED Pingxi sky lantern master and is the exact edit target. Keep that master’s outer paper contour, all positions, scale, camera, page margins, existing oval bamboo base, and plum #6E2B3F outline. Change only the paper coloring. Color its vertical paper gores in alternating wax red #A3364F and cream #F3E2BB. Make a substantial wax-red paper panel occupying the central left area (roughly one third of the width), an equally substantial cream panel in the central right, with a narrow cream section on the left flank and narrow wax red on the right flank, following the curved seams all the way from crown to the bottom hem. Rich alternating blocks should still read at 40 px. Keep edges of the big color fills crisp, use one flat shading tone and a handful of ink hatch marks. Add a visibly generous warm internal glow like a lit lantern, centered in the lower half, using broad cream and light brass tones fading into the red and the cream; the upper half retains saturated solid wax red and cream. Internal glow only, no outer halo; don't let it wash out the red. No visual redesign, graphics, horizontal bands, round badges, flag, punctuation or markings. The paper shell fully conceals the ring's fuel and letter in this closed image. Leave the ring as it is. Exactly one lantern, transparent square canvas.",
     "model": "gpt-image-2",
     "reference_photo": "https://upload.wikimedia.org/wikipedia/commons/6/6a/SkyLanternFestivalPic.jpg",
     "vessel": {
@@ -10377,17 +10377,22 @@
           "file": "vessel-sky-lantern-paper.png",
           "role": "lift",
           "pivot": {
-            "x": 512,
-            "y": 490
+            "x": 509,
+            "y": 492
           },
           "open": [
             {
               "at": 0
             },
             {
+              "at": 0.35,
+              "y": -0.078,
+              "scale": 0.94
+            },
+            {
               "at": 1,
-              "y": -0.167,
-              "scale": 0.87
+              "y": -0.169,
+              "scale": 0.83
             }
           ]
         },
@@ -10396,82 +10401,91 @@
           "file": "vessel-sky-lantern-glow.png",
           "role": "fade",
           "pivot": {
-            "x": 512,
-            "y": 490
+            "x": 509,
+            "y": 492
           },
           "open": [
             {
               "at": 0,
+              "opacity": 0.46
+            },
+            {
+              "at": 0.35,
+              "y": -0.078,
+              "scale": 0.94,
               "opacity": 0.39
             },
             {
               "at": 1,
-              "y": -0.167,
-              "scale": 0.87,
-              "opacity": 0.16
+              "y": -0.169,
+              "scale": 0.83,
+              "opacity": 0.17
             }
           ],
           "idle": [
             {
               "type": "glow",
-              "base": 0.39,
-              "range": 0.35,
-              "flicker": 0.095
+              "base": 0.46,
+              "range": 0.24,
+              "flicker": 0.09
             }
           ]
         }
       ],
       "mouth": {
-        "x": 503,
-        "y": 857
+        "x": 577,
+        "y": 832
       },
       "baseY": 903,
       "sparkle": {
-        "x": 495,
+        "x": 501,
         "y": 897
       },
       "glint": null,
       "openGlow": null,
       "readyPulse": null
     },
-    "production": "Closed reference generated first. Registered layers are composited to produce the exact closed art.",
+    "production": "Edited closed master. Exact prior paper alpha and closed footprint. Reassembled from the registered parts.",
     "web_export": "public/art/vessels/vessel-sky-lantern.webp"
   },
   {
     "path": "design/art/vessels/vessel-sky-lantern-ring.png",
-    "what": "Pingxi sky lantern — bamboo ring and rolled letter",
+    "what": "Pingxi sky lantern — bamboo ring, fuel cake, flame and upright rolled letter",
     "size_px": [
       1024,
       1024
     ],
     "transparent": true,
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is approved style; image 2 is the actual Pingxi paper lantern master. Edit that exact lantern into separate parts on one transparent square sprite sheet, separated vertically. At top left, the paper balloon alone, flat cream with only seams, slight brass shading and sparse hatching; accurately match the shape and unmarked paper from image 2. Finish its lower hem as a clean narrow ellipse, with its underside closed visually by warm cream from inside the paper. There is no bamboo hoop attached to it. At bottom by itself, with clear alpha gap, isolate the same bamboo ring from the bottom of the lantern, seen in the same shallow perspective, complete edge and all bindings. Make its opening visibly transparent away from a small cream rolled letter with curled ends and a simple plum ribbon, lying across middle on just two fine bamboo supports. The drawing has no writing, marks, flag, religious symbols, flames or tassel. No exterior shadow. At top right, well separated from both inked parts, one small soft diffuse brass-gold glow on true transparent, feathered to zero before its edges, no outline. Flat color fills with one shading tone, very spare hatches, negligible grain, and genuine transparent background.",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the approved style sheet. Image 2 is the newly edited CLOSED Pingxi lantern, the target for this edit. Image 3 is the prior bamboo ring layer, for exact shallow perspective and bamboo materials. Create the revealed LOWER layer of image 2 only (leave out the red and cream paper balloon and remove any glow outside the flame). ONE full bamboo hoop, intact, with a wide shallow ellipse and clear open alpha holes, thin bamboo cross supports, and a small dark brass-brown square fuel cake sitting at the exact center of the hoop and a small distinct golden flame atop it, outlined in plum. To the right of center, separated from the flame by a clear gap, place one LARGE UPRIGHT rolled cream letter with a clear spiral opening at the top, plum outline and slim wax-red ribbon around the middle. The scroll stands vertically on the cross supports with its top well above the rear ring. Its height should be about 50–55% of the outer ring's diameter and its width about 20–25%, with large simple inked shapes so it reads at 120 px. Do not let flame touch the letter. Keep the ring horizontal with the same shallow camera perspective as in image 3: ellipse outer height about 23% of its width (around a 4.3:1 ellipse), don't make the ring deeper or taller. All objects appear together on one layer with flame and letter visually separate. Flat fills and one shading tone, light hatching only, no backdrop, paper shade, text, logo, branding, tassels or unrelated decoration. Transparent alpha.",
     "model": "gpt-image-2",
-    "web_export": "public/art/vessels/vessel-sky-lantern-ring.webp"
+    "web_export": "public/art/vessels/vessel-sky-lantern-ring.webp",
+    "production": "Revealed layer edited from the closed art. Ring registered to the prior width and shelf base."
   },
   {
     "path": "design/art/vessels/vessel-sky-lantern-paper.png",
-    "what": "Pingxi sky lantern — lift-off cream paper shell",
+    "what": "Pingxi sky lantern — wax-red and cream lift-off paper shell",
     "size_px": [
       1024,
       1024
     ],
     "transparent": true,
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is approved style; image 2 is the actual Pingxi paper lantern master. Edit that exact lantern into separate parts on one transparent square sprite sheet, separated vertically. At top left, the paper balloon alone, flat cream with only seams, slight brass shading and sparse hatching; accurately match the shape and unmarked paper from image 2. Finish its lower hem as a clean narrow ellipse, with its underside closed visually by warm cream from inside the paper. There is no bamboo hoop attached to it. At bottom by itself, with clear alpha gap, isolate the same bamboo ring from the bottom of the lantern, seen in the same shallow perspective, complete edge and all bindings. Make its opening visibly transparent away from a small cream rolled letter with curled ends and a simple plum ribbon, lying across middle on just two fine bamboo supports. The drawing has no writing, marks, flag, religious symbols, flames or tassel. No exterior shadow. At top right, well separated from both inked parts, one small soft diffuse brass-gold glow on true transparent, feathered to zero before its edges, no outline. Flat color fills with one shading tone, very spare hatches, negligible grain, and genuine transparent background.",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the required style sheet. Image 2 is the existing CLOSED Pingxi sky lantern master and is the exact edit target. Keep that master’s outer paper contour, all positions, scale, camera, page margins, existing oval bamboo base, and plum #6E2B3F outline. Change only the paper coloring. Color its vertical paper gores in alternating wax red #A3364F and cream #F3E2BB. Make a substantial wax-red paper panel occupying the central left area (roughly one third of the width), an equally substantial cream panel in the central right, with a narrow cream section on the left flank and narrow wax red on the right flank, following the curved seams all the way from crown to the bottom hem. Rich alternating blocks should still read at 40 px. Keep edges of the big color fills crisp, use one flat shading tone and a handful of ink hatch marks. Add a visibly generous warm internal glow like a lit lantern, centered in the lower half, using broad cream and light brass tones fading into the red and the cream; the upper half retains saturated solid wax red and cream. Internal glow only, no outer halo; don't let it wash out the red. No visual redesign, graphics, horizontal bands, round badges, flag, punctuation or markings. The paper shell fully conceals the ring's fuel and letter in this closed image. Leave the ring as it is. Exactly one lantern, transparent square canvas.",
     "model": "gpt-image-2",
-    "web_export": "public/art/vessels/vessel-sky-lantern-paper.webp"
+    "web_export": "public/art/vessels/vessel-sky-lantern-paper.webp",
+    "production": "Paper isolated from the assembled edit. Its alpha matches the previous paper silhouette exactly."
   },
   {
     "path": "design/art/vessels/vessel-sky-lantern-glow.png",
-    "what": "Pingxi sky lantern — soft paper glow",
+    "what": "Pingxi sky lantern — soft internal glow",
     "size_px": [
       1024,
       1024
     ],
     "transparent": true,
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is approved style; image 2 is the actual Pingxi paper lantern master. Edit that exact lantern into separate parts on one transparent square sprite sheet, separated vertically. At top left, the paper balloon alone, flat cream with only seams, slight brass shading and sparse hatching; accurately match the shape and unmarked paper from image 2. Finish its lower hem as a clean narrow ellipse, with its underside closed visually by warm cream from inside the paper. There is no bamboo hoop attached to it. At bottom by itself, with clear alpha gap, isolate the same bamboo ring from the bottom of the lantern, seen in the same shallow perspective, complete edge and all bindings. Make its opening visibly transparent away from a small cream rolled letter with curled ends and a simple plum ribbon, lying across middle on just two fine bamboo supports. The drawing has no writing, marks, flag, religious symbols, flames or tassel. No exterior shadow. At top right, well separated from both inked parts, one small soft diffuse brass-gold glow on true transparent, feathered to zero before its edges, no outline. Flat color fills with one shading tone, very spare hatches, negligible grain, and genuine transparent background.",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the required style sheet. Image 2 is the existing CLOSED Pingxi sky lantern master and is the exact edit target. Keep that master’s outer paper contour, all positions, scale, camera, page margins, existing oval bamboo base, and plum #6E2B3F outline. Change only the paper coloring. Color its vertical paper gores in alternating wax red #A3364F and cream #F3E2BB. Make a substantial wax-red paper panel occupying the central left area (roughly one third of the width), an equally substantial cream panel in the central right, with a narrow cream section on the left flank and narrow wax red on the right flank, following the curved seams all the way from crown to the bottom hem. Rich alternating blocks should still read at 40 px. Keep edges of the big color fills crisp, use one flat shading tone and a handful of ink hatch marks. Add a visibly generous warm internal glow like a lit lantern, centered in the lower half, using broad cream and light brass tones fading into the red and the cream; the upper half retains saturated solid wax red and cream. Internal glow only, no outer halo; don't let it wash out the red. No visual redesign, graphics, horizontal bands, round badges, flag, punctuation or markings. The paper shell fully conceals the ring's fuel and letter in this closed image. Leave the ring as it is. Exactly one lantern, transparent square canvas.",
     "model": "gpt-image-2",
-    "production": "Generated effect isolated, its alpha softened and registered to the vessel canvas.",
-    "web_export": "public/art/vessels/vessel-sky-lantern-glow.webp"
+    "production": "The existing generated glow alpha was repositioned inside the edited lower paper for a stronger flicker.",
+    "web_export": "public/art/vessels/vessel-sky-lantern-glow.webp",
+    "source_prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is approved style; image 2 is the actual Pingxi paper lantern master. Edit that exact lantern into separate parts on one transparent square sprite sheet, separated vertically. At top left, the paper balloon alone, flat cream with only seams, slight brass shading and sparse hatching; accurately match the shape and unmarked paper from image 2. Finish its lower hem as a clean narrow ellipse, with its underside closed visually by warm cream from inside the paper. There is no bamboo hoop attached to it. At bottom by itself, with clear alpha gap, isolate the same bamboo ring from the bottom of the lantern, seen in the same shallow perspective, complete edge and all bindings. Make its opening visibly transparent away from a small cream rolled letter with curled ends and a simple plum ribbon, lying across middle on just two fine bamboo supports. The drawing has no writing, marks, flag, religious symbols, flames or tassel. No exterior shadow. At top right, well separated from both inked parts, one small soft diffuse brass-gold glow on true transparent, feathered to zero before its edges, no outline. Flat color fills with one shading tone, very spare hatches, negligible grain, and genuine transparent background."
   }
 ]

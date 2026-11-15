@@ -92,19 +92,26 @@
           905
         ],
         [
-          213,
-          85,
-          811,
+          220,
+          76,
+          804,
           905
         ],
         [
-          233,
-          22,
-          790,
+          246,
+          33,
+          777,
           905
         ]
       ],
-      "minimum_canvas_clearance_px": 22,
+      "minimum_canvas_clearance_px": 33,
+      "paper_silhouette_alpha_matches_prior_master": true,
+      "closed_footprint_matches_prior_master": true,
+      "paper_to_letter_clearance_fully_open_px": 82,
+      "opaque_palette_pixel_counts_at_40px": {
+        "red": 254,
+        "cream": 264
+      },
       "exports": {
         "vessel-sky-lantern.webp": {
           "size": [
@@ -157,15 +164,15 @@
       }
     }
   },
-  "existing_manifest_entries": 359,
+  "existing_manifest_entries": 367,
   "preserved_art": [
     {
-      "reference": "845b7fcd276d190ab2ca09b72bf75f4c0fe8b750",
-      "unchanged_files": 1343,
-      "sha256_of_sorted_sha256sum_list": "188533d39b6c798cd31de5f6f0db1a0465147fe54135207c8266a8b44b865fec"
+      "reference": "e021254eeac53e4b4f17420cf1cc5a66bd5810b0",
+      "unchanged_files": 1356,
+      "sha256_of_sorted_sha256sum_list": "dc1d848fffad8fbc3862308f8b48bb9c200d5e7f240c4edf9c11ac4550083027"
     },
     {
-      "reference": "a1a6d022547d405b2bb3484a7263211eb9ef2dbb",
+      "reference": "029fbea7f7344e62b64a16a8eb6015eafe1a1018",
       "unchanged_files": 1298,
       "sha256_of_sorted_sha256sum_list": "1cad39a6f788205bbb790d3a8fb342f4d446417b8a782ab998251b6889f78f81"
     }
