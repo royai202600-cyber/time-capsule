@@ -72,6 +72,7 @@ export type Database = {
           place_lat: number | null
           place_lng: number | null
           place_name: string | null
+          public_capsule_drop_place: string | null
           public_capsule_returns: number
           public_capsule_spot: string | null
           recipient: string | null
@@ -104,6 +105,7 @@ export type Database = {
           place_lat?: number | null
           place_lng?: number | null
           place_name?: string | null
+          public_capsule_drop_place?: string | null
           public_capsule_returns?: number
           public_capsule_spot?: string | null
           recipient?: string | null
@@ -136,6 +138,7 @@ export type Database = {
           place_lat?: number | null
           place_lng?: number | null
           place_name?: string | null
+          public_capsule_drop_place?: string | null
           public_capsule_returns?: number
           public_capsule_spot?: string | null
           recipient?: string | null
