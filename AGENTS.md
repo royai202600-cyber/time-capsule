@@ -79,6 +79,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-15: Roy reaffirmed kamcheng approval and asked for a Miss Joaquim orchid redraw. The arch holds two open flowers and a large terminal bud, which opens with a smooth round violet-rose lip and a rolled letter. The pot and sway are retained. The draft was refreshed from main; Roy reviews orchid, then the whole of PR #139.
 - 2026-11-15: Roy approved the recoloured kamcheng at `957d31d` and authorized orchid in flat ink with plum petals and teal-green leaves. The orchid and approved kamcheng are ready for whole-PR review in draft #139.
 - 2026-11-15: Roy approved a muted Peranakan palette exception for kamcheng only in draft PR #139. The recolour keeps the original silhouette, placement, scale, brass fittings and plum outlines. The lid peeks up 2.5% on a 4200 ms cycle alongside the knob sparkle. Roy reviews the revised kamcheng before orchid.
 - 2026-11-15: Roy moved the Singapore RV-SG test gate to the Peranakan kamcheng jar because Tingkat already has art in PR #134. Orchid follows Roy’s OK. Whole-PR approval and green CI precede the owner-account squash merge. Art only.

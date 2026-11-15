@@ -25,11 +25,11 @@
         0,
         0
       ],
-      "center_alpha": 255,
+      "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        234,
-        180,
-        790,
+        219,
+        174,
+        808,
         902
       ]
     },
@@ -65,11 +65,11 @@
         0,
         0
       ],
-      "center_alpha": 255,
+      "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        234,
-        478,
-        790,
+        219,
+        267,
+        808,
         760
       ]
     },
@@ -87,10 +87,10 @@
       ],
       "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        238,
-        193,
-        496,
-        581
+        605,
+        90,
+        755,
+        342
       ]
     },
     "right": {
@@ -107,10 +107,10 @@
       ],
       "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        554,
-        184,
-        819,
-        586
+        766,
+        97,
+        914,
+        342
       ]
     },
     "throat": {
@@ -125,12 +125,12 @@
         0,
         0
       ],
-      "center_alpha": 255,
+      "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        411,
-        154,
-        635,
-        638
+        695,
+        90,
+        820,
+        366
       ]
     },
     "bud-right": {
@@ -147,10 +147,10 @@
       ],
       "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        475,
-        180,
-        669,
-        503
+        711,
+        175,
+        805,
+        308
       ]
     },
     "bud-left": {
@@ -167,10 +167,10 @@
       ],
       "center_alpha": 0,
       "visible_bbox_alpha_gt_20": [
-        396,
-        183,
-        575,
-        504
+        696,
+        174,
+        799,
+        303
       ]
     }
   },
@@ -247,17 +247,17 @@
   ],
   "ip_review": "Original natural potted orchid based on observed flower morphology. No text, trade dress, logo, flag, national emblem, official insignia or branding.",
   "pre_existing_art": {
-    "base_commit": "957d31dbe326d682048aac902c37a235de7f5f36",
+    "base_commit": "7bda981",
     "scope": "Images tracked under design/art and public/art at base, excluding the shared regenerated contact sheet",
     "before": {
-      "count": 1309,
-      "sha256_of_sorted_path_sha256_map": "8afb4e4e5f7a017d58f40f8ae9a9b47dce3bb2c896379578f7cf585279f38a13"
+      "count": 1417,
+      "sha256_of_sorted_path_sha256_map": "916f4fb31ddf08e08caebcae888ea7722789d19784fe5fa8d1dfb3cb962c2961"
     },
     "after": {
-      "count": 1309,
-      "sha256_of_sorted_path_sha256_map": "8afb4e4e5f7a017d58f40f8ae9a9b47dce3bb2c896379578f7cf585279f38a13"
+      "count": 1417,
+      "sha256_of_sorted_path_sha256_map": "916f4fb31ddf08e08caebcae888ea7722789d19784fe5fa8d1dfb3cb962c2961"
     },
-    "approved_kamcheng_included": true
+    "approved_kamcheng_verified_separately": true
   },
   "idle_review": {
     "loop_ms": 4200,
@@ -266,5 +266,13 @@
     "rest_matches_assembled": true,
     "reduced_motion_still": true,
     "chrome_viewport_px": 375
+  },
+  "revision": {
+    "species": "Papilionanthe Miss Joaquim",
+    "closed_open_blooms": 2,
+    "closed_terminal_buds": 1,
+    "pot_png_and_webp_preserved": true,
+    "approved_kamcheng_commit": "957d31dbe326d682048aac902c37a235de7f5f36",
+    "approved_kamcheng_files_byte_identical": true
   }
 }
