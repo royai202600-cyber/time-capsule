@@ -463,6 +463,10 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-bolo-bun-top.png` | Pineapple bun with butter — cracked upper half | 1024×1024 | Rotates back around the measured rear hinge. |
 | `vessels/vessel-bolo-bun-letter.png` | Pineapple bun with butter — folded cream letter | 1024×1024 | Revealed beside the butter. |
 | `vessels/vessel-bolo-bun-steam.png` | Pineapple bun with butter — idle steam wisps | 1024×1024 | Separate translucent particles drift upward over a 4.2-second loop. |
+| `vessels/vessel-tram.png` | 叮叮電車 / Ding-ding tram — closed double-decker tin toy | 1024×1024 | RV-HK rare. Inspected [A tram in Causeway Bay in Hong Kong.jpg](https://commons.wikimedia.org/wiki/File:A_tram_in_Causeway_Bay_in_Hong_Kong.jpg) for the rounded profile, two window rows, wheel truck and trolley pole. Original navy-and-cream tin finish with unmarked panels. [Motion](_checks/tram-motion.png) · [40/120 px](_checks/tram-silhouette.png) |
+| `vessels/vessel-tram-body.png` | Ding-ding tram — body with painted window panels and letter compartment | 1024×1024 | The complete cream-lined compartment holds a folded letter. |
+| `vessels/vessel-tram-roof.png` | Ding-ding tram — roof with trolley pole | 1024×1024 | Lifts straight up and fades to reveal the letter. |
+| `vessels/vessel-tram-bell.png` | Ding-ding tram — brass bell | 1024×1024 | Ticks 8° around its mount while the whole tram bobs 2.8% on a 4.2-second loop. |
 | `stamps/stamp-hkust.png` | HKUST curved academic building / Piazza Passport stamp | 1024×1024 | ink blue; pending Roy |
 | `stamps/stamp-hunt-hkust-2026-11.png` | HKUST City Hunt stamp; double ring, curved academic building | 1024×1024 | ink blue; pending Roy |
 
