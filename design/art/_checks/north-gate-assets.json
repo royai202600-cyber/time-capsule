@@ -1,0 +1,115 @@
+{
+  "count": 4,
+  "passed": 4,
+  "failed": [],
+  "assets": [
+    {
+      "path": "vessels/vessel-north-gate-base.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-north-gate-interior.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-north-gate-roof.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "vessels/vessel-north-gate.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    }
+  ],
+  "canvas": {
+    "alpha_bbox_xyxy_exclusive": [
+      144,
+      240,
+      881,
+      901
+    ],
+    "width_px": 737,
+    "base_y_inclusive": 900
+  },
+  "rest_stack": {
+    "rgba_exact": true,
+    "different_pixels": 0
+  },
+  "webp": {
+    "count": 4,
+    "size_px": [
+      512,
+      512
+    ],
+    "all_corners_alpha_zero": true
+  },
+  "preexisting_art": {
+    "base": "a1a6d022547d405b2bb3484a7263211eb9ef2dbb",
+    "files_matching_base_git_blob_hashes": 1551,
+    "path_and_blob_id_list_sha256": "af250cb51dc5b689af27b32abfccf89757f64347a8c61dd14226869bff4c3482",
+    "excluded_shared_files": [
+      "design/art/README.md",
+      "design/art/_checks/contact-sheet.png",
+      "design/art/manifest.json"
+    ]
+  }
+}

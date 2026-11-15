@@ -458,8 +458,49 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-red-bird-box.png` | Red Bird Sundial Box — box | 1024×1024 | pending Roy; see manifest |
 | `vessels/vessel-red-bird-lid.png` | Red Bird Sundial Box — lid | 1024×1024 | pending Roy; see manifest |
 | `vessels/vessel-red-bird-shadow.png` | Red Bird Sundial Box — shadow | 1024×1024 | pending Roy; see manifest |
+| `vessels/vessel-north-gate.png` | Miniature North Gate / 北門城樓, closed | 1024×1024 | Roy approved test · idle roof peek added |
+| `vessels/vessel-north-gate-base.png` | Miniature North Gate, stationary stone and wax-red gate | 1024×1024 | see manifest |
+| `vessels/vessel-north-gate-interior.png` | Miniature North Gate, roof recess and lit parchment reveal | 1024×1024 | see manifest |
+| `vessels/vessel-north-gate-roof.png` | Miniature North Gate, lift-off roof | 1024×1024 | see manifest |
+| `vessels/vessel-durian.png` | Durian / 榴槤, closed | 1024×1024 | RV-L-art |
+| `vessels/vessel-durian-left.png` | Durian, left husk with stem | 1024×1024 | see manifest |
+| `vessels/vessel-durian-right.png` | Durian, right husk | 1024×1024 | see manifest |
+| `vessels/vessel-durian-left-pith.png` | Durian, left cut pith lining | 1024×1024 | see manifest |
+| `vessels/vessel-durian-right-pith.png` | Durian, right cut pith lining | 1024×1024 | see manifest |
+| `vessels/vessel-durian-pods.png` | Durian, pods, complete pith bed and rolled letter | 1024×1024 | see manifest |
+| `vessels/vessel-lighthouse.png` | Guia Lighthouse / 東望洋燈塔, closed | 1024×1024 | RV-L-art |
+| `vessels/vessel-lighthouse-tower.png` | Guia Lighthouse, white tower and balconies | 1024×1024 | see manifest |
+| `vessels/vessel-lighthouse-letter.png` | Guia Lighthouse, lantern room recess and letter | 1024×1024 | see manifest |
+| `vessels/vessel-lighthouse-cap.png` | Guia Lighthouse, lift-off wax-red cap | 1024×1024 | see manifest |
+| `vessels/vessel-lighthouse-beam.png` | Guia Lighthouse, amber lantern beam | 1024×1024 | see manifest |
+| `stamps/stamp-beimen.png` | Beimen Passport stamp, Taipei North Gate | 1024×1024 | ink blue |
+| `stamps/stamp-esplanade.png` | Esplanade Passport stamp, twin louvered domes | 1024×1024 | ink blue |
+| `stamps/stamp-guia.png` | Guia Passport stamp, lighthouse tower | 1024×1024 | ink blue |
 | `stamps/stamp-hkust.png` | HKUST curved academic building / Piazza Passport stamp | 1024×1024 | ink blue; pending Roy |
 | `stamps/stamp-hunt-hkust-2026-11.png` | HKUST City Hunt stamp; double ring, curved academic building | 1024×1024 | ink blue; pending Roy |
+| `vessels/vessel-pineapple-cake.png` | Pineapple cake pastry — closed assembly | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-pineapple-cake-left.png` | Pineapple cake — left half crust | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-pineapple-cake-right.png` | Pineapple cake — right half crust | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-pineapple-cake-left-filling.png` | Pineapple cake — full left cut face with pineapple filling | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-pineapple-cake-right-filling.png` | Pineapple cake — full right cut face with pineapple filling | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-pineapple-cake-letter.png` | Pineapple cake — rolled cream letter | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-teapot.png` | Oolong teapot — closed assembly | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-teapot-pot.png` | Oolong teapot — clay pot and small cup with complete interior and rolled letter | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-teapot-lid.png` | Oolong teapot — lift-off clay lid with brass knob | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-teapot-steam.png` | Oolong teapot — soft steam curls | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern.png` | Pingxi sky lantern — closed assembly with wax-red and cream panels | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern-ring.png` | Pingxi sky lantern — bamboo ring, fuel cake, flame and upright rolled letter | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern-paper.png` | Pingxi sky lantern — wax-red and cream lift-off paper shell | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern-glow.png` | Pingxi sky lantern — soft internal glow | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-rwb-bag.png` | Red-white-blue bag — assembled | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-bag.png` | Red-white-blue bag — bag | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-letter.png` | Red-white-blue bag — letter | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-front.png` | Red-white-blue bag — front | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-zip.png` | Red-white-blue bag — zip | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin.png` | Tingkat tiffin carrier — assembled | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin-stack.png` | Tingkat tiffin carrier — stack | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin-top.png` | Tingkat tiffin carrier — top | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin-steam.png` | Tingkat tiffin carrier — steam | 1024×1024 | RV-R1; see manifest |
 | `vessels/vessel-egg-tart.png` | 葡撻 / Egg tart in its fluted foil cup | 1024×1024 | RV-MO test approved by Roy at `ea7b7e5` |
 | `vessels/vessel-egg-tart-cup.png` | Fluted foil cup with complete interior and folded letter | 1024×1024 | Static |
 | `vessels/vessel-egg-tart-tart.png` | Complete puff-pastry shell and caramel-spotted custard | 1024×1024 | B lift-off |
@@ -491,6 +532,26 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 
 [Red Bird vessel review](_checks/red-bird-review.png) · [40/120px](_checks/red-bird-sizes.png) · [stack](_checks/red-bird-stack.png) · [closed/half/open motion](_checks/red-bird-motion.png) · [shadow idle](_checks/red-bird-idle.png) · [audit](_checks/red-bird-audit.json)
 
+### Miniature North Gate
+
+[Motion overlay](_checks/north-gate-motion.png) · [Idle peek](_checks/north-gate-idle.png) · [40/120 px](_checks/north-gate-sizes.png) · [Exact rest stack](_checks/north-gate-stack.png) · [Audit](_checks/north-gate-assets.json)
+
+The roof lifts above a shallow recess, revealing the rolled letter in the arch. The roof rises 2.5% of the canvas height and settles over 4.2 seconds. The brass ridge sparkles on the same loop. The gate is a simplified souvenir with an enlarged arch, enlarged roof tiles and brass accents. Its three small openings and single swept roof come from the north-side view inspected on 2026-11-15. [North Side of Taipei City North Gate 20221122.jpg, Yu tptw](https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg)
+
+### Durian and Esplanade
+
+[Motion overlay](_checks/durian-motion.png) · [40/120 px](_checks/durian-sizes.png) · [Exact rest stack](_checks/durian-stack.png)
+
+The whole fruit splits along its natural seam, showing pale pith, golden pods and a rolled letter. The idle loop pairs a 2.7% breathe with a glint on one of the spikes. The stamp shows the two theatre domes and their triangular sunshades, while the vessel uses the fruit behind the nickname. References inspected on 2026-11-15. [Esplanade Theatres on the Bay Singapore1.jpg, Philip Nalangan](https://commons.wikimedia.org/wiki/File:Esplanade_Theatres_on_the_Bay_Singapore1.jpg) · [Esplanade_Singapore.jpg, aerial view of both domes](https://mediaclubdatastorage.blob.core.windows.net/mediaclubwebcontent/uploads/story_attachment/attachment/1760/Esplanade_Singapore.jpg) · [Whole and sectioned durian, Wellcome Collection V0044772](https://commons.wikimedia.org/wiki/File:A_durian_(Durio_zibethinus);_an_entire_and_sectioned_fruit._Wellcome_V0044772.jpg)
+
+### Guia Lighthouse
+
+[Motion overlay](_checks/lighthouse-motion.png) · [Idle beam](_checks/lighthouse-idle.png) · [40/120 px](_checks/lighthouse-sizes.png) · [Exact rest stack](_checks/lighthouse-stack.png)
+
+The wax-red cap lifts above the lantern room and reveals a rolled letter on the brass rim. A soft beam sweeps from the lens during idle. The miniature and the stamp use the tower's tapered white walls, stacked balconies and domed lantern cap. Reference inspected on 2026-11-15. [Guia Lighthouse, Macao World Heritage photograph 163113-19.jpg](https://www.wh.mo/upload/mhImage/photo/25/20231122/163113-19.jpg)
+
+[Three Passport stamps at 40/120 px](_checks/regional-landmark-stamp-sizes.png) · [Batch asset audit](_checks/regional-landmark-assets.json)
+
 ### Red Bird reference
 
 [HKUST Campus Management Office: Circle of Time / Red Bird Sundial](https://cmo.hkust.edu.hk/sundial-sculpture) · [official photograph, the filename Roy identified](https://cmo.hkust.edu.hk/files/sundial_M0089_01_m001R2.jpg). Credit: HKUST Campus Management Office / HKUST. Inspected 2026-11-10: the red swept steel planes stand in the circular pool and stepped podium of the Entrance Piazza. The [official Visit HKUST page](https://hkust.edu.hk/visit) confirms the same sculpture against the curved academic building. This is not the Guangzhou sundial or the university emblem. Only the small reference thumbnail is stored; the vessel is an original souvenir design, not a replica.
@@ -520,6 +581,28 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `hunt-covers/hunt-cover-park.png` | 1280×720 | Opaque full-bleed cover for a fictional park. |
 
 [Six-template review](_checks/private-hunt-quest-templates-review.png) shows each WebP at 46 px over land and water and in a centered 16:9 crop. The 3D pin and original review sheet are preserved in commit `f55af42`. The stamp and park cover remain under review. Roy approved the park template as-is. The remaining five templates await set review. The backend needs to add `oldStreet` to its template allowlist.
+
+### Taiwan wave 1 and retained R1 vessels
+
+| Vessel | Opening and idle | Closed width | Review |
+|---|---|---:|---|
+| Pineapple cake (鳳梨酥) | H: the two halves swivel apart, revealing pineapple filling and a rolled letter. The pastry bobs by 3% over 4 s; sparkle on the crust. | 724 px | [Motion](_checks/pineapple-cake-motion.png) · [40/120 px](_checks/pineapple-cake-silhouette.png) |
+| Oolong teapot (台灣茶壺) | B: the brass-knob lid lifts to reveal a rolled letter inside. Soft steam drifts above the spout over 4.1 s. | 724 px | [Motion](_checks/teapot-motion.png) · [40/120 px](_checks/teapot-silhouette.png) |
+| Pingxi sky lantern (平溪天燈) | B: the cream and wax-red paper shell rises to uncover an upright letter and the central flame on a fuel cake. The warm lower glow flickers as the vessel bobs over 4.4 s. | 638 px | [Motion](_checks/sky-lantern-motion.png) · [40/120 px](_checks/sky-lantern-silhouette.png) |
+| Red-white-blue bag (紅白藍袋) | Zip fades, then the letter springs up behind the near lip. The bag sways 3.5° on a 4.1 s loop. | 720 px | [Motion](_checks/rwb-bag-motion.png) · [40/120 px](_checks/rwb-bag-silhouette.png) |
+| Tingkat tiffin carrier (錫格飯盒) | The clipped top tier lifts by its brass handle to reveal an open enamel bowl. Steam drifts on a 4.2 s loop. | 721 px | [Motion](_checks/tiffin-motion.png) · [40/120 px](_checks/tiffin-silhouette.png) |
+
+The pineapple cake rests on base y=904. Its five animation layers are two crust halves, two complete cut faces registered to the crust, and the letter. At rest the cut faces and letter are hidden and the crust halves exactly match the closed master. [Pineapple-cake alpha and size audit](_checks/pineapple-cake-assets.json) · [Exact stack](_checks/pineapple-cake-check.json).
+
+Real references inspected on 2026-11-15
+
+- Taiwan. The rounded square shortcrust, browned sides and fibrous filling in Ocdp’s CC0 photo informed the pastry. [Taiwanese_Pineapple_Cake_001.jpg](https://commons.wikimedia.org/wiki/File:Taiwanese_Pineapple_Cake_001.jpg) · [Exact photo](https://upload.wikimedia.org/wikipedia/commons/e/e2/Taiwanese_Pineapple_Cake_001.jpg)
+- Oolong teapot. Neptunati’s public domain photo shows the small round clay pot, short spout and small cups of a gongfu tea service. [Gong fu cha.jpg](https://commons.wikimedia.org/wiki/File:Gong_fu_cha.jpg) · [Exact photo](https://upload.wikimedia.org/wikipedia/commons/8/89/Gong_fu_cha.jpg). The [National Museum of Natural Science](https://www.nmns.edu.tw/en/our-research/featured/Collection-E00283/) documents the use of small pots and cups for gongfu tea in Taiwan.
+- Pingxi sky lantern. Mathgeek1978’s CC BY 4.0 photo from the 2024 Pingxi festival shows the inflated paper shoulders, warm light and open base. [SkyLanternFestivalPic.jpg](https://commons.wikimedia.org/wiki/File:SkyLanternFestivalPic.jpg) · [Exact photo](https://upload.wikimedia.org/wikipedia/commons/6/6a/SkyLanternFestivalPic.jpg).
+- Hong Kong. The photograph by NG WA KidS~commonswiki shows the woven stripes and seams of generic market carry-alls. [HK Red-White-Blue bags.JPG](https://commons.wikimedia.org/wiki/File:HK_Red-White-Blue_bags.JPG) · [Exact photo](https://upload.wikimedia.org/wikipedia/commons/f/f5/HK_Red-White-Blue_bags.JPG)
+- Singapore. De MiNi art’s workshop photo shows the stacked blue enamel tiers, painted floral panels and carrying frame of a Singapore Peranakan tingkat. The original illustration uses a simpler floral band and brass side clips. [Workshop listing](https://www.pelago.com/en/activity/pa8ir-mini-tingkat-painting-workshop-singapore/) · [0829-0713_mini-tingkat-painting-workshop-singapore-pelago0-xlarge.jpg](https://www.pelago.com/img/products/SG-Singapore/mini-tingkat-painting-workshop/0829-0713_mini-tingkat-painting-workshop-singapore-pelago0-xlarge.jpg)
+
+[Updated regional spec at PR #132](https://github.com/royai202600-cyber/time-capsule/blob/03483e26b1b4221ad1b2f82a535f0a0663e23d27/docs/design/regional-vessels.md#1-new-regional-vessels-wave-1-12) · [Full contact sheet](_checks/contact-sheet.png) · [Retained bag and tingkat alpha and size audit](_checks/rv-r1-assets.json)
 
 ## Macau egg tart
 

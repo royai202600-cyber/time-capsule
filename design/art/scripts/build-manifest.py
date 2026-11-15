@@ -490,7 +490,41 @@ def register_hkust_hunt_stamp() -> None:
     print('HKUST hunt stamp registered; retained',len(previous),'existing records')
 
 
+def append_vessels(batch_path: Path) -> None:
+    """Register new vessel masters without regenerating approved manifest entries."""
+    from PIL import Image
+
+    manifest_path = ROOT / "manifest.json"
+    raw = manifest_path.read_text()
+    known = {entry["path"] for entry in json.loads(raw)}
+    added = []
+    for record in json.loads(batch_path.read_text()):
+        relative = Path(record.pop("relative_path"))
+        if relative.parent != Path("vessels") or not relative.match("vessel-*.png"):
+            raise ValueError(f"Invalid vessel path: {relative}")
+        path = f"design/art/{relative}"
+        if path in known:
+            raise ValueError(f"Vessel master is already registered: {path}")
+        with Image.open(ROOT / relative) as master:
+            if master.size != (1024, 1024) or master.mode != "RGBA":
+                raise ValueError(f"Expected a 1024-square RGBA master: {path}")
+            added.append({
+                "path": path, "what": record.pop("what"), "size_px": list(master.size),
+                "transparent": True, **record,
+                "web_export": f"public/art/{relative.with_suffix('.webp')}",
+            })
+        known.add(path)
+
+    if added:
+        snippet = json.dumps(added, ensure_ascii=False, indent=2)[2:-2]
+        manifest_path.write_text(raw[:raw.rfind("]")].rstrip() + ",\n" + snippet + "\n]\n")
+    print(f"Registered {len(added)} new vessel masters")
+
+
 if __name__ == "__main__":
+    if len(sys.argv) == 3 and sys.argv[1] == "--append-vessels":
+        append_vessels(Path(sys.argv[2]))
+        raise SystemExit(0)
     if sys.argv[1:] == ["--stamp-hunt-hkust"]:
         register_hkust_hunt_stamp()
         raise SystemExit(0)

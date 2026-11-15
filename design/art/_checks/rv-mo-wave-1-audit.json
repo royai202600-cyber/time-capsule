@@ -1,43 +1,216 @@
 {
-  "baseline_commit": "ea7b7e5aefed650f8efd278ef17e55e5182adc9a",
-  "prior_art_files_compared": 1564,
-  "shared_files_excluded": [
-    "design/art/README.md",
-    "design/art/_checks/contact-sheet.png",
-    "design/art/manifest.json"
-  ],
-  "prior_manifest_entries_equal": 348,
-  "comparison": "SHA-256 per prior file. Aggregate hashes the sorted digest, two spaces, path, LF records.",
-  "baseline_aggregate_sha256": "d5f21a46ecf245434a6b98a26f413785bc3ecacc91b420bfa8401db52df419d2",
-  "worktree_aggregate_sha256": "d5f21a46ecf245434a6b98a26f413785bc3ecacc91b420bfa8401db52df419d2",
-  "differences": [],
-  "approved_egg_tart_sha256": {
+  "reviewed_rv_mo_head": "dc5c66c731c5cd1183357b469e7a3e1205bc3414",
+  "refreshed_main": "7bda981d0db3384d522eca0b641ae93341b3d142",
+  "original_rv_mo_base": "a1a6d022547d405b2bb3484a7263211eb9ef2dbb",
+  "prior_art_at_reviewed_head": {
+    "files_compared": 1573,
+    "excluded_shared_or_revised_files": [
+      "design/art/README.md",
+      "design/art/_checks/contact-sheet.png",
+      "design/art/_checks/pedicab-at-120px.png",
+      "design/art/_checks/pedicab-motion.png",
+      "design/art/_checks/pedicab-silhouette.png",
+      "design/art/_checks/pedicab-stack.png",
+      "design/art/_checks/rv-mo-wave-1-audit.json",
+      "design/art/manifest.json",
+      "design/art/scripts/build-manifest.py",
+      "design/art/scripts/check-vessels.py",
+      "design/art/scripts/finish-batch1.py",
+      "design/art/vessels/vessel-pedicab-cab.png",
+      "design/art/vessels/vessel-pedicab-canopy.png",
+      "design/art/vessels/vessel-pedicab-hinge-pin.png",
+      "design/art/vessels/vessel-pedicab-wheel.png",
+      "public/art/vessels/vessel-pedicab-cab.webp",
+      "public/art/vessels/vessel-pedicab-canopy.webp",
+      "public/art/vessels/vessel-pedicab-hinge-pin.webp",
+      "public/art/vessels/vessel-pedicab-wheel.webp"
+    ],
+    "baseline_aggregate_sha256": "cf4a7cb8849616bd1260df15c81916568a7c177be32d8d866cd03ae12b91ae68",
+    "worktree_aggregate_sha256": "cf4a7cb8849616bd1260df15c81916568a7c177be32d8d866cd03ae12b91ae68",
+    "differences": []
+  },
+  "upstream_art": {
+    "files_compared": 1684,
+    "excluded_shared_or_revised_files": [
+      "design/art/README.md",
+      "design/art/_checks/contact-sheet.png",
+      "design/art/manifest.json"
+    ],
+    "baseline_aggregate_sha256": "729fe4e33f326237b3ac52cab3dfd99cb95750b556d83b5645d6f9ad5db10dbf",
+    "worktree_aggregate_sha256": "729fe4e33f326237b3ac52cab3dfd99cb95750b556d83b5645d6f9ad5db10dbf",
+    "differences": []
+  },
+  "approved_egg_tart_and_rooster_sha256": {
     "design/art/_checks/egg-tart-at-120px.png": "dfc72eea08ecc6bd28a8693b2622ebc0a3e6f204edb134ffe5bec2a836afc966",
     "design/art/_checks/egg-tart-audit.json": "456fa011fad4c59efa00594d0b9c30ca73cb7a7a50ff6fa10d90d4809b90a2a9",
     "design/art/_checks/egg-tart-motion.png": "9c53698693b827b2f9699079fe67c64ef4c224c6e29ea671fb63cf6fdff75f87",
     "design/art/_checks/egg-tart-silhouette.png": "6a27a2eef0aa8f8c9b9795c61137bd364c0dc0d3404d3e9276b7323ea8db3b47",
     "design/art/_checks/egg-tart-stack.png": "72cfb166570b0be5977a2d6f7db6df7cf07a61e3f53537efd17592f19850f71a",
+    "design/art/_checks/rooster-at-120px.png": "aaa97185397efb2b845ca5bbb6ffbd87bd82c85eb1b769b9e5d4128fda8eec47",
+    "design/art/_checks/rooster-motion.png": "0d80f7d72a27fa48846bdf28a5a93db3b98bd4265f12e626a1522751aae813ef",
+    "design/art/_checks/rooster-silhouette.png": "00cbe7712f1233acd5970fdc059de42fac549be6fb3c13a4bc83310c4894541e",
+    "design/art/_checks/rooster-stack.png": "a37279e5001deba9cc65cc593f2ceb9519b2569fa0163390f28cfc20a16a9723",
     "design/art/vessels/vessel-egg-tart-cup.png": "10aff98617d52a59d7397c1602ba7b57b993d5c8c692def218b387fba0573358",
     "design/art/vessels/vessel-egg-tart-steam.png": "fb53b47baa7985c29b0ef88a072c5f40dd48b28b132dc15204d192b00de69cee",
     "design/art/vessels/vessel-egg-tart-tart.png": "1f57e610d40741008e8146323ae417a97a891b496194f83920450a7986d7e815",
     "design/art/vessels/vessel-egg-tart.png": "72cfb166570b0be5977a2d6f7db6df7cf07a61e3f53537efd17592f19850f71a",
+    "design/art/vessels/vessel-rooster-back.png": "9ef6458ae7af34571c8239f096dca2e9c18f75e84c16c84aae6d92a9cd295999",
+    "design/art/vessels/vessel-rooster-body.png": "a91b09963df1c8085564c23affef572f420f510772677d8ec8704ee3b3e9858f",
+    "design/art/vessels/vessel-rooster.png": "a37279e5001deba9cc65cc593f2ceb9519b2569fa0163390f28cfc20a16a9723",
     "public/art/vessels/vessel-egg-tart-cup.webp": "c9aa9c7f9bf726531e1e59b73c67bad8bc6f5d6d6d5438a0b88e052ef8309513",
     "public/art/vessels/vessel-egg-tart-steam.webp": "0f16d5b56f60d3f3d3fe644d599c36dccd613fd0ff56a1401d1427a4129e21f1",
     "public/art/vessels/vessel-egg-tart-tart.webp": "8ec04c290636be7176b1ee26c7eecdbd8703fbc840e45c977a2499da97872237",
-    "public/art/vessels/vessel-egg-tart.webp": "d78fb019092891a386fc19097e77d1839048d47248a4443c8524757f2ff1491f"
+    "public/art/vessels/vessel-egg-tart.webp": "d78fb019092891a386fc19097e77d1839048d47248a4443c8524757f2ff1491f",
+    "public/art/vessels/vessel-rooster-back.webp": "e5d6afe8cfeb1b799b687f79c9e44863e854929b5a38c605cda0b4cd62d16e64",
+    "public/art/vessels/vessel-rooster-body.webp": "5c7313f125b6cbb7ae880a235527b7e0be8250132acdc2d7500ad227db8b0e17",
+    "public/art/vessels/vessel-rooster.webp": "b6a56d458a1f79047966e5e33cad22bee80a09c9b9c5e12c9191c3382a811062"
   },
-  "vessels": {
-    "rooster": {
-      "closed_stack_exact_rgba": true,
-      "closed_solid_bounds": [
-        234,
-        121,
-        793,
-        910
-      ],
-      "base_y": 909,
+  "unchanged_closed_pedicab_sha256": {
+    "design/art/vessels/vessel-pedicab.png": "7000fda02cf36e008c528790ea94c44054c1ae1c9792167cbb4326852f3c4138",
+    "public/art/vessels/vessel-pedicab.webp": "5d4f66136cd2e512ebcae832f6ca888b44c6350aaec7913a58a98160cb8c997a"
+  },
+  "upstream_manifest_entries_unchanged": 385,
+  "opening_and_asset_checks": {
+    "egg-tart": {
+      "closed_stack_exact_rgba": false,
+      "current_renderer_max_rgba_delta": 1,
+      "exact_under_reviewed_renderer": true,
       "opening_samples_inside_canvas": 41,
-      "frame_bounds": {
+      "frames": {
+        "0.0": [
+          148,
+          322,
+          878,
+          906
+        ],
+        "0.5": [
+          157,
+          110,
+          867,
+          906
+        ],
+        "1.0": [
+          157,
+          66,
+          867,
+          906
+        ]
+      },
+      "width": 723,
+      "base_y": 901,
+      "assets": {
+        "design/art/vessels/vessel-egg-tart.png": {
+          "size_px": [
+            1024,
+            1024
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "72cfb166570b0be5977a2d6f7db6df7cf07a61e3f53537efd17592f19850f71a"
+        },
+        "public/art/vessels/vessel-egg-tart.webp": {
+          "size_px": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "d78fb019092891a386fc19097e77d1839048d47248a4443c8524757f2ff1491f"
+        },
+        "design/art/vessels/vessel-egg-tart-cup.png": {
+          "size_px": [
+            1024,
+            1024
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "10aff98617d52a59d7397c1602ba7b57b993d5c8c692def218b387fba0573358"
+        },
+        "public/art/vessels/vessel-egg-tart-cup.webp": {
+          "size_px": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "c9aa9c7f9bf726531e1e59b73c67bad8bc6f5d6d6d5438a0b88e052ef8309513"
+        },
+        "design/art/vessels/vessel-egg-tart-tart.png": {
+          "size_px": [
+            1024,
+            1024
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "1f57e610d40741008e8146323ae417a97a891b496194f83920450a7986d7e815"
+        },
+        "public/art/vessels/vessel-egg-tart-tart.webp": {
+          "size_px": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "8ec04c290636be7176b1ee26c7eecdbd8703fbc840e45c977a2499da97872237"
+        },
+        "design/art/vessels/vessel-egg-tart-steam.png": {
+          "size_px": [
+            1024,
+            1024
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "fb53b47baa7985c29b0ef88a072c5f40dd48b28b132dc15204d192b00de69cee"
+        },
+        "public/art/vessels/vessel-egg-tart-steam.webp": {
+          "size_px": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "0f16d5b56f60d3f3d3fe644d599c36dccd613fd0ff56a1401d1427a4129e21f1"
+        }
+      }
+    },
+    "rooster": {
+      "closed_stack_exact_rgba": false,
+      "current_renderer_max_rgba_delta": 1,
+      "exact_under_reviewed_renderer": true,
+      "opening_samples_inside_canvas": 41,
+      "frames": {
         "0.0": [
           230,
           118,
@@ -57,7 +230,8 @@
           913
         ]
       },
-      "mouth_occluded_at_rest_and_clear_open": true,
+      "width": 559,
+      "base_y": 909,
       "assets": {
         "design/art/vessels/vessel-rooster.png": {
           "size_px": [
@@ -141,15 +315,10 @@
     },
     "pedicab": {
       "closed_stack_exact_rgba": true,
-      "closed_solid_bounds": [
-        152,
-        299,
-        871,
-        905
-      ],
-      "base_y": 904,
-      "opening_samples_inside_canvas": 41,
-      "frame_bounds": {
+      "current_renderer_max_rgba_delta": 0,
+      "exact_under_refreshed_renderer": true,
+      "opening_samples_inside_canvas": 101,
+      "frames": {
         "0.0": [
           149,
           295,
@@ -158,18 +327,19 @@
         ],
         "0.5": [
           149,
-          166,
-          874,
+          267,
+          965,
           908
         ],
         "1.0": [
           149,
-          311,
-          953,
+          492,
+          988,
           908
         ]
       },
-      "mouth_occluded_at_rest_and_clear_open": true,
+      "width": 719,
+      "base_y": 904,
       "assets": {
         "design/art/vessels/vessel-pedicab.png": {
           "size_px": [
@@ -208,7 +378,7 @@
             0,
             0
           ],
-          "sha256": "ad33e70f454dcf2e30bf748de8ef8c493fec9d1b0ab242210e6eb6c8d35ad0df"
+          "sha256": "c8d716eede0eee177a0d3a8b46c1754581508f30e5ad7ba316d3565e639c0681"
         },
         "public/art/vessels/vessel-pedicab-wheel.webp": {
           "size_px": [
@@ -221,7 +391,7 @@
             0,
             0
           ],
-          "sha256": "8b56a516c47800f3518dffb304b4cd4a582ff655f217f49322fb4e1e39ce5f56"
+          "sha256": "7a7ce14c5ea9cac5e9901a625814097a5a1b039986254acbeaaa10db1ebb4438"
         },
         "design/art/vessels/vessel-pedicab-cab.png": {
           "size_px": [
@@ -234,7 +404,7 @@
             0,
             0
           ],
-          "sha256": "4aded64260ce7c12dec6f2c60e9d061a6d2cf5ab52dd5d1460a99d83caadf2e8"
+          "sha256": "8ac4489fac51aae4c1f8eeced91e9809b8c700297fe9a48e51bd44a11fb5d8a9"
         },
         "public/art/vessels/vessel-pedicab-cab.webp": {
           "size_px": [
@@ -247,7 +417,7 @@
             0,
             0
           ],
-          "sha256": "9f08467ca64a64ecc403f4b9381504ae24b18ee35b4aeaea86769fbad8608c55"
+          "sha256": "1c32d23bff0543533cbbf76ea2f491cb537e8c22cc2f077de7fc8b3859e41e1d"
         },
         "design/art/vessels/vessel-pedicab-canopy.png": {
           "size_px": [
@@ -260,7 +430,7 @@
             0,
             0
           ],
-          "sha256": "2926d33b23aafe1e8dbc7dd7a78912fcf69d03ec7d88a41d6f4da743e428eff1"
+          "sha256": "e1ad68741559f4dabbed04ad1b177d1f93013317032e1ecdf6811489a9959e4a"
         },
         "public/art/vessels/vessel-pedicab-canopy.webp": {
           "size_px": [
@@ -273,7 +443,7 @@
             0,
             0
           ],
-          "sha256": "d90c8b42df0bacf7a57e16f49ba95606ae15a286db7b628356a3592565ce56ea"
+          "sha256": "458468187321b7a8e985a4017642fa21b1e858ded5b7523495bc3e63c3053219"
         },
         "design/art/vessels/vessel-pedicab-hinge-pin.png": {
           "size_px": [
@@ -286,7 +456,7 @@
             0,
             0
           ],
-          "sha256": "cc1c76830d04a5fb959a90b05d4cb04aab60fcce6d8aa1cebaef388d1381a205"
+          "sha256": "d6ef6db3bcd6db092bb109b2ba9aa09b821eb3d3573d5efb417f130b7143ced0"
         },
         "public/art/vessels/vessel-pedicab-hinge-pin.webp": {
           "size_px": [
@@ -299,9 +469,80 @@
             0,
             0
           ],
-          "sha256": "fc5daac072465ad50505662f656509d6f9f89e48eb88bdc10f5723c062e761e9"
+          "sha256": "4b471ff3ec51fa4c156ab992ca3d1cbe555af7d18415856d0c98a8883496ed1b"
+        },
+        "design/art/vessels/vessel-pedicab-rear-bow.png": {
+          "size_px": [
+            1024,
+            1024
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "83e79065c8c49f02046814572f80998c5d6d84f6cf8a5ae51ae0921622fc1ad5"
+        },
+        "public/art/vessels/vessel-pedicab-rear-bow.webp": {
+          "size_px": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "7bfcd5419717a68f0fee817a6ce6407f9a526797750806506eec8c825e4b5919"
+        },
+        "design/art/vessels/vessel-pedicab-folded-hood.png": {
+          "size_px": [
+            1024,
+            1024
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "8061e3fa9e9080a43f19df269e72968330a96a59983eed78e67f014e23c33f87"
+        },
+        "public/art/vessels/vessel-pedicab-folded-hood.webp": {
+          "size_px": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "sha256": "1f0acd2c02ac30bb77b12b558eb5a36793197623bff4a01af9aed789c6ff2ba9"
         }
-      }
+      },
+      "closed_idle_stack_exact_rgba": true,
+      "fully_visible_letter_region": [
+        582,
+        589,
+        688,
+        645
+      ],
+      "stowed_hood_bounds": [
+        815,
+        516,
+        988,
+        617
+      ],
+      "lower_seat_hinge": {
+        "x": 822,
+        "y": 598
+      },
+      "animated_review_frames": 37
     }
-  }
+  },
+  "aggregate_method": "SHA-256 of sorted digest, two spaces, path, LF records."
 }

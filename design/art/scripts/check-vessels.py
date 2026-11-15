@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Composite vessel layers and record size, alpha, and visual-difference checks."""
 
+import argparse
 import json
 import runpy
 from pathlib import Path
@@ -96,11 +97,16 @@ def check_vessel(vessel: str, layer_names: list[str]) -> dict:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--only", nargs="+", help="Check only these vessel IDs.")
+    args = parser.parse_args()
     CHECKS.mkdir(parents=True, exist_ok=True)
     for path, spec in load_specs().items():
         LAYERS[Path(path).stem.removeprefix("vessel-")] = [l["name"] for l in spec["layers"]]
-    for vessel, layer_names in LAYERS.items():
-        result = check_vessel(vessel, layer_names)
+    for vessel in args.only or LAYERS:
+        if vessel not in LAYERS:
+            parser.error(f"Unknown vessel ID: {vessel}")
+        result = check_vessel(vessel, LAYERS[vessel])
         print(vessel, "MAE", result["assembled_vs_stack_mae_rgb_on_paper_0_to_255"],
               "alpha corners", "PASS" if result["all_corners_alpha_zero"] else "FAIL")
 

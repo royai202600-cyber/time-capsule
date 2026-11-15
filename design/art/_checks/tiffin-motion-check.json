@@ -1,0 +1,26 @@
+{
+  "baseY": 897,
+  "closed_rgba_exact": true,
+  "closed_half_open_bounds": [
+    [
+      152,
+      120,
+      873,
+      903
+    ],
+    [
+      152,
+      32,
+      873,
+      903
+    ],
+    [
+      171,
+      319,
+      853,
+      903
+    ]
+  ],
+  "sampled_frames": 21,
+  "min_clear_px": 29
+}
