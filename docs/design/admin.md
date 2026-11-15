@@ -1,6 +1,6 @@
 # Admin (管理後台)
 
-Status: Roy approved the plan on 2026-11-15. PR #133 supplies the screens. The stacked A1 branch enables the RPCs with migration `20261115110050_admin_phase_one`, approved for release after verification.
+Status: Roy approved the plan on 2026-11-15. PR #133 supplies the screens. The stacked A1 branch enables the RPCs with migration `20261115111007_admin_phase_one`, applied in production.
 
 Screens: `mobile/app/admin/` routes, `mobile/src/features/admin/` (shell, Overview, Corrupted Capsules, City map, Review, Members, Activity), `mobile/src/services/admin.ts` (types and RPC calls the screens expect). Run `cd mobile && npm run web` and open http://localhost:8088/admin. For local design work, set `ADMIN_BACKEND` to `false`. The sample opens without signing in and has a **View as** switch for each role.
 
