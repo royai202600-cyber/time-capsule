@@ -11354,16 +11354,16 @@
   },
   {
     "path": "design/art/vessels/vessel-tram.png",
-    "what": "Ding-ding tram / 叮叮電車 — closed muted-green-and-cream double-decker tin toy",
+    "what": "Ding-ding tram / 叮叮電車 — closed green Hong Kong double-decker with timber sashes and fender tray",
     "size_px": [
       1024,
       1024
     ],
     "transparent": true,
-    "prompt": "Use gpt-image-2. Image 1 is the approved Time Capsule style sheet. Image 2 is the exact closed Ding-ding tram artwork to edit.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved palette exception, for this tram's body panels only: muted heritage Hong Kong tram green, roughly dark desaturated pine green #28564A with its existing ink shading. Recolour only the two currently navy-blue painted body panels: the full waist band between the two cream window rows, and the larger rectangular lower side panel between the cream band and the thin brass bottom trim. Keep all of the existing cream and glass-blue window bands and panes, the cream front around the headlamp, the entire navy roof and trolley pole, navy undercarriage and wheels, brass bell and headlamp trim, and plum ink outlines unchanged. Exact same artwork, geometry, position, scale, paper grain, framing, lines, and true transparent alpha. Change only those two fills. Flat ink, no new features, no livery, text, real company name, number, sign, brand or emblem.",
+    "prompt": "Use gpt-image-2. Create one new original closed Time Capsule vessel. Input with photographed street is Roy’s `tram hk.jpeg`, a geometry reference. The image with seven illustrated keepsakes is the required approved design/art/style-sheet.png. Use the photo’s vehicle structure and viewpoint, and render only the isolated unmarked toy using the style sheet.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved palette exception, this Ding-ding tram only: muted dark Hong Kong tram green (dark pine green around #28564A) for the entire painted car body, structural uprights, and flat roof. Keep the style block unchanged. Warm brown wood is already allowed for the actual wooden window frames; use warm medium brown with restrained grain. The windows are open to an ink-dark interior, with no glass reflections or blue glazing whatsoever.\n\nMatch the reference’s geometry closely: front on the left, long side receding toward the right in a clearly readable front three-quarter view. The near end is upright and narrow — its width is about 36–40% of its own height from roof to bottom, with visibly straight full-height corners, very slightly rounded only at the ends. A tall old Hong Kong double-decker streetcar, slim and boxy, not a rounded bus. Two tall rows of rectangular window openings with thin brown wood sashes and dark recess behind, several openings along the visible long side, across both decks. Flat low green roof with almost no crown, and a real shallow rectangular cream destination box above the narrow front windshield, completely blank. A single dark trolley pole angles back from the roof toward the rear right with no overhead cable. Where the ads appear in the photo, leave broad, plain inset flat cream rectangles between decks and on the lower side. Keep green framing around the cream rectangles; ad boards are filled with absolutely no content. One single round brass headlight on the lower narrow front, with a tiny brass service bell above and off to one side, visibly bell-shaped with a hanging loop and clapper, mounted on green. The bell is small enough never to read as a second light. Add the characteristic shallow open metal fender tray extending horizontally across the actual bottom front, low to the ground with a few strong plum/nave bars. Dark navy lower band and discreet wheel truck.\n\nAbsolutely no real markings from the photograph, no type, route, fleet numbers (including no 120), company names, ads, logos, pictures on the panels, people, street, tracks, overhead lines, scenery or shadow. Crisp ink outline and clean flat fills with light paper grain. Prioritize clear shape, strongly separated two decks and visible front fender at 40 px. True transparent background on a square. Center the silhouette horizontally, with about 70% canvas width, bottom fender near y=905 at 1024 reference scale and enough transparent headroom to lift the roof.",
     "model": "gpt-image-2",
     "web_export": "public/art/vessels/vessel-tram.webp",
-    "postprocess": "Sampled the approved GPT Image 2 edit’s green and transferred it only to the two registered body panel fills. Reassembled the body with the existing roof and bell. Alpha, scale and placement are identical to the original tram.",
+    "postprocess": "Cleaned stray alpha and normalized the registered layers to one 1024-square canvas; exported the exact closed keyframe composite.",
     "vessel": {
       "id": "tram",
       "opening": "B",
@@ -11385,8 +11385,8 @@
           "file": "vessel-tram-roof.png",
           "role": "lift",
           "pivot": {
-            "x": 511,
-            "y": 328
+            "x": 466,
+            "y": 237
           },
           "open": [
             {
@@ -11396,17 +11396,17 @@
             },
             {
               "at": 0.5,
-              "y": -0.075,
-              "opacity": 0.85
+              "y": -0.067,
+              "opacity": 0.88
             },
             {
               "at": 0.8,
-              "y": -0.119,
-              "opacity": 0.25
+              "y": -0.098,
+              "opacity": 0.34
             },
             {
               "at": 1,
-              "y": -0.125,
+              "y": -0.108,
               "opacity": 0
             }
           ]
@@ -11420,21 +11420,21 @@
               "type": "tick",
               "deg": 8,
               "pivot": {
-                "x": 243,
-                "y": 705
+                "x": 217,
+                "y": 673
               }
             }
           ]
         }
       ],
       "mouth": {
-        "x": 498,
-        "y": 298
+        "x": 525,
+        "y": 239
       },
-      "baseY": 899,
+      "baseY": 902,
       "sparkle": {
-        "x": 223,
-        "y": 773
+        "x": 280,
+        "y": 748
       },
       "glint": null,
       "openGlow": null,
@@ -11443,29 +11443,29 @@
   },
   {
     "path": "design/art/vessels/vessel-tram-body.png",
-    "what": "Ding-ding tram — body, painted windows and complete recessed letter compartment",
+    "what": "Ding-ding tram — body, dark open timber windows and complete recessed letter compartment",
     "size_px": [
       1024,
       1024
     ],
     "transparent": true,
-    "prompt": "Use gpt-image-2. Image 1 is the approved style sheet. Image 2 is the exact assembled tram, the edit target.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nKeep only the existing navy-and-cream tram body at exactly its existing position, scale, angle, and silhouette, including both rows of windows, headlamp and wheels. Remove the entire detachable navy top roof and trolley pole, along the existing seam directly above the cream upper window band. Underneath that roof draw a complete shallow recessed letter compartment in the very same footprint as the old roof, viewed from the same angle, with a navy enamel rear rim and a complete plain cream lining. Put a single visible cream folded envelope with an undecorated wax-red seal lying on the lining, centred horizontally near the middle of the channel, fully within the old roof silhouette, low enough to be hidden completely when the closed roof is layered back on. Paint the tin sides as before. Remove only the small front brass bell above the headlamp and repair the underlying plain cream, letting the existing thin horizontal panel line continue through that area. Keep all other pixels unaltered. No newly added hardware or scenery. No numbers, lettering, marks, livery, names or green. Same square canvas, actual transparency. No palette exception.",
+    "prompt": "Use gpt-image-2. Image 1 is the approved style sheet. Image 2 is the exact newly drawn assembled tram to edit.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nLocked registration: keep the full 1254-square canvas as supplied and the body exactly where it is. Remove only the thin flat roof cap, its cream destination box and its trolley pole. Keep the complete original narrow front, both rows of wooden window frames, the dark interior, cream panels, one brass headlight, dark lower band, fender tray and wheels. Nothing moves or changes size. Inside the same existing roof footprint, reveal a complete shallow open letter compartment for the upper deck: a dark green back rim, pale cream inset lining and one small folded cream letter with an undecorated wax-red seal in the near middle of the recess. As seen from the same front three-quarter angle, the compartment follows the receding long side and remains inside the removed roof’s outline. No part sticks above the old silhouette. The upper rim sits just along the old roof seam above the wood frames. Fill the open windows behind the wood frames with dark ink so they read as a shadowed interior. Remove the tiny bell above and to the left of the headlight so its independent motion can show a clean body panel. Preserve the rest of that green front panel. No text, numerals, livery, ads, images, logos, scenery or shadow. True transparency only outside the tram and in the fender bars.\n\nRoy's approved palette exception, this tram only: muted dark Hong Kong tram green for all original painted body and roof parts. Wooden sash frames stay warm brown as allowed by the style block.",
     "model": "gpt-image-2",
     "web_export": "public/art/vessels/vessel-tram-body.webp",
-    "postprocess": "Used the edited interior at the roof seam and restored the front panel under the removable bell with a local blend. Applied the registered muted tram-green fill to the two navy body panels only, using the colour sampled from the assembled edit. The lining and letter are unchanged."
+    "postprocess": "Registered the complete letter compartment under the roof with a tapered shift. Filled stray glazing cutouts with the edited dark interior and used a local blend behind the isolated bell."
   },
   {
     "path": "design/art/vessels/vessel-tram-roof.png",
-    "what": "Ding-ding tram — lift-off roof and trolley pole",
+    "what": "Ding-ding tram — flat lift-off green roof, blank cream destination box and trolley pole",
     "size_px": [
       1024,
       1024
     ],
     "transparent": true,
-    "prompt": "Use gpt-image-2. Image 1 is the approved style sheet. Image 2 is the exact assembled tram, the edit target.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nPrecisely isolate only the existing shallow navy roof and attached diagonal trolley pole of the tram in image 2, down to the dark ink roof seam directly above the upper row of cream window frames. The roof cap and pole retain their same coordinates, angle, dimensions, colours and outlines on the original full square canvas. Remove the entire windowed tram body and every other part. True transparent alpha everywhere else. No props, new shapes, text, livery or colour exception.",
+    "prompt": "Use gpt-image-2. Image 1 is the approved style sheet. Image 2 is the exact newly drawn assembled tram to edit.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nIsolate the existing flat roof cap of the tram, its shallow blank cream destination box at the front-left, and its single diagonal angled-back trolley pole. Everything stays on the exact same 1254-square canvas, coordinates, scale, angle, and shape as image 2, including the shallow original long edge following the dark seam just above the front fascia and timber window frames. Show only the lift-off roof. Remove every pixel belonging to the body, windows, panels, bell, wheels and everything else. Render true alpha outside the existing roof silhouette. No new hardware, route, fleet numbers, lettering, signs with content, names, marks or scenery.\n\nRoy's approved palette exception, this tram only: muted dark Hong Kong tram green for the flat roof. Use the original plum outline and keep the destination box plain cream.",
     "model": "gpt-image-2",
     "web_export": "public/art/vessels/vessel-tram-roof.webp",
-    "postprocess": "Registered the roof edit to the source seam and sampled the original closed roof and pole pixels."
+    "postprocess": "Registered the roof edit to the source seam and sampled the original closed green roof, blank destination box and pole pixels."
   },
   {
     "path": "design/art/vessels/vessel-tram-bell.png",
@@ -11475,7 +11475,7 @@
       1024
     ],
     "transparent": true,
-    "prompt": "Use gpt-image-2. Image 1 is the approved style sheet. Image 2 is the exact assembled tram, the edit target.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nIsolate only the existing very small gold-brass service bell above the headlamp on the left curved cream front of the tram. Keep the original little round hanger, bell cup and clapper, and preserve their silhouette, orientation, scale, colour and stage coordinates exactly. Remove the headlamp, panel line, body, roof, and every other pixel. True transparent alpha outside the bell. No colour exception.",
+    "prompt": "Use gpt-image-2. Image 1 is the approved style sheet. Image 2 is the exact newly drawn assembled tram to edit.\nApp: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nIsolate only the one little brass service bell on the lower green front, up and to the left of the large round headlamp. Match the bell precisely: round hanging loop, flared cap and tiny clapper, preserving its original shape, lighting, position and scale on the full square canvas. Remove the green panel, headlight and every other pixel, including the cast shading beyond the bell's outline. Real transparency outside the small bell. No added marks, lettering, or colour exception for this brass layer.",
     "model": "gpt-image-2",
     "web_export": "public/art/vessels/vessel-tram-bell.webp",
     "postprocess": "Cleaned and registered the isolated bell to the front-panel mount."
