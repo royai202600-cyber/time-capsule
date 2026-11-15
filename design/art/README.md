@@ -505,6 +505,20 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-tiffin-stack.png` | Tingkat tiffin carrier — stack | 1024×1024 | RV-R1; see manifest |
 | `vessels/vessel-tiffin-top.png` | Tingkat tiffin carrier — top | 1024×1024 | RV-R1; see manifest |
 | `vessels/vessel-tiffin-steam.png` | Tingkat tiffin carrier — steam | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-egg-tart.png` | 葡撻 / Egg tart in its fluted foil cup | 1024×1024 | RV-MO test approved by Roy at `ea7b7e5` |
+| `vessels/vessel-egg-tart-cup.png` | Fluted foil cup with complete interior and folded letter | 1024×1024 | Static |
+| `vessels/vessel-egg-tart-tart.png` | Complete puff-pastry shell and caramel-spotted custard | 1024×1024 | B lift-off |
+| `vessels/vessel-egg-tart-steam.png` | Soft blue steam wisps | 1024×1024 | Upward drift and fade |
+| `vessels/vessel-rooster.png` | 葡國公雞 / Portuguese rooster | 1024×1024 | Roy approved at `dc5c66c` |
+| `vessels/vessel-rooster-body.png` | Ceramic body with complete letter recess | 1024×1024 | Static |
+| `vessels/vessel-rooster-back.png` | Painted tail and back cap | 1024×1024 | C cap lift |
+| `vessels/vessel-pedicab.png` | 澳門三輪車 / Macau pedicab | 1024×1024 | Whole-PR review |
+| `vessels/vessel-pedicab-cab.png` | Cab frame, fork and complete bench with folded letter | 1024×1024 | Static |
+| `vessels/vessel-pedicab-canopy.png` | Wax-red canvas roof and brass piping | 1024×1024 | A hinge |
+| `vessels/vessel-pedicab-wheel.png` | Front tire and spokes | 1024×1024 | Wheel tick |
+| `vessels/vessel-pedicab-hinge-pin.png` | Upper brass button travelling with the roof bow | 1024×1024 | Hinge |
+| `vessels/vessel-pedicab-rear-bow.png` | Rear canopy bow and lower seat-frame pivot | 1024×1024 | Hinge |
+| `vessels/vessel-pedicab-folded-hood.png` | Gathered wax-red cloth and nested brass-piped pleats | 1024×1024 | Folds down behind the bench |
 | `vessels/vessel-kamcheng.png` | Peranakan kamcheng — closed pink porcelain jar with phoenix and peonies | 1024×1024 | RV-SG test · see manifest |
 | `vessels/vessel-kamcheng-jar.png` | Peranakan kamcheng — jar with complete glazed porcelain interior and rolled letter | 1024×1024 | RV-SG test · see manifest |
 | `vessels/vessel-kamcheng-lid.png` | Peranakan kamcheng — lift-off porcelain lid with brass peach knob | 1024×1024 | RV-SG test · see manifest |
@@ -604,3 +618,21 @@ Real references inspected on 2026-11-15
 - Singapore. De MiNi art’s workshop photo shows the stacked blue enamel tiers, painted floral panels and carrying frame of a Singapore Peranakan tingkat. The original illustration uses a simpler floral band and brass side clips. [Workshop listing](https://www.pelago.com/en/activity/pa8ir-mini-tingkat-painting-workshop-singapore/) · [0829-0713_mini-tingkat-painting-workshop-singapore-pelago0-xlarge.jpg](https://www.pelago.com/img/products/SG-Singapore/mini-tingkat-painting-workshop/0829-0713_mini-tingkat-painting-workshop-singapore-pelago0-xlarge.jpg)
 
 [Updated regional spec at PR #132](https://github.com/royai202600-cyber/time-capsule/blob/03483e26b1b4221ad1b2f82a535f0a0663e23d27/docs/design/regional-vessels.md#1-new-regional-vessels-wave-1-12) · [Full contact sheet](_checks/contact-sheet.png) · [Retained bag and tingkat alpha and size audit](_checks/rv-r1-assets.json)
+
+## Macau egg tart
+
+Inspected the fluted foil cups, layered pastry and toasted custard in the [MICHELIN Guide photo, `d806e1fb0eb24176a7dbd990292ad5a7_Portuguese_Egg_Tart.JPG`](https://d3h1lg3ksw6i6b.cloudfront.net/media/image/2023/09/20/d806e1fb0eb24176a7dbd990292ad5a7_Portuguese_Egg_Tart.JPG) on 2026-11-15. The art shows a single generic Macau tart. The reference informed the tart and cup shapes and the caramel blisters.
+
+The pastry uses the regional plan’s approved muted food colours. Paper and glass blue are used for the foil. As the tart lifts, the cup reveals a folded letter. Only the steam drifts during the 4.2 s idle loop. Measured anchors and the exact prompts are in the manifest.
+
+[Motion overlay](_checks/egg-tart-motion.png) · [40/120 px sheet](_checks/egg-tart-silhouette.png) · [Exact rest stack](_checks/egg-tart-stack.png) · [Hash and geometry audit](_checks/egg-tart-audit.json)
+
+## Macau rooster and pedicab
+
+The Portuguese rooster has a wax-red comb and original heart and flower painting on navy ceramic. The back cap lifts to reveal a finished recess with a rolled letter. The whole figure rocks 4° over 4.2 seconds. The silhouette draws on the flared base, upright comb and rounded swept tail in the [Wikimedia Commons photo `PA2900302_galo_emiliarocha_medio.jpg`](https://commons.wikimedia.org/wiki/File:PA2900302_galo_emiliarocha_medio.jpg), inspected on 2026-11-15.
+
+The Macau pedicab layout was checked again against two photographs on 2026-11-15. The Hotel Lisboa view shows the pedalling rider ahead of the passenger bench and one central front wheel. The stand view shows the empty forward-facing bench behind the rider’s saddle and the rear axle beneath the bench, with the far rear wheel partly obscured. The drawing has that same arrangement. [LN9267, `Macau_rickshaw_13-02-2019.jpg`](https://upload.wikimedia.org/wikipedia/commons/f/f1/Macau_rickshaw_13-02-2019.jpg) · [`3wheelscar.jpg`](https://upload.wikimedia.org/wikipedia/commons/3/32/3wheelscar.jpg)
+
+The wax-red canopy and upper bow swing rearward. The pleats gather, then the stack rotates down around the lower seat-frame hinge and rests behind the blue bench. The folded letter is fully visible in the open pose. The closed PNG and WebP are byte-identical to `dc5c66c`. The front wheel still ticks as the cab bobs over 3.9 seconds.
+
+[Rooster motion](_checks/rooster-motion.png) · [Rooster at 40/120 px](_checks/rooster-silhouette.png) · [Pedicab motion](_checks/pedicab-motion.png) · [Animated fold](_checks/pedicab-fold.gif) · [Pedicab at 40/120 px](_checks/pedicab-silhouette.png) · [Hash and geometry audit](_checks/rv-mo-wave-1-audit.json)

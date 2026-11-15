@@ -73,6 +73,8 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 
 ## Done
 
+- RV-MO — Roy approved Macau wave 1 in [PR #138](https://github.com/royai202600-cyber/time-capsule/pull/138). The set contains the egg tart, Portuguese rooster and Macau pedicab with the canopy folding behind the bench. The main refresh preserved the approved art byte for byte. Art-only delivery.
+
 - WC1 — Waypost coverage is live. PR #136 squash-merged as `029fbea` and all five migrations are applied. Each region’s production density matched all five staged samples. Production real-JWT checks passed for Civic Square discovery, a new spin in each region and an eligible public capsule drop. The fixture account and all its rows were removed. Owner follow-up `c96ec35` regenerated the live types. Roy deferred the signed-in 375 px Hong Kong and Singapore Waypost checks after Chrome blocked location. [Coverage report](review/waypost-coverage.md)
 
 - L2 — web location keeps streaming on Journey. PR #130 passed CI 43696272275 and Roy’s owner account squash-merged it as `af56ca3`. A timeout keeps the browser watch and last fix. Signal loss keeps the fix and retries in three seconds. Tab return resumes a stopped watch without duplicating it, and denial clears the saved choice. TypeScript, 186 tests, Expo dependency check and web export passed. At 375 px on localhost, Chromium with simulated GPS and a mocked signed-in session and API followed six fixes without a reload or a location card. Same-cell fixes made zero additional nearby requests. Crossing a cell made one. No migration. Physical phone verification remains with Roy’s colleague.
