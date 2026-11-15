@@ -1,5 +1,7 @@
 # Task board
 
+Private quest QR and rewards — review on `codex/quest-qr-reward`. Organizers can view and print labeled on-site QR cards after the first join. Arrive, spin and puzzle quest completions show a rising points bubble. Browser-verified locally with a locked hunt and disposable accounts.
+
 Part C guide release — merge #125, #126, #128 in order, apply migration `20261114134200_private_hunt_guide`, then release immediately. Legacy unfinished members start at the guide with progress intact. Hidden hunts refuse reward claims until restored. Hosted rollback includes an existing member with completed progress.
 
 Private quest pins PR #127 — done (2026-11-14): the one-argument `huntStillOn` filter callback passed CI 43604296046 and owner-account squash merge `e7dcd1f`. Owner-authored release `568909d` is live. Production test hunt YBAWML shows `Private hunts 6` and all six quest pins at Taipa Central Park. No migration.

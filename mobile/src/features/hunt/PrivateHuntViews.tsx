@@ -5,7 +5,6 @@ import { Animated, Easing, Image, Modal, Platform, Pressable, ScrollView, Text, 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Circle, Path, Rect } from "react-native-svg";
 import { ArtIcon } from "../../components/ArtIcon";
-import { haptics } from "../../components/haptics";
 import { Avatar } from "../../components/Avatar";
 import { useLanguage } from "../../i18n";
 import { useReducedMotion } from "../../useReducedMotion";
@@ -205,6 +204,38 @@ export function GuideCard({ hunt, near, busy, onStart, onCollect, onClose }: {
   </View>;
 }
 
+function QuestPointsReward({ label, spin }: { label: string; spin: boolean }) {
+  const reduced = useReducedMotion();
+  const rise = useRef(new Animated.Value(0)).current;
+  const delay = spin ? 600 : 0;
+  useEffect(() => {
+    if (reduced) return;
+    rise.setValue(0);
+    const animation = Animated.timing(rise, {
+      toValue: 1,
+      delay,
+      duration: 1250,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: Platform.OS !== "web",
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [delay, reduced, rise]);
+
+  return <Animated.View pointerEvents="none" accessibilityLiveRegion="polite" style={{
+    position: "absolute", minWidth: 104, minHeight: 84, paddingHorizontal: 12, borderRadius: 50,
+    alignItems: "center", justifyContent: "center", borderWidth: 3, borderColor: C.brass,
+    backgroundColor: "rgba(255,253,244,.97)", ...shadows.card,
+    opacity: reduced ? 1 : rise.interpolate({ inputRange: [0, .14, 1], outputRange: [0, 1, 1] }),
+    transform: [
+      { translateY: reduced ? -90 : rise.interpolate({ inputRange: [0, 1], outputRange: [25, -90] }) },
+      { scale: reduced ? 1 : rise.interpolate({ inputRange: [0, .45, 1], outputRange: [.65, 1.12, 1] }) },
+    ],
+  }}>
+    <Text style={{ fontFamily: serif, fontSize: 24, color: C.ink, textAlign: "center" }}>{label}</Text>
+  </Animated.View>;
+}
+
 /**
  * One quest, laid out like a Waypost: the name at the top, its picture in a brass rim, one line saying what
  * to do, and the buttons at the bottom. A spin quest is spun exactly like a Waypost. Every check is the
@@ -221,14 +252,7 @@ export function QuestScreen({ hunt, quest, meters, busy, error, tries, result, o
   const [answer, setAnswer] = useState("");
   const [scanning, setScanning] = useState(false);
   const [, tick] = useState(0);
-  const tally = useRef(new Animated.Value(0)).current;
   useEffect(() => { setAnswer(""); }, [quest.id]);
-  useEffect(() => {
-    if (!result) return;
-    void haptics.success();
-    tally.setValue(0);
-    Animated.timing(tally, { toValue: 1, duration: 2800, easing: Easing.linear, useNativeDriver: Platform.OS !== "web" }).start();
-  }, [result, tally]);
   const near = meters <= GAME_ACTION_RADIUS_M;
   const done = !!quest.done_at || !!result, shut = locked(hunt, quest);
   const wait = waitLeft(quest);
@@ -270,16 +294,12 @@ export function QuestScreen({ hunt, quest, meters, busy, error, tries, result, o
       </View>
     </View>
 
-    {result && <Animated.View pointerEvents="none" style={{
-      position: "absolute", top: insets.top + 68, right: spacing.md,
-      opacity: tally.interpolate({ inputRange: [0, .08, .8, 1], outputRange: [0, 1, 1, 0] }),
-      transform: [{ translateX: tally.interpolate({ inputRange: [0, .08, 1], outputRange: [28, 0, 0] }) }],
-    }}><Text style={{ fontFamily: serif, fontSize: 20, color: C.ink }}>+{t.pointsShort(result.points)}</Text></Animated.View>}
-
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, alignItems: "center", justifyContent: "center", gap: spacing.lg, paddingTop: insets.top + 80, paddingBottom: insets.bottom + (done || spin || catching ? 90 : 150), paddingHorizontal: spacing.lg }}>
       {/* Remounting after a refusal lets a spin quest be spun again once the player has walked closer. */}
       <SpinDisc key={error ?? "disc"} source={questImageSource(quest.image)} size={small ? 170 : DISC} spinnable={spin && ready && !busy}
-        dim={(done && !result) || shut || !started} label={spin ? g("spinHint") : quest.name} onSpin={() => onComplete()} />
+        dim={(done && !result) || shut || !started} label={spin ? g("spinHint") : quest.name} onSpin={() => onComplete()}>
+        {result && <QuestPointsReward label={`+${t.pointsShort(result.points)}`} spin={spin} />}
+      </SpinDisc>
       {!!quest.description && !done && <Text style={{ alignSelf: "stretch", maxWidth: 420, fontFamily: sans, fontSize: 14, lineHeight: 22, color: C.ink, backgroundColor: "rgba(246,248,251,.9)", borderRadius: radii.md, overflow: "hidden", paddingHorizontal: spacing.md, paddingVertical: 10 }}>{quest.description}</Text>}
 
       {!done && !shut && puzzle && <View style={{ alignSelf: "stretch", maxWidth: 420, gap: spacing.sm }}>

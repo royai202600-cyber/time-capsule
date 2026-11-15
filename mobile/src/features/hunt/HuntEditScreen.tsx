@@ -23,6 +23,7 @@ import { Btn, TaskList, keeperPortrait, type TaskRow } from "./HuntViews";
 import { QuestGlyph } from "./PrivateHuntViews";
 import { useHuntText } from "./strings";
 import { useOrganizerText, type OrganizerText } from "./organizerStrings";
+import { QuestQrCard } from "./QuestQrCard";
 import { QuestEditor } from "./QuestEditor";
 import { QuestMap } from "./QuestMap";
 import { useForegroundLocation } from "../journey/location";
@@ -51,6 +52,7 @@ export default function HuntEditScreen() {
   const [code, setCode] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
   const [editing, setEditing] = useState<QuestDraft | null>(null);
+  const [qrQuest, setQrQuest] = useState<QuestDraft | null>(null);
   const [review, setReview] = useState<Review | null>(null);
   const [sheet, setSheet] = useState<"route" | "limit" | "start" | "end" | "guide" | null>(null);
   // The next tap on the quest map puts a fixed guide there.
@@ -138,14 +140,20 @@ export default function HuntEditScreen() {
 
   const problems = huntProblems(draft, quests);
   const ready = canPublish(draft, quests);
-  const rows: TaskRow[] = [...quests].sort((a, b) => a.ordinal - b.ordinal).map((w) => ({
-    key: w.id ?? String(w.ordinal),
-    label: w.name || o.newQuest,
-    sub: h.questTypes[w.quest_type] + (w.quest_type === "restore" && w.catch_count ? ` × ${w.catch_count}` : ""),
-    right: h.pointsShort(w.points),
-    glyph: <QuestGlyph type={w.quest_type} size={15} color={C.blue} />,
-    onPress: locked ? undefined : () => setEditing(w),
-  }));
+  const orderedQuests = [...quests].sort((a, b) => a.ordinal - b.ordinal);
+  const placedQuests = orderedQuests.filter(hasSpot);
+  const mapNumber = (w: QuestDraft) => placedQuests.findIndex((q) => q.id === w.id) + 1 || w.ordinal;
+  const rows: TaskRow[] = orderedQuests.map((w) => {
+    const hasQr = w.quest_type === "arrive" && w.arrive_check === "gps_qr" && !!w.qr_token;
+    return {
+      key: w.id ?? String(w.ordinal),
+      label: w.name || o.newQuest,
+      sub: [h.questTypes[w.quest_type] + (w.quest_type === "restore" && w.catch_count ? ` × ${w.catch_count}` : ""), hasQr && o.viewQuestQr].filter(Boolean).join(" · "),
+      right: h.pointsShort(w.points),
+      glyph: <QuestGlyph type={w.quest_type} size={15} color={C.blue} />,
+      onPress: locked ? (hasQr ? () => setQrQuest(w) : undefined) : () => setEditing(w),
+    };
+  });
   const dateText = (iso: string) => new Date(iso).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US");
   const timeText = (iso: string) => new Date(iso).toLocaleTimeString(language === "zh" ? "zh-Hant" : "en-US", { hour: "2-digit", minute: "2-digit" });
   // A fixed guide sets the area only when no quest has a spot, as on the server.
@@ -332,7 +340,13 @@ export default function HuntEditScreen() {
         onChange={(v) => edit({ ends_at: v })} o={o} />
     </Sheet>
 
-    {!!editing && <QuestEditor huntId={id} quest={editing} busy={busy}
+    <Sheet open={!!qrQuest?.qr_token} title={o.viewQuestQr} onClose={() => setQrQuest(null)}>
+      {qrQuest?.qr_token && <QuestQrCard eventName={draft.name} name={qrQuest.name || o.unnamedSpot} ordinal={mapNumber(qrQuest)}
+        lat={qrQuest.location_lat} lng={qrQuest.location_lng} token={qrQuest.qr_token} />}
+      <Btn quiet title={o.cancel} onPress={() => setQrQuest(null)} />
+    </Sheet>
+
+    {!!editing && <QuestEditor huntId={id} eventName={draft.name} mapNumber={mapNumber(editing)} quest={editing} busy={busy}
       onClose={() => setEditing(null)} onSave={saveQuest}
       onDelete={editing.id ? () => deleteQuest(editing) : undefined} />}
   </Screen>;

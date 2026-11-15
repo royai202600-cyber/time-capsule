@@ -7,12 +7,12 @@ import { ArtIcon } from "../../components/ArtIcon";
 import { useForegroundLocation } from "../journey/location";
 import { searchPlaces, type PointPlace } from "../../services/places";
 import { LIMITS, hasSpot, questProblems, type QuestDraft } from "../../services/privateHuntOrganizer";
-import { GiftQr } from "../capsule/GiftQr";
+import { QuestQrCard } from "./QuestQrCard";
 import { PinPicker } from "./PinPicker";
 import { DEFAULT_QUEST_IMAGE, QUEST_TEMPLATES, questImageSource, templateImage, useQuestImages } from "./questImage";
 import { uploadQuestImage } from "../../services/huntMedia";
 import { pickPhoto } from "../../components/pickPhoto";
-import { qrGroups, questQr, type PrivateHuntQuestType } from "../../services/privateHunt";
+import type { PrivateHuntQuestType } from "../../services/privateHunt";
 import { Btn } from "./HuntViews";
 import { QuestGlyph } from "./PrivateHuntViews";
 import { PointsSlider } from "./PointsSlider";
@@ -24,8 +24,8 @@ const PLACEHOLDER = "#A5AFBD";
 const TYPES: PrivateHuntQuestType[] = ["arrive", "spin", "puzzle", "restore"];
 const input = { fontFamily: sans, fontSize: 15, color: C.ink, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, paddingHorizontal: 14, paddingVertical: 12 } as const;
 
-export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: {
-  huntId: string; quest: QuestDraft; busy: boolean;
+export function QuestEditor({ huntId, eventName, mapNumber, quest, busy, onClose, onSave, onDelete }: {
+  huntId: string; eventName: string; mapNumber: number; quest: QuestDraft; busy: boolean;
   onClose: () => void; onSave: (w: QuestDraft) => void; onDelete?: () => void;
 }) {
   const o = useOrganizerText();
@@ -84,6 +84,9 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
         </View>
 
         <ScrollView contentContainerStyle={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.xl, gap: spacing.md }}>
+          {w.quest_type === "arrive" && w.arrive_check === "gps_qr" && w.qr_token &&
+            <QuestQrCard eventName={eventName} name={w.name || o.unnamedSpot} ordinal={mapNumber}
+              lat={w.location_lat} lng={w.location_lng} token={w.qr_token} />}
           <Label text={typed ? o.questLabel : o.chooseType} />
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
             {TYPES.map((kind) => {
@@ -153,14 +156,7 @@ export function QuestEditor({ huntId, quest, busy, onClose, onSave, onDelete }: 
               })}
             </View>
             <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{o.arriveCheckSub[w.arrive_check]}</Text>
-            {w.arrive_check === "gps_qr" && <View style={{ alignItems: "center", gap: spacing.sm, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: radii.md, padding: spacing.md }}>
-              {w.qr_token
-                ? <><GiftQr value={questQr(w.qr_token)} label={o.qrForQuest(w.name || o.unnamedSpot)} />
-                  {/* Printed under the QR, so a player whose camera won't work can type it. */}
-                  <Text selectable style={{ fontFamily: serif, fontSize: 16, letterSpacing: 1.5, color: C.ink, textAlign: "center" }}>{qrGroups(w.qr_token)}</Text>
-                  <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textAlign: "center" }}>{o.printQr}</Text></>
-                : <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textAlign: "center" }}>{o.qrAfterSave}</Text>}
-            </View>}
+            {w.arrive_check === "gps_qr" && !w.qr_token && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{o.qrAfterSave}</Text>}
           </>}
 
           <Label text={o.pointsLabel} />
