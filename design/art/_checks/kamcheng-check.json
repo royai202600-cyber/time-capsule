@@ -112,5 +112,23 @@
       "count": 1298,
       "sha256_of_sorted_path_sha256_map": "d7f271dc63686273edf0099391f8c1d1884a52686fd8d19e58ecec6a88381928"
     }
+  },
+  "palette_revision": {
+    "prior_commit": "68d09d7c34fe1ff3b88703cec8cceb348ba388b1",
+    "png_alpha_pixel_exact": [
+      "vessel-kamcheng.png",
+      "vessel-kamcheng-jar.png",
+      "vessel-kamcheng-lid.png"
+    ],
+    "original_opaque_brass_pixels_unchanged": 28775
+  },
+  "idle_review": {
+    "loop_ms": 4200,
+    "lid_rise_fraction": 0.025,
+    "lid_rise_px_at_120": 3,
+    "returns_to_exact_rest": true,
+    "chrome_preview_viewport_width": 375,
+    "knob_sparkle_verified": true,
+    "reduced_motion_still_verified": true
   }
 }
