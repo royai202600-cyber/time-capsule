@@ -11,6 +11,7 @@ const listeners = new Set<() => void>();
 let subscription: { remove(): void } | null = null;
 let starting: Promise<void> | null = null;
 let fixTimer: ReturnType<typeof setTimeout> | null = null;
+let webRetryTimer: ReturnType<typeof setTimeout> | null = null;
 let generation = 0;
 let requesting = false;
 let appStateSubscription: ReturnType<typeof AppState.addEventListener> | null = null;
@@ -47,6 +48,8 @@ const receive = (position: { coords: { latitude: number; longitude: number; accu
 };
 function stop() {
   generation++;
+  if (webRetryTimer !== null) clearTimeout(webRetryTimer);
+  webRetryTimer = null;
   if (fixTimer) clearTimeout(fixTimer);
   fixTimer = null;
   subscription?.remove();
@@ -61,14 +64,29 @@ function watchWeb() {
     publish({ status: "unavailable", fix: null });
     return;
   }
-  publish({ status: "granted", error: null });
+  if (webRetryTimer !== null) {
+    clearTimeout(webRetryTimer);
+    webRetryTimer = null;
+  } else {
+    publish({ status: "granted", error: null });
+  }
   const run = generation;
   const id = navigator.geolocation.watchPosition((fix) => { if (run === generation) receive(fix); }, (error) => {
     if (run !== generation) return;
-    stop();
-    if (error.code === 1) rememberBrowserLocation(false);
-    publish({ status: error.code === 1 ? "denied" : "unavailable", fix: null, error: error.message });
-  }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 });
+    if (error.code === 1) {
+      stop();
+      rememberBrowserLocation(false);
+      publish({ status: "denied", fix: null, error: error.message });
+    } else if (error.code === 2) {
+      stop();
+      const retry = generation;
+      webRetryTimer = setTimeout(() => {
+        if (retry === generation) watchWeb();
+      }, 3000);
+      if (!state.fix) publish({ status: "unavailable", error: error.message });
+    }
+    // A timeout leaves the browser watch running.
+  }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 5000 });
   subscription = { remove: () => navigator.geolocation.clearWatch(id) };
   navigator.geolocation.getCurrentPosition?.((fix) => { if (run === generation) receive(fix); }, () => {},
     { enableHighAccuracy: false, timeout: 8000, maximumAge: 15000 });
@@ -128,7 +146,7 @@ export async function checkLocation() {
       if (run !== generation || requesting) return;
       if (permission === "granted" || (permission === "unknown" && browserLocationApproved())) watchWeb();
       else if (permission === "denied") { rememberBrowserLocation(false); stop(); publish({ status: "denied", fix: null }); }
-      else if (!subscription) publish({ status: "explain", fix: null });
+      else if (!subscription && webRetryTimer === null) publish({ status: "explain", fix: null });
       return;
     }
     const permission = await Location.getForegroundPermissionsAsync();

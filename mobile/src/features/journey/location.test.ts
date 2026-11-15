@@ -1,10 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   platform: { OS: "web" }, settings: vi.fn(),
   storage: { getItem: vi.fn(), setItem: vi.fn(), removeItem: vi.fn() },
   getPermission: vi.fn(), requestPermission: vi.fn(), services: vi.fn(), cached: vi.fn(), current: vi.fn(), watch: vi.fn(),
 }));
+// Read the location hook's current snapshot without mounting a React tree.
+vi.mock("react", () => ({ useEffect: vi.fn(), useState: (value: unknown) => [value] }));
 vi.mock("react-native", () => ({ Platform: mocks.platform, Linking: { openSettings: mocks.settings }, AppState: { addEventListener: vi.fn() } }));
 vi.mock("expo-location", () => ({
   Accuracy: { Balanced: 3, High: 5 }, getForegroundPermissionsAsync: mocks.getPermission,
@@ -21,6 +23,30 @@ beforeEach(() => {
   mocks.storage.getItem.mockReturnValue(null);
   vi.stubGlobal("localStorage", mocks.storage);
 });
+
+afterEach(() => {
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+});
+
+function mockBrowserWatch() {
+  let nextId = 0;
+  const watchPosition = vi.fn((_receive: PositionCallback, _fail: PositionErrorCallback) => nextId++);
+  const clearWatch = vi.fn();
+  vi.stubGlobal("navigator", {
+    geolocation: { watchPosition, clearWatch },
+    permissions: { query: vi.fn(async () => ({ state: "granted" })) },
+  });
+  return { watchPosition, clearWatch };
+}
+
+function browserFix(latitude: number) {
+  return { coords: { latitude, longitude: 114, accuracy: 20 }, timestamp: Date.now() } as GeolocationPosition;
+}
+
+function browserError(code: number) {
+  return { code, message: "Location error" } as GeolocationPositionError;
+}
 
 describe("foreground location", () => {
   it("restores a known browser grant on startup", async () => {
@@ -71,16 +97,71 @@ describe("foreground location", () => {
     expect(location.currentFix()).toMatchObject({ lat: 22, lng: 114, accuracy: 20 });
   });
 
-  it("clears a denied browser watch and discards its old fix", async () => {
-    let fail!: PositionErrorCallback;
-    const clearWatch = vi.fn();
-    vi.stubGlobal("navigator", { geolocation: { watchPosition: (_: PositionCallback, error: PositionErrorCallback) => { fail = error; return 8; }, clearWatch } });
+  it("keeps the browser watch running through timeouts before and after a fix", async () => {
+    const { watchPosition, clearWatch } = mockBrowserWatch();
     const location = await import("./location");
     await location.requestLocation();
-    fail({ code: 1, message: "denied" } as GeolocationPositionError);
-    expect(clearWatch).toHaveBeenCalledWith(8);
+    const [receive, fail] = watchPosition.mock.calls[0];
+    fail(browserError(3));
+    expect(location.useForegroundLocation()).toMatchObject({ status: "granted", fix: null });
+
+    receive(browserFix(22));
+    fail(browserError(3));
+    expect(location.useForegroundLocation()).toMatchObject({ status: "granted", fix: { lat: 22 } });
+    await location.checkLocation(); // Same permission recheck that runs on tab activation.
+    expect(clearWatch).not.toHaveBeenCalled();
+    expect(watchPosition).toHaveBeenCalledOnce();
+    receive(browserFix(23));
+    expect(location.currentFix()?.lat).toBe(23);
+  });
+
+  it("restarts once after an unavailable error and keeps the last fix", async () => {
+    vi.useFakeTimers();
+    const { watchPosition, clearWatch } = mockBrowserWatch();
+    const location = await import("./location");
+    await location.requestLocation();
+    const [receive, fail] = watchPosition.mock.calls[0];
+    receive(browserFix(22));
+    fail(browserError(2));
+    fail(browserError(2)); // A callback queued by the retired watch.
+    receive(browserFix(23));
+    expect(clearWatch).toHaveBeenCalledExactlyOnceWith(0);
+    expect(location.useForegroundLocation()).toMatchObject({ status: "granted", fix: { lat: 22 } });
+    vi.advanceTimersByTime(2999);
+    expect(watchPosition).toHaveBeenCalledOnce();
+    vi.advanceTimersByTime(1);
+    expect(watchPosition).toHaveBeenCalledTimes(2);
+    watchPosition.mock.calls[1][0](browserFix(24));
+    expect(location.currentFix()?.lat).toBe(24);
+  });
+
+  it("shows unavailable before the first fix and lets a tab recheck restart the stopped watch", async () => {
+    vi.useFakeTimers();
+    const { watchPosition } = mockBrowserWatch();
+    const location = await import("./location");
+    await location.requestLocation();
+    watchPosition.mock.calls[0][1](browserError(2));
+    expect(location.useForegroundLocation()).toMatchObject({ status: "unavailable", fix: null });
+    await Promise.all([location.checkLocation(), location.checkLocation()]);
+    vi.advanceTimersByTime(3000);
+    expect(watchPosition).toHaveBeenCalledTimes(2);
+    watchPosition.mock.calls[1][0](browserFix(22));
+    expect(location.useForegroundLocation()).toMatchObject({ status: "granted", fix: { lat: 22 } });
+  });
+
+  it("stops the browser watch and clears the fix and saved choice on denial", async () => {
+    vi.useFakeTimers();
+    const { watchPosition, clearWatch } = mockBrowserWatch();
+    const location = await import("./location");
+    await location.requestLocation();
+    const [receive, fail] = watchPosition.mock.calls[0];
+    receive(browserFix(22));
+    fail(browserError(1));
+    vi.advanceTimersByTime(3000);
+    expect(clearWatch).toHaveBeenCalledExactlyOnceWith(0);
+    expect(watchPosition).toHaveBeenCalledOnce();
     expect(mocks.storage.removeItem).toHaveBeenCalledWith("time-capsule.location-approved.v1");
-    expect(location.currentFix()).toBeNull();
+    expect(location.useForegroundLocation()).toMatchObject({ status: "denied", fix: null });
   });
 
   it("clears a previously granted fix if the browser permission is revoked", async () => {
