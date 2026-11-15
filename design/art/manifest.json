@@ -10218,5 +10218,260 @@
     },
     "postprocess": "Kept independent steam alpha, softened edges and registered the glass-blue steam over the open enamel bowl. Shared native 1254→1091 downscale to the common 1024 canvas.",
     "web_export": "public/art/vessels/vessel-tiffin-steam.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-teapot.png",
+    "what": "Oolong teapot — closed assembly",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: warm brown unglazed clay as in the regional vessel plan. Brass knob and ink-blue/cream cup are from the standard palette.\n\nImage 1 is the mandatory style sheet. Image 2 is a real gongfu tea service; use only the short rounded clay pot and tiny cup as shape cues. Draw one CLOSED Taiwan oolong tea vessel, a generous round cocoa-brown clay pot, short clear left spout, bold loop handle at right, shallow removable round lid with a distinct simple brass knob, and one tiny low handleless indigo ceramic cup beside the pot at lower right. A lid seam should be clearly inked; the perspective looks slightly down into the cup. Exactly flat illustrated fills and broad discrete color shapes, one discrete soft shade, plum ink outlines, a few sparse parallel hatching marks at the shadow edge. Near-zero grain, no painterly stipple or complex gradients, no gloss. No floral pattern, table, exterior shadow, steam, scenery or markings. True alpha transparency. Square, use about 70% of canvas width, centered, lowest edge ~89% down. Leave generous room above for lid travel.",
+    "model": "gpt-image-2",
+    "reference_photo": "https://upload.wikimedia.org/wikipedia/commons/8/89/Gong_fu_cha.jpg",
+    "vessel": {
+      "id": "teapot",
+      "opening": "B",
+      "idleMs": 4100,
+      "idle": [],
+      "layers": [
+        {
+          "name": "pot",
+          "file": "vessel-teapot-pot.png",
+          "role": "static"
+        },
+        {
+          "name": "lid",
+          "file": "vessel-teapot-lid.png",
+          "role": "lift",
+          "pivot": {
+            "x": 478,
+            "y": 523
+          },
+          "open": [
+            {
+              "at": 0
+            },
+            {
+              "at": 1,
+              "y": -0.242
+            }
+          ]
+        },
+        {
+          "name": "steam",
+          "file": "vessel-teapot-steam.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.23,
+              "y": -0.018,
+              "opacity": 0.8
+            },
+            {
+              "at": 0.52,
+              "y": -0.06,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": -0.11,
+              "opacity": 0
+            }
+          ],
+          "idle": [
+            {
+              "type": "drift",
+              "amount": 0.046
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 478,
+        "y": 524
+      },
+      "baseY": 903,
+      "sparkle": {
+        "x": 455,
+        "y": 419
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "production": "Closed reference generated first. Registered layers are composited to produce the exact closed art.",
+    "web_export": "public/art/vessels/vessel-teapot.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-teapot-pot.png",
+    "what": "Oolong teapot — clay pot and small cup with complete interior and rolled letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: warm brown unglazed clay per the regional-vessels plan. Use standard palette for brass knob, cup, cream rolled paper, ribbon and pale blue steam.\n\nImage 1 is the style sheet; image 2 is the actual closed master to edit. Make the OPEN state of the EXACT SAME round pot and cup. Keep pot silhouette, dimensions, profile, perspective, body registration and cup position pixel-for-pixel as close as possible. Fill, outline and shading flat, with a few sparse ink hatches only. Lift only the entire round lid and its brass knob straight upward so there is a gap to the pot. At the original lid location draw a clearly visible complete dark oval interior with a clay rim and a small horizontally rolled cream letter tied with a simple plum band seated inside, the far rim behind the letter, near rim in front. The cup stays alongside. Change the existing pale spout to the same red-brown clay as the pot, with inked opening. Make genuinely transparent background. No shadow or other props. Draw two tiny very soft detached pale-blue steam wisps floating to the left of the lifted lid with clear transparent gap, so they can be cropped separately. One isolated scene on square transparent canvas.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-teapot-pot.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-teapot-lid.png",
+    "what": "Oolong teapot — lift-off clay lid with brass knob",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: warm brown unglazed clay as in the regional vessel plan. Brass knob and ink-blue/cream cup are from the standard palette.\n\nImage 1 is the mandatory style sheet. Image 2 is a real gongfu tea service; use only the short rounded clay pot and tiny cup as shape cues. Draw one CLOSED Taiwan oolong tea vessel, a generous round cocoa-brown clay pot, short clear left spout, bold loop handle at right, shallow removable round lid with a distinct simple brass knob, and one tiny low handleless indigo ceramic cup beside the pot at lower right. A lid seam should be clearly inked; the perspective looks slightly down into the cup. Exactly flat illustrated fills and broad discrete color shapes, one discrete soft shade, plum ink outlines, a few sparse parallel hatching marks at the shadow edge. Near-zero grain, no painterly stipple or complex gradients, no gloss. No floral pattern, table, exterior shadow, steam, scenery or markings. True alpha transparency. Square, use about 70% of canvas width, centered, lowest edge ~89% down. Leave generous room above for lid travel.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-teapot-lid.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-teapot-steam.png",
+    "what": "Oolong teapot — soft steam curls",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved palette exception: warm brown unglazed clay per the regional-vessels plan. Use standard palette for brass knob, cup, cream rolled paper, ribbon and pale blue steam.\n\nImage 1 is the style sheet; image 2 is the actual closed master to edit. Make the OPEN state of the EXACT SAME round pot and cup. Keep pot silhouette, dimensions, profile, perspective, body registration and cup position pixel-for-pixel as close as possible. Fill, outline and shading flat, with a few sparse ink hatches only. Lift only the entire round lid and its brass knob straight upward so there is a gap to the pot. At the original lid location draw a clearly visible complete dark oval interior with a clay rim and a small horizontally rolled cream letter tied with a simple plum band seated inside, the far rim behind the letter, near rim in front. The cup stays alongside. Change the existing pale spout to the same red-brown clay as the pot, with inked opening. Make genuinely transparent background. No shadow or other props. Draw two tiny very soft detached pale-blue steam wisps floating to the left of the lifted lid with clear transparent gap, so they can be cropped separately. One isolated scene on square transparent canvas.",
+    "model": "gpt-image-2",
+    "production": "Generated effect isolated, its alpha softened and registered to the vessel canvas.",
+    "web_export": "public/art/vessels/vessel-teapot-steam.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-sky-lantern.png",
+    "what": "Pingxi sky lantern — closed assembly",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the mandatory style sheet. Image 2 is a real Pingxi sky lantern release; use the traditional inflated balloon form and oval base opening, never any real-world marks. Draw one tall Pingxi sky lantern as a CLOSED game vessel: a restrained squared-off inflated lantern, dome-like paper shoulders, broad upper third, tapered lower third, one or two delicate vertical paper seams and a small oval flat bamboo hoop visibly supporting and protruding just under the bottom hem. More like a tall bag of air than a sphere or a round ribbed Chinese festival lantern. Warm cream paper, one soft brass-tinted shade low down, plum outline, bamboo from brass/cream. Light emanates from inside with one small soft warm area on the lower paper, no flame, no beam, no outer halo. Flat color fills, one discrete shading tone, just a little sparse hatching at the shade edge, almost no grain or painterly rendering. No flag, wishes, lettering, tassel, strings, frame outside the paper, branding, scenery or cast shadow. Genuine transparent alpha. Square, center the iconic shape, balloon width about 61% of canvas and height ~69%, lowest edge ~89% down, with headroom for upward travel.",
+    "model": "gpt-image-2",
+    "reference_photo": "https://upload.wikimedia.org/wikipedia/commons/6/6a/SkyLanternFestivalPic.jpg",
+    "vessel": {
+      "id": "sky-lantern",
+      "opening": "B",
+      "idleMs": 4400,
+      "idle": [
+        {
+          "type": "bob",
+          "amount": 0.029
+        }
+      ],
+      "layers": [
+        {
+          "name": "ring",
+          "file": "vessel-sky-lantern-ring.png",
+          "role": "static"
+        },
+        {
+          "name": "paper",
+          "file": "vessel-sky-lantern-paper.png",
+          "role": "lift",
+          "pivot": {
+            "x": 512,
+            "y": 490
+          },
+          "open": [
+            {
+              "at": 0
+            },
+            {
+              "at": 1,
+              "y": -0.167,
+              "scale": 0.87
+            }
+          ]
+        },
+        {
+          "name": "glow",
+          "file": "vessel-sky-lantern-glow.png",
+          "role": "fade",
+          "pivot": {
+            "x": 512,
+            "y": 490
+          },
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0.39
+            },
+            {
+              "at": 1,
+              "y": -0.167,
+              "scale": 0.87,
+              "opacity": 0.16
+            }
+          ],
+          "idle": [
+            {
+              "type": "glow",
+              "base": 0.39,
+              "range": 0.35,
+              "flicker": 0.095
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 503,
+        "y": 857
+      },
+      "baseY": 903,
+      "sparkle": {
+        "x": 495,
+        "y": 897
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    },
+    "production": "Closed reference generated first. Registered layers are composited to produce the exact closed art.",
+    "web_export": "public/art/vessels/vessel-sky-lantern.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-sky-lantern-ring.png",
+    "what": "Pingxi sky lantern — bamboo ring and rolled letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is approved style; image 2 is the actual Pingxi paper lantern master. Edit that exact lantern into separate parts on one transparent square sprite sheet, separated vertically. At top left, the paper balloon alone, flat cream with only seams, slight brass shading and sparse hatching; accurately match the shape and unmarked paper from image 2. Finish its lower hem as a clean narrow ellipse, with its underside closed visually by warm cream from inside the paper. There is no bamboo hoop attached to it. At bottom by itself, with clear alpha gap, isolate the same bamboo ring from the bottom of the lantern, seen in the same shallow perspective, complete edge and all bindings. Make its opening visibly transparent away from a small cream rolled letter with curled ends and a simple plum ribbon, lying across middle on just two fine bamboo supports. The drawing has no writing, marks, flag, religious symbols, flames or tassel. No exterior shadow. At top right, well separated from both inked parts, one small soft diffuse brass-gold glow on true transparent, feathered to zero before its edges, no outline. Flat color fills with one shading tone, very spare hatches, negligible grain, and genuine transparent background.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-sky-lantern-ring.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-sky-lantern-paper.png",
+    "what": "Pingxi sky lantern — lift-off cream paper shell",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is approved style; image 2 is the actual Pingxi paper lantern master. Edit that exact lantern into separate parts on one transparent square sprite sheet, separated vertically. At top left, the paper balloon alone, flat cream with only seams, slight brass shading and sparse hatching; accurately match the shape and unmarked paper from image 2. Finish its lower hem as a clean narrow ellipse, with its underside closed visually by warm cream from inside the paper. There is no bamboo hoop attached to it. At bottom by itself, with clear alpha gap, isolate the same bamboo ring from the bottom of the lantern, seen in the same shallow perspective, complete edge and all bindings. Make its opening visibly transparent away from a small cream rolled letter with curled ends and a simple plum ribbon, lying across middle on just two fine bamboo supports. The drawing has no writing, marks, flag, religious symbols, flames or tassel. No exterior shadow. At top right, well separated from both inked parts, one small soft diffuse brass-gold glow on true transparent, feathered to zero before its edges, no outline. Flat color fills with one shading tone, very spare hatches, negligible grain, and genuine transparent background.",
+    "model": "gpt-image-2",
+    "web_export": "public/art/vessels/vessel-sky-lantern-paper.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-sky-lantern-glow.png",
+    "what": "Pingxi sky lantern — soft paper glow",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is approved style; image 2 is the actual Pingxi paper lantern master. Edit that exact lantern into separate parts on one transparent square sprite sheet, separated vertically. At top left, the paper balloon alone, flat cream with only seams, slight brass shading and sparse hatching; accurately match the shape and unmarked paper from image 2. Finish its lower hem as a clean narrow ellipse, with its underside closed visually by warm cream from inside the paper. There is no bamboo hoop attached to it. At bottom by itself, with clear alpha gap, isolate the same bamboo ring from the bottom of the lantern, seen in the same shallow perspective, complete edge and all bindings. Make its opening visibly transparent away from a small cream rolled letter with curled ends and a simple plum ribbon, lying across middle on just two fine bamboo supports. The drawing has no writing, marks, flag, religious symbols, flames or tassel. No exterior shadow. At top right, well separated from both inked parts, one small soft diffuse brass-gold glow on true transparent, feathered to zero before its edges, no outline. Flat color fills with one shading tone, very spare hatches, negligible grain, and genuine transparent background.",
+    "model": "gpt-image-2",
+    "production": "Generated effect isolated, its alpha softened and registered to the vessel canvas.",
+    "web_export": "public/art/vessels/vessel-sky-lantern-glow.webp"
   }
 ]
