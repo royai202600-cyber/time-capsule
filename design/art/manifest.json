@@ -9690,5 +9690,284 @@
     "source_sha256": "331887d928e7929b0b013f7583c25990aa87fa9e07e0c996a379f0fbf7a1321d",
     "processing": "Isolated the two wisps, downscaled, softened alpha, tinted glass-blue shading and registered above the pastry.",
     "web_export": "public/art/vessels/vessel-egg-tart-steam.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rooster.png",
+    "what": "Portuguese rooster — painted ceramic folk figurine",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nDraw the assembled CLOSED 葡國公雞 / Portuguese rooster time-capsule vessel. Image 1 is the mandatory drawing style reference. Image 2 is a traditional ceramic folk rooster photo for its comb, long curved neck, rounded belly, swept fan tail and flared foot only. Make a handcrafted ceramic statuette in a clear left-facing three-quarter view: tall big three-lobed wax-red comb and wattle, brass beak, dark navy ceramic body, dark navy broad swept tail, shallow ink-blue pedestal, simple original painted wax-red hearts and brass/ink-blue five-petal flowers and a handful of dots. This is a physical ceramic figurine, never an icon or an official mark, and the painting layout is original. Show a thin tidy continuous oval cap seam running across the back where the tail-bearing cap sits flush in the back of its bulbous body, so the separate tail and a shallow back plate can lift as one piece; its whole head, neck, chest and pedestal stay fixed. Give the body right of the neck enough width to hide a letter. Closed: no contents visible. Captivating silhouette with large simple forms, few brush details and a flat, matte ink-and-fill rendering with exactly one flat shadow tone per surface and only a little restrained hatching. Avoid watercolor modeling and gradients, photographic highlights, excessive dots, paper backdrop, color outside the prescribed palette, text, insignia, logos, flags or inscriptions. Square alpha canvas; center horizontally and set the base near 89% of height, leaving headroom above the comb and tail. No cast shadow outside the object.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "https://upload.wikimedia.org/wikipedia/commons/3/3b/PA2900302_galo_emiliarocha_medio.jpg"
+    ],
+    "source_sha256": "3e8a9d3cc08b84a55e53f6711cf07018b1b86297b84a9130d140329323d81e16",
+    "processing": "Exact at:0 composite of the registered body and back. Common scale and seating on a 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-rooster.webp",
+    "vessel": {
+      "opening": "C",
+      "idleMs": 4200,
+      "idle": [
+        {
+          "type": "sway",
+          "deg": 4,
+          "pivot": {
+            "x": 483,
+            "y": 902
+          }
+        }
+      ],
+      "layers": [
+        {
+          "name": "body",
+          "file": "vessel-rooster-body.png",
+          "role": "static"
+        },
+        {
+          "name": "back",
+          "file": "vessel-rooster-back.png",
+          "role": "lift",
+          "pivot": {
+            "x": 595,
+            "y": 495
+          },
+          "open": [
+            {
+              "at": 0
+            },
+            {
+              "at": 0.5,
+              "x": 0.043,
+              "y": -0.113
+            },
+            {
+              "at": 1,
+              "x": 0.084,
+              "y": -0.215,
+              "opacity": 0.94
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 588,
+        "y": 506
+      },
+      "sparkle": {
+        "x": 286,
+        "y": 357
+      },
+      "id": "rooster",
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null,
+      "baseY": 909
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-rooster-body.png",
+    "what": "Portuguese rooster — body and complete letter recess",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nEdit image 2, the closed Portuguese ceramic rooster, keeping the other reference (image 1) as its style guide. Remove the entire tail-bearing back cap above/right of the thin brass seam. Preserve the large red comb and wattle, beak, navy head and neck, decorated chest and belly, pedestal, and their exact positions, angle and scale on the 1254-square edit target. The lifting cap is the portion entirely to the right of the neck and above the existing gold seam. It must be fully absent here. At the diagonal gold seam, draw a complete ceramic rim and a shallow hollow glazed blue/navy opening in three-quarter perspective. Its near edge exactly follows the visible curved line from the neck to the outer belly. Limit the far edge to just above that line inside the space the tail formerly occupied. Inside that cavity nest one small pale cream rolled letter tied with wax-red thread; it is a blank paper object with no text. Keep the letter and rim completely inside the old tail shape so the separate closed cap can hide them. Keep the entire ceramic head/base shape immutable. True alpha around and between shapes. Use the existing original painted motifs and flat matte fills, a single shadow tone, and only light hatching. No unrelated objects.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "Assembled GPT Image 2 rooster edit target"
+    ],
+    "source_sha256": "5574e67d6b14cb0089fbfe6d45808d43a7e63ee2689506393c442c09918998d9",
+    "processing": "Removed stray alpha and aligned the complete hollow and letter to the cap seam.",
+    "web_export": "public/art/vessels/vessel-rooster-body.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rooster-back.png",
+    "what": "Portuguese rooster — removable ceramic tail and back cap",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nEdit image 2, the closed Portuguese ceramic rooster, with image 1 as its style guide. Keep only the removable navy ceramic tail and shallow back cap, precisely at the original position and scale on the square. The exact cut line is the thin diagonal brass seam on the original, from the neck saddle near x=560, y=565 to the right of the belly near x=850, y=737. Keep the entire navy fan above that line, including its original flower and heart, gold seam, and complete thin sculpted underside. Preserve exterior contour and original flat colors, one shade and little hatching. Delete the entire rest of the rooster, including head, comb, chest and pedestal, to real transparent alpha. No additional parts.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "Assembled GPT Image 2 rooster edit target"
+    ],
+    "source_sha256": "544c07ec09468b91b8a643bc2de5b1ad3de7d0ca746e50db17e6e5bb6bcb9a82",
+    "processing": "Registered the isolated cap to the original tail position and scaled both layers together.",
+    "web_export": "public/art/vessels/vessel-rooster-back.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-pedicab.png",
+    "what": "Macau pedicab — covered passenger tricycle",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nDraw the assembled CLOSED 澳門三輪車 / Macau pedicab time-capsule vessel. Image 1 is the mandatory drawing style reference. Image 2 is a real Macau trishaw photo solely for the vehicle's structure: a bicycle front on the left with one large front wheel, handlebars and rider saddle, connected by a low frame and footboard to the side-by-side passenger bench and a two-wheel axle at the rear on the right. Show the nearer rear wheel fully, the far rear wheel only through naturally available gaps, and no fourth wheel. A toy-like compact pedicab in front three-quarter view with the near side in view, simple dark wheel spokes with tiny brass hubs, ink-blue and brass chassis, paper/cream passenger bench, and a **solid wax-red rounded fold-back canopy with one narrow brass piping edge**, a plain cloth canopy over the rear bench only. No people, signs, photos, numbers, fleet markings, streets or basket. Passenger letter is hidden by the closed canopy's near-side flap; the bench can be revealed when the canvas roof folds up and back. Show a small brass round pivot high on the rear side of the passenger bench at the right edge of the canopy's rigid frame. Make the canopy a single contiguous removable piece from the pivot upward: the wax-red cloth including its frame and gold piping; its roof projects left from the hinge and stays distinct from the bicycle. Include real transparent voids between spokes and bars. Clear silhouette at 40 px. Use an understated flat, matte ink-and-fill look with exactly one discrete shadow tone per surface, barely any hatching and no soft gradients or glossy realism. No flags, emblems, text or brand. Center horizontally and set tires near 89% of the square, with ample transparent padding, subject about 70% width. No cast shadow outside the vehicle. Use only the style-block colors.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "https://upload.wikimedia.org/wikipedia/commons/f/f1/Macau_rickshaw_13-02-2019.jpg"
+    ],
+    "source_sha256": "c7abf55e904b466fb27d8b0ad08e8788f47c2a67982b8cc82cd0dab102645636",
+    "processing": "Exact at:0 composite of the wheel, cab and folding canopy. Common scale and seating on a 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-pedicab.webp",
+    "vessel": {
+      "opening": "A",
+      "idleMs": 3900,
+      "idle": [
+        {
+          "type": "bob",
+          "amount": 0.028
+        }
+      ],
+      "layers": [
+        {
+          "name": "wheel",
+          "file": "vessel-pedicab-wheel.png",
+          "role": "static",
+          "idle": [
+            {
+              "type": "tick",
+              "deg": 4.5,
+              "pivot": {
+                "x": 264,
+                "y": 770
+              }
+            }
+          ]
+        },
+        {
+          "name": "cab",
+          "file": "vessel-pedicab-cab.png",
+          "role": "static"
+        },
+        {
+          "name": "canopy",
+          "file": "vessel-pedicab-canopy.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 850,
+            "y": 418
+          },
+          "open": [
+            {
+              "at": 0
+            },
+            {
+              "at": 0.5,
+              "rotate": 55,
+              "scaleX": 0.51,
+              "scaleY": 0.53
+            },
+            {
+              "at": 1,
+              "rotate": 142,
+              "scaleX": 0.2,
+              "scaleY": 0.39
+            }
+          ]
+        },
+        {
+          "name": "hinge-pin",
+          "file": "vessel-pedicab-hinge-pin.png",
+          "role": "static"
+        }
+      ],
+      "mouth": {
+        "x": 631,
+        "y": 614
+      },
+      "sparkle": {
+        "x": 850,
+        "y": 418
+      },
+      "id": "pedicab",
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null,
+      "baseY": 904
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-pedicab-wheel.png",
+    "what": "Macau pedicab — complete front wheel behind the bicycle fork",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nEdit image 2 (the closed Macau pedicab) with image 1 as the style guide. Extract only the complete large front bicycle wheel at the lower left in its exact original position, scale, and tilted front three-quarter elliptical perspective. Same dark navy rubber profile, cream narrow inner rim, fine navy spokes and round brass hub. Repair the short rim and spoke sections occluded by the blue fork and fender so the entire wheel is complete when rotated a few degrees behind them. True transparent alpha between every spoke, outside the tire, and everywhere else. Remove the fork, mudguard, all frame tubing, handlebars, canopy, and both rear wheels. Match the flat one-shadow ink-and-fill illustration. Square, keep original wheel location and size. No lettering or marks.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "Assembled GPT Image 2 pedicab edit target"
+    ],
+    "source_sha256": "09430e8dc6ffff8c78ac3737875c8f4decc2f60e15734634da86e97912a323c1",
+    "processing": "Registered the complete tire to the source front-wheel bounds and kept it beneath the fork.",
+    "web_export": "public/art/vessels/vessel-pedicab-wheel.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-pedicab-cab.png",
+    "what": "Macau pedicab — frame, fork and complete passenger bench with letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nEdit image 2, the closed Macau pedicab, with image 1 as its style guide. Erase only the wax-red soft roof, wax-red drop curtain, brass piping attached to them and their thin front roof strut. Keep the entire navy and brass bicycle frame, rider saddle, handlebars, front and both rear wheels, footrest, cream seat edge and brass rear-side pivot in the same positions and scale. Reveal the complete rear passenger bench behind the former curtain, with cream seat cushion, broad ink blue backrest and a small folded cream envelope with a wax-red dot resting on the passenger cushion. The folded letter is around the middle of the seat, tucked inside the prior curtain silhouette. The vehicle MUST remain a single connected triangle front bike plus rear bench on two wheels. Bench stays small and no passenger or driver, no replacement hood, no flag, no writing. Clean transparent holes around the frame. Keep flat matte single-shade material rendering, and only light hatching. All unchanged parts exactly as image 2.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "Assembled GPT Image 2 pedicab edit target"
+    ],
+    "source_sha256": "b3ab5c95ef433f29d5a5d31f3d18247c42f083db0018af249e49bd1f1d20aee1",
+    "processing": "Aligned rear pivot to the canopy. Removed the old front wheel behind the retained fork and fender.",
+    "web_export": "public/art/vessels/vessel-pedicab-cab.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-pedicab-canopy.png",
+    "what": "Macau pedicab — wax-red folding cloth canopy",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nEdit image 2, the closed Macau pedicab, with image 1 as style guide. Keep only the complete wax-red convertible canopy (round roof, hanging red side flap and its thin gold piping) in its exact original position and scale on the square. Its rear pivot is the original circular gold attachment on the right rear corner, not itself a moving part. Detach the thin metal front roof support strut, which does not belong to the fabric panel. Remove all bicycle and carriage parts, bench, everything else to genuinely transparent alpha. Where the red side flap originally overlapped the blue wheel fender and cream frame, finish the flap as a short red curved edge edged with brass that helps the loose part read when folded, preserving all existing visible fabric edges. Flat fills, one single shade, light hatching. No text, no logos, no background.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "Assembled GPT Image 2 pedicab edit target"
+    ],
+    "source_sha256": "f703c8172ed41eab21a9862a88dc431e09081f6f4ffd81663c725c393602c4f7",
+    "processing": "Registered cloth and piping to the closed pose and cleaned the shared hinge edge.",
+    "web_export": "public/art/vessels/vessel-pedicab-canopy.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-pedicab-hinge-pin.png",
+    "what": "Macau pedicab — brass hinge pin",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nEdit image 2, the closed Macau pedicab, with image 1 as its style guide. Erase only the wax-red soft roof, wax-red drop curtain, brass piping attached to them and their thin front roof strut. Keep the entire navy and brass bicycle frame, rider saddle, handlebars, front and both rear wheels, footrest, cream seat edge and brass rear-side pivot in the same positions and scale. Reveal the complete rear passenger bench behind the former curtain, with cream seat cushion, broad ink blue backrest and a small folded cream envelope with a wax-red dot resting on the passenger cushion. The folded letter is around the middle of the seat, tucked inside the prior curtain silhouette. The vehicle MUST remain a single connected triangle front bike plus rear bench on two wheels. Bench stays small and no passenger or driver, no replacement hood, no flag, no writing. Clean transparent holes around the frame. Keep flat matte single-shade material rendering, and only light hatching. All unchanged parts exactly as image 2.",
+    "model": "gpt-image-2",
+    "reference_images": [
+      "design/art/style-sheet.png",
+      "Assembled GPT Image 2 pedicab edit target"
+    ],
+    "source_sha256": "b3ab5c95ef433f29d5a5d31f3d18247c42f083db0018af249e49bd1f1d20aee1",
+    "processing": "Isolated the stationary brass hinge as the top layer.",
+    "web_export": "public/art/vessels/vessel-pedicab-hinge-pin.webp"
   }
 ]
