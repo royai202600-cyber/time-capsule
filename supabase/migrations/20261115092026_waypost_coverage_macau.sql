@@ -13,8 +13,8 @@ insert into public.public_capsule_spots (name_zh,name_en,city_zh,city_en,lat,lng
 ('水塘公園','Reservoir Park','澳門','Macau',22.2030413,113.5566018,true,false,'osm:way/778862867@125m;waterfront/relation/10266786','waterfront'),
 ('氹仔海濱休憩區','Zona de Lazer da Marginal da Taipa','澳門','Macau',22.1522239,113.5456881,true,false,'osm:way/944736302@25m;waterfront/way/405826614','waterfront'),
 ('廣場','Square','澳門','Macau',22.1481317,113.5631815,true,false,'osm:way/1194508224@0m;square/way/424248133','square'),
-('法式露臺','French Terrace','澳門','Macau',22.1902240,113.5582743,true,false,'osm:way/314945807@125m;square/way/314945807','square'),
-('船伕露臺','Gondolier Terrace','澳門','Macau',22.1922661,113.5569565,true,false,'osm:way/314945815@50m;square/way/314945815','square'),
+('法式露台','French Terrace','澳門','Macau',22.1902240,113.5582743,true,false,'osm:way/314945807@125m;square/way/314945807','square'),
+('船夫露台','Gondolier Terrace','澳門','Macau',22.1922661,113.5569565,true,false,'osm:way/314945815@50m;square/way/314945815','square'),
 ('大潭山郊野公園','Parque Natural da Taipa Grande','澳門','Macau',22.1587975,113.5708902,true,false,'osm:way/478113953@100m;park/way/783087990','park')
 on conflict (source_ref) where source_ref is not null do nothing;
 insert into public.corrupted_spots (city,timezone,lat,lng,habitat,source_ref) values

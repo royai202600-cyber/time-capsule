@@ -76,7 +76,7 @@ Each sample was snapped to the nearest mapped public outdoor footway, path or pe
 | Taipei · Wenshan / Jingmei | 24.9925496, 121.5408539 | 15.7 | 3823.0 → 361.5 | 0 → 0 | 0 → 1 | 0 → 2 | 9 → 35 | 0 → 0 | Yes |
 | Taipei · Da’an Forest Park | 25.0299979, 121.5355013 | 0.3 | 106.7 → 106.7 | 2 → 2 | 4 → 4 | 4 → 4 | 39 → 88 | 66 → 66 | Yes |
 
-13 of 20 samples met their full target.
+13 of 20 samples met their full target. Claude accepted the seven shortfalls during review of PR #136. Roy retained the existing playground eligibility rules.
 
 - **Tsim Sha Tsui**. The nearest Waypost is 301.7 m away. All eligible candidates within 300 m are within 250 m of a live Waypost. The four-within-500 m target is met.
 - **Central**. The nearest eligible Waypost is 295.2 m away. The road and restricted-access buffers leave separated public areas. The spaced layout places two Wayposts within 500 m.
@@ -88,9 +88,24 @@ Each sample was snapped to the nearest mapped public outdoor footway, path or pe
 
 ## Names
 
-The name audit lists 137 Wayposts, including all 43 OpenCC conversions, 69 generic Chinese names and 75 generic English names. Name selection used the Traditional Chinese tags, a Chinese-only local name or the Chinese tag. English used the English tag, Macau’s Portuguese tag or a Latin local name. Generic labels followed the scene.
+Chinese name precedence is `name:zh-Hant`, `name:zh-TW`, `name:zh-HK`, a Chinese-only local `name`, then `name:zh`. Only Singapore labels selected from `name:zh` go through OpenCC `s2t`. English labels use the English tag, Macau’s Portuguese tag or a Latin local name. Generic labels follow the scene.
 
-[Complete name audit](waypost-coverage-names.csv)
+The source check compared all 217 staged Hong Kong, Macau and Taipei names with their selected tags in the dated OSM extracts or the applicable generic scene label. It restored these spellings.
+
+| Region | Spelling in `1767369` | OSM spelling | Wayposts |
+|---|---|---|---:|
+| Hong Kong | 鰂魚湧公園 | 鰂魚涌公園 | 2 |
+| Hong Kong | 坑口文曲裏公園 | 坑口文曲里公園 | 1 |
+| Hong Kong | 市政局百週年紀念花園 | 市政局百周年紀念花園 | 1 |
+| Macau | 船伕露臺 | 船夫露台 | 1 |
+| Macau | 法式露臺 | 法式露台 | 1 |
+| Taipei | 臺北植物園 | 台北植物園 | 1 |
+| Taipei | 微風平臺 | 微風平台 | 1 |
+| Taipei | 景觀臺 | 景觀台 | 1 |
+
+The audit contains 130 data rows, covering 34 OpenCC conversions, 69 generic Chinese labels and 75 generic English labels. A strict CSV parse verified eight columns in the header and every data row. [Complete name audit](waypost-coverage-names.csv)
+
+Square-grid references now use `@grid<x>_<y>m;square`. Regeneration changed the references of 15 Wayposts and 19 Corrupted Capsule spots. It preserved every coordinate, all English names, and the full 20-point density table.
 
 ## Verification
 
@@ -98,7 +113,7 @@ The hosted preflight ran all five migrations in order inside one transaction and
 
 Hosted wave replay inserted the exact new spot rows for each region in separate rollback transactions. Every existing spot was evaluated for the 144 ten-minute waves on 2026-11-15 local time. Release IDs, vessels, rarities and expiry timestamps matched for all 373,680 existing spot releases.
 
-The real-JWT test signed in through disposable local GoTrue and called PostgREST against the staged schema. At Civic Square it received 127 common Wayposts plus Taipei 101 in distance order. A stress case received exactly 200 common Wayposts plus Taipei 101. A new Taipei seed awarded the correct spin balance, XP and five-minute cooldown. A new spot produced a Corrupted Capsule that could be restored with the correct Wax Ball cost. Public drop and return used eligible original destinations, and both accounts were denied direct access to sealed contents.
+The real-JWT test at `1767369` signed in through disposable local GoTrue and called PostgREST against the staged schema. At Civic Square it received 127 common Wayposts plus Taipei 101 in distance order. A stress case received exactly 200 common Wayposts plus Taipei 101. A new Taipei seed awarded the correct spin balance, XP and five-minute cooldown. A new spot produced a Corrupted Capsule that could be restored with the correct Wax Ball cost. Public drop and return used eligible original destinations, and both accounts were denied direct access to sealed contents. The nearby/drop migration is byte-identical to that revision, so the review follow-up reused the real-JWT results.
 
 Xinyi has 142 distinct eligible coordinates within the 1,200 m hunt area before spacing. The largest gap from any of those coordinates to an existing Waypost is 168.1 m. The closest staged Waypost is 1,280.3 m from the hunt centre. Its spin correctly earned zero Xinyi credit. A disposable game-only Waypost inside the existing boundary earned one credit with the same real-JWT account after check-in. The migration adds no Waypost to that hunt.
 

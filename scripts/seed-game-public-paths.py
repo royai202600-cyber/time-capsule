@@ -8,6 +8,9 @@ EXTRACTS is a JSON object keyed by city with a {url, path} entry for each city.
 LIVE_POINTS is a JSON object keyed by city with wayposts and spots arrays of
 [lat, lng] pairs from the live database. TILE_GEOMETRY is the existing PMTiles
 coverage GeoJSON. OUTPUT must already be a directory.
+
+Square-grid references encode the projected x and y coordinates in metres as
+osm:way/474288886@grid-2025_1625m;square. The underscore separates the coordinates.
 """
 import argparse
 from collections import Counter, defaultdict
@@ -319,7 +322,7 @@ def area_points(area):
         for y in range(math.ceil(min_y / STEP) * STEP, math.floor(max_y) + 1, STEP):
             point = Point(x, y)
             if area.contains(point):
-                yield f"{x},{y}m", point
+                yield f"grid{x}_{y}m", point
 
 
 def collect(extract, safety, project, unproject):
@@ -363,7 +366,13 @@ def collect(extract, safety, project, unproject):
                 if owner:
                     add(point, owner_scene, f"osm:{ref}@{offset}m;{owner_scene}/{owner[1]}", owner[2])
     priority = {scene: index for index, scene in enumerate(SCENES)}
-    return sorted(candidates.values(), key=lambda c: (priority[c.scene], c.ref))
+
+    def placement_order(c):
+        # Keep grid samples in their original placement order across the reference-format change.
+        ref = c.ref.replace("@grid", "@").replace("_", ",") if "@grid" in c.ref else c.ref
+        return priority[c.scene], ref
+
+    return sorted(candidates.values(), key=placement_order)
 
 
 def distance(a, b):
@@ -413,12 +422,15 @@ def is_latin(name):
 def names(c, city, converter):
     tags = c.tags
     generic_zh, generic_en, _ = SCENES[c.scene]
-    zh = next((tags[k].strip() for k in ("name:zh-Hant", "name:zh-TW", "name:zh-HK", "name", "name:zh")
-               if k in tags and is_chinese(tags[k])), None)
+    zh_key, zh = next(
+        ((k, tags[k].strip()) for k in ("name:zh-Hant", "name:zh-TW", "name:zh-HK", "name", "name:zh")
+         if k in tags and is_chinese(tags[k])),
+        (None, None),
+    )
     en = tags.get("name:en", "").strip() or (tags.get("name:pt", "").strip() if city == "Macau" else "")
     if not en and is_latin(tags.get("name", "")):
         en = tags["name"].strip()
-    converted = converter.convert(zh) if zh else None
+    converted = converter.convert(zh) if city == "Singapore" and zh_key == "name:zh" else zh
     audit = {}
     if zh and converted != zh:
         audit["converted"] = [zh, converted]
@@ -551,7 +563,7 @@ def insert(table, columns, rows, conflict):
 
 def write_region(output, city, source, posts, spots, report):
     region = REGIONS[city]
-    converter = OpenCC("s2t")
+    converter = OpenCC("s2t") if city == "Singapore" else None
     labels = []
     post_rows = []
     for c in posts:
