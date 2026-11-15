@@ -9536,5 +9536,138 @@
     "template_key": "oldStreet",
     "postprocess": "Downscale to 1024 square with Lanczos. Both display crops use the center.",
     "web_export": "public/art/quest-templates/quest-template-old-street.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-north-gate.png",
+    "what": "Miniature North Gate (北門城樓), closed souvenir",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nDraw a single assembled, closed collectible souvenir miniature loosely inspired by Taipei's historic North Gate (Cheng'en Gate). The attached image is the style reference. Architectural cues observed in the real photo: broad squat blue-gray ashlar base, one deep semicircular arch with sturdy rectangular piers, wax-red rectangular upper wall with two tiny dark square openings and a central oculus, one swept single-eave tiled roof with a raised central ridge and restrained upturned corners. Use wax-red/plum roof tiles and a small brass or cream ridge highlight. Simple readable shapes at 40 px, predominantly frontal with a little of the right side visible. One continuous eave separates the detachable tile roof from the wall with a clear seam; the miniature is still closed and there is no rolled paper visible yet. The arch is dark with a recessed back wall in the closed state. No plaque or plaque outlines, no lettering or glyphs, flags, finial symbols or emblems. No environment, floor, shadow outside silhouette or extra objects. Set the object about 70% of square canvas width and height, horizontally centered, base close to 88% down and clear space above the ridge for lifting.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "landmark_reference": "https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg",
+    "postprocess": "One shared Lanczos 1254 to 1003 resize and (16, 7) canvas offset. Discard alpha below 20. Closed pixels divided between base and roof by the edited roof mask. Crop and feather the edited open recess and letter into a separate reveal layer.",
+    "web_export": "public/art/vessels/vessel-north-gate.webp",
+    "vessel": {
+      "id": "north-gate",
+      "assembled": "vessel-north-gate.png",
+      "opening": "B",
+      "idleMs": 4200,
+      "idle": [],
+      "layers": [
+        {
+          "name": "base",
+          "file": "vessel-north-gate-base.png",
+          "role": "static"
+        },
+        {
+          "name": "interior",
+          "file": "vessel-north-gate-interior.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 0
+            },
+            {
+              "at": 0.16,
+              "opacity": 0
+            },
+            {
+              "at": 0.7,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "name": "roof",
+          "file": "vessel-north-gate-roof.png",
+          "role": "lift",
+          "open": [
+            {
+              "at": 0,
+              "y": 0,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": -0.157,
+              "opacity": 1
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 520,
+        "y": 437
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 640,
+        "y": 288
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-north-gate-base.png",
+    "what": "Miniature North Gate, stationary stone and wax-red gate",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact assembled Miniature North Gate to edit. Make its complete opened base for the B lift-off animation. Remove ONLY the wax-red tiled roof and its brass eave above the horizontal seam along the top of the wax-red upper wall. Reveal a shallow, entirely drawn inset beneath the roof with a cream rim, navy interior wall, visible continuous floor and sides, occupying the narrow footprint directly behind the existing top edge of the red wall. It should be just a little visible from the same camera angle. The opening lets a soft warm light into the lower stone archway, revealing one clearly legible cream rolled parchment tucked horizontally at the bottom of the arch on its existing stone threshold, inside the opening, no writing or ribbon needed. Draw the whole rolled parchment, recessed stone arch walls, chamber back, and threshold with no gaps. Keep all remaining surfaces of the existing upper wax-red wall and blue ashlar building precisely in place, including every window, round oculus, ashlar seam and silhouette, at the reference's original pixel positions, proportions, outlined style and palette. No roof, no background, no legible characters, no shadow outside the silhouette. Do not rescale, zoom, center, rotate, widen, or shift the base. Same exact square canvas as Image 2.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "assembled North Gate generation"
+    ],
+    "landmark_reference": "https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg",
+    "postprocess": "One shared Lanczos 1254 to 1003 resize and (16, 7) canvas offset. Discard alpha below 20. Closed pixels divided between base and roof by the edited roof mask. Crop and feather the edited open recess and letter into a separate reveal layer.",
+    "web_export": "public/art/vessels/vessel-north-gate-base.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-north-gate-interior.png",
+    "what": "Miniature North Gate, revealed roof recess and lit letter in the arch",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact assembled Miniature North Gate to edit. Make its complete opened base for the B lift-off animation. Remove ONLY the wax-red tiled roof and its brass eave above the horizontal seam along the top of the wax-red upper wall. Reveal a shallow, entirely drawn inset beneath the roof with a cream rim, navy interior wall, visible continuous floor and sides, occupying the narrow footprint directly behind the existing top edge of the red wall. It should be just a little visible from the same camera angle. The opening lets a soft warm light into the lower stone archway, revealing one clearly legible cream rolled parchment tucked horizontally at the bottom of the arch on its existing stone threshold, inside the opening, no writing or ribbon needed. Draw the whole rolled parchment, recessed stone arch walls, chamber back, and threshold with no gaps. Keep all remaining surfaces of the existing upper wax-red wall and blue ashlar building precisely in place, including every window, round oculus, ashlar seam and silhouette, at the reference's original pixel positions, proportions, outlined style and palette. No roof, no background, no legible characters, no shadow outside the silhouette. Do not rescale, zoom, center, rotate, widen, or shift the base. Same exact square canvas as Image 2.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "assembled North Gate generation"
+    ],
+    "landmark_reference": "https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg",
+    "postprocess": "One shared Lanczos 1254 to 1003 resize and (16, 7) canvas offset. Discard alpha below 20. Closed pixels divided between base and roof by the edited roof mask. Crop and feather the edited open recess and letter into a separate reveal layer.",
+    "web_export": "public/art/vessels/vessel-north-gate-interior.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-north-gate-roof.png",
+    "what": "Miniature North Gate, lift-off tiled roof with brass ridge",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nImage 1 is the style sheet. Image 2 is the exact assembled Miniature North Gate to edit. Keep ONLY its existing swept wax-red tiled roof with its brass ridge and brass eave trim and the thin dark outlined join right underneath the trim. Preserve the exact pixel position, outer silhouette and scale, curvature of the ridge and eave, highlights, every tile and scene framing. Remove the entire wax-red window wall and stone gate below the eave to true transparency. Keep the same exact square canvas and leave the roof floating in its original upper position. No shadow, background, borders or other objects. Do not recenter or expand the roof.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "assembled North Gate generation"
+    ],
+    "landmark_reference": "https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg",
+    "postprocess": "One shared Lanczos 1254 to 1003 resize and (16, 7) canvas offset. Discard alpha below 20. Closed pixels divided between base and roof by the edited roof mask. Crop and feather the edited open recess and letter into a separate reveal layer.",
+    "web_export": "public/art/vessels/vessel-north-gate-roof.webp"
   }
 ]

@@ -458,6 +458,10 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-red-bird-box.png` | Red Bird Sundial Box — box | 1024×1024 | pending Roy; see manifest |
 | `vessels/vessel-red-bird-lid.png` | Red Bird Sundial Box — lid | 1024×1024 | pending Roy; see manifest |
 | `vessels/vessel-red-bird-shadow.png` | Red Bird Sundial Box — shadow | 1024×1024 | pending Roy; see manifest |
+| `vessels/vessel-north-gate.png` | Miniature North Gate / 北門城樓, closed | 1024×1024 | RV-L-art test |
+| `vessels/vessel-north-gate-base.png` | Miniature North Gate, stationary stone and wax-red gate | 1024×1024 | see manifest |
+| `vessels/vessel-north-gate-interior.png` | Miniature North Gate, roof recess and lit parchment reveal | 1024×1024 | see manifest |
+| `vessels/vessel-north-gate-roof.png` | Miniature North Gate, lift-off roof | 1024×1024 | see manifest |
 | `stamps/stamp-hkust.png` | HKUST curved academic building / Piazza Passport stamp | 1024×1024 | ink blue; pending Roy |
 | `stamps/stamp-hunt-hkust-2026-11.png` | HKUST City Hunt stamp; double ring, curved academic building | 1024×1024 | ink blue; pending Roy |
 
@@ -476,6 +480,12 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 - Xinyi hunt stamp silhouette reference: [TAIPEI 101 official sunrise photograph](https://www.taipei-101.com.tw/asset/img/cover-sunrise.jpg), linked from the [official gallery](https://www.taipei-101.com.tw/tw/explore/photogallery), inspected 2026-11-10. Observed stacked upward-flared tiers and slim spire; used only to inform a smaller loose tower behind the focal letter. The photograph is not reproduced in the artwork or repository.
 
 [Red Bird vessel review](_checks/red-bird-review.png) · [40/120px](_checks/red-bird-sizes.png) · [stack](_checks/red-bird-stack.png) · [closed/half/open motion](_checks/red-bird-motion.png) · [shadow idle](_checks/red-bird-idle.png) · [audit](_checks/red-bird-audit.json)
+
+### Miniature North Gate
+
+[Motion overlay](_checks/north-gate-motion.png) · [40/120 px](_checks/north-gate-sizes.png) · [Exact rest stack](_checks/north-gate-stack.png) · [Audit](_checks/north-gate-assets.json)
+
+The roof lifts above a shallow recess, revealing the rolled letter in the arch. The brass ridge sparkles once per 4200 ms loop. The gate is a simplified souvenir with an enlarged arch, enlarged roof tiles and brass accents. Its three small openings and single swept roof come from the north-side view inspected on 2026-11-15. [North Side of Taipei City North Gate 20221122.jpg, Yu tptw](https://commons.wikimedia.org/wiki/File:North_Side_of_Taipei_City_North_Gate_20221122.jpg)
 
 ### Red Bird reference
 
