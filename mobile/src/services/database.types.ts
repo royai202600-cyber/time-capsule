@@ -414,6 +414,7 @@ export type Database = {
         Row: {
           city: string
           habitat: string
+          hidden_at: string | null
           id: string
           lat: number
           lng: number
@@ -423,6 +424,7 @@ export type Database = {
         Insert: {
           city: string
           habitat: string
+          hidden_at: string | null
           id?: string
           lat: number
           lng: number
@@ -432,6 +434,7 @@ export type Database = {
         Update: {
           city?: string
           habitat?: string
+          hidden_at?: string | null
           id?: string
           lat?: number
           lng?: number
@@ -1089,6 +1092,7 @@ export type Database = {
           city_en: string
           city_zh: string
           game_enabled: boolean
+          hidden_at: string | null
           id: string
           kind: string
           lat: number
@@ -1104,6 +1108,7 @@ export type Database = {
           city_en: string
           city_zh: string
           game_enabled?: boolean
+          hidden_at?: string | null
           id?: string
           kind?: string
           lat: number
@@ -1119,6 +1124,7 @@ export type Database = {
           city_en?: string
           city_zh?: string
           game_enabled?: boolean
+          hidden_at?: string | null
           id?: string
           kind?: string
           lat?: number

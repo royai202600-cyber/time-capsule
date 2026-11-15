@@ -56,7 +56,7 @@ Owner and admin only; moderators and viewers keep the read-only map. Everything 
   - Kind is always common. A Landmark Waypost has a monument, a fight and rewards, so it still comes through the Landmark SOP.
 - **Move.** Select a Waypost, tap **Move**, tap the new place, **Save**. Tapping is easier than dragging on a phone and never moves a pin by accident.
 - **Edit.** Names and scene, from the same card.
-- **Hide and show.** **Hide** (wax red) sets `game_enabled = false`. Nothing is ever deleted, so spin history stays. **Show** brings it back. A hidden Waypost that is also a public capsule drop place stays a drop place.
+- **Hide and show.** **Hide** (wax red) sets `game_enabled = false`. Nothing is ever deleted, so spin history stays. **Show** brings it back. A hidden Waypost leaves the drop and pass-on pool until shown again.
 - **Checks, shown in the card before saving:**
   - Closer than 250 m to another Waypost: a warning naming it and the distance. Saving anyway needs a note.
   - Outside the city's map coverage: refused. Beyond the tiles there's no 3D map, so a new area goes through the City Hunt SOP like a new city.
@@ -64,7 +64,7 @@ Owner and admin only; moderators and viewers keep the read-only map. Everything 
 - **Landmarks** show a blue "Landmark" pill and are view only. A Landmark has a monument, a fight, an earned vessel and a Passport stamp, so agents create and change it through the Landmark SOP.
 - **When players see it.** At once: Journey reloads nearby Wayposts every 30 seconds.
 - Hand-added Wayposts are public capsule drop places like every other safe point (see the drop rule below).
-- **Corrupted Capsule spots** show on the map in edit mode with **Hide** and **Show**, for a park closed for construction. New spots still come from the seed script, because it does the safety check.
+- **Corrupted Capsule spots** show on the map in edit mode with **Hide** and **Show**, for a park closed for construction. Hidden spots leave spawning, drops and pass-on. New spots still come from the seed script, because it does the safety check.
 
 ### Phase 2: Corrupted Capsule spawning
 

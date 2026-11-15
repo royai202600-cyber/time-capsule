@@ -5,6 +5,7 @@ import { sample } from "./adminSample";
 
 /** Set to false locally to work on the screens with sample data. */
 export const ADMIN_BACKEND = true;
+export const ADMIN_EDIT_BACKEND = false;
 /** Development builds without the backend read the sample, so the screens can be built and checked. */
 export const ADMIN_SAMPLE = !ADMIN_BACKEND && typeof __DEV__ !== "undefined" && __DEV__;
 
@@ -52,22 +53,24 @@ export type SpawnRule = {
   /** "MM-DD" start and end, or null for all year. */
   dates: [string, string] | null;
   regions: string[];
+  places?: string[];
   /** Why a vessel can never be a Corrupted Capsule. */
   never: "starter" | "earned" | "brand" | null;
 };
-export type WaveConfig = { wave_minutes: number; spawn_chance: number; weights: Record<Rarity, number>; nearby_max: number };
+export type WaveConfig = { wave_minutes: number; spawn_chance: number; weights: Record<Rarity, number>; nearby_max: number; next_length?: { minutes: number; starts_at: string } | null };
 export type Spawning = {
   config: WaveConfig;
   rules: SpawnRule[];
+  places?: { id: string; parent: string | null; name_zh: string; name_en: string; country_zh: string; country_en: string; has_spots: boolean }[];
   stats: Record<string, { out_now: number; caught_today: number; caught_week: number }>;
 };
 
-export type MapWaypost = { id: string; name_zh: string; name_en: string; lat: number; lng: number; kind: "common" | "landmark"; game_enabled: boolean; source_ref?: string | null };
+export type MapWaypost = { id: string; name_zh: string; name_en: string; lat: number; lng: number; kind: "common" | "landmark"; game_enabled: boolean; source_ref?: string | null; scene?: string | null; hidden_at?: string | null };
 export type WaveCapsule = { spot: string; vessel: string; rarity: Rarity; lat: number; lng: number; expires_at: string; caught: boolean };
 export type CityMap = {
   region: Region;
   wayposts: MapWaypost[];
-  spots: { id: string; lat: number; lng: number; habitat: Habitat | null }[];
+  spots: { id: string; lat: number; lng: number; habitat: Habitat | null; hidden_at?: string | null }[];
   wave: WaveCapsule[];
   keepers: { hunt: string; name_zh: string; name_en: string; lat: number; lng: number; landmark?: string }[];
   private_quests: { id: string; hunt: string; hunt_name: string; lat: number; lng: number; picture?: string }[];

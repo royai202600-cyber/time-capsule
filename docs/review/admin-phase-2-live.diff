@@ -1,0 +1,257 @@
+--- /dev/null
++++ phase-2/roll-and-resolver-core
+@@ -0,0 +1,63 @@
++-- Preload the same game secret once for a whole map or preview. Interpret its
++-- HMAC's first four bytes as the unsigned fraction used by the live game.
++create function private.game_roll(p_key text, p_secret bytea) returns double precision
++language sql immutable strict as $$
++  select ('x' || pg_catalog.encode(pg_catalog.substr(
++    extensions.hmac(pg_catalog.convert_to(p_key, 'UTF8'), p_secret, 'sha256'), 1, 4), 'hex'))::bit(32)::bigint::double precision
++    / 4294967296::double precision;
++$$;
++
++create type private.game_spawn_pool as (common text[], uncommon text[], rare text[]);
++
++-- Habitats and local windows only depend on the city, wave and kind of spot.
++-- Build each pool once, then keep the spot-specific rolls in the resolver.
++create function private.game_spawn_pool(p_rules private.vessel_spawn_rules[], p_habitat text, p_local timestamp)
++returns private.game_spawn_pool language sql stable as $$
++  select array_agg(r.vessel) filter (where r.rarity = 'common'),
++    array_agg(r.vessel) filter (where r.rarity = 'uncommon'),
++    array_agg(r.vessel) filter (where r.rarity = 'rare')
++  from unnest(p_rules) r
++  cross join lateral (select extract(hour from p_local)::integer as hour, to_char(p_local, 'MM-DD') as md) t
++  where (r.habitat is null or r.habitat = p_habitat)
++    and (r.local_start_hour is null
++      or (r.local_start_hour < r.local_end_hour and t.hour >= r.local_start_hour and t.hour < r.local_end_hour)
++      or (r.local_start_hour > r.local_end_hour and (t.hour >= r.local_start_hour or t.hour < r.local_end_hour)))
++    and (r.month_day_start is null
++      or (r.month_day_start <= r.month_day_end and t.md between r.month_day_start and r.month_day_end)
++      or (r.month_day_start > r.month_day_end and (t.md >= r.month_day_start or t.md <= r.month_day_end)));
++$$;
++
++create function private.resolve_spawn_batch(p_spots uuid[], p_wave bigint, wave_end timestamptz,
++  cfg private.game_config, pool private.game_spawn_pool, secret bytea)
++returns table (spot uuid, spawn_id text, vessel text, rarity text, expires_at timestamptz)
++language sql stable as $$
++  with seeds as materialized (
++    select p.id, p.id::text || ':' || p_wave as seed from unnest(p_spots) p(id)
++  ), shown as materialized (
++    select s.*, private.game_roll(s.seed || ':rarity', secret) as roll
++    from seeds s where cfg.spawn_chance = 1 or private.game_roll(s.seed || ':show', secret) < cfg.spawn_chance
++  ), choice as materialized (
++    select s.*, case
++      when s.roll < cfg.rarity_common_weight / w.total then 'common'
++      when s.roll < (cfg.rarity_common_weight + cfg.rarity_uncommon_weight) / w.total then 'uncommon'
++      else 'rare' end as tier
++    from shown s cross join lateral (select
++      (cfg.rarity_common_weight + cfg.rarity_uncommon_weight + cfg.rarity_rare_weight)::float8 as total) w
++  ), eligible as materialized (
++    select c.*, case when c.tier = 'rare' and pool.rare is not null then 'rare'
++      when c.tier <> 'common' and pool.uncommon is not null then 'uncommon'
++      when pool.common is not null then 'common'
++      when pool.uncommon is not null then 'uncommon'
++      when pool.rare is not null then 'rare' end as chosen
++    from choice c
++  ), options as materialized (
++    select e.*, case e.chosen when 'common' then pool.common
++      when 'uncommon' then pool.uncommon else pool.rare end as vessels from eligible e
++  )
++  select o.id, o.seed, case when cardinality(o.vessels) = 1 then o.vessels[1] else (
++    select v.id from unnest(o.vessels) v(id)
++    order by pg_catalog.substr(extensions.hmac(pg_catalog.convert_to(o.seed || ':vessel:' || v.id, 'UTF8'),
++      secret, 'sha256'), 1, 4), v.id limit 1
++  ) end, o.chosen, wave_end
++  from options o where o.vessels is not null;
++$$;
+--- live/private.resolve_spawn
++++ phase-2/private.resolve_spawn
+@@ -3 +3,2 @@
+- LANGUAGE plpgsql
++
++ LANGUAGE sql
+@@ -7,51 +8,12 @@
+-declare spot public.corrupted_spots; cfg private.game_config; wave_at timestamptz;
+-  local_hour integer; local_md text; chosen_rarity text; picked text;
+-  rarity_roll double precision; total_weight integer; visible_minutes integer;
+-begin
+-  select * into spot from public.corrupted_spots where id=p_spot;
+-  if spot.id is null then return; end if;
+-  select * into cfg from private.game_config where singleton;
+-  wave_at := to_timestamp(p_wave * cfg.wave_minutes * 60);
+-  if private.game_roll(p_spot::text||':'||p_wave||':show') >= cfg.spawn_chance
+-    then return; end if;
+-  local_hour := extract(hour from wave_at at time zone spot.timezone)::integer;
+-  local_md := to_char(wave_at at time zone spot.timezone,'MM-DD');
+-  rarity_roll := private.game_roll(p_spot::text||':'||p_wave||':rarity');
+-  total_weight := cfg.rarity_common_weight+cfg.rarity_uncommon_weight+cfg.rarity_rare_weight;
+-  chosen_rarity := case
+-    when rarity_roll < cfg.rarity_common_weight::double precision/total_weight then 'common'
+-    when rarity_roll < (cfg.rarity_common_weight+cfg.rarity_uncommon_weight)::double precision/total_weight
+-      then 'uncommon' else 'rare' end;
+-  select r.vessel, r.rarity into picked, rarity from private.vessel_spawn_rules r
+-    where exists (
+-        select 1 from private.game_regions g
+-        join private.vessel_spawn_places a on a.region_id in (g.id, g.parent_id)
+-        where g.city = spot.city and a.vessel = r.vessel
+-      )
+-      and (r.habitat is null or r.habitat=spot.habitat)
+-      and (r.local_start_hour is null
+-        or (r.local_start_hour < r.local_end_hour and local_hour >= r.local_start_hour and local_hour < r.local_end_hour)
+-        or (r.local_start_hour > r.local_end_hour and (local_hour >= r.local_start_hour or local_hour < r.local_end_hour)))
+-      and (r.month_day_start is null
+-        or (r.month_day_start <= r.month_day_end and local_md between r.month_day_start and r.month_day_end)
+-        or (r.month_day_start > r.month_day_end and (local_md >= r.month_day_start or local_md <= r.month_day_end)))
+-    -- Prefer the rolled tier, then the neighboring tiers, lower first.
+-    order by array_position(case chosen_rarity
+-        when 'common' then array['common','uncommon','rare']
+-        when 'uncommon' then array['uncommon','common','rare']
+-        else array['rare','uncommon','common'] end, r.rarity),
+-      private.game_roll(p_spot::text||':'||p_wave||':vessel:'||r.vessel), r.vessel
+-    limit 1;
+-  if picked is null then return; end if;
+-  visible_minutes := cfg.visible_min_minutes + floor(
+-    private.game_roll(p_spot::text||':'||p_wave||':duration') *
+-    (cfg.visible_max_minutes-cfg.visible_min_minutes+1))::integer;
+-  spawn_id := p_spot::text||':'||p_wave::text;
+-  vessel := picked;
+-  expires_at := wave_at + make_interval(mins=>visible_minutes);
+-  -- Temporary Roy QA spots expire at their fixed ten-minute batch boundary.
+-  if spot.source_ref ~ '^qa:roy-taipei-game:[0-9]+:[0-9]+$' then
+-    expires_at := least(expires_at,to_timestamp((split_part(spot.source_ref,':',3)::bigint+1)*600));
+-  end if;
+-  return next;
+-end $function$
++  select resolved.spawn_id, resolved.vessel, resolved.rarity, resolved.expires_at
++  from public.corrupted_spots p
++  cross join private.game_wave_by_number(p_wave) w
++  cross join lateral private.game_spawn_at(w.starts_at) r
++  cross join private.game_secret key
++  cross join lateral private.resolve_spawn_batch(array[p.id], p_wave, w.ends_at, r.config,
++    private.game_spawn_pool(private.game_spawn_city_rules(r, p.city), p.habitat, w.starts_at at time zone p.timezone),
++    key.secret) resolved
++  where p.id = p_spot and p.hidden_at is null and key.singleton
++    and case when p.source_ref ~ '^qa:roy-taipei-game:[0-9]+:[0-9]+$'
++      then split_part(p.source_ref, ':', 3)::bigint = p_wave else true end;
++$function$
+--- live/private.refresh_taipei_game_demo
++++ phase-2/private.refresh_taipei_game_demo
+@@ -7,2 +7,2 @@
+-  batch bigint := floor(extract(epoch from now())/600)::bigint;
+-  wave bigint; i integer; n integer; spot uuid; released record;
++  batch bigint := (select w.wave from private.game_wave_at(now()) w);
++  i integer; n integer; spot uuid; released record;
+@@ -17 +16,0 @@
+-  select floor(extract(epoch from now())/(wave_minutes*60))::bigint into wave from private.game_config where singleton;
+@@ -32 +31 @@
+-      select * into released from private.resolve_spawn(spot,wave);
++      select * into released from private.resolve_spawn(spot,batch);
+--- live/public.game_nearby
++++ phase-2/public.game_nearby
+@@ -7 +7 @@
+-declare cfg private.game_config; result_spawns jsonb; result_wayposts jsonb; wave bigint; candidate jsonb; pass integer; spawn_candidates jsonb; attempt_spawns jsonb;
++declare cfg private.game_config; result_spawns jsonb; result_wayposts jsonb; wave bigint; wave_start timestamptz; nearby_target integer; candidate jsonb; pass integer; spawn_candidates jsonb; attempt_spawns jsonb;
+@@ -11 +11,2 @@
+-  wave := floor(extract(epoch from now())/(cfg.wave_minutes*60))::bigint;
++  select w.wave, w.starts_at into wave, wave_start from private.game_wave_at(now()) w;
++  nearby_target := ((private.game_spawn_at(wave_start)).config).nearby_spawn_target;
+@@ -23,0 +25 @@
++      and p.hidden_at is null
+@@ -40 +42 @@
+-      exit when jsonb_array_length(attempt_spawns)>=cfg.nearby_spawn_target;
++      exit when jsonb_array_length(attempt_spawns)>=nearby_target;
+@@ -43 +45 @@
+-    exit when jsonb_array_length(result_spawns)>=cfg.nearby_spawn_target;
++    exit when jsonb_array_length(result_spawns)>=nearby_target;
+--- live/public.corrupted_capsule_throw
++++ phase-2/public.corrupted_capsule_throw
+@@ -19 +19 @@
+-  current_wave := floor(extract(epoch from now())/(cfg.wave_minutes*60))::bigint;
++  current_wave := (select w.wave from private.game_wave_at(now()) w);
+@@ -21 +21 @@
+-  select * into spot from public.corrupted_spots where id=split_part(p_spawn,':',1)::uuid;
++  select * into spot from public.corrupted_spots where id=split_part(p_spawn,':',1)::uuid and hidden_at is null for share;
+--- live/private.admin_wave
++++ phase-2/private.admin_wave
+@@ -6,0 +7,10 @@
++  with clock as materialized (
++    select w.*, r.config, private.game_spawn_city_rules(r, p_city) rules, key.secret
++    from private.game_wave_at(now()) w cross join lateral private.game_spawn_at(w.starts_at) r
++    cross join private.game_secret key where key.singleton
++  ), habitats as materialized (
++    select p.timezone, p.habitat, array_agg(p.id) spots
++    from public.corrupted_spots p where p.city = p_city and p.hidden_at is null
++      and p.source_ref not like 'qa:roy-taipei-game:%'
++    group by p.timezone, p.habitat
++  )
+@@ -10,4 +20,5 @@
+-  from private.game_config cfg
+-  join public.corrupted_spots p on p.city = p_city
+-  cross join lateral private.resolve_spawn(p.id, floor(extract(epoch from now()) / (cfg.wave_minutes * 60))::bigint) s
+-  where cfg.singleton and p.source_ref not like 'qa:roy-taipei-game:%' and s.expires_at > now();
++  from clock w cross join habitats h
++  cross join lateral private.resolve_spawn_batch(h.spots, w.wave, w.ends_at, w.config,
++    private.game_spawn_pool(w.rules, h.habitat, w.starts_at at time zone h.timezone), w.secret) s
++  join public.corrupted_spots p on p.id = s.spot
++  where s.expires_at > now();
+--- live/private.admin_region
++++ phase-2/private.admin_region
+@@ -16,2 +16,2 @@
+-      where p.city = p_region.city and p.source_ref not like 'qa:roy-taipei-game:%'),
+-    'capsule_spots', (select count(*) from public.public_capsule_spots p where p.city_en = p_region.city and p.public_drop),
++      where p.city = p_region.city and p.hidden_at is null and p.source_ref not like 'qa:roy-taipei-game:%'),
++    'capsule_spots', (select count(*) from public.public_capsule_spots p where p.city_en = p_region.city and p.public_drop and p.hidden_at is null),
+--- live/public.admin_city_map
++++ phase-2/public.admin_city_map
+@@ -20 +20,2 @@
+-        'kind', p.kind, 'game_enabled', p.game_enabled, 'source_ref', p.source_ref
++        'kind', p.kind, 'game_enabled', p.game_enabled, 'source_ref', p.source_ref,
++        'scene', p.scene, 'hidden_at', p.hidden_at
+@@ -22 +23 @@
+-        from public.public_capsule_spots p where p.city_en = city.city),
++        from public.public_capsule_spots p where p.city_en = city.city and (p.game_enabled or p.hidden_at is not null)),
+@@ -24 +25 @@
+-        'id', p.id, 'lat', p.lat, 'lng', p.lng, 'habitat', p.habitat
++        'id', p.id, 'lat', p.lat, 'lng', p.lng, 'habitat', p.habitat, 'hidden_at', p.hidden_at
+--- live/public.admin_spawning
++++ phase-2/public.admin_spawning
+@@ -24 +24,4 @@
+-        'wave_minutes', cfg.wave_minutes, 'spawn_chance', cfg.spawn_chance, 'nearby_max', cfg.nearby_spawn_target,
++        'wave_minutes', (select w.minutes from private.game_wave_at(now()) w),
++        'next_length', (select jsonb_build_object('minutes', w.minutes, 'starts_at', w.starts_at)
++          from private.game_wave_periods w where w.starts_at > now() order by w.starts_at limit 1),
++        'spawn_chance', cfg.spawn_chance, 'nearby_max', cfg.nearby_spawn_target,
+@@ -26,0 +30,6 @@
++      'places', (select jsonb_agg(jsonb_build_object('id', g.id, 'parent', g.parent_id,
++        'name_zh', g.name_zh, 'name_en', g.name_en, 'country_zh', g.country_zh, 'country_en', g.country_en,
++        'has_spots', exists (select 1 from private.game_regions child
++          join public.corrupted_spots p on p.city = child.city and p.source_ref not like 'qa:%'
++          where g.id in (child.id, child.parent_id))) order by g.country_en, g.name_en)
++        from private.game_regions g),
+@@ -33,0 +43,2 @@
++        'places', (select coalesce(jsonb_agg(a.region_id order by a.region_id), '[]'::jsonb)
++          from private.vessel_spawn_places a where a.vessel = v.id),
+--- live/private.public_capsule_points
++++ phase-2/private.public_capsule_points
+@@ -8 +8 @@
+-    (public_capsule_spots.game_enabled OR public_capsule_spots.public_drop) AS eligible,
++    (public_capsule_spots.hidden_at IS NULL AND (public_capsule_spots.game_enabled OR public_capsule_spots.public_drop)) AS eligible,
+@@ -20 +20 @@
+-    (s.source_ref !~~ 'qa:%'::text) AS eligible,
++    (s.hidden_at IS NULL AND s.source_ref !~~ 'qa:%'::text) AS eligible,
+--- live/private.game_roll
++++ phase-2/private.game_roll
+@@ -3 +3,2 @@
+- LANGUAGE plpgsql
++
++ LANGUAGE sql
+@@ -7,7 +8,2 @@
+-declare h bytea;
+-begin
+-  select extensions.hmac(pg_catalog.convert_to(p_key,'UTF8'),secret,'sha256')
+-    into h from private.game_secret where singleton;
+-  return (get_byte(h,0)*16777216.0 + get_byte(h,1)*65536.0
+-    + get_byte(h,2)*256.0 + get_byte(h,3)) / 4294967296.0;
+-end $function$
++  select private.game_roll(p_key, k.secret) from private.game_secret k where k.singleton;
++$function$

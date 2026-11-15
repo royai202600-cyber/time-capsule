@@ -108,10 +108,12 @@ function seed(at: Coords) {
 const DEV_VESSELS = ["bubble-tea", "bento", "hot-air-balloon"];
 const DEV_RARITY: Rarity[] = ["common", "uncommon", "rare"];
 let devNext = 0;
+const DEV_WAVE_MINUTES = 10;
 let devWave = -1;
 let devAnchor: Coords | null = null;
 function refreshDevWave(at: Coords) {
-  const wave = Math.floor(Date.now() / 600_000);
+  const waveMs = DEV_WAVE_MINUTES * 60_000;
+  const wave = Math.floor(Date.now() / waveMs);
   const meters = (a: Coords, b: Coords) => Math.hypot((a.lat - b.lat) * 110540, (a.lng - b.lng) * 111320 * Math.cos(at.lat * Math.PI / 180));
   if (wave === devWave && devAnchor && meters(at, devAnchor) <= 100) return;
   devWave = wave; devAnchor = { ...at }; dev.corrupted = [];
@@ -122,7 +124,7 @@ function refreshDevWave(at: Coords) {
     const i = devNext++, kind = i % DEV_VESSELS.length;
     dev.corrupted.push({
       id: `dev-${wave}-${i}`, vessel: DEV_VESSELS[kind], rarity: DEV_RARITY[kind], ...point,
-      expires_at: new Date((wave + 1) * 600_000).toISOString(), attempts_left: 3,
+      expires_at: new Date((wave + 1) * waveMs).toISOString(), attempts_left: 3,
     });
   }
 }

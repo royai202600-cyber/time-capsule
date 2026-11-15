@@ -67,18 +67,20 @@ function scatter(seed: string, n: number, center: { lat: number; lng: number }, 
   });
 }
 
-function waveEnd(now = Date.now()) {
-  const step = 10 * 60000;
-  return new Date(Math.floor(now / step) * step + step).toISOString();
+const SAMPLE_WAVE_MINUTES = 10;
+
+function waveEnd(slot: number, step: number) {
+  return new Date((slot + 1) * step).toISOString();
 }
 function wave(region: Region): WaveCapsule[] {
   const spots = scatter(`${region.id}-spots`, region.corrupted_spots, region.center, 1.6);
-  const slot = Math.floor(Date.now() / 600000);
+  const step = SAMPLE_WAVE_MINUTES * 60_000;
+  const slot = Math.floor(Date.now() / step);
   return spots.flatMap((s, i) => {
     const roll = ((i + 1) * 7919 + slot * 104729) % 100;
     if (roll >= 22) return [];
     const r = roll < 14 ? 0 : roll < 20 ? 1 : 2;
-    return [{ spot: `${region.id}-spot-${i}`, vessel: region.vessels[r], rarity: RARITY[r], lat: s.lat, lng: s.lng, expires_at: waveEnd(), caught: roll % 5 === 0 }];
+    return [{ spot: `${region.id}-spot-${i}`, vessel: region.vessels[r], rarity: RARITY[r], lat: s.lat, lng: s.lng, expires_at: waveEnd(slot, step), caught: roll % 5 === 0 }];
   });
 }
 
@@ -140,7 +142,7 @@ export const sample = {
     return pause({ region: { ...region, out_now: wave(region).filter((w) => !w.caught).length }, wayposts: [...posts, ...(LANDMARKS[region.id] ?? [])], spots, wave: wave(region), keepers: KEEPERS[region.id] ?? [], private_quests: quests });
   },
   spawning: (): Promise<Spawning> => pause({
-    config: { wave_minutes: 10, spawn_chance: 0.55, weights: { common: 70, uncommon: 25, rare: 5 }, nearby_max: 6 },
+    config: { wave_minutes: SAMPLE_WAVE_MINUTES, spawn_chance: 0.55, weights: { common: 70, uncommon: 25, rare: 5 }, nearby_max: 6 },
     rules: rules(),
     stats: Object.fromEntries(REGIONS.map((r, i) => [r.id, { out_now: wave(r).filter((w) => !w.caught).length, caught_today: 12 + i * 7, caught_week: 80 + i * 31 }])),
   }),
