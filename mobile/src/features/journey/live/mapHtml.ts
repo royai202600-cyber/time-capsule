@@ -285,7 +285,7 @@ map.on('dragstart',()=>{if(follow){follow=false;send({type:'follow',follow:false
 const mapEl=document.getElementById('map');let zNow=1;
 const rescale=()=>{const base=pickupZoom(you?you.lat:map.getCenter().lat,state.reach||100),d=map.getZoom()-base;
   // The quest editor's maps (reach 0) keep every pin full size, so the organizer can read each number.
-  zNow=state.reach===0?1:Math.max(.4,Math.min(1,Math.pow(2,d)));mapEl.style.setProperty('--z',zNow.toFixed(3));mapEl.style.setProperty('--zq',(state.reach===0?1:Math.max(.7,Math.min(1,Math.pow(2,d/2)))).toFixed(3));mapEl.classList.toggle('tiny',state.reach!==0&&d<-3)};
+  zNow=state.reach===0?1:Math.max(.4,Math.min(1,Math.pow(2,d)));mapEl.style.setProperty('--z',zNow.toFixed(3));mapEl.style.setProperty('--zq',(state.reach===0?1:Math.max(.7,Math.min(1,Math.pow(2,d/2)))).toFixed(3));mapEl.classList.toggle('tiny',!${cityWave}&&state.reach!==0&&d<-3)};
 map.on('zoom',rescale);
 // Overlapping pins: the first tap on a stack fans it out around its spot (pins never move on the map itself);
 // tapping one then opens it. Tapping the map or moving it folds the fan back.
