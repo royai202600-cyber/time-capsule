@@ -1,6 +1,6 @@
 # Waypost coverage review
 
-WC1 uses Roy’s approved design. All five migrations are staged for review and held for production rollout. [Design PR #131](https://github.com/royai202600-cyber/time-capsule/pull/131)
+WC1 uses Roy’s approved design. All five migrations are live, and each region’s production density matched the staged measurements below. [Design PR #131](https://github.com/royai202600-cyber/time-capsule/pull/131)
 
 ## Changes and live baseline
 
@@ -123,4 +123,6 @@ Mobile `npm ci`, `npm run typecheck`, `npm test`, `npx expo install --check` and
 
 ## Rollout
 
-No production migrations or deployments were made. After Claude reviews and Roy approves, apply the first migration followed by Hong Kong, Macau, Singapore and Taipei. Verify the density after each region and regenerate live database types after the schema change.
+Roy’s account squash-merged PR #136 as `029fbea` after green CI on `8bb284c`. The connected Supabase migration-history comparison found exactly the five expected pending files. A hosted transaction executed the five files and rolled back as the dry-run. Each production migration was then committed with its repository version in the order above. After each regional commit, all five of that region’s production samples matched the staged density table. Owner-authored commit `c96ec35` regenerates the live types for `public_drop`.
+
+A real production JWT returned 127 common Wayposts and Taipei 101 in exact distance order at Civic Square. The disposable player spun Victoria Park, Reservoir Park, Orchard Promenade and the Waterfront Waypost at 蔣渭水先生紀念廣場. The public capsule dropped at eligible Jinglian Plaza. Global sign-out and cleanup left zero fixture users, sessions, capsules, spins or related rows. The signed-in browser reached Journey at 375 px. Chrome blocked location, and Roy deferred the bilingual Waypost verification in Hong Kong and Singapore. [Production app](https://time-capsule-pi-two.vercel.app)

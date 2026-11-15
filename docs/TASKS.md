@@ -26,7 +26,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
-| RV-MO | Macau regional vessel art | Codex / Roy | Roy approved the egg tart and rooster in draft PR #138. The revised pedicab concertina fold awaits Roy’s review. Whole-PR approval and green CI precede the owner-account squash merge. |
 | RV-L-art | Earned Landmark vessels and Passport stamps | Codex / Roy | Roy approved the North Gate test in #137 and requested its 2.5% idle roof lift. The complete art batch includes Durian, Guia Lighthouse, and ink-blue Beimen, Esplanade and Guia stamps. Roy approved the full set at `543b9cc` in #137. Refreshed from main with the approved art preserved. Green CI precedes owner-account squash merge. |
 | Orienteering P2 | Private hunt player backend | Codex / Roy | Released in #120. Migration `20261114054459` is applied. The signed-in browser verified typed QR, spin, puzzle, leaderboard and Passport. |
 | Orienteering P1 | Private hunt organizer backend | Codex / Roy | Released in #119. Migration `20261114034030` is applied. A disposable pilot organizer verified creation, template and photo quests, publishing, review, and the first-join edit lock. |
@@ -56,7 +55,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 |---|---|---|---|
 | RV-TW | Taiwan regional vessel art, wave 1 | Codex art | Roy approved all five vessels in [PR #134](https://github.com/royai202600-cyber/time-capsule/pull/134): pineapple cake, oolong teapot, Pingxi sky lantern, red-white-blue bag and tingkat. Approved art is preserved through the main refresh. Green CI gates owner-account squash merge. RV-W is held. |
 | O1 | City Orienteering: timed daily system hunts | Codex `T` + Claude U1 | Live with migration `20261114033941`. Xinyi check-in, countdown, time-up, same-day restart, return and both time records were verified. |
-| WC1 | Waypost and Corrupted Capsule coverage inside the four current tile areas | Codex | PR #136 awaits re-review after the OSM name and square-grid reference fixes. Five held migrations add 294 Wayposts and 431 spots. See the [density and name audit](review/waypost-coverage.md) for all 20 samples and the seven accepted shortfalls. Xinyi spin credit used a disposable fixture because the 250 m spacing excludes every new seed candidate inside the hunt. |
 | O2 | Private hunts: organizer and player | Codex + Claude | Live. Both accounts passed the 375 px browser checks. Phone camera QR and photo upload in Expo Go remain for Roy. |
 | O3 | Private hunts phase 2: photo missions with organizer review, teams, broadcasts, score adjustment, public listing | Roy decides moderation → Claude designs → Codex | Not started; waits for the moderation decision. |
 | C2 | Create v2: simpler private + public capsule creation (`docs/design/create-v2.md`, demo `docs/design/demos/create-v2.html`) | Claude design → Codex build | Phase 1 merged in #109 after CI 43488825374. Roy verified the Future me / Anywhere send and public Journey drop appear in Sent. Owner release `91c178f` is live. Signed-in production verified the new header and four-step navigation. Point-place migration `20261113190556` is applied. Disposable real-JWT tests verified early, far and missing-location refusal, near opening, and legacy landmark and Anywhere opening. Remaining acceptance checks cover any map point, place search and ordered blocks with real JWTs. Old capsules still open. Roy confirms moderation before media is allowed in public capsules. |
@@ -73,6 +71,10 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+
+- RV-MO — Roy approved Macau wave 1 in [PR #138](https://github.com/royai202600-cyber/time-capsule/pull/138). The set contains the egg tart, Portuguese rooster and Macau pedicab with the canopy folding behind the bench. The main refresh preserved the approved art byte for byte. Art-only delivery.
+
+- WC1 — Waypost coverage is live. PR #136 squash-merged as `029fbea` and all five migrations are applied. Each region’s production density matched all five staged samples. Production real-JWT checks passed for Civic Square discovery, a new spin in each region and an eligible public capsule drop. The fixture account and all its rows were removed. Owner follow-up `c96ec35` regenerated the live types. Roy deferred the signed-in 375 px Hong Kong and Singapore Waypost checks after Chrome blocked location. [Coverage report](review/waypost-coverage.md)
 
 - L2 — web location keeps streaming on Journey. PR #130 passed CI 43696272275 and Roy’s owner account squash-merged it as `af56ca3`. A timeout keeps the browser watch and last fix. Signal loss keeps the fix and retries in three seconds. Tab return resumes a stopped watch without duplicating it, and denial clears the saved choice. TypeScript, 186 tests, Expo dependency check and web export passed. At 375 px on localhost, Chromium with simulated GPS and a mocked signed-in session and API followed six fixes without a reload or a location card. Same-cell fixes made zero additional nearby requests. Crossing a cell made one. No migration. Physical phone verification remains with Roy’s colleague.
 
