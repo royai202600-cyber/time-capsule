@@ -26,7 +26,8 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
-| RV-HK | Hong Kong wave 1 regional vessel art | Codex / Roy | Roy approved `bolo-bun` at `b6cdf2a`. The `tram` was redrawn from Roy’s `tram hk.jpeg` with a tall green body and roof, dark timber-framed openings, blank cream panels and a fender tray. Draft PR #140 awaits Roy’s review of the revised tram. |
+| RV-HK | Hong Kong wave 1 regional vessel art | Codex / Roy | Roy approved `bolo-bun` at `b6cdf2a` and the reference-based tram at `743133d`, and approved the full art PR #140. Shared records refreshed from main. Green CI precedes owner-account squash merge. The red-white-blue bag is already in #134. |
+| RV-SG | Singapore wave 1 vessel art | Codex / Roy | Roy approved kamcheng and the revised Miss Joaquim orchid in PR #139 at `36471e1`. Refreshed from main with every approved PNG and WebP byte-identical. Owner-account squash merge follows green CI. Tingkat landed separately in #134. Art only. |
 | RV-L-art | Earned Landmark vessels and Passport stamps | Codex / Roy | Roy approved the North Gate test in #137 and requested its 2.5% idle roof lift. The complete art batch includes Durian, Guia Lighthouse, and ink-blue Beimen, Esplanade and Guia stamps. Roy approved the full set at `543b9cc` in #137. Refreshed from main with the approved art preserved. Green CI precedes owner-account squash merge. |
 | Orienteering P2 | Private hunt player backend | Codex / Roy | Released in #120. Migration `20261114054459` is applied. The signed-in browser verified typed QR, spin, puzzle, leaderboard and Passport. |
 | Orienteering P1 | Private hunt organizer backend | Codex / Roy | Released in #119. Migration `20261114034030` is applied. A disposable pilot organizer verified creation, template and photo quests, publishing, review, and the first-join edit lock. |
@@ -72,6 +73,8 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+
+- RV-MO — Roy approved Macau wave 1 in [PR #138](https://github.com/royai202600-cyber/time-capsule/pull/138). The set contains the egg tart, Portuguese rooster and Macau pedicab with the canopy folding behind the bench. The main refresh preserved the approved art byte for byte. Art-only delivery.
 
 - WC1 — Waypost coverage is live. PR #136 squash-merged as `029fbea` and all five migrations are applied. Each region’s production density matched all five staged samples. Production real-JWT checks passed for Civic Square discovery, a new spin in each region and an eligible public capsule drop. The fixture account and all its rows were removed. Owner follow-up `c96ec35` regenerated the live types. Roy deferred the signed-in 375 px Hong Kong and Singapore Waypost checks after Chrome blocked location. [Coverage report](review/waypost-coverage.md)
 
