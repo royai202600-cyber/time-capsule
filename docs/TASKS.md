@@ -52,7 +52,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 - V1 cleanup follow-up: remove unattached `voice-notes` uploads older than 24 hours through the Storage API, with an attachment re-check. Pending uploads remain unreadable. Never delete attached recordings or manipulate Storage metadata to delete blobs.
 | ID | Task | Owner | Done when |
 |---|---|---|---|
-| RV-R1 | Regional vessel art batch 1 | Codex art | Pineapple-cake test masters, exports, motion and size sheets are ready for Roy’s draft PR review. After his approval, draw `rwb-bag`, `tiffin` and `egg-tart` in order. Whole-batch approval gates merge. RV-W is held. [Design spec PR #132](https://github.com/royai202600-cyber/time-capsule/pull/132) |
+| RV-R1 | Regional vessel art batch 1 | Codex art | Roy approved the test art with a scripted size correction. All four vessels and their motion and 40/120 px sheets are in [draft PR #134](https://github.com/royai202600-cyber/time-capsule/pull/134) for whole-batch approval. Green CI gates the owner-account merge. RV-W is held. |
 | O1 | City Orienteering: timed daily system hunts | Codex `T` + Claude U1 | Live with migration `20261114033941`. Xinyi check-in, countdown, time-up, same-day restart, return and both time records were verified. |
 | O2 | Private hunts: organizer and player | Codex + Claude | Live. Both accounts passed the 375 px browser checks. Phone camera QR and photo upload in Expo Go remain for Roy. |
 | O3 | Private hunts phase 2: photo missions with organizer review, teams, broadcasts, score adjustment, public listing | Roy decides moderation → Claude designs → Codex | Not started; waits for the moderation decision. |

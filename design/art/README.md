@@ -460,9 +460,22 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-red-bird-shadow.png` | Red Bird Sundial Box — shadow | 1024×1024 | pending Roy; see manifest |
 | `stamps/stamp-hkust.png` | HKUST curved academic building / Piazza Passport stamp | 1024×1024 | ink blue; pending Roy |
 | `stamps/stamp-hunt-hkust-2026-11.png` | HKUST City Hunt stamp; double ring, curved academic building | 1024×1024 | ink blue; pending Roy |
-| `vessels/vessel-pineapple-cake.png` | Pineapple-cake box — closed assembly | 1024×1024 | RV-R1 test; see manifest |
-| `vessels/vessel-pineapple-cake-sleeve.png` | Pineapple-cake box — hollow cream slipcase | 1024×1024 | RV-R1 test; see manifest |
-| `vessels/vessel-pineapple-cake-tray.png` | Pineapple-cake box — sliding tray with pastries and letter | 1024×1024 | RV-R1 test; see manifest |
+| `vessels/vessel-pineapple-cake.png` | Pineapple-cake box — closed assembly | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-pineapple-cake-sleeve.png` | Pineapple-cake box — hollow cream slipcase | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-pineapple-cake-tray.png` | Pineapple-cake box — sliding tray with pastries and letter | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag.png` | Red-white-blue bag — assembled | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-bag.png` | Red-white-blue bag — bag | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-letter.png` | Red-white-blue bag — letter | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-front.png` | Red-white-blue bag — front | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-zip.png` | Red-white-blue bag — zip | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin.png` | Tingkat tiffin carrier — assembled | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin-stack.png` | Tingkat tiffin carrier — stack | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin-top.png` | Tingkat tiffin carrier — top | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin-steam.png` | Tingkat tiffin carrier — steam | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-egg-tart.png` | Egg-tart box — assembled | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-egg-tart-box.png` | Egg-tart box — box | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-egg-tart-lid.png` | Egg-tart box — lid | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-egg-tart-steam.png` | Egg-tart box — steam | 1024×1024 | RV-R1; see manifest |
 
 ## Review
 
@@ -510,10 +523,22 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 
 [Six-template review](_checks/private-hunt-quest-templates-review.png) shows each WebP at 46 px over land and water and in a centered 16:9 crop. The 3D pin and original review sheet are preserved in commit `f55af42`. The stamp and park cover remain under review. Roy approved the park template as-is. The remaining five templates await set review. The backend needs to add `oldStreet` to its template allowlist.
 
-### Regional vessels R1 test — Pineapple-cake box
+### Regional vessels R1
 
-The original cream and ink-blue paper sleeve has an inked pineapple and a plain brass sticker. The drawer slides along the sleeve’s seam and reveals a letter and a complete tray of square pastries. The 4-second idle loop uses 3% breathing, with a sparkle on the sticker. The 1024 px closed canvas uses baseY 899 and the lower-to-upper stack is tray, then sleeve.
+| Vessel | Opening and idle | Closed width | Review |
+|---|---|---:|---|
+| Pineapple-cake box (鳳梨酥禮盒) | Tray slides 238 px right and 26 px down. The box breathes by 3% on a 4 s loop. | 631 px | [Motion](_checks/pineapple-cake-motion.png) · [40/120 px](_checks/pineapple-cake-silhouette.png) |
+| Red-white-blue bag (紅白藍袋) | Zip fades, then the letter springs up behind the near lip. The bag sways 3.5° on a 4.1 s loop. | 720 px | [Motion](_checks/rwb-bag-motion.png) · [40/120 px](_checks/rwb-bag-silhouette.png) |
+| Tingkat tiffin carrier (錫格飯盒) | The clipped top tier lifts by its brass handle to reveal an open enamel bowl. Steam drifts on a 4.2 s loop. | 721 px | [Motion](_checks/tiffin-motion.png) · [40/120 px](_checks/tiffin-silhouette.png) |
+| Egg-tart box (葡撻盒) | The wax-red paper lid lifts to reveal the custard tarts and envelope. Steam drifts on a 3.9 s loop. | 733 px | [Motion](_checks/egg-tart-motion.png) · [40/120 px](_checks/egg-tart-silhouette.png) |
 
-- Pastry shape and crust reference inspected on 2026-11-15. Photo by Ocdp, CC0. [Taiwanese_Pineapple_Cake_001.jpg](https://commons.wikimedia.org/wiki/File:Taiwanese_Pineapple_Cake_001.jpg) · [Exact source file](https://upload.wikimedia.org/wikipedia/commons/e/e2/Taiwanese_Pineapple_Cake_001.jpg)
-- Approved design and batch order. [Regional vessels spec at PR #132](https://github.com/royai202600-cyber/time-capsule/blob/152813ed156011afab14f1c4e75295fe6b563789/docs/design/regional-vessels.md#1-new-regional-vessels-12)
-- Review sheets and stack proof. [Motion and anchors](_checks/pineapple-cake-motion.png) · [40/120 px](_checks/pineapple-cake-silhouette.png) · [Exact stack](_checks/pineapple-cake-check.json) · [Full contact sheet](_checks/contact-sheet.png)
+The pineapple sleeve and tray share a 1254→790 downscale from the original registered sources. The closed center is 72.5 px left of the canvas center. The fully open alpha bounds are x 124–992 and y 523–927 inclusive, with the letter fully visible. The lid of the Egg-tart box uses a small plain brass foil accent sampled from the Pineapple-cake illustration. All four rests match their layer stacks exactly.
+
+Real references inspected on 2026-11-15
+
+- Taiwan. The square shortcrust and browned sides in Ocdp’s CC0 photo informed the pastries. [Taiwanese_Pineapple_Cake_001.jpg](https://commons.wikimedia.org/wiki/File:Taiwanese_Pineapple_Cake_001.jpg) · [Exact photo](https://upload.wikimedia.org/wikipedia/commons/e/e2/Taiwanese_Pineapple_Cake_001.jpg)
+- Hong Kong. The photograph by NG WA KidS~commonswiki shows the woven stripes and seams of generic market carry-alls. [HK Red-White-Blue bags.JPG](https://commons.wikimedia.org/wiki/File:HK_Red-White-Blue_bags.JPG) · [Exact photo](https://upload.wikimedia.org/wikipedia/commons/f/f5/HK_Red-White-Blue_bags.JPG)
+- Singapore. De MiNi art’s workshop photo shows the stacked blue enamel tiers, painted floral panels and carrying frame of a Singapore Peranakan tingkat. The original illustration uses a simpler floral band and brass side clips. [Workshop listing](https://www.pelago.com/en/activity/pa8ir-mini-tingkat-painting-workshop-singapore/) · [0829-0713_mini-tingkat-painting-workshop-singapore-pelago0-xlarge.jpg](https://www.pelago.com/img/products/SG-Singapore/mini-tingkat-painting-workshop/0829-0713_mini-tingkat-painting-workshop-singapore-pelago0-xlarge.jpg)
+- Macau. The photograph shows the tarts’ fluted laminated shells, yellow custard and toasted patches. [Macau Eggtart.jpg](https://commons.wikimedia.org/wiki/File:Macau_Eggtart.jpg) · [Exact photo](https://upload.wikimedia.org/wikipedia/commons/0/05/Macau_Eggtart.jpg)
+
+[Approved regional spec at PR #132](https://github.com/royai202600-cyber/time-capsule/blob/152813ed156011afab14f1c4e75295fe6b563789/docs/design/regional-vessels.md#1-new-regional-vessels-12) · [Full contact sheet](_checks/contact-sheet.png) · [16-master alpha and size audit](_checks/rv-r1-assets.json)

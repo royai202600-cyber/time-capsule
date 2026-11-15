@@ -9557,7 +9557,7 @@
       ],
       "sha256": "bb0c0b6db547313fdc7dc5014d06dff5328e926809740c49b7fa1b1b93599501"
     },
-    "postprocess": "Same 1254→640 downscale and placement for both registered parts. Assembled from the closed keyframe over transparent pixels; the sleeve follows the isolated edit and the visible ink-blue end uses the first closed illustration.",
+    "postprocess": "Same 1254→790 downscale and placement for both registered parts. Assembled from the closed keyframe over transparent pixels; the sleeve follows the isolated edit and the visible ink-blue end uses the first closed illustration.",
     "vessel": {
       "id": "pineapple-cake",
       "opening": "F",
@@ -9574,8 +9574,8 @@
           "file": "vessel-pineapple-cake-tray.png",
           "role": "slide",
           "pivot": {
-            "x": 726,
-            "y": 777
+            "x": 705,
+            "y": 750
           },
           "open": [
             {
@@ -9585,13 +9585,13 @@
             },
             {
               "at": 0.5,
-              "x": 0.109375,
-              "y": 0.01171875
+              "x": 0.1162109375,
+              "y": 0.0126953125
             },
             {
               "at": 1,
-              "x": 0.21875,
-              "y": 0.0234375
+              "x": 0.232421875,
+              "y": 0.025390625
             }
           ]
         },
@@ -9607,13 +9607,13 @@
         }
       ],
       "mouth": {
-        "x": 707,
-        "y": 735
+        "x": 682,
+        "y": 698
       },
-      "baseY": 899,
+      "baseY": 900,
       "sparkle": {
-        "x": 670,
-        "y": 676
+        "x": 636,
+        "y": 625
       },
       "glint": null,
       "openGlow": null,
@@ -9668,5 +9668,639 @@
     },
     "postprocess": "Isolated edit of the closed source. Registered the tray to the sleeve opening and aligned its exterior wall to the original closed blue end. Removed stray alpha and used the shared downscale and placement.",
     "web_export": "public/art/vessels/vessel-pineapple-cake-tray.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rwb-bag.png",
+    "what": "Red-white-blue bag — assembled",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nCreate the CLOSED assembled sprite of the traditional plain Hong Kong Red-white-blue bag (紅白藍袋), a soft-sided rectangular reusable woven-nylon carry-all. Image 1 is the mandatory style reference. Give it a single front-facing broad panel with a narrow visible side gusset, fine fabric grain, and repeating woven wax-red, paper-white and ink-blue vertical bands with subtle woven cross-stripes. Strong silhouette at 40 px, two short navy webbing loop handles visible above the bag and angled subtly toward the outside left and right so the middle can later admit a letter. Across the top is a straight, almost horizontal ink-blue zipper seam, seen very slightly from above, with a tiny brass pull near the right quarter. Completely zipped closed, softly filled, with simple heavy navy outline. Everyday market carry-all, free of all labels, tags, logos, emblems, lettering, stickers, flags, patterned trademarks or designer detailing. No ground or cast shadow, true alpha outside. Use a square canvas with about 70% width occupancy, bottom y about 88% of image height and above 100 px top margin. Keep the bag generously tall and full rather than a thin satchel.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "844cc7f81f9bfe999947a0d0a799814f5d7908aea3f9b705df06072991bc5eeb"
+    },
+    "postprocess": "Composited at the initial keyframes. Original closed weave and brass zipper detail are preserved. Shared native 1254→939 downscale to the common 1024 canvas.",
+    "vessel": {
+      "id": "rwb-bag",
+      "opening": "K",
+      "idleMs": 4100,
+      "idle": [
+        {
+          "type": "sway",
+          "deg": 3.5,
+          "pivot": {
+            "x": 512,
+            "y": 894
+          }
+        }
+      ],
+      "layers": [
+        {
+          "name": "bag",
+          "file": "vessel-rwb-bag-bag.png",
+          "role": "static",
+          "open": [
+            {
+              "at": 0
+            }
+          ]
+        },
+        {
+          "name": "letter",
+          "file": "vessel-rwb-bag-letter.png",
+          "role": "pop",
+          "open": [
+            {
+              "at": 0,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 0,
+              "scale": 0.93
+            },
+            {
+              "at": 0.29,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 0,
+              "scale": 0.93
+            },
+            {
+              "at": 0.37,
+              "x": 0.0,
+              "y": -0.04296875,
+              "opacity": 1,
+              "scale": 0.98
+            },
+            {
+              "at": 0.6,
+              "x": 0.0,
+              "y": -0.1259765625,
+              "opacity": 1,
+              "scale": 1.045
+            },
+            {
+              "at": 0.78,
+              "x": 0.0,
+              "y": -0.1533203125,
+              "opacity": 1,
+              "scale": 1.035
+            },
+            {
+              "at": 1,
+              "x": 0.0,
+              "y": -0.1328125,
+              "opacity": 1,
+              "scale": 1
+            }
+          ],
+          "pivot": {
+            "x": 508,
+            "y": 490
+          }
+        },
+        {
+          "name": "front",
+          "file": "vessel-rwb-bag-front.png",
+          "role": "static",
+          "open": [
+            {
+              "at": 0
+            }
+          ]
+        },
+        {
+          "name": "zip",
+          "file": "vessel-rwb-bag-zip.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "opacity": 1
+            },
+            {
+              "at": 0.3,
+              "opacity": 0
+            },
+            {
+              "at": 1,
+              "opacity": 0
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 508,
+        "y": 357
+      },
+      "sparkle": {
+        "x": 773,
+        "y": 333
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null,
+      "baseY": 897
+    },
+    "web_export": "public/art/vessels/vessel-rwb-bag.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rwb-bag-bag.png",
+    "what": "Red-white-blue bag — bag",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference. Image 2 is the closed assembled Hong Kong nylon bag and edit target. Keep its exact two handles, exact camera, exact size, exact position, exact stripe registration, identical bottom and sides. Only edit the narrow top opening between both handles: the brass slider pull disappears and the zipper is unzipped. Dark navy lined interior clearly visible as a slim open slot running from left to right, with a slightly scooped near fabric lip and narrow far zipper lip. Make interior complete with navy lining and no holes. Do not go above the existing top contour or change the exterior silhouette. Keep the handles in their original position. Do not add letters/envelopes/contents, other props, cast shadow or ground. True transparency elsewhere.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "01abd54d6d7741475846057c8dd3ff008bd8a6318832d7eb953f8cd46edb6e3d"
+    },
+    "postprocess": "Registered the generated complete navy-lined opening onto the original lower bag panel at the zipper band. Shared native 1254→939 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-rwb-bag-bag.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rwb-bag-letter.png",
+    "what": "Red-white-blue bag — letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference; image 2 is the closed Hong Kong market bag and this is an isolated animation-part edit from it. Replace the bag with ONLY a small cream sealed envelope, at the exact horizontal midpoint of the bag zipper, centered around x=610 y=483 at the size of image 2 (1254 square). It should be approximately 260 pixels wide and 170 pixels tall on that 1254 canvas. Show the front of the envelope nearly face-on and level, with a plum ink outline, simple back-flap diagonals, muted red plain round wax seal. No text or marks, no wing, no ribbon, no hand. Preserve the original canvas and view; every other pixel fully transparent including where the bag used to be. No floor, shadow or props.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "fbc57b2029504dcbf7175c250e05b8079736b93338f4eb792f97a5356f5b107b"
+    },
+    "postprocess": "Isolated envelope downscaled and registered within the handle gap. K pop-up overshoots and settles inside the opening. Shared native 1254→939 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-rwb-bag-letter.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rwb-bag-front.png",
+    "what": "Red-white-blue bag — front",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference. Image 2 is the closed assembled Hong Kong nylon bag and edit target. Keep its exact two handles, exact camera, exact size, exact position, exact stripe registration, identical bottom and sides. Only edit the narrow top opening between both handles: the brass slider pull disappears and the zipper is unzipped. Dark navy lined interior clearly visible as a slim open slot running from left to right, with a slightly scooped near fabric lip and narrow far zipper lip. Make interior complete with navy lining and no holes. Do not go above the existing top contour or change the exterior silhouette. Keep the handles in their original position. Do not add letters/envelopes/contents, other props, cast shadow or ground. True transparency elsewhere.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "01abd54d6d7741475846057c8dd3ff008bd8a6318832d7eb953f8cd46edb6e3d"
+    },
+    "postprocess": "Extracted the interior edit’s near lip to occlude the rising envelope. Shared native 1254→939 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-rwb-bag-front.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-rwb-bag-zip.png",
+    "what": "Red-white-blue bag — zip",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nCreate the CLOSED assembled sprite of the traditional plain Hong Kong Red-white-blue bag (紅白藍袋), a soft-sided rectangular reusable woven-nylon carry-all. Image 1 is the mandatory style reference. Give it a single front-facing broad panel with a narrow visible side gusset, fine fabric grain, and repeating woven wax-red, paper-white and ink-blue vertical bands with subtle woven cross-stripes. Strong silhouette at 40 px, two short navy webbing loop handles visible above the bag and angled subtly toward the outside left and right so the middle can later admit a letter. Across the top is a straight, almost horizontal ink-blue zipper seam, seen very slightly from above, with a tiny brass pull near the right quarter. Completely zipped closed, softly filled, with simple heavy navy outline. Everyday market carry-all, free of all labels, tags, logos, emblems, lettering, stickers, flags, patterned trademarks or designer detailing. No ground or cast shadow, true alpha outside. Use a square canvas with about 70% width occupancy, bottom y about 88% of image height and above 100 px top margin. Keep the bag generously tall and full rather than a thin satchel.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "844cc7f81f9bfe999947a0d0a799814f5d7908aea3f9b705df06072991bc5eeb"
+    },
+    "postprocess": "Isolated the original closed seam and brass pull in the matching zipper band; fades before the envelope rises. Shared native 1254→939 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-rwb-bag-zip.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-tiffin.png",
+    "what": "Tingkat tiffin carrier — assembled",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference. Create the CLOSED assembled sprite of an original Singapore Straits/Peranakan enamel tingkat carrier (錫格飯盒). Show three broad shallow stacked round enamel food tiers of identical diameter, defined by two strong slightly curved seams, with a domed lid and a very short sturdy brass carry handle on the TOP TIER, and small brass side clips. Keep clips clear of the middle/lower tier opening seam or use two separated clasps. Traditional painted enamel character: strong glass-blue and ink-blue bands, paper-white flower silhouettes and very simple leafy stems rendered exclusively in the approved blues and paper, with the enamel rims cream/paper. Original decoration, a few large readable flowers only, no text, emblems, logos, trade dress or extra props. Show complete closed object in a shallow three-quarter, slightly elevated angle, looking down enough to see the broad ellipse of the top, and use a squat wide silhouette so at 40 px all three tiers and the short handle read. Width and height each about 69–72% of a square transparent canvas, centered horizontally with bottom about 88%; leave space above for lifting the top tier. Outline in navy/plum, storybook ink and low sheen enamel, fine grain. No cast shadow or ground, true alpha outside entire silhouette. Entirely closed, no visible food or letter.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "26c2f969474226fb9b0a98e2c4445b8396d8ff624e40c47f6c4bfef9c89967c9"
+    },
+    "postprocess": "Composited at the initial keyframes from the three registered layers. Shared native 1254→1091 downscale to the common 1024 canvas.",
+    "vessel": {
+      "id": "tiffin",
+      "opening": "B",
+      "idleMs": 4200,
+      "idle": [],
+      "layers": [
+        {
+          "name": "stack",
+          "file": "vessel-tiffin-stack.png",
+          "role": "static",
+          "open": [
+            {
+              "at": 0
+            }
+          ]
+        },
+        {
+          "name": "top",
+          "file": "vessel-tiffin-top.png",
+          "role": "lift",
+          "open": [
+            {
+              "at": 0,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 1
+            },
+            {
+              "at": 0.23,
+              "x": 0.0,
+              "y": -0.0478515625,
+              "opacity": 1
+            },
+            {
+              "at": 0.5,
+              "x": 0.0,
+              "y": -0.0859375,
+              "opacity": 0.56
+            },
+            {
+              "at": 0.73,
+              "x": 0.0,
+              "y": -0.091796875,
+              "opacity": 0
+            },
+            {
+              "at": 1,
+              "x": 0.0,
+              "y": -0.091796875,
+              "opacity": 0
+            }
+          ],
+          "pivot": {
+            "x": 515,
+            "y": 145
+          }
+        },
+        {
+          "name": "steam",
+          "file": "vessel-tiffin-steam.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 0.55
+            },
+            {
+              "at": 0.3,
+              "x": 0.0,
+              "y": -0.01171875,
+              "opacity": 0.66
+            },
+            {
+              "at": 1,
+              "x": 0.0,
+              "y": -0.0498046875,
+              "opacity": 1
+            }
+          ],
+          "idle": [
+            {
+              "type": "drift",
+              "amount": 0.04
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 515,
+        "y": 510
+      },
+      "sparkle": {
+        "x": 405,
+        "y": 144
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null,
+      "baseY": 897
+    },
+    "web_export": "public/art/vessels/vessel-tiffin.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-tiffin-stack.png",
+    "what": "Tingkat tiffin carrier — stack",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference; image 2 is the edit target. Remove the entire top tier, lid, handle and its two gold clips from the enamel food carrier. The artwork should show exactly the original bottom TWO blue tiers below the first blue-to-cream curved seam, at their original coordinates and size, with their original flowers and curves. Do not move the bottom. Add a physically complete open enamel food bowl at their top, looking down into a visible ellipse that ends exactly at the retained cream rim. Draw its full interior with a little rice, leafy greens, carrot-orange vegetables and a small folded cream note/envelope with wax-red sealing dot on the food, all separated cleanly and low in the bowl. No steam in this edit. No other objects, shadow, text, emblems or ground. Keep everything above this original seam fully transparent outside the open ellipse.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "d747850cd44122c8b71362f22b76c668746022f75f4ccfd85d43a7baf5d7af61"
+    },
+    "postprocess": "Registered the complete open two-tier edit to the source base, including enamel lining, food and envelope. Shared native 1254→1091 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-tiffin-stack.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-tiffin-top.png",
+    "what": "Tingkat tiffin carrier — top",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference; image 2 is the assembled carrier and this is an isolation edit. Keep only the top tier of the pictured Peranakan tingkat at the exact same original size and position: brass carry handle, blue domed lid and its side clips, and the topmost blue enamel body band with its white flower down through its lower dark-blue edge. Remove both lower tiers completely, ending at the curved line between the top blue band and the middle tier's cream rim. The retained top-tier unit has a finished lower edge suitable for when it lifts off. Do not redraw its motifs or move it on the canvas. Fully transparent everywhere else. No food, ground, lettering, logos, emblems or props.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "e6318996e5e0151a538e3c7dee49f62fd1b59e440e86b2c1fb6e3b574e64399b"
+    },
+    "postprocess": "Complete isolated top tier, handle and small side clips, registered over the stack. Shared native 1254→1091 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-tiffin-top.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-tiffin-steam.png",
+    "what": "Tingkat tiffin carrier — steam",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference; image 2 is the standing enamel food carrier, the edit target. Remove all of the carrier and retain only a tiny cluster of three independent gently curling, soft translucent watercolor wisps rising off warm rice, around the center of the square, in cool glass-blue and paper white. Wisps should each be narrow and have tapered ends, visible on cool paper but naturally fading to real alpha. Separate the wisps with clear transparent gaps. Overall shape approximately 300 px wide and 220 px tall on the 1254 px square. No outline, no dark or grey shadow, no solid block of fog or glow, no container, no backdrop, no text. True transparency around everything.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "9bf7bdeb82f601765fd60dc6fd282fea16c83e9adc305c48d5b60ec5f5fe1ac1"
+    },
+    "postprocess": "Kept independent steam alpha, softened edges and registered the glass-blue steam over the open enamel bowl. Shared native 1254→1091 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-tiffin-steam.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-egg-tart.png",
+    "what": "Egg-tart box — assembled",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference. Create a single CLOSED assembled sprite of an original, unbranded Macau Portuguese egg-tart bakery box (葡撻盒). A generously tall square wax-red and cream paper pastry carton with a separate shallow drop-over lid. Decorate its red lid with one substantial cream diamond panel containing a simple blue or wax-red line-art illustration of a single fluted round egg tart from above (ordinary printed line art, no trademark), and two or three plain corner lines, clean and readable at 40 px. Strong dark-plum outline, cream front bottom panels and a little paper grain like the illustrated tin and envelope in the style reference. Show a distinct lid-to-box seam around the whole rectangular silhouette; the lid will lift vertically in a later edit. Use a slightly elevated three-quarter view with generous visible front and lid, depth substantial enough to distinguish the box from the flat pineapple-cake slider. One solid assembled object, no contents visible, nothing else. No text, bakery branding, monograms, flags, emblems, cast shadow or floor. True alpha outside. Full box fills around 72% of square canvas width, has clear top margin for motion, and rests around y=88%.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "e760b679b9743e624926e72b713c114028ee528c22e6126c65ca2caf297eb528"
+    },
+    "postprocess": "Composited at the initial keyframes from the three registered layers. Shared native 1254→950 downscale to the common 1024 canvas.",
+    "vessel": {
+      "id": "egg-tart",
+      "opening": "B",
+      "idleMs": 3900,
+      "idle": [],
+      "layers": [
+        {
+          "name": "box",
+          "file": "vessel-egg-tart-box.png",
+          "role": "static",
+          "open": [
+            {
+              "at": 0
+            }
+          ]
+        },
+        {
+          "name": "lid",
+          "file": "vessel-egg-tart-lid.png",
+          "role": "lift",
+          "open": [
+            {
+              "at": 0,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 1
+            },
+            {
+              "at": 0.22,
+              "x": 0.0,
+              "y": -0.0498046875,
+              "opacity": 1
+            },
+            {
+              "at": 0.5,
+              "x": 0.0,
+              "y": -0.109375,
+              "opacity": 0.57
+            },
+            {
+              "at": 0.76,
+              "x": 0.0,
+              "y": -0.125,
+              "opacity": 0
+            },
+            {
+              "at": 1,
+              "x": 0.0,
+              "y": -0.125,
+              "opacity": 0
+            }
+          ],
+          "pivot": {
+            "x": 513,
+            "y": 427
+          }
+        },
+        {
+          "name": "steam",
+          "file": "vessel-egg-tart-steam.png",
+          "role": "fade",
+          "open": [
+            {
+              "at": 0,
+              "x": 0.0,
+              "y": 0.0,
+              "opacity": 0.36
+            },
+            {
+              "at": 0.25,
+              "x": 0.0,
+              "y": -0.0029296875,
+              "opacity": 0.6
+            },
+            {
+              "at": 1,
+              "x": 0.0,
+              "y": -0.0400390625,
+              "opacity": 1
+            }
+          ],
+          "idle": [
+            {
+              "type": "drift",
+              "amount": 0.04
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 537,
+        "y": 491
+      },
+      "sparkle": {
+        "x": 618,
+        "y": 582
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null,
+      "baseY": 897
+    },
+    "web_export": "public/art/vessels/vessel-egg-tart.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-egg-tart-box.png",
+    "what": "Egg-tart box — box",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference; image 2 is the exact assembled pose and edit target. Remove only the red lid, so the cream paper pastry box interior is fully revealed at the exact height where the separate lid used to sit. Preserve the cream lower front and right walls, same edges, proportions and base, blank border lines, camera, envelope and 1254 canvas placement with no restaging. Use the original top footprint for the full open rectangular mouth. Seat three small Portuguese egg tarts inside it, with fluted golden laminated pastry, yellow custard and distinctly toasted tea-brown caramel freckles, and one folded cream letter with a small simple wax-red seal at the front right, alongside the pastries. Make the view into the box and all interior surfaces complete; no dark artificial holes. No steam in this edit. No lid, logos, text, emblems, cast shadow, or ground. Only the open cream pastry box with its contents on true transparency.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "17b987af5075258a26467fca8e792080a8b706320c9658516639629eb1d6266c"
+    },
+    "postprocess": "Registered the complete open cream pastry carton, browned-custard pastries and envelope under the lid. Shared native 1254→950 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-egg-tart-box.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-egg-tart-lid.png",
+    "what": "Egg-tart box — lid",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference. Image 2 is the closed illustrated Macau egg-tart pastry box and the edit target. Isolate only the entire wax-red shallow lid, with its paper rim, exactly at its original dimensions, angle and coordinates, preserving the printed cream diamond and ordinary stylized tart illustration pixel-for-pixel where possible. Remove all of the cream lower box below its dark-plum lid-to-box seam. The lid is closed and viewed from above; finish its narrow lower edge like the original. No other pieces, floor, shadow, logos, text, or other objects. Fully transparent elsewhere on the same square canvas.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "4f158fabb4b1a00b078959aac50b413c213c91d1586e18b6dcb9ff25809805ac"
+    },
+    "postprocess": "Isolated the closed red pastry lid, with the original printed tart drawing and a small plain brass foil accent sampled from the pineapple-cake source. Shared native 1254→950 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-egg-tart-lid.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-egg-tart-steam.png",
+    "what": "Egg-tart box — steam",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nRoy's approved food-colour exception (egg yellow, salmon, carrot orange, leafy green, rice white, tea brown) applies only to the food inside pineapple-cake, tiffin and egg-tart. Everything else stays in the palette.\n\nImage 1 is the mandatory style reference. Image 2 is the closed egg-tart box and edit target. Remove the box completely and isolate only two small, gently curling translucent steam wisps of warm pastries on the same empty square. Use soft tinted glass-blue watercolor, with airy alpha, taper and clean gaps between the wisps. No outlines or opaque highlights, no objects, no ground, no background or lighting wash. Wisps float vertically, centered, occupying at most about a quarter of the full canvas. True transparency. The two wisps are fully independent loose air particles.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "closed assembled generation"
+    ],
+    "native_source": {
+      "size_px": [
+        1254,
+        1254
+      ],
+      "sha256": "ff94d8696e0c0f3a79830acde7d6c194003870333ae96276a0693c08ff890efe"
+    },
+    "postprocess": "Kept independent steam alpha, softened edges and registered the translucent wisps above the pastry carton. Shared native 1254→950 downscale to the common 1024 canvas.",
+    "web_export": "public/art/vessels/vessel-egg-tart-steam.webp"
   }
 ]
