@@ -1,0 +1,180 @@
+{
+  "vessels": {
+    "teapot": {
+      "opening": "B",
+      "closed_rgba_match": true,
+      "closed_width_px": 724,
+      "baseY": 903,
+      "sampled_poses": 101,
+      "alpha_bounds_closed_mid_open": [
+        [
+          150,
+          393,
+          874,
+          905
+        ],
+        [
+          150,
+          269,
+          874,
+          905
+        ],
+        [
+          150,
+          145,
+          874,
+          905
+        ]
+      ],
+      "minimum_canvas_clearance_px": 119,
+      "exports": {
+        "vessel-teapot.webp": {
+          "size": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "vessel-teapot-pot.webp": {
+          "size": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "vessel-teapot-lid.webp": {
+          "size": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "vessel-teapot-steam.webp": {
+          "size": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    "sky-lantern": {
+      "opening": "B",
+      "closed_rgba_match": true,
+      "closed_width_px": 638,
+      "baseY": 903,
+      "sampled_poses": 101,
+      "alpha_bounds_closed_mid_open": [
+        [
+          193,
+          149,
+          831,
+          905
+        ],
+        [
+          220,
+          76,
+          804,
+          905
+        ],
+        [
+          246,
+          33,
+          777,
+          905
+        ]
+      ],
+      "minimum_canvas_clearance_px": 33,
+      "paper_silhouette_alpha_matches_prior_master": true,
+      "closed_footprint_matches_prior_master": true,
+      "paper_to_letter_clearance_fully_open_px": 82,
+      "opaque_palette_pixel_counts_at_40px": {
+        "red": 254,
+        "cream": 264
+      },
+      "exports": {
+        "vessel-sky-lantern.webp": {
+          "size": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "vessel-sky-lantern-ring.webp": {
+          "size": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "vessel-sky-lantern-paper.webp": {
+          "size": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "vessel-sky-lantern-glow.webp": {
+          "size": [
+            512,
+            512
+          ],
+          "alpha_corners": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    }
+  },
+  "existing_manifest_entries": 367,
+  "preserved_art": [
+    {
+      "reference": "e021254eeac53e4b4f17420cf1cc5a66bd5810b0",
+      "unchanged_files": 1356,
+      "sha256_of_sorted_sha256sum_list": "dc1d848fffad8fbc3862308f8b48bb9c200d5e7f240c4edf9c11ac4550083027"
+    },
+    {
+      "reference": "029fbea7f7344e62b64a16a8eb6015eafe1a1018",
+      "unchanged_files": 1298,
+      "sha256_of_sorted_sha256sum_list": "1cad39a6f788205bbb790d3a8fb342f4d446417b8a782ab998251b6889f78f81"
+    }
+  ]
+}

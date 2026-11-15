@@ -487,6 +487,29 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `stamps/stamp-guia.png` | Guia Passport stamp, lighthouse tower | 1024×1024 | ink blue |
 | `stamps/stamp-hkust.png` | HKUST curved academic building / Piazza Passport stamp | 1024×1024 | ink blue; pending Roy |
 | `stamps/stamp-hunt-hkust-2026-11.png` | HKUST City Hunt stamp; double ring, curved academic building | 1024×1024 | ink blue; pending Roy |
+| `vessels/vessel-pineapple-cake.png` | Pineapple cake pastry — closed assembly | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-pineapple-cake-left.png` | Pineapple cake — left half crust | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-pineapple-cake-right.png` | Pineapple cake — right half crust | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-pineapple-cake-left-filling.png` | Pineapple cake — full left cut face with pineapple filling | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-pineapple-cake-right-filling.png` | Pineapple cake — full right cut face with pineapple filling | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-pineapple-cake-letter.png` | Pineapple cake — rolled cream letter | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-teapot.png` | Oolong teapot — closed assembly | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-teapot-pot.png` | Oolong teapot — clay pot and small cup with complete interior and rolled letter | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-teapot-lid.png` | Oolong teapot — lift-off clay lid with brass knob | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-teapot-steam.png` | Oolong teapot — soft steam curls | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern.png` | Pingxi sky lantern — closed assembly with wax-red and cream panels | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern-ring.png` | Pingxi sky lantern — bamboo ring, fuel cake, flame and upright rolled letter | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern-paper.png` | Pingxi sky lantern — wax-red and cream lift-off paper shell | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-sky-lantern-glow.png` | Pingxi sky lantern — soft internal glow | 1024×1024 | RV-TW; see manifest |
+| `vessels/vessel-rwb-bag.png` | Red-white-blue bag — assembled | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-bag.png` | Red-white-blue bag — bag | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-letter.png` | Red-white-blue bag — letter | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-front.png` | Red-white-blue bag — front | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-rwb-bag-zip.png` | Red-white-blue bag — zip | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin.png` | Tingkat tiffin carrier — assembled | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin-stack.png` | Tingkat tiffin carrier — stack | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin-top.png` | Tingkat tiffin carrier — top | 1024×1024 | RV-R1; see manifest |
+| `vessels/vessel-tiffin-steam.png` | Tingkat tiffin carrier — steam | 1024×1024 | RV-R1; see manifest |
 
 ## Review
 
@@ -553,3 +576,25 @@ The wax-red cap lifts above the lantern room and reveals a rolled letter on the 
 | `hunt-covers/hunt-cover-park.png` | 1280×720 | Opaque full-bleed cover for a fictional park. |
 
 [Six-template review](_checks/private-hunt-quest-templates-review.png) shows each WebP at 46 px over land and water and in a centered 16:9 crop. The 3D pin and original review sheet are preserved in commit `f55af42`. The stamp and park cover remain under review. Roy approved the park template as-is. The remaining five templates await set review. The backend needs to add `oldStreet` to its template allowlist.
+
+### Taiwan wave 1 and retained R1 vessels
+
+| Vessel | Opening and idle | Closed width | Review |
+|---|---|---:|---|
+| Pineapple cake (鳳梨酥) | H: the two halves swivel apart, revealing pineapple filling and a rolled letter. The pastry bobs by 3% over 4 s; sparkle on the crust. | 724 px | [Motion](_checks/pineapple-cake-motion.png) · [40/120 px](_checks/pineapple-cake-silhouette.png) |
+| Oolong teapot (台灣茶壺) | B: the brass-knob lid lifts to reveal a rolled letter inside. Soft steam drifts above the spout over 4.1 s. | 724 px | [Motion](_checks/teapot-motion.png) · [40/120 px](_checks/teapot-silhouette.png) |
+| Pingxi sky lantern (平溪天燈) | B: the cream and wax-red paper shell rises to uncover an upright letter and the central flame on a fuel cake. The warm lower glow flickers as the vessel bobs over 4.4 s. | 638 px | [Motion](_checks/sky-lantern-motion.png) · [40/120 px](_checks/sky-lantern-silhouette.png) |
+| Red-white-blue bag (紅白藍袋) | Zip fades, then the letter springs up behind the near lip. The bag sways 3.5° on a 4.1 s loop. | 720 px | [Motion](_checks/rwb-bag-motion.png) · [40/120 px](_checks/rwb-bag-silhouette.png) |
+| Tingkat tiffin carrier (錫格飯盒) | The clipped top tier lifts by its brass handle to reveal an open enamel bowl. Steam drifts on a 4.2 s loop. | 721 px | [Motion](_checks/tiffin-motion.png) · [40/120 px](_checks/tiffin-silhouette.png) |
+
+The pineapple cake rests on base y=904. Its five animation layers are two crust halves, two complete cut faces registered to the crust, and the letter. At rest the cut faces and letter are hidden and the crust halves exactly match the closed master. [Pineapple-cake alpha and size audit](_checks/pineapple-cake-assets.json) · [Exact stack](_checks/pineapple-cake-check.json).
+
+Real references inspected on 2026-11-15
+
+- Taiwan. The rounded square shortcrust, browned sides and fibrous filling in Ocdp’s CC0 photo informed the pastry. [Taiwanese_Pineapple_Cake_001.jpg](https://commons.wikimedia.org/wiki/File:Taiwanese_Pineapple_Cake_001.jpg) · [Exact photo](https://upload.wikimedia.org/wikipedia/commons/e/e2/Taiwanese_Pineapple_Cake_001.jpg)
+- Oolong teapot. Neptunati’s public domain photo shows the small round clay pot, short spout and small cups of a gongfu tea service. [Gong fu cha.jpg](https://commons.wikimedia.org/wiki/File:Gong_fu_cha.jpg) · [Exact photo](https://upload.wikimedia.org/wikipedia/commons/8/89/Gong_fu_cha.jpg). The [National Museum of Natural Science](https://www.nmns.edu.tw/en/our-research/featured/Collection-E00283/) documents the use of small pots and cups for gongfu tea in Taiwan.
+- Pingxi sky lantern. Mathgeek1978’s CC BY 4.0 photo from the 2024 Pingxi festival shows the inflated paper shoulders, warm light and open base. [SkyLanternFestivalPic.jpg](https://commons.wikimedia.org/wiki/File:SkyLanternFestivalPic.jpg) · [Exact photo](https://upload.wikimedia.org/wikipedia/commons/6/6a/SkyLanternFestivalPic.jpg).
+- Hong Kong. The photograph by NG WA KidS~commonswiki shows the woven stripes and seams of generic market carry-alls. [HK Red-White-Blue bags.JPG](https://commons.wikimedia.org/wiki/File:HK_Red-White-Blue_bags.JPG) · [Exact photo](https://upload.wikimedia.org/wikipedia/commons/f/f5/HK_Red-White-Blue_bags.JPG)
+- Singapore. De MiNi art’s workshop photo shows the stacked blue enamel tiers, painted floral panels and carrying frame of a Singapore Peranakan tingkat. The original illustration uses a simpler floral band and brass side clips. [Workshop listing](https://www.pelago.com/en/activity/pa8ir-mini-tingkat-painting-workshop-singapore/) · [0829-0713_mini-tingkat-painting-workshop-singapore-pelago0-xlarge.jpg](https://www.pelago.com/img/products/SG-Singapore/mini-tingkat-painting-workshop/0829-0713_mini-tingkat-painting-workshop-singapore-pelago0-xlarge.jpg)
+
+[Updated regional spec at PR #132](https://github.com/royai202600-cyber/time-capsule/blob/03483e26b1b4221ad1b2f82a535f0a0663e23d27/docs/design/regional-vessels.md#1-new-regional-vessels-wave-1-12) · [Full contact sheet](_checks/contact-sheet.png) · [Retained bag and tingkat alpha and size audit](_checks/rv-r1-assets.json)
