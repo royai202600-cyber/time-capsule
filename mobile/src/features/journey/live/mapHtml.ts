@@ -139,7 +139,7 @@ function rasterStyle() {
 }
 
 /** follow: false keeps the camera where it starts instead of following the player (the quest editor). */
-export function mapHtml({ pmtiles, center, follow = true }: { pmtiles: string | null; center: { lat: number; lng: number }; follow?: boolean }) {
+export function mapHtml({ pmtiles, center, follow = true, cityWave = false }: { pmtiles: string | null; center: { lat: number; lng: number }; follow?: boolean; cityWave?: boolean }) {
   const style = pmtiles ? vectorStyle(pmtiles) : rasterStyle();
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <link rel="stylesheet" href="${MAPLIBRE}/maplibre-gl.css">
@@ -195,6 +195,7 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.sealed .v{filter:grayscale(.2)}
 .pin .cracks{pointer-events:none}
 .pin.corrupted .v:not(.cracks){filter:saturate(.55) brightness(.84)}
+.pin.corrupted.done .pin-body{opacity:.4}
 .pin.corrupted.rare .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
 .pin.corrupted.uncommon .disc{background:radial-gradient(${C.lightBlue}99,transparent 70%)}
 .pin.waypost{width:40px;height:50px}
@@ -338,6 +339,27 @@ function stroll(to,after){if(!youMark)return;const from=youMark.getLngLat(),f={l
   requestAnimationFrame(step)}
 const walkTo=to=>{if(!you)return;walkFrom={lat:you.lat,lng:you.lng};walkAt={lat:to.lat,lng:to.lng};stroll(walkAt)};
 const walkHome=()=>{walkAt=null;walkFrom=null;stroll({lat:you.lat,lng:you.lng},()=>{walkLeft=null})};
+// The admin can receive over a thousand wave pins. At overview zoom, show one
+// capsule per screen cell and keep the selected pin. Zoom in to inspect every pin.
+function visiblePins(){
+  if(!${cityWave})return state.pins;
+  const canvas=map.getCanvas(), cells=new Set(), pins=[];
+  const thin=map.getZoom()<pickupZoom(map.getCenter().lat,100)-1;
+  for(const p of state.pins){
+    if(p.kind==='corrupted'&&!p.selected){
+      const {x,y}=map.project([p.lng,p.lat]);
+      if(x<-32||y<-32||x>canvas.clientWidth+32||y>canvas.clientHeight+32)continue;
+      if(thin){
+        const cell=Math.floor(x/24)+':'+Math.floor(y/24);
+        if(cells.has(cell))continue;
+        cells.add(cell);
+      }
+    }
+    pins.push(p);
+  }
+  return pins;
+}
+if(${cityWave}){map.on('moveend',render);map.on('resize',render)}
 function render(){
   if(you){
     if(!youMark){const el=document.createElement('div');el.className='you'+(state.figure?' fig':'');el.innerHTML='<div class="pulse"></div><div class="cone"></div>'+(state.figure?'<div class="me" style="background-image:url('+state.figure+')"></div>':face(state.portrait));youMark=new maplibregl.Marker({element:el,rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat(shown()).addTo(map)}
@@ -355,9 +377,9 @@ function render(){
   }
   const route=state.route||[];
   map.getSource('route')&&map.getSource('route').setData({type:'FeatureCollection',features:route.length>1?[{type:'Feature',geometry:{type:'LineString',coordinates:route.map(p=>[p.lng,p.lat])}}]:[]});
-  const want=new Set(state.pins.map(p=>p.id));
+  const pins=visiblePins(),want=new Set(pins.map(p=>p.id));
   for(const [id,m] of marks){if(!want.has(id)){m.marker.remove();marks.delete(id)}}
-  for(const p of state.pins){
+  for(const p of pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
       :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 1.5C12.8 8.2 15.8 11.2 22.5 12 15.8 12.8 12.8 15.8 12 22.5 11.2 15.8 8.2 12.8 1.5 12 8.2 11.2 11.2 8.2 12 1.5Z"/></svg></div></div>'
       :p.kind==='quest'?'<div class="pin-body"><div class="disc"></div><div class="photo"><div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>'+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'

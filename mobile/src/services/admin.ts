@@ -1,11 +1,10 @@
 // The admin (docs/design/admin.md). Every call goes to a server function that checks the caller's role and
-// writes the action log; this file only shapes the answers. Until Codex's functions land, development
-// builds read a sample (adminSample.ts) and production shows "No access".
+// logs writes; this file only shapes the answers. The sample is available for local design work.
 import { supabase } from "./supabase";
 import { sample } from "./adminSample";
 
-/** Flipped to true in the same PR that applies the admin migration. */
-export const ADMIN_BACKEND = false;
+/** Set to false locally to work on the screens with sample data. */
+export const ADMIN_BACKEND = true;
 /** Development builds without the backend read the sample, so the screens can be built and checked. */
 export const ADMIN_SAMPLE = !ADMIN_BACKEND && typeof __DEV__ !== "undefined" && __DEV__;
 
@@ -63,15 +62,15 @@ export type Spawning = {
   stats: Record<string, { out_now: number; caught_today: number; caught_week: number }>;
 };
 
-export type MapWaypost = { id: string; name_zh: string; name_en: string; lat: number; lng: number; kind: "common" | "landmark"; game_enabled: boolean };
+export type MapWaypost = { id: string; name_zh: string; name_en: string; lat: number; lng: number; kind: "common" | "landmark"; game_enabled: boolean; source_ref?: string | null };
 export type WaveCapsule = { spot: string; vessel: string; rarity: Rarity; lat: number; lng: number; expires_at: string; caught: boolean };
 export type CityMap = {
   region: Region;
   wayposts: MapWaypost[];
   spots: { id: string; lat: number; lng: number; habitat: Habitat | null }[];
   wave: WaveCapsule[];
-  keepers: { hunt: string; name_zh: string; name_en: string; lat: number; lng: number }[];
-  private_quests: { id: string; hunt: string; hunt_name: string; lat: number; lng: number }[];
+  keepers: { hunt: string; name_zh: string; name_en: string; lat: number; lng: number; landmark?: string }[];
+  private_quests: { id: string; hunt: string; hunt_name: string; lat: number; lng: number; picture?: string }[];
 };
 
 export type Person = { id: string; name: string; avatar: Record<string, unknown> | null };

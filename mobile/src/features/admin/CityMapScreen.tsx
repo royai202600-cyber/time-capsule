@@ -8,7 +8,7 @@ import { crackOverlays } from "../../art/crackOverlays";
 import { useLanguage } from "../../i18n";
 import { VESSELS } from "../shop/strings";
 import { keeperPortrait } from "../hunt/HuntViews";
-import { DEFAULT_QUEST_IMAGE, questImageUri } from "../hunt/questImage";
+import { questImageUri } from "../hunt/questImage";
 import { vesselUri } from "../journey/journeyModel";
 import { LiveMap } from "../journey/live/LiveMap";
 import { mapHtml } from "../journey/live/mapHtml";
@@ -26,6 +26,12 @@ const CITY_REACH = 400;
 export default function CityMapScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const data = useLoad(() => admin.cityMap(id), [id]);
+  const waveEnd = data.data?.wave[0]?.expires_at;
+  useEffect(() => {
+    if (!waveEnd) return;
+    const timer = setTimeout(data.reload, Math.max(1000, Date.parse(waveEnd) - Date.now() + 500));
+    return () => clearTimeout(timer);
+  }, [waveEnd, data.reload]);
   if (data.error) return <Failed onRetry={data.reload} />;
   if (!data.data) return <Loading />;
   return <CityMapView key={id} map={data.data} />;
@@ -42,7 +48,7 @@ function CityMapView({ map }: { map: CityMap }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => { const t = setInterval(() => setNow(Date.now()), 30000); return () => clearInterval(t); }, []);
 
-  const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, follow: false, center: map.region.center }), []);
+  const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, follow: false, center: map.region.center, cityWave: true }), []);
   const everything = useMemo(() => [...map.wayposts, ...map.wave, ...map.keepers, ...map.private_quests].map((p) => ({ lat: p.lat, lng: p.lng })), [map]);
   useEffect(() => { const t = setTimeout(() => ref.current?.fit(everything), 400); return () => clearTimeout(t); }, []);
 
@@ -57,13 +63,13 @@ function CityMapView({ map }: { map: CityMap }) {
       id: `w:${w.id}`, lat: w.lat, lng: w.lng, kind: w.kind === "landmark" ? "landmark" : "waypost",
       vessel: assetUri(w.kind === "landmark" ? gameArt.landmarkGem : gameArt.waypostGemBlue) ?? "", selected: selected === `w:${w.id}`,
     })) : []),
-    ...(layers.wave ? out.map<LivePin>((c) => ({
+    ...(layers.wave ? map.wave.map<LivePin>((c) => ({
       id: `c:${c.spot}`, lat: c.lat, lng: c.lng, kind: "corrupted", vessel: vesselUri(c.vessel),
-      cracks: assetUri(crackOverlays[c.vessel]) ?? undefined, rarity: c.rarity, selected: selected === `c:${c.spot}`,
+      cracks: assetUri(crackOverlays[c.vessel]) ?? undefined, rarity: c.rarity, done: c.caught, selected: selected === `c:${c.spot}`,
     })) : []),
     ...(layers.hunts ? [
       ...map.keepers.map<LivePin>((k) => ({ id: `k:${k.hunt}`, lat: k.lat, lng: k.lng, kind: "keeper", vessel: "", portrait: assetUri(keeperPortrait), figure: assetUri(characters.keeper) })),
-      ...map.private_quests.map<LivePin>((q) => ({ id: `q:${q.id}`, lat: q.lat, lng: q.lng, kind: "quest", vessel: "", quest: "arrive", photo: questImageUri(DEFAULT_QUEST_IMAGE) })),
+      ...map.private_quests.map<LivePin>((q) => ({ id: `q:${q.id}`, lat: q.lat, lng: q.lng, kind: "quest", vessel: "", quest: "arrive", photo: questImageUri(q.picture) })),
     ] : []),
   ], [map, layers, selected]);
   const state = useMemo(() => ({ you: null, reach: CITY_REACH, pins }), [pins]);

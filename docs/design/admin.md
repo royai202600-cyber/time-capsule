@@ -1,8 +1,8 @@
 # Admin (管理後台)
 
-Status: Roy approved the plan on 2026-11-15. Phase 1 screens are built against a development sample (`mobile/src/services/adminSample.ts`, `ADMIN_BACKEND = false`); the backend below is Codex's. Claude designs and builds the screens; Codex builds everything on the server.
+Status: Roy approved the plan on 2026-11-15. PR #133 supplies the screens. The stacked A1 branch enables the RPCs with migration `20261115090250_admin_phase_one`, held for Claude's review.
 
-Screens: `mobile/app/admin/` routes, `mobile/src/features/admin/` (shell, Overview, Corrupted Capsules, City map, Review, Members, Activity), `mobile/src/services/admin.ts` (types and RPC calls the screens expect). Run `cd mobile && npm run web` and open http://localhost:8088/admin; in development the sample opens without signing in and has a **View as** switch for each role.
+Screens: `mobile/app/admin/` routes, `mobile/src/features/admin/` (shell, Overview, Corrupted Capsules, City map, Review, Members, Activity), `mobile/src/services/admin.ts` (types and RPC calls the screens expect). Run `cd mobile && npm run web` and open http://localhost:8088/admin. For local design work, set `ADMIN_BACKEND` to `false`. The sample opens without signing in and has a **View as** switch for each role.
 
 ## Why
 
@@ -13,7 +13,7 @@ Roy can't see which cities are open, which Corrupted Capsules are out, or what i
 - **Where it lives:** a hidden `/admin` route inside the existing Expo web app (`mobile/app/admin/`), web only. It shares sign-in, the Supabase client, translations and the theme, and needs no second Vercel project. Native builds show nothing at `/admin`.
 - **Look:** the Time Capsule look, not a generic dashboard. Cool paper background, Noto Serif TC headings and numbers, Noto Sans TC body, ink blue for controls, brass only for precious things (Landmarks, vessels), wax red for remove/destructive actions, the same cards, pills and portraits as the app. Both languages, switchable.
 - **Responsive:** phone first like the app (375 px works for checking a report on the go). From 900 px a left sidebar replaces the bottom tabs, and lists become tables with a detail panel beside them. The map fills the free space.
-- **Security is on the server.** Hiding the link doesn't protect anything. Every admin RPC checks the caller's role and writes the action log; the client only reads `admin_me()` to decide what to show.
+- **Security is on the server.** Hiding the link doesn't protect anything. Every admin RPC checks the caller's role, and each successful write appends one action log entry. The client only reads `admin_me()` to decide what to show.
 - **Three shared parts** that every later feature plugs into: members and roles, the action log, and one review queue.
 - **Opening a new city stays with Codex and the SOP** (OSM safety filtering, vessel set, map tiles). Admin shows the result and edits individual Wayposts.
 
@@ -23,7 +23,7 @@ Roy can't see which cities are open, which Corrupted Capsules are out, or what i
 |---|---|
 | Owner | Everything, including members. Roy. At least one owner always remains. |
 | Admin | Edit game data, approve imports, moderate. |
-| Moderator | Review queue only (reports, flagged content, imports waiting). |
+| Moderator | Dashboard read access and review queue decisions. |
 | Viewer | Read everything except reported letter text. Changes nothing. |
 
 A member is added by the email of an existing app account. Each role is a fixed list of allowed actions on the server (`private.admin_can(action)`), so adding a role later is one line.
@@ -86,10 +86,26 @@ Names may change if Codex has a better fit; report the final ones.
 - `admin_cities()`: one row per game region: id, names (zh/en), time zone, counts of common and Landmark Wayposts, Corrupted Capsule spots, capsule spots, the region's three spawnable vessels, how many Corrupted Capsules are out in the current wave, live City Hunts, published private hunts, and map coverage (`covered`, `bytes`, `built_at`). Regions are implicit today (city name fields and per-region spawn sets); if that makes this unreliable, add a small `private.game_regions` table seeded from what is live and report it.
 - `admin_city_map(p_region)`: Wayposts (id, names, lat, lng, kind, game_enabled, source_ref), Corrupted Capsule spots, the **current wave** for the whole region computed for the current ten-minute boundary without a player location (spot, vessel, lat, lng, expires_at, caught), City Hunt Keeper and Landmark points, published private hunt quests (id, hunt, lat, lng, picture).
 - `admin_spawning()`: every vessel with its rarity, habitat, hour and date windows, the places it can spawn in, whether it is earned or a starter, plus per place: country, city, time zone, out now, caught today and this week. Also the shared `game_config` wave settings. Today places are a fixed list in `private.vessel_spawn_rules.regions` and cities are mapped to Taiwan inside `private.resolve_spawn`; move that into a small `private.game_regions` table (country, city, names zh/en, time zone, and later the coverage fields above) so phase 2 can add places without changing a function. Waves and spawns must stay exactly the same; prove it by comparing resolved waves before and after for every spot over a day.
-- `admin_queue(p_status)`: one list across kinds. Phase 1 kinds `hunt_report` (from `private.private_hunt_reports`, grouped by hunt) and `public_capsule_report` (from `public.public_capsule_reports`, grouped by capsule), with counts, reasons, reporters, content preview and current visibility. `admin_queue_resolve(p_kind, p_id, p_decision 'restore'|'remove', p_note)`. Restoring clears the hide; removing keeps the item hidden for good. Both log.
+- `admin_queue(p_status)`: one list across kinds. Phase 1 kinds `hunt_report` (from `private.private_hunt_reports`, grouped by hunt) and `public_capsule_report` (from `public.public_capsule_reports`, grouped by capsule), with counts, reasons, reporters, content preview and current visibility. `admin_queue_resolve(p_kind, p_id, p_decision 'restore'|'remove', p_note)`. Restoring clears the hide and keeps the previous reports in history. New reports reopen the item and count toward the existing two-report threshold. Removal is final. Each decision appends one audit row.
 - `admin_activity(p_limit, p_before)`: newest first, with actor name and portrait.
-- Map coverage: record the PMTiles areas (name, bounds, bytes, built date) in a table so `admin_cities` can show them; seed from `docs/design/public-sea-tiles.md`. Measure each city's share of the 99 MB file if practical.
+- Map coverage: record the PMTiles areas (name, bounds, bytes, built date) in a table so `admin_cities` can show them; seed from `docs/design/public-sea-tiles.md`. The bounds, build date and measured per-city tile bytes are in [Public Sea city tiles](public-sea-tiles.md). The ten coverage areas are kept separately from the four active game cities.
 - Grants: execute to `authenticated` only; each function refuses unless `admin_can`. Hosted rollback tests: non-member refused everywhere, each role's allowed and refused actions, last-owner guard, sealed `capsule_contents` still unreadable except the reported public capsule preview for moderator and up.
+
+## A1 verification
+
+Run `supabase/tests/admin-wave-before.sql` before the migration body, then
+run `admin-wave-after.sql` and `admin-phase-one.sql` before rolling back.
+Use a single transaction and omit the migration's outer transaction statements.
+The signed-JWT suite is `node supabase/tests/admin-phase-one-api.mjs` against a
+local Supabase stack with A1 loaded and a local Roy owner profile and password.
+
+Private hunt quest coordinates assign visible published quests to city coverage
+bounds. A city counts each hunt once when it has a quest in those bounds.
+Catch totals use local midnight and the Monday start of the region's local week.
+City-wide pins indicate whether anyone caught a spawn. Each player's catch and
+spawn selection rules still use their own existing game RPCs.
+The map can render bundled quest pictures. Organizer uploads retain the
+existing private Storage rules.
 
 ## Build order
 

@@ -35,3 +35,24 @@ range and length response headers, and uses `AllowedOrigins: ["*"]`. A wildcard
 is needed because the Expo Go WebView can have an opaque origin; the bucket
 contains public map data only. The production Vercel and `localhost:8088`
 origins are included by that rule.
+
+## Admin coverage
+
+The coverage table records each extraction rectangle and the Protomaps build
+date. A city's size counts compressed tile payloads that touch only its
+rectangle. Each physical payload is counted once, including when multiple tile
+IDs use the same bytes. Shared tile payloads use 1,006,577 bytes and archive
+metadata and directory overhead use 7,190 bytes.
+
+| Area | Exclusive tile bytes |
+| --- | ---: |
+| Macau | 4,096,945 |
+| Hong Kong | 9,726,639 |
+| Taipei | 10,408,587 |
+| Tokyo | 20,081,565 |
+| Kyoto | 12,461,893 |
+| Seoul | 9,218,586 |
+| Singapore | 6,167,393 |
+| Bangkok | 9,866,979 |
+| Beijing | 6,175,184 |
+| Kuala Lumpur | 9,767,282 |
