@@ -9536,5 +9536,109 @@
     "template_key": "oldStreet",
     "postprocess": "Downscale to 1024 square with Lanczos. Both display crops use the center.",
     "web_export": "public/art/quest-templates/quest-template-old-street.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-kamcheng.png",
+    "what": "Peranakan kamcheng — closed blue porcelain jar with phoenix and peonies",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nCreate one CLOSED original Peranakan kamcheng vessel, a small household covered porcelain jar for festive food, stylized as a Time Capsule sprite. Use the attached sheet for art style only, especially the blue tin's plum outlines and painted glaze and the cream lantern's beautiful flower marks. Historical form observed on the Peranakan Museum's circa-1900 peony-and-phoenix covered jar: round generous belly, low ring foot, shallow domed cover, two small shoulder ears with freely hanging ring handles. Use a simple brass peach-shaped knob with no animal figure, and two small brass rings with transparent holes, plus one delicate brass line at the seam and foot. Glazed porcelain is entirely opaque. The curved body carries an original, legible, asymmetrical decorative band with one handsome little ink-blue long-tailed phoenix in profile between two large blue peony blossoms and a few spare blue leaves. The bird is a casual naturalistic painted motif, no crest, no insignia. Keep the bird and large petals legible in miniature, with generous undecorated glass-blue areas. Light ink-blue decoration and main shadows, glass-blue porcelain base colour, brass metal fittings and slim trims. All colours within the style palette. Closed at a dark clean seam where the removable cover meets the jar lip. Set the finished object in three-quarter view with clear volume and a visible lid ellipse, about 70% of the square canvas, base near y 88%, enough clear space above the knob for a later lift. True alpha. No surfaces, floor, cast shadow, food, other objects, letters, numbers, text, emblems, marks or designs copied from the museum object.",
+    "model": "gpt-image-2",
+    "style_reference": "design/art/style-sheet.png",
+    "subject_reference": "https://commons.wikimedia.org/wiki/File:Kamcheng_with_peonies_and_phoenix_from_China_ca_1900_IMG_9805_singapore_peranakan_museum.jpg",
+    "secondary_subject_reference": "https://www.roots.gov.sg/api/media/8e926041-9e91-445d-a9a9-c24f9cebb8d5/1143330.jpg",
+    "web_export": "public/art/vessels/vessel-kamcheng.webp",
+    "postprocess": "Exact at=0 stack of the original design and its edited layers. All parts share one scale 953/1254 and one translation.",
+    "vessel": {
+      "id": "kamcheng",
+      "opening": "B",
+      "idleMs": 4200,
+      "idle": [],
+      "layers": [
+        {
+          "name": "jar",
+          "file": "vessel-kamcheng-jar.png",
+          "role": "static"
+        },
+        {
+          "name": "lid",
+          "file": "vessel-kamcheng-lid.png",
+          "role": "lift",
+          "pivot": {
+            "x": 510,
+            "y": 393
+          },
+          "open": [
+            {
+              "at": 0,
+              "y": 0,
+              "opacity": 1
+            },
+            {
+              "at": 0.5,
+              "y": -0.15,
+              "opacity": 1
+            },
+            {
+              "at": 0.76,
+              "y": -0.16,
+              "opacity": 0.65
+            },
+            {
+              "at": 1,
+              "y": -0.166,
+              "opacity": 0
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 509,
+        "y": 371
+      },
+      "baseY": 900,
+      "sparkle": {
+        "x": 489,
+        "y": 224
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-kamcheng-jar.png",
+    "what": "Peranakan kamcheng — jar with complete glazed porcelain interior and rolled letter",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nEdit target: the second attached image, the closed original Peranakan kamcheng jar. The first attached image is the approved style sheet for style only. Retain the main round porcelain jar below the original lid seam at exactly the same position and scale. Preserve the phoenix, the two peonies, the brass foot ring, brass ring handles and their holes, and all pixels of the existing outside lower body. Remove the entire lid and knob; keep actual transparent alpha outside. Render the newly exposed opening as a complete bowl mouth ellipse spanning from about x=314 to 930, with its front lower edge exactly where the original lid's bottom dark line was, and its far arc receding behind it. The uninterrupted thin brass mouth rim should match the lip it seats under. Fill the ellipse with shaded ink-blue and glass-blue glazed porcelain, no transparent holes. Place a single small cream parchment roll with an understated wax-red tie in the bottom centre of that interior. Keep it fully within the ellipse and below the back rim, so it's concealed when the lid is on. No writing or further objects. Match the edge and original closed registration exactly. Same 1254px square transparent canvas.",
+    "model": "gpt-image-2",
+    "style_reference": "design/art/style-sheet.png",
+    "subject_reference": "https://commons.wikimedia.org/wiki/File:Kamcheng_with_peonies_and_phoenix_from_China_ca_1900_IMG_9805_singapore_peranakan_museum.jpg",
+    "secondary_subject_reference": "https://www.roots.gov.sg/api/media/8e926041-9e91-445d-a9a9-c24f9cebb8d5/1143330.jpg",
+    "web_export": "public/art/vessels/vessel-kamcheng-jar.webp",
+    "postprocess": "Edited from assembled image. Re-registered the complete opening and rolled letter against the closed seam; preserved the exterior and removed stray alpha from the edges."
+  },
+  {
+    "path": "design/art/vessels/vessel-kamcheng-lid.png",
+    "what": "Peranakan kamcheng — lift-off porcelain lid with brass peach knob",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nEdit target: the second attached image, the closed original Peranakan kamcheng jar. The first attached image is the approved style sheet for style only. Keep only the entire domed blue porcelain lid, its ink-blue leaf sprig, its thin brass lower edge and its brass peach knob. Exact position, scale, angle, shape, and original pixels throughout. Its lowest line is the original curved dark outline underneath the narrow brass strip. The porcelain jar body, all bird and flower decoration, and its side rings belong to a different layer and must be removed to true transparency. Keep the same 1254px square canvas, no new shadow or motif, no resizing or moving.",
+    "model": "gpt-image-2",
+    "style_reference": "design/art/style-sheet.png",
+    "subject_reference": "https://commons.wikimedia.org/wiki/File:Kamcheng_with_peonies_and_phoenix_from_China_ca_1900_IMG_9805_singapore_peranakan_museum.jpg",
+    "secondary_subject_reference": "https://www.roots.gov.sg/api/media/8e926041-9e91-445d-a9a9-c24f9cebb8d5/1143330.jpg",
+    "web_export": "public/art/vessels/vessel-kamcheng-lid.webp",
+    "postprocess": "Edited from assembled image. Aligned the isolated lid outline to the original near lip; preserved the original painted glaze and brass highlights. Removed stray alpha from the edges."
   }
 ]

@@ -1,0 +1,116 @@
+{
+  "style_reference": "design/art/style-sheet.png",
+  "layer_order": [
+    "jar",
+    "lid"
+  ],
+  "assembled_vs_stack_mae_rgb_on_paper_0_to_255": 0,
+  "exact_pixel_match": true,
+  "all_corners_alpha_zero": true,
+  "layer_checks": {
+    "assembled": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 255,
+      "visible_bbox_alpha_gt_20": [
+        179,
+        181,
+        845,
+        902
+      ]
+    },
+    "jar": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 255,
+      "visible_bbox_alpha_gt_20": [
+        179,
+        306,
+        845,
+        902
+      ]
+    },
+    "lid": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        272,
+        181,
+        746,
+        429
+      ]
+    }
+  },
+  "webp_exports": {
+    "vessel-kamcheng.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "lossless_alpha": true,
+      "transparent_corners": true
+    },
+    "vessel-kamcheng-jar.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "lossless_alpha": true,
+      "transparent_corners": true
+    },
+    "vessel-kamcheng-lid.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "lossless_alpha": true,
+      "transparent_corners": true
+    }
+  },
+  "opening_frames_inside_canvas": 101,
+  "silhouette_review_px": [
+    40,
+    120
+  ],
+  "ip_review": "Original porcelain pattern from observed historical forms. No trade dress, text, logos, flags, emblems or sacred objects.",
+  "pre_existing_art": {
+    "base_commit": "a1a6d022547d405b2bb3484a7263211eb9ef2dbb",
+    "scope": "Images tracked under design/art and public/art at base, excluding the shared regenerated contact sheet",
+    "before": {
+      "count": 1298,
+      "sha256_of_sorted_path_sha256_map": "d7f271dc63686273edf0099391f8c1d1884a52686fd8d19e58ecec6a88381928"
+    },
+    "after": {
+      "count": 1298,
+      "sha256_of_sorted_path_sha256_map": "d7f271dc63686273edf0099391f8c1d1884a52686fd8d19e58ecec6a88381928"
+    }
+  }
+}

@@ -26,6 +26,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
+| RV-SG | Singapore wave 1 vessel art | Codex / Roy | Kamcheng test with closed stack, motion overlay and 40/120 px review awaits Roy’s OK before orchid. Tingkat is tracked separately in PR #134. Art only. |
 | Orienteering P2 | Private hunt player backend | Codex / Roy | Released in #120. Migration `20261114054459` is applied. The signed-in browser verified typed QR, spin, puzzle, leaderboard and Passport. |
 | Orienteering P1 | Private hunt organizer backend | Codex / Roy | Released in #119. Migration `20261114034030` is applied. A disposable pilot organizer verified creation, template and photo quests, publishing, review, and the first-join edit lock. |
 | HKUST stamps | Place stamp triangle fix + HKUST City Hunt double-ring stamp | Codex / Roy | PR #101 revised for Roy: script clears only 1467 triangle pixels; every other place-master pixel identical. New GPT Image 2 hunt stamp, normalized alone; place/hunt/Xinyi review at 24/40/64/120 px. Only app edit is the hunt image entry in mobile art manifest. Other stamps preserved; pending Roy’s OK again. No migration, deployment or merge. |
