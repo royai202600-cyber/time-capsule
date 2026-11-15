@@ -458,6 +458,11 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-red-bird-box.png` | Red Bird Sundial Box — box | 1024×1024 | pending Roy; see manifest |
 | `vessels/vessel-red-bird-lid.png` | Red Bird Sundial Box — lid | 1024×1024 | pending Roy; see manifest |
 | `vessels/vessel-red-bird-shadow.png` | Red Bird Sundial Box — shadow | 1024×1024 | pending Roy; see manifest |
+| `vessels/vessel-bolo-bun.png` | 菠蘿油 / Pineapple bun with butter — closed pastry | 1024×1024 | RV-HK uncommon. Inspected Peachyeung316’s [Pineapple bun from Heung Heung Bakery HK.jpg](https://commons.wikimedia.org/wiki/File:Pineapple_bun_from_Heung_Heung_Bakery_HK.jpg) for the crackled dome, cut and butter slab. [Motion](_checks/bolo-bun-motion.png) · [40/120 px](_checks/bolo-bun-silhouette.png) |
+| `vessels/vessel-bolo-bun-bottom.png` | Pineapple bun with butter — lower bread, complete cut crumb and butter | 1024×1024 | Fills the revealed interior beneath the letter. |
+| `vessels/vessel-bolo-bun-top.png` | Pineapple bun with butter — cracked upper half | 1024×1024 | Rotates back around the measured rear hinge. |
+| `vessels/vessel-bolo-bun-letter.png` | Pineapple bun with butter — folded cream letter | 1024×1024 | Revealed beside the butter. |
+| `vessels/vessel-bolo-bun-steam.png` | Pineapple bun with butter — idle steam wisps | 1024×1024 | Separate translucent particles drift upward over a 4.2-second loop. |
 | `stamps/stamp-hkust.png` | HKUST curved academic building / Piazza Passport stamp | 1024×1024 | ink blue; pending Roy |
 | `stamps/stamp-hunt-hkust-2026-11.png` | HKUST City Hunt stamp; double ring, curved academic building | 1024×1024 | ink blue; pending Roy |
 
