@@ -258,7 +258,29 @@ create table private.vessel_spawn_places (
 alter table private.vessel_spawn_places enable row level security;
 revoke all on private.vessel_spawn_places from public, anon, authenticated, service_role;
 
--- The join deliberately preserves the previous four assignment scopes.
+-- Abort instead of losing a rule assignment or leaving a city without a lookup.
+do $$
+declare
+  missing_regions text[];
+  missing_cities text[];
+begin
+  select array_agg(distinct r.region) into missing_regions
+  from private.vessel_spawn_rules v cross join lateral unnest(v.regions) r(region)
+  where not exists (select 1 from private.game_regions g where g.city = r.region);
+  if missing_regions is not null then
+    raise exception 'unmapped_spawn_regions: %', missing_regions;
+  end if;
+
+  select array_agg(distinct p.city) into missing_cities
+  from public.corrupted_spots p
+  where not exists (select 1 from private.game_regions g where g.city = p.city);
+  if missing_cities is not null then
+    raise exception 'unmapped_corrupted_spot_cities: %', missing_cities;
+  end if;
+end;
+$$;
+
+-- Preserve every assignment at its original scope.
 insert into private.vessel_spawn_places (region_id, vessel)
 select g.id, r.vessel
 from private.vessel_spawn_rules r
@@ -290,9 +312,8 @@ begin
     when rarity_roll < cfg.rarity_common_weight::double precision/total_weight then 'common'
     when rarity_roll < (cfg.rarity_common_weight+cfg.rarity_uncommon_weight)::double precision/total_weight
       then 'uncommon' else 'rare' end;
-  select r.vessel into picked from private.vessel_spawn_rules r
-    where r.rarity = chosen_rarity
-      and exists (
+  select r.vessel, r.rarity into picked, rarity from private.vessel_spawn_rules r
+    where exists (
         select 1 from private.game_regions g
         join private.vessel_spawn_places a on a.region_id in (g.id, g.parent_id)
         where g.city = spot.city and a.vessel = r.vessel
@@ -304,14 +325,19 @@ begin
       and (r.month_day_start is null
         or (r.month_day_start <= r.month_day_end and local_md between r.month_day_start and r.month_day_end)
         or (r.month_day_start > r.month_day_end and (local_md >= r.month_day_start or local_md <= r.month_day_end)))
-    order by private.game_roll(p_spot::text||':'||p_wave||':vessel:'||r.vessel)
+    -- Prefer the rolled tier, then the neighboring tiers, lower first.
+    order by array_position(case chosen_rarity
+        when 'common' then array['common','uncommon','rare']
+        when 'uncommon' then array['uncommon','common','rare']
+        else array['rare','uncommon','common'] end, r.rarity),
+      private.game_roll(p_spot::text||':'||p_wave||':vessel:'||r.vessel), r.vessel
     limit 1;
   if picked is null then return; end if;
   visible_minutes := cfg.visible_min_minutes + floor(
     private.game_roll(p_spot::text||':'||p_wave||':duration') *
     (cfg.visible_max_minutes-cfg.visible_min_minutes+1))::integer;
   spawn_id := p_spot::text||':'||p_wave::text;
-  vessel := picked; rarity := chosen_rarity;
+  vessel := picked;
   expires_at := wave_at + make_interval(mins=>visible_minutes);
   -- Temporary Roy QA spots expire at their fixed ten-minute batch boundary.
   if spot.source_ref ~ '^qa:roy-taipei-game:[0-9]+:[0-9]+$' then
@@ -362,7 +388,7 @@ language sql stable set search_path = '' as $$
       from public.public_capsule_spots p where p.city_en = p_region.city and p.game_enabled),
     'corrupted_spots', (select count(*) from public.corrupted_spots p
       where p.city = p_region.city and p.source_ref not like 'qa:roy-taipei-game:%'),
-    'capsule_spots', (select count(*) from public.public_capsule_spots p where p.city_en = p_region.city),
+    'capsule_spots', (select count(*) from public.public_capsule_spots p where p.city_en = p_region.city and p.public_drop),
     'vessels', (select coalesce(jsonb_agg(v.id order by case r.rarity
       when 'common' then 1 when 'uncommon' then 2 else 3 end, v.sort, v.id), '[]'::jsonb)
       from private.vessel_spawn_rules r join public.vessels v on v.id = r.vessel
@@ -613,8 +639,7 @@ begin
   ) then
     update public.hunts set hidden_at = clock_timestamp() where id = h.id;
   end if;
-end $function$
-;
+end $function$;
 
 CREATE OR REPLACE FUNCTION public.public_capsule_nearby(p_lat double precision, p_lng double precision, p_accuracy double precision)
  RETURNS TABLE(id uuid, hint text, vessel text, lat double precision, lng double precision, spot_zh text, spot_en text, sealed_at timestamp with time zone, available_at timestamp with time zone, returns integer, sender jsonb)
@@ -639,8 +664,7 @@ AS $function$
     and not private.public_capsule_is_hidden(c.id)
   order by public.distance_m(p_lat, p_lng, s.lat, s.lng), c.open_at
   limit 100;
-$function$
-;
+$function$;
 
 CREATE OR REPLACE FUNCTION public.public_capsule_pick_up(p_id uuid, p_lat double precision, p_lng double precision, p_accuracy double precision)
  RETURNS void
@@ -668,8 +692,7 @@ begin
   end if;
   insert into public.public_capsule_pickups (capsule_id, finder) values (p_id, auth.uid());
   update public.capsules set recipient = auth.uid() where id = p_id;
-end $function$
-;
+end $function$;
 
 revoke all on function
   private.admin_audit_append_only(), private.admin_can(text), private.admin_person(uuid),

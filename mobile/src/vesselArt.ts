@@ -7,7 +7,13 @@ export type VesselKind = 'dome' | 'bottle' | 'envelope' | 'tin' | 'lantern' | 'm
   // Final illustrated batches B5 and B6
   | 'hot-air-balloon' | 'bubble-tea' | 'dim-sum-steamer' | 'bento' | 'paper-cranes' | 'heart-locket' | 'suitcase' | 'postbox' | 'camp-lantern' | 'treasure-chest' | 'spellbook' | 'escape-pod' | 'crystal-ball' | 'wishing-lamp' | 'potion' | 'pocket-watch' | 'diploma-tube' | 'baby-shoes' | 'memorial-candle' | 'rocket-tin'
   // HKUST Landmark reward
-  | 'red-bird';
+  | 'red-bird'
+  // Regional wave 1 and upcoming Landmark rewards
+  | 'pineapple-cake' | 'teapot' | 'sky-lantern'
+  | 'rwb-bag' | 'bolo-bun' | 'tram'
+  | 'tiffin' | 'kamcheng' | 'orchid'
+  | 'egg-tart' | 'rooster' | 'pedicab'
+  | 'north-gate' | 'durian' | 'lighthouse';
 /** The original 7 vessels, which also have SVG drawings. */
 export type SvgVesselKind = 'dome' | 'bottle' | 'envelope' | 'tin' | 'lantern' | 'musicbox' | 'maison';
 // Pivots are normalized to the vessel view box and identify the moving lid.

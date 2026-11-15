@@ -1,0 +1,114 @@
+{
+  "opening": "H",
+  "full_rgba_closed_match": true,
+  "closed_width_px": 724,
+  "baseY": 904,
+  "bounds_max_exclusive": {
+    "closed": [
+      150,
+      313,
+      874,
+      905
+    ],
+    "half": [
+      91,
+      286,
+      932,
+      909
+    ],
+    "open": [
+      35,
+      256,
+      983,
+      912
+    ]
+  },
+  "keyframe_samples_checked": 101,
+  "minimum_horizontal_clearance_px": 35,
+  "rendered_web_exports": {
+    "vessel-pineapple-cake.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "vessel-pineapple-cake-right-filling.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "vessel-pineapple-cake-left-filling.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "vessel-pineapple-cake-left.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "vessel-pineapple-cake-right.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "vessel-pineapple-cake-letter.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "preserved_art": [
+    {
+      "reference": "a1a6d022547d405b2bb3484a7263211eb9ef2dbb",
+      "unchanged_files": 1298,
+      "sha256_of_sorted_sha256sum_list": "1cad39a6f788205bbb790d3a8fb342f4d446417b8a782ab998251b6889f78f81"
+    },
+    {
+      "reference": "92dea7ca3cdb1eab93fb659951e15460912554a8",
+      "unchanged_files": 1326,
+      "sha256_of_sorted_sha256sum_list": "f9cc16f6958ea7fdd9889e8e2881c3c4a2a9260029c8e44c9110280a577ea422"
+    }
+  ]
+}

@@ -1,0 +1,278 @@
+{
+  "style_reference": "design/art/style-sheet.png",
+  "layer_order": [
+    "pot",
+    "stem",
+    "left",
+    "right",
+    "throat",
+    "bud-right",
+    "bud-left"
+  ],
+  "assembled_vs_stack_mae_rgb_on_paper_0_to_255": 0,
+  "exact_pixel_match": true,
+  "all_corners_alpha_zero": true,
+  "layer_checks": {
+    "assembled": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        219,
+        174,
+        808,
+        902
+      ]
+    },
+    "pot": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        393,
+        703,
+        634,
+        902
+      ]
+    },
+    "stem": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        219,
+        267,
+        808,
+        760
+      ]
+    },
+    "left": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        605,
+        90,
+        755,
+        342
+      ]
+    },
+    "right": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        766,
+        97,
+        914,
+        342
+      ]
+    },
+    "throat": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        695,
+        90,
+        820,
+        366
+      ]
+    },
+    "bud-right": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        711,
+        175,
+        805,
+        308
+      ]
+    },
+    "bud-left": {
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "center_alpha": 0,
+      "visible_bbox_alpha_gt_20": [
+        696,
+        174,
+        799,
+        303
+      ]
+    }
+  },
+  "webp_exports": {
+    "vessel-orchid.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "lossless_alpha": true,
+      "transparent_corners": true
+    },
+    "vessel-orchid-pot.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "lossless_alpha": true,
+      "transparent_corners": true
+    },
+    "vessel-orchid-stem.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "lossless_alpha": true,
+      "transparent_corners": true
+    },
+    "vessel-orchid-left.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "lossless_alpha": true,
+      "transparent_corners": true
+    },
+    "vessel-orchid-right.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "lossless_alpha": true,
+      "transparent_corners": true
+    },
+    "vessel-orchid-throat.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "lossless_alpha": true,
+      "transparent_corners": true
+    },
+    "vessel-orchid-bud-left.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "lossless_alpha": true,
+      "transparent_corners": true
+    },
+    "vessel-orchid-bud-right.webp": {
+      "size": [
+        512,
+        512
+      ],
+      "lossless_alpha": true,
+      "transparent_corners": true
+    }
+  },
+  "opening_frames_inside_canvas": 101,
+  "silhouette_review_px": [
+    40,
+    120
+  ],
+  "ip_review": "Original natural potted orchid based on observed flower morphology. No text, trade dress, logo, flag, national emblem, official insignia or branding.",
+  "pre_existing_art": {
+    "base_commit": "7bda981",
+    "scope": "Images tracked under design/art and public/art at base, excluding the shared regenerated contact sheet",
+    "before": {
+      "count": 1417,
+      "sha256_of_sorted_path_sha256_map": "916f4fb31ddf08e08caebcae888ea7722789d19784fe5fa8d1dfb3cb962c2961"
+    },
+    "after": {
+      "count": 1417,
+      "sha256_of_sorted_path_sha256_map": "916f4fb31ddf08e08caebcae888ea7722789d19784fe5fa8d1dfb3cb962c2961"
+    },
+    "approved_kamcheng_verified_separately": true
+  },
+  "idle_review": {
+    "loop_ms": 4200,
+    "plant_sway_degrees": 3.25,
+    "grounded_pot": true,
+    "rest_matches_assembled": true,
+    "reduced_motion_still": true,
+    "chrome_viewport_px": 375
+  },
+  "revision": {
+    "species": "Papilionanthe Miss Joaquim",
+    "closed_open_blooms": 2,
+    "closed_terminal_buds": 1,
+    "pot_png_and_webp_preserved": true,
+    "approved_kamcheng_commit": "957d31dbe326d682048aac902c37a235de7f5f36",
+    "approved_kamcheng_files_byte_identical": true
+  }
+}

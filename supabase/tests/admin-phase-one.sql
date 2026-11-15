@@ -205,6 +205,16 @@ reset role;
 
 do $$
 begin
+  if (select count(*) from private.vessel_spawn_places) <> 24
+    or exists (
+      select 1 from private.game_regions g where g.center_lat is not null
+      and (select count(*) from private.vessel_spawn_places a where a.region_id in (g.id, g.parent_id)) <> 6
+    ) then raise exception 'unexpected regional spawn pool'; end if;
+  if exists (
+    select 1 from private.game_regions g where g.center_lat is not null
+    and (private.admin_region(g, 0)->>'capsule_spots')::bigint <>
+      (select count(*) from public.public_capsule_spots s where s.city_en = g.city and s.public_drop)
+  ) then raise exception 'wrong public drop count'; end if;
   if (select count(*) from private.admin_actions where action in ('queue.restore', 'queue.remove')) <> 4
     or (select count(*) from public.public_capsule_reports where capsule_id = 'aec11000-0000-4000-8001-000000000001') <> 3
     or not private.public_capsule_is_hidden('aec11000-0000-4000-8001-000000000001')

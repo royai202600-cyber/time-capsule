@@ -1,0 +1,52 @@
+--- live/private.resolve_spawn
++++ A1/private.resolve_spawn
+@@ -23,7 +23,11 @@
+     when rarity_roll < (cfg.rarity_common_weight+cfg.rarity_uncommon_weight)::double precision/total_weight
+       then 'uncommon' else 'rare' end;
+   select r.vessel, r.rarity into picked, rarity from private.vessel_spawn_rules r
+-    where (case when spot.city in ('Taipei','Taiwan','Kaohsiung','Taichung','Tainan') then 'Taiwan' else spot.city end)=any(r.regions)
++    where exists (
++        select 1 from private.game_regions g
++        join private.vessel_spawn_places a on a.region_id in (g.id, g.parent_id)
++        where g.city = spot.city and a.vessel = r.vessel
++      )
+       and (r.habitat is null or r.habitat=spot.habitat)
+       and (r.local_start_hour is null
+         or (r.local_start_hour < r.local_end_hour and local_hour >= r.local_start_hour and local_hour < r.local_end_hour)
+--- live/public.private_hunt_report
++++ A1/public.private_hunt_report
+@@ -11,7 +11,11 @@
+   if not exists (select 1 from public.private_hunt_members where hunt_id = h.id and user_id = auth.uid())
+   then raise exception 'not_joined'; end if;
+   insert into private.private_hunt_reports (hunt_id, reporter) values (h.id, auth.uid()) on conflict do nothing;
+-  if h.hidden_at is null and exists (select 1 from private.private_hunt_reports where hunt_id = h.id offset 1) then
++  if h.hidden_at is null and exists (
++    select 1 from private.private_hunt_reports r where r.hunt_id = h.id
++      and r.reported_at > coalesce((private.admin_latest_review('hunt', h.id)).at, '-infinity'::timestamptz)
++    offset 1
++  ) then
+     update public.hunts set hidden_at = clock_timestamp() where id = h.id;
+   end if;
+ end $function$
+--- live/public.public_capsule_nearby
++++ A1/public.public_capsule_nearby
+@@ -18,7 +18,7 @@
+     and public.distance_m(p_lat, p_lng, s.lat, s.lng) <= 5000
+     and not exists (select 1 from public.public_capsule_pickups x where x.capsule_id = c.id and x.finder = auth.uid())
+     and not exists (select 1 from public.public_capsule_reports r where r.capsule_id = c.id and r.reporter = auth.uid())
+-    and (select count(*) from public.public_capsule_reports r where r.capsule_id = c.id) < 2
++    and not private.public_capsule_is_hidden(c.id)
+   order by public.distance_m(p_lat, p_lng, s.lat, s.lng), c.open_at
+   limit 100;
+ $function$
+--- live/public.public_capsule_pick_up
++++ A1/public.public_capsule_pick_up
+@@ -13,7 +13,7 @@
+   if c.recipient is not null or c.open_at > now()
+     or exists (select 1 from public.public_capsule_pickups x where x.capsule_id = p_id and x.finder = auth.uid())
+     or exists (select 1 from public.public_capsule_reports r where r.capsule_id = p_id and r.reporter = auth.uid())
+-    or (select count(*) from public.public_capsule_reports r where r.capsule_id = p_id) >= 2
++    or private.public_capsule_is_hidden(p_id)
+   then raise exception 'taken'; end if;
+   if p_lat is null or p_lng is null or p_lat < -90 or p_lat > 90 or p_lng < -180 or p_lng > 180
+     or p_accuracy is null or p_accuracy <= 0 or p_accuracy > 200

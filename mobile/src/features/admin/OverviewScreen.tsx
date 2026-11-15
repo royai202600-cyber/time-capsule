@@ -1,5 +1,5 @@
 // Every open city at a glance (docs/design/admin.md, Overview), with what waits in the review queue on top.
-import React from "react";
+import React, { useState } from "react";
 import { Text, View } from "react-native";
 import { router } from "expo-router";
 import { ArtIcon } from "../../components/ArtIcon";
@@ -40,6 +40,10 @@ function CityCard({ city }: { city: Region }) {
   const { language } = useLanguage();
   const zh = language === "zh";
   const mb = megabytes(city.coverage.bytes);
+  const [wideVessels, setWideVessels] = useState(false);
+  const vesselsPerRow = wideVessels ? 6 : 3;
+  const vesselRows = Array.from({ length: Math.ceil(city.vessels.length / vesselsPerRow) },
+    (_, index) => city.vessels.slice(index * vesselsPerRow, (index + 1) * vesselsPerRow));
   return <Card style={{ gap: spacing.md }}>
     <View style={{ flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" }}>
       <View style={{ gap: 2 }}>
@@ -60,10 +64,13 @@ function CityCard({ city }: { city: Region }) {
     </View>
     <View style={{ gap: spacing.sm }}>
       <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{a.canAppear}</Text>
-      <View style={{ flexDirection: "row", gap: spacing.sm, backgroundColor: C.paper, borderRadius: 12, padding: spacing.sm }}>
-        {city.vessels.map((v) => <View key={v} style={{ flex: 1, alignItems: "center", gap: 4 }}>
-          <VesselThumb kind={v} size={52} />
-          <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 11, color: C.ink }}>{(VESSELS as any)[v]?.name[language] ?? v}</Text>
+      <View onLayout={({ nativeEvent }) => setWideVessels(nativeEvent.layout.width >= 374)}
+        style={{ gap: spacing.sm, backgroundColor: C.paper, borderRadius: 12, padding: spacing.sm }}>
+        {vesselRows.map((row) => <View key={row[0]} style={{ flexDirection: "row", gap: spacing.sm }}>
+          {row.map((v) => <View key={v} style={{ flex: 1, minWidth: 0, alignItems: "center", gap: 4 }}>
+            <VesselThumb kind={v} size={52} />
+            <Text numberOfLines={1} style={{ maxWidth: "100%", fontFamily: sans, fontSize: 11, color: C.ink }}>{(VESSELS as any)[v]?.name[language] ?? v}</Text>
+          </View>)}
         </View>)}
       </View>
     </View>

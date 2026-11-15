@@ -83,7 +83,7 @@ try {
   assert.deepEqual(ok(await rpc(viewer.jwt, 'me')), { role: 'moderator' });
   ok(await rpc(owner, 'member_set_role', edit(viewer.id, 'viewer')));
 
-  const spot = ok(await request('/rest/v1/public_capsule_spots?select=id,lat,lng&city_en=eq.Taipei&limit=1', { key: service }))[0];
+  const spot = ok(await request('/rest/v1/public_capsule_spots?select=id,lat,lng&city_en=eq.Taipei&public_drop=is.true&limit=1', { key: service }))[0];
   const openAt = new Date(Date.now() - 60000).toISOString();
   const future = new Date(Date.now() + 3600000).toISOString();
   const publicCapsule = { sender: outsider.id, vessel: 'tin', open_at: openAt,
@@ -108,12 +108,13 @@ try {
     assert.deepEqual(ok(await rpc(member.jwt, 'me')), { role: member.role });
     const cities = ok(await rpc(member.jwt, 'cities'));
     assert.equal(cities.length, 4);
+    assert(cities.every(city => city.vessels.length === 6));
     const map = ok(await rpc(member.jwt, 'city_map', args.city_map));
     assert.equal(map.region.id, 'taipei');
     assert(map.wave.length > 100 && map.wayposts.some(p => p.kind === 'landmark'));
     const spawning = ok(await rpc(member.jwt, 'spawning'));
     assert.equal(spawning.config.nearby_max, 6);
-    assert.equal(spawning.rules.filter(r => r.regions.length).length, 12);
+    assert.equal(spawning.rules.filter(r => r.regions.length).length, 24);
     assert(ok(await rpc(member.jwt, 'activity', args.activity)).length > 0);
     const queue = ok(await rpc(member.jwt, 'queue', args.queue));
     const item = queue.find(q => q.id === published);
@@ -130,17 +131,25 @@ try {
   }
   await denied(viewer.jwt, 'queue_resolve', args.queue_resolve);
 
+  const location = { p_lat: spot.lat, p_lng: spot.lng, p_accuracy: 10 };
+  const pickup = token => request('/rest/v1/rpc/public_capsule_pick_up', { method: 'POST', token,
+    body: { p_id: published, ...location } });
+  const inbox = () => request(`/rest/v1/capsules?select=id,opened_at&id=eq.${published}&recipient=eq.${roy.id}`, { token: owner });
   const nearby = async token => ok(await request('/rest/v1/rpc/public_capsule_nearby', { method: 'POST', token,
     body: { p_lat: spot.lat, p_lng: spot.lng, p_accuracy: 10 } })).some(c => c.id === published);
   assert.equal(await nearby(admin.jwt), false);
   ok(await rpc(moderator.jwt, 'queue_resolve', args.queue_resolve));
   assert.equal(await nearby(admin.jwt), true);
+  ok(await pickup(owner));
+  const opened = ok(await request('/rest/v1/rpc/open_capsule', { method: 'POST', token: owner,
+    body: { p_id: published, ...location } }));
+  assert.equal(opened[0].message, 'A1 VISIBLE REPORTED TEXT');
+  assert(ok(await inbox())[0].opened_at);
   ok(await insert('public_capsule_reports', { capsule_id: published, reporter: admin.id, reason: 'other' }));
   ok(await rpc(admin.jwt, 'queue_resolve', resolve(published, 'remove')));
   assert.equal(await nearby(admin.jwt), false);
-  const pickup = await request('/rest/v1/rpc/public_capsule_pick_up', { method: 'POST', token: owner,
-    body: { p_id: published, p_lat: spot.lat, p_lng: spot.lng, p_accuracy: 10 } });
-  assert.equal(pickup.data?.message, 'taken');
+  assert.deepEqual(ok(await inbox()), []);
+  assert.equal((await pickup(owner)).data?.message, 'taken');
   const done = ok(await rpc(viewer.jwt, 'queue', { p_status: 'done' })).find(q => q.id === published);
   assert.equal(done.decision, 'remove');
   assert.equal(done.preview, null);
