@@ -1,0 +1,138 @@
+region,source_ref,lat,lng,converted_from,converted_to,generic_zh,generic_en
+Hong Kong,osm:way/417590439@25m;park/way/675493141,22.3061872,114.2554085,,,公園,Park
+Hong Kong,osm:way/935197258@50m;garden/way/37664204,22.2982558,114.1762198,市政局百周年紀念花園,市政局百週年紀念花園,,
+Hong Kong,osm:node/9705370017;publicArt,22.2779707,114.161995,,,公共藝術,
+Hong Kong,osm:way/1021161261@0m;waterfront/way/775969233,22.3180548,114.1551457,,,海濱步道,Waterfront
+Hong Kong,osm:way/102225743@0m;waterfront/relation/12921008,22.2895354,114.2184512,鰂魚涌公園,鰂魚湧公園,,
+Hong Kong,osm:way/102225781@0m;waterfront/relation/12921008,22.2885687,114.2212728,鰂魚涌公園,鰂魚湧公園,,
+Hong Kong,osm:way/1117814985@250m;waterfront/way/1086874057,22.3023995,114.1924838,,,海濱步道,Waterfront
+Hong Kong,osm:way/1264391890@0m;waterfront/way/135248210,22.3127723,114.2654904,坑口文曲里公園,坑口文曲裏公園,,
+Hong Kong,osm:way/1313794177@25m;waterfront/way/1122405295,22.2925115,114.2667456,,,海濱步道,Waterfront
+Hong Kong,osm:way/1391725362@125m;waterfront/way/1391725364,22.3107182,114.2071226,,,海濱步道,Waterfront
+Hong Kong,osm:way/808453789@175m;waterfront/way/1234351380,22.3258797,114.1492419,,,海濱步道,Waterfront
+Hong Kong,osm:way/1046752669@0m;square/way/266102541,22.282548,114.1903585,,,廣場,Square
+Hong Kong,"osm:way/1365729408@-1925,1925m;square",22.3173109,114.1612863,,,廣場,Square
+Hong Kong,"osm:way/1371000423@5300,2150m;square",22.3193273,114.2315241,,,廣場,Square
+Hong Kong,osm:way/312192947@25m;square/way/312192960,22.2821516,114.1272577,,,廣場,Square
+Hong Kong,osm:way/914287397@50m;square/way/914287397,22.3102561,114.2393374,,,廣場,Square
+Hong Kong,osm:way/133164724@200m;park/way/675496677,22.3187181,114.2609755,,,公園,Park
+Hong Kong,osm:way/830380982@25m;park/way/775969233,22.3204061,114.1559367,,,公園,Park
+Macau,osm:way/666225612@175m;waterfront/way/405602204,22.1455282,113.5511937,,,海濱步道,Waterfront
+Macau,osm:way/1194508224@0m;square/way/424248133,22.1481317,113.5631815,,,廣場,Square
+Macau,osm:way/314945807@125m;square/way/314945807,22.190224,113.5582743,法式露台,法式露臺,,
+Macau,osm:way/314945815@50m;square/way/314945815,22.1922661,113.5569565,船夫露台,船伕露臺,,
+Singapore,"osm:way/474288886@-2025,1625m;square",1.3046139,103.831784,乌节宝龙坊,烏節寶龍坊,,
+Singapore,osm:way/541395710@0m;waterfront/way/329762423,1.2875148,103.8246747,中峇鲁公园,中峇魯公園,,
+Singapore,osm:way/685178661@100m;square/way/931655370,1.3324463,103.8501246,,,廣場,Square
+Singapore,osm:way/46521277@325m;square/way/474288886,1.3035837,103.8340942,乌节宝龙坊,烏節寶龍坊,,
+Singapore,osm:node/10048423476;publicArt,1.2821343,103.856863,,,公共藝術,
+Singapore,osm:node/10554386876;publicArt,1.2762314,103.8201015,,,公共藝術,Public art
+Singapore,osm:node/6461554413;publicArt,1.2947895,103.853218,,,公共藝術,
+Singapore,osm:node/6473158913;publicArt,1.2476421,103.8218273,圣淘沙,聖淘沙,,
+Singapore,osm:way/1167350219@0m;waterfront/relation/15394784,1.2771193,103.8114387,直落布兰雅山公园,直落布蘭雅山公園,,
+Singapore,osm:way/1321546690@25m;waterfront/way/439331643,1.3254547,103.8562357,,,海濱步道,
+Singapore,osm:way/1462539158@100m;waterfront/way/567248094,1.3256107,103.9019013,,,海濱步道,
+Singapore,osm:way/1462539158@375m;waterfront/way/567248094,1.3264622,103.904202,,,海濱步道,
+Singapore,osm:way/1487214819@50m;waterfront/way/681191987,1.3091403,103.8893008,,,海濱步道,Waterfront
+Singapore,osm:way/1516352605@0m;waterfront/way/174721786,1.2963784,103.9009593,,,海濱步道,
+Singapore,osm:way/1562172955@50m;waterfront/way/1562172958,1.3291573,103.9042978,,,海濱步道,Waterfront
+Singapore,osm:way/172387168@0m;waterfront/relation/15727863,1.265593,103.806597,拉柏多自然保护区,拉柏多自然保護區,,
+Singapore,osm:way/229630825@75m;waterfront/way/174721786,1.2945792,103.8879832,,,海濱步道,
+Singapore,osm:way/393187265@150m;waterfront/relation/10247957,1.2811719,103.8756854,滨海湾东花园,濱海灣東花園,,
+Singapore,osm:way/395801750@25m;waterfront/way/552973480,1.3143663,103.892397,,,海濱步道,Waterfront
+Singapore,osm:way/455246456@0m;waterfront/way/174721786,1.2947041,103.894481,,,海濱步道,
+Singapore,osm:way/455246818@350m;waterfront/way/174721786,1.2944291,103.8903133,,,海濱步道,
+Singapore,osm:way/679172819@25m;waterfront/way/253929400,1.3136601,103.8893466,芽笼罗弄40游乐场,芽籠羅弄40遊樂場,,
+Singapore,osm:way/845223323@375m;waterfront/way/41662337,1.3015986,103.8436758,,,海濱步道,
+Singapore,osm:way/910675266@0m;waterfront/way/904611455,1.2949272,103.8775268,,,海濱步道,
+Singapore,osm:way/930113504@0m;waterfront/way/912423174,1.3204107,103.8671302,加冷公园连道,加冷公園連道,,
+Singapore,osm:way/1094051080@100m;garden/way/980089262,1.2869774,103.8308379,,,花園,Garden
+Singapore,osm:way/1507448916@0m;garden/way/1507448913,1.3331311,103.8656038,,,花園,Garden
+Singapore,osm:way/1155359166@25m;square/way/1155359166,1.3267154,103.8076416,,,廣場,Square
+Singapore,osm:way/116818163@100m;square/way/116818163,1.2515215,103.817021,,,廣場,Square
+Singapore,osm:way/1557262991@25m;square/way/1557262991,1.3045445,103.8846439,,,廣場,Square
+Singapore,osm:way/1561978139@100m;square/way/1561978139,1.3154448,103.8985456,,,廣場,Square
+Singapore,osm:way/162525974@275m;square/way/172015629,1.2840344,103.8582144,,,廣場,
+Singapore,"osm:way/176274033@-2975,-3350m;square",1.2598726,103.8232387,圣淘沙跨海步行道,聖淘沙跨海步行道,,
+Singapore,osm:way/216223896@75m;square/way/218268266,1.3014677,103.8541899,,,廣場,Square
+Singapore,"osm:way/266998785@-4450,-2925m;square",1.2636945,103.8099705,,,廣場,Square
+Singapore,osm:way/41659829@25m;square/way/474288906,1.3015125,103.839116,,,廣場,Square
+Singapore,"osm:way/474288886@-1475,1350m;square",1.3021408,103.8367316,乌节宝龙坊,烏節寶龍坊,,
+Singapore,"osm:way/474763401@-1150,50m;square",1.2904496,103.8396552,,,廣場,Square
+Singapore,osm:way/480175918@25m;square/way/480632927,1.2545318,103.8176723,,,廣場,Square
+Singapore,"osm:way/616972594@-3000,-2375m;square",1.268641,103.8230137,,,廣場,Square
+Singapore,"osm:way/739513984@-850,-625m;square",1.2843792,103.8423538,,,廣場,Square
+Singapore,osm:way/1056794643@0m;park/way/343746558,1.2702304,103.8195696,花柏山公园,花柏山公園,,
+Singapore,osm:way/1091337322@0m;park/way/291415385,1.3117963,103.8582811,松美路游乐场,松美路遊樂場,,
+Singapore,osm:way/1092481475@50m;park/way/506476742,1.2764928,103.8437815,道拉实连路公园,道拉實連路公園,,
+Singapore,osm:way/1131625195@25m;park/way/1131625194,1.3114796,103.8989059,加美花园,加美花園,,
+Singapore,osm:way/1160327872@25m;park/relation/15693200,1.334639,103.8715606,比达达利绿道,比達達利綠道,,
+Singapore,osm:way/1160524558@50m;park/relation/15693200,1.3368722,103.8724605,比达达利绿道,比達達利綠道,,
+Singapore,osm:way/1168861565@25m;park/way/343746558,1.2749263,103.8162933,花柏山公园,花柏山公園,,
+Singapore,osm:way/1182941686@0m;park/way/1153434547,1.3308805,103.8597456,,,公園,Park
+Singapore,osm:way/1217599789@25m;park/way/306458376,1.3354432,103.8530821,,,公園,
+Singapore,osm:way/128869365@0m;park/way/39430856,1.2859308,103.8405821,珍珠山城市公园,珍珠山城市公園,,
+Singapore,osm:way/1352481434@0m;park/way/1232950362,1.3163012,103.8493583,,,公園,
+Singapore,osm:way/1408952013@75m;park/way/343746558,1.2705782,103.8166247,花柏山公园,花柏山公園,,
+Singapore,osm:way/1431686512@25m;park/way/336772793,1.331283,103.8081161,华登岭游乐场,華登嶺遊樂場,,
+Singapore,osm:way/1436377747@0m;park/way/683635206,1.3245767,103.889175,,,公園,Park
+Singapore,osm:way/1492126112@25m;park/way/867325578,1.3254657,103.8178851,大学路园,大學路園,,
+Singapore,osm:way/150829211@0m;park/way/904611455,1.2947555,103.8833222,,,公園,
+Singapore,osm:way/161135917@25m;park/way/739806937,1.2949096,103.8104073,亚历山大水道线性公园,亞歷山大水道線性公園,,
+Singapore,osm:way/310894901@175m;park/relation/15394784,1.2787657,103.8151167,直落布兰雅山公园,直落布蘭雅山公園,,
+Singapore,osm:way/314523100@25m;park/way/863261570,1.320914,103.8319363,,,公園,Park
+Singapore,osm:way/455246818@1300m;park/way/174721786,1.2958012,103.8987168,,,公園,
+Singapore,osm:way/455246818@2050m;park/way/23161989,1.2979055,103.9050498,,,公園,
+Singapore,osm:way/482506797@0m;park/way/44488254,1.2967339,103.8863229,加东公园,加東公園,,
+Singapore,osm:way/496173180@75m;park/way/52235098,1.3001031,103.8411014,,,公園,
+Singapore,osm:way/541094689@25m;park/way/172243396,1.287439,103.808487,亚历山大山东社区公园,亞歷山大山東社區公園,,
+Singapore,osm:way/541376996@0m;park/way/172093862,1.2734184,103.8240807,武吉宝美岗公园,武吉寶美崗公園,,
+Singapore,osm:way/541965754@50m;park/way/307082729,1.3317874,103.8755864,祯百家道公园,禎百家道公園,,
+Singapore,osm:way/543555996@25m;park/way/307082466,1.3345399,103.8772952,百快道公园,百快道公園,,
+Singapore,osm:way/546197393@25m;park/way/586526941,1.2877306,103.8129503,麟记公园,麟記公園,,
+Singapore,osm:way/546702695@0m;park/way/358462339,1.304417,103.8770707,,,公園,
+Singapore,osm:way/616747718@100m;park/relation/15394784,1.2797013,103.8114656,直落布兰雅山公园,直落布蘭雅山公園,,
+Singapore,osm:way/775652563@50m;park/way/808404353,1.3226455,103.8264777,马康公园,馬康公園,,
+Singapore,osm:way/860574566@50m;park/way/739106887,1.3119222,103.8558752,城市绿地,城市綠地,,
+Singapore,osm:way/918147746@525m;park/way/736934929,1.3140249,103.8095814,新加坡植物园加洛普延伸区,新加坡植物園加洛普延伸區,,
+Taipei,osm:way/557572414@50m;park/way/273202842,25.0595336,121.5596589,,,,Park
+Taipei,osm:way/251212756@75m;square/way/251212756,25.0390934,121.5399877,,,廣場,Square
+Taipei,osm:node/11491802703;publicArt,25.0266581,121.5755142,,,公共藝術,Public art
+Taipei,osm:node/13316223672;publicArt,25.0518914,121.6010094,,,公共藝術,
+Taipei,osm:node/5751124159;publicArt,25.0677177,121.5963663,,,,Public art
+Taipei,osm:node/7996740405;publicArt,25.0703468,121.5305696,,,公共藝術,Public art
+Taipei,osm:way/1001730484@25m;waterfront/way/764011467,25.070401,121.5226395,,,海濱步道,Waterfront
+Taipei,osm:way/1074753352@0m;waterfront/way/43565999,25.0651058,121.614132,,,,Waterfront
+Taipei,osm:way/1097326370@25m;waterfront/relation/4601743,25.0321116,121.5114698,台北植物園,臺北植物園,,
+Taipei,osm:way/1382836313@0m;waterfront/way/301927905,25.019103,121.521675,,,,Waterfront
+Taipei,osm:way/1487603285@0m;waterfront/way/43565999,25.0620364,121.6103722,,,,Waterfront
+Taipei,osm:way/1576485955@0m;waterfront/way/349570046,25.0221526,121.51485,,,,Waterfront
+Taipei,osm:way/305394501@75m;waterfront/way/504669513,25.0110023,121.5305206,,,,Waterfront
+Taipei,osm:way/718263433@0m;waterfront/way/302249040,25.0114613,121.5276074,,,,Waterfront
+Taipei,osm:way/826112870@0m;waterfront/way/212404916,25.0227877,121.5596135,,,,Waterfront
+Taipei,osm:way/1093147368@25m;square/way/1093147368,25.0841366,121.5283493,微風平台,微風平臺,,Square
+Taipei,"osm:way/1166080095@-2800,2825m;square",25.0654032,121.532201,,,廣場,Square
+Taipei,"osm:way/1469168923@-1000,1100m;square",25.0498922,121.550073,,,廣場,Square
+Taipei,osm:way/261737312@25m;square/way/261737312,25.0308392,121.5910268,,,,Square
+Taipei,osm:way/298601634@50m;square/way/298601634,25.0426654,121.5864274,,,,Square
+Taipei,"osm:way/374876309@-4800,-1800m;square",25.0238046,121.5123608,,,廣場,Square
+Taipei,osm:way/376248649@25m;square/way/376248649,24.9928951,121.5495081,景觀台,景觀臺,,Square
+Taipei,"osm:way/397020472@-650,-5250m;square",24.9927855,121.5535505,,,廣場,Square
+Taipei,osm:way/420571813@100m;square/way/420571813,25.0806955,121.5608237,,,廣場,Square
+Taipei,"osm:way/549779381@-5000,950m;square",25.0485353,121.5103658,,,廣場,Square
+Taipei,osm:way/1042354472@0m;park/way/72380602,25.0576882,121.5946419,,,,Park
+Taipei,osm:way/1074753380@0m;park/way/43565999,25.0597595,121.6002145,,,,Park
+Taipei,osm:way/1168979631@0m;park/relation/14636498,25.0780569,121.5802189,,,,Park
+Taipei,osm:way/1229613906@125m;park/way/189781448,25.0653217,121.5965158,,,,Park
+Taipei,osm:way/1229613908@150m;park/way/189781448,25.0661243,121.599068,,,,Park
+Taipei,osm:way/1277957498@100m;park/way/317031161,25.0675249,121.6079472,,,,Park
+Taipei,osm:way/1469141296@0m;park/way/718041352,25.0006367,121.5735875,,,,Park
+Taipei,osm:way/1564134462@25m;park/relation/7832374,25.0508334,121.5108818,,,,Park
+Taipei,osm:way/352005283@150m;park/way/596404742,25.060285,121.604762,,,,Park
+Taipei,osm:way/352005283@425m;park/way/596404742,25.0608683,121.6074088,,,,Park
+Taipei,osm:way/443216019@25m;park/way/583425394,25.0230879,121.5480012,,,公園,Park
+Taipei,osm:way/556419965@50m;park/way/556419964,25.0751315,121.5811792,,,,Park
+Taipei,osm:way/600025469@250m;park/way/183864398,25.0774454,121.5540726,,,,Park
+Taipei,osm:way/695599094@25m;park/way/695599093,24.9967226,121.5389547,,,公園,Park
+Taipei,osm:way/858961978@0m;park/way/538617831,25.077121,121.5268428,,,,Park
+Taipei,osm:way/915818027@0m;park/way/301927905,25.0176588,121.5237916,,,,Park
