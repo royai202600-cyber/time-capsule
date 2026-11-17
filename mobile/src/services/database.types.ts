@@ -425,13 +425,19 @@ export type Database = {
           fact_zh: string | null
           id: number
           local_price: number | null
+          photo_credit: string | null
+          photo_license: string | null
+          photo_link: string | null
+          photo_path: string | null
           published: boolean
           question_en: string
           question_zh: string
           seq: number
           source: string | null
           usd_rate: number | null
-          vessel: string
+          venue_en: string | null
+          venue_zh: string | null
+          vessel: string | null
         }
         Insert: {
           checked_on?: string | null
@@ -441,13 +447,19 @@ export type Database = {
           fact_zh?: string | null
           id?: never
           local_price?: number | null
+          photo_credit?: string | null
+          photo_license?: string | null
+          photo_link?: string | null
+          photo_path?: string | null
           published?: boolean
           question_en: string
           question_zh: string
           seq: number
           source?: string | null
           usd_rate?: number | null
-          vessel: string
+          venue_en?: string | null
+          venue_zh?: string | null
+          vessel?: string | null
         }
         Update: {
           checked_on?: string | null
@@ -457,13 +469,19 @@ export type Database = {
           fact_zh?: string | null
           id?: never
           local_price?: number | null
+          photo_credit?: string | null
+          photo_license?: string | null
+          photo_link?: string | null
+          photo_path?: string | null
           published?: boolean
           question_en?: string
           question_zh?: string
           seq?: number
           source?: string | null
           usd_rate?: number | null
-          vessel?: string
+          venue_en?: string | null
+          venue_zh?: string | null
+          vessel?: string | null
         }
         Relationships: [
           {

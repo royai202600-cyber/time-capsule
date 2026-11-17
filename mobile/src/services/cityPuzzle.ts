@@ -46,7 +46,8 @@ export type CityPuzzle = {
   venue_zh: string; venue_en: string;
   /** A real photo of the item when we have one we may reuse; otherwise the vessel art is shown. */
   photo: PuzzlePhoto | null;
-  vessel: string;
+  /** Existing vessel art when it matches the subject. Photo-only puzzles have no vessel. */
+  vessel: string | null;
   /** Players guess in US dollars so any city reads the same; each guess is also shown in the city's own money. */
   currency: string;
   /** Units of the city's money per US dollar, as checked with the price. Showing it gives nothing away. */
