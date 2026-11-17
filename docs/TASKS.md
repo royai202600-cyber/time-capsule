@@ -1,5 +1,7 @@
 # Task board
 
+CE1 release approved by Roy on 2026-11-17 after Claude reviewed `e80cb13`. Expo alignment passes 198 mobile tests, TypeScript, `expo install --check`, and web/iOS exports. Owner-account merge follows green CI, then #147 and #149 in order, migration/photos and production verification.
+
 Private quest QR and rewards — PR #129 squash-merged as `7d6b9b9` after green CI 43681042268. Organizers can view and print labeled on-site QR cards after the first join. Arrive, spin and puzzle quest completions show a rising points bubble. Browser-verified locally with a locked hunt and disposable accounts.
 
 Part C guide release — merge #125, #126, #128 in order, apply migration `20261114134200_private_hunt_guide`, then release immediately. Legacy unfinished members start at the guide with progress intact. Hidden hunts refuse reward claims until restored. Hosted rollback includes an existing member with completed progress.
