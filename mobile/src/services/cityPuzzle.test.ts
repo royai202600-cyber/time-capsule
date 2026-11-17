@@ -1,8 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
+import { PostgrestError } from "@supabase/supabase-js";
+
 
 vi.mock("./supabase", () => ({ supabase: { rpc: vi.fn() } }));
 
-import { CITIES, MAX_GUESSES, cityAt, cityPuzzle, CityPuzzleError, judge, localPriceText, localText, parseGuess, shareText, usdText, type CityPuzzle } from "./cityPuzzle";
+import { supabase } from "./supabase";
+import { CITIES, MAX_GUESSES, cityAt, cityPuzzle, judge, localPriceText, localText, parseGuess, shareText, usdText, type CityPuzzle } from "./cityPuzzle";
 
 describe("judge", () => {
   it("wins within 10% either way", () => {
@@ -69,27 +72,25 @@ describe("cityAt", () => {
   });
 });
 
-describe("sample puzzle", () => {
-  it("keeps the price back until the puzzle ends, then pays once", async () => {
-    const day = await cityPuzzle.today();
-    expect(day.puzzles.map((p) => p.city)).toEqual(["taipei", "hongkong", "macau", "singapore"]);
-    expect(day.puzzles.every((p) => p.answer === null && !p.done)).toBe(true);
-    const first = await cityPuzzle.guess("taipei", 9);
-    expect(first.puzzle.guesses).toEqual([{ usd: 9, hint: "lower", close: false }]);
-    expect(first.puzzle.answer).toBeNull();
-    const win = await cityPuzzle.guess("taipei", 1.9);
-    expect(win.puzzle.won && win.puzzle.done).toBe(true);
-    expect(win.puzzle.reward).toBe(3);
-    expect(win.puzzle.answer?.local).toBe(60);
-    expect(win.streak).toBe(day.streak + 1);
-    await expect(cityPuzzle.guess("taipei", 2)).rejects.toBeInstanceOf(CityPuzzleError);
-    expect((await cityPuzzle.today()).puzzles[0].done).toBe(true);
+describe("puzzle RPCs", () => {
+  const rpc = vi.mocked(supabase.rpc);
+
+  it("fetches the server's puzzle day and streak", async () => {
+    const day = { puzzles: [], streak: 2 };
+    rpc.mockResolvedValueOnce({
+      data: day, error: null, success: true, count: null, status: 200, statusText: "OK",
+    });
+    await expect(cityPuzzle.today()).resolves.toEqual(day);
+    expect(rpc).toHaveBeenLastCalledWith("city_puzzle_today");
   });
-  it("ends after six misses with the smaller reward, and the streak rises only once a day", async () => {
-    let out = await cityPuzzle.guess("macau", 50);
-    for (let i = 1; i < MAX_GUESSES; i++) out = await cityPuzzle.guess("macau", 50);
-    expect(out.puzzle.done && !out.puzzle.won).toBe(true);
-    expect(out.puzzle.reward).toBe(1);
-    expect(out.streak).toBe(3);
+
+  it("submits US dollars and keeps the RPC error code", async () => {
+    rpc.mockResolvedValueOnce({
+      data: null,
+      error: new PostgrestError({ message: "already_done", code: "P0001", details: "", hint: "" }),
+      success: false, count: null, status: 400, statusText: "Bad Request",
+    });
+    await expect(cityPuzzle.guess("taipei", 1.9)).rejects.toMatchObject({ code: "already_done" });
+    expect(rpc).toHaveBeenLastCalledWith("city_puzzle_guess", { p_city: "taipei", p_usd: 1.9 });
   });
 });

@@ -4,7 +4,7 @@
 import type { GameState } from "./game";
 import { supabase } from "./supabase";
 
-export const CITY_PUZZLE_BACKEND = false;
+export const CITY_PUZZLE_BACKEND = true;
 export const CITY_EXPLORER = CITY_PUZZLE_BACKEND || (typeof __DEV__ !== "undefined" && __DEV__);
 export const MAX_GUESSES = 6;
 /** A guess within this share of the price is a win; prices are "typical", so exact would be unfair. */

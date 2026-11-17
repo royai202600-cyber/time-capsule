@@ -368,6 +368,113 @@ export type Database = {
           },
         ]
       }
+      city_puzzle_plays: {
+        Row: {
+          city: string
+          done: boolean
+          guesses: NonNullable<Json>
+          play_date: string
+          question_id: number
+          reward: number | null
+          user_id: string
+          won: boolean
+        }
+        Insert: {
+          city: string
+          done?: boolean
+          guesses?: NonNullable<Json>
+          play_date: string
+          question_id: number
+          reward?: number | null
+          user_id: string
+          won?: boolean
+        }
+        Update: {
+          city?: string
+          done?: boolean
+          guesses?: NonNullable<Json>
+          play_date?: string
+          question_id?: number
+          reward?: number | null
+          user_id?: string
+          won?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "city_puzzle_plays_city_question_id_fkey"
+            columns: ["city", "question_id"]
+            isOneToOne: false
+            referencedRelation: "city_puzzle_questions"
+            referencedColumns: ["city", "id"]
+          },
+          {
+            foreignKeyName: "city_puzzle_plays_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      city_puzzle_questions: {
+        Row: {
+          checked_on: string | null
+          city: string
+          currency: string
+          fact_en: string | null
+          fact_zh: string | null
+          id: number
+          local_price: number | null
+          published: boolean
+          question_en: string
+          question_zh: string
+          seq: number
+          source: string | null
+          usd_rate: number | null
+          vessel: string
+        }
+        Insert: {
+          checked_on?: string | null
+          city: string
+          currency: string
+          fact_en?: string | null
+          fact_zh?: string | null
+          id?: never
+          local_price?: number | null
+          published?: boolean
+          question_en: string
+          question_zh: string
+          seq: number
+          source?: string | null
+          usd_rate?: number | null
+          vessel: string
+        }
+        Update: {
+          checked_on?: string | null
+          city?: string
+          currency?: string
+          fact_en?: string | null
+          fact_zh?: string | null
+          id?: never
+          local_price?: number | null
+          published?: boolean
+          question_en?: string
+          question_zh?: string
+          seq?: number
+          source?: string | null
+          usd_rate?: number | null
+          vessel?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "city_puzzle_questions_vessel_fkey"
+            columns: ["vessel"]
+            isOneToOne: false
+            referencedRelation: "vessels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       corrupted_catches: {
         Row: {
           attempts: number
@@ -1282,6 +1389,14 @@ export type Database = {
       }
       city_hunt_join: { Args: { p_hunt: string }; Returns: Json }
       city_hunt_list: { Args: { p_lat: number; p_lng: number }; Returns: Json }
+      city_puzzle_guess: {
+        Args: { p_city: string; p_usd: number }
+        Returns: Json
+      }
+      city_puzzle_today: {
+        Args: never
+        Returns: Json
+      }
       corrupted_capsule_throw: {
         Args: {
           p_accuracy: number
