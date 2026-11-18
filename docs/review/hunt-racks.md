@@ -1,10 +1,31 @@
 # Waypost rack data move review
 
-Read-only hosted snapshot, 2026-11-18. No migration has been applied. The inventory may change before release; repeat the query and review the exact disposition immediately before applying. Distances are to the nearest currently game-enabled common Waypost; ties use Waypost ID.
+**Contract additions.** Rack items also return `lock_question` so the client can display the prompt. Validation also returns `bad_filter` for an unknown filter and `rejected` for malformed text input. All requested RPC names, fields and error codes are present.
 
-Refreshed snapshot: 14 move, four delete, one already claimed stays in its Inbox. Three unclaimed capsules currently use other vessels and need conversion to the public bottle.
+## RPCs
 
-This is a proposed disposition, not a record of completed changes. The four deletions include their sealed content. The existing report and moderation functions can reset a claimed public capsule's recipient; they must be changed along with the rack opening path so a report or moderation decision cannot silently put a claimed capsule back in circulation. The old public-nearby, drop, pickup and return RPCs and their legacy wrappers also need explicit retirement behavior.
+| RPC | Result and behavior |
+|---|---|
+| `waypost_rack(waypost_id, filter, cursor)` | `{ count, items, next_cursor }`. The count is the entire matching set and pages contain up to 24 items. Pass `next_cursor` back unchanged with the same Waypost and filter. Item fields are `capsule_id, sender: {portrait, name}, hint, opens_at, ready, has_question, lock_question, is_friend, is_mine`. Ready means the timer has elapsed. |
+| `rack_leave(waypost_id, lat, lng, accuracy, body, hint, wait_days, lock_question?, lock_answer?)` | `{ capsule_id, opens_at }`. Errors are `too_far` for ineligible Wayposts, bad accuracy or distance over 100 m, `bad_wait`, `blocked_words`, `no_answer` and `rejected`. Body is 1–280 characters, hint up to 40, question and answer up to 280 each. The database always picks the bottle and does not read or change ownership. |
+| `rack_open(capsule_id, lat, lng, accuracy, answer?)` | Content object with the same fields as an `open_capsule` row. Checks rack availability, including sender exclusion, then location, time and answer. Errors are `taken`, `too_far`, `too_early` and `wrong_answer`. The answer uses lowercasing and removal of whitespace, including ideographic spaces. |
+| `admin_waypost_rack(waypost_id, cursor)` | Audited pages with sender, hint, opens_at, lock_question, status and report_count. Hidden Wayposts and capsule history are available to staff. Reported entries show the body to owner, admin and moderator. Viewer sees metadata. Errors are `forbidden` and `not_found`. |
+| `admin_rack_remove(capsule_id, reason)` | Owner, admin and moderator. Returns `{ action_id, capsule_id }`. Errors are `forbidden`, `not_found` and `reason_required`. Removal revokes Inbox access if claimed. Pass `action_id` to `admin_undo` for an unopened removal. Undo refuses stale actions and opened capsules. |
+
+The shared `private.text_allowed(text)` checks English and Chinese substrings case-insensitively. Database writers can reuse it for routes and private letters. The word table, helper and sealed answer all have restricted access.
+
+## Replaced behavior
+
+- `public_capsule_report` and its existing `sea_report` wrapper use the existing report table. The first pending report hides an unclaimed rack entry globally. Reports after opening leave the claim in place while staff review it.
+- `private.public_capsule_is_hidden`, `admin_queue` and `admin_queue_resolve` surface pending reports and the question in the existing queue. Restore makes an unopened entry available unless an independent rack removal is in force. Remove revokes Inbox access and retains the opening record.
+- `admin_undo` handles rack removal and delegates other actions to the existing game admin logic with its existing permissions.
+- `public_capsule_drop` and `sea_throw` accept the old parameters. The old duration becomes a wait at the nearest eligible rack within 100 m. Missing a rack returns `no_shore`.
+- `public_capsule_nearby` and `sea_nearby` return empty lists. `public_capsule_pick_up`, `sea_pick_up`, `public_capsule_return` and `sea_return` refuse with `not_allowed`.
+- The old point lookup view is retired after the data move. The historical drop-place table and its rows are retained for the later cleanup.
+
+## Proposed cutover
+
+Read-only hosted inventory refreshed on 2026-11-18. **14 unopened capsules move, four are deleted with their content, and one claimed capsule stays in its Inbox.** Three moved capsules are converted to the public bottle. Distances are to the nearest visible, game-enabled common Waypost. Ties use Waypost ID.
 
 Reproduce the snapshot with the query below. The point-type predicates distinguish the three existing location sources; the final distance comparison must use the unrounded value.
 
@@ -54,3 +75,9 @@ order by disposition, c.id;
 | dc41325b-d93a-49a2-80ef-ed077b05c2f2 | move | Xinyi Square (cff0ab16-af6b-4e57-bcde-0d0e9075ce8e) | 0.0 | unclaimed / bottle |
 | df4f3d12-9f18-4b47-9e59-ad1be7e7f20f | move | Songshou Square (dfa83121-4233-4e14-8f64-45bfe84b3256) | 0.0 | unclaimed / bottle |
 | fa2e095d-ac0d-47a3-9720-92302535dff2 | move | Taipei Civic Square (e736802f-8192-42d8-ae36-58caa815e005) | 31.7 | unclaimed / bottle |
+
+## Verification
+
+- Hosted Supabase ran the migration and `supabase/tests/hunt-racks.sql` inside one transaction ending in `ROLLBACK`. It checked legacy and rack RPC errors, paging and filters, sealing, report and queue states, staff roles, audit records, grants, and the 19 dispositions including the four content cascades. A follow-up read confirmed 19 original public capsules, zero fixture accounts, Wayposts and audit rows, and neither the new RPC nor the migration version present.
+- Local Supabase ran the SQL suite and `node supabase/tests/hunt-racks-api.mjs` with disposable real JWTs. Both HTTP open requests were observed waiting on the same PostgreSQL row before the lock was released. The winner received the letter and Inbox row, and the other got `taken`. True concurrent access was tested locally because independent hosted sessions cannot see schema changes inside the rollback transaction.
+- Local cleanup confirmed zero disposable users, sessions, capsules and content rows. The temporary schema changes were reverted, the Time Capsule containers stopped, and the preserved volume was kept.

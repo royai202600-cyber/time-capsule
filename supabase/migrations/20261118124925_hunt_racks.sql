@@ -287,8 +287,9 @@ begin
     update public.hunts set hidden_at = case when p_decision = 'remove' then coalesce(hidden_at, clock_timestamp()) end
     where id = p_id;
   elsif p_decision = 'remove' then
-    update public.capsules set recipient = null, seen_at = null
-    where id = target_capsule and recipient is not null;
+    update public.capsules set recipient = null, seen_at = null,
+      rack_removed_at = coalesce(rack_removed_at, clock_timestamp())
+    where id = target_capsule;
   end if;
   perform private.admin_log('queue.' || p_decision, target_type, p_id, title,
     jsonb_build_object('hidden', was_hidden), jsonb_build_object('hidden', p_decision = 'remove'), p_note);
@@ -306,7 +307,7 @@ begin
   select w.* into post from public.public_capsule_spots w where w.id = waypost_id and w.kind = 'common';
   if not found then raise exception 'not_found'; end if;
   with rack as materialized (
-    select c.id, c.sender, c.hint, c.open_at, c.sealed_at, c.opened_at, c.lock_question, c.rack_removed_at
+    select c.id, c.sender, c.hint, c.open_at, c.sealed_at, c.recipient, c.opened_at, c.lock_question, c.rack_removed_at
     from public.capsules c where c.is_public and c.public_capsule_spot = post.id
   ), page as materialized (
     select * from rack
@@ -323,6 +324,7 @@ begin
       'status', case when i.rack_removed_at is not null or review.action = 'queue.remove' then 'removed'
         when private.public_capsule_is_hidden(i.id) then 'reported'
         when i.opened_at is not null then 'opened'
+        when i.recipient is not null then 'claimed'
         when i.open_at <= statement_timestamp() then 'ready' else 'waiting' end,
       'report_count', reports.total,
       'body', case when reports.total > 0 and private.admin_can('letters') then cc.message end
@@ -426,7 +428,7 @@ with destinations as materialized (
 delete from public.capsules c using destinations d where c.id = d.id and d.waypost_id is null;
 
 alter table public.capsules add constraint capsules_unclaimed_rack_check check (
-  not is_public or recipient is not null or opened_at is not null
+  not is_public or recipient is not null or opened_at is not null or rack_removed_at is not null
   or (public_capsule_spot is not null and vessel = 'bottle')
 );
 
