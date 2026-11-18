@@ -402,5 +402,85 @@ revoke all on function public.admin_waypost_rack(uuid, jsonb), public.admin_rack
 grant execute on function public.admin_waypost_rack(uuid, jsonb), public.admin_rack_remove(uuid, text),
   public.admin_undo(bigint, text) to authenticated;
 
+-- Resolve historical coordinates once before retiring the old point lookup.
+-- Leave claimed Inbox capsules and their opening records intact.
+with destinations as materialized (
+  select c.id, nearest.id as waypost_id
+  from public.capsules c
+  left join private.public_capsule_points s
+    on s.id = coalesce(c.public_capsule_spot, c.corrupted_drop_spot, c.public_capsule_drop_place)
+    and s.corrupted = (c.corrupted_drop_spot is not null)
+    and s.drop_place = (c.public_capsule_drop_place is not null)
+  left join lateral (
+    select w.id from public.public_capsule_spots w
+    where w.game_enabled and w.hidden_at is null and w.kind = 'common'
+      and public.distance_m(s.lat, s.lng, w.lat, w.lng) <= 1000
+    order by public.distance_m(s.lat, s.lng, w.lat, w.lng), w.id limit 1
+  ) nearest on true
+  where c.is_public and c.recipient is null and c.opened_at is null
+), moved as (
+  update public.capsules c set public_capsule_spot = d.waypost_id,
+    corrupted_drop_spot = null, public_capsule_drop_place = null, vessel = 'bottle', edition_no = null
+  from destinations d where c.id = d.id and d.waypost_id is not null
+)
+delete from public.capsules c using destinations d where c.id = d.id and d.waypost_id is null;
+
+alter table public.capsules add constraint capsules_unclaimed_rack_check check (
+  not is_public or recipient is not null or opened_at is not null
+  or (public_capsule_spot is not null and vessel = 'bottle')
+);
+
+create or replace function public.public_capsule_drop(
+  p_message text, p_hint text, p_vessel text, p_drift_days integer,
+  p_lat double precision, p_lng double precision, p_accuracy double precision
+) returns table(id uuid, spot_zh text, spot_en text, available_at timestamptz)
+language plpgsql security definer set search_path = '' as $$
+declare
+  post public.public_capsule_spots;
+  result jsonb;
+begin
+  if auth.uid() is null then raise exception 'not signed in'; end if;
+  select w.* into post from public.public_capsule_spots w
+  where w.game_enabled and w.hidden_at is null and w.kind = 'common'
+    and private.rack_distance(w, p_lat, p_lng, p_accuracy) <= 100
+  order by public.distance_m(p_lat, p_lng, w.lat, w.lng), w.id limit 1 for share;
+  if not found then raise exception 'no_shore'; end if;
+  begin
+    result := public.rack_leave(post.id, p_lat, p_lng, p_accuracy, p_message, p_hint, p_drift_days);
+  exception when raise_exception then
+    if sqlerrm = 'too_far' then raise exception 'no_shore'; end if;
+    if sqlerrm in ('blocked_words', 'bad_wait') then raise exception 'rejected'; end if;
+    raise;
+  end;
+  return query select (result->>'capsule_id')::uuid, post.name_zh, post.name_en,
+    (result->>'opens_at')::timestamptz;
+end;
+$$;
+
+create or replace function public.public_capsule_nearby(p_lat double precision, p_lng double precision, p_accuracy double precision)
+returns table(id uuid, hint text, vessel text, lat double precision, lng double precision,
+  spot_zh text, spot_en text, sealed_at timestamptz, available_at timestamptz, returns integer, sender jsonb)
+language sql stable security definer set search_path = '' as $$
+  select null::uuid, null::text, null::text, null::double precision, null::double precision,
+    null::text, null::text, null::timestamptz, null::timestamptz, null::integer, null::jsonb where false;
+$$;
+
+create or replace function public.public_capsule_pick_up(p_id uuid, p_lat double precision, p_lng double precision, p_accuracy double precision)
+returns void language plpgsql security definer set search_path = '' as $$
+begin
+  raise exception 'not_allowed';
+end;
+$$;
+
+create or replace function public.public_capsule_return(p_id uuid)
+returns void language plpgsql security definer set search_path = '' as $$
+begin
+  raise exception 'not_allowed';
+end;
+$$;
+
+-- Keep the retired table and foreign keys until old app cleanup.
+drop view private.public_capsule_points;
+
 notify pgrst, 'reload schema';
 commit;
