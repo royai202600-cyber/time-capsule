@@ -82,3 +82,5 @@ Run the web app (`cd mobile && npm run web` → http://localhost:8088, with `EXP
 - [ ] TypeScript and `npm test` pass.
 
 Put the screenshots (default view, rotated view, and the reference photo side by side) in `docs/review/monuments/<id>-*.png` and in the PR. **Roy approves them in chat before merge.** Merge and release follow the usual owner-account rules.
+
+When adding a Landmark vessel row, set `unlimited_copies = true`.

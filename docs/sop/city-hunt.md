@@ -56,3 +56,5 @@ Hunts can only be in areas we already cover: Taipei, Hong Kong, Singapore and Ma
 
 ## After a hunt ends
 Nothing to do. Leave its rows in place: players keep their stamps and finished hunts.
+
+When adding a Landmark vessel row, set `unlimited_copies = true`.
