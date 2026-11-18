@@ -245,7 +245,7 @@ begin
     is_new:=not exists (select 1 from public.owned_vessels o
       where o.user_id=auth.uid() and o.vessel=reward);
     insert into public.owned_vessels(user_id, vessel, copies)
-      values (auth.uid(), reward, null) on conflict (user_id, vessel) do nothing;
+      values (auth.uid(), reward, null) on conflict on constraint owned_vessels_pkey do nothing;
     stars := 1;
     insert into public.passport_stamps(user_id,place,first_at,how_earned)
       values(auth.uid(),post.place,now(),'landmark')
