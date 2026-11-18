@@ -1,5 +1,7 @@
 # Task board
 
+CE1 Singapore price correction (2026-11-18): Roy approved unpublishing eight outdated questions; hosted rollback passed. Migration is held for the midnight Singapore window after green CI and owner squash merge; other held migrations must not be applied.
+
 CE1 release approved by Roy on 2026-11-17 after Claude reviewed `e80cb13`. Expo alignment #150 (`22343f7`), screens #147 (`09db461`) and backend #149 (`1fb35fe`) merged through Roy’s account after green CI. Migration `20261117110915` is applied, all 51 public photos verified and live types regenerated in owner release `276034a`. Production 375 px zh/en play, rewards, streak, Share and source links pass. Disposable fixtures removed.
 
 Private quest QR and rewards — PR #129 squash-merged as `7d6b9b9` after green CI 43681042268. Organizers can view and print labeled on-site QR cards after the first join. Arrive, spin and puzzle quest completions show a rising points bubble. Browser-verified locally with a locked hunt and disposable accounts.

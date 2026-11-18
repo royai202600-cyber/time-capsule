@@ -83,6 +83,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-18: Roy approved unpublishing Singapore Guess the price sequences 1, 2, 6, 12, 15, 16, 18 and 19 because the venue closed or exhibition ended. Preserve questions and historical plays; apply only just after Singapore midnight after hosted rollback, green CI and owner squash merge with [hold deploy]. Other held migrations remain held.
 - 2026-11-18: Vercel skips any main commit whose subject ends with `[hold deploy]`. Use the suffix for backend merges whose migrations are held and leave it off normal app releases so they deploy.
 - 2026-11-18: HL-C1 PR #154 merged after Claude’s review of `74e6495` and Roy’s approval. Hold migration `20261118124925` for the HL-U1 app release. Refresh the rack inventory immediately before applying it, and apply it before any HL-C3 migrations.
 - 2026-11-18: HL-C3 merged in PR #156. The third price miss completes the quest with 0 points, catch quests use the city’s wave pool, and the first Arrive pins are at least 200 m from the Keeper. Hold all three migrations. Apply them only after HL-C1 migration `20261118124925`, with the app release that shows quest pins.
