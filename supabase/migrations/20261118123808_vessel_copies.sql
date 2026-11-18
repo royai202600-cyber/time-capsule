@@ -349,52 +349,222 @@ begin
 end;
 $function$;
 
--- Administrative writes are serialized with sends/catches and recorded with before/after values.
-create function public.admin_vessel_set_unlimited(p_vessel text,p_unlimited boolean,p_note text default null)
-returns jsonb language plpgsql security definer set search_path='' as $$
-declare before_value boolean; result jsonb;
+-- Take the catalogue row lock before reading this snapshot. Sends, catches and
+-- ownership inserts take a shared lock on that same row.
+create function private.vessel_copy_snapshot(p_vessel text) returns jsonb
+language sql stable set search_path = '' as $$
+  select jsonb_build_object('unlimited_copies', v.unlimited_copies, 'balances',
+    coalesce((select jsonb_object_agg(o.user_id, o.copies)
+      from public.owned_vessels o where o.vessel = v.id), '{}'::jsonb))
+  from public.vessels v where v.id = p_vessel;
+$$;
+revoke all on function private.vessel_copy_snapshot(text) from public, anon, authenticated;
+
+create function public.admin_vessel_set_unlimited(vessel_id text, "on" boolean)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  before_state jsonb;
+  after_state jsonb;
 begin
-  if not private.admin_can('edit') then raise exception 'forbidden'; end if;
-  if p_unlimited is null then raise exception 'invalid_unlimited'; end if;
-  select unlimited_copies into before_value from public.vessels where id=p_vessel for update;
+  perform private.require_game_editor();
+  perform private.lock_game_edits();
+  if "on" is null then raise exception 'invalid_unlimited'; end if;
+  perform 1 from public.vessels where id = vessel_id for update;
   if not found then raise exception 'unknown vessel'; end if;
-  if before_value is distinct from p_unlimited then
-    update public.vessels set unlimited_copies=p_unlimited where id=p_vessel;
-    update public.owned_vessels set copies=case when p_unlimited then null else 0 end where vessel=p_vessel;
+  before_state := private.vessel_copy_snapshot(vessel_id);
+  if (before_state->>'unlimited_copies')::boolean = "on" then
+    return jsonb_build_object('unlimited_copies', "on");
   end if;
-  result:=jsonb_build_object('unlimited_copies',p_unlimited);
-  perform private.admin_log('vessel_set_unlimited','vessel',p_vessel,p_vessel,jsonb_build_object('unlimited_copies',before_value),result,p_note);
-  return result;
+  if not "on" and exists (select 1 from public.vessels
+    where id = vessel_id and (id in ('dome','bottle','envelope','tin') or earned_place is not null))
+  then raise exception 'required_unlimited'; end if;
+
+  update public.vessels set unlimited_copies = "on" where id = vessel_id;
+  update public.owned_vessels set copies = case when "on" then null else 0 end where vessel = vessel_id;
+  after_state := private.vessel_copy_snapshot(vessel_id);
+  perform private.admin_log('vessel.unlimited', 'vessel_copies', vessel_id, vessel_id, before_state, after_state);
+  return jsonb_build_object('unlimited_copies', "on");
 end $$;
-create function public.admin_player_adjust_copies(p_user uuid,p_vessel text,p_delta integer,p_note text default null)
-returns jsonb language plpgsql security definer set search_path='' as $$
-declare before_value integer; after_value integer; unlimited boolean; result jsonb;
+
+create function public.admin_player_adjust_copies(user_id uuid, vessel_id text, delta integer, reason text)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  before_value integer;
+  after_value integer;
+  is_unlimited boolean;
+  target text := user_id::text || ':' || vessel_id;
 begin
-  if not private.admin_can('edit') then raise exception 'forbidden'; end if;
-  if p_delta is null or p_delta=0 then raise exception 'invalid_delta'; end if;
-  select unlimited_copies into unlimited from public.vessels where id=p_vessel for share;
+  perform private.require_game_editor();
+  perform private.lock_game_edits();
+  if delta is null or delta = 0 then raise exception 'invalid_delta'; end if;
+  if nullif(btrim(reason), '') is null then raise exception 'reason_required'; end if;
+  select unlimited_copies into is_unlimited from public.vessels where id = vessel_id for share;
   if not found then raise exception 'unknown vessel'; end if;
-  if unlimited then raise exception 'unlimited_vessel'; end if;
-  select copies into before_value from public.owned_vessels where user_id=p_user and vessel=p_vessel for update;
+  if is_unlimited then raise exception 'unlimited_vessel'; end if;
+  select o.copies into before_value from public.owned_vessels o
+    where o.user_id = admin_player_adjust_copies.user_id and o.vessel = vessel_id for update;
   if not found then raise exception 'vessel_not_owned'; end if;
-  if before_value::bigint+p_delta < 0 or before_value::bigint+p_delta > 2147483647 then raise exception 'invalid_copies'; end if;
-  update public.owned_vessels set copies=before_value+p_delta where user_id=p_user and vessel=p_vessel returning copies into after_value;
-  result:=jsonb_build_object('copies',after_value);
-  perform private.admin_log('player_adjust_copies','player_vessel',p_user::text||':'||p_vessel,p_vessel,jsonb_build_object('copies',before_value),result,p_note);
-  return result;
+  if before_value::bigint + delta not between 0 and 2147483647 then raise exception 'invalid_copies'; end if;
+  update public.owned_vessels o set copies = before_value + delta
+    where o.user_id = admin_player_adjust_copies.user_id and o.vessel = vessel_id returning o.copies into after_value;
+  perform private.admin_log('vessel.player_copies', 'player_vessel', target, vessel_id,
+    jsonb_build_object('copies', before_value), jsonb_build_object('copies', after_value), btrim(reason));
+  return jsonb_build_object('copies', after_value);
 end $$;
-create function public.admin_copies_per_catch_set(p_copies integer,p_note text default null)
-returns jsonb language plpgsql security definer set search_path='' as $$
-declare old_value integer; result jsonb;
+
+-- The existing game settings RPC also accepts an independent copies setting edit.
+create function public.admin_wave_config_set(p_copies_per_catch integer, p_note text default null)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  old_value integer;
+  result jsonb;
 begin
-  if not private.admin_can('edit') then raise exception 'forbidden'; end if;
-  if p_copies is null or p_copies not between 1 and 1000 then raise exception 'invalid_copies'; end if;
+  perform private.require_game_editor();
+  perform private.lock_game_edits();
+  if p_copies_per_catch is null or p_copies_per_catch not between 1 and 1000 then raise exception 'invalid_copies'; end if;
   select copies_per_catch into old_value from private.vessel_copy_settings where singleton for update;
-  update private.vessel_copy_settings set copies_per_catch=p_copies where singleton;
-  result:=jsonb_build_object('copies_per_catch',p_copies);
-  perform private.admin_log('copies_per_catch_set','game_config','singleton','copies_per_catch',jsonb_build_object('copies_per_catch',old_value),result,p_note);
+  update private.vessel_copy_settings set copies_per_catch = p_copies_per_catch where singleton;
+  result := jsonb_build_object('copies_per_catch', p_copies_per_catch);
+  perform private.admin_log('config.copies_per_catch', 'config', 'copies_per_catch', 'copies_per_catch',
+    jsonb_build_object('copies_per_catch', old_value), result, p_note);
   return result;
 end $$;
-revoke all on function public.admin_vessel_set_unlimited(text,boolean,text),public.admin_player_adjust_copies(uuid,text,integer,text),public.admin_copies_per_catch_set(integer,text) from public,anon,authenticated;
-grant execute on function public.admin_vessel_set_unlimited(text,boolean,text),public.admin_player_adjust_copies(uuid,text,integer,text),public.admin_copies_per_catch_set(integer,text) to authenticated;
+
+revoke all on function public.admin_vessel_set_unlimited(text,boolean),
+  public.admin_player_adjust_copies(uuid,text,integer,text), public.admin_wave_config_set(integer,text)
+  from public, anon, authenticated, service_role;
+grant execute on function public.admin_vessel_set_unlimited(text,boolean),
+  public.admin_player_adjust_copies(uuid,text,integer,text), public.admin_wave_config_set(integer,text)
+  to authenticated;
+
+create or replace function public.admin_undo(p_action_id bigint, p_note text default null) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare event private.admin_actions;
+declare post public.public_capsule_spots;
+declare restored public.public_capsule_spots;
+declare rule private.vessel_spawn_rules;
+declare current_state jsonb;
+declare saved jsonb;
+declare p_region text;
+declare p_vessel text;
+declare player uuid;
+begin
+  perform private.require_game_editor();
+  perform private.lock_game_edits();
+  select * into event from private.admin_actions a where a.id = p_action_id;
+  if not found then raise exception 'not_found'; end if;
+  if event.action not in ('waypost.add', 'waypost.move', 'waypost.edit', 'waypost.hide', 'waypost.show',
+    'spawn.place_add', 'spawn.place_remove', 'spawn.rule', 'config.wave', 'config.wave_length', 'vessel.unlimited', 'vessel.player_copies', 'config.copies_per_catch')
+  then raise exception 'not_undoable'; end if;
+  if exists (select 1 from private.admin_actions a where a.target_type = event.target_type
+      and a.target_id = event.target_id and a.id > event.id)
+  then raise exception 'stale'; end if;
+
+  case event.target_type
+    when 'vessel_copies' then
+      perform 1 from public.vessels where id = event.target_id for update;
+      current_state := private.vessel_copy_snapshot(event.target_id);
+      if current_state is distinct from event.after then raise exception 'stale'; end if;
+      update public.vessels set unlimited_copies = (event.before->>'unlimited_copies')::boolean
+        where id = event.target_id;
+      update public.owned_vessels o set copies = (event.before->'balances'->>o.user_id::text)::integer
+        where o.vessel = event.target_id;
+      saved := event.before;
+    when 'player_vessel' then
+      player := split_part(event.target_id, ':', 1)::uuid;
+      p_vessel := split_part(event.target_id, ':', 2);
+      perform 1 from public.vessels where id = p_vessel and not unlimited_copies for share;
+      if not found or exists (select 1 from private.admin_actions a where a.target_type = 'vessel_copies'
+        and a.target_id = p_vessel and a.id > event.id) then raise exception 'stale'; end if;
+      select jsonb_build_object('copies', o.copies) into current_state
+        from public.owned_vessels o where o.user_id = player and o.vessel = p_vessel for update;
+      if current_state is distinct from event.after then raise exception 'stale'; end if;
+      update public.owned_vessels o set copies = (event.before->>'copies')::integer
+        where o.user_id = player and o.vessel = p_vessel;
+      saved := event.before;
+    when 'waypost' then
+      post := private.admin_waypost_row(event.target_id::uuid);
+      current_state := to_jsonb(post);
+      if current_state is distinct from event.after then raise exception 'stale'; end if;
+      if event.action = 'waypost.add' then
+        -- Retain the pin and its history when undoing creation.
+        restored := post;
+        restored.game_enabled := false;
+        restored.hidden_at := now();
+      else
+        restored := jsonb_populate_record(null::public.public_capsule_spots, event.before);
+      end if;
+      saved := to_jsonb(private.save_admin_waypost(post, restored, p_note));
+    when 'spawn_place' then
+      p_region := event.after->>'region_id';
+      p_vessel := event.after->>'vessel';
+      select to_jsonb(a) into current_state from private.vessel_spawn_places a
+        where a.region_id = p_region and a.vessel = p_vessel;
+      if event.action = 'spawn.place_add' then
+        if current_state is null then raise exception 'stale'; end if;
+        saved := private.admin_spawn_write('admin_spawn_place_remove',
+          jsonb_build_object('p_region', p_region, 'p_vessel', p_vessel), p_note, false);
+        if (event.after->>'created_rule')::boolean and not exists (
+          select 1 from private.vessel_spawn_places a where a.vessel = p_vessel)
+          and not exists (select 1 from private.admin_actions a
+            where a.target_type = 'spawn_rule' and a.target_id = p_vessel and a.id > event.id)
+        then
+          delete from private.vessel_spawn_rules r where r.vessel = p_vessel
+            and r.rarity = 'common' and r.habitat is null
+            and r.local_start_hour is null and r.month_day_start is null;
+        end if;
+      else
+        if current_state is not null then raise exception 'stale'; end if;
+        saved := private.admin_spawn_write('admin_spawn_place_add',
+          jsonb_build_object('p_region', p_region, 'p_vessel', p_vessel), p_note, false);
+      end if;
+    when 'spawn_rule' then
+      select to_jsonb(r) into current_state from private.vessel_spawn_rules r
+        where r.vessel = event.target_id for update;
+      if current_state is distinct from event.after then raise exception 'stale'; end if;
+      if event.before is null then
+        if exists (select 1 from private.vessel_spawn_places a where a.vessel = event.target_id)
+        then raise exception 'stale'; end if;
+        delete from private.vessel_spawn_rules r where r.vessel = event.target_id;
+        saved := jsonb_build_object('vessel', event.target_id, 'rule', null);
+      else
+        rule := jsonb_populate_record(null::private.vessel_spawn_rules, event.before);
+        saved := private.admin_spawn_write('admin_spawn_rule_set', jsonb_build_object(
+          'p_vessel', rule.vessel, 'p_rarity', rule.rarity, 'p_habitat', rule.habitat,
+          'p_start_hour', rule.local_start_hour, 'p_end_hour', rule.local_end_hour,
+          'p_md_start', rule.month_day_start, 'p_md_end', rule.month_day_end), p_note, false);
+      end if;
+    when 'config' then
+      if event.action = 'config.copies_per_catch' then
+        select jsonb_build_object('copies_per_catch', c.copies_per_catch) into current_state
+          from private.vessel_copy_settings c where c.singleton for update;
+        if current_state is distinct from event.after then raise exception 'stale'; end if;
+        update private.vessel_copy_settings set copies_per_catch = (event.before->>'copies_per_catch')::integer where singleton;
+        saved := event.before;
+      elsif event.action = 'config.wave_length' then
+        current_state := private.admin_wave_length_state();
+        if (current_state - 'pending') is distinct from (event.after - 'pending') then raise exception 'stale'; end if;
+        saved := private.admin_schedule_wave_length((event.before->>'minutes')::integer,
+          case when (event.before->>'pending')::boolean then (event.before->>'starts_at')::timestamptz end);
+      else
+        select jsonb_build_object('spawn_chance', c.spawn_chance, 'common_weight', c.rarity_common_weight,
+          'uncommon_weight', c.rarity_uncommon_weight, 'rare_weight', c.rarity_rare_weight,
+          'nearby_target', c.nearby_spawn_target) into current_state from private.game_config c where c.singleton;
+        if current_state is distinct from event.after then raise exception 'stale'; end if;
+        saved := private.admin_spawn_write('admin_wave_config_set', jsonb_build_object(
+          'p_spawn_chance', event.before->'spawn_chance', 'p_common_weight', event.before->'common_weight',
+          'p_uncommon_weight', event.before->'uncommon_weight', 'p_rare_weight', event.before->'rare_weight',
+          'p_nearby_target', event.before->'nearby_target'), p_note, false);
+      end if;
+    else raise exception 'not_undoable';
+  end case;
+
+  if event.action like 'spawn.%' or event.action in ('config.wave', 'config.wave_length') then
+    perform private.admin_assert_spawn_pool();
+  end if;
+  perform private.admin_log('undo', event.target_type, event.target_id, event.target_label,
+    current_state, saved || jsonb_build_object('undo_of', event.id), p_note);
+  return saved;
+end;
+$$;
 commit;

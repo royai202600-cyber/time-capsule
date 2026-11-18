@@ -1448,8 +1448,16 @@ export type Database = {
         Args: { p_action_id: number; p_note?: string }
         Returns: Json
       }
+      admin_player_adjust_copies: {
+        Args: { user_id: string; vessel_id: string; delta: number; reason: string }
+        Returns: Json
+      }
+      admin_vessel_set_unlimited: {
+        Args: { vessel_id: string; on: boolean }
+        Returns: Json
+      }
       admin_wave_config_set: {
-        Args: {
+        Args: { p_copies_per_catch: number; p_note?: string } | {
           p_common_weight: number
           p_nearby_target: number
           p_note?: string
