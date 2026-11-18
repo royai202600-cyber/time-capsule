@@ -1,0 +1,23 @@
+# HL-C4 Today's Hunt API
+
+Player RPCs take the CE1 city keys `taipei`, `hongkong`, `macau`, and `singapore`. The date uses the city's timezone from the game regions table. The selection radius is 1,500 m from the city's visible, game-enabled Landmark Waypost: Taipei 101, HKUST, Senado Square, or the Merlion. If that Waypost is unavailable, player RPCs return `hunt_unavailable` even when a schedule exists. Automatic catch pins use existing enabled common Wayposts inside the radius.
+
+- `todays_hunt({ p_city })` returns `{ date, quests, score, finished, streak }`. The quests use the C3 shape with `color: 'blue'`, `locked: false`, and the player's earned points. Render done pins purple using `done`. `correct_answer` appears only on a completed question or price. An empty or exhausted pool returns `hunt_unavailable`.
+- `todays_hunt_attempt({ p_city, p_ordinal, p_answer })` accepts one-based ordinals and one of `{ choice }` (zero-based), `{ usd }`, or `{ caught }`. It returns the C3 attempt shape. A wrong question, third price miss, or incomplete catch finishes that quest with 2 points. Correct answers and full catches earn 10. A price miss with guesses remaining earns 0 and returns a higher/lower hint. Refresh the hunt for the score, streak, and completion, and refresh game state for the once-only 3-wax payout after all three quests finish.
+- `todays_hunt_friends({ p_city })` returns an array of `{ user: { id, name, avatar }, score, finished, streak }`. The caller always appears. Friends appear after they attempt a quest for that city on that day. Streak includes yesterday's run until the end of today, then resets if today was missed.
+
+The automatic schedule is shared across accounts in question, price, catch order. Published multiple-choice and price entries need both coordinates and must be within 1,500 m. Automatic selection excludes pool items already scheduled within 30 days on either side of the date. A complete day requires both pool types and a catch pin. Small pools can run out before the end of that window. An admin can explicitly reuse an eligible item when editing a future day. The schedule stores shared quest snapshots, so a later pool edit does not silently change a scheduled question or its grading.
+
+## HL-U5 calendar
+
+- `admin_todays_hunt_calendar({ p_city, p_from, p_days })` accepts 1–31 days and returns an array of `{ date, started, quests, unavailable_reason }`. It fills incomplete current and future days on demand. Historical unscheduled days report `not_scheduled`. Other reasons are `missing_landmark`, `missing_question`, `missing_price`, `missing_catch_pin`, `recent_question`, and `recent_price`. Incomplete days can show admin-set slots. Admin quest objects include `pool_id` and `correct_answer` (nullable).
+- `admin_todays_hunt_set({ p_city, p_date, p_ordinal, p_pool_id })` replaces a question or price with an eligible item of the same type. For catch, use `p_location_lat` and `p_location_lng`, optional `p_catch_count` (defaults to 3, accepts 1–5), and optional `p_name_zh` and `p_name_en`. The name fields use `private.text_allowed`.
+- `admin_todays_hunt_swap({ p_city, p_date, p_a, p_b })` moves two existing quests to each other's ordinals. Both writes return the changed day. Use the Activity action ID with `admin_undo`. Undo refuses a stale action or a day that has started. All calendar RPCs require admin or owner.
+
+## Verification and release
+
+Hosted rollback runs HL-C2 `20261118123808`, HL-C1 `20261118124925`, all three HL-C3 migrations, HL-C4 `20261118134846`, and `supabase/tests/todays-hunt.sql` inside one transaction, with individual migration transaction markers removed. It checks Taipei, Macau and Hong Kong, including the 1,500 m boundary at HKUST, exclusion of Tsim Sha Tsui pool rows, refusal when the HKUST Landmark Waypost is hidden, the local midnight boundary, pool eligibility and reuse, scoring and secrets, the once-only payout, streaks and friends, calendar set/swap/Undo, and CE1 compatibility.
+
+`node supabase/tests/todays-hunt-api.mjs` uses GoTrue sessions and PostgREST on the isolated `tc_todays_hunt_verify` database with the same migrations. It deletes its test accounts. The disposable database is dropped after the test. Client type declarations for the six new RPCs were regenerated from this database. Other held migration type changes are outside this PR.
+
+Hold the production migration for the HL-U3 app release. HL-Q1 ([PR #152](https://github.com/royai202600-cyber/time-capsule/pull/152)) owns the production pool seed. Verify playable coverage for each city after publication. The squash title is `HL-C4 Today's Hunt backend (#<PR number>) [hold deploy]`.

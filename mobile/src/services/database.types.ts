@@ -1450,6 +1450,37 @@ export type Database = {
         Args: { p_id: string; p_note?: string; p_visible: boolean }
         Returns: Json
       }
+      admin_todays_hunt_calendar: {
+        Args: {
+          p_city: string
+          p_days: number
+          p_from: string
+        }
+        Returns: Json
+      }
+      admin_todays_hunt_set: {
+        Args: {
+          p_catch_count?: number
+          p_city: string
+          p_date: string
+          p_location_lat?: number
+          p_location_lng?: number
+          p_name_en?: string
+          p_name_zh?: string
+          p_ordinal: number
+          p_pool_id?: string
+        }
+        Returns: Json
+      }
+      admin_todays_hunt_swap: {
+        Args: {
+          p_a: number
+          p_b: number
+          p_city: string
+          p_date: string
+        }
+        Returns: Json
+      }
       admin_undo: {
         Args: { p_action_id: number; p_note?: string }
         Returns: Json
@@ -1957,6 +1988,16 @@ export type Database = {
         Args: { p_id: string; p_verdict: boolean }
         Returns: undefined
       }
+      todays_hunt: { Args: { p_city: string }; Returns: Json }
+      todays_hunt_attempt: {
+        Args: {
+          p_answer: Json
+          p_city: string
+          p_ordinal: number
+        }
+        Returns: Json
+      }
+      todays_hunt_friends: { Args: { p_city: string }; Returns: Json }
       vessel_stock: {
         Args: never
         Returns: {
