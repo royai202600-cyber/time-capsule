@@ -1,0 +1,754 @@
+[
+  {
+    "id": "taipei-001",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "台北101",
+    "place_en": "Taipei 101",
+    "location_lat": 25.033667,
+    "location_lng": 121.56481,
+    "prompt_zh": "台北101的建築外形常被比作哪種植物？",
+    "prompt_en": "Which plant does Taipei 101’s form resemble?",
+    "choices": [
+      {
+        "zh": "竹子",
+        "en": "Bamboo"
+      },
+      {
+        "zh": "松樹",
+        "en": "Pine"
+      },
+      {
+        "zh": "蓮花",
+        "en": "Lotus"
+      },
+      {
+        "zh": "棕櫚",
+        "en": "Palm"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://travel.taipei/en/pictorial/article/48476",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "taipei-002",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "台北101",
+    "place_en": "Taipei 101",
+    "location_lat": 25.033667,
+    "location_lng": 121.56481,
+    "prompt_zh": "台北101的設計建築師是誰？",
+    "prompt_en": "Who designed Taipei 101?",
+    "choices": [
+      {
+        "zh": "李祖原",
+        "en": "C. Y. Lee"
+      },
+      {
+        "zh": "王大閎",
+        "en": "Wang Da-hong"
+      },
+      {
+        "zh": "貝聿銘",
+        "en": "I. M. Pei"
+      },
+      {
+        "zh": "安藤忠雄",
+        "en": "Tadao Ando"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://travel.taipei/en/pictorial/article/48476",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "taipei-003",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "台北101",
+    "place_en": "Taipei 101",
+    "location_lat": 25.033667,
+    "location_lng": 121.56481,
+    "prompt_zh": "台北101的風阻尼球約重多少公噸？",
+    "prompt_en": "Approximately how many metric tons does Taipei 101’s wind damper weigh?",
+    "choices": [
+      {
+        "zh": "660公噸",
+        "en": "660 metric tons"
+      },
+      {
+        "zh": "60公噸",
+        "en": "60 metric tons"
+      },
+      {
+        "zh": "160公噸",
+        "en": "160 metric tons"
+      },
+      {
+        "zh": "1,660公噸",
+        "en": "1,660 metric tons"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://travel.taipei/en/pictorial/article/48476",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "taipei-004",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "台北101",
+    "place_en": "Taipei 101",
+    "location_lat": 25.033667,
+    "location_lng": 121.56481,
+    "prompt_zh": "台北101的風阻尼球直徑約為多少？",
+    "prompt_en": "What is the approximate diameter of Taipei 101’s wind damper?",
+    "choices": [
+      {
+        "zh": "5.5公尺",
+        "en": "5.5 metres"
+      },
+      {
+        "zh": "1.5公尺",
+        "en": "1.5 metres"
+      },
+      {
+        "zh": "10公尺",
+        "en": "10 metres"
+      },
+      {
+        "zh": "20公尺",
+        "en": "20 metres"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://travel.taipei/en/pictorial/article/48476",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "taipei-005",
+    "city": "taipei",
+    "type": "question",
+    "kind": "text",
+    "place_zh": "台北101",
+    "place_en": "Taipei 101",
+    "location_lat": 25.033667,
+    "location_lng": 121.56481,
+    "prompt_zh": "台北101的外形常被比作哪種植物？請輸入名稱。",
+    "prompt_en": "Which plant does Taipei 101 resemble? Enter its name.",
+    "choices": null,
+    "answer": {
+      "zh": [
+        "竹子"
+      ],
+      "en": [
+        "bamboo"
+      ]
+    },
+    "source_url": "https://travel.taipei/en/pictorial/article/48476",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "hong-kong-001",
+    "city": "hong-kong",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "香港科技大學紅鳥日晷",
+    "place_en": "HKUST Red Bird Sundial",
+    "location_lat": 22.3374255,
+    "location_lng": 114.2629606,
+    "prompt_zh": "科大紅鳥雕塑具備哪種計時器的功能？",
+    "prompt_en": "What type of timepiece does HKUST’s Red Bird sculpture function as?",
+    "choices": [
+      {
+        "zh": "日晷",
+        "en": "Sundial"
+      },
+      {
+        "zh": "沙漏",
+        "en": "Hourglass"
+      },
+      {
+        "zh": "水鐘",
+        "en": "Water clock"
+      },
+      {
+        "zh": "擺鐘",
+        "en": "Pendulum clock"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://cmo.hkust.edu.hk/sundial-sculpture",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "hong-kong-002",
+    "city": "hong-kong",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "香港科技大學紅鳥日晷",
+    "place_en": "HKUST Red Bird Sundial",
+    "location_lat": 22.3374255,
+    "location_lng": 114.2629606,
+    "prompt_zh": "科大紅鳥日晷主要由什麼材料製成？",
+    "prompt_en": "What is the HKUST Red Bird sundial made of?",
+    "choices": [
+      {
+        "zh": "鋼",
+        "en": "Steel"
+      },
+      {
+        "zh": "木",
+        "en": "Wood"
+      },
+      {
+        "zh": "玻璃",
+        "en": "Glass"
+      },
+      {
+        "zh": "陶土",
+        "en": "Clay"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://cmo.hkust.edu.hk/sundial-sculpture",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "hong-kong-003",
+    "city": "hong-kong",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "香港科技大學紅鳥日晷",
+    "place_en": "HKUST Red Bird Sundial",
+    "location_lat": 22.3374255,
+    "location_lng": 114.2629606,
+    "prompt_zh": "科大紅鳥日晷是哪一年安裝的？",
+    "prompt_en": "In which year was the HKUST Red Bird sundial installed?",
+    "choices": [
+      {
+        "zh": "1991",
+        "en": "1991"
+      },
+      {
+        "zh": "1971",
+        "en": "1971"
+      },
+      {
+        "zh": "2001",
+        "en": "2001"
+      },
+      {
+        "zh": "2011",
+        "en": "2011"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://cmo.hkust.edu.hk/sundial-sculpture",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "hong-kong-004",
+    "city": "hong-kong",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "香港科技大學紅鳥日晷",
+    "place_en": "HKUST Red Bird Sundial",
+    "location_lat": 22.3374255,
+    "location_lng": 114.2629606,
+    "prompt_zh": "科大紅鳥日晷基座的浮雕描繪了多少項中國科技成就？",
+    "prompt_en": "How many Chinese science and technology achievements are depicted in the Red Bird podium mural?",
+    "choices": [
+      {
+        "zh": "39項",
+        "en": "39"
+      },
+      {
+        "zh": "9項",
+        "en": "9"
+      },
+      {
+        "zh": "19項",
+        "en": "19"
+      },
+      {
+        "zh": "99項",
+        "en": "99"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://cmo.hkust.edu.hk/sundial-sculpture",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "hong-kong-005",
+    "city": "hong-kong",
+    "type": "question",
+    "kind": "text",
+    "place_zh": "香港科技大學紅鳥日晷",
+    "place_en": "HKUST Red Bird Sundial",
+    "location_lat": 22.3374255,
+    "location_lng": 114.2629606,
+    "prompt_zh": "科大紅鳥雕塑會利用太陽光發揮哪種計時器的功能？",
+    "prompt_en": "What type of timepiece does the HKUST Red Bird sculpture use sunlight to function as?",
+    "choices": null,
+    "answer": {
+      "zh": [
+        "日晷"
+      ],
+      "en": [
+        "sundial"
+      ]
+    },
+    "source_url": "https://cmo.hkust.edu.hk/sundial-sculpture",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "singapore-001",
+    "city": "singapore",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "魚尾獅公園",
+    "place_en": "Merlion Park",
+    "location_lat": 1.286798,
+    "location_lng": 103.854301,
+    "prompt_zh": "魚尾獅公園的魚尾獅頭部是哪種動物？",
+    "prompt_en": "What animal forms the head of the Merlion at Merlion Park?",
+    "choices": [
+      {
+        "zh": "獅子",
+        "en": "Lion"
+      },
+      {
+        "zh": "老虎",
+        "en": "Tiger"
+      },
+      {
+        "zh": "大象",
+        "en": "Elephant"
+      },
+      {
+        "zh": "馬",
+        "en": "Horse"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://www.visitsingapore.com/de_de/neighbourhood/featured-neighbourhood/marina-bay/merlion-park/",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "singapore-002",
+    "city": "singapore",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "魚尾獅公園",
+    "place_en": "Merlion Park",
+    "location_lat": 1.286798,
+    "location_lng": 103.854301,
+    "prompt_zh": "魚尾獅公園的魚尾獅身體象徵新加坡昔日的什麼？",
+    "prompt_en": "What does the Merlion’s fish body represent about Singapore’s past?",
+    "choices": [
+      {
+        "zh": "漁村",
+        "en": "A fishing village"
+      },
+      {
+        "zh": "沙漠綠洲",
+        "en": "A desert oasis"
+      },
+      {
+        "zh": "礦業城鎮",
+        "en": "A mining town"
+      },
+      {
+        "zh": "山區牧場",
+        "en": "A mountain ranch"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://www.visitsingapore.com/de_de/neighbourhood/featured-neighbourhood/marina-bay/merlion-park/",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "singapore-003",
+    "city": "singapore",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "魚尾獅公園",
+    "place_en": "Merlion Park",
+    "location_lat": 1.286798,
+    "location_lng": 103.854301,
+    "prompt_zh": "魚尾獅公園的主魚尾獅雕像約有多高？",
+    "prompt_en": "Approximately how tall is the main Merlion statue at Merlion Park?",
+    "choices": [
+      {
+        "zh": "8.6公尺",
+        "en": "8.6 metres"
+      },
+      {
+        "zh": "2.6公尺",
+        "en": "2.6 metres"
+      },
+      {
+        "zh": "18.6公尺",
+        "en": "18.6 metres"
+      },
+      {
+        "zh": "80公尺",
+        "en": "80 metres"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://www.visitsingapore.com/de_de/neighbourhood/featured-neighbourhood/marina-bay/merlion-park/",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "singapore-004",
+    "city": "singapore",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "魚尾獅公園",
+    "place_en": "Merlion Park",
+    "location_lat": 1.286798,
+    "location_lng": 103.854301,
+    "prompt_zh": "魚尾獅公園的主魚尾獅雕像在哪一年揭幕？",
+    "prompt_en": "In which year was the main Merlion statue unveiled?",
+    "choices": [
+      {
+        "zh": "1972",
+        "en": "1972"
+      },
+      {
+        "zh": "1952",
+        "en": "1952"
+      },
+      {
+        "zh": "1982",
+        "en": "1982"
+      },
+      {
+        "zh": "2002",
+        "en": "2002"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://www.visitsingapore.com/de_de/neighbourhood/featured-neighbourhood/marina-bay/merlion-park/",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "singapore-005",
+    "city": "singapore",
+    "type": "question",
+    "kind": "text",
+    "place_zh": "魚尾獅公園",
+    "place_en": "Merlion Park",
+    "location_lat": 1.286798,
+    "location_lng": 103.854301,
+    "prompt_zh": "魚尾獅公園的魚尾獅頭部是哪種動物？",
+    "prompt_en": "What animal forms the Merlion’s head at Merlion Park?",
+    "choices": null,
+    "answer": {
+      "zh": [
+        "獅子"
+      ],
+      "en": [
+        "lion"
+      ]
+    },
+    "source_url": "https://www.visitsingapore.com/de_de/neighbourhood/featured-neighbourhood/marina-bay/merlion-park/",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "macau-001",
+    "city": "macau",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "議事亭前地",
+    "place_en": "Senado Square",
+    "location_lat": 22.193683,
+    "location_lng": 113.53989,
+    "prompt_zh": "議事亭前地旁的民政總署大樓最初建於哪一年？",
+    "prompt_en": "In what year was the former Leal Senado Building by Senado Square originally built?",
+    "choices": [
+      {
+        "zh": "1784",
+        "en": "1784"
+      },
+      {
+        "zh": "1684",
+        "en": "1684"
+      },
+      {
+        "zh": "1884",
+        "en": "1884"
+      },
+      {
+        "zh": "1984",
+        "en": "1984"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://www.wh.mo/en/site/detail/11",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "macau-002",
+    "city": "macau",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "議事亭前地",
+    "place_en": "Senado Square",
+    "location_lat": 22.193683,
+    "location_lng": 113.53989,
+    "prompt_zh": "議事亭前地旁的民政總署大樓採用哪種建築風格？",
+    "prompt_en": "What architectural style is the former Leal Senado Building by Senado Square?",
+    "choices": [
+      {
+        "zh": "新古典主義",
+        "en": "Neoclassical"
+      },
+      {
+        "zh": "哥德式",
+        "en": "Gothic"
+      },
+      {
+        "zh": "野獸派",
+        "en": "Brutalist"
+      },
+      {
+        "zh": "裝飾藝術",
+        "en": "Art Deco"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://www.wh.mo/en/site/detail/11",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "macau-003",
+    "city": "macau",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "議事亭前地",
+    "place_en": "Senado Square",
+    "location_lat": 22.193683,
+    "location_lng": 113.53989,
+    "prompt_zh": "議事亭前地旁的民政總署大樓背後有什麼？",
+    "prompt_en": "What lies at the back of the former Leal Senado Building by Senado Square?",
+    "choices": [
+      {
+        "zh": "庭院花園",
+        "en": "A courtyard garden"
+      },
+      {
+        "zh": "燈塔",
+        "en": "A lighthouse"
+      },
+      {
+        "zh": "碼頭",
+        "en": "A pier"
+      },
+      {
+        "zh": "火車月台",
+        "en": "A railway platform"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://www.wh.mo/en/site/detail/11",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "macau-004",
+    "city": "macau",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "議事亭前地",
+    "place_en": "Senado Square",
+    "location_lat": 22.193683,
+    "location_lng": 113.53989,
+    "prompt_zh": "議事亭前地旁的民政總署大樓正門兩側有哪種柱子？",
+    "prompt_en": "What kind of columns flank the entrance of the former Leal Senado Building by Senado Square?",
+    "choices": [
+      {
+        "zh": "花崗岩多立克柱",
+        "en": "Granite Doric columns"
+      },
+      {
+        "zh": "木製科林斯柱",
+        "en": "Wooden Corinthian columns"
+      },
+      {
+        "zh": "鋼製柱",
+        "en": "Steel columns"
+      },
+      {
+        "zh": "磚砌尖塔",
+        "en": "Brick pinnacles"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://www.wh.mo/en/site/detail/11",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  },
+  {
+    "id": "macau-005",
+    "city": "macau",
+    "type": "question",
+    "kind": "text",
+    "place_zh": "議事亭前地",
+    "place_en": "Senado Square",
+    "location_lat": 22.193683,
+    "location_lng": 113.53989,
+    "prompt_zh": "議事亭前地旁的民政總署大樓最初建於哪一年？請輸入四位數字。",
+    "prompt_en": "In what year was the former Leal Senado Building by Senado Square originally built? Enter four digits.",
+    "choices": null,
+    "answer": {
+      "zh": [
+        "1784"
+      ],
+      "en": [
+        "1784"
+      ]
+    },
+    "source_url": "https://www.wh.mo/en/site/detail/11",
+    "checked_date": "2026-11-18",
+    "photo": null,
+    "photo_credit": null,
+    "photo_licence": null,
+    "recheck_within_six_months": false,
+    "status": "draft"
+  }
+]
