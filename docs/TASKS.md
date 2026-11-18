@@ -71,7 +71,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | HL-U1 | Quest pin component, Journey gem = Waypost only, Waypost card (Spin + rack + leave form) | Claude (`claude/hunt-racks-ui`) | Screens behind a mock flag; wired after HL-C1. |
 | HL-U2 | Copies in Create, Cabinet and Album | Claude (`claude/vessel-copies-ui`) | Behind a mock flag; wired after HL-C2. |
 | HL-C4 | Today's Hunt backend | Codex | Wave 2, after HL-C3 review. |
-| HL-C5 | Route capsules backend and city route templates | Codex | Wave 2, after HL-C3 review. |
+| HL-C5 | Route capsules backend and city route templates | Codex (`codex/route-capsules`) | [Draft PR #160](https://github.com/royai202600-cyber/time-capsule/pull/160) and [API handoff](review/route-capsules.md). Hosted rollback and local real-JWT friend and Memory Routes passed. Hold migration `20261118135059` until HL-U4 ships. HL-Q1 supplies the real pool. |
 | HL-U3 | Today's Hunt screen with motion | Claude | Wave 2. |
 | HL-U4 | Shared quest editor (private hunt + route), City Hunt quest pins, recipient route view | Claude | Wave 2. |
 | HL-U5 | Admin: question pool, Today's Hunt calendar, rack contents, copies | Claude | Wave 2. |

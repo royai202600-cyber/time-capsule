@@ -76,6 +76,8 @@ export type Database = {
           public_capsule_returns: number
           public_capsule_spot: string | null
           recipient: string | null
+          route_done: number
+          route_total: number
           sea: boolean | null
           sea_returns: number | null
           sealed_at: string
@@ -109,6 +111,8 @@ export type Database = {
           public_capsule_returns?: number
           public_capsule_spot?: string | null
           recipient?: string | null
+          route_done?: number
+          route_total?: number
           sea?: boolean | null
           sea_returns?: number | null
           sealed_at?: string
@@ -142,6 +146,8 @@ export type Database = {
           public_capsule_returns?: number
           public_capsule_spot?: string | null
           recipient?: string | null
+          route_done?: number
+          route_total?: number
           sea?: boolean | null
           sea_returns?: number | null
           sealed_at?: string
@@ -1845,6 +1851,28 @@ export type Database = {
         Returns: undefined
       }
       public_capsule_return: { Args: { p_id: string }; Returns: undefined }
+      route_attempt: {
+        Args: { p_capsule: string; p_payload: Json }
+        Returns: Json
+      }
+      route_pool_pick: {
+        Args: {
+          p_city: string
+          p_exclude?: string[]
+          p_lat: number
+          p_lng: number
+          p_type: string
+        }
+        Returns: Json
+      }
+      route_progress: {
+        Args: { p_capsule: string }
+        Returns: Json
+      }
+      route_templates: {
+        Args: { p_city: string }
+        Returns: Json
+      }
       sea_nearby: {
         Args: { p_accuracy: number; p_lat: number; p_lng: number }
         Returns: {
@@ -1899,6 +1927,7 @@ export type Database = {
               p_place?: string
               p_prediction?: string
               p_recipient: string
+              p_route?: Json
               p_vessel: string
               p_voice?: string
               p_voice_ms?: number

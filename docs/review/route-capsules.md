@@ -1,0 +1,15 @@
+# HL-C5 route capsules
+
+`route_templates({ p_city })` returns three bilingual templates when at least three distinct published pool locations are within 1.5 km of the city's visible Landmark Waypost. Each template has a stable city-and-slot ID and three ordered stops. The three start points are spread across the candidate locations ranked by distance to the Landmark. If there are only three locations, the templates start at different stops on the same loop. Cities with fewer eligible locations return `[]`. HL-Q1 supplies the real pool separately.
+
+`route_pool_pick({ p_city, p_type, p_lat, p_lng, p_exclude })` returns the nearest published question or price of that type within 2 km, or `null` when none is eligible. Both endpoints expose the stop coordinates, bilingual place name, pool ID and C3 question or price preview without grading data. Use the returned coordinates when replacing a stop.
+
+`send_capsule` adds optional `p_route` to the standard RPC. Omit it or send `null` for Anywhere. Existing versions can still pass the place ID as `p_place` or use the separate coordinate overload. A route contains 1–5 stops. The server uses the pool item's location for a pool question or price and snaps Landmark stops to a visible Landmark Waypost within 2 km. A Catch stop requires 1–5 catches and a spawn pool at that pin. Custom question and answer limits are 280 and 120 characters. Rules and grading data are captured at send time.
+
+Read `route_total` and `route_done` on the usual capsule row. Only the recipient can call `route_progress({ p_capsule })` and get ordered C3 quest objects. The route context identifies the brass pin style. Only the current stop can accept `route_attempt({ p_capsule, p_payload })`. Catch and Landmark attempts activate the step before calling the regular throw or fight flow. A quest completion pays zero quest points. Normal catch and fight rewards still apply. Route progress can happen before the opening time. `open_capsule` preserves the existing time check and returns `route incomplete` with hint `route_locked` if a stop remains.
+
+## Verification and release
+
+Run `supabase/tests/route-capsules.sql` in a single hosted transaction after C2 `20261118123808`, C1 `20261118124925`, C3 `20261118125002`, `20261118125330`, `20261118130332`, and C5 `20261118135059`. Remove the migrations' outer transaction markers and roll back after the assertions. The script creates its own pool and players. To run the real-JWT check, use a disposable copy of local Supabase named `tc_route_verify` with those migrations applied and GoTrue and PostgREST pointed to it as `tc-route-auth` and `tc-route-rest` on the local Supabase Docker network. Run `node supabase/tests/route-capsules-api.mjs`. It signs out and deletes its users.
+
+Hold migration `20261118135059` until the HL-U4 screens ship. Use a squash title ending in `[hold deploy]`.
