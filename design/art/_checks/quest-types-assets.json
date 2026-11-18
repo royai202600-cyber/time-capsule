@@ -1,6 +1,6 @@
 {
-  "count": 6,
-  "passed": 6,
+  "count": 8,
+  "passed": 8,
   "failed": [],
   "assets": [
     {
@@ -62,6 +62,44 @@
     },
     {
       "path": "quest-types/quest-type-arrive.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-types/quest-type-catch.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-types/quest-type-landmark.png",
       "size": [
         1024,
         1024

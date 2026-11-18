@@ -646,15 +646,17 @@ The wax-red canopy and upper bow swing rearward. The pleats gather, then the sta
 
 [Rooster motion](_checks/rooster-motion.png) · [Rooster at 40/120 px](_checks/rooster-silhouette.png) · [Pedicab motion](_checks/pedicab-motion.png) · [Animated fold](_checks/pedicab-fold.gif) · [Pedicab at 40/120 px](_checks/pedicab-silhouette.png) · [Hash and geometry audit](_checks/rv-mo-wave-1-audit.json)
 
-### Quest-type pictures — test batch
+### Quest-type pictures and pin frames
 
 | Master | Size | Description |
 |---|---|---|
 | `quest-types/quest-type-arrive.png` | 1024×1024 | Opaque arrive quest picture for a 46 px circular pin. |
 | `quest-types/quest-type-question.png` | 1024×1024 | Opaque question quest picture for a 46 px circular pin. |
 | `quest-types/quest-type-price.png` | 1024×1024 | Opaque price quest picture for a 46 px circular pin. |
+| `quest-types/quest-type-catch.png` | 1024×1024 | Cracked capsule with an incoming red wax ball. |
+| `quest-types/quest-type-landmark.png` | 1024×1024 | Fictional toy tower with a wax seal. |
 
-Roy approved question and price on 2026-11-18. The revised arrive picture puts two large footprints in front of the brass flagpole. Quest-type pictures fill the circular pin window. Quest card banners show the place photo.
+Roy approved question and price on 2026-11-18, then approved the revised arrive picture and the frame colors at `a42def4`. Quest-type pictures fill the circular pin window. Quest card banners show the place photo.
 
 | Frame master | Size | Color |
 |---|---|---|
@@ -664,4 +666,4 @@ Roy approved question and price on 2026-11-18. The revised arrive picture puts t
 
 All three frames come from one faceted source with one alpha mask. On the master canvas, the transparent circular window is centered at (506, 399) with radius 237 px. The tip anchor is (506, 955). The same values are in each manifest entry. The frames have a light rim. The app supplies the done tick and order number.
 
-[Pin review at 46 px and 138 px](_checks/quest-types-review.png) · [Asset audit](_checks/quest-types-assets.json) · [Contact sheet](_checks/contact-sheet.png). Arrive and the 3D frame are awaiting Roy’s approval before catch and landmark are drawn.
+[Pin review at 46 px and 138 px](_checks/quest-types-review.png) · [Asset audit](_checks/quest-types-assets.json) · [Contact sheet](_checks/contact-sheet.png). The complete set is in draft PR #153 for Roy’s approval.

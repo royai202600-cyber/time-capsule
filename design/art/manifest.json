@@ -12902,5 +12902,41 @@
     },
     "postprocess": "Shared generated frame. Resize, cut circular alpha, preserve thin light bevel, and remap facet lightness to the color ramp with finish-quest-pins.py.",
     "web_export": "public/art/quest-pins/quest-pin-plum.webp"
+  },
+  {
+    "path": "design/art/quest-types/quest-type-catch.png",
+    "what": "Corrupted Capsule with a wax ball for a 46 px circular map pin",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nA single square illustrated paper scene for the Catch quest, like the second attachment. Picture-specific override: opaque full bleed illustration, fill the WHOLE rectangular canvas, all four corners, no borders, no round enclosing outline and no checkerboard or transparency. Quiet pale-blue paper ground with a soft cream path. One invented compact round-ended blue ceramic capsule vessel with a simple brass joining band, with dark heavy naturally branching fracture lines across the shell. A separate large dark wax-red ball is flying toward it from below left, with two simple swooshes made of brushwork behind the ball, outside it. Make the ball plainly spherical and unmarked, like smooth sealing wax with just a soft highlight. No keyhole, stamp, embossing or any decoration on the ball. The slanted vessel goes behind it, upper right. The two together make a compact diagonal group inside the central 80% of the canvas, with broad outlines easy to see at a glance as a small image. No text, numbers, graphics, arrows, badges, masks, visible frame or other objects. The landscape and paper color must continue uninterrupted to the straight square edges.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-types/quest-type-arrive.png"
+    ],
+    "quest_type": "catch",
+    "postprocess": "Lanczos downscale to an opaque 1024 px square. Composed for the centered circular window.",
+    "web_export": "public/art/quest-types/quest-type-catch.webp"
+  },
+  {
+    "path": "design/art/quest-types/quest-type-landmark.png",
+    "what": "Fictional toy tower monument with a wax seal for a 46 px circular map pin",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nMake the Landmark quest picture. The first attachment is the style reference, and the second is the framing reference for an opaque light quest scene. Draw a generic toy-like ink-blue tower monument in three-quarter view, with a clean tall, slightly tapered square shaft, a broad short plinth, and a simple cap. The tower is fictional and has a fresh anonymous outline, with no resemblance to Taipei 101 or any specific building. A large round wax-red sealing wax impression with a simple concentric indentation and no mark in its center is clearly attached to the front face near the base, legible even at 46 px. Use the miniature plinth and foreground seal to balance the width of the tall tower. Keep the full silhouette and seal grouped centrally, about 80% of canvas width and height and fully visible inside a round pin window. Picture-specific exception: opaque full-bleed square light paper scene with very quiet pale blue ground and cream light, no transparency. No text, numbers, clock, symbols, logos, other buildings, pin shape or frame.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-types/quest-type-arrive.png"
+    ],
+    "quest_type": "landmark",
+    "postprocess": "Crop the side margins, resize to 1024×900 with Lanczos, and extend the plain paper and ground at the top and bottom to keep the tower cap and seal inside the circle.",
+    "web_export": "public/art/quest-types/quest-type-landmark.webp"
   }
 ]
