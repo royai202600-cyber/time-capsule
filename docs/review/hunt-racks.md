@@ -9,7 +9,7 @@
 | `waypost_rack(waypost_id, filter, cursor)` | `{ count, items, next_cursor }`. The count is the entire matching set and pages contain up to 24 items. Pass `next_cursor` back unchanged with the same Waypost and filter. Item fields are `capsule_id, sender: {portrait, name}, hint, opens_at, ready, has_question, lock_question, is_friend, is_mine`. Ready means the timer has elapsed. |
 | `rack_leave(waypost_id, lat, lng, accuracy, body, hint, wait_days, lock_question?, lock_answer?)` | `{ capsule_id, opens_at }`. Errors are `too_far` for ineligible Wayposts, bad accuracy or distance over 100 m, `bad_wait`, `blocked_words`, `no_answer` and `rejected`. Body is 1–280 characters, hint up to 40, question and answer up to 280 each. The database always picks the bottle and does not read or change ownership. |
 | `rack_open(capsule_id, lat, lng, accuracy, answer?)` | Content object with the same fields as an `open_capsule` row. Checks rack availability, including sender exclusion, then location, time and answer. Errors are `taken`, `too_far`, `too_early` and `wrong_answer`. The answer uses lowercasing and removal of whitespace, including ideographic spaces. |
-| `admin_waypost_rack(waypost_id, cursor)` | Audited pages with sender, hint, opens_at, lock_question, status and report_count. Hidden Wayposts and capsule history are available to staff. Reported entries show the body to owner, admin and moderator. Viewer sees metadata. Errors are `forbidden` and `not_found`. |
+| `admin_waypost_rack(waypost_id, cursor)` | Pages with sender, hint, opens_at, lock_question, status and report_count. Hidden Wayposts and capsule history are available to staff. Reported entries show the body to owner, admin and moderator. Viewer sees metadata. A read is audited only when its page shows a reported body. Errors are `forbidden` and `not_found`. |
 | `admin_rack_remove(capsule_id, reason)` | Owner, admin and moderator. Returns `{ action_id, capsule_id }`. Errors are `forbidden`, `not_found` and `reason_required`. Removal revokes Inbox access if claimed. Pass `action_id` to `admin_undo` for an unopened removal. Undo refuses stale actions and opened capsules. |
 
 The shared `private.text_allowed(text)` checks English and Chinese substrings case-insensitively. Database writers can reuse it for routes and private letters. The word table, helper and sealed answer all have restricted access.
@@ -52,10 +52,6 @@ order by disposition, c.id;
 
 | Capsule ID | Disposition | Nearest Waypost (ID) | Distance (m) | Existing state / vessel |
 |---|---|---|---:|---|
-| 250ea8a0-f5ae-44a7-b4af-24f8141d70f0 | delete | Square (e346c227-0647-4b31-99a3-2c6baa5b3bed) | 1718629.3 | unclaimed / bottle |
-| 30165305-cf5b-4428-87c8-340ac88fa991 | delete | Dahu Park (7aba1ead-3282-4114-8f01-298b27b8d2c0) | 1478695.7 | unclaimed / bottle |
-| 4b9bd4a7-5e35-4f30-ba73-736f6917c15c | delete | Watten Heights Playground (f19a5775-f92c-454b-bf87-e17c1245e54e) | 1428789.8 | unclaimed / bottle |
-| 571a08ba-949d-43b6-a3f7-277b269b3b2c | delete | Dahu Park (7aba1ead-3282-4114-8f01-298b27b8d2c0) | 1747802.7 | unclaimed / bottle |
 | 250ea8a0-f5ae-44a7-b4af-24f8141d70f0 | delete | Square (e346c227-0647-4b31-99a3-2c6baa5b3bed) | 1718629.3 | unclaimed / bottle |
 | 30165305-cf5b-4428-87c8-340ac88fa991 | delete | Dahu Park (7aba1ead-3282-4114-8f01-298b27b8d2c0) | 1478695.7 | unclaimed / bottle |
 | 4b9bd4a7-5e35-4f30-ba73-736f6917c15c | delete | Watten Heights Playground (f19a5775-f92c-454b-bf87-e17c1245e54e) | 1428789.8 | unclaimed / bottle |

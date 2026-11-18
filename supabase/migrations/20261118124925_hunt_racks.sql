@@ -338,8 +338,10 @@ begin
       (select jsonb_build_object('sealed_at', i.sealed_at, 'id', i.id)
        from items i order by i.sealed_at, i.id limit 1) end
   ) into result;
-  perform private.admin_log('rack.list', 'waypost_rack', post.id::text, post.name_en, null,
-    jsonb_build_object('cursor', cursor, 'shown', jsonb_array_length(result->'items')));
+  if exists (select 1 from jsonb_array_elements(result->'items') item where item->>'body' is not null) then
+    perform private.admin_log('rack.list', 'waypost_rack', post.id::text, post.name_en, null,
+      jsonb_build_object('cursor', cursor, 'shown', jsonb_array_length(result->'items')));
+  end if;
   return result;
 end;
 $$;

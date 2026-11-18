@@ -108,10 +108,12 @@ begin
   perform pg_temp.require_ok((public.waypost_rack(post_id,'has_question')->>'count')::integer = 0, 'admin remove hides');
   perform public.admin_undo((removal->>'action_id')::bigint);
   perform pg_temp.require_ok((public.waypost_rack(post_id,'has_question')->>'count')::integer = 1, 'moderator undo');
-  perform pg_temp.require_ok(exists (select 1 from private.admin_actions where actor = viewer_id and action = 'rack.list')
+  perform pg_temp.require_ok(not exists (select 1 from private.admin_actions where actor = viewer_id and action = 'rack.list')
+    and (select count(*) from private.admin_actions where actor = moderator_id and action = 'rack.list'
+      and target_type = 'waypost_rack' and target_id = post_id::text and after ?& array['cursor','shown']) = 1
     and exists (select 1 from private.admin_actions where actor = moderator_id and action = 'undo')
     and exists (select 1 from private.admin_actions where actor = moderator_id and action = 'rack.remove'
-      and note = 'Test remove'), 'audited reads and writes');
+      and note = 'Test remove'), 'only the page with a reported body is logged, alongside removal and undo');
 
   update public.capsules c set open_at = now() - interval '1 minute' where c.id = capsule_id;
   perform set_config('request.jwt.claim.sub', finder_id::text, true);
