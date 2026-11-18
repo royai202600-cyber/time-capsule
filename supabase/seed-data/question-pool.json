@@ -4085,9 +4085,10 @@
     "usd": 5.43,
     "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
     "checked_on": "2026-11-17",
-    "status": "draft",
+    "status": "hidden",
     "recheck_within_six_months": true,
-    "outside_coverage": false
+    "outside_coverage": false,
+    "hidden_reason": "Malaysian Food Street permanently closed"
   },
   {
     "id": "singapore-ce1-02",
@@ -4111,9 +4112,10 @@
     "usd": 3.88,
     "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
     "checked_on": "2026-11-17",
-    "status": "draft",
+    "status": "hidden",
     "recheck_within_six_months": true,
-    "outside_coverage": false
+    "outside_coverage": false,
+    "hidden_reason": "Malaysian Food Street permanently closed"
   },
   {
     "id": "singapore-ce1-03",
@@ -4215,9 +4217,10 @@
     "usd": 13.96,
     "source_url": "https://www.nhb.gov.sg/peranakanmuseum/visit/plan-your-visit",
     "checked_on": "2026-11-17",
-    "status": "draft",
+    "status": "hidden",
     "recheck_within_six_months": true,
-    "outside_coverage": false
+    "outside_coverage": false,
+    "hidden_reason": "Peacock Power exhibition ended"
   },
   {
     "id": "singapore-ce1-07",
@@ -4371,9 +4374,10 @@
     "usd": 3.1,
     "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
     "checked_on": "2026-11-17",
-    "status": "draft",
+    "status": "hidden",
     "recheck_within_six_months": true,
-    "outside_coverage": false
+    "outside_coverage": false,
+    "hidden_reason": "Malaysian Food Street permanently closed"
   },
   {
     "id": "singapore-ce1-13",
@@ -4449,9 +4453,10 @@
     "usd": 2.33,
     "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
     "checked_on": "2026-11-17",
-    "status": "draft",
+    "status": "hidden",
     "recheck_within_six_months": true,
-    "outside_coverage": false
+    "outside_coverage": false,
+    "hidden_reason": "Malaysian Food Street permanently closed"
   },
   {
     "id": "singapore-ce1-16",
@@ -4475,9 +4480,10 @@
     "usd": 4.65,
     "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
     "checked_on": "2026-11-17",
-    "status": "draft",
+    "status": "hidden",
     "recheck_within_six_months": true,
-    "outside_coverage": false
+    "outside_coverage": false,
+    "hidden_reason": "Malaysian Food Street permanently closed"
   },
   {
     "id": "singapore-ce1-17",
@@ -4527,9 +4533,10 @@
     "usd": 4.65,
     "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
     "checked_on": "2026-11-17",
-    "status": "draft",
+    "status": "hidden",
     "recheck_within_six_months": true,
-    "outside_coverage": false
+    "outside_coverage": false,
+    "hidden_reason": "Malaysian Food Street permanently closed"
   },
   {
     "id": "singapore-ce1-19",
@@ -4553,9 +4560,10 @@
     "usd": 4.65,
     "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
     "checked_on": "2026-11-17",
-    "status": "draft",
+    "status": "hidden",
     "recheck_within_six_months": true,
-    "outside_coverage": false
+    "outside_coverage": false,
+    "hidden_reason": "Malaysian Food Street permanently closed"
   },
   {
     "id": "singapore-ce1-20",
@@ -4857,188 +4865,1635 @@
     "id": "macau-001",
     "city": "macau",
     "type": "question",
+    "place_zh": "市政署大樓（原議事亭）",
+    "place_en": "Former Leal Senado Building",
+    "osm_ref": "way/192573684",
+    "location_lat": 22.1935795,
+    "location_lng": 113.5396412,
+    "prompt_zh": "澳門原議事亭大樓最初建於哪一年？",
+    "prompt_en": "In what year was Macau’s former Leal Senado Building originally built?",
     "kind": "choice",
-    "place_zh": "議事亭前地",
-    "place_en": "Senado Square",
-    "location_lat": 22.193683,
-    "location_lng": 113.53989,
-    "prompt_zh": "議事亭前地旁的民政總署大樓最初建於哪一年？",
-    "prompt_en": "In what year was the former Leal Senado Building by Senado Square originally built?",
     "choices": [
       {
-        "zh": "1784",
+        "zh": "1784 年",
         "en": "1784"
       },
       {
-        "zh": "1684",
-        "en": "1684"
+        "zh": "1654 年",
+        "en": "1654"
       },
       {
-        "zh": "1884",
-        "en": "1884"
+        "zh": "1840 年",
+        "en": "1840"
       },
       {
-        "zh": "1984",
-        "en": "1984"
+        "zh": "1910 年",
+        "en": "1910"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://www.wh.mo/en/site/detail/11",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
+    "answer": 0,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/11",
+    "checked_on": "2026-11-18",
     "status": "draft"
   },
   {
     "id": "macau-002",
     "city": "macau",
     "type": "question",
-    "kind": "choice",
     "place_zh": "議事亭前地",
     "place_en": "Senado Square",
-    "location_lat": 22.193683,
-    "location_lng": 113.53989,
-    "prompt_zh": "議事亭前地旁的民政總署大樓採用哪種建築風格？",
-    "prompt_en": "What architectural style is the former Leal Senado Building by Senado Square?",
+    "osm_ref": "way/192573684",
+    "location_lat": 22.19381,
+    "location_lng": 113.53996,
+    "prompt_zh": "議事亭前地周圍的粉彩歷史建築屬於哪種建築風格？",
+    "prompt_en": "What architectural style characterises the pastel historic buildings around Senado Square?",
+    "kind": "choice",
     "choices": [
+      {
+        "zh": "哥德復興",
+        "en": "Gothic Revival"
+      },
       {
         "zh": "新古典主義",
         "en": "Neoclassical"
       },
       {
-        "zh": "哥德式",
-        "en": "Gothic"
-      },
-      {
-        "zh": "野獸派",
-        "en": "Brutalist"
-      },
-      {
         "zh": "裝飾藝術",
         "en": "Art Deco"
+      },
+      {
+        "zh": "粗獷主義",
+        "en": "Brutalism"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://www.wh.mo/en/site/detail/11",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
+    "answer": 1,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/12",
+    "checked_on": "2026-11-18",
     "status": "draft"
   },
   {
     "id": "macau-003",
     "city": "macau",
     "type": "question",
+    "place_zh": "仁慈堂大樓",
+    "place_en": "Holy House of Mercy",
+    "osm_ref": "way/713100572",
+    "location_lat": 22.1938159,
+    "location_lng": 113.5400875,
+    "prompt_zh": "澳門仁慈堂在本地創立了哪一類首間西式機構？",
+    "prompt_en": "The Holy House of Mercy founded Macau’s first Western-style facility of what kind?",
     "kind": "choice",
-    "place_zh": "議事亭前地",
-    "place_en": "Senado Square",
-    "location_lat": 22.193683,
-    "location_lng": 113.53989,
-    "prompt_zh": "議事亭前地旁的民政總署大樓背後有什麼？",
-    "prompt_en": "What lies at the back of the former Leal Senado Building by Senado Square?",
     "choices": [
       {
-        "zh": "庭院花園",
-        "en": "A courtyard garden"
+        "zh": "公共圖書館",
+        "en": "A public library"
       },
       {
-        "zh": "燈塔",
-        "en": "A lighthouse"
+        "zh": "印刷所",
+        "en": "A printing house"
       },
       {
-        "zh": "碼頭",
-        "en": "A pier"
+        "zh": "醫療診所",
+        "en": "A medical clinic"
       },
       {
-        "zh": "火車月台",
-        "en": "A railway platform"
+        "zh": "法院",
+        "en": "A court"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://www.wh.mo/en/site/detail/11",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
+    "answer": 2,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/14",
+    "checked_on": "2026-11-18",
     "status": "draft"
   },
   {
     "id": "macau-004",
     "city": "macau",
     "type": "question",
-    "kind": "choice",
-    "place_zh": "議事亭前地",
-    "place_en": "Senado Square",
-    "location_lat": 22.193683,
-    "location_lng": 113.53989,
-    "prompt_zh": "議事亭前地旁的民政總署大樓正門兩側有哪種柱子？",
-    "prompt_en": "What kind of columns flank the entrance of the former Leal Senado Building by Senado Square?",
-    "choices": [
-      {
-        "zh": "花崗岩多立克柱",
-        "en": "Granite Doric columns"
-      },
-      {
-        "zh": "木製科林斯柱",
-        "en": "Wooden Corinthian columns"
-      },
-      {
-        "zh": "鋼製柱",
-        "en": "Steel columns"
-      },
-      {
-        "zh": "磚砌尖塔",
-        "en": "Brick pinnacles"
-      }
+    "place_zh": "伯多祿五世劇院",
+    "place_en": "Dom Pedro V Theatre",
+    "osm_ref": "way/772345370",
+    "location_lat": 22.1922335,
+    "location_lng": 113.537966,
+    "prompt_zh": "伯多祿五世劇院外牆的主色是甚麼？",
+    "prompt_en": "What is the main colour of the Dom Pedro V Theatre’s exterior walls?",
+    "kind": "text",
+    "choices": null,
+    "answer": "Sage green",
+    "typed_aliases": [
+      "鼠尾草綠",
+      "灰綠色",
+      "淺綠色",
+      "綠色",
+      "绿色",
+      "Sage green",
+      "Green",
+      "Verde",
+      "Verde sálvia",
+      "Verde salva",
+      "luk6 sik1"
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://www.wh.mo/en/site/detail/11",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/8",
+    "checked_on": "2026-11-18",
     "status": "draft"
   },
   {
     "id": "macau-005",
     "city": "macau",
     "type": "question",
-    "kind": "text",
-    "place_zh": "議事亭前地",
-    "place_en": "Senado Square",
-    "location_lat": 22.193683,
-    "location_lng": 113.53989,
-    "prompt_zh": "議事亭前地旁的民政總署大樓最初建於哪一年？請輸入四位數字。",
-    "prompt_en": "In what year was the former Leal Senado Building by Senado Square originally built? Enter four digits.",
-    "choices": null,
-    "answer": {
-      "zh": [
-        "1784"
-      ],
-      "en": [
-        "1784"
-      ]
-    },
-    "source_url": "https://www.wh.mo/en/site/detail/11",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
+    "place_zh": "盧家大屋",
+    "place_en": "Lou Kau Mansion",
+    "osm_ref": "way/192573694",
+    "location_lat": 22.1941832,
+    "location_lng": 113.541105,
+    "prompt_zh": "盧家大屋的傳統外牆主要由甚麼材料砌成？",
+    "prompt_en": "What material forms the traditional exterior walls of Lou Kau Mansion?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "紅磚",
+        "en": "Red brick"
+      },
+      {
+        "zh": "竹",
+        "en": "Bamboo"
+      },
+      {
+        "zh": "白色大理石",
+        "en": "White marble"
+      },
+      {
+        "zh": "灰磚",
+        "en": "Grey brick"
+      }
+    ],
+    "answer": 3,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/16",
+    "checked_on": "2026-11-18",
     "status": "draft"
+  },
+  {
+    "id": "macau-006",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "崗頂前地",
+    "place_en": "St. Augustine’s Square",
+    "osm_ref": "way/772345371",
+    "location_lat": 22.1922823,
+    "location_lng": 113.5382402,
+    "prompt_zh": "崗頂前地的傳統葡式地面鋪的是甚麼？",
+    "prompt_en": "What material gives the surface of St. Augustine’s Square its traditional Portuguese character?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "小塊石頭",
+        "en": "Cobblestones"
+      },
+      {
+        "zh": "赤陶地磚",
+        "en": "Terracotta tiles"
+      },
+      {
+        "zh": "木板",
+        "en": "Timber planks"
+      },
+      {
+        "zh": "打磨混凝土",
+        "en": "Polished concrete"
+      }
+    ],
+    "answer": 0,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/7",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-007",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "何東圖書館",
+    "place_en": "Sir Robert Ho Tung Library",
+    "osm_ref": "way/823303471",
+    "location_lat": 22.1922695,
+    "location_lng": 113.5378571,
+    "prompt_zh": "何東爵士在哪一年買下日後成為圖書館的宅第？",
+    "prompt_en": "In what year did Sir Robert Ho Tung buy the mansion that later became the library?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1894 年",
+        "en": "1894"
+      },
+      {
+        "zh": "1918 年",
+        "en": "1918"
+      },
+      {
+        "zh": "1905 年",
+        "en": "1905"
+      },
+      {
+        "zh": "1941 年",
+        "en": "1941"
+      }
+    ],
+    "answer": 1,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/9",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-008",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "亞婆井前地",
+    "place_en": "Lilau Square",
+    "osm_ref": "way/206830675",
+    "location_lat": 22.1883814,
+    "location_lng": 113.5351829,
+    "prompt_zh": "昔日亞婆井一帶為澳門提供哪種重要資源？",
+    "prompt_en": "What important resource did the area around Lilau Square once supply to Macau?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "石灰",
+        "en": "Lime"
+      },
+      {
+        "zh": "海鹽",
+        "en": "Sea salt"
+      },
+      {
+        "zh": "天然泉水",
+        "en": "Natural spring water"
+      },
+      {
+        "zh": "木材",
+        "en": "Timber"
+      }
+    ],
+    "answer": 2,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/3",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-009",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "鄭家大屋",
+    "place_en": "Mandarin’s House",
+    "osm_ref": "way/231345534",
+    "location_lat": 22.1883314,
+    "location_lng": 113.534751,
+    "prompt_zh": "哪一位晚清思想家及作家曾居於這座傳統宅第？",
+    "prompt_en": "Which late Qing thinker and writer lived at the Mandarin’s House?",
+    "kind": "text",
+    "choices": null,
+    "answer": "Zheng Guanying",
+    "typed_aliases": [
+      "鄭觀應",
+      "郑观应",
+      "鄭觀應先生",
+      "Zheng Guanying",
+      "Zheng Guan Ying",
+      "Cheng Kuan-ying",
+      "Cheng Koon-ying",
+      "Cheng Kun Ieng",
+      "Zeng6 gun1 jing3"
+    ],
+    "source_url": "https://www.wh.gov.mo/en/site/detail/4",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-010",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "港務局大樓（原摩爾兵營）",
+    "place_en": "Former Moorish Barracks",
+    "osm_ref": "way/866161645",
+    "location_lat": 22.1873075,
+    "location_lng": 113.5329081,
+    "prompt_zh": "原摩爾兵營最初為一支來自印度哪一地區的部隊而建？",
+    "prompt_en": "The former Moorish Barracks originally housed a regiment from which part of India?",
+    "kind": "text",
+    "choices": null,
+    "answer": "Goa",
+    "typed_aliases": [
+      "果阿",
+      "高亞",
+      "高阿",
+      "Goa",
+      "Gôa",
+      "Gwo2 aa3"
+    ],
+    "source_url": "https://www.wh.gov.mo/en/site/detail/2",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-011",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "大三巴牌坊",
+    "place_en": "Ruins of St Paul’s",
+    "osm_ref": "way/482391384",
+    "location_lat": 22.1970964,
+    "location_lng": 113.54072,
+    "prompt_zh": "大三巴牌坊原屬的教堂在哪一年被大火摧毀？",
+    "prompt_en": "In what year did fire destroy the church whose façade survives at the Ruins of St Paul’s?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1704 年",
+        "en": "1704"
+      },
+      {
+        "zh": "1755 年",
+        "en": "1755"
+      },
+      {
+        "zh": "1898 年",
+        "en": "1898"
+      },
+      {
+        "zh": "1835 年",
+        "en": "1835"
+      }
+    ],
+    "answer": 3,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/18",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-012",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "舊城牆遺址",
+    "place_en": "Section of the Old City Walls",
+    "osm_ref": "way/306982081",
+    "location_lat": 22.1975872,
+    "location_lng": 113.5404907,
+    "prompt_zh": "舊城牆的夯土混合物加入了哪種貝殼？",
+    "prompt_en": "Which shells were added to the rammed mixture used for this stretch of the Old City Walls?",
+    "kind": "text",
+    "choices": null,
+    "answer": "Oyster shells",
+    "typed_aliases": [
+      "蠔殼",
+      "牡蠣殼",
+      "牡蛎壳",
+      "蠔仔殼",
+      "Oyster shells",
+      "Oyster shell",
+      "Cascas de ostra",
+      "Casca de ostra",
+      "Hou4 hok3"
+    ],
+    "source_url": "https://www.wh.gov.mo/en/site/detail/20",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-013",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "大炮台",
+    "place_en": "Mount Fortress",
+    "osm_ref": "way/710432494",
+    "location_lat": 22.1966075,
+    "location_lng": 113.5421638,
+    "prompt_zh": "1622 年，大炮台協助澳門抵抗哪一國的進攻？",
+    "prompt_en": "In 1622, Mount Fortress helped repel an attack by forces from which country?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "荷蘭",
+        "en": "The Netherlands"
+      },
+      {
+        "zh": "法國",
+        "en": "France"
+      },
+      {
+        "zh": "丹麥",
+        "en": "Denmark"
+      },
+      {
+        "zh": "瑞典",
+        "en": "Sweden"
+      }
+    ],
+    "answer": 0,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/21",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-014",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "東方基金會會址（原東方花園）",
+    "place_en": "Casa Garden",
+    "osm_ref": "way/712582363",
+    "location_lat": 22.1999599,
+    "location_lng": 113.5395897,
+    "prompt_zh": "哪一家貿易公司曾將東方花園大宅用作澳門總部？",
+    "prompt_en": "Which trading company once used the Casa Garden mansion as its Macau headquarters?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "哈德遜灣公司",
+        "en": "The Hudson’s Bay Company"
+      },
+      {
+        "zh": "英國東印度公司",
+        "en": "The British East India Company"
+      },
+      {
+        "zh": "法國東印度公司",
+        "en": "The French East India Company"
+      },
+      {
+        "zh": "丹麥東印度公司",
+        "en": "The Danish East India Company"
+      }
+    ],
+    "answer": 1,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/23",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-015",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "賈梅士洞",
+    "place_en": "Camões Grotto",
+    "osm_ref": "way/248826421",
+    "location_lat": 22.2006034,
+    "location_lng": 113.539272,
+    "prompt_zh": "白鴿巢公園石洞紀念的賈梅士，主要以甚麼身分聞名？",
+    "prompt_en": "What was Luís de Camões, commemorated by the grotto in the park, best known as?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "作曲家",
+        "en": "A composer"
+      },
+      {
+        "zh": "雕塑家",
+        "en": "A sculptor"
+      },
+      {
+        "zh": "詩人",
+        "en": "A poet"
+      },
+      {
+        "zh": "地圖繪製師",
+        "en": "A cartographer"
+      }
+    ],
+    "answer": 2,
+    "source_url": "https://www.macaotourism.gov.mo/en/sightseeing/gardens/luis-de-camoes-park",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-016",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "中西藥局舊址",
+    "place_en": "Former Chong Sai Pharmacy",
+    "osm_ref": "way/660183185",
+    "location_lat": 22.1958885,
+    "location_lng": 113.5394415,
+    "prompt_zh": "孫中山在草堆街的中西藥局從事哪一類工作？",
+    "prompt_en": "What kind of work did Sun Yat-sen practise at Chong Sai Pharmacy on Rua das Estalagens?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "葡文翻譯",
+        "en": "Portuguese translation"
+      },
+      {
+        "zh": "報紙編輯",
+        "en": "Newspaper editing"
+      },
+      {
+        "zh": "建築設計",
+        "en": "Architectural design"
+      },
+      {
+        "zh": "西醫診療",
+        "en": "Western medical practice"
+      }
+    ],
+    "answer": 3,
+    "source_url": "https://www.icm.gov.mo/en/ChongSaiPharmacy",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-017",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "消防博物館",
+    "place_en": "Fire Services Museum",
+    "osm_ref": "way/1194095695",
+    "location_lat": 22.2001872,
+    "location_lng": 113.5434517,
+    "prompt_zh": "澳門消防博物館所在的歷史消防建築在哪一年落成？",
+    "prompt_en": "In what year was the historic fire-services building housing Macau’s Fire Services Museum completed?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1920 年",
+        "en": "1920"
+      },
+      {
+        "zh": "1885 年",
+        "en": "1885"
+      },
+      {
+        "zh": "1950 年",
+        "en": "1950"
+      },
+      {
+        "zh": "1980 年",
+        "en": "1980"
+      }
+    ],
+    "answer": 0,
+    "source_url": "https://www.macaotourism.gov.mo/en/sightseeing/museums-and-galleries/fire-services-museum",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-018",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "東望洋燈塔",
+    "place_en": "Guia Lighthouse",
+    "osm_ref": "way/643625404",
+    "location_lat": 22.1964933,
+    "location_lng": 113.5496011,
+    "prompt_zh": "東望洋燈塔的塔身高多少？",
+    "prompt_en": "How tall is the tower of Guia Lighthouse?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "12.3 公尺",
+        "en": "12.3 metres"
+      },
+      {
+        "zh": "18.3 公尺",
+        "en": "18.3 metres"
+      },
+      {
+        "zh": "25.3 公尺",
+        "en": "25.3 metres"
+      },
+      {
+        "zh": "31.3 公尺",
+        "en": "31.3 metres"
+      }
+    ],
+    "answer": 1,
+    "source_url": "https://www.wh.gov.mo/en/site/detail/25",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-019",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "二龍喉公園",
+    "place_en": "Flora Garden",
+    "osm_ref": "way/1046560029",
+    "location_lat": 22.2001834,
+    "location_lng": 113.5512468,
+    "prompt_zh": "二龍喉公園原址曾是哪一座宅邸的庭園？",
+    "prompt_en": "Flora Garden occupies the former grounds of which residence?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "竹仔室",
+        "en": "Bela Vista"
+      },
+      {
+        "zh": "總督官邸",
+        "en": "The Governor’s Residence"
+      },
+      {
+        "zh": "二龍喉別墅",
+        "en": "Flora Palace"
+      },
+      {
+        "zh": "東方花園大宅",
+        "en": "Casa Garden Mansion"
+      }
+    ],
+    "answer": 2,
+    "source_url": "https://macaomagazine.net/exploring-macaos-history-from-the-garden-path/",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-020",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "盧廉若公園",
+    "place_en": "Lou Lim Ioc Garden",
+    "osm_ref": "way/764201163",
+    "location_lat": 22.2007332,
+    "location_lng": 113.5477611,
+    "prompt_zh": "盧廉若公園的佈局仿照中國哪一座城市的古典園林？",
+    "prompt_en": "The layout of Lou Lim Ioc Garden was modelled on the classical gardens of which Chinese city?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "北京",
+        "en": "Beijing"
+      },
+      {
+        "zh": "成都",
+        "en": "Chengdu"
+      },
+      {
+        "zh": "廈門",
+        "en": "Xiamen"
+      },
+      {
+        "zh": "蘇州",
+        "en": "Suzhou"
+      }
+    ],
+    "answer": 3,
+    "source_url": "https://www.culturalheritage.mo/en/detail/99950",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-021",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "金蓮花廣場",
+    "place_en": "Golden Lotus Square",
+    "osm_ref": "way/1099772205",
+    "location_lat": 22.1962455,
+    "location_lng": 113.552929,
+    "prompt_zh": "金蓮花廣場的主雕塑由哪種金屬鑄成？",
+    "prompt_en": "What metal was used to cast the centrepiece sculpture at Golden Lotus Square?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "青銅",
+        "en": "Bronze"
+      },
+      {
+        "zh": "不鏽鋼",
+        "en": "Stainless steel"
+      },
+      {
+        "zh": "鑄鐵",
+        "en": "Cast iron"
+      },
+      {
+        "zh": "鋁",
+        "en": "Aluminium"
+      }
+    ],
+    "answer": 0,
+    "source_url": "https://www.icm.gov.mo/rc/viewer/pdfViewerParts/40055/2290",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-022",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "紅街市",
+    "place_en": "Red Market",
+    "osm_ref": "way/307134303",
+    "location_lat": 22.2051026,
+    "location_lng": 113.5454756,
+    "prompt_zh": "紅街市最初在哪一年啟用？",
+    "prompt_en": "In what year did the Red Market first open?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1906 年",
+        "en": "1906"
+      },
+      {
+        "zh": "1936 年",
+        "en": "1936"
+      },
+      {
+        "zh": "1966 年",
+        "en": "1966"
+      },
+      {
+        "zh": "1986 年",
+        "en": "1986"
+      }
+    ],
+    "answer": 1,
+    "source_url": "https://www.gcs.gov.mo/news/detail/en/M26JIi3IFB",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-023",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "龍環葡韻住宅式博物館",
+    "place_en": "Taipa Houses",
+    "osm_ref": "way/641079273",
+    "location_lat": 22.153861,
+    "location_lng": 113.5593693,
+    "prompt_zh": "龍環葡韻靠海旁的原葡式住宅共有幾座？",
+    "prompt_en": "How many former Portuguese residences make up the waterfront row at the Taipa Houses?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "三座",
+        "en": "Three"
+      },
+      {
+        "zh": "七座",
+        "en": "Seven"
+      },
+      {
+        "zh": "五座",
+        "en": "Five"
+      },
+      {
+        "zh": "九座",
+        "en": "Nine"
+      }
+    ],
+    "answer": 2,
+    "source_url": "https://www.culture.gov.mo/en/housesmuseum/",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-024",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "益隆炮竹廠舊址",
+    "place_en": "Former Iec Long Firecracker Factory",
+    "osm_ref": "way/1261806672",
+    "location_lat": 22.1548275,
+    "location_lng": 113.5578847,
+    "prompt_zh": "益隆炮竹廠在哪一年停止生產？",
+    "prompt_en": "In which year did the Iec Long Firecracker Factory close?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1964 年",
+        "en": "1964"
+      },
+      {
+        "zh": "1974 年",
+        "en": "1974"
+      },
+      {
+        "zh": "1994 年",
+        "en": "1994"
+      },
+      {
+        "zh": "1984 年",
+        "en": "1984"
+      }
+    ],
+    "answer": 3,
+    "source_url": "https://www.macaumuseum.gov.mo/en/collections/96263?AspxAutoDetectCookieSupport=1",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-025",
+    "city": "macau",
+    "type": "question",
+    "place_zh": "澳門科學館",
+    "place_en": "Macao Science Center",
+    "osm_ref": "way/1125403427",
+    "location_lat": 22.1871232,
+    "location_lng": 113.5573412,
+    "prompt_zh": "澳門科學館由哪位建築師設計？",
+    "prompt_en": "Which architect designed the Macao Science Center?",
+    "kind": "text",
+    "choices": null,
+    "answer": "IM Pei",
+    "typed_aliases": [
+      "貝聿銘",
+      "贝聿铭",
+      "貝聿銘先生",
+      "I. M. Pei",
+      "I M Pei",
+      "IM Pei",
+      "Ieoh Ming Pei",
+      "Pei Ieoh Ming",
+      "Bui3 wat6 ming4"
+    ],
+    "source_url": "https://www.msc.org.mo/en/article-detail/43/old_new_155",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "macau-ce1-01",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 1,
+    "place_zh": "安德魯咖啡店，路環，澳門",
+    "place_en": "Lord Stow’s Café, Coloane, Macau",
+    "osm_ref": "way/1533000214",
+    "location_lat": 22.1182174,
+    "location_lng": 113.5511372,
+    "location_source_url": "https://lordstow.com/macau-outlet/lord-stows-cafe/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "路環安德魯咖啡店一個葡式蛋撻（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of one Portuguese egg tart at Lord Stow’s Café in Coloane, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 11.0,
+    "usd": 1.36,
+    "source_url": "https://lordstow.com/files/menus/lord-stows-cafe.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "macau-ce1-02",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 2,
+    "place_zh": "安德魯咖啡店，路環，澳門",
+    "place_en": "Lord Stow’s Café, Coloane, Macau",
+    "osm_ref": "way/1533000214",
+    "location_lat": 22.1182174,
+    "location_lng": 113.5511372,
+    "location_source_url": "https://lordstow.com/macau-outlet/lord-stows-cafe/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "路環安德魯咖啡店一份原味芝士餅（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of a plain chilled cheesecake at Lord Stow’s Café in Coloane, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 32.0,
+    "usd": 3.96,
+    "source_url": "https://lordstow.com/files/menus/lord-stows-cafe.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "macau-ce1-03",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 3,
+    "place_zh": "澳門大賽車博物館售票處，新口岸，澳門",
+    "place_en": "Macao Grand Prix Museum ticket office, NAPE, Macau",
+    "osm_ref": "way/942508484",
+    "location_lat": 22.1948039,
+    "location_lng": 113.5533395,
+    "location_source_url": "https://mgpm.macaotourism.gov.mo/en/about/ticketing",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "澳門大賽車博物館一張成人正價票要多少錢？",
+    "prompt_en": "What is the price of a full-price adult ticket to the Macao Grand Prix Museum?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 80.0,
+    "usd": 9.9,
+    "source_url": "https://mgpm.macaotourism.gov.mo/en/about/ticketing",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-04",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 4,
+    "place_zh": "澳門輕軌媽閣站售票機，媽閣，澳門",
+    "place_en": "Macao LRT Barra Station ticket machines, Barra, Macau",
+    "osm_ref": "way/1350622244",
+    "location_lat": 22.18401,
+    "location_lng": 113.53018,
+    "location_source_url": "https://www.mlm.com.mo/en/station_locationDetail/article/lphpolkr.html",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "從媽閣站出發，搭澳門輕軌三站或以下的一張成人單程票要多少錢？",
+    "prompt_en": "What is the price of an adult Macao LRT single ticket from Barra for three stops or fewer?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 6.0,
+    "usd": 0.74,
+    "source_url": "https://www.mlm.com.mo/en/general_ticket.html",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-05",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 5,
+    "place_zh": "松山纜車二龍喉公園售票處，望德堂區，澳門",
+    "place_en": "Guia Cable Car ticket office, Flora Garden, São Lázaro, Macau",
+    "osm_ref": "way/411044997",
+    "location_lat": 22.2005568,
+    "location_lng": 113.5507727,
+    "location_source_url": "https://www.macaotourism.gov.mo/en/shows-and-entertainment/family-fun/cable-car",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "澳門松山纜車一張普通來回票要多少錢？",
+    "prompt_en": "What is the price of a standard return ticket on Macao’s Guia cable car?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 3.0,
+    "usd": 0.37,
+    "source_url": "https://www.macaotourism.gov.mo/en/shows-and-entertainment/family-fun/cable-car",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-06",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 6,
+    "place_zh": "澳門旅遊塔觀光層售票處，南灣，澳門",
+    "place_en": "Macau Tower observation deck ticket office, Nam Van, Macau",
+    "osm_ref": "way/712001442",
+    "location_lat": 22.1803844,
+    "location_lng": 113.5375033,
+    "location_source_url": "https://www.macautower.com.mo/en/entertainment/observation-deck/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "澳門旅遊塔一張包含手扇的成人標準觀光票要多少錢？",
+    "prompt_en": "What is the price of an adult Macau Tower observation ticket that includes a hand fan?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 208.0,
+    "usd": 25.74,
+    "source_url": "https://www.macautower.com.mo/en/entertainment/observation-deck/",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-07",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 7,
+    "place_zh": "澳門君悅酒店大堂酒廊，路氹，澳門",
+    "place_en": "Grand Hyatt Macau Lobby Lounge, Cotai, Macau",
+    "osm_ref": "way/763414618",
+    "location_lat": 22.1485823,
+    "location_lng": 113.5683289,
+    "location_source_url": "https://www.hyatt.com/grand-hyatt/en-US/macgh-grand-hyatt-macau/dining",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "澳門君悅酒店大堂酒廊一個可麗露（未計政府稅）要多少錢？",
+    "prompt_en": "What is the price of one canelé at the Grand Hyatt Macau Lobby Lounge, before tax?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 25.0,
+    "usd": 3.09,
+    "source_url": "https://www.hyatt.com/content/dam/hotel/propertysites/assets/grand/macgh/documents/en_US/dining/lobby-lounge/Lobby-Lounge-Cake-Menu.pdf",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-08",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 8,
+    "place_zh": "銀河氹仔漁村，路氹，澳門",
+    "place_en": "Tam Chai Yu Chun, Galaxy Macau, Cotai",
+    "osm_ref": "way/378848861",
+    "location_lat": 22.1497485,
+    "location_lng": 113.5548056,
+    "location_source_url": "https://www.galaxymacau.com/dining/restaurants/tam-chai-yu-chun/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "澳門銀河氹仔漁村一份漁村富貴蝦餃皇（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of one serving of steamed mantis-shrimp dumplings at Tam Chai Yu Chun, Galaxy Macau, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 88.0,
+    "usd": 10.89,
+    "source_url": "https://img.galaxymacau.com/2026-11/TCYC_Lunch_Dimsun_Seasonal_261113.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-09",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 9,
+    "place_zh": "安德魯咖啡店，路環，澳門",
+    "place_en": "Lord Stow’s Café, Coloane, Macau",
+    "osm_ref": "way/1533000214",
+    "location_lat": 22.1182174,
+    "location_lng": 113.5511372,
+    "location_source_url": "https://lordstow.com/macau-outlet/lord-stows-cafe/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "路環安德魯咖啡店一份伯爵茶卷（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of an Earl Grey roll at Lord Stow’s Café in Coloane, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 24.0,
+    "usd": 2.97,
+    "source_url": "https://lordstow.com/files/menus/lord-stows-cafe.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "macau-ce1-10",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 10,
+    "place_zh": "澳門博物館售票處，大炮台，澳門",
+    "place_en": "Macao Museum ticket office, Mount Fortress, Macau",
+    "osm_ref": "way/306984874",
+    "location_lat": 22.1978087,
+    "location_lng": 113.5420863,
+    "location_source_url": "https://www.macaumuseum.gov.mo/en/visit/tickets",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "非澳門居民在一般收費日參觀澳門博物館的一張成人票要多少錢？",
+    "prompt_en": "What is the price of a non-resident adult ticket to the Macao Museum on a regular paid day?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 15.0,
+    "usd": 1.86,
+    "source_url": "https://www.macaumuseum.gov.mo/doc/upload/1614832333784.pdf?AspxAutoDetectCookieSupport=1",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-11",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 11,
+    "place_zh": "澳門君悅酒店大堂酒廊，路氹，澳門",
+    "place_en": "Grand Hyatt Macau Lobby Lounge, Cotai, Macau",
+    "osm_ref": "way/763414618",
+    "location_lat": 22.1485823,
+    "location_lng": 113.5683289,
+    "location_source_url": "https://www.hyatt.com/grand-hyatt/en-US/macgh-grand-hyatt-macau/dining",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "澳門君悅酒店大堂酒廊一磅陳皮里斯本朱古力蛋糕（未計政府稅）要多少錢？",
+    "prompt_en": "What is the price of a one-pound Lisbon chocolate torte at the Grand Hyatt Macau Lobby Lounge, before tax?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 228.0,
+    "usd": 28.21,
+    "source_url": "https://www.hyatt.com/content/dam/hotel/propertysites/assets/grand/macgh/documents/en_US/dining/lobby-lounge/Lobby-Lounge-Cake-Menu.pdf",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-12",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 12,
+    "place_zh": "銀河氹仔漁村，路氹，澳門",
+    "place_en": "Tam Chai Yu Chun, Galaxy Macau, Cotai",
+    "osm_ref": "way/378848861",
+    "location_lat": 22.1497485,
+    "location_lng": 113.5548056,
+    "location_source_url": "https://www.galaxymacau.com/dining/restaurants/tam-chai-yu-chun/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "澳門銀河氹仔漁村一份豬潤燒賣（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of one serving of pork-liver siu mai at Tam Chai Yu Chun, Galaxy Macau, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 58.0,
+    "usd": 7.18,
+    "source_url": "https://img.galaxymacau.com/2026-11/TCYC_Lunch_Dimsun_Seasonal_261113.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-13",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 13,
+    "place_zh": "林則徐紀念館售票處，蓮峰廟，澳門",
+    "place_en": "Lin Zexu Memorial Museum ticket office, Lin Fung Temple, Macau",
+    "osm_ref": "way/820063178",
+    "location_lat": 22.2099565,
+    "location_lng": 113.5471827,
+    "location_source_url": "https://www.macaotourism.gov.mo/en/sightseeing/museums-and-galleries/lin-zexu-memorial-museum-of-macao",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "澳門林則徐紀念館一張成人正價票要多少錢？",
+    "prompt_en": "What is the price of a full-price adult ticket to the Lin Zexu Memorial Museum of Macao?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 5.0,
+    "usd": 0.62,
+    "source_url": "https://www.museums.gov.mo/eng/museums.html",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-14",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 14,
+    "place_zh": "銀河氹仔漁村，路氹，澳門",
+    "place_en": "Tam Chai Yu Chun, Galaxy Macau, Cotai",
+    "osm_ref": "way/378848861",
+    "location_lat": 22.1497485,
+    "location_lng": 113.5548056,
+    "location_source_url": "https://www.galaxymacau.com/dining/restaurants/tam-chai-yu-chun/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "澳門銀河氹仔漁村一份脆皮白糖糕（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of one serving of pan-fried sweet rice cake at Tam Chai Yu Chun, Galaxy Macau, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 58.0,
+    "usd": 7.18,
+    "source_url": "https://img.galaxymacau.com/2026-11/TCYC_Lunch_Dimsun_Seasonal_261113.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-15",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 15,
+    "place_zh": "仁慈堂博物館售票處，議事亭前地，澳門",
+    "place_en": "Holy House of Mercy Museum ticket office, Senado Square, Macau",
+    "osm_ref": "way/578630912",
+    "location_lat": 22.1936984,
+    "location_lng": 113.5404363,
+    "location_source_url": "https://www.macaotourism.gov.mo/en/sightseeing/macao-world-heritage/holy-house-of-mercy",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "澳門仁慈堂博物館一張成人正價門票要多少錢？",
+    "prompt_en": "What is the price of a standard adult ticket to Macao’s Museum of the Holy House of Mercy?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 5.0,
+    "usd": 0.62,
+    "source_url": "https://www.museums.gov.mo/eng/museums.html",
+    "checked_on": "2026-11-17",
+    "status": "hidden",
+    "recheck_within_six_months": true,
+    "outside_coverage": false,
+    "hidden_reason": "MOP 5 adult admission superseded by MOP 10"
+  },
+  {
+    "id": "macau-ce1-16",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 16,
+    "place_zh": "銀河氹仔漁村，路氹，澳門",
+    "place_en": "Tam Chai Yu Chun, Galaxy Macau, Cotai",
+    "osm_ref": "way/378848861",
+    "location_lat": 22.1497485,
+    "location_lng": 113.5548056,
+    "location_source_url": "https://www.galaxymacau.com/dining/restaurants/tam-chai-yu-chun/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "澳門銀河氹仔漁村一位楊枝甘露（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of one portion of chilled mango sago at Tam Chai Yu Chun, Galaxy Macau, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 58.0,
+    "usd": 7.18,
+    "source_url": "https://img.galaxymacau.com/2026-11/TCYC_Lunch_Dimsun_Seasonal_261113.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-ce1-17",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 17,
+    "place_zh": "新濠影滙影滙之星售票處，路氹，澳門",
+    "place_en": "Studio City Golden Reel ticket office, Cotai, Macau",
+    "osm_ref": "way/894099719",
+    "location_lat": 22.14082,
+    "location_lng": 113.5630378,
+    "location_source_url": "https://studiocity-macau.com/en/attractions/golden-reel",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "搭一次影滙之星摩天輪的標準票要多少錢？",
+    "prompt_en": "What is the price of a standard ticket for a ride on the Golden Reel?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 100.0,
+    "usd": 12.37,
+    "source_url": "https://studiocity-macau.com/en/attractions/golden-reel",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "macau-ce1-18",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 18,
+    "place_zh": "新濠影滙香滿樓，路氹，澳門",
+    "place_en": "Spice Road, Studio City, Cotai, Macau",
+    "osm_ref": "way/894099719",
+    "location_lat": 22.1408198,
+    "location_lng": 113.5630463,
+    "location_source_url": "https://www.studiocity-macau.com/en/dining/spice-road",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "一份摩哆雞腿飯的餐牌價（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of a Macanese baked spiced chicken drumstick with rice, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 128.0,
+    "usd": 15.84,
+    "source_url": "https://www.studiocity-macau.com/assets/public/2026-04/SC_Spice_Road_%20ALCMenu_2026Q2V2.pdf",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "macau-ce1-19",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 19,
+    "place_zh": "新濠影滙香滿樓，路氹，澳門",
+    "place_en": "Spice Road, Studio City, Cotai, Macau",
+    "osm_ref": "way/894099719",
+    "location_lat": 22.1408198,
+    "location_lng": 113.5630463,
+    "location_source_url": "https://www.studiocity-macau.com/en/dining/spice-road",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "一份澳門乾免治牛肉飯的餐牌價（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of a serving of Macanese minced beef with a fried egg and rice, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 128.0,
+    "usd": 15.84,
+    "source_url": "https://www.studiocity-macau.com/assets/public/2026-04/SC_Spice_Road_%20ALCMenu_2026Q2V2.pdf",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "macau-ce1-20",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 20,
+    "place_zh": "銀河氹仔漁村，路氹，澳門",
+    "place_en": "Tam Chai Yu Chun, Galaxy Macau, Cotai",
+    "osm_ref": "way/378848861",
+    "location_lat": 22.1497485,
+    "location_lng": 113.5548056,
+    "location_source_url": "https://www.galaxymacau.com/dining/restaurants/tam-chai-yu-chun/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "一份鮮鮑燒賣的餐牌價（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of a serving of steamed pork dumplings with abalone, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "rate": 8.08138,
+    "local_amount": 88.0,
+    "usd": 10.89,
+    "source_url": "https://img.galaxymacau.com/2026-11/TCYC_Lunch_Dimsun_Seasonal_261113.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "macau-landmark-price-01",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "place_zh": "新中央酒店碧麗宮，新馬路",
+    "place_en": "Palace Restaurant at Hotel Central, Avenida de Almeida Ribeiro",
+    "osm_ref": "way/490710460",
+    "location_lat": 22.1941969,
+    "location_lng": 113.539332,
+    "prompt_zh": "一份懷舊牛尾湯的餐牌價（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of one classic oxtail soup before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "local_amount": 68.0,
+    "usd": 8.41,
+    "rate": 8.082204,
+    "source_url": "https://www.hotelcentral.com.mo/Palace_Menu/index.html",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.hotelcentral.com.mo/food.html",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "macau-landmark-price-02",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "place_zh": "船屋葡國餐廳，媽閣",
+    "place_en": "A Lorcha, Barra",
+    "osm_ref": "way/46510069",
+    "location_lat": 22.1869968,
+    "location_lng": 113.5310066,
+    "prompt_zh": "三件葡式炸馬介休球的餐牌價（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of three Portuguese dried cod cakes before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "local_amount": 60.0,
+    "usd": 7.42,
+    "rate": 8.082204,
+    "source_url": "https://www.alorcha.com/en/restaurantmenu/",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.alorcha.com/en/restaurantmenu/",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "macau-landmark-price-03",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "place_zh": "新葡京8餐廳，南灣",
+    "place_en": "The Eight at Grand Lisboa, Nam Van",
+    "osm_ref": "way/954675220",
+    "location_lat": 22.1904922,
+    "location_lng": 113.5441454,
+    "prompt_zh": "一位尊貴套餐（不配餐酒）的餐牌價（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of the Precious Menu for one person without wine pairing, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "local_amount": 3280.0,
+    "usd": 405.83,
+    "rate": 8.082204,
+    "source_url": "https://img.grandlisboa.com/files/gl-dining-the-8-precious-menu-260303-rev.pdf",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.grandlisboa.com/en/restaurants-n-bars/the-eight",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "macau-landmark-price-04",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "place_zh": "新葡京扒房，南灣",
+    "place_en": "The Kitchen at Grand Lisboa, Nam Van",
+    "osm_ref": "way/988177061",
+    "location_lat": 22.1915464,
+    "location_lng": 113.5435059,
+    "prompt_zh": "一位晚市品味套餐（不配餐酒）的餐牌價（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of the dinner tasting menu for one person without wine pairing, before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "local_amount": 1200.0,
+    "usd": 148.47,
+    "rate": 8.082204,
+    "source_url": "https://img.grandlisboa.com/files/gl-the-kitchen-dinner-set-menu-261113.pdf",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.grandlisboa.com/en/restaurants-n-bars/the-kitchen",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "macau-landmark-price-05",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "place_zh": "新葡京日夜自助餐，南灣",
+    "place_en": "Round-The-Clock Buffet at Grand Lisboa, Nam Van",
+    "osm_ref": "way/823044814",
+    "location_lat": 22.1902901,
+    "location_lng": 113.5433957,
+    "prompt_zh": "一位成人平日非假期的自助午餐（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of one adult weekday lunch buffet on a non-holiday before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "local_amount": 200.0,
+    "usd": 24.75,
+    "rate": 8.082204,
+    "source_url": "https://www.grandlisboa.com/en/restaurants-n-bars/round-the-clock-buffet",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.grandlisboa.com/en/restaurants-n-bars/round-the-clock-buffet",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "macau-landmark-price-06",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "place_zh": "永利澳門湖畔意廊，外港新填海區",
+    "place_en": "Lakeside Trattoria at Wynn Macau, NAPE",
+    "osm_ref": "way/709213452",
+    "location_lat": 22.1885837,
+    "location_lng": 113.545764,
+    "prompt_zh": "一位成人半自助早餐的牌價要多少錢？",
+    "prompt_en": "What is the price of the listed adult semi-buffet breakfast?",
+    "choices": null,
+    "currency": "MOP",
+    "local_amount": 268.0,
+    "usd": 33.16,
+    "rate": 8.082204,
+    "source_url": "https://www.wynnresortsmacau.com/en/wynn-macau/dining/lakeside-trattoria",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.wynnresortsmacau.com/en/wynn-macau/resort-map",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "macau-landmark-price-07",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "place_zh": "永利澳門紅8粥麵，外港新填海區",
+    "place_en": "Red 8 at Wynn Macau, NAPE",
+    "osm_ref": "way/1031633715",
+    "location_lat": 22.1889508,
+    "location_lng": 113.5478589,
+    "prompt_zh": "一份香脆咕嚕肉的餐牌價（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of one order of sweet-and-sour pork before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "local_amount": 108.0,
+    "usd": 13.36,
+    "rate": 8.082204,
+    "source_url": "https://owsc.wynnresortsmacau.com/dining/wm-red-8-a-la-carte-menu-260824.pdf",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.wynnresortsmacau.com/en/wynn-macau/dining/red-8-wm",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "macau-landmark-price-08",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "place_zh": "永利澳門99麵，外港新填海區",
+    "place_en": "99 Noodles at Wynn Macau, NAPE",
+    "osm_ref": "way/405596049",
+    "location_lat": 22.1896136,
+    "location_lng": 113.5467284,
+    "prompt_zh": "一份京味拍黃瓜的餐牌價（未計服務費）要多少錢？",
+    "prompt_en": "What is the price of one order of marinated cucumbers with garlic before service charge?",
+    "choices": null,
+    "currency": "MOP",
+    "local_amount": 59.0,
+    "usd": 7.3,
+    "rate": 8.082204,
+    "source_url": "https://owsc.wynnresortsmacau.com/dining/wm-99-noodles-a-la-carte-menu-260720.pdf",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.wynnresortsmacau.com/en/wynn-macau/dining/99-noodles-wynn-macau",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "macau-landmark-price-09",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "place_zh": "澳門美高梅甜點店，外港新填海區",
+    "place_en": "Pastry Bar at MGM Macau, NAPE",
+    "osm_ref": "way/321628296",
+    "location_lat": 22.1871861,
+    "location_lng": 113.5485926,
+    "prompt_zh": "一個 1.5 磅牛油或糖霜訂製蛋糕的牌價（未計政府稅）要多少錢？",
+    "prompt_en": "What is the price of one 1.5 lb buttercream or icing custom cake before government tax?",
+    "choices": null,
+    "currency": "MOP",
+    "local_amount": 380.0,
+    "usd": 47.02,
+    "rate": 8.082204,
+    "source_url": "https://static.mgm.mo/restaurant-menu/macau/pb/pb-cake-selections.pdf",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.mgm.mo/en/dining/mgm-macau/pastry-bar",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "macau-landmark-price-10",
+    "city": "macau",
+    "type": "price",
+    "kind": null,
+    "place_zh": "澳門通皇朝旗艦店，皇朝區",
+    "place_en": "Macau Pass Dynasty flagship customer centre, Dynasty district",
+    "osm_ref": "way/1124600578",
+    "location_lat": 22.1897747,
+    "location_lng": 113.5506353,
+    "prompt_zh": "購買一張世遺景點澳門通卡（含起始儲值額）要多少錢？",
+    "prompt_en": "What is the price of buying one World Heritage Macau Pass card, including its initial stored value?",
+    "choices": null,
+    "currency": "MOP",
+    "local_amount": 80.0,
+    "usd": 9.9,
+    "rate": 8.082204,
+    "source_url": "https://www.macaupass.com/cardfaqs",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.macaupass.com/contact",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
   }
 ]
