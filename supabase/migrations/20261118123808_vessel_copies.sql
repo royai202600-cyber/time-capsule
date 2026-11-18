@@ -1,6 +1,8 @@
 begin;
 alter table public.vessels add column unlimited_copies boolean not null default false;
 update public.vessels set unlimited_copies=true where id in ('dome','bottle','envelope','tin') or earned_place is not null;
+alter table public.vessels add constraint required_unlimited_vessels
+  check (unlimited_copies or (id not in ('dome','bottle','envelope','tin') and earned_place is null));
 alter table public.owned_vessels alter column copies drop not null;
 alter table public.owned_vessels drop constraint owned_vessels_copies_check;
 alter table public.owned_vessels add constraint owned_vessels_copies_check check (copies is null or copies >= 0);
@@ -93,6 +95,30 @@ begin
 end $function$
 ;
 
+-- Today's Hunt can award points independently by skipping this inventory operation.
+create function private.award_catch_copies(p_user uuid, p_vessel text)
+returns integer language plpgsql set search_path = '' as $$
+declare
+  is_unlimited boolean;
+  award integer;
+  balance integer;
+begin
+  select v.unlimited_copies into strict is_unlimited from public.vessels v where v.id = p_vessel for share;
+  if is_unlimited then
+    insert into public.owned_vessels(user_id, vessel, copies)
+      values (p_user, p_vessel, null) on conflict (user_id, vessel) do nothing;
+    return null;
+  end if;
+  award := private.copies_per_catch(p_user);
+  insert into public.owned_vessels as o(user_id, vessel, copies)
+    values (p_user, p_vessel, award)
+    on conflict (user_id, vessel) do update
+      set copies = least(o.copies::bigint + excluded.copies, 2147483647)::integer
+    returning o.copies into balance;
+  return balance;
+end $$;
+revoke all on function private.award_catch_copies(uuid,text) from public, anon, authenticated;
+
 CREATE OR REPLACE FUNCTION public.corrupted_capsule_throw(p_spawn text, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text, p_ring double precision, p_hit boolean)
  RETURNS TABLE(result text, vessel text, copies integer, stars integer, is_new boolean, xp_gained integer, wax_balls integer, gold_balls integer, attempts_left integer)
  LANGUAGE plpgsql
@@ -150,13 +176,7 @@ begin
         where user_id=auth.uid() and spawn_id=p_spawn;
       is_new := not exists (select 1 from public.owned_vessels
         where user_id=auth.uid() and public.owned_vessels.vessel=corrupted_capsule_throw.vessel);
-      -- Single hook for a future level-based award; today it is the configured amount.
-      perform 1 from public.vessels v where v.id=corrupted_capsule_throw.vessel for share;
-      insert into public.owned_vessels(user_id,vessel,copies)
-        values(auth.uid(),vessel,case when (select v.unlimited_copies from public.vessels v where v.id=corrupted_capsule_throw.vessel) then null else private.copies_per_catch(auth.uid()) end)
-        on conflict on constraint owned_vessels_pkey do update
-          set copies=case when (select v.unlimited_copies from public.vessels v where v.id=corrupted_capsule_throw.vessel) then null else public.owned_vessels.copies+private.copies_per_catch(auth.uid()) end
-        returning public.owned_vessels.copies into copies;
+      copies := private.award_catch_copies(auth.uid(), vessel);
       stars := 1; -- Compatibility field for older apps; duplicates no longer increase stars.
       xp_gained := private.award_xp(auth.uid(),'catch',p_spawn,cfg.xp_catch);
       if is_new then xp_gained := xp_gained+
@@ -223,11 +243,8 @@ begin
     vessel:=reward;
     is_new:=not exists (select 1 from public.owned_vessels o
       where o.user_id=auth.uid() and o.vessel=reward);
-    perform 1 from public.vessels v where v.id=reward for share;
-    insert into public.owned_vessels(user_id,vessel,copies)
-      values(auth.uid(),reward,case when (select v.unlimited_copies from public.vessels v where v.id=reward) then null else 1 end)
-      on conflict on constraint owned_vessels_pkey do nothing;
-    select o.copies into copies from public.owned_vessels o where o.user_id=auth.uid() and o.vessel=reward;
+    insert into public.owned_vessels(user_id, vessel, copies)
+      values (auth.uid(), reward, null) on conflict (user_id, vessel) do nothing;
     stars := 1;
     insert into public.passport_stamps(user_id,place,first_at,how_earned)
       values(auth.uid(),post.place,now(),'landmark')
