@@ -3236,189 +3236,1622 @@
     "id": "singapore-001",
     "city": "singapore",
     "type": "question",
+    "place_zh": "加文納橋",
+    "place_en": "Cavenagh Bridge",
+    "osm_ref": "way/29377116",
+    "location_lat": 1.2868701,
+    "location_lng": 103.8521903,
+    "prompt_zh": "加文納橋在哪一年完工？",
+    "prompt_en": "In what year was Cavenagh Bridge completed?",
     "kind": "choice",
-    "place_zh": "魚尾獅公園",
-    "place_en": "Merlion Park",
-    "location_lat": 1.286798,
-    "location_lng": 103.854301,
-    "prompt_zh": "魚尾獅公園的魚尾獅頭部是哪種動物？",
-    "prompt_en": "What animal forms the head of the Merlion at Merlion Park?",
     "choices": [
       {
-        "zh": "獅子",
-        "en": "Lion"
+        "zh": "1869 年",
+        "en": "1869"
       },
       {
-        "zh": "老虎",
-        "en": "Tiger"
+        "zh": "1859 年",
+        "en": "1859"
       },
       {
-        "zh": "大象",
-        "en": "Elephant"
+        "zh": "1879 年",
+        "en": "1879"
       },
       {
-        "zh": "馬",
-        "en": "Horse"
+        "zh": "1889 年",
+        "en": "1889"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://www.visitsingapore.com/de_de/neighbourhood/featured-neighbourhood/marina-bay/merlion-park/",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
+    "answer": 0,
+    "source_url": "https://www.roots.gov.sg/-/media/Roots/Files/singapore-river-walk/nhb_singpaore-river-walk_2018.pdf",
+    "checked_on": "2026-11-18",
     "status": "draft"
   },
   {
     "id": "singapore-002",
     "city": "singapore",
     "type": "question",
+    "place_zh": "達爾豪西方尖碑",
+    "place_en": "Dalhousie Obelisk",
+    "osm_ref": "way/106086885",
+    "location_lat": 1.2874928,
+    "location_lng": 103.8521633,
+    "prompt_zh": "達爾豪西方尖碑紀念的是哪一件事？",
+    "prompt_en": "What event does the Dalhousie Obelisk commemorate?",
     "kind": "choice",
-    "place_zh": "魚尾獅公園",
-    "place_en": "Merlion Park",
-    "location_lat": 1.286798,
-    "location_lng": 103.854301,
-    "prompt_zh": "魚尾獅公園的魚尾獅身體象徵新加坡昔日的什麼？",
-    "prompt_en": "What does the Merlion’s fish body represent about Singapore’s past?",
     "choices": [
       {
-        "zh": "漁村",
-        "en": "A fishing village"
+        "zh": "新加坡河首次疏浚",
+        "en": "The first dredging of the Singapore River"
       },
       {
-        "zh": "沙漠綠洲",
-        "en": "A desert oasis"
+        "zh": "印度總督到訪",
+        "en": "A visit by the governor-general of India"
       },
       {
-        "zh": "礦業城鎮",
-        "en": "A mining town"
+        "zh": "公共鐘樓啟用",
+        "en": "The inauguration of a public clock tower"
       },
       {
-        "zh": "山區牧場",
-        "en": "A mountain ranch"
+        "zh": "第一條電報線鋪設",
+        "en": "The laying of the first telegraph line"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://www.visitsingapore.com/de_de/neighbourhood/featured-neighbourhood/marina-bay/merlion-park/",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
+    "answer": 1,
+    "source_url": "https://www.roots.gov.sg/-/media/Roots/Files/singapore-river-walk/nhb_singpaore-river-walk_2018.pdf",
+    "checked_on": "2026-11-18",
     "status": "draft"
   },
   {
     "id": "singapore-003",
     "city": "singapore",
     "type": "question",
+    "place_zh": "林謀盛紀念碑",
+    "place_en": "Lim Bo Seng Memorial",
+    "osm_ref": "way/256153690",
+    "location_lat": 1.288508,
+    "location_lng": 103.853083,
+    "prompt_zh": "林謀盛紀念碑的主體採用哪種造型？",
+    "prompt_en": "What form does the main structure of the Lim Bo Seng Memorial take?",
     "kind": "choice",
-    "place_zh": "魚尾獅公園",
-    "place_en": "Merlion Park",
-    "location_lat": 1.286798,
-    "location_lng": 103.854301,
-    "prompt_zh": "魚尾獅公園的主魚尾獅雕像約有多高？",
-    "prompt_en": "Approximately how tall is the main Merlion statue at Merlion Park?",
     "choices": [
       {
-        "zh": "8.6公尺",
-        "en": "8.6 metres"
+        "zh": "方尖碑",
+        "en": "An obelisk"
       },
       {
-        "zh": "2.6公尺",
-        "en": "2.6 metres"
+        "zh": "拱門",
+        "en": "An arch"
       },
       {
-        "zh": "18.6公尺",
-        "en": "18.6 metres"
+        "zh": "寶塔",
+        "en": "A pagoda"
       },
       {
-        "zh": "80公尺",
-        "en": "80 metres"
+        "zh": "圓亭",
+        "en": "A circular pavilion"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://www.visitsingapore.com/de_de/neighbourhood/featured-neighbourhood/marina-bay/merlion-park/",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
+    "answer": 2,
+    "source_url": "https://www.roots.gov.sg/-/media/Roots/Files/world-war-2/world-war-2-trail-booklet.pdf",
+    "checked_on": "2026-11-18",
     "status": "draft"
   },
   {
     "id": "singapore-004",
     "city": "singapore",
     "type": "question",
-    "kind": "choice",
     "place_zh": "魚尾獅公園",
     "place_en": "Merlion Park",
-    "location_lat": 1.286798,
-    "location_lng": 103.854301,
-    "prompt_zh": "魚尾獅公園的主魚尾獅雕像在哪一年揭幕？",
-    "prompt_en": "In which year was the main Merlion statue unveiled?",
+    "osm_ref": "way/164881353",
+    "location_lat": 1.2867742,
+    "location_lng": 103.8544348,
+    "prompt_zh": "魚尾獅公園的主雕像最初在哪一年揭幕？",
+    "prompt_en": "What year was the main statue at Merlion Park first unveiled?",
+    "kind": "choice",
     "choices": [
       {
-        "zh": "1972",
+        "zh": "1955 年",
+        "en": "1955"
+      },
+      {
+        "zh": "1988 年",
+        "en": "1988"
+      },
+      {
+        "zh": "1999 年",
+        "en": "1999"
+      },
+      {
+        "zh": "1972 年",
         "en": "1972"
-      },
-      {
-        "zh": "1952",
-        "en": "1952"
-      },
-      {
-        "zh": "1982",
-        "en": "1982"
-      },
-      {
-        "zh": "2002",
-        "en": "2002"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
+    "answer": 3,
     "source_url": "https://www.visitsingapore.com/de_de/neighbourhood/featured-neighbourhood/marina-bay/merlion-park/",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
+    "checked_on": "2026-11-18",
     "status": "draft"
   },
   {
     "id": "singapore-005",
     "city": "singapore",
     "type": "question",
+    "place_zh": "濱海藝術中心",
+    "place_en": "Esplanade – Theatres on the Bay",
+    "osm_ref": "way/164881343",
+    "location_lat": 1.2889974,
+    "location_lng": 103.8554669,
+    "prompt_zh": "濱海藝術中心帶刺的圓頂，常被比作哪種水果？",
+    "prompt_en": "Which fruit are the spiky domes of Esplanade – Theatres on the Bay often compared to?",
     "kind": "text",
-    "place_zh": "魚尾獅公園",
-    "place_en": "Merlion Park",
-    "location_lat": 1.286798,
-    "location_lng": 103.854301,
-    "prompt_zh": "魚尾獅公園的魚尾獅頭部是哪種動物？",
-    "prompt_en": "What animal forms the Merlion’s head at Merlion Park?",
     "choices": null,
-    "answer": {
-      "zh": [
-        "獅子"
-      ],
-      "en": [
-        "lion"
-      ]
-    },
-    "source_url": "https://www.visitsingapore.com/de_de/neighbourhood/featured-neighbourhood/marina-bay/merlion-park/",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
+    "answer": "Durian",
+    "typed_aliases": [
+      "榴槤",
+      "榴蓮",
+      "榴莲",
+      "Durian",
+      "Durian fruit",
+      "Buah durian"
+    ],
+    "source_url": "https://www.esplanade.com/offstage/articles/2020/6-things-about-esplanade",
+    "checked_on": "2026-11-18",
     "status": "draft"
+  },
+  {
+    "id": "singapore-006",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "陣亡戰士紀念碑",
+    "place_en": "The Cenotaph",
+    "osm_ref": "way/256153668",
+    "location_lat": 1.2902341,
+    "location_lng": 103.8539081,
+    "prompt_zh": "這座紀念碑最初是為了紀念哪一場戰爭的死難者？",
+    "prompt_en": "Which war did the Cenotaph originally commemorate?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "第一次世界大戰",
+        "en": "World War I"
+      },
+      {
+        "zh": "第二次世界大戰",
+        "en": "World War II"
+      },
+      {
+        "zh": "韓戰",
+        "en": "The Korean War"
+      },
+      {
+        "zh": "克里米亞戰爭",
+        "en": "The Crimean War"
+      }
+    ],
+    "answer": 0,
+    "source_url": "https://www.roots.gov.sg/-/media/Roots/Files/world-war-2/world-war-2-trail-booklet.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-007",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "舊國會大廈藝術之家",
+    "place_en": "The Arts House at the Old Parliament",
+    "osm_ref": "way/474991679",
+    "location_lat": 1.288562,
+    "location_lng": 103.8507233,
+    "prompt_zh": "藝術之家所在的舊國會大廈，原建築在哪一年落成？",
+    "prompt_en": "In what year was the original building that now houses The Arts House completed?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1843 年",
+        "en": "1843"
+      },
+      {
+        "zh": "1827 年",
+        "en": "1827"
+      },
+      {
+        "zh": "1875 年",
+        "en": "1875"
+      },
+      {
+        "zh": "1909 年",
+        "en": "1909"
+      }
+    ],
+    "answer": 1,
+    "source_url": "https://www.roots.gov.sg/-/media/Roots/Images/landmarks/jubilee-walk/jubilee-walk-resources/map-pdf/01-jubilee-walk-map.pdf?la=en",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-008",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "維多利亞劇院",
+    "place_en": "Victoria Theatre",
+    "osm_ref": "way/474982557",
+    "location_lat": 1.2881239,
+    "location_lng": 103.8516949,
+    "prompt_zh": "今天的維多利亞劇院所在的舊翼，最初是哪一座公共建築？",
+    "prompt_en": "What public building originally occupied the older wing that houses Victoria Theatre today?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "海關大樓",
+        "en": "The Customs House"
+      },
+      {
+        "zh": "中央郵局",
+        "en": "The General Post Office"
+      },
+      {
+        "zh": "市政廳（Town Hall）",
+        "en": "The Town Hall"
+      },
+      {
+        "zh": "中央消防局",
+        "en": "The Central Fire Station"
+      }
+    ],
+    "answer": 2,
+    "source_url": "https://www.roots.gov.sg/-/media/Roots/Images/landmarks/jubilee-walk/jubilee-walk-resources/map-pdf/01-jubilee-walk-map.pdf?la=en",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-009",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "亞洲文明博物館",
+    "place_en": "Asian Civilisations Museum",
+    "osm_ref": "way/474512990",
+    "location_lat": 1.2874094,
+    "location_lng": 103.8516679,
+    "prompt_zh": "亞洲文明博物館所在的皇后坊大廈，最初用作甚麼？",
+    "prompt_en": "What was the Empress Place Building that houses the Asian Civilisations Museum originally used for?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "公共圖書館",
+        "en": "A public library"
+      },
+      {
+        "zh": "航運倉庫",
+        "en": "A shipping warehouse"
+      },
+      {
+        "zh": "音樂學院",
+        "en": "A music school"
+      },
+      {
+        "zh": "政府辦公室",
+        "en": "Government offices"
+      }
+    ],
+    "answer": 3,
+    "source_url": "https://www.roots.gov.sg/Collection-Landing/listing/1180012",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-010",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "浮爾頓酒店",
+    "place_en": "The Fullerton Hotel",
+    "osm_ref": "way/545365287",
+    "location_lat": 1.2859406,
+    "location_lng": 103.8534674,
+    "prompt_zh": "酒店所在的浮爾頓大廈，在哪一年正式開幕？",
+    "prompt_en": "In what year did the Fullerton Building that houses the hotel officially open?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1928 年",
+        "en": "1928"
+      },
+      {
+        "zh": "1901 年",
+        "en": "1901"
+      },
+      {
+        "zh": "1939 年",
+        "en": "1939"
+      },
+      {
+        "zh": "1957 年",
+        "en": "1957"
+      }
+    ],
+    "answer": 0,
+    "source_url": "https://www.roots.gov.sg/places/places-landing/Places/national-monuments/former-fullerton-building",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-011",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "哥烈碼頭",
+    "place_en": "Clifford Pier",
+    "osm_ref": "way/515143395",
+    "location_lat": 1.2840765,
+    "location_lng": 103.8534267,
+    "prompt_zh": "哥烈碼頭啟用後，早期主要為哪一類旅客服務？",
+    "prompt_en": "Which travellers did Clifford Pier primarily serve in its early years?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "從馬來半島搭火車的乘客",
+        "en": "Rail passengers from the Malay Peninsula"
+      },
+      {
+        "zh": "乘船入境的乘客",
+        "en": "Passengers arriving by sea"
+      },
+      {
+        "zh": "乘水上飛機的旅客",
+        "en": "Seaplane passengers"
+      },
+      {
+        "zh": "搭長途巴士過境的旅客",
+        "en": "Cross-border coach passengers"
+      }
+    ],
+    "answer": 1,
+    "source_url": "https://www.roots.gov.sg/places/places-landing/Places/historic-sites/clifford-pier",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-012",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "新加坡國家美術館",
+    "place_en": "National Gallery Singapore",
+    "osm_ref": "way/294237571",
+    "location_lat": 1.2903443,
+    "location_lng": 103.8522056,
+    "prompt_zh": "新加坡國家美術館由前市政大廈與哪座歷史建築改建而成？",
+    "prompt_en": "Along with the former City Hall, which historic building was adapted for National Gallery Singapore?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "舊海關大樓",
+        "en": "Former Customs House"
+      },
+      {
+        "zh": "中央消防局",
+        "en": "Central Fire Station"
+      },
+      {
+        "zh": "前最高法院",
+        "en": "Former Supreme Court"
+      },
+      {
+        "zh": "前稅務大樓",
+        "en": "Former Revenue House"
+      }
+    ],
+    "answer": 2,
+    "source_url": "https://www.roots.gov.sg/-/media/Roots/Images/landmarks/jubilee-walk/jubilee-walk-resources/map-pdf/01-jubilee-walk-map.pdf?la=en",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-013",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "老巴剎",
+    "place_en": "Lau Pa Sat",
+    "osm_ref": "way/1197413580",
+    "location_lat": 1.280907,
+    "location_lng": 103.8503889,
+    "prompt_zh": "老巴剎正式的舊市場名稱是甚麼？",
+    "prompt_en": "What was the former official market name of Lau Pa Sat?",
+    "kind": "text",
+    "choices": null,
+    "answer": "Telok Ayer",
+    "typed_aliases": [
+      "直落亞逸市場",
+      "直落亞逸巴剎",
+      "直落亞逸街市",
+      "直落亚逸市场",
+      "Telok Ayer Market",
+      "Teluk Ayer Market",
+      "Telok Ayer",
+      "Pasar Telok Ayer"
+    ],
+    "source_url": "https://www.roots.gov.sg/places/places-landing/Places/national-monuments/former-telok-ayer-market-now-known-as-lau-pa-sat",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-014",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "舊禧街警察局",
+    "place_en": "Old Hill Street Police Station",
+    "osm_ref": "way/95762792",
+    "location_lat": 1.2909136,
+    "location_lng": 103.8486509,
+    "prompt_zh": "舊禧街警察局在哪一年被列為新加坡國家古蹟？",
+    "prompt_en": "In what year was the Old Hill Street Police Station gazetted as a Singapore national monument?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1986 年",
+        "en": "1986"
+      },
+      {
+        "zh": "2004 年",
+        "en": "2004"
+      },
+      {
+        "zh": "2012 年",
+        "en": "2012"
+      },
+      {
+        "zh": "1998 年",
+        "en": "1998"
+      }
+    ],
+    "answer": 3,
+    "source_url": "https://www.roots.gov.sg/places/places-landing/Places/landmarks/police-heritage-trail/old-hill-street-police-station-140-hill-street",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-015",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "藝術科學博物館",
+    "place_en": "ArtScience Museum",
+    "osm_ref": "way/528509257",
+    "location_lat": 1.2861756,
+    "location_lng": 103.858833,
+    "prompt_zh": "藝術科學博物館的屋頂造型常被比作哪一種花？",
+    "prompt_en": "Which flower is the ArtScience Museum’s roof often compared to?",
+    "kind": "text",
+    "choices": null,
+    "answer": "Lotus",
+    "typed_aliases": [
+      "蓮花",
+      "荷花",
+      "莲花",
+      "Lotus",
+      "Lotus flower",
+      "Bunga teratai"
+    ],
+    "source_url": "https://www.marinabaysands.com/content/dam/singapore/marinabaysands/master/main/home/company-information/media-centre/factsheets/amenities/artscience-museum.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-016",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "螺旋橋",
+    "place_en": "Helix Bridge",
+    "osm_ref": "way/164881553",
+    "location_lat": 1.2866032,
+    "location_lng": 103.8603811,
+    "prompt_zh": "螺旋橋的鋼結構模仿哪種攜帶遺傳資訊的分子？",
+    "prompt_en": "Which molecule that carries genetic information inspired the steel structure of the Helix Bridge?",
+    "kind": "text",
+    "choices": null,
+    "answer": "DNA",
+    "typed_aliases": [
+      "去氧核糖核酸",
+      "脫氧核糖核酸",
+      "脱氧核糖核酸",
+      "DNA",
+      "Deoxyribonucleic acid"
+    ],
+    "source_url": "https://www.roots.gov.sg/places/places-landing/Places/landmarks/jubilee-walk/helix-bridge",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-017",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "和平紀念碑",
+    "place_en": "Civilian War Memorial",
+    "osm_ref": "way/694102538",
+    "location_lat": 1.2929161,
+    "location_lng": 103.8546845,
+    "prompt_zh": "新加坡的和平紀念碑由幾根直立的柱子組成？",
+    "prompt_en": "How many upright columns make up Singapore’s Civilian War Memorial?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "四根",
+        "en": "Four"
+      },
+      {
+        "zh": "兩根",
+        "en": "Two"
+      },
+      {
+        "zh": "三根",
+        "en": "Three"
+      },
+      {
+        "zh": "六根",
+        "en": "Six"
+      }
+    ],
+    "answer": 0,
+    "source_url": "https://www.roots.gov.sg/places/places-landing/Places/national-monuments/civilian-war-memorial",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-018",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "擎天樹叢",
+    "place_en": "Supertree Grove",
+    "osm_ref": "way/533476223",
+    "location_lat": 1.2815491,
+    "location_lng": 103.8648295,
+    "prompt_zh": "擎天樹叢中最高的擎天樹有多高？",
+    "prompt_en": "How tall is the tallest Supertree in Supertree Grove?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "35 公尺",
+        "en": "35 metres"
+      },
+      {
+        "zh": "50 公尺",
+        "en": "50 metres"
+      },
+      {
+        "zh": "65 公尺",
+        "en": "65 metres"
+      },
+      {
+        "zh": "80 公尺",
+        "en": "80 metres"
+      }
+    ],
+    "answer": 1,
+    "source_url": "https://www.gardensbythebay.com.sg/en/things-to-do/attractions/supertree-grove.html",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-019",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "新加坡摩天觀景輪",
+    "place_en": "Singapore Flyer",
+    "osm_ref": "way/531319601",
+    "location_lat": 1.2892383,
+    "location_lng": 103.8626369,
+    "prompt_zh": "新加坡摩天觀景輪的總高度是多少？",
+    "prompt_en": "What is the overall height of the Singapore Flyer?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "105 公尺",
+        "en": "105 metres"
+      },
+      {
+        "zh": "135 公尺",
+        "en": "135 metres"
+      },
+      {
+        "zh": "165 公尺",
+        "en": "165 metres"
+      },
+      {
+        "zh": "195 公尺",
+        "en": "195 metres"
+      }
+    ],
+    "answer": 2,
+    "source_url": "https://www.visitsingapore.com/neighbourhood/featured-neighbourhood/marina-bay/singapore-flyer/",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-020",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "新加坡植物園",
+    "place_en": "Singapore Botanic Gardens",
+    "osm_ref": "way/142773420",
+    "location_lat": 1.3083678,
+    "location_lng": 103.8160861,
+    "prompt_zh": "新加坡植物園在哪一年列入聯合國教科文組織的世界遺產名錄？",
+    "prompt_en": "In which year was the Singapore Botanic Gardens inscribed on the UNESCO World Heritage List?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "2006 年",
+        "en": "2006"
+      },
+      {
+        "zh": "2010 年",
+        "en": "2010"
+      },
+      {
+        "zh": "2021 年",
+        "en": "2021"
+      },
+      {
+        "zh": "2015 年",
+        "en": "2015"
+      }
+    ],
+    "answer": 3,
+    "source_url": "https://whc.unesco.org/en/list/1483",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-021",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "濱海堤壩",
+    "place_en": "Marina Barrage",
+    "osm_ref": "way/690677474",
+    "location_lat": 1.2805837,
+    "location_lng": 103.8713266,
+    "prompt_zh": "濱海堤壩在哪一年正式啟用？",
+    "prompt_en": "In which year did Marina Barrage officially open?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "2008 年",
+        "en": "2008"
+      },
+      {
+        "zh": "2000 年",
+        "en": "2000"
+      },
+      {
+        "zh": "2014 年",
+        "en": "2014"
+      },
+      {
+        "zh": "2020 年",
+        "en": "2020"
+      }
+    ],
+    "answer": 0,
+    "source_url": "https://www.pub.gov.sg/Public/Places-of-Interest/Marina-Barrage",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-022",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "福康寧公園禁泉",
+    "place_en": "Forbidden Spring, Fort Canning Park",
+    "osm_ref": "way/252086126",
+    "location_lat": 1.2943697,
+    "location_lng": 103.8453304,
+    "prompt_zh": "福康寧公園這口相傳供王室女眷沐浴的古泉叫甚麼？",
+    "prompt_en": "What is the name of the historic spring at Fort Canning Park said to have been used by royal women for bathing?",
+    "kind": "text",
+    "choices": null,
+    "answer": "Pancur Larangan",
+    "typed_aliases": [
+      "禁泉",
+      "皇家禁泉",
+      "Pancur Larangan",
+      "Panchor Larangan",
+      "Panchur Larangan",
+      "Forbidden Spring"
+    ],
+    "source_url": "https://www.nparks.gov.sg/visit/parks/fort-canning-park/special-features",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-023",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "甘榜格南王宮",
+    "place_en": "Istana Kampong Gelam",
+    "osm_ref": "way/643262097",
+    "location_lat": 1.3025093,
+    "location_lng": 103.8590236,
+    "prompt_zh": "甘榜格南王宮經整修後，於 2005 年以哪一個文化場館的身分對外開放？",
+    "prompt_en": "After restoration, what cultural venue opened in Istana Kampong Gelam in 2005?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "海事博物館",
+        "en": "A maritime museum"
+      },
+      {
+        "zh": "馬來傳統文化館",
+        "en": "The Malay Heritage Centre"
+      },
+      {
+        "zh": "新加坡城市展覽館",
+        "en": "The Singapore City Gallery"
+      },
+      {
+        "zh": "公共藝術學院",
+        "en": "A public art school"
+      }
+    ],
+    "answer": 1,
+    "source_url": "https://www.ura.gov.sg/conservation/find-a-building/conservation-portal/kpgl/",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-024",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "新加坡國家體育場",
+    "place_en": "Singapore National Stadium",
+    "osm_ref": "way/534638586",
+    "location_lat": 1.3036375,
+    "location_lng": 103.8759673,
+    "prompt_zh": "新加坡國家體育場用哪一種活動結構來遮蔽賽場？",
+    "prompt_en": "Which moving structure provides shelter over the field at Singapore National Stadium?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "可升降的中央天篷",
+        "en": "A vertically lifting canopy"
+      },
+      {
+        "zh": "可旋轉的整座圓頂",
+        "en": "A rotating dome"
+      },
+      {
+        "zh": "可伸縮屋頂",
+        "en": "A retractable roof"
+      },
+      {
+        "zh": "可充氣的薄膜屋頂",
+        "en": "An inflatable membrane roof"
+      }
+    ],
+    "answer": 2,
+    "source_url": "https://www.thekallang.com.sg/en/plan-your-visit/venues-and-amenities/national-stadium.html",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-025",
+    "city": "singapore",
+    "type": "question",
+    "place_zh": "花柏山頂",
+    "place_en": "Mount Faber Peak",
+    "osm_ref": "way/688712026",
+    "location_lat": 1.2714189,
+    "location_lng": 103.8191185,
+    "prompt_zh": "哪一種公共觀光交通工具把花柏山頂連接到聖淘沙？",
+    "prompt_en": "Which type of sightseeing transport connects Mount Faber Peak to Sentosa?",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "渡輪",
+        "en": "A ferry"
+      },
+      {
+        "zh": "齒軌鐵路",
+        "en": "A rack railway"
+      },
+      {
+        "zh": "開篷旅遊巴士",
+        "en": "An open-top tour bus"
+      },
+      {
+        "zh": "空中纜車",
+        "en": "A cable car"
+      }
+    ],
+    "answer": 3,
+    "source_url": "https://mountfaberleisure.com/attraction/mount-faber-peak/",
+    "checked_on": "2026-11-18",
+    "status": "draft"
+  },
+  {
+    "id": "singapore-ce1-01",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 1,
+    "place_zh": "馬來西亞美食街，聖淘沙名勝世界，新加坡",
+    "place_en": "Malaysian Food Street, Resorts World Sentosa, Singapore",
+    "osm_ref": "way/532431185",
+    "location_lat": 1.2563858,
+    "location_lng": 103.8214486,
+    "location_source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/press-release/pdf/en/2012/20120106-rws-malaysianfoodstreet.pdf?rev=b98b1eac43c74f6baa10441594c2f482",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "聖淘沙馬來西亞美食街一份咖椰牛油吐司早餐套餐要多少錢？",
+    "prompt_en": "What is the price of one kaya-butter toast breakfast set at Malaysian Food Street, Sentosa?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 7.0,
+    "usd": 5.43,
+    "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-02",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 2,
+    "place_zh": "馬來西亞美食街，聖淘沙名勝世界，新加坡",
+    "place_en": "Malaysian Food Street, Resorts World Sentosa, Singapore",
+    "osm_ref": "way/532431185",
+    "location_lat": 1.2563858,
+    "location_lng": 103.8214486,
+    "location_source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/press-release/pdf/en/2012/20120106-rws-malaysianfoodstreet.pdf?rev=b98b1eac43c74f6baa10441594c2f482",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "聖淘沙馬來西亞美食街兩片印度煎餅配扁豆咖哩要多少錢？",
+    "prompt_en": "What is the price of two roti canai with dhal curry at Malaysian Food Street, Sentosa?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 5.0,
+    "usd": 3.88,
+    "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-03",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 3,
+    "place_zh": "國家胡姬花園售票處，東陵，新加坡",
+    "place_en": "National Orchid Garden ticket counter, Tanglin, Singapore",
+    "osm_ref": "way/47266918",
+    "location_lat": 1.3116374,
+    "location_lng": 103.8148278,
+    "location_source_url": "https://www.nparks.gov.sg/-/media/sbg/documents/nog-map-apr-2021.pdf?hash=37A402C2417642DBFB919AA6DEC54C3B8DADD3D0&la=en",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "新加坡國家胡姬花園一張非居民成人標準票要多少錢？",
+    "prompt_en": "What is the price of a standard non-resident adult ticket to Singapore’s National Orchid Garden?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 15.0,
+    "usd": 11.64,
+    "source_url": "https://sbg.nparks.gov.sg/attractions/national-orchid-garden/",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-04",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 4,
+    "place_zh": "新加坡動物園售票處，萬態，新加坡",
+    "place_en": "Singapore Zoo ticket office, Mandai, Singapore",
+    "osm_ref": "way/1006761178",
+    "location_lat": 1.4046144,
+    "location_lng": 103.7903789,
+    "location_source_url": "https://www.mandai.com/content/dam/mandai/mandai-wildlife-east/park-map/mwe-en-map.pdf",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "遊客在一般日到新加坡動物園的一張成人門票要多少錢？",
+    "prompt_en": "What is the price of an adult tourist ticket to Singapore Zoo on a regular day?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 49.0,
+    "usd": 38.01,
+    "source_url": "https://www.mandai.com/en/tickets-and-passes/single-attractions.html",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "singapore-ce1-05",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 5,
+    "place_zh": "新加坡國家博物館售票處，史丹福路，新加坡",
+    "place_en": "National Museum of Singapore ticket office, Stamford Road, Singapore",
+    "osm_ref": "way/528897480",
+    "location_lat": 1.2963063,
+    "location_lng": 103.8488905,
+    "location_source_url": "https://www.nhb.gov.sg/nationalmuseum/plan-your-visit/visitor-information/admissions",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "新加坡國家博物館一張外籍成人一般票要多少錢？",
+    "prompt_en": "What is the price of one general admission ticket for a foreign adult at the National Museum of Singapore?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 20.0,
+    "usd": 15.52,
+    "source_url": "https://www.nhb.gov.sg/nationalmuseum/plan-your-visit/visitor-information/admissions",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-06",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 6,
+    "place_zh": "土生文化館售票處，亞美尼亞街，新加坡",
+    "place_en": "Peranakan Museum ticket office, Armenian Street, Singapore",
+    "osm_ref": "way/189017872",
+    "location_lat": 1.2939748,
+    "location_lng": 103.8491557,
+    "location_source_url": "https://www.nhb.gov.sg/peranakanmuseum/visit/plan-your-visit",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "新加坡土生文化館孔雀特展期間一張外籍成人全館票要多少錢？",
+    "prompt_en": "What is the price of an all-access adult tourist ticket to Singapore’s Peranakan Museum during Peacock Power?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 18.0,
+    "usd": 13.96,
+    "source_url": "https://www.nhb.gov.sg/peranakanmuseum/visit/plan-your-visit",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-07",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 7,
+    "place_zh": "樟宜機場地鐵站第二航廈票務服務中心，樟宜，新加坡",
+    "place_en": "SimplyGo ticket office, Changi Airport MRT Terminal 2, Changi",
+    "osm_ref": "way/471101336",
+    "location_lat": 1.3553838,
+    "location_lng": 103.9883503,
+    "location_source_url": "https://www.changiairport.com/en/at-changi/transport-and-directions/leaving-the-airport.html",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "新加坡一張一日遊客通行卡 Singapore Tourist Pass要多少錢？",
+    "prompt_en": "What is the price of a one-day Singapore Tourist Pass?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 17.0,
+    "usd": 13.19,
+    "source_url": "https://thesingaporetouristpass.com.sg/faq/singapore-tourist-pass/",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "singapore-ce1-08",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 8,
+    "place_zh": "新加坡纜車花柏山站售票處，花柏山，新加坡",
+    "place_en": "Singapore Cable Car Mount Faber ticket office, Mount Faber",
+    "osm_ref": "way/688712026",
+    "location_lat": 1.2713865,
+    "location_lng": 103.8191415,
+    "location_source_url": "https://mountfaberleisure.com/attraction/mount-faber-peak/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "新加坡纜車 SkyPass 一張成人來回票的未折扣原價要多少錢？",
+    "prompt_en": "What is the price of an adult return Singapore Cable Car SkyPass at regular price?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 35.0,
+    "usd": 27.15,
+    "source_url": "https://mountfaberleisure.com/attraction/singapore-cable-car/",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-09",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 9,
+    "place_zh": "新加坡摩天觀景輪售票處，濱海中心，新加坡",
+    "place_en": "Singapore Flyer ticket office, Marina Centre, Singapore",
+    "osm_ref": "way/531319601",
+    "location_lat": 1.2892383,
+    "location_lng": 103.8626369,
+    "location_source_url": "https://www.singaporeflyer.com/en/amenity/getting-to-singapore-flyer",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "新加坡摩天觀景輪一張標準成人票要多少錢？",
+    "prompt_en": "What is the price of a standard adult ticket for the Singapore Flyer?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 46.0,
+    "usd": 35.69,
+    "source_url": "https://www.singaporeflyer.com/en",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-10",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 10,
+    "place_zh": "新加坡國家美術館售票處，市政區，新加坡",
+    "place_en": "National Gallery Singapore ticket counter, Civic District",
+    "osm_ref": "way/294237571",
+    "location_lat": 1.290361,
+    "location_lng": 103.8522147,
+    "location_source_url": "https://www.nationalgallery.sg/sg/en/visit/visitor-information.html",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "新加坡國家美術館一張非新加坡籍成人一般票要多少錢？",
+    "prompt_en": "What is the price of one standard general-admission ticket for a foreign adult at National Gallery Singapore?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 20.0,
+    "usd": 15.52,
+    "source_url": "https://www.nationalgallery.sg/sg/en/visit/visitor-information.html",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-11",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 11,
+    "place_zh": "時光之翼售票處，西樂索海灘，聖淘沙",
+    "place_en": "Wings of Time ticket office, Siloso Beach, Sentosa, Singapore",
+    "osm_ref": "way/116818163",
+    "location_lat": 1.2513701,
+    "location_lng": 103.8171312,
+    "location_source_url": "https://www.sentosa.com.sg/en/things-to-do/attractions/wings-of-time/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "聖淘沙時光之翼煙火秀標準座位的一張未折扣原價票要多少錢？",
+    "prompt_en": "What is the price of one standard-seat ticket to Sentosa’s Wings of Time fireworks show at its undiscounted price?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 22.0,
+    "usd": 17.07,
+    "source_url": "https://mountfaberleisure.com/attraction/wings-of-time-fireworks-symphony",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-12",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 12,
+    "place_zh": "馬來西亞美食街，聖淘沙名勝世界，新加坡",
+    "place_en": "Malaysian Food Street, Resorts World Sentosa, Singapore",
+    "osm_ref": "way/532431185",
+    "location_lat": 1.2563858,
+    "location_lng": 103.8214486,
+    "location_source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/press-release/pdf/en/2012/20120106-rws-malaysianfoodstreet.pdf?rev=b98b1eac43c74f6baa10441594c2f482",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "聖淘沙馬來西亞美食街兩片斑蘭戚風蛋糕要多少錢？",
+    "prompt_en": "What is the price of two slices of pandan chiffon cake at Malaysian Food Street, Sentosa?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 4.0,
+    "usd": 3.1,
+    "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-13",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 13,
+    "place_zh": "河川生態園售票處，萬態，新加坡",
+    "place_en": "River Wonders ticket office, Mandai, Singapore",
+    "osm_ref": "way/1006761136",
+    "location_lat": 1.404039,
+    "location_lng": 103.790504,
+    "location_source_url": "https://www.mandai.com/content/dam/mandai/mandai-wildlife-east/park-map/mwe-en-map.pdf",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "遊客在一般日到新加坡河川生態園的一張成人門票要多少錢？",
+    "prompt_en": "What is the price of an adult tourist ticket to River Wonders on a regular day?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 45.0,
+    "usd": 34.91,
+    "source_url": "https://www.mandai.com/en/tickets-and-passes/single-attractions.html",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "singapore-ce1-14",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 14,
+    "place_zh": "新加坡摩天觀景輪售票處，濱海中心，新加坡",
+    "place_en": "Singapore Flyer ticket office, Marina Centre, Singapore",
+    "osm_ref": "way/531319601",
+    "location_lat": 1.2892383,
+    "location_lng": 103.8626369,
+    "location_source_url": "https://www.singaporeflyer.com/en/amenity/getting-to-singapore-flyer",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "新加坡摩天觀景輪一張成人新加坡司令體驗票要多少錢？",
+    "prompt_en": "What is the price of one adult Singapore Sling Experience ticket for the Singapore Flyer?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 79.0,
+    "usd": 61.29,
+    "source_url": "https://www.singaporeflyer.com/en",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-15",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 15,
+    "place_zh": "馬來西亞美食街，聖淘沙名勝世界，新加坡",
+    "place_en": "Malaysian Food Street, Resorts World Sentosa, Singapore",
+    "osm_ref": "way/532431185",
+    "location_lat": 1.2563858,
+    "location_lng": 103.8214486,
+    "location_source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/press-release/pdf/en/2012/20120106-rws-malaysianfoodstreet.pdf?rev=b98b1eac43c74f6baa10441594c2f482",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "聖淘沙馬來西亞美食街一杯熱拉茶要多少錢？",
+    "prompt_en": "What is the price of a hot teh tarik at Malaysian Food Street, Sentosa?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 3.0,
+    "usd": 2.33,
+    "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-16",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 16,
+    "place_zh": "馬來西亞美食街，聖淘沙名勝世界，新加坡",
+    "place_en": "Malaysian Food Street, Resorts World Sentosa, Singapore",
+    "osm_ref": "way/532431185",
+    "location_lat": 1.2563858,
+    "location_lng": 103.8214486,
+    "location_source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/press-release/pdf/en/2012/20120106-rws-malaysianfoodstreet.pdf?rev=b98b1eac43c74f6baa10441594c2f482",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "聖淘沙馬來西亞美食街一杯加冰的西瓜汁要多少錢？",
+    "prompt_en": "What is the price of a watermelon juice with ice at Malaysian Food Street, Sentosa?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 6.0,
+    "usd": 4.65,
+    "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-17",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 17,
+    "place_zh": "夜間野生動物園售票處，萬態，新加坡",
+    "place_en": "Night Safari ticket office, Mandai, Singapore",
+    "osm_ref": "way/529802170",
+    "location_lat": 1.4038775,
+    "location_lng": 103.7891191,
+    "location_source_url": "https://www.mandai.com/content/dam/mandai/mandai-wildlife-east/park-map/mwe-en-map.pdf",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "遊客在一般日到新加坡夜間野生動物園的一張成人門票要多少錢？",
+    "prompt_en": "What is the price of an adult tourist ticket to Night Safari on a regular day?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 58.0,
+    "usd": 45.0,
+    "source_url": "https://www.mandai.com/en/tickets-and-passes/single-attractions.html",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "singapore-ce1-18",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 18,
+    "place_zh": "馬來西亞美食街，聖淘沙名勝世界，新加坡",
+    "place_en": "Malaysian Food Street, Resorts World Sentosa, Singapore",
+    "osm_ref": "way/532431185",
+    "location_lat": 1.2563858,
+    "location_lng": 103.8214486,
+    "location_source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/press-release/pdf/en/2012/20120106-rws-malaysianfoodstreet.pdf?rev=b98b1eac43c74f6baa10441594c2f482",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "聖淘沙馬來西亞美食街一杯荔枝爆爆珠冰飲要多少錢？",
+    "prompt_en": "What is the price of a lychee popping-boba drink at Malaysian Food Street, Sentosa?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 6.0,
+    "usd": 4.65,
+    "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-19",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 19,
+    "place_zh": "馬來西亞美食街，聖淘沙名勝世界，新加坡",
+    "place_en": "Malaysian Food Street, Resorts World Sentosa, Singapore",
+    "osm_ref": "way/532431185",
+    "location_lat": 1.2563858,
+    "location_lng": 103.8214486,
+    "location_source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/press-release/pdf/en/2012/20120106-rws-malaysianfoodstreet.pdf?rev=b98b1eac43c74f6baa10441594c2f482",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "一杯美祿恐龍要多少錢？",
+    "prompt_en": "What is the price of one Milo Dinosaur?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 6.0,
+    "usd": 4.65,
+    "source_url": "https://www.rwsentosa.com/-/jssmedia/project/non-gaming/rwsentosa/dining/malaysian-food-street/menus/breakfast-menu.pdf?rev=e813c8172af84f6386775893052cdb0e&sc_lang=en",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-ce1-20",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 20,
+    "place_zh": "Durian 36，芽籠路，新加坡",
+    "place_en": "Durian 36, Geylang Road, Singapore",
+    "osm_ref": "way/876000027",
+    "location_lat": 1.3142441,
+    "location_lng": 103.8883467,
+    "location_source_url": "https://www.durian36delivery.com.sg/",
+    "location_checked_on": "2026-11-18",
+    "prompt_zh": "一公斤貓山王榴槤的店家網上牌價要多少錢？",
+    "prompt_en": "What is the price of a kilo of Mao Shan Wang durian at the shop’s listed online price?",
+    "choices": null,
+    "currency": "S$",
+    "rate": 1.289,
+    "local_amount": 30.0,
+    "usd": 23.27,
+    "source_url": "https://www.durian36delivery.com.sg/",
+    "checked_on": "2026-11-17",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "singapore-landmark-price-01",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "place_zh": "PS.Cafe One Fullerton，濱海灣",
+    "place_en": "PS.Cafe One Fullerton, Marina Bay",
+    "osm_ref": "way/479233715",
+    "location_lat": 1.2864865,
+    "location_lng": 103.8544552,
+    "prompt_zh": "平日兩道菜套餐午餐的菜單牌價要多少錢？",
+    "prompt_en": "What is the price of the listed price of the weekday two-course set lunch?",
+    "choices": null,
+    "currency": "S$",
+    "local_amount": 32.0,
+    "usd": 24.83,
+    "rate": 1.2888,
+    "source_url": "https://www.pscafe.com/pscafe-one-fullerton",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.pscafe.com/pscafe-one-fullerton",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "singapore-landmark-price-02",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "place_zh": "浮爾頓酒店 The Courtyard，浮爾頓廣場",
+    "place_en": "The Courtyard at The Fullerton Hotel, Fullerton Square",
+    "osm_ref": "way/545365287",
+    "location_lat": 1.2859622,
+    "location_lng": 103.8534745,
+    "prompt_zh": "一份成人下午茶的牌價（未含服務費及消費稅）要多少錢？",
+    "prompt_en": "What is the price of the listed adult afternoon tea price before service charge and GST?",
+    "choices": null,
+    "currency": "S$",
+    "local_amount": 68.0,
+    "usd": 52.76,
+    "rate": 1.2888,
+    "source_url": "https://www.fullertonhotels.com/fullerton-hotel-singapore/dining/restaurants-and-bars/the-courtyard",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.fullertonhotels.com/fullerton-hotel-singapore/dining/restaurants-and-bars/the-courtyard",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "singapore-landmark-price-03",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "place_zh": "紅點設計博物館售票處，濱海灣",
+    "place_en": "Red Dot Design Museum ticket counter, Marina Bay",
+    "osm_ref": "way/958873943",
+    "location_lat": 1.2803778,
+    "location_lng": 103.8564893,
+    "prompt_zh": "一位非新加坡公民的標準單人門票要多少錢？",
+    "prompt_en": "What is the price of a standard single admission ticket for a visitor who is not a Singapore citizen?",
+    "choices": null,
+    "currency": "S$",
+    "local_amount": 12.0,
+    "usd": 9.31,
+    "rate": 1.2888,
+    "source_url": "https://museum.red-dot.sg/pages/visit-the-museum",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://museum.red-dot.sg/pages/visit-the-museum",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "singapore-landmark-price-04",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "place_zh": "新加坡河遊船克拉碼頭售票亭，克拉碼頭",
+    "place_en": "Singapore River Cruise ticket counter, Clarke Quay",
+    "osm_ref": "way/106086886",
+    "location_lat": 1.289913,
+    "location_lng": 103.8459947,
+    "prompt_zh": "一張成人新加坡河體驗遊船標準票要多少錢？",
+    "prompt_en": "What is the price of a standard adult Singapore River Experience cruise ticket?",
+    "choices": null,
+    "currency": "S$",
+    "local_amount": 28.0,
+    "usd": 21.73,
+    "rate": 1.2888,
+    "source_url": "https://rivercruise.com.sg/river-cruise/",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://rivercruise.com.sg/river-cruise/",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "singapore-landmark-price-05",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "place_zh": "牛車水原貌館售票處，牛車水",
+    "place_en": "Chinatown Heritage Centre ticket counter, Chinatown",
+    "osm_ref": "way/218239415",
+    "location_lat": 1.2834741,
+    "location_lng": 103.8443187,
+    "prompt_zh": "一張外國遊客的原價入場票要多少錢？",
+    "prompt_en": "What is the price of one undiscounted admission ticket for a foreign visitor?",
+    "choices": null,
+    "currency": "S$",
+    "local_amount": 30.0,
+    "usd": 23.28,
+    "rate": 1.2888,
+    "source_url": "https://www.chinatownheritagecentre.com.sg/promotions",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.chinatownheritagecentre.com.sg/plan-your-visit",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "singapore-landmark-price-06",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "place_zh": "濱海灣金沙空中花園觀景台售票處，海灣舫",
+    "place_en": "SkyPark Observation Deck Box Office, Bayfront",
+    "osm_ref": "way/345706114",
+    "location_lat": 1.2846692,
+    "location_lng": 103.861311,
+    "prompt_zh": "一張離峰時段的成人標準票要多少錢？",
+    "prompt_en": "What is the price of a standard adult off-peak admission ticket?",
+    "choices": null,
+    "currency": "S$",
+    "local_amount": 35.0,
+    "usd": 27.16,
+    "rate": 1.2888,
+    "source_url": "https://www.marinabaysands.com/attractions/skypark-observation-deck.html",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.marinabaysands.com/faq.html",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "singapore-landmark-price-07",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "place_zh": "藝術科學博物館售票處，海灣舫",
+    "place_en": "ArtScience Museum Box Office, Bayfront",
+    "osm_ref": "way/528509257",
+    "location_lat": 1.285892,
+    "location_lng": 103.8588845,
+    "prompt_zh": "新加坡居民購買一張 teamLab 未來世界成人票的公布起價要多少錢？",
+    "prompt_en": "What is the price of the published starting price of an adult Singapore-resident ticket for teamLab Future World?",
+    "choices": null,
+    "currency": "S$",
+    "local_amount": 28.0,
+    "usd": 21.73,
+    "rate": 1.2888,
+    "source_url": "https://www.marinabaysands.com/museum/exhibitions/future-world.html",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.marinabaysands.com/museum/exhibitions/future-world.html",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "singapore-landmark-price-08",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "place_zh": "華僑銀行空中走道售票亭，濱海南花園",
+    "place_en": "OCBC Skyway ticket booth, Bay South Garden",
+    "osm_ref": "way/172297170",
+    "location_lat": 1.2822623,
+    "location_lng": 103.8644268,
+    "prompt_zh": "一張新加坡居民成人門票要多少錢？",
+    "prompt_en": "What is the price of one Singapore-resident adult admission ticket?",
+    "choices": null,
+    "currency": "S$",
+    "local_amount": 10.0,
+    "usd": 7.76,
+    "rate": 1.2888,
+    "source_url": "https://www.gardensbythebay.com.sg/en/things-to-do/attractions/ocbc-skyway.html",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.gardensbythebay.com.sg/en/things-to-do/attractions/ocbc-skyway.html",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "singapore-landmark-price-09",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "place_zh": "擎天樹觀景台入口，濱海南花園",
+    "place_en": "Supertree Observatory admission, Bay South Garden",
+    "osm_ref": "way/172297199",
+    "location_lat": 1.2818595,
+    "location_lng": 103.8637895,
+    "prompt_zh": "一張非居民成人門票要多少錢？",
+    "prompt_en": "What is the price of one non-resident adult admission ticket?",
+    "choices": null,
+    "currency": "S$",
+    "local_amount": 14.0,
+    "usd": 10.86,
+    "rate": 1.2888,
+    "source_url": "https://www.gardensbythebay.com.sg/en/things-to-do/attractions/supertree-observatory.html",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.gardensbythebay.com.sg/en/things-to-do/attractions/supertree-observatory.html",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
+  },
+  {
+    "id": "singapore-landmark-price-10",
+    "city": "singapore",
+    "type": "price",
+    "kind": null,
+    "place_zh": "金沙購物商城舢舨售票處，海灣舫",
+    "place_en": "Sampan Rides ticket counter at The Shoppes, Bayfront",
+    "osm_ref": "way/528509258",
+    "location_lat": 1.285255,
+    "location_lng": 103.8591998,
+    "prompt_zh": "一張舢舨遊船標準票要多少錢？",
+    "prompt_en": "What is the price of one standard Sampan Ride admission ticket?",
+    "choices": null,
+    "currency": "S$",
+    "local_amount": 15.0,
+    "usd": 11.64,
+    "rate": 1.2888,
+    "source_url": "https://www.marinabaysands.com/attractions/sampan-rides.html",
+    "checked_on": "2026-11-18",
+    "location_source_url": "https://www.marinabaysands.com/faq.html",
+    "location_checked_on": "2026-11-18",
+    "fx_source_url": "https://www.smbc.co.jp/market/backnumber/fixing/pdf_daily/now/fixing2026111820261118.pdf",
+    "fx_checked_on": "2026-11-18",
+    "status": "draft",
+    "outside_coverage": false,
+    "recheck_within_six_months": true
   },
   {
     "id": "macau-001",
