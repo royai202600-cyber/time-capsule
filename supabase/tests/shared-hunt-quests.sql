@@ -23,7 +23,7 @@ declare organizer uuid := 'c3a10000-0000-4000-8000-000000000001';
 begin
   update public.profiles set can_create_hunts=true where id=organizer;
   select * into strict post from public.public_capsule_spots where kind='landmark' and place='taipei101';
-  update private.game_config set restore_common=1 where singleton;
+  update private.game_config set restore_common=1,restore_uncommon=1,restore_rare=1 where singleton;
   perform pg_temp.pool_user(1);
   h:=public.private_hunt_create(jsonb_build_object('name','Quest rollback','route_mode','ordered','leaderboard_visible',true,
     'starts_at',now()-interval '1 hour','ends_at',now()+interval '1 hour',
@@ -121,7 +121,15 @@ begin
   perform pg_temp.pool_user(2);
   update public.player_game set wax_balls=100 where user_id=player;
   select * into target from public.corrupted_capsule_throw(spawn,post.lat,post.lng,10,'wax',1,true);
-  assert target.result='restored';
+  assert target.result='restored' and target.copies=3 and target.stars=1;
+  assert (select not unlimited_copies from public.vessels where id=target.vessel);
+  assert (select copies=3 from public.owned_vessels where user_id=player and vessel=target.vessel);
+  assert exists (
+    select 1 from private.game_wave_at(now()) wave
+    cross join lateral unnest(private.game_spawn_city_rules(private.game_spawn_at(wave.starts_at),'Taipei')) rule
+    join private.quest_spawns release on release.vessel=rule.vessel and release.rarity=rule.rarity
+    where 'quest:'||release.id=spawn
+  );
   assert (select completed_at is not null from public.private_hunt_quest_progress where quest_id=q);
 
   select * into attempts from public.landmark_start(post.id,post.lat,post.lng,10);
@@ -145,12 +153,17 @@ begin
   update public.hunts set route_mode='any' where id=h;
   perform pg_temp.pool_expect(format('select public.private_hunt_quest_attempt(%L)',
     pg_temp.quest_payload(q,post.lat,post.lng,'{"usd":"10"}')),'bad_answer');
-  for i in 1..3 loop
+  for i in 1..2 loop
     result:=public.private_hunt_quest_attempt(pg_temp.quest_payload(q,post.lat,post.lng,'{"usd":8}'));
     assert result->>'done'='false' and (result->>'tries_left')::int=3-i and not (result ? 'correct_answer');
   end loop;
+  result:=public.private_hunt_quest_attempt(pg_temp.quest_payload(q,post.lat,post.lng,'{"usd":8}'));
+  assert result='{"ok":false,"done":true,"points":0,"tries_left":0,"correct_answer":{"usd":10,"local_amount":320}}'::jsonb;
+  assert (select points=0 from public.private_hunt_members where hunt_id=h and user_id=auth.uid());
+  assert (select completed_at is not null and tries=3 from public.private_hunt_quest_progress
+    where quest_id=q and user_id=auth.uid());
   perform pg_temp.pool_expect(format('select public.private_hunt_quest_attempt(%L)',
-    pg_temp.quest_payload(q,post.lat,post.lng,'{"usd":10}')),'no_tries');
+    pg_temp.quest_payload(q,post.lat,post.lng,'{"usd":10}')),'already_done');
   update public.hunts set ends_at=now()-interval '1 second' where id=h;
   perform pg_temp.pool_expect(format('select public.private_hunt_quest_attempt(%L)',
     pg_temp.quest_payload(q,post.lat,post.lng,'{"usd":10}')),'time_up');

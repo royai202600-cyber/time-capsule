@@ -69,6 +69,7 @@ create table private.quest_spawns (
   location_lat double precision not null,
   location_lng double precision not null,
   vessel text not null references public.vessels(id),
+  rarity text not null check (rarity in ('common','uncommon','rare')),
   unique(context,quest_id,user_id,slot)
 );
 create index quest_spawns_user on private.quest_spawns(user_id);
@@ -141,19 +142,21 @@ returns jsonb language plpgsql stable set search_path = '' as $$
 declare guess numeric;
 declare target numeric;
 declare is_right boolean;
+declare finished boolean;
 declare tries_after int;
 begin
   if r.type='price' then
-    if tries>=3 then raise exception 'no_tries'; end if;
     if jsonb_typeof(a->'usd') is distinct from 'number' then raise exception 'bad_answer'; end if;
     guess:=(a->>'usd')::numeric;
     if guess <= 0 or guess > 1000000 or scale(guess)>2 then raise exception 'bad_answer'; end if;
     target:=(r.correct_answer->>'usd')::numeric;
     is_right:=abs(guess-target)<=target*0.10;
-    return jsonb_strip_nulls(jsonb_build_object('ok',is_right,'done',is_right,'points',0,
-      'tries_left',3-tries-1,
-      'hint',case when not is_right and guess<target then 'higher' when not is_right then 'lower' end,
-      'correct_answer',case when is_right then r.correct_answer end));
+    tries_after:=tries+1;
+    finished:=is_right or tries_after=3;
+    return jsonb_strip_nulls(jsonb_build_object('ok',is_right,'done',finished,'points',0,
+      'tries_left',3-tries_after,
+      'hint',case when not finished and guess<target then 'higher' when not finished then 'lower' end,
+      'correct_answer',case when finished then r.correct_answer end));
   elsif r.type='question' then
     if wait_until>at_time then raise exception 'no_tries'; end if;
     if r.question->>'kind'='choice' then
@@ -467,29 +470,64 @@ end $function$;
 
 create function private.quest_start_spawns(p_context text,p_id uuid,r private.quest_rules,p_run timestamptz,
   p_remaining int,p_end timestamptz)
-returns void language sql set search_path='' as $$
-  insert into private.quest_spawns (quest_id,context,user_id,run_at,slot,expires_at,location_lat,location_lng,vessel)
-  select p_id,p_context,auth.uid(),p_run,n,least(p_end,now()+interval '10 minutes'),
-    r.location_lat,r.location_lng,v.id
-  from generate_series(1,p_remaining) n
-  cross join lateral (select id from public.vessels where earned_place is null and price_mop=0
-    order by id limit 1) v
+returns void language plpgsql set search_path='' as $$
+declare region private.game_regions;
+declare habitat text;
+declare wave record;
+declare revision private.game_spawn_revisions;
+declare pool private.game_spawn_pool;
+declare seed_ids uuid[];
+begin
+  select g.* into region from private.game_regions g
+  join private.game_map_coverage b on b.id=g.coverage_id
+  where g.city is not null and r.location_lat between b.south and b.north
+    and r.location_lng between b.west and b.east
+  order by public.distance_m(r.location_lat,r.location_lng,g.center_lat,g.center_lng),g.id
+  limit 1;
+  if not found then raise exception 'bad_rule'; end if;
+
+  -- A nearby public spot supplies the habitat. A pin without a mapped
+  -- habitat can use the city's rules that do not require one.
+  select s.habitat into habitat from public.corrupted_spots s
+  where s.city=region.city and s.hidden_at is null and s.source_ref not like 'qa:%'
+    and s.lat between r.location_lat-0.01 and r.location_lat+0.01
+    and public.distance_m(s.lat,s.lng,r.location_lat,r.location_lng) <=
+      (select action_radius_m from private.game_config where singleton)
+  order by public.distance_m(s.lat,s.lng,r.location_lat,r.location_lng),s.id limit 1;
+
+  select * into wave from private.game_wave_at(now());
+  revision:=private.game_spawn_at(wave.starts_at);
+  pool:=private.game_spawn_pool(private.game_spawn_city_rules(revision,region.city),
+    habitat,wave.starts_at at time zone region.timezone);
+  if num_nonnulls(pool.common,pool.uncommon,pool.rare)=0 then raise exception 'bad_rule'; end if;
+  -- Quests guarantee their requested releases. The resolver still uses the
+  -- wave's rarity weights, city assignments, windows and vessel selection.
+  revision.config.spawn_chance:=1;
+  select array_agg(gen_random_uuid() order by n) into seed_ids from generate_series(1,p_remaining) n;
+  insert into private.quest_spawns
+    (id,quest_id,context,user_id,run_at,slot,expires_at,location_lat,location_lng,vessel,rarity)
+  select chosen.spot,p_id,p_context,auth.uid(),p_run,array_position(seed_ids,chosen.spot),
+    least(p_end,now()+interval '10 minutes'),r.location_lat,r.location_lng,chosen.vessel,chosen.rarity
+  from private.game_secret key
+  cross join lateral private.resolve_spawn_batch(seed_ids,wave.wave,wave.ends_at,revision.config,pool,key.secret) chosen
+  where key.singleton
   on conflict(context,quest_id,user_id,slot) do update set
-    id=gen_random_uuid(),run_at=excluded.run_at,expires_at=excluded.expires_at
+    id=excluded.id,run_at=excluded.run_at,expires_at=excluded.expires_at,
+    vessel=excluded.vessel,rarity=excluded.rarity
   where quest_spawns.run_at<>excluded.run_at or quest_spawns.expires_at<=now()
     or exists (select 1 from public.corrupted_catches c where c.user_id=auth.uid()
-      and c.spawn_id='quest:'||quest_spawns.id and c.result in ('caught','failed'))
-$$;
+      and c.spawn_id='quest:'||quest_spawns.id and c.result in ('caught','failed'));
+end $$;
 
-create function private.private_quest_finish(h public.hunts,w public.private_hunt_quests,p_at timestamptz)
+create function private.private_quest_finish(h public.hunts,w public.private_hunt_quests,p_at timestamptz,p_points integer,p_tries integer)
 returns void language plpgsql set search_path='' as $$
 begin
-  insert into public.private_hunt_quest_progress(hunt_id,quest_id,user_id,completed_at)
-  values(h.id,w.id,auth.uid(),p_at)
-  on conflict(quest_id,user_id) do update set completed_at=excluded.completed_at,wait_until=null
+  insert into public.private_hunt_quest_progress(hunt_id,quest_id,user_id,completed_at,tries)
+  values(h.id,w.id,auth.uid(),p_at,p_tries)
+  on conflict(quest_id,user_id) do update set completed_at=excluded.completed_at,tries=excluded.tries,wait_until=null
     where private_hunt_quest_progress.completed_at is null;
   if not found then return; end if;
-  update public.private_hunt_members m set points=m.points+w.points,
+  update public.private_hunt_members m set points=m.points+p_points,
     finished_at=case when not exists (select 1 from public.private_hunt_quests q
       where q.hunt_id=h.id and not exists (select 1 from public.private_hunt_quest_progress c
         where c.quest_id=q.id and c.user_id=auth.uid() and c.completed_at is not null)) then p_at end
@@ -511,6 +549,7 @@ declare accuracy double precision := (payload->>'accuracy')::double precision;
 declare choice numeric;
 declare submitted text;
 declare at_time timestamptz;
+declare return_points integer;
 begin
   if auth.uid() is null then raise exception 'not_allowed'; end if;
   select * into w from public.private_hunt_quests where id=(payload->>'quest_id')::uuid;
@@ -561,8 +600,9 @@ begin
     perform private.quest_start_spawns('private_hunt',w.id,r,m.started_at,r.catch_count-coalesce(c.catch_count,0),
       least(h.ends_at,m.started_at+make_interval(mins=>h.time_limit_min)));
   elsif (result->>'done')::boolean then
-    perform private.private_quest_finish(h,w,at_time);
-    return result || jsonb_build_object('points',w.points);
+    return_points:=case when (result->>'ok')::boolean then w.points else 0 end;
+    perform private.private_quest_finish(h,w,at_time,return_points,3-coalesce((result->>'tries_left')::int,3));
+    return result || jsonb_build_object('points',return_points);
   elsif r.type in ('question','price') then
     insert into public.private_hunt_quest_progress(hunt_id,quest_id,user_id,tries,wait_until)
     values(h.id,w.id,auth.uid(),3-(result->>'tries_left')::int,
@@ -668,7 +708,7 @@ begin
     on conflict(quest_id,user_id) do update set run_at=excluded.run_at,tries=excluded.tries,
       wait_until=excluded.wait_until,completed_at=excluded.completed_at;
   end if;
-  return result || jsonb_build_object('points',case when (result->>'done')::boolean then q.points else 0 end);
+  return result || jsonb_build_object('points',case when (result->>'done')::boolean and (result->>'ok')::boolean then q.points else 0 end);
 end $$;
 
 create function private.quest_spawn_available(s private.quest_spawns)
@@ -707,7 +747,7 @@ begin
     values(h.id,w.id,auth.uid(),1)
     on conflict(quest_id,user_id) do update set catch_count=private_hunt_quest_progress.catch_count+1
     returning catch_count into total;
-    if total>=w.catch_count then perform private.private_quest_finish(h,w,clock_timestamp()); end if;
+    if total>=w.catch_count then perform private.private_quest_finish(h,w,clock_timestamp(),w.points,0); end if;
   else
     select * into q from private.city_hunt_located_quests where quest_id=s.quest_id;
     perform 1 from public.city_hunt_quest_progress where hunt_id=q.hunt_id and user_id=auth.uid() for update;
@@ -737,7 +777,7 @@ begin
     if not found or private.private_quest_is_locked(h,m,w.ordinal) or m.finished_at is not null
       or not private.quest_at_pin(private.private_quest_rule(w),p_lat,p_lng,1)
     then continue; end if;
-    perform private.private_quest_finish(h,w,clock_timestamp());
+    perform private.private_quest_finish(h,w,clock_timestamp(),w.points,0);
   end loop;
 
   for q in select cq.* from private.city_hunt_located_quests cq join private.quest_rules r on r.id=cq.quest_id
@@ -757,7 +797,7 @@ end $$;
 create function private.quest_spawn_markers(p_lat double precision,p_lng double precision,p_radius double precision)
 returns jsonb language sql stable set search_path='' as $$
   select coalesce(jsonb_agg(jsonb_build_object(
-    'spawn_id','quest:'||s.id,'vessel',s.vessel,'rarity','common',
+    'spawn_id','quest:'||s.id,'vessel',s.vessel,'rarity',s.rarity,
     'lat',s.location_lat,'lng',s.location_lng,'expires_at',s.expires_at,
     'attempts_left',cfg.max_attempts-coalesce(c.attempts,0),'already_caught',false,
     'quest_id',s.quest_id) order by s.quest_id,s.slot),'[]')
@@ -902,7 +942,7 @@ begin
     if not found or not private.quest_spawn_available(quest_spawn) then raise exception 'expired'; end if;
     spot.lat:=quest_spawn.location_lat;
     spot.lng:=quest_spawn.location_lng;
-    select quest_spawn.vessel as vessel, 'common'::text as rarity into released;
+    select quest_spawn.vessel as vessel, quest_spawn.rarity as rarity into released;
   else
     if p_spawn !~ '^[0-9a-f-]{36}:[0-9]{1,18}$' then raise exception 'expired'; end if;
     wave := split_part(p_spawn,':',2)::bigint;
@@ -946,13 +986,8 @@ begin
         where user_id=auth.uid() and spawn_id=p_spawn;
       is_new := not exists (select 1 from public.owned_vessels
         where user_id=auth.uid() and public.owned_vessels.vessel=corrupted_capsule_throw.vessel);
-      insert into public.owned_vessels(user_id,vessel,copies)
-        values(auth.uid(),vessel,1)
-        on conflict on constraint owned_vessels_pkey do update
-          set copies=public.owned_vessels.copies+1
-        returning public.owned_vessels.copies into copies;
-      select count(*)::integer into stars from unnest(cfg.star_thresholds) threshold
-        where threshold<=copies;
+      copies := private.award_catch_copies(auth.uid(), vessel);
+      stars := 1; -- Compatibility field for older apps; duplicates no longer increase stars.
       xp_gained := private.award_xp(auth.uid(),'catch',p_spawn,cfg.xp_catch);
       if is_new then xp_gained := xp_gained+
         private.award_xp(auth.uid(),'new_vessel',vessel,cfg.xp_new_vessel); end if;
@@ -1100,7 +1135,7 @@ revoke all on function private.quest_json(uuid,int,private.quest_rules,int,boole
   private.private_quest_rule(public.private_hunt_quests),
   private.private_quest_is_locked(public.hunts,public.private_hunt_members,int),
   private.quest_start_spawns(text,uuid,private.quest_rules,timestamptz,int,timestamptz),
-  private.private_quest_finish(public.hunts,public.private_hunt_quests,timestamptz),
+  private.private_quest_finish(public.hunts,public.private_hunt_quests,timestamptz,int,int),
   private.city_quest_done(private.city_hunt_located_quests,public.city_hunt_quest_progress),
   private.city_quest_locked(public.hunts,private.city_hunt_located_quests,public.city_hunt_quest_progress),
   private.quest_spawn_available(private.quest_spawns),private.quest_record_catch(private.quest_spawns),

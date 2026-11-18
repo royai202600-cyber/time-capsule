@@ -13,7 +13,7 @@ declare count_done integer;
 begin
   insert into private.game_speed_allowlist(user_id) values(player) on conflict do nothing;
   perform pg_temp.pool_user(4);
-  update private.game_config set restore_common=1 where singleton;
+  update private.game_config set restore_common=1,restore_uncommon=1,restore_rare=1 where singleton;
   for h in select * from public.hunts where id in ('xinyi-2026-11','senado-square-2026-11','hkust-2026-11') order by id
   loop
     assert public.city_hunt_quests(h.id)='[]'::jsonb;
@@ -21,6 +21,8 @@ begin
     assert public.city_hunt_quests(h.id)='[]'::jsonb;
     perform public.city_hunt_check_in(h.id,h.keeper_lat,h.keeper_lng,10);
     assert jsonb_array_length(public.city_hunt_quests(h.id))=5;
+    q:=public.city_hunt_quests(h.id)->0;
+    assert public.distance_m((q->>'location_lat')::float8,(q->>'location_lng')::float8,h.keeper_lat,h.keeper_lng)>=200;
     -- Simulate a player who had already spun one Waypost and caught two
     -- capsules before upgrading. The first pin and the two catches carry over.
     update public.city_hunt_quest_progress set spin_count=1,restore_count=2,

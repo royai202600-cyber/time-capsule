@@ -59,7 +59,7 @@ sql(`
   on conflict(id) do update set can_create_hunts=excluded.can_create_hunts;
   insert into private.admin_members(user_id,role) values ('${organizer.id}','admin');
   insert into private.game_speed_allowlist(user_id) values ('${member.id}');
-  update private.game_config set restore_common=1 where singleton;
+  update private.game_config set restore_common=1,restore_uncommon=1,restore_rare=1 where singleton;
 `)
 
 const editor = organizer.jwt
@@ -124,7 +124,10 @@ assert(spawn)
 const throwArgs = { p_spawn: spawn.spawn_id, p_ball: 'wax', p_ring: 1, p_hit: true, ...loc }
 expectError(rpc('corrupted_capsule_throw', other, throwArgs), 'expired')
 sql(`update public.player_game set wax_balls=100 where user_id='${member.id}'`)
-assert.equal(call('corrupted_capsule_throw', jwt, throwArgs)[0].result, 'restored')
+const [catchResult] = call('corrupted_capsule_throw', jwt, throwArgs)
+assert.equal(catchResult.result, 'restored')
+assert.equal(catchResult.copies, 3)
+assert.equal(catchResult.stars, 1)
 
 call('private_hunt_quest_attempt', jwt, payload(landmark))
 const [fight] = call('landmark_start', jwt, { p_waypost: post.id, ...loc })

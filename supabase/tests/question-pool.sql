@@ -54,6 +54,8 @@ begin
     where target_id=q_id::text and action='question_pool.edit';
   assert event.before->>'prompt_en' = 'Prompt' and event.after->>'prompt_en' = 'Updated prompt';
   assert not (event.after ? 'answer') and not (event.before ? 'answer');
+  perform pg_temp.pool_user(3);
+  perform pg_temp.pool_expect(format('select public.admin_undo(%s)',event.id),'forbidden');
   perform pg_temp.pool_user(1);
   perform public.admin_undo(event.id);
   assert (select answer = '"answer-fixture"'::jsonb from private.question_pool_secrets where id=q_id);

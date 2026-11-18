@@ -212,12 +212,11 @@ declare prior private.question_pool;
 declare restored private.question_pool;
 declare secret private.question_pool_secrets;
 begin
-  perform private.require_game_editor();
   select * into event from private.admin_actions where id = p_action_id;
-  if not found then raise exception 'not_found'; end if;
-  if event.target_type <> 'question_pool' then
+  if event.target_type is distinct from 'question_pool' then
     return private.admin_undo_before_question_pool(p_action_id,p_note);
   end if;
+  perform private.require_game_editor();
   if event.action not in ('question_pool.add','question_pool.edit','question_pool.status')
   then raise exception 'not_undoable'; end if;
 

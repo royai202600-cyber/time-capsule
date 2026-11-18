@@ -54,9 +54,9 @@ type QuestResult = {
 }
 ```
 
-Call `city_hunt_quest_attempt({ payload })` or `private_hunt_quest_attempt({ payload })`. Choice indexes start at zero. Price guesses are in USD. The rate is units of local currency per USD. The exact local price arrives with the successful answer. A wrong submission returns `ok:false`; after the third failure further submissions return the RPC error `no_tries`. Questions can be retried after 60 seconds. Price tries last for the run. For a private GPS + QR arrival, send the organizer token or printed deep link in `answer.qr`.
+Call `city_hunt_quest_attempt({ payload })` or `private_hunt_quest_attempt({ payload })`. Choice indexes start at zero. Price guesses are in USD. The rate is units of local currency per USD. The exact local price arrives on success or after the third miss. The third miss completes the price quest with `ok:false, done:true, points:0, tries_left:0` and `correct_answer`. Subsequent attempts return `already_done`. Questions remain incomplete after three misses and return `no_tries` during their 60-second cooldown. For a private GPS + QR arrival, send the organizer token or printed deep link in `answer.qr`.
 
-A catch attempt near the pin activates private releases containing `quest_id` in `game_nearby.spawns`. Submit `spawn_id` to the existing throw RPC and refresh quests after a restoration. A Landmark attempt checks location and order, then the existing fight RPCs handle the fight. Refresh quests after winning. A valid activation returns `ok:true, done:false, points:0`.
+A catch attempt near the pin activates private releases containing `quest_id` in `game_nearby.spawns`. Submit `spawn_id` to the existing throw RPC and refresh quests after a restoration. Releases use the city's active wave pool, rarity weights and habitat and time rules. They award copies through HL-C2's normal catch path. Activating a pin without an eligible city spawn pool returns the existing `bad_rule` error. A Landmark attempt checks location and order, then the existing fight RPCs handle the fight. Refresh quests after winning. A valid activation returns `ok:true, done:false, points:0`.
 
 ## Organizer and admin contracts
 
@@ -70,13 +70,13 @@ The 80 CE1 questions enter the pool with null coordinates. CE1 keeps its origina
 
 ## Existing SQL definitions replaced
 
-- `public.admin_undo` delegates other actions to its previous implementation.
+- `public.admin_undo` delegates actions outside the question pool before checking the editor role. HL-C1 can still authorize moderator rack Undo, and HL-C2 keeps its own checks.
 - `public.private_hunt_quest_save` delegates the two compatible editor formats to its previous implementation.
 - `private.private_hunt_player_object` builds the shared objects and the compatible payload.
 - `public.private_hunt_edit_state` returns the pool selection and quest metadata to the organizer.
 - `public.private_hunt_quest_complete` refuses new rules on the old endpoint.
 - `public.game_nearby` adds only the caller's quest releases.
-- `public.corrupted_capsule_throw` validates and records a catch against its quest release.
+- `public.corrupted_capsule_throw` uses the merged HL-C2 definition and adds quest-release validation and progress. Copies and compatibility stars use the normal HL-C2 award path.
 - `private.city_hunt_record_quest` credits the existing Landmark win to eligible quests.
 - `public.city_hunt_finish` checks located quests for runs using the new attempt RPC and the legacy counters for older apps.
 
@@ -84,13 +84,13 @@ The shared migration also extends the pool usage helper introduced in checkpoint
 
 ## Proposed City Hunt pins
 
-The Keeper checks the player in, starts the existing timer and gives the reward. All five pins appear after check-in. Each route uses three visits, five Corrupted Capsule catches at one outdoor pin, and the existing Landmark as the last quest. The coordinates come from the live Wayposts and the seed checks that each Waypost is visible, game enabled and inside its hunt area.
+The Keeper checks the player in, starts the existing timer and gives the reward. All five pins appear after check-in. Each route uses three visits, five Corrupted Capsule catches at one outdoor pin, and the existing Landmark as the last quest. The first Arrive pin is at least 200 m from the Keeper. The coordinates come from the live Wayposts and the seed checks that each Waypost is visible, game enabled and inside its hunt area.
 
 | Order | Type | Xinyi | Senado | HKUST |
 |---|---|---|---|---|
-| 1 | Arrive | Taipei Civic Square, south point | Jorge Álvares Square | LG7 Lawn South |
-| 2 | Arrive | Songshou Square | Ferreira do Amaral Square | HKUST Piazza East |
-| 3 | Arrive | Songzhi Park | Arts Garden | HKUST Piazza South |
+| 1 | Arrive | Xiangti Avenue Square (430 m from Keeper) | Ferreira do Amaral Square (508 m) | Fong Shu Chuen Promenade (273 m) |
+| 2 | Arrive | Songshou Square | Arts Garden | LG7 Lawn South |
+| 3 | Arrive | Songzhi Park | Vasco da Gama Garden | HKUST Piazza East |
 | 4 | Catch ×5 | Xinyi 21 Plaza | Mount Fortress Park | HKUST Piazza North |
 | 5 | Landmark | Taipei 101 | Senado Square fountain | HKUST Entrance Piazza |
 
@@ -98,6 +98,6 @@ For runs active at rollout, existing spin credits account for the first one, two
 
 ## Running the checks
 
-Hosted rollback runs `question-pool-before.sql`, the three HL-C3 migrations in order, and `question-pool.sql`, `shared-hunt-quests.sql` and `located-city-hunts.sql` inside one transaction. It checks both CE1 RPC responses against their before snapshots, then covers pool roles, edit and undo, answer privacy, all five private types, all three City Hunt routes, legacy calls, daily reset, and reward claims.
+Hosted rollback runs C2 `20261118123808` from `ec7cf1c` and C1 `20261118124925` from `4432006`, in that order, with their outer transaction markers removed. The same transaction then runs `question-pool-before.sql`, the three C3 migrations, `question-pool.sql`, `shared-hunt-quests.sql`, `located-city-hunts.sql`, `quest-types-integration.sql`, and C1's `hunt-racks.sql` from the same commit. The assertions cover CE1 response equality, moderator rack Undo and question pool Undo, private and City Hunt price exhaustion, quest catch copies, an unlimited starter catch, and the full hunt and legacy compatibility checks. The last statement rolls everything back.
 
 `node supabase/tests/shared-quest-api.mjs` exercises authenticated calls with sessions issued by GoTrue. It targets the disposable `tc_quest_types_verify` database and its two test containers on the existing Docker network.
