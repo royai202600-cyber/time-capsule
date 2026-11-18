@@ -238,7 +238,7 @@ export const game = {
     dev.attempts.delete(args.attempt);
     return { result: "won", cracks: 0, vessel, copies, stars: starsFor(copies), is_new: copies === 1, xp_gained: 2000, state: stateNow() };
   },
-  async collection(): Promise<Record<string, { copies: number; stars: number }>> {
+  async collection(): Promise<Record<string, { copies: number | null; stars: number }>> {
     if (await live()) {
       const { data, error } = await supabase.rpc("my_collection");
       fail(error);

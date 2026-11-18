@@ -349,7 +349,7 @@ export default function CabinetScreen() {
   const [owned, setOwned] = useState<Owned[]>([]);
   const [usage, setUsage] = useState<Record<string, number>>({});
   const [error, setError] = useState("");
-  const [caught, setCaught] = useState<Record<string, { copies: number; stars: number }>>({});
+  const [caught, setCaught] = useState<Record<string, { copies: number | null; stars: number }>>({});
 
   useFocusEffect(useCallback(() => {
     let alive = true;

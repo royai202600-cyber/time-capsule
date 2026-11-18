@@ -274,6 +274,21 @@ begin
     where o.user_id=auth.uid() order by v.sort,o.vessel;
 end $$;
 
+-- PostgreSQL requires recreating the function to add a result column.
+drop function public.vessel_stock();
+create function public.vessel_stock()
+returns table(vessel text, remaining integer, copies integer)
+language sql stable security definer set search_path = '' as $$
+  select v.id,
+    v.edition_total - (select count(*)::integer from public.owned_vessels o where o.vessel = v.id),
+    case when v.unlimited_copies then null else coalesce(mine.copies, 0) end
+  from public.vessels v
+  left join public.owned_vessels mine on mine.vessel = v.id and mine.user_id = auth.uid()
+  where v.edition_total is not null and auth.uid() is not null;
+$$;
+revoke all on function public.vessel_stock() from public, anon, authenticated;
+grant execute on function public.vessel_stock() to authenticated;
+
 CREATE OR REPLACE FUNCTION public.admin_spawning()
  RETURNS jsonb
  LANGUAGE plpgsql

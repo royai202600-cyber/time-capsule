@@ -44,7 +44,7 @@ export default function AlbumScreen() {
   const { width: windowWidth } = useWindowDimensions();
   const [all, setAll] = useState<Row[]>([]);
   const [owned, setOwned] = useState<string[]>([]);
-  const [caught, setCaught] = useState<Record<string, { copies: number; stars: number }>>({});
+  const [caught, setCaught] = useState<Record<string, { copies: number | null; stars: number }>>({});
 
   useFocusEffect(useCallback(() => {
     let alive = true;
