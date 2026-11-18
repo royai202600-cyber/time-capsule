@@ -58,6 +58,10 @@ begin
   perform public.private_hunt_quest_save(h,a||jsonb_build_object('type','price','ordinal',4,'pool_id',price_id));
   perform public.private_hunt_quest_save(h,a||'{"type":"catch","ordinal":5,"catch_count":1}');
   perform public.private_hunt_quest_save(h,a||'{"type":"landmark","ordinal":6}');
+  result:=public.private_hunt_edit_state(h);
+  assert result->'quests'->1->>'pool_id'=choice_id::text;
+  assert result->'quests'->3->'price'->>'place_en'='Named shop';
+  assert not (result->'quests'->3->'price' ? 'local_amount');
   code:=public.private_hunt_publish(h)->>'join_code';
 
   perform pg_temp.pool_user(2);
@@ -130,6 +134,26 @@ begin
   assert result->>'reward_collected_at' is not null and result->>'points'='60';
   assert (select count(*)=6 from jsonb_array_elements(result->'quests') where value->>'done'='true');
   assert exists(select 1 from public.my_passport() where place=h);
+
+  -- A fresh player has three independent price tries. Malformed inputs do not use one.
+  perform pg_temp.pool_user(3);
+  perform public.private_hunt_join_code(code);
+  perform public.private_hunt_start(h,post.lat,post.lng,10);
+  select id into q from public.private_hunt_quests where hunt_id=h and ordinal=4;
+  perform pg_temp.pool_expect(format('select public.private_hunt_quest_attempt(%L)',
+    pg_temp.quest_payload(q,post.lat,post.lng,'{"usd":10}')),'locked');
+  update public.hunts set route_mode='any' where id=h;
+  perform pg_temp.pool_expect(format('select public.private_hunt_quest_attempt(%L)',
+    pg_temp.quest_payload(q,post.lat,post.lng,'{"usd":"10"}')),'bad_answer');
+  for i in 1..3 loop
+    result:=public.private_hunt_quest_attempt(pg_temp.quest_payload(q,post.lat,post.lng,'{"usd":8}'));
+    assert result->>'done'='false' and (result->>'tries_left')::int=3-i and not (result ? 'correct_answer');
+  end loop;
+  perform pg_temp.pool_expect(format('select public.private_hunt_quest_attempt(%L)',
+    pg_temp.quest_payload(q,post.lat,post.lng,'{"usd":10}')),'no_tries');
+  update public.hunts set ends_at=now()-interval '1 second' where id=h;
+  perform pg_temp.pool_expect(format('select public.private_hunt_quest_attempt(%L)',
+    pg_temp.quest_payload(q,post.lat,post.lng,'{"usd":10}')),'time_up');
 end $$;
 select 'PASS: shared quest types and private hunt completion' as result;
 

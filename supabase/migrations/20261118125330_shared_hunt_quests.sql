@@ -42,6 +42,7 @@ create table private.city_hunt_located_quests (
   quest_id uuid primary key references private.quest_rules(id),
   ordinal integer not null check (ordinal > 0),
   points integer not null default 0 check (points >= 0),
+  available_since timestamptz not null default now(),
   legacy_type text check (legacy_type in ('spin','restore','landmark')),
   unique(hunt_id,ordinal)
 );
@@ -258,6 +259,37 @@ begin
   delete from private.private_hunt_quest_secrets where quest_id=w.id;
   delete from private.quest_rules where id=existing.rule_id;
 end $$;
+
+CREATE OR REPLACE FUNCTION public.private_hunt_edit_state(p_hunt text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare h public.hunts;
+begin
+  select * into h from public.hunts where id = p_hunt and kind = 'private' and owner = auth.uid();
+  if not found then raise exception 'not allowed' using errcode = '42501'; end if;
+  return jsonb_build_object('draft', private.private_hunt_draft(h), 'status', h.status, 'code', h.join_code,
+    'locked', h.first_joined_at is not null,
+    'quests', coalesce((select jsonb_agg(
+      (to_jsonb(w) - 'hunt_id' - 'rule_id') || jsonb_build_object(
+        'puzzle_kind', coalesce(w.puzzle_kind, 'choice'),
+        'choices', coalesce(w.choices, '[]'::jsonb), 'answer', '')
+      || case when r.id is null then '{}'::jsonb else
+        private.quest_json(w.id,w.ordinal,r,w.points,false,false,0)
+        || jsonb_strip_nulls(jsonb_build_object('pool_id',r.pool_id)) end
+      || case when s.qr_token is null then '{}'::jsonb else jsonb_build_object('qr_token', s.qr_token) end
+      order by w.ordinal)
+      from public.private_hunt_quests w left join private.private_hunt_quest_secrets s on s.quest_id = w.id
+      left join private.quest_rules r on r.id=w.rule_id
+      where w.hunt_id = h.id), '[]'::jsonb));
+end $function$
+;
+
+revoke all on function public.private_hunt_edit_state(p_hunt text) from public,anon,authenticated;
+
+grant execute on function public.private_hunt_edit_state(p_hunt text) to authenticated;
 
 create function private.private_quest_rule(w public.private_hunt_quests)
 returns private.quest_rules language plpgsql stable set search_path='' as $$
@@ -547,7 +579,8 @@ create function private.city_quest_done(q private.city_hunt_located_quests,p pub
 returns boolean language sql stable set search_path='' as $$
   select exists(select 1 from private.city_hunt_located_progress c
     where c.quest_id=q.quest_id and c.user_id=p.user_id and c.run_at=p.checked_in_at and c.completed_at is not null)
-    or ((p.located_run_at is distinct from p.checked_in_at or p.finished_at is not null)
+    or ((p.located_run_at is distinct from p.checked_in_at and
+        (p.checked_in_at<q.available_since or p.finished_at is not null))
       and coalesce(case q.legacy_type when 'spin' then p.spin_count
         when 'restore' then p.restore_count when 'landmark' then p.landmark_count end >= q.legacy_goal,false))
 $$;
@@ -608,7 +641,8 @@ begin
     -- Legacy actions after this point cannot advance located quests.
     insert into private.city_hunt_located_progress(quest_id,user_id,run_at,caught,completed_at)
     select e.quest_id,auth.uid(),p.checked_in_at,
-      case when e.legacy_type='restore' then least(coalesce(e.legacy_goal,0),p.restore_count) else 0 end,
+      case when e.legacy_type='restore' and p.checked_in_at<e.available_since
+        then least(coalesce(e.legacy_goal,0),p.restore_count) else 0 end,
       case when private.city_quest_done(e,p) then p.checked_in_at end
     from private.city_hunt_located_quests e where e.hunt_id=h.id
     on conflict(quest_id,user_id) do update set run_at=excluded.run_at,tries=0,wait_until=null,
