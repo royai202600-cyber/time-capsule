@@ -653,7 +653,7 @@ The wax-red canopy and upper bow swing rearward. The pleats gather, then the sta
 | `quest-types/quest-type-arrive.png` | 1024×1024 | Opaque arrive quest picture for a 46 px circular pin. |
 | `quest-types/quest-type-question.png` | 1024×1024 | Opaque question quest picture for a 46 px circular pin. |
 | `quest-types/quest-type-price.png` | 1024×1024 | Opaque price quest picture for a 46 px circular pin. |
-| `quest-types/quest-type-catch.png` | 1024×1024 | Cracked capsule with an incoming red wax ball. |
+| `quest-types/quest-type-catch.png` | 1024×1024 | Cracked message-in-a-bottle vessel with a visible rolled letter and an incoming red wax ball. |
 | `quest-types/quest-type-landmark.png` | 1024×1024 | Fictional toy tower with a wax seal. |
 
 Roy approved question and price on 2026-11-18, then approved the revised arrive picture and the frame colors at `a42def4`. Quest-type pictures fill the circular pin window. Quest card banners show the place photo.
@@ -666,4 +666,4 @@ Roy approved question and price on 2026-11-18, then approved the revised arrive 
 
 All three frames come from one faceted source with one alpha mask. On the master canvas, the transparent circular window is centered at (506, 399) with radius 237 px. The tip anchor is (506, 955). The same values are in each manifest entry. The frames have a light rim. The app supplies the done tick and order number.
 
-[Pin review at 46 px and 138 px](_checks/quest-types-review.png) · [Asset audit](_checks/quest-types-assets.json) · [Contact sheet](_checks/contact-sheet.png). The complete set is in draft PR #153 for Roy’s approval.
+[Pin review at 46 px and 138 px](_checks/quest-types-review.png) · [Asset audit](_checks/quest-types-assets.json) · [Contact sheet](_checks/contact-sheet.png). Roy approved landmark at `716ecf9`. Draft PR #153 shows the revised catch picture for the final set review.
