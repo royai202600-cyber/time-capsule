@@ -12766,5 +12766,179 @@
     "model": "gpt-image-2",
     "web_export": "public/art/vessels/vessel-tram-bell.webp",
     "postprocess": "Cleaned and registered the isolated bell to the front-panel mount."
+  },
+  {
+    "path": "design/art/quest-types/quest-type-arrive.png",
+    "what": "Arrive quest picture for a 46 px circular map pin",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse the first attachment for style, the park template for its opaque paper scene, and the question picture for the large, compact subject scale. Draw the Arrive quest picture. A large upright wax-red blank pennant on a thick brass pole with a round brass base dominates the center. Two very large ink-blue shoeprints, each with a clearly separated heel and sole, are planted close together in front of the base and walk toward it from the lower-left. Tilt the prints diagonally, and make each print about one quarter of the picture width. Arrange the flag and prints as a compact roughly square group that spans approximately 80% of the canvas width and height and fits in the centered circle. Aim for flag in the top half and the two large dark prints in the lower-left and lower-center. Compose strictly for a 46 px circular window, with bold shapes and strong contrast. The main subject must be much larger than scenery. Picture-specific exception to the transparent background and scale: opaque full-bleed light paper scene with a cream path and quiet light-blue ground, 1024 square. No symbols, marks, text, frames, corners, borders, or secondary objects.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-templates/quest-template-park.png",
+      "design/art/quest-types/quest-type-question.png"
+    ],
+    "quest_type": "arrive",
+    "postprocess": "Lanczos to 1024×900 with 62 px reflected paper/ground above and below, keeping the pole finial and footprints in the circle.",
+    "web_export": "public/art/quest-types/quest-type-arrive.webp"
+  },
+  {
+    "path": "design/art/quest-types/quest-type-question.png",
+    "what": "Question quest-type picture for a circular map pin and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse the first attached image as the style reference and the second as an example of the existing quest-template framing. Create one new quest-type picture: A large brass magnifying glass over a folded paper clue. The paper is completely blank. Picture-specific exception to the transparent background instruction: use an opaque, full-bleed square paper scene like the template. Place the main subject centrally and make it easy to recognize in both a 46 px circular crop and a centered 16:9 crop. No text, letters, numbers, symbols, question marks, currency signs, borders, or pin shape.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-templates/quest-template-park.png"
+    ],
+    "quest_type": "question",
+    "postprocess": "Downscaled from 1254 square to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-types/quest-type-question.webp"
+  },
+  {
+    "path": "design/art/quest-types/quest-type-price.png",
+    "what": "Price quest-type picture for a circular map pin and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse the first attached image as the style reference and the second as an example of the existing quest-template framing. Create one new quest-type picture: A large brass price tag on a string resting on a small stack of plain coins. The tag and coins are completely blank. Picture-specific exception to the transparent background instruction: use an opaque, full-bleed square paper scene like the template. Place the main subject centrally and make it easy to recognize in both a 46 px circular crop and a centered 16:9 crop. No text, letters, numbers, symbols, question marks, currency signs, borders, or pin shape.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-templates/quest-template-park.png"
+    ],
+    "quest_type": "price",
+    "postprocess": "Downscaled from 1254 square to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-types/quest-type-price.webp"
+  },
+  {
+    "path": "design/art/quest-pins/quest-pin-blue.png",
+    "what": "Faceted blue quest pin frame with transparent picture window",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nOne quest pin frame sprite for a game map. The first attachment is the app style sheet. Gem-specific exception to the hand-inked and flat-colour directions: follow the two supplied Waypost gems for their muted, sculpted low-poly gemstone facets, clean edges without outlines, subtle surface grain, and soft light from the upper left. Use the BLUE Waypost gem as the hue reference. Show exactly ONE vertically upright, front-facing teardrop pin, with a clean rounded head tapering into a single point at the bottom. This asset-specific straight-on view lets the inset perfectly round window remain circular. The round top has a large flat, totally blank white circular insert at its center, bounded by a thin light bevel. This white insert is a temporary placeholder to be removed by script, so it must be a perfect circle, without reflected texture, icons or shadows in the white area. Give the annulus and the pointed tail around the window a few broad angular blue facets that will still read at 46 pixels. At the top and shoulders keep an obvious strip of blue gemstone between the window and outer silhouette. The body around the hole and point is solid and substantial, not metallic or glossy. Use a fully transparent outer background, no cast shadow, no other objects, no tick mark, no text, no numbers. Square 1024 framing with a small safe margin.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/game/waypost-gem.png",
+      "design/art/game/waypost-gem-blue.png"
+    ],
+    "window": {
+      "x": 506,
+      "y": 399,
+      "radius": 237
+    },
+    "tip_anchor": {
+      "x": 506,
+      "y": 955
+    },
+    "postprocess": "Shared generated frame. Resize, cut circular alpha, preserve thin light bevel, and remap facet lightness to the color ramp with finish-quest-pins.py.",
+    "web_export": "public/art/quest-pins/quest-pin-blue.webp"
+  },
+  {
+    "path": "design/art/quest-pins/quest-pin-brass.png",
+    "what": "Faceted brass quest pin frame with transparent picture window",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nOne quest pin frame sprite for a game map. The first attachment is the app style sheet. Gem-specific exception to the hand-inked and flat-colour directions: follow the two supplied Waypost gems for their muted, sculpted low-poly gemstone facets, clean edges without outlines, subtle surface grain, and soft light from the upper left. Use the BLUE Waypost gem as the hue reference. Show exactly ONE vertically upright, front-facing teardrop pin, with a clean rounded head tapering into a single point at the bottom. This asset-specific straight-on view lets the inset perfectly round window remain circular. The round top has a large flat, totally blank white circular insert at its center, bounded by a thin light bevel. This white insert is a temporary placeholder to be removed by script, so it must be a perfect circle, without reflected texture, icons or shadows in the white area. Give the annulus and the pointed tail around the window a few broad angular blue facets that will still read at 46 pixels. At the top and shoulders keep an obvious strip of blue gemstone between the window and outer silhouette. The body around the hole and point is solid and substantial, not metallic or glossy. Use a fully transparent outer background, no cast shadow, no other objects, no tick mark, no text, no numbers. Square 1024 framing with a small safe margin.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/game/waypost-gem.png",
+      "design/art/game/waypost-gem-blue.png"
+    ],
+    "window": {
+      "x": 506,
+      "y": 399,
+      "radius": 237
+    },
+    "tip_anchor": {
+      "x": 506,
+      "y": 955
+    },
+    "postprocess": "Shared generated frame. Resize, cut circular alpha, preserve thin light bevel, and remap facet lightness to the color ramp with finish-quest-pins.py.",
+    "web_export": "public/art/quest-pins/quest-pin-brass.webp"
+  },
+  {
+    "path": "design/art/quest-pins/quest-pin-plum.png",
+    "what": "Faceted plum quest pin frame with transparent picture window",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nOne quest pin frame sprite for a game map. The first attachment is the app style sheet. Gem-specific exception to the hand-inked and flat-colour directions: follow the two supplied Waypost gems for their muted, sculpted low-poly gemstone facets, clean edges without outlines, subtle surface grain, and soft light from the upper left. Use the BLUE Waypost gem as the hue reference. Show exactly ONE vertically upright, front-facing teardrop pin, with a clean rounded head tapering into a single point at the bottom. This asset-specific straight-on view lets the inset perfectly round window remain circular. The round top has a large flat, totally blank white circular insert at its center, bounded by a thin light bevel. This white insert is a temporary placeholder to be removed by script, so it must be a perfect circle, without reflected texture, icons or shadows in the white area. Give the annulus and the pointed tail around the window a few broad angular blue facets that will still read at 46 pixels. At the top and shoulders keep an obvious strip of blue gemstone between the window and outer silhouette. The body around the hole and point is solid and substantial, not metallic or glossy. Use a fully transparent outer background, no cast shadow, no other objects, no tick mark, no text, no numbers. Square 1024 framing with a small safe margin.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/game/waypost-gem.png",
+      "design/art/game/waypost-gem-blue.png"
+    ],
+    "window": {
+      "x": 506,
+      "y": 399,
+      "radius": 237
+    },
+    "tip_anchor": {
+      "x": 506,
+      "y": 955
+    },
+    "postprocess": "Shared generated frame. Resize, cut circular alpha, preserve thin light bevel, and remap facet lightness to the color ramp with finish-quest-pins.py.",
+    "web_export": "public/art/quest-pins/quest-pin-plum.webp"
+  },
+  {
+    "path": "design/art/quest-types/quest-type-catch.png",
+    "what": "Cracked message-in-a-bottle capsule with a wax ball for a 46 px circular map pin",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nCreate the replacement Catch quest illustration. Use attachment 1 for exact ink, shading and color style, attachment 2 for the existing Time Capsule message-in-a-bottle vessel silhouette and construction (round long body, shouldered narrow neck, cork, cream rolled letter visible inside), attachment 3 as the visual reference for the dark branching game cracks, and attachment 4 for the opaque full-bleed paper scene and scale. Picture-specific exception to the transparent background instruction: this is one opaque square paper illustration, fully painted to all four straight edges and corners, including pale ink-blue ground and a light cream path. Show the same corked glass bottle tipped diagonally from lower center to upper right, with a broad clear cream rolled letter showing through darkened, desaturated ink-blue glass. Put a couple of bold dark navy or plum Crack A-style jagged branches across the front and shoulder, wide and dark enough to read at 46 px, with enough clear glass around them to read the letter. Use one separate large wax-red spherical ball flying in from the lower left toward the bottle, with a short pair of brush motion strokes trailing behind it. The ball has only light and shading, a blank wax surface without an imprint, keyhole, stamp or icon. Center the two objects as a compact diagonal pair taking about 80% of canvas width and height. Keep the cork, bottle base and entire ball a little inside the midpoint-to-corner diagonals so an external circular crop leaves them readable. The large bottle and ball are the only focus. Minimal light scenery. No water, waves, text, numbers, symbols, emblems, inset boundary, frame, round outline or checkerboard. Continue the actual light paper scene into all four corners.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/vessels/vessel-bottle.png",
+      "design/art/game/crack-overlay.png",
+      "design/art/quest-types/quest-type-arrive.png"
+    ],
+    "quest_type": "catch",
+    "postprocess": "Lanczos to opaque 1024 px square, offset 20 px left and 18 px down with reflected scene edges to keep the cork and ball inside the round window.",
+    "web_export": "public/art/quest-types/quest-type-catch.webp"
+  },
+  {
+    "path": "design/art/quest-types/quest-type-landmark.png",
+    "what": "Fictional toy tower monument with a wax seal for a 46 px circular map pin",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nMake the Landmark quest picture. The first attachment is the style reference, and the second is the framing reference for an opaque light quest scene. Draw a generic toy-like ink-blue tower monument in three-quarter view, with a clean tall, slightly tapered square shaft, a broad short plinth, and a simple cap. The tower is fictional and has a fresh anonymous outline, with no resemblance to Taipei 101 or any specific building. A large round wax-red sealing wax impression with a simple concentric indentation and no mark in its center is clearly attached to the front face near the base, legible even at 46 px. Use the miniature plinth and foreground seal to balance the width of the tall tower. Keep the full silhouette and seal grouped centrally, about 80% of canvas width and height and fully visible inside a round pin window. Picture-specific exception: opaque full-bleed square light paper scene with very quiet pale blue ground and cream light, no transparency. No text, numbers, clock, symbols, logos, other buildings, pin shape or frame.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-types/quest-type-arrive.png"
+    ],
+    "quest_type": "landmark",
+    "postprocess": "Crop the side margins, resize to 1024×900 with Lanczos, and extend the plain paper and ground at the top and bottom to keep the tower cap and seal inside the circle.",
+    "web_export": "public/art/quest-types/quest-type-landmark.webp"
   }
 ]
