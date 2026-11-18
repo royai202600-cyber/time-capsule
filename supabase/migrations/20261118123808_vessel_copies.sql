@@ -55,11 +55,6 @@ begin
     select edition_no into v_ed from public.owned_vessels where user_id = auth.uid() and vessel = p_vessel;
     if not found then raise exception 'vessel not owned' using hint = 'not_owned'; end if;
   end if;
-  if not v.unlimited_copies then
-    update public.owned_vessels set copies = copies - 1
-      where user_id = auth.uid() and vessel = p_vessel and copies > 0;
-    if not found then raise exception 'no_copies' using hint = 'no_copies'; end if;
-  end if;
   if p_open_at <= now() then raise exception 'open time must be in the future'; end if;
   if p_place is not null then
     select * into pl from public.places where id = p_place;
@@ -85,6 +80,12 @@ begin
     if exists (select 1 from public.capsule_contents cc where cc.voice_path = p_voice) then
       raise exception 'voice already attached';
     end if;
+  end if;
+  -- The guarded update locks the balance until the capsule and its content commit.
+  if not v.unlimited_copies then
+    update public.owned_vessels set copies = copies - 1
+      where user_id = auth.uid() and vessel = p_vessel and copies > 0;
+    if not found then raise exception 'no_copies' using hint = 'no_copies'; end if;
   end if;
   insert into public.capsules (sender, recipient, vessel, hint, open_at, place, handwritten, edition_no, has_voice, kind)
     values (auth.uid(), p_recipient, p_vessel, coalesce(trim(p_hint), ''), p_open_at, p_place, p_drawing is not null, v_ed, p_voice is not null, p_kind)
