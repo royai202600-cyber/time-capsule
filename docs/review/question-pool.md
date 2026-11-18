@@ -45,3 +45,13 @@ No photos are proposed; use the matching vessel fallback. No question is flagged
 | macau-003 | 議事亭前地 / Senado Square | 議事亭前地旁的民政總署大樓背後有什麼？ / What lies at the back of the former Leal Senado Building by Senado Square? | 庭院花園 / A courtyard garden | [Official source](https://www.wh.mo/en/site/detail/11) | 2026-11-18 | None |
 | macau-004 | 議事亭前地 / Senado Square | 議事亭前地旁的民政總署大樓正門兩側有哪種柱子？ / What kind of columns flank the entrance of the former Leal Senado Building by Senado Square? | 花崗岩多立克柱 / Granite Doric columns | [Official source](https://www.wh.mo/en/site/detail/11) | 2026-11-18 | None |
 | macau-005 | 議事亭前地 / Senado Square | 議事亭前地旁的民政總署大樓最初建於哪一年？請輸入四位數字。 / In what year was the former Leal Senado Building by Senado Square originally built? Enter four digits. | 1784 / 1784 | [Official source](https://www.wh.mo/en/site/detail/11) | 2026-11-18 | None |
+
+## Follow-up audit, 2026-11-18
+
+The first 20 rows predate the distinct-place and public-outdoor requirement. They are retained only as unapproved research and must be replaced or relocated before import: they reuse four Landmark coordinates, and each typed clue overlaps a choice clue. The one additional Taipei candidate below uses an existing outdoor sampled park path rather than the building or road. Its sampled position is recorded in `20261108180337_time_capsule_game_backend.sql` as `osm:way/319526552@300m;park/way/27244215`. It still needs a fresh safety and access review alongside the completed pool.
+
+| ID | Place | Question (zh / en) | Answer (zh / en) | Source | Checked | Photo credit |
+|---|---|---|---|---|---|---|
+| taipei-006 | 象山公園 / Xiangshan Park | 象山公園的所在地以前是什麼用途？ / What was the site of Xiangshan Park previously used for? | 軍事靶場 / A military firing range | [Taipei Travel](https://www.travel.taipei/en/attraction/details/703/) | 2026-11-18 | None |
+
+The published [coverage table](../design/waypost-coverage.md#map-coverage-what-is-in-and-out) excludes Lantau, most of Coloane, and the north of Singapore. Existing CE1 venues include the [Tung Chung cable car terminal on Lantau](https://www.np360.com.hk/en/visitor-information/faqs), [Singapore Zoo at Mandai](https://www.mandai.com/en/plan-your-visit/maps.html), and Lord Stow’s Café in Coloane. The exact café location still needs its own source: the bakery contact page is not enough to establish the café entrance. These existing venues cannot simultaneously retain their real locations and be inside the current coverage; do not assign misleading coordinates. Also pending: clarification of the new no-schools instruction against the previously approved HKUST outdoor exception.

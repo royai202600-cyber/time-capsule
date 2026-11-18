@@ -750,5 +750,43 @@
     "photo_licence": null,
     "recheck_within_six_months": false,
     "status": "draft"
+  },
+  {
+    "id": "taipei-006",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "象山公園",
+    "place_en": "Xiangshan Park",
+    "location_lat": 25.0301894,
+    "location_lng": 121.5702748,
+    "prompt_zh": "象山公園的所在地以前是什麼用途？",
+    "prompt_en": "What was the site of Xiangshan Park previously used for?",
+    "choices": [
+      {
+        "zh": "軍事靶場",
+        "en": "A military firing range"
+      },
+      {
+        "zh": "茶葉工廠",
+        "en": "A tea factory"
+      },
+      {
+        "zh": "火車維修廠",
+        "en": "A railway workshop"
+      },
+      {
+        "zh": "海港碼頭",
+        "en": "A harbour pier"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://www.travel.taipei/en/attraction/details/703/",
+    "location_source_url": "https://www.openstreetmap.org/way/319526552",
+    "checked_date": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": false
   }
 ]
