@@ -6,186 +6,1344 @@
     "kind": "choice",
     "place_zh": "台北101",
     "place_en": "Taipei 101",
-    "location_lat": 25.033667,
-    "location_lng": 121.56481,
-    "prompt_zh": "台北101的建築外形常被比作哪種植物？",
-    "prompt_en": "Which plant does Taipei 101’s form resemble?",
+    "location_lat": 25.0347425,
+    "location_lng": 121.5643983,
+    "osm_ref": "way/1339499092",
+    "prompt_zh": "台北101的建築高度是多少？",
+    "prompt_en": "How tall is Taipei 101?",
     "choices": [
       {
-        "zh": "竹子",
-        "en": "Bamboo"
+        "zh": "508公尺",
+        "en": "508 metres"
       },
       {
-        "zh": "松樹",
-        "en": "Pine"
+        "zh": "408公尺",
+        "en": "408 metres"
       },
       {
-        "zh": "蓮花",
-        "en": "Lotus"
+        "zh": "608公尺",
+        "en": "608 metres"
       },
       {
-        "zh": "棕櫚",
-        "en": "Palm"
+        "zh": "708公尺",
+        "en": "708 metres"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
     "source_url": "https://travel.taipei/en/pictorial/article/48476",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
-    "status": "draft"
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 0
   },
   {
     "id": "taipei-002",
     "city": "taipei",
     "type": "question",
     "kind": "choice",
-    "place_zh": "台北101",
-    "place_en": "Taipei 101",
-    "location_lat": 25.033667,
-    "location_lng": 121.56481,
-    "prompt_zh": "台北101的設計建築師是誰？",
-    "prompt_en": "Who designed Taipei 101?",
+    "place_zh": "四四南村",
+    "place_en": "Four Four South Village",
+    "location_lat": 25.0314718,
+    "location_lng": 121.5619104,
+    "osm_ref": "way/373793584",
+    "prompt_zh": "四四南村原本是哪一類聚落？",
+    "prompt_en": "What kind of settlement was Four Four South Village originally?",
     "choices": [
       {
-        "zh": "李祖原",
-        "en": "C. Y. Lee"
+        "zh": "鐵路員工宿舍區",
+        "en": "Housing for railway workers"
       },
       {
-        "zh": "王大閎",
-        "en": "Wang Da-hong"
+        "zh": "軍人及其眷屬的住宅聚落",
+        "en": "Housing for military families"
       },
       {
-        "zh": "貝聿銘",
-        "en": "I. M. Pei"
+        "zh": "漁業合作社聚落",
+        "en": "A fishing cooperative"
       },
       {
-        "zh": "安藤忠雄",
-        "en": "Tadao Ando"
+        "zh": "茶農聚落",
+        "en": "A tea growers’ village"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://travel.taipei/en/pictorial/article/48476",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
-    "status": "draft"
+    "source_url": "https://travel.taipei/zh-tw/media/audio-guide/details/409",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 1
   },
   {
     "id": "taipei-003",
     "city": "taipei",
     "type": "question",
     "kind": "choice",
-    "place_zh": "台北101",
-    "place_en": "Taipei 101",
-    "location_lat": 25.033667,
-    "location_lng": 121.56481,
-    "prompt_zh": "台北101的風阻尼球約重多少公噸？",
-    "prompt_en": "Approximately how many metric tons does Taipei 101’s wind damper weigh?",
+    "place_zh": "象山觀景平台",
+    "place_en": "Xiangshan Boulder Lookout",
+    "location_lat": 25.0269102,
+    "location_lng": 121.5741282,
+    "osm_ref": "way/1237332592",
+    "prompt_zh": "象山這處觀景平台旁有一組著名的大石，共有幾塊？",
+    "prompt_en": "How many boulders make up the famous group beside this Xiangshan lookout?",
     "choices": [
       {
-        "zh": "660公噸",
-        "en": "660 metric tons"
+        "zh": "三塊",
+        "en": "Three"
       },
       {
-        "zh": "60公噸",
-        "en": "60 metric tons"
+        "zh": "五塊",
+        "en": "Five"
       },
       {
-        "zh": "160公噸",
-        "en": "160 metric tons"
+        "zh": "六塊",
+        "en": "Six"
       },
       {
-        "zh": "1,660公噸",
-        "en": "1,660 metric tons"
+        "zh": "九塊",
+        "en": "Nine"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://travel.taipei/en/pictorial/article/48476",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
-    "status": "draft"
+    "source_url": "https://www.travel.taipei/en/pictorial/article/18240/",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 2
   },
   {
     "id": "taipei-004",
     "city": "taipei",
     "type": "question",
     "kind": "choice",
-    "place_zh": "台北101",
-    "place_en": "Taipei 101",
-    "location_lat": 25.033667,
-    "location_lng": 121.56481,
-    "prompt_zh": "台北101的風阻尼球直徑約為多少？",
-    "prompt_en": "What is the approximate diameter of Taipei 101’s wind damper?",
+    "place_zh": "松山文創園區",
+    "place_en": "Songshan Cultural and Creative Park",
+    "location_lat": 25.0441719,
+    "location_lng": 121.5604507,
+    "osm_ref": "way/229056581",
+    "prompt_zh": "松山文創園區的前身主要生產什麼？",
+    "prompt_en": "What did the factory that became Songshan Cultural and Creative Park make?",
     "choices": [
       {
-        "zh": "5.5公尺",
-        "en": "5.5 metres"
+        "zh": "陶瓷",
+        "en": "Ceramics"
       },
       {
-        "zh": "1.5公尺",
-        "en": "1.5 metres"
+        "zh": "玻璃",
+        "en": "Glass"
       },
       {
-        "zh": "10公尺",
-        "en": "10 metres"
+        "zh": "紡織品",
+        "en": "Textiles"
       },
       {
-        "zh": "20公尺",
-        "en": "20 metres"
+        "zh": "香菸",
+        "en": "Cigarettes"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://travel.taipei/en/pictorial/article/48476",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
-    "status": "draft"
+    "source_url": "https://www.travel.taipei/en/attraction/details/586",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 3
   },
   {
     "id": "taipei-005",
     "city": "taipei",
     "type": "question",
+    "kind": "choice",
+    "place_zh": "臺北大巨蛋",
+    "place_en": "Taipei Dome",
+    "location_lat": 25.041574,
+    "location_lng": 121.559146,
+    "osm_ref": "way/431945126",
+    "prompt_zh": "臺北大巨蛋的主要球場是為哪種運動設計的？",
+    "prompt_en": "What sport was the main playing field at Taipei Dome designed for?",
+    "choices": [
+      {
+        "zh": "棒球",
+        "en": "Baseball"
+      },
+      {
+        "zh": "曲棍球",
+        "en": "Field hockey"
+      },
+      {
+        "zh": "橄欖球",
+        "en": "Rugby"
+      },
+      {
+        "zh": "板球",
+        "en": "Cricket"
+      }
+    ],
+    "source_url": "https://www.taipeidome.com.tw/Web/Dome/AboutThePark_717295311738896384/",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 0
+  },
+  {
+    "id": "taipei-006",
+    "city": "taipei",
+    "type": "question",
     "kind": "text",
-    "place_zh": "台北101",
-    "place_en": "Taipei 101",
-    "location_lat": 25.033667,
-    "location_lng": 121.56481,
-    "prompt_zh": "台北101的外形常被比作哪種植物？請輸入名稱。",
-    "prompt_en": "Which plant does Taipei 101 resemble? Enter its name.",
+    "place_zh": "幾米月亮公車",
+    "place_en": "Jimmy’s Moon Bus",
+    "location_lat": 25.0327766,
+    "location_lng": 121.565656,
+    "osm_ref": "way/1537742063",
+    "prompt_zh": "幾米月亮公車裡，坐在駕駛座的是哪種動物？",
+    "prompt_en": "What kind of animal is in the driver’s seat of Jimmy’s Moon Bus?",
     "choices": null,
-    "answer": {
-      "zh": [
-        "竹子"
-      ],
-      "en": [
-        "bamboo"
-      ]
-    },
-    "source_url": "https://travel.taipei/en/pictorial/article/48476",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
-    "status": "draft"
+    "source_url": "https://www.travel.taipei/file/2296/",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": "bear",
+    "typed_aliases": [
+      "熊",
+      "大熊",
+      "大隻熊",
+      "a bear",
+      "big bear"
+    ]
+  },
+  {
+    "id": "taipei-007",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "台北世貿一館",
+    "place_en": "Taipei World Trade Center Exhibition Hall 1",
+    "location_lat": 25.0347109,
+    "location_lng": 121.5619098,
+    "osm_ref": "way/136814868",
+    "prompt_zh": "台北世貿一館地面以上共有幾層？",
+    "prompt_en": "How many floors above ground does Taipei World Trade Center Exhibition Hall 1 have?",
+    "choices": [
+      {
+        "zh": "三層",
+        "en": "Three"
+      },
+      {
+        "zh": "七層",
+        "en": "Seven"
+      },
+      {
+        "zh": "五層",
+        "en": "Five"
+      },
+      {
+        "zh": "九層",
+        "en": "Nine"
+      }
+    ],
+    "source_url": "https://twtc.org.tw/en/about",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 1
+  },
+  {
+    "id": "taipei-008",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "香堤大道廣場",
+    "place_en": "Xiangti Avenue Square",
+    "location_lat": 25.0374527,
+    "location_lng": 121.5670165,
+    "osm_ref": "way/1340087848",
+    "prompt_zh": "臺北市公園處介紹香堤大道廣場時，特別提到哪種行道樹？",
+    "prompt_en": "Which tree does Taipei’s parks department highlight along Xiangti Avenue Square?",
+    "choices": [
+      {
+        "zh": "樟樹",
+        "en": "Camphor"
+      },
+      {
+        "zh": "榕樹",
+        "en": "Banyan"
+      },
+      {
+        "zh": "櫸木",
+        "en": "Zelkova"
+      },
+      {
+        "zh": "木棉",
+        "en": "Silk cotton"
+      }
+    ],
+    "source_url": "https://travel.taipei/zh-tw/news/details/62359",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 2
+  },
+  {
+    "id": "taipei-009",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "永春崗公園",
+    "place_en": "Yongchunggang Park",
+    "location_lat": 25.0312531,
+    "location_lng": 121.5768601,
+    "osm_ref": "way/1341564303",
+    "prompt_zh": "永春崗公園遊戲場的設計以當地哪一段歷史為靈感？",
+    "prompt_en": "What part of local history inspired the playground design at Yongchunggang Park?",
+    "choices": [
+      {
+        "zh": "製鹽",
+        "en": "Salt production"
+      },
+      {
+        "zh": "造船",
+        "en": "Shipbuilding"
+      },
+      {
+        "zh": "採珠",
+        "en": "Pearl diving"
+      },
+      {
+        "zh": "採煤",
+        "en": "Coal mining"
+      }
+    ],
+    "source_url": "https://ppfcc.org/park/p0089/",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 3
+  },
+  {
+    "id": "taipei-010",
+    "city": "taipei",
+    "type": "question",
+    "kind": "text",
+    "place_zh": "彩虹起跑線",
+    "place_en": "Rainbow Starting Line",
+    "location_lat": 25.0377059,
+    "location_lng": 121.5632301,
+    "osm_ref": "way/309157018",
+    "prompt_zh": "市民廣場的這道彩虹地景，把長條形的彩虹比作飛機起降的什麼？",
+    "prompt_en": "What aircraft feature does the long strip of colour at this public artwork resemble?",
+    "choices": null,
+    "source_url": "https://travel.taipei/en/attraction/details/2366",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": "runway",
+    "typed_aliases": [
+      "跑道",
+      "起降跑道",
+      "飛機跑道",
+      "a runway",
+      "airstrip"
+    ]
+  },
+  {
+    "id": "taipei-011",
+    "city": "taipei",
+    "type": "question",
+    "kind": "text",
+    "place_zh": "國立國父紀念館",
+    "place_en": "National Sun Yat-sen Memorial Hall",
+    "location_lat": 25.0380703,
+    "location_lng": 121.557978,
+    "osm_ref": "way/49153748",
+    "prompt_zh": "誰設計了國立國父紀念館？",
+    "prompt_en": "Who designed the National Sun Yat-sen Memorial Hall?",
+    "choices": null,
+    "source_url": "https://travel.taipei/en/attraction/details/446/",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": "Wang Dahong",
+    "typed_aliases": [
+      "王大閎",
+      "王大宏",
+      "王大闳",
+      "Wang Da-hong",
+      "Wang Da Hong",
+      "Da-hong Wang"
+    ]
+  },
+  {
+    "id": "taipei-012",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "象山公園",
+    "place_en": "Xiangshan Park",
+    "location_lat": 25.0301894,
+    "location_lng": 121.5702748,
+    "osm_ref": "way/319526552",
+    "prompt_zh": "象山公園的所在地以前是什麼用途？",
+    "prompt_en": "What was the site of Xiangshan Park previously used for?",
+    "choices": [
+      {
+        "zh": "軍事靶場",
+        "en": "A military firing range"
+      },
+      {
+        "zh": "茶葉工廠",
+        "en": "A tea factory"
+      },
+      {
+        "zh": "火車維修廠",
+        "en": "A railway workshop"
+      },
+      {
+        "zh": "海港碼頭",
+        "en": "A harbour pier"
+      }
+    ],
+    "source_url": "https://www.travel.taipei/en/attraction/details/703/",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 0
+  },
+  {
+    "id": "taipei-013",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "臺北市議會",
+    "place_en": "Taipei City Council",
+    "location_lat": 25.0390656,
+    "location_lng": 121.5623217,
+    "osm_ref": "way/1376754788",
+    "prompt_zh": "臺北市議會在哪一年遷到信義區現址？",
+    "prompt_en": "In what year did Taipei City Council move to its current site in Xinyi?",
+    "choices": [
+      {
+        "zh": "1970年",
+        "en": "1970"
+      },
+      {
+        "zh": "1990年",
+        "en": "1990"
+      },
+      {
+        "zh": "1980年",
+        "en": "1980"
+      },
+      {
+        "zh": "2000年",
+        "en": "2000"
+      }
+    ],
+    "source_url": "https://www.cna.com.tw/news/aloc/201709050245.aspx",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 1
+  },
+  {
+    "id": "taipei-014",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "大安森林公園",
+    "place_en": "Daan Forest Park",
+    "location_lat": 25.0312408,
+    "location_lng": 121.536494,
+    "osm_ref": "way/49195976",
+    "prompt_zh": "大安森林公園的生態池有幾座人工島？",
+    "prompt_en": "How many artificial islands are in Daan Forest Park’s ecological pond?",
+    "choices": [
+      {
+        "zh": "一座",
+        "en": "One"
+      },
+      {
+        "zh": "四座",
+        "en": "Four"
+      },
+      {
+        "zh": "兩座",
+        "en": "Two"
+      },
+      {
+        "zh": "五座",
+        "en": "Five"
+      }
+    ],
+    "source_url": "https://www.travel.taipei/en/pictorial/article/57704",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 2
+  },
+  {
+    "id": "taipei-015",
+    "city": "taipei",
+    "type": "question",
+    "kind": "text",
+    "place_zh": "大佳河濱公園",
+    "place_en": "Dajia Riverside Park",
+    "location_lat": 25.0757169,
+    "location_lng": 121.5331829,
+    "osm_ref": "way/354318668",
+    "prompt_zh": "大佳河濱公園沿著哪一條河流？",
+    "prompt_en": "Which river runs alongside Dajia Riverside Park?",
+    "choices": null,
+    "source_url": "https://travel.taipei/en/attraction/details/602",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": "Keelung River",
+    "typed_aliases": [
+      "基隆河",
+      "基隆",
+      "台北基隆河",
+      "Jilong River",
+      "Keelung"
+    ]
+  },
+  {
+    "id": "taipei-016",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "二二八和平公園",
+    "place_en": "228 Peace Park",
+    "location_lat": 25.0430687,
+    "location_lng": 121.5141308,
+    "osm_ref": "way/784696787",
+    "prompt_zh": "二二八和平公園以前叫什麼名字？",
+    "prompt_en": "What was 228 Peace Park formerly called?",
+    "choices": [
+      {
+        "zh": "臺北中央公園",
+        "en": "Taipei Central Park"
+      },
+      {
+        "zh": "臺北西公園",
+        "en": "Taipei West Park"
+      },
+      {
+        "zh": "臺北青年公園",
+        "en": "Taipei Youth Park"
+      },
+      {
+        "zh": "臺北新公園",
+        "en": "Taipei New Park"
+      }
+    ],
+    "source_url": "https://www.travel.taipei/zh-tw/news/details/26895/",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 3
+  },
+  {
+    "id": "taipei-017",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "國立中正紀念堂",
+    "place_en": "Chiang Kai-shek Memorial Hall",
+    "location_lat": 25.035192,
+    "location_lng": 121.520895,
+    "osm_ref": "way/1053359168",
+    "prompt_zh": "中正紀念堂主體建築的藍色屋頂呈什麼形狀？",
+    "prompt_en": "What shape is the blue roof of the main Chiang Kai-shek Memorial Hall?",
+    "choices": [
+      {
+        "zh": "八角形",
+        "en": "Octagon"
+      },
+      {
+        "zh": "六角形",
+        "en": "Hexagon"
+      },
+      {
+        "zh": "圓形",
+        "en": "Circle"
+      },
+      {
+        "zh": "三角形",
+        "en": "Triangle"
+      }
+    ],
+    "source_url": "https://travel.taipei/en/media/audio-guide/details/37",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 0
+  },
+  {
+    "id": "taipei-018",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "美堤河濱公園",
+    "place_en": "Meiti Riverside Park",
+    "location_lat": 25.075421,
+    "location_lng": 121.5593166,
+    "osm_ref": "way/1056884091",
+    "prompt_zh": "美堤河濱公園的規劃始於哪項河川工程？",
+    "prompt_en": "What type of river engineering set the stage for Meiti Riverside Park?",
+    "choices": [
+      {
+        "zh": "開挖港池",
+        "en": "Excavating a harbour basin"
+      },
+      {
+        "zh": "截彎取直",
+        "en": "Straightening a river bend"
+      },
+      {
+        "zh": "建造水力發電壩",
+        "en": "Building a hydroelectric dam"
+      },
+      {
+        "zh": "興建船閘",
+        "en": "Installing a navigation lock"
+      }
+    ],
+    "source_url": "https://www.travel.taipei/en/attraction/details/2390",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 1
+  },
+  {
+    "id": "taipei-019",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "彩虹河濱公園",
+    "place_en": "Rainbow Riverside Park",
+    "location_lat": 25.05568,
+    "location_lng": 121.5722262,
+    "osm_ref": "way/1070592915",
+    "prompt_zh": "彩虹河濱公園位於中山高速公路與哪座橋之間？",
+    "prompt_en": "Rainbow Riverside Park lies between Sun Yat-Sen Freeway and which bridge?",
+    "choices": [
+      {
+        "zh": "臺北橋",
+        "en": "Taipei Bridge"
+      },
+      {
+        "zh": "華江橋",
+        "en": "Huajiang Bridge"
+      },
+      {
+        "zh": "麥帥一橋",
+        "en": "First MacArthur Bridge"
+      },
+      {
+        "zh": "忠孝橋",
+        "en": "Zhongxiao Bridge"
+      }
+    ],
+    "source_url": "https://www.travel.taipei/en/attraction/details/2013/",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 2
+  },
+  {
+    "id": "taipei-020",
+    "city": "taipei",
+    "type": "question",
+    "kind": "text",
+    "place_zh": "華山1914文化創意產業園區",
+    "place_en": "Huashan 1914 Creative Park",
+    "location_lat": 25.0441558,
+    "location_lng": 121.5298235,
+    "osm_ref": "way/1307758123",
+    "prompt_zh": "華山1914在成為文創園區以前，是哪一種工廠？",
+    "prompt_en": "What kind of factory occupied Huashan 1914 before it became a creative park?",
+    "choices": null,
+    "source_url": "https://travel.taipei/en/attraction/details/515",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": "winery",
+    "typed_aliases": [
+      "酒廠",
+      "釀酒廠",
+      "製酒廠",
+      "a winery",
+      "wine factory"
+    ]
+  },
+  {
+    "id": "taipei-021",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "花博公園圓山園區",
+    "place_en": "Taipei Expo Park Yuanshan Area",
+    "location_lat": 25.0706847,
+    "location_lng": 121.521689,
+    "osm_ref": "way/24836053",
+    "prompt_zh": "花博公園圓山園區曾是哪一場博覽會的展區？",
+    "prompt_en": "Which exhibition used the Yuanshan site now occupied by Taipei Expo Park?",
+    "choices": [
+      {
+        "zh": "國際海洋博覽會",
+        "en": "International Ocean Expo"
+      },
+      {
+        "zh": "國際航空博覽會",
+        "en": "International Aviation Expo"
+      },
+      {
+        "zh": "世界郵票展",
+        "en": "World Stamp Exhibition"
+      },
+      {
+        "zh": "臺北國際花卉博覽會",
+        "en": "Taipei International Flora Expo"
+      }
+    ],
+    "source_url": "https://travel.taipei/en/pictorial/article/65930",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 3
+  },
+  {
+    "id": "taipei-022",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "臺北中山堂",
+    "place_en": "Taipei Zhongshan Hall",
+    "location_lat": 25.0438644,
+    "location_lng": 121.5105362,
+    "osm_ref": "way/1347529884",
+    "prompt_zh": "臺北中山堂一樓的主要廳堂曾是哪個機構的集會場所？",
+    "prompt_en": "Which body once met in the main ground-floor hall of Taipei Zhongshan Hall?",
+    "choices": [
+      {
+        "zh": "國民大會",
+        "en": "National Assembly"
+      },
+      {
+        "zh": "臺灣省議會",
+        "en": "Taiwan Provincial Assembly"
+      },
+      {
+        "zh": "監察院",
+        "en": "Control Yuan"
+      },
+      {
+        "zh": "司法院",
+        "en": "Judicial Yuan"
+      }
+    ],
+    "source_url": "https://travel.taipei/en/media/audio-guide/details/57",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 0
+  },
+  {
+    "id": "taipei-023",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "富陽自然生態公園",
+    "place_en": "Fuyang Eco Park",
+    "location_lat": 25.0171204,
+    "location_lng": 121.5563748,
+    "osm_ref": "way/1460554840",
+    "prompt_zh": "富陽自然生態公園的前身是哪種軍事設施？",
+    "prompt_en": "What kind of military facility formerly occupied the site of Fuyang Eco Park?",
+    "choices": [
+      {
+        "zh": "海軍基地",
+        "en": "A naval base"
+      },
+      {
+        "zh": "彈藥庫",
+        "en": "An ammunition depot"
+      },
+      {
+        "zh": "雷達站",
+        "en": "A radar station"
+      },
+      {
+        "zh": "軍用機場",
+        "en": "A military airfield"
+      }
+    ],
+    "source_url": "https://www.travel.taipei/en/attraction/details/618/",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 1
+  },
+  {
+    "id": "taipei-024",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "興隆公園",
+    "place_en": "Xinglong Park",
+    "location_lat": 25.0000005,
+    "location_lng": 121.5510798,
+    "osm_ref": "way/253358885",
+    "prompt_zh": "興隆公園湖中的橋是什麼造型？",
+    "prompt_en": "What is the shape of the bridge in Xinglong Park’s lake?",
+    "choices": [
+      {
+        "zh": "鋸齒形",
+        "en": "Zigzag"
+      },
+      {
+        "zh": "螺旋形",
+        "en": "Spiral"
+      },
+      {
+        "zh": "拱形",
+        "en": "Arch"
+      },
+      {
+        "zh": "環形",
+        "en": "Ring"
+      }
+    ],
+    "source_url": "https://travel.taipei/en/attraction/details/634/",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 2
+  },
+  {
+    "id": "taipei-025",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "國立臺灣博物館本館",
+    "place_en": "National Taiwan Museum Main Building",
+    "location_lat": 25.04313,
+    "location_lng": 121.515007,
+    "osm_ref": "way/79606900",
+    "prompt_zh": "國立臺灣博物館本館所在的這棟建築是哪一年落成的？",
+    "prompt_en": "In what year was the National Taiwan Museum’s current main building completed?",
+    "choices": [
+      {
+        "zh": "1895年",
+        "en": "1895"
+      },
+      {
+        "zh": "1935年",
+        "en": "1935"
+      },
+      {
+        "zh": "1955年",
+        "en": "1955"
+      },
+      {
+        "zh": "1915年",
+        "en": "1915"
+      }
+    ],
+    "source_url": "https://eng.taiwan.net.tw/m1.aspx?id=5955&print=1&sNo=0002090+",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "answer": 3
+  },
+  {
+    "id": "taipei-ce1-01",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 1,
+    "place_zh": "春水堂南西店，中山區，台北",
+    "place_en": "Chun Shui Tang SKM Nanxi, Zhongshan, Taipei",
+    "location_lat": 25.0523845,
+    "location_lng": 121.5211033,
+    "osm_ref": "way/542684698",
+    "prompt_zh": "一杯中杯冰珍珠奶茶的餐牌原價要多少錢？",
+    "prompt_en": "What is the price of a medium iced pearl milk tea at menu price?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 200.0,
+    "usd": 6.06,
+    "source_url": "https://www.chunshuitang.com.tw/menu-detail/skm_nanxi_store/",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.chunshuitang.com.tw/en/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-02",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 2,
+    "place_zh": "微熱山丘民生公園店，松山區，台北",
+    "place_en": "SunnyHills Minsheng Park, Songshan, Taipei",
+    "location_lat": 25.0577523,
+    "location_lng": 121.5571311,
+    "osm_ref": "way/1471704243",
+    "prompt_zh": "微熱山丘十入鳳梨酥要多少錢？",
+    "prompt_en": "What is the price of a ten-piece box of SunnyHills pineapple cakes?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 550.0,
+    "usd": 16.68,
+    "source_url": "https://beccadaily.com/sunny-hills/",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.sunnyhills.com.tw/store/zh-tw/shop/f44dd8c1-d53c-40d2-a1e2-d03b5a794a54",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-03",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 3,
+    "place_zh": "鼎泰豐台北101店，信義區，台北",
+    "place_en": "Din Tai Fung Taipei 101, Xinyi, Taipei",
+    "location_lat": 25.0334669,
+    "location_lng": 121.5644527,
+    "osm_ref": "way/1339499085",
+    "prompt_zh": "一份十顆鮮肉小籠包的外送餐牌價要多少錢？",
+    "prompt_en": "What is the price of a ten-piece order of pork xiaolongbao at the delivery menu price?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 290.0,
+    "usd": 8.79,
+    "source_url": "https://www.ubereats.com/tw/store/din-tai-fung%E9%BC%8E%E6%B3%B0%E8%B1%90-101%E5%BA%97/AdPwg1XZTwOrtO90s3mFSA",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.dintaifung.com.tw/eng/store.php?cid=1",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-04",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 4,
+    "place_zh": "臺北市立動物園售票處，文山區，台北",
+    "place_en": "Taipei Zoo ticket office, Wenshan, Taipei",
+    "location_lat": 24.9982412,
+    "location_lng": 121.5819253,
+    "osm_ref": "way/440124347",
+    "prompt_zh": "臺北市立動物園一張一般全票要多少錢？",
+    "prompt_en": "What is the price of a regular Taipei Zoo admission ticket?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 100.0,
+    "usd": 3.03,
+    "source_url": "https://english.zoo.gov.taipei/cp.aspx?n=8ED5B9F3BA1D301D&s=0FDA15FCD803C117",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://english.zoo.gov.taipei/News_Content.aspx?n=1C101BB74EA31928&s=5DD855A30ABF5861&sms=F6417076988132FF",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-05",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 5,
+    "place_zh": "貓空纜車動物園站售票處，文山區，台北",
+    "place_en": "Maokong Gondola Taipei Zoo Station, Wenshan, Taipei",
+    "location_lat": 24.9962432,
+    "location_lng": 121.5763427,
+    "osm_ref": "way/657396299",
+    "prompt_zh": "貓空纜車一張普通單程票要多少錢？",
+    "prompt_en": "What is the price of one regular single-journey ticket on the Maokong Gondola?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 180.0,
+    "usd": 5.46,
+    "source_url": "https://english.gondola.taipei/cp.aspx?n=19884A72DB5E7A1D",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://gondolaticket.metro.taipei/gondolaticket/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-06",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 6,
+    "place_zh": "臺北天文館售票處，士林區，台北",
+    "place_en": "Taipei Astronomical Museum ticket office, Shilin, Taipei",
+    "location_lat": 25.0959909,
+    "location_lng": 121.5177737,
+    "osm_ref": "way/137324319",
+    "prompt_zh": "臺北天文館展示場一張全票要多少錢？",
+    "prompt_en": "What is the price of an adult ticket to Taipei Astronomical Museum’s exhibition hall?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 40.0,
+    "usd": 1.21,
+    "source_url": "https://en.tam.gov.taipei/News_Content.aspx?n=32FD082B7F3FA5E5&s=D3869EA9A2AC6C8A",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://tam.gov.taipei/cp.aspx?n=1FBCE6F417E8A9F7",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "taipei-ce1-07",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 7,
+    "place_zh": "臺北捷運台北車站詢問處，中正區，台北",
+    "place_en": "Taipei Metro information counter, Taipei Main Station, Zhongzheng",
+    "location_lat": 25.0466167,
+    "location_lng": 121.5176068,
+    "osm_ref": "way/1559040563",
+    "prompt_zh": "臺北捷運一張一般一日票要多少錢？",
+    "prompt_en": "What is the price of a standard Taipei Metro one-day pass?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 150.0,
+    "usd": 4.55,
+    "source_url": "https://m.metro.taipei/en/ticketinfo.asp",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://web.metro.taipei/pages2026/WebStation/051",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-08",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 8,
+    "place_zh": "臺北兒童新樂園摩天輪，士林區，台北",
+    "place_en": "Taipei Children’s Amusement Park Ferris wheel, Shilin, Taipei",
+    "location_lat": 25.0966999,
+    "location_lng": 121.5153932,
+    "osm_ref": "way/1346846075",
+    "prompt_zh": "臺北兒童新樂園搭一次摩天輪的設施票要多少錢？",
+    "prompt_en": "What is the price of one Ferris wheel ride at Taipei Children’s Amusement Park?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 30.0,
+    "usd": 0.91,
+    "source_url": "https://english.tcap.taipei/cp.aspx?n=0EE6B89A9CF30056",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://english.tcap.taipei/cp.aspx?n=244A93049FE0079E",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "taipei-ce1-09",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 9,
+    "place_zh": "台北101觀景台售票處，信義區，台北",
+    "place_en": "Taipei 101 Observatory ticket office, Xinyi, Taipei",
+    "location_lat": 25.0333555,
+    "location_lng": 121.5649073,
+    "osm_ref": "way/1339499083",
+    "prompt_zh": "台北101觀景台 89 樓一張成人全票要多少錢？",
+    "prompt_en": "What is the price of a full-price adult ticket to Taipei 101’s 89th-floor observatory?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 600.0,
+    "usd": 18.19,
+    "source_url": "https://101ob.welcometw.com/tour/Lyrg?lang=zh_TW",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.taipei-101.com.tw/tw/observatory",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-10",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 10,
+    "place_zh": "國立故宮博物院北院第一展覽館，士林區，台北",
+    "place_en": "National Palace Museum Northern Branch, Exhibition Hall I, Shilin, Taipei",
+    "location_lat": 25.1018105,
+    "location_lng": 121.5487377,
+    "osm_ref": "way/244450380",
+    "prompt_zh": "臺北故宮北院一張外籍成人一般票要多少錢？",
+    "prompt_en": "What is the price of a standard ticket for a non-Taiwanese adult at the National Palace Museum’s Northern Branch?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 350.0,
+    "usd": 10.61,
+    "source_url": "https://www.npm.gov.tw/Articles.aspx?l=2&sno=02007004",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.npm.gov.tw/Articles.aspx?sno=02007001",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "taipei-ce1-11",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 11,
+    "place_zh": "台北當代藝術館售票處，大同區，台北",
+    "place_en": "MOCA Taipei ticket office, Datong, Taipei",
+    "location_lat": 25.0504894,
+    "location_lng": 121.5190682,
+    "osm_ref": "way/251731717",
+    "prompt_zh": "台北當代藝術館一張一般門票要多少錢？",
+    "prompt_en": "What is the price of a general admission ticket to the Museum of Contemporary Art Taipei?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 100.0,
+    "usd": 3.03,
+    "source_url": "https://www.moca.taipei/en/Visit/Hours%20%26%20Admissions",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.moca.taipei/en/Visit/Getting%20Here",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-12",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 12,
+    "place_zh": "台灣高鐵台北車站售票處，中正區，台北",
+    "place_en": "THSR ticket office, Taipei Main Station, Zhongzheng",
+    "location_lat": 25.0468505,
+    "location_lng": 121.5171029,
+    "osm_ref": "way/1565404787",
+    "prompt_zh": "台灣高鐵從台北到桃園一張標準車廂對號全票要多少錢？",
+    "prompt_en": "What is the price of one full-fare reserved standard-class high-speed rail ticket from Taipei to Taoyuan?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 160.0,
+    "usd": 4.85,
+    "source_url": "https://en.thsrc.com.tw/ArticleContent/4c3efc1d-e6df-4bfd-97b4-52e89f79ee5c",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://en.thsrc.com.tw/ArticleContent/53156954-1528-461f-af8b-54c517a435a4",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-13",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 13,
+    "place_zh": "春水堂南西店，中山區，台北",
+    "place_en": "Chun Shui Tang SKM Nanxi, Zhongshan, Taipei",
+    "location_lat": 25.0523845,
+    "location_lng": 121.5211033,
+    "osm_ref": "way/542684698",
+    "prompt_zh": "一碗御品牛肉麵的餐牌原價要多少錢？",
+    "prompt_en": "What is the price of a bowl of signature braised beef noodle soup at menu price?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 315.0,
+    "usd": 9.55,
+    "source_url": "https://www.chunshuitang.com.tw/menu-detail/skm_nanxi_store/",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.chunshuitang.com.tw/en/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-14",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 14,
+    "place_zh": "臺北戲棚售票處，中山區，台北",
+    "place_en": "TaipeiEYE box office, Zhongshan, Taipei",
+    "location_lat": 25.0610017,
+    "location_lng": 121.5231307,
+    "osm_ref": "way/724232243",
+    "prompt_zh": "臺北戲棚一般晚場演出的一張全票要多少錢？",
+    "prompt_en": "What is the price of a full-price ticket for a regular evening show at TaipeiEYE?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 800.0,
+    "usd": 24.26,
+    "source_url": "https://www.taipeieye.com/en/Order/2026/11?programId=38&scheduleId=10377",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.taipeieye.com/en/location/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-15",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 15,
+    "place_zh": "鼎泰豐台北101店，信義區，台北",
+    "place_en": "Din Tai Fung Taipei 101, Xinyi, Taipei",
+    "location_lat": 25.0334669,
+    "location_lng": 121.5644527,
+    "osm_ref": "way/1339499085",
+    "prompt_zh": "一份蝦仁蛋炒飯的外送餐牌價要多少錢？",
+    "prompt_en": "What is the price of one shrimp and egg fried rice at the delivery menu price?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 320.0,
+    "usd": 9.7,
+    "source_url": "https://www.ubereats.com/tw/store/din-tai-fung%E9%BC%8E%E6%B3%B0%E8%B1%90-101%E5%BA%97/AdPwg1XZTwOrtO90s3mFSA",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.dintaifung.com.tw/eng/store.php?cid=1",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-16",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 16,
+    "place_zh": "臺北市立動物園遊客列車總站，文山區，台北",
+    "place_en": "Taipei Zoo shuttle train main stop, Wenshan, Taipei",
+    "location_lat": 24.9983215,
+    "location_lng": 121.5821923,
+    "osm_ref": "way/1346843043",
+    "prompt_zh": "臺北市立動物園遊客列車一張票要多少錢？",
+    "prompt_en": "What is the price of a ticket for the Taipei Zoo shuttle train?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 5.0,
+    "usd": 0.15,
+    "source_url": "https://english.zoo.gov.taipei/cp.aspx?n=8ED5B9F3BA1D301D&s=0FDA15FCD803C117",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://english.zoo.gov.taipei/cp.aspx?n=26f8019ce6d17786",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-17",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 17,
+    "place_zh": "鼎泰豐台北101店，信義區，台北",
+    "place_en": "Din Tai Fung Taipei 101, Xinyi, Taipei",
+    "location_lat": 25.0334669,
+    "location_lng": 121.5644527,
+    "osm_ref": "way/1339499085",
+    "prompt_zh": "一份蝦肉紅油抄手的外送餐牌價要多少錢？",
+    "prompt_en": "What is the price of one spicy shrimp and pork wontons order at the delivery menu price?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 240.0,
+    "usd": 7.28,
+    "source_url": "https://www.ubereats.com/tw/store/din-tai-fung%E9%BC%8E%E6%B3%B0%E8%B1%90-101%E5%BA%97/AdPwg1XZTwOrtO90s3mFSA",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.dintaifung.com.tw/eng/store.php?cid=1",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-18",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 18,
+    "place_zh": "春水堂南西店，中山區，台北",
+    "place_en": "Chun Shui Tang SKM Nanxi, Zhongshan, Taipei",
+    "location_lat": 25.0523845,
+    "location_lng": 121.5211033,
+    "osm_ref": "way/542684698",
+    "prompt_zh": "一壺高山焙火烏龍的餐牌原價要多少錢？",
+    "prompt_en": "What is the price of a pot of roasted oolong tea at menu price?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 290.0,
+    "usd": 8.79,
+    "source_url": "https://www.chunshuitang.com.tw/menu-detail/skm_nanxi_store/",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.chunshuitang.com.tw/en/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-19",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 19,
+    "place_zh": "春水堂南西店，中山區，台北",
+    "place_en": "Chun Shui Tang SKM Nanxi, Zhongshan, Taipei",
+    "location_lat": 25.0523845,
+    "location_lng": 121.5211033,
+    "osm_ref": "way/542684698",
+    "prompt_zh": "一份蒸蘿蔔糕的餐牌原價要多少錢？",
+    "prompt_en": "What is the price of a serving of steamed turnip cake at menu price?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 130.0,
+    "usd": 3.94,
+    "source_url": "https://www.chunshuitang.com.tw/menu-detail/skm_nanxi_store/",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.chunshuitang.com.tw/en/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "taipei-ce1-20",
+    "city": "taipei",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 20,
+    "place_zh": "春水堂南西店，中山區，台北",
+    "place_en": "Chun Shui Tang SKM Nanxi, Zhongshan, Taipei",
+    "location_lat": 25.0523845,
+    "location_lng": 121.5211033,
+    "osm_ref": "way/542684698",
+    "prompt_zh": "一碗功夫麵的餐牌原價要多少錢？",
+    "prompt_en": "What is the price of a bowl of Kung-Fu Noodles at menu price?",
+    "choices": null,
+    "currency": "NT$",
+    "rate": 32.98,
+    "local_amount": 135.0,
+    "usd": 4.09,
+    "source_url": "https://www.chunshuitang.com.tw/menu-detail/skm_nanxi_store/",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.chunshuitang.com.tw/en/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
   },
   {
     "id": "hong-kong-001",
@@ -750,109 +1908,5 @@
     "photo_licence": null,
     "recheck_within_six_months": false,
     "status": "draft"
-  },
-  {
-    "id": "taipei-006",
-    "city": "taipei",
-    "type": "question",
-    "kind": "choice",
-    "place_zh": "象山公園",
-    "place_en": "Xiangshan Park",
-    "location_lat": 25.0301894,
-    "location_lng": 121.5702748,
-    "prompt_zh": "象山公園的所在地以前是什麼用途？",
-    "prompt_en": "What was the site of Xiangshan Park previously used for?",
-    "choices": [
-      {
-        "zh": "軍事靶場",
-        "en": "A military firing range"
-      },
-      {
-        "zh": "茶葉工廠",
-        "en": "A tea factory"
-      },
-      {
-        "zh": "火車維修廠",
-        "en": "A railway workshop"
-      },
-      {
-        "zh": "海港碼頭",
-        "en": "A harbour pier"
-      }
-    ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://www.travel.taipei/en/attraction/details/703/",
-    "location_source_url": "https://www.openstreetmap.org/way/319526552",
-    "checked_date": "2026-11-18",
-    "status": "draft",
-    "recheck_within_six_months": false
-  },
-  {
-    "id": "taipei-007",
-    "city": "taipei",
-    "type": "question",
-    "kind": "choice",
-    "place_zh": "大安森林公園",
-    "place_en": "Daan Forest Park",
-    "location_lat": 25.0312408,
-    "location_lng": 121.536494,
-    "prompt_zh": "大安森林公園的生態池有幾座人工島？",
-    "prompt_en": "How many artificial islands are in Daan Forest Park’s ecological pond?",
-    "choices": [
-      {
-        "zh": "兩座",
-        "en": "Two"
-      },
-      {
-        "zh": "一座",
-        "en": "One"
-      },
-      {
-        "zh": "四座",
-        "en": "Four"
-      },
-      {
-        "zh": "六座",
-        "en": "Six"
-      }
-    ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://www.travel.taipei/en/pictorial/article/57704",
-    "location_source_url": "https://www.openstreetmap.org/way/49195976",
-    "checked_date": "2026-11-18",
-    "status": "draft",
-    "recheck_within_six_months": false
-  },
-  {
-    "id": "taipei-008",
-    "city": "taipei",
-    "type": "question",
-    "kind": "text",
-    "place_zh": "大佳河濱公園",
-    "place_en": "Dajia Riverside Park",
-    "location_lat": 25.0757169,
-    "location_lng": 121.5331829,
-    "prompt_zh": "大佳河濱公園沿著哪一條河流？",
-    "prompt_en": "Which river runs alongside Dajia Riverside Park?",
-    "choices": null,
-    "answer": {
-      "zh": [
-        "基隆河"
-      ],
-      "en": [
-        "Keelung River",
-        "Jilong River",
-        "Keelung"
-      ]
-    },
-    "source_url": "https://travel.taipei/en/attraction/details/602",
-    "location_source_url": "https://www.openstreetmap.org/way/354318668",
-    "checked_date": "2026-11-18",
-    "status": "draft",
-    "recheck_within_six_months": false
   }
 ]
