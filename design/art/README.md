@@ -645,3 +645,13 @@ The Macau pedicab layout was checked again against two photographs on 2026-11-15
 The wax-red canopy and upper bow swing rearward. The pleats gather, then the stack rotates down around the lower seat-frame hinge and rests behind the blue bench. The folded letter is fully visible in the open pose. The closed PNG and WebP are byte-identical to `dc5c66c`. The front wheel still ticks as the cab bobs over 3.9 seconds.
 
 [Rooster motion](_checks/rooster-motion.png) · [Rooster at 40/120 px](_checks/rooster-silhouette.png) · [Pedicab motion](_checks/pedicab-motion.png) · [Animated fold](_checks/pedicab-fold.gif) · [Pedicab at 40/120 px](_checks/pedicab-silhouette.png) · [Hash and geometry audit](_checks/rv-mo-wave-1-audit.json)
+
+### Quest-type pictures — test batch
+
+| Master | Size | Description |
+|---|---|---|
+| `quest-types/quest-type-arrive.png` | 1024×1024 | Opaque arrive quest picture for a 46 px pin and centred 16:9 crop. |
+| `quest-types/quest-type-question.png` | 1024×1024 | Opaque question quest picture for a 46 px pin and centred 16:9 crop. |
+| `quest-types/quest-type-price.png` | 1024×1024 | Opaque price quest picture for a 46 px pin and centred 16:9 crop. |
+
+[Pin and banner review](_checks/quest-types-review.png) · [Asset audit](_checks/quest-types-assets.json). The first three pictures await Roy’s approval before catch and landmark are drawn.

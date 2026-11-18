@@ -12766,5 +12766,59 @@
     "model": "gpt-image-2",
     "web_export": "public/art/vessels/vessel-tram-bell.webp",
     "postprocess": "Cleaned and registered the isolated bell to the front-panel mount."
+  },
+  {
+    "path": "design/art/quest-types/quest-type-arrive.png",
+    "what": "Arrive quest-type picture for a circular map pin and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse the first attached image as the style reference and the second as an example of the existing quest-template framing. Create one new quest-type picture: Walking footsteps on a cream path arriving at a small wax-red flag. Make the footprints and flag a single clear, large central subject. Picture-specific exception to the transparent background instruction: use an opaque, full-bleed square paper scene like the template. Place the main subject centrally and make it easy to recognize in both a 46 px circular crop and a centered 16:9 crop. No text, letters, numbers, symbols, question marks, currency signs, borders, or pin shape.\nComposition correction: keep the small red flag AND the footprints together near the exact center as one compact group, entirely within the central 55% of the square and the middle 45% vertically. No trees or other large background subjects. The flag must be unmistakably visible in the centered circle, not at an outer edge.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-templates/quest-template-park.png"
+    ],
+    "quest_type": "arrive",
+    "postprocess": "Downscaled from 1254 square to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-types/quest-type-arrive.webp"
+  },
+  {
+    "path": "design/art/quest-types/quest-type-question.png",
+    "what": "Question quest-type picture for a circular map pin and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse the first attached image as the style reference and the second as an example of the existing quest-template framing. Create one new quest-type picture: A large brass magnifying glass over a folded paper clue. The paper is completely blank. Picture-specific exception to the transparent background instruction: use an opaque, full-bleed square paper scene like the template. Place the main subject centrally and make it easy to recognize in both a 46 px circular crop and a centered 16:9 crop. No text, letters, numbers, symbols, question marks, currency signs, borders, or pin shape.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-templates/quest-template-park.png"
+    ],
+    "quest_type": "question",
+    "postprocess": "Downscaled from 1254 square to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-types/quest-type-question.webp"
+  },
+  {
+    "path": "design/art/quest-types/quest-type-price.png",
+    "what": "Price quest-type picture for a circular map pin and a 16:9 banner",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse the first attached image as the style reference and the second as an example of the existing quest-template framing. Create one new quest-type picture: A large brass price tag on a string resting on a small stack of plain coins. The tag and coins are completely blank. Picture-specific exception to the transparent background instruction: use an opaque, full-bleed square paper scene like the template. Place the main subject centrally and make it easy to recognize in both a 46 px circular crop and a centered 16:9 crop. No text, letters, numbers, symbols, question marks, currency signs, borders, or pin shape.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/quest-templates/quest-template-park.png"
+    ],
+    "quest_type": "price",
+    "postprocess": "Downscaled from 1254 square to 1024 square with Lanczos. Both display crops use the center.",
+    "web_export": "public/art/quest-types/quest-type-price.webp"
   }
 ]

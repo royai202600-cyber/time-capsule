@@ -1,0 +1,64 @@
+{
+  "count": 3,
+  "passed": 3,
+  "failed": [],
+  "assets": [
+    {
+      "path": "quest-types/quest-type-arrive.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-types/quest-type-price.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "quest-types/quest-type-question.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": false,
+      "corners_alpha": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    }
+  ]
+}
