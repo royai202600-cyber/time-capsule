@@ -3,7 +3,9 @@ alter table public.vessels add column unlimited_copies boolean not null default 
 update public.vessels set unlimited_copies=true where id in ('dome','bottle','envelope','tin') or earned_place is not null;
 alter table public.vessels add constraint required_unlimited_vessels
   check (unlimited_copies or (id not in ('dome','bottle','envelope','tin') and earned_place is null));
-alter table public.owned_vessels alter column copies drop not null;
+alter table public.owned_vessels
+  alter column copies drop not null,
+  alter column copies drop default;
 alter table public.owned_vessels drop constraint owned_vessels_copies_check;
 alter table public.owned_vessels add constraint owned_vessels_copies_check check (copies is null or copies >= 0);
 update public.owned_vessels o set copies=case when v.unlimited_copies then null else 10 end from public.vessels v where v.id=o.vessel;
@@ -17,12 +19,14 @@ create function private.copies_per_catch(p_user uuid) returns integer language s
 $$;
 revoke all on function private.copies_per_catch(uuid) from public,anon,authenticated;
 
--- Existing acquisition paths omit copies; normalize unlimited ownership on insertion.
+-- New ownership must match the catalogue setting. Lock it against concurrent switches.
 create function private.vessel_copies_on_insert() returns trigger language plpgsql set search_path='' as $$
 declare is_unlimited boolean;
 begin
   select v.unlimited_copies into is_unlimited from public.vessels v where v.id=new.vessel for share;
-  if is_unlimited then new.copies:=null; end if;
+  if found and is_unlimited <> (new.copies is null) then
+    raise exception 'invalid_ownership_copies';
+  end if;
   return new;
 end $$;
 create trigger vessel_copies_on_insert before insert on public.owned_vessels for each row execute function private.vessel_copies_on_insert();
@@ -95,6 +99,96 @@ begin
   return v_id;
 end $function$
 ;
+
+CREATE OR REPLACE FUNCTION public.acquire_vessel(p_vessel text)
+ RETURNS integer
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare v public.vessels; n integer;
+begin
+  if auth.uid() is null then raise exception 'not signed in'; end if;
+  select * into v from public.vessels where id = p_vessel for share;
+  if v.id is null then raise exception 'unknown vessel'; end if;
+  if v.earned_place is not null then raise exception 'vessel must be earned at its place' using hint = 'earned_only'; end if;
+  if v.brand is null and v.edition_total is null then
+    raise exception 'vessel must be collected' using hint = 'collect_only';
+  end if;
+  if exists (select 1 from public.owned_vessels where user_id = auth.uid() and vessel = p_vessel) then
+    raise exception 'already owned' using hint = 'owned';
+  end if;
+  if v.edition_total is not null then
+    perform pg_advisory_xact_lock(hashtext('vessel:' || p_vessel));   -- number editions one at a time
+    select coalesce(max(edition_no), 0) + 1 into n from public.owned_vessels where vessel = p_vessel;
+    if n > v.edition_total then raise exception 'sold out' using hint = 'sold_out'; end if;
+  end if;
+  insert into public.owned_vessels (user_id, vessel, edition_no, copies)
+    values (auth.uid(), p_vessel, n, case when v.unlimited_copies then null else 10 end);
+  return n;
+end $function$;
+
+create or replace function public.open_capsule(p_id uuid, p_lat double precision DEFAULT NULL::double precision, p_lng double precision DEFAULT NULL::double precision, p_accuracy double precision DEFAULT NULL::double precision)
+ returns table(message text, drawing text, photo text, opened_at timestamptz, gift_code text, voice_path text, voice_ms integer, prediction text, verdict boolean)
+ language plpgsql security definer set search_path = '' as $function$
+declare c public.capsules; pl public.places; d double precision; g text;
+  cfg private.game_config; waited_days integer;
+begin
+  select * into c from public.capsules
+    where id = p_id and recipient = auth.uid() for update;
+  if c.id is null then raise exception 'capsule not found'; end if;
+  if c.opened_at is null then
+    if c.open_at > now() then raise exception 'not yet' using hint = 'locked'; end if;
+    if c.place is not null or c.place_lat is not null then
+      if c.place is not null then
+        select * into strict pl from public.places where id = c.place;
+      end if;
+      if p_lat is null or p_lng is null then raise exception 'location needed' using hint = 'no_location'; end if;
+      if p_lat < -90 or p_lat > 90 or p_lng < -180 or p_lng > 180 then
+        raise exception 'invalid location' using hint = 'no_location';
+      end if;
+      if p_accuracy is null or p_accuracy <= 0 or p_accuracy > 200 then
+        raise exception 'location not accurate enough' using hint = 'inaccurate';
+      end if;
+      d := public.distance_m(p_lat, p_lng, coalesce(c.place_lat, pl.lat), coalesce(c.place_lng, pl.lng));
+      if d > coalesce(pl.radius_m, 100) then raise exception 'too far: % m', round(d) using hint = 'far'; end if;
+      if pl.brand_vessel is not null and pl.brand_vessel = c.vessel then
+        g := 'AUR-' || lpad(coalesce(c.edition_no, 0)::text, 3, '0') || '-' || upper(substr(md5(random()::text || c.id::text), 1, 4));
+      end if;
+    end if;
+    update public.capsules
+      set opened_at = now(), seen_at = coalesce(seen_at, now()),
+          opened_lat = p_lat, opened_lng = p_lng,
+          opened_distance_m = case when d is null then null else round(d) end,
+          gift_code = g
+      where id = p_id
+      returning * into c;
+    if c.place is not null then
+      insert into public.owned_vessels (user_id, vessel, copies)
+        select c.recipient, v.id, null::integer from public.vessels v where v.earned_place = c.place
+        on conflict (user_id, vessel) do nothing;
+    end if;
+    begin
+      if c.place is not null then
+      insert into public.passport_stamps(user_id,place,first_at,how_earned)
+        values(c.recipient,c.place,c.opened_at,'capsule')
+        on conflict (user_id,place) do nothing;
+      end if;
+    select * into cfg from private.game_config where singleton;
+    waited_days:=least(cfg.xp_open_day_cap,
+      floor(extract(epoch from c.opened_at-c.sealed_at)/86400)::integer);
+    if waited_days>=cfg.xp_open_min_days then
+      perform private.ensure_player(c.recipient);
+      perform private.award_xp(c.recipient,'capsule_open',c.id::text,
+        cfg.xp_open_base+cfg.xp_open_per_day*waited_days);
+    end if;
+    exception when others then
+      raise warning 'Time Capsule game rewards failed for capsule %: %',c.id,sqlerrm;
+    end;
+  end if;
+  return query select cc.message, cc.drawing, cc.photo, c.opened_at, c.gift_code, cc.voice_path, cc.voice_ms, cc.prediction, c.verdict
+    from public.capsule_contents cc where cc.capsule_id = p_id;
+end $function$;
 
 -- Today's Hunt can award points independently by skipping this inventory operation.
 create function private.award_catch_copies(p_user uuid, p_vessel text)
@@ -380,7 +474,7 @@ begin
   then raise exception 'required_unlimited'; end if;
 
   update public.vessels set unlimited_copies = "on" where id = vessel_id;
-  update public.owned_vessels set copies = case when "on" then null else 0 end where vessel = vessel_id;
+  update public.owned_vessels set copies = case when "on" then null else 10 end where vessel = vessel_id;
   after_state := private.vessel_copy_snapshot(vessel_id);
   perform private.admin_log('vessel.unlimited', 'vessel_copies', vessel_id, vessel_id, before_state, after_state);
   return jsonb_build_object('unlimited_copies', "on");

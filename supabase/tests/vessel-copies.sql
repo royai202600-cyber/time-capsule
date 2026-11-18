@@ -50,6 +50,12 @@ begin
   if exists(select 1 from public.vessel_stock() where copies is distinct from 0) then
     raise exception 'Unowned finite limited stock leaked a balance';
   end if;
+  perform public.acquire_vessel('maison');
+  select * into strict collection from public.my_collection() where vessel='maison';
+  if collection.copies is distinct from 10 then raise exception 'Shop purchase did not start at 10'; end if;
+  perform public.send_capsule(auth.uid(),'maison','test','',now()+interval '1 day');
+  select * into strict collection from public.my_collection() where vessel='maison';
+  if collection.copies is distinct from 9 then raise exception 'Shop send did not spend one of 10 copies'; end if;
   for i in 1..5 loop
     if i in (2,3) then continue; end if;
     perform pg_temp.copies_user(i);
@@ -63,10 +69,17 @@ reset role;
 
 select pg_temp.copies_user(1);
 do $$
-declare v text; x record; spawn record; post record; attempt uuid; balance integer;
+declare v text; x record; spawn record; post record; attempt uuid; cap_id uuid; balance integer;
 begin
-  insert into public.owned_vessels(user_id,vessel)
-    select auth.uid(),id from public.vessels where earned_place is not null limit 1 returning vessel into v;
+  perform pg_temp.copies_error($q$insert into public.owned_vessels(user_id,vessel)
+    values(auth.uid(),'maison')$q$,'invalid_ownership_copies');
+  select r.id as vessel, p.id as place, p.lat, p.lng into strict post
+    from public.vessels r join public.places p on p.id=r.earned_place limit 1;
+  v := post.vessel;
+  insert into public.capsules(sender,recipient,vessel,place,open_at)
+    values(auth.uid(),auth.uid(),'dome',post.place,now()) returning id into cap_id;
+  insert into public.capsule_contents(capsule_id,message) values(cap_id,'Landmark opening fixture');
+  perform public.open_capsule(cap_id,post.lat,post.lng,10);
   select * into strict x from public.my_collection() where vessel=v;
   if x.copies is not null or x.stars<>1 then raise exception 'Landmark collection incorrect'; end if;
   perform public.send_capsule(auth.uid(),v,'test','',now()+interval '1 day');
@@ -127,10 +140,18 @@ begin
   perform public.admin_vessel_set_unlimited('photo-strip',true);
   if (select copies from public.owned_vessels where user_id=player and vessel='photo-strip') is not null then raise exception 'Toggle on failed'; end if;
   select id into strict event_id from private.admin_actions where actor=auth.uid() and action='vessel.unlimited';
-  if (public.admin_undo(event_id)->>'unlimited_copies')::boolean or
-     (select copies from public.owned_vessels where user_id=player and vessel='photo-strip')<>3
+  expected := public.admin_undo(event_id);
+  if expected->'unlimited_copies' is distinct from 'false'::jsonb or
+     (select copies from public.owned_vessels where user_id=player and vessel='photo-strip') is distinct from 3
   then raise exception 'Toggle undo did not restore finite balance'; end if;
   perform public.admin_vessel_set_unlimited('photo-strip',true);
   perform public.admin_vessel_set_unlimited('photo-strip',false);
-  if (select copies from public.owned_vessels where user_id=player and vessel='photo-strip')<>0 then raise exception 'Toggle off failed'; end if;
+  if (select copies from public.owned_vessels where user_id=player and vessel='photo-strip') is distinct from 10
+  then raise exception 'Toggle off did not grant 10 copies'; end if;
+  select id into strict event_id from private.admin_actions where actor=auth.uid()
+    and action='vessel.unlimited' and (after->>'unlimited_copies')::boolean=false;
+  expected := public.admin_undo(event_id);
+  if expected->'unlimited_copies' is distinct from 'true'::jsonb or
+     (select copies from public.owned_vessels where user_id=player and vessel='photo-strip') is not null
+  then raise exception 'Toggle-off undo did not restore unlimited ownership'; end if;
 end $$;
