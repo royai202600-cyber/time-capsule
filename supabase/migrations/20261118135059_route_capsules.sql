@@ -173,6 +173,7 @@ begin
     raise exception 'bad_rule';
   end if;
   rule.type := (stop->>'type')::private.quest_type;
+  if not private.text_allowed(place_name) then raise exception 'blocked_words'; end if;
   if stop->>'pool_id' is not null then
     if rule.type not in ('question','price') or prompt is not null or answer is not null then
       raise exception 'bad_rule';
@@ -194,7 +195,9 @@ begin
     then raise exception 'rejected'; end if;
     if nullif(private.private_hunt_normalize_answer(answer),'') is null then raise exception 'no_answer'; end if;
     if jsonb_typeof(stop->'own_answer') is distinct from 'string' then raise exception 'rejected'; end if;
-    if not private.text_allowed(prompt) then raise exception 'blocked_words'; end if;
+    if not (private.text_allowed(prompt) and private.text_allowed(answer)) then
+      raise exception 'blocked_words';
+    end if;
     rule.question := jsonb_build_object('kind','text','prompt_zh',prompt,'prompt_en',prompt);
     rule.correct_answer := jsonb_build_object('text',answer);
   elsif prompt is not null or answer is not null then

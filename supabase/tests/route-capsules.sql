@@ -96,6 +96,10 @@ begin
   perform pg_temp.route_expect(format('select public.send_capsule(%L,%L,%L,%L,now()+interval ''1 hour'',p_route=>%L)',
     recipient,'dome','Body','Hint',jsonb_build_array(stop||'{"own_question":"go die","own_answer":"Tea"}')),'blocked_words');
   perform pg_temp.route_expect(format('select public.send_capsule(%L,%L,%L,%L,now()+interval ''1 hour'',p_route=>%L)',
+    recipient,'dome','Body','Hint',jsonb_build_array(point||'{"type":"arrive","name":"Go die"}')),'blocked_words');
+  perform pg_temp.route_expect(format('select public.send_capsule(%L,%L,%L,%L,now()+interval ''1 hour'',p_route=>%L)',
+    recipient,'dome','Body','Hint',jsonb_build_array(stop||'{"own_answer":"Go die"}')),'blocked_words');
+  perform pg_temp.route_expect(format('select public.send_capsule(%L,%L,%L,%L,now()+interval ''1 hour'',p_route=>%L)',
     recipient,'dome','Body','Hint',jsonb_build_array(stop||jsonb_build_object('own_answer',repeat('a',121)))),'rejected');
   perform pg_temp.route_expect(format('select public.send_capsule(%L,%L,%L,%L,now()+interval ''1 hour'',p_route=>%L)',
     recipient,'dome','Body','Hint',jsonb_build_array(stop||jsonb_build_object('own_question',repeat('a',281),'own_answer','Tea'))),'rejected');
