@@ -788,5 +788,71 @@
     "checked_date": "2026-11-18",
     "status": "draft",
     "recheck_within_six_months": false
+  },
+  {
+    "id": "taipei-007",
+    "city": "taipei",
+    "type": "question",
+    "kind": "choice",
+    "place_zh": "大安森林公園",
+    "place_en": "Daan Forest Park",
+    "location_lat": 25.0312408,
+    "location_lng": 121.536494,
+    "prompt_zh": "大安森林公園的生態池有幾座人工島？",
+    "prompt_en": "How many artificial islands are in Daan Forest Park’s ecological pond?",
+    "choices": [
+      {
+        "zh": "兩座",
+        "en": "Two"
+      },
+      {
+        "zh": "一座",
+        "en": "One"
+      },
+      {
+        "zh": "四座",
+        "en": "Four"
+      },
+      {
+        "zh": "六座",
+        "en": "Six"
+      }
+    ],
+    "answer": {
+      "choice": 0
+    },
+    "source_url": "https://www.travel.taipei/en/pictorial/article/57704",
+    "location_source_url": "https://www.openstreetmap.org/way/49195976",
+    "checked_date": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": false
+  },
+  {
+    "id": "taipei-008",
+    "city": "taipei",
+    "type": "question",
+    "kind": "text",
+    "place_zh": "大佳河濱公園",
+    "place_en": "Dajia Riverside Park",
+    "location_lat": 25.0757169,
+    "location_lng": 121.5331829,
+    "prompt_zh": "大佳河濱公園沿著哪一條河流？",
+    "prompt_en": "Which river runs alongside Dajia Riverside Park?",
+    "choices": null,
+    "answer": {
+      "zh": [
+        "基隆河"
+      ],
+      "en": [
+        "Keelung River",
+        "Jilong River",
+        "Keelung"
+      ]
+    },
+    "source_url": "https://travel.taipei/en/attraction/details/602",
+    "location_source_url": "https://www.openstreetmap.org/way/354318668",
+    "checked_date": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": false
   }
 ]

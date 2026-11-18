@@ -55,3 +55,10 @@ The first 20 rows predate the distinct-place and public-outdoor requirement. The
 | taipei-006 | 象山公園 / Xiangshan Park | 象山公園的所在地以前是什麼用途？ / What was the site of Xiangshan Park previously used for? | 軍事靶場 / A military firing range | [Taipei Travel](https://www.travel.taipei/en/attraction/details/703/) | 2026-11-18 | None |
 
 The published [coverage table](../design/waypost-coverage.md#map-coverage-what-is-in-and-out) excludes Lantau, most of Coloane, and the north of Singapore. Existing CE1 venues include the [Tung Chung cable car terminal on Lantau](https://www.np360.com.hk/en/visitor-information/faqs), [Singapore Zoo at Mandai](https://www.mandai.com/en/plan-your-visit/maps.html), and Lord Stow’s Café in Coloane. The exact café location still needs its own source: the bakery contact page is not enough to establish the café entrance. These existing venues cannot simultaneously retain their real locations and be inside the current coverage; do not assign misleading coordinates. Also pending: clarification of the new no-schools instruction against the previously approved HKUST outdoor exception.
+
+Additional candidates away from the Landmark (outdoor path locations are from the same 20261108180337 sampled-path seed; each needs a fresh safety and access review):
+
+| ID | Place | Question (zh / en) | Answer (zh / en) | Source | Checked | Photo credit |
+|---|---|---|---|---|---|---|
+| taipei-007 | 大安森林公園 / Daan Forest Park | 生態池有幾座人工島？ / How many artificial islands are in its ecological pond? | 兩座 / Two | [Taipei Travel](https://www.travel.taipei/en/pictorial/article/57704) | 2026-11-18 | None |
+| taipei-008 | 大佳河濱公園 / Dajia Riverside Park | 沿著哪一條河流？ / Which river runs alongside the park? | 基隆河 / Keelung River | [Taipei Travel](https://travel.taipei/en/attraction/details/602) | 2026-11-18 | None |
