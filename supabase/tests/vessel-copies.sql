@@ -72,6 +72,12 @@ begin
   perform public.send_capsule(auth.uid(),v,'test','',now()+interval '1 day');
   if private.award_catch_copies(auth.uid(),v) is not null then raise exception 'Unlimited catch has balance'; end if;
 
+  select lat,lng into strict post from private.public_capsule_points where eligible limit 1;
+  select * into strict x from public.public_capsule_drop('test','','bottle',1,post.lat,post.lng,10);
+  if not exists (select 1 from public.capsules c where c.id=x.id and c.is_public and c.vessel='bottle') or
+    exists (select 1 from public.owned_vessels where user_id=auth.uid() and vessel='bottle')
+  then raise exception 'Public bottle did not bypass ownership'; end if;
+
   -- A different account starts without Landmark ownership.
   perform pg_temp.copies_user(5);
   select w.id, w.lat, w.lng, r.id as vessel into strict post
