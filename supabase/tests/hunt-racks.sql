@@ -1,4 +1,4 @@
--- Run after the migration SQL in the same transaction. Roll back both.
+-- Run after the vessel copies and rack migrations in the same transaction. Roll back the entire suite.
 create function pg_temp.require_ok(ok boolean, label text) returns void
 language plpgsql as $$
 begin
@@ -35,6 +35,7 @@ declare
   page jsonb;
   page_two jsonb;
   removal jsonb;
+  copy_action_id bigint;
   origin constant text := '25, 121, 10';
 begin
   insert into auth.users (id, email) select id, id::text || '@rack-test.invalid'
@@ -106,14 +107,33 @@ begin
   perform public.admin_queue_resolve('public_capsule_report', capsule_id::text, 'restore', null);
   removal := public.admin_rack_remove(capsule_id, 'Test remove');
   perform pg_temp.require_ok((public.waypost_rack(post_id,'has_question')->>'count')::integer = 0, 'admin remove hides');
-  perform public.admin_undo((removal->>'action_id')::bigint);
-  perform pg_temp.require_ok((public.waypost_rack(post_id,'has_question')->>'count')::integer = 1, 'moderator undo');
+  perform pg_temp.require_ok(public.admin_undo((removal->>'action_id')::bigint) = jsonb_build_object(
+      'capsule_id', capsule_id, 'undo_of', (removal->>'action_id')::bigint),
+    'moderator can undo rack removal through public admin_undo');
+  perform pg_temp.require_ok((public.waypost_rack(post_id,'has_question')->>'count')::integer = 1,
+    'rack undo restores the listing');
   perform pg_temp.require_ok(not exists (select 1 from private.admin_actions where actor = viewer_id and action = 'rack.list')
     and (select count(*) from private.admin_actions where actor = moderator_id and action = 'rack.list'
       and target_type = 'waypost_rack' and target_id = post_id::text and after ?& array['cursor','shown']) = 1
     and exists (select 1 from private.admin_actions where actor = moderator_id and action = 'undo')
     and exists (select 1 from private.admin_actions where actor = moderator_id and action = 'rack.remove'
       and note = 'Test remove'), 'only the page with a reported body is logged, alongside removal and undo');
+
+  insert into public.owned_vessels (user_id, vessel, copies) values (sender_id, 'photo-strip', 2);
+  perform set_config('request.jwt.claim.sub', admin_id::text, true);
+  perform pg_temp.require_ok(public.admin_player_adjust_copies(sender_id, 'photo-strip', 3, 'HL-C1 integration') =
+    '{"copies":5}'::jsonb, 'HL-C2 adjusts copies through the admin RPC');
+  select id into strict copy_action_id from private.admin_actions
+  where actor = admin_id and action = 'vessel.player_copies' and note = 'HL-C1 integration';
+  perform set_config('request.jwt.claim.sub', moderator_id::text, true);
+  perform pg_temp.expect_error(format('select public.admin_undo(%s)', copy_action_id), 'forbidden');
+  perform set_config('request.jwt.claim.sub', admin_id::text, true);
+  perform pg_temp.require_ok(public.admin_undo(copy_action_id) = '{"copies":2}'::jsonb,
+    'public admin_undo delegates vessel copies to the HL-C2 implementation');
+  perform pg_temp.require_ok((select copies from public.owned_vessels where user_id = sender_id and vessel = 'photo-strip') = 2
+    and exists (select 1 from private.admin_actions where actor = admin_id and action = 'undo'
+      and target_type = 'player_vessel' and after->>'undo_of' = copy_action_id::text),
+    'vessel undo restores the balance and records its audit');
 
   update public.capsules c set open_at = now() - interval '1 minute' where c.id = capsule_id;
   perform set_config('request.jwt.claim.sub', finder_id::text, true);

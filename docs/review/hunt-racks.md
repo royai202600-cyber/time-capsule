@@ -25,7 +25,7 @@ The shared `private.text_allowed(text)` checks English and Chinese substrings ca
 
 ## Proposed cutover
 
-Read-only hosted inventory refreshed on 2026-11-18. **14 unopened capsules move, four are deleted with their content, and one claimed capsule stays in its Inbox.** Three moved capsules are converted to the public bottle. Distances are to the nearest visible, game-enabled common Waypost. Ties use Waypost ID.
+Read-only hosted inventory refreshed on 2026-11-18. Refresh it again immediately before the joint migration and HL-U1 app release. **14 unopened capsules move, four are deleted with their content, and one claimed capsule stays in its Inbox.** Three moved capsules are converted to the public bottle. Distances are to the nearest visible, game-enabled common Waypost. Ties use Waypost ID.
 
 Reproduce the snapshot with the query below. The point-type predicates distinguish the three existing location sources; the final distance comparison must use the unrounded value.
 
@@ -73,6 +73,8 @@ order by disposition, c.id;
 | fa2e095d-ac0d-47a3-9720-92302535dff2 | move | Taipei Civic Square (e736802f-8192-42d8-ae36-58caa815e005) | 31.7 | unclaimed / bottle |
 
 ## Verification
+
+- After PR #155 merged as `ec7cf1c`, hosted Supabase ran HL-C2, HL-C1 and the rack suite in that order inside one rollback transaction. Moving `admin_undo` preserved the HL-C2 routine’s database identity and body. Through the public wrapper, an admin restored a copy balance from five to two and a moderator restored an unopened rack capsule. A moderator was refused vessel undo. Only the page that displayed a reported body generated a `rack.list` audit record. The follow-up read found zero fixture users, profiles, Wayposts, content and audit entries, and both migrations remained unapplied.
 
 - Hosted Supabase ran the migration and `supabase/tests/hunt-racks.sql` inside one transaction ending in `ROLLBACK`. It checked legacy and rack RPC errors, paging and filters, sealing, report and queue states, staff roles, audit records, grants, and the 19 dispositions including the four content cascades. A follow-up read confirmed 19 original public capsules, zero fixture accounts, Wayposts and audit rows, and neither the new RPC nor the migration version present.
 - Local Supabase ran the SQL suite and `node supabase/tests/hunt-racks-api.mjs` with disposable real JWTs. Both HTTP open requests were observed waiting on the same PostgreSQL row before the lock was released. The winner received the letter and Inbox row, and the other got `taken`. True concurrent access was tested locally because independent hosted sessions cannot see schema changes inside the rollback transaction.

@@ -370,7 +370,7 @@ begin
 end;
 $$;
 
--- Keep existing game edit undo behavior behind its own role check.
+-- Retain the HL-C2 vessel copy and game edit undo implementation and its role check.
 alter function public.admin_undo(bigint, text) set schema private;
 revoke all on function private.admin_undo(bigint, text) from public, anon, authenticated, service_role;
 
