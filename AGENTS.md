@@ -83,6 +83,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-19: Singapore price correction migration `20261118140304` was applied directly in one transaction just after midnight Singapore time; eight outdated questions were unpublished and their rows preserved. The five older hunt-loop migrations remain held; a later push of those versions requires `--include-all` because this applied version is newer.
 - 2026-11-18: HL-C5 merged in PR #160. Hold migration `20261118135059` and apply it with the HL-U4 app release, after HL-C4 migration `20261118134846`.
 - 2026-11-18: HL-C4 merged in PR #161 after Claude approved `44ba6ac`. Hold migration `20261118134846` and apply it with the HL-U3 app release (draft PR #163), after the HL-C2, HL-C1 and HL-C3 migrations and before HL-C5’s.
 - 2026-11-18: Roy approved unpublishing Singapore Guess the price sequences 1, 2, 6, 12, 15, 16, 18 and 19 because the venue closed or exhibition ended. Preserve questions and historical plays; apply only just after Singapore midnight after hosted rollback, green CI and owner squash merge with [hold deploy]. Other held migrations remain held.

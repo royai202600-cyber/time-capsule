@@ -1,6 +1,6 @@
 # Task board
 
-CE1 Singapore price correction (2026-11-18): Roy approved unpublishing eight outdated questions; hosted rollback passed. Migration is held for the midnight Singapore window after green CI and owner squash merge; other held migrations must not be applied.
+CE1 Singapore price correction (2026-11-19): PR #162 merged as `43ab294` after green CI. Migration `20261118140304` was applied directly just after Singapore midnight; all eight target rows remain present and unpublished, Singapore has 12 published questions, the other cities are unchanged, and today returns published seq 5. The five older hunt-loop migrations remain held; their later push requires `--include-all`.
 
 CE1 release approved by Roy on 2026-11-17 after Claude reviewed `e80cb13`. Expo alignment #150 (`22343f7`), screens #147 (`09db461`) and backend #149 (`1fb35fe`) merged through Roy’s account after green CI. Migration `20261117110915` is applied, all 51 public photos verified and live types regenerated in owner release `276034a`. Production 375 px zh/en play, rewards, streak, Share and source links pass. Disposable fixtures removed.
 
