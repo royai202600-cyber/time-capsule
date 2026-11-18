@@ -5,7 +5,7 @@
       "main": true
     }
   },
-  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" != \"main\" ] || [ \"$(git log -1 --format=%s)\" = \"HL-C1 Waypost racks backend (#154) [hold deploy]\" ] || [ \"$(git log -1 --format=%s)\" = \"HL-C3 Shared quests and question pool (#156) [hold deploy]\" ]",
+  "ignoreCommand": "[ \"$VERCEL_GIT_COMMIT_REF\" != \"main\" ] || git log -1 --format=%s | grep -q '\\[hold deploy\\]$'",
   "installCommand": "cd mobile && npm ci",
   "buildCommand": "cd mobile && npx expo export --platform web",
   "outputDirectory": "mobile/dist",
