@@ -1,0 +1,664 @@
+begin;
+alter table public.vessels add column unlimited_copies boolean not null default false;
+update public.vessels set unlimited_copies=true where id in ('dome','bottle','envelope','tin') or earned_place is not null;
+alter table public.vessels add constraint required_unlimited_vessels
+  check (unlimited_copies or (id not in ('dome','bottle','envelope','tin') and earned_place is null));
+alter table public.owned_vessels
+  alter column copies drop not null,
+  alter column copies drop default;
+alter table public.owned_vessels drop constraint owned_vessels_copies_check;
+alter table public.owned_vessels add constraint owned_vessels_copies_check check (copies is null or copies >= 0);
+update public.owned_vessels o set copies=case when v.unlimited_copies then null else 10 end from public.vessels v where v.id=o.vessel;
+-- Kept separate because spawn revisions store the game_config composite type.
+create table private.vessel_copy_settings (singleton boolean primary key default true check(singleton), copies_per_catch integer not null default 3 check(copies_per_catch between 1 and 1000));
+insert into private.vessel_copy_settings default values;
+revoke all on private.vessel_copy_settings from public,anon,authenticated;
+-- Extension point for future level-based awards.
+create function private.copies_per_catch(p_user uuid) returns integer language sql stable set search_path='' as $$
+  select copies_per_catch from private.vessel_copy_settings where singleton;
+$$;
+revoke all on function private.copies_per_catch(uuid) from public,anon,authenticated;
+
+-- New ownership must match the catalogue setting. Lock it against concurrent switches.
+create function private.vessel_copies_on_insert() returns trigger language plpgsql set search_path='' as $$
+declare is_unlimited boolean;
+begin
+  select v.unlimited_copies into is_unlimited from public.vessels v where v.id=new.vessel for share;
+  if found and is_unlimited <> (new.copies is null) then
+    raise exception 'invalid_ownership_copies';
+  end if;
+  return new;
+end $$;
+create trigger vessel_copies_on_insert before insert on public.owned_vessels for each row execute function private.vessel_copies_on_insert();
+revoke all on function private.vessel_copies_on_insert() from public, anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.send_capsule(p_recipient uuid, p_vessel text, p_message text, p_hint text, p_open_at timestamp with time zone, p_place text DEFAULT NULL::text, p_drawing text DEFAULT NULL::text, p_photo text DEFAULT NULL::text, p_voice text DEFAULT NULL::text, p_voice_ms integer DEFAULT NULL::integer, p_kind text DEFAULT 'letter'::text, p_prediction text DEFAULT NULL::text)
+ RETURNS uuid
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare v_id uuid; v public.vessels; v_ed integer; pl public.places; v_voice_object uuid; v_prediction text;
+begin
+  if auth.uid() is null then raise exception 'not signed in'; end if;
+  if p_kind is null or p_kind not in ('letter', 'prediction') then raise exception 'invalid capsule kind'; end if;
+  if p_kind = 'prediction' then
+    v_prediction := btrim(coalesce(p_prediction, ''), E' \t\n\r\f' || chr(11));
+    if char_length(v_prediction) not between 1 and 140 then
+      raise exception 'prediction must contain 1 to 140 characters';
+    end if;
+  elsif p_prediction is not null then
+    raise exception 'letter cannot contain a prediction';
+  end if;
+  if p_recipient <> auth.uid() and not exists (
+    select 1 from public.friendships where user_id = auth.uid() and friend_id = p_recipient
+  ) then raise exception 'recipient is not a friend'; end if;
+  select * into v from public.vessels where id = p_vessel for share;
+  if v.id is null then raise exception 'unknown vessel'; end if;
+  if v.id not in ('dome','bottle','envelope','tin') or v.earned_place is not null then
+    select edition_no into v_ed from public.owned_vessels where user_id = auth.uid() and vessel = p_vessel;
+    if not found then raise exception 'vessel not owned' using hint = 'not_owned'; end if;
+  end if;
+  if p_open_at <= now() then raise exception 'open time must be in the future'; end if;
+  if p_place is not null then
+    select * into pl from public.places where id = p_place;
+    if pl.id is null then raise exception 'unknown place'; end if;
+    if pl.brand_vessel is not null and pl.brand_vessel <> p_vessel then raise exception 'place needs brand vessel' using hint = 'brand_place'; end if;
+  end if;
+  if p_voice is null then
+    if p_voice_ms is not null then raise exception 'voice duration without voice'; end if;
+  else
+    if p_voice !~ '^[0-9a-f-]{36}/[0-9a-f-]{36}\.(m4a|webm)$'
+       or (storage.foldername(p_voice))[1] <> auth.uid()::text then
+      raise exception 'invalid voice path';
+    end if;
+    if p_voice_ms is null or p_voice_ms < 500 or p_voice_ms > 60000 then
+      raise exception 'invalid voice duration';
+    end if;
+    -- Serialize attachment attempts; UNIQUE is a final concurrent-reuse guard.
+    select o.id into v_voice_object from storage.objects o
+      where o.bucket_id = 'voice-notes' and o.name = p_voice
+        and o.owner_id = auth.uid()::text
+      for update;
+    if v_voice_object is null then raise exception 'voice upload not found or not owned'; end if;
+    if exists (select 1 from public.capsule_contents cc where cc.voice_path = p_voice) then
+      raise exception 'voice already attached';
+    end if;
+  end if;
+  -- The guarded update locks the balance until the capsule and its content commit.
+  if not v.unlimited_copies then
+    update public.owned_vessels set copies = copies - 1
+      where user_id = auth.uid() and vessel = p_vessel and copies > 0;
+    if not found then raise exception 'no_copies' using hint = 'no_copies'; end if;
+  end if;
+  insert into public.capsules (sender, recipient, vessel, hint, open_at, place, handwritten, edition_no, has_voice, kind)
+    values (auth.uid(), p_recipient, p_vessel, coalesce(trim(p_hint), ''), p_open_at, p_place, p_drawing is not null, v_ed, p_voice is not null, p_kind)
+    returning id into v_id;
+  insert into public.capsule_contents (capsule_id, message, drawing, photo, voice_path, voice_ms, prediction)
+    values (v_id, nullif(trim(coalesce(p_message, '')), ''), p_drawing, p_photo, p_voice, p_voice_ms, v_prediction);
+  return v_id;
+end $function$
+;
+
+CREATE OR REPLACE FUNCTION public.acquire_vessel(p_vessel text)
+ RETURNS integer
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare v public.vessels; n integer;
+begin
+  if auth.uid() is null then raise exception 'not signed in'; end if;
+  select * into v from public.vessels where id = p_vessel for share;
+  if v.id is null then raise exception 'unknown vessel'; end if;
+  if v.earned_place is not null then raise exception 'vessel must be earned at its place' using hint = 'earned_only'; end if;
+  if v.brand is null and v.edition_total is null then
+    raise exception 'vessel must be collected' using hint = 'collect_only';
+  end if;
+  if exists (select 1 from public.owned_vessels where user_id = auth.uid() and vessel = p_vessel) then
+    raise exception 'already owned' using hint = 'owned';
+  end if;
+  if v.edition_total is not null then
+    perform pg_advisory_xact_lock(hashtext('vessel:' || p_vessel));   -- number editions one at a time
+    select coalesce(max(edition_no), 0) + 1 into n from public.owned_vessels where vessel = p_vessel;
+    if n > v.edition_total then raise exception 'sold out' using hint = 'sold_out'; end if;
+  end if;
+  insert into public.owned_vessels (user_id, vessel, edition_no, copies)
+    values (auth.uid(), p_vessel, n, case when v.unlimited_copies then null else 10 end);
+  return n;
+end $function$;
+
+create or replace function public.open_capsule(p_id uuid, p_lat double precision DEFAULT NULL::double precision, p_lng double precision DEFAULT NULL::double precision, p_accuracy double precision DEFAULT NULL::double precision)
+ returns table(message text, drawing text, photo text, opened_at timestamptz, gift_code text, voice_path text, voice_ms integer, prediction text, verdict boolean)
+ language plpgsql security definer set search_path = '' as $function$
+declare c public.capsules; pl public.places; d double precision; g text;
+  cfg private.game_config; waited_days integer;
+begin
+  select * into c from public.capsules
+    where id = p_id and recipient = auth.uid() for update;
+  if c.id is null then raise exception 'capsule not found'; end if;
+  if c.opened_at is null then
+    if c.open_at > now() then raise exception 'not yet' using hint = 'locked'; end if;
+    if c.place is not null or c.place_lat is not null then
+      if c.place is not null then
+        select * into strict pl from public.places where id = c.place;
+      end if;
+      if p_lat is null or p_lng is null then raise exception 'location needed' using hint = 'no_location'; end if;
+      if p_lat < -90 or p_lat > 90 or p_lng < -180 or p_lng > 180 then
+        raise exception 'invalid location' using hint = 'no_location';
+      end if;
+      if p_accuracy is null or p_accuracy <= 0 or p_accuracy > 200 then
+        raise exception 'location not accurate enough' using hint = 'inaccurate';
+      end if;
+      d := public.distance_m(p_lat, p_lng, coalesce(c.place_lat, pl.lat), coalesce(c.place_lng, pl.lng));
+      if d > coalesce(pl.radius_m, 100) then raise exception 'too far: % m', round(d) using hint = 'far'; end if;
+      if pl.brand_vessel is not null and pl.brand_vessel = c.vessel then
+        g := 'AUR-' || lpad(coalesce(c.edition_no, 0)::text, 3, '0') || '-' || upper(substr(md5(random()::text || c.id::text), 1, 4));
+      end if;
+    end if;
+    update public.capsules
+      set opened_at = now(), seen_at = coalesce(seen_at, now()),
+          opened_lat = p_lat, opened_lng = p_lng,
+          opened_distance_m = case when d is null then null else round(d) end,
+          gift_code = g
+      where id = p_id
+      returning * into c;
+    if c.place is not null then
+      insert into public.owned_vessels (user_id, vessel, copies)
+        select c.recipient, v.id, null::integer from public.vessels v where v.earned_place = c.place
+        on conflict (user_id, vessel) do nothing;
+    end if;
+    begin
+      if c.place is not null then
+      insert into public.passport_stamps(user_id,place,first_at,how_earned)
+        values(c.recipient,c.place,c.opened_at,'capsule')
+        on conflict (user_id,place) do nothing;
+      end if;
+    select * into cfg from private.game_config where singleton;
+    waited_days:=least(cfg.xp_open_day_cap,
+      floor(extract(epoch from c.opened_at-c.sealed_at)/86400)::integer);
+    if waited_days>=cfg.xp_open_min_days then
+      perform private.ensure_player(c.recipient);
+      perform private.award_xp(c.recipient,'capsule_open',c.id::text,
+        cfg.xp_open_base+cfg.xp_open_per_day*waited_days);
+    end if;
+    exception when others then
+      raise warning 'Time Capsule game rewards failed for capsule %: %',c.id,sqlerrm;
+    end;
+  end if;
+  return query select cc.message, cc.drawing, cc.photo, c.opened_at, c.gift_code, cc.voice_path, cc.voice_ms, cc.prediction, c.verdict
+    from public.capsule_contents cc where cc.capsule_id = p_id;
+end $function$;
+
+-- Today's Hunt can award points independently by skipping this inventory operation.
+create function private.award_catch_copies(p_user uuid, p_vessel text)
+returns integer language plpgsql set search_path = '' as $$
+declare
+  is_unlimited boolean;
+  award integer;
+  balance integer;
+begin
+  select v.unlimited_copies into strict is_unlimited from public.vessels v where v.id = p_vessel for share;
+  if is_unlimited then
+    insert into public.owned_vessels(user_id, vessel, copies)
+      values (p_user, p_vessel, null) on conflict (user_id, vessel) do nothing;
+    return null;
+  end if;
+  award := private.copies_per_catch(p_user);
+  insert into public.owned_vessels as o(user_id, vessel, copies)
+    values (p_user, p_vessel, award)
+    on conflict (user_id, vessel) do update
+      set copies = least(o.copies::bigint + excluded.copies, 2147483647)::integer
+    returning o.copies into balance;
+  return balance;
+end $$;
+revoke all on function private.award_catch_copies(uuid,text) from public, anon, authenticated;
+
+CREATE OR REPLACE FUNCTION public.corrupted_capsule_throw(p_spawn text, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text, p_ring double precision, p_hit boolean)
+ RETURNS TABLE(result text, vessel text, copies integer, stars integer, is_new boolean, xp_gained integer, wax_balls integer, gold_balls integer, attempts_left integer)
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare pg public.player_game; cfg private.game_config; spot public.corrupted_spots;
+  released record; caught public.corrupted_catches; wave bigint; current_wave bigint;
+  chance double precision; did_catch boolean;
+begin
+  if p_spawn is null or p_spawn !~
+    '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}:[0-9]{1,18}$'
+    then raise exception 'expired'; end if;
+  if p_ball is null or p_ball not in ('wax','gold') or p_ring is null or p_hit is null
+    or p_ring::text in ('NaN','Infinity','-Infinity') then raise exception 'rejected'; end if;
+  pg := private.track_position(p_lat,p_lng,p_accuracy);
+  select * into cfg from private.game_config where singleton;
+  wave := split_part(p_spawn,':',2)::bigint;
+  current_wave := (select w.wave from private.game_wave_at(now()) w);
+  if wave not between current_wave-1 and current_wave then raise exception 'expired'; end if;
+  select * into spot from public.corrupted_spots where id=split_part(p_spawn,':',1)::uuid and hidden_at is null for share;
+  if spot.id is null then raise exception 'expired'; end if;
+  select * into released from private.resolve_spawn(spot.id,wave);
+  if released.spawn_id is null or released.spawn_id<>p_spawn or released.expires_at<=now()
+    then raise exception 'expired'; end if;
+  if public.distance_m(p_lat,p_lng,spot.lat,spot.lng)>cfg.action_radius_m
+    then raise exception 'too_far'; end if;
+  select * into caught from public.corrupted_catches
+    where user_id=auth.uid() and spawn_id=p_spawn for update;
+  if caught.result='caught' then raise exception 'already_caught'; end if;
+  if coalesce(caught.attempts,0)>=cfg.max_attempts then raise exception 'no_attempts'; end if;
+  if (p_ball='wax' and pg.wax_balls<1) or (p_ball='gold' and pg.gold_balls<1)
+    then raise exception 'no_balls'; end if;
+  update public.player_game set
+    wax_balls=public.player_game.wax_balls-case when p_ball='wax' then 1 else 0 end,
+    gold_balls=public.player_game.gold_balls-case when p_ball='gold' then 1 else 0 end
+    where user_id=auth.uid() returning * into pg;
+  vessel := released.vessel; result := 'miss'; copies := null; stars := null;
+  is_new := false; xp_gained := 0;
+  attempts_left := cfg.max_attempts-coalesce(caught.attempts,0);
+  if p_hit then
+    insert into public.corrupted_catches(user_id,spawn_id,attempts,result,vessel)
+      values(auth.uid(),p_spawn,1,'pending',vessel)
+      on conflict (user_id,spawn_id) do update
+      set attempts=public.corrupted_catches.attempts+1
+      returning * into caught;
+    attempts_left := greatest(0,cfg.max_attempts-caught.attempts);
+    chance := case released.rarity when 'common' then cfg.restore_common
+      when 'uncommon' then cfg.restore_uncommon else cfg.restore_rare end;
+    chance := least(1.0,chance+cfg.restore_ring_bonus*least(1.0,greatest(0.0,p_ring))
+      +case when p_ball='gold' then cfg.restore_gold_bonus else 0 end);
+    did_catch := random()<chance;
+    if did_catch then
+      update public.corrupted_catches set result='caught',caught_at=now()
+        where user_id=auth.uid() and spawn_id=p_spawn;
+      is_new := not exists (select 1 from public.owned_vessels
+        where user_id=auth.uid() and public.owned_vessels.vessel=corrupted_capsule_throw.vessel);
+      copies := private.award_catch_copies(auth.uid(), vessel);
+      stars := 1; -- Compatibility field for older apps; duplicates no longer increase stars.
+      xp_gained := private.award_xp(auth.uid(),'catch',p_spawn,cfg.xp_catch);
+      if is_new then xp_gained := xp_gained+
+        private.award_xp(auth.uid(),'new_vessel',vessel,cfg.xp_new_vessel); end if;
+      xp_gained := xp_gained+private.award_xp(auth.uid(),'first_catch_day',
+        (now() at time zone 'UTC')::date::text,cfg.xp_first_daily_catch);
+      result := 'restored';
+      begin
+        perform private.city_hunt_record_quest('restore',spot.id,p_lat,p_lng);
+      exception when others then
+        raise warning 'hunt restore bookkeeping failed: %',sqlerrm;
+      end;
+    else
+      update public.corrupted_catches set result=case when attempts>=cfg.max_attempts
+        then 'failed' else 'pending' end
+        where user_id=auth.uid() and spawn_id=p_spawn;
+      result := 'not_restored';
+    end if;
+  end if;
+  wax_balls:=pg.wax_balls; gold_balls:=pg.gold_balls;
+  return next;
+end $function$;
+
+CREATE OR REPLACE FUNCTION public.landmark_hit(p_attempt uuid, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text, p_ring double precision)
+ RETURNS TABLE(result text, cracks integer, expires_at timestamp with time zone, vessel text, copies integer, stars integer, is_new boolean, xp_gained integer, wax_balls integer, gold_balls integer)
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+declare pg public.player_game; cfg private.game_config; active public.landmark_attempts;
+  post public.public_capsule_spots; damage integer; reward text;
+begin
+  if p_ball is null or p_ball not in ('wax','gold') or p_ring is null
+    or p_ring::text in ('NaN','Infinity','-Infinity')
+    then raise exception 'rejected'; end if;
+  pg:=private.track_position(p_lat,p_lng,p_accuracy);
+  select * into cfg from private.game_config where singleton;
+  select * into active from public.landmark_attempts
+    where id=p_attempt and user_id=auth.uid() for update;
+  if active.id is null or active.expires_at<=now() or active.won_at is not null
+    then raise exception 'expired'; end if;
+  select * into post from public.public_capsule_spots
+    where id=active.waypost_id and game_enabled and kind='landmark';
+  if post.id is null or public.distance_m(p_lat,p_lng,post.lat,post.lng)>cfg.action_radius_m
+    then raise exception 'too_far'; end if;
+  if (p_ball='wax' and pg.wax_balls<1) or (p_ball='gold' and pg.gold_balls<1)
+    then raise exception 'no_balls'; end if;
+  update public.player_game set
+    wax_balls=public.player_game.wax_balls-case when p_ball='wax' then 1 else 0 end,
+    gold_balls=public.player_game.gold_balls-case when p_ball='gold' then 1 else 0 end
+    where user_id=auth.uid() returning * into pg;
+  damage:=case when p_ball='gold' or
+    least(1.0,greatest(0.0,p_ring))>=cfg.landmark_strong_ring
+    then cfg.landmark_strong_damage else cfg.landmark_normal_damage end;
+  update public.landmark_attempts
+    set cracks_left=greatest(0,cracks_left-damage),
+      won_at=case when cracks_left<=damage then now() else null end
+    where id=p_attempt returning cracks_left,public.landmark_attempts.expires_at
+      into cracks,expires_at;
+  result:='hit'; vessel:=null; copies:=null; stars:=null; is_new:=false; xp_gained:=0;
+  if cracks=0 then
+    select id into reward from public.vessels where earned_place=post.place;
+    if reward is null then raise exception 'missing landmark vessel'; end if;
+    vessel:=reward;
+    is_new:=not exists (select 1 from public.owned_vessels o
+      where o.user_id=auth.uid() and o.vessel=reward);
+    insert into public.owned_vessels(user_id, vessel, copies)
+      values (auth.uid(), reward, null) on conflict on constraint owned_vessels_pkey do nothing;
+    stars := 1;
+    insert into public.passport_stamps(user_id,place,first_at,how_earned)
+      values(auth.uid(),post.place,now(),'landmark')
+      on conflict (user_id,place) do nothing;
+    -- The first win at a place pays XP; the vessel remains collected.
+    xp_gained:=private.award_xp(auth.uid(),'landmark_win',post.place,cfg.xp_landmark);
+    result:='won';
+    begin
+      perform private.city_hunt_record_quest('landmark',post.id,p_lat,p_lng);
+    exception when others then
+      raise warning 'hunt landmark bookkeeping failed: %',sqlerrm;
+    end;
+  end if;
+  wax_balls:=pg.wax_balls; gold_balls:=pg.gold_balls;
+  return next;
+end $function$
+;
+
+create or replace function public.my_collection()
+returns table(vessel text,copies integer,stars integer,edition_no integer,acquired_at timestamptz)
+language plpgsql stable security definer set search_path='' as $$
+begin
+  if auth.uid() is null then raise exception 'not signed in'; end if;
+  return query select o.vessel,o.copies,1,o.edition_no,o.acquired_at
+    from public.owned_vessels o join public.vessels v on v.id=o.vessel
+    where o.user_id=auth.uid() order by v.sort,o.vessel;
+end $$;
+
+-- PostgreSQL requires recreating the function to add a result column.
+drop function public.vessel_stock();
+create function public.vessel_stock()
+returns table(vessel text, remaining integer, copies integer)
+language sql stable security definer set search_path = '' as $$
+  select v.id,
+    v.edition_total - (select count(*)::integer from public.owned_vessels o where o.vessel = v.id),
+    case when v.unlimited_copies then null else coalesce(mine.copies, 0) end
+  from public.vessels v
+  left join public.owned_vessels mine on mine.vessel = v.id and mine.user_id = auth.uid()
+  where v.edition_total is not null and auth.uid() is not null;
+$$;
+revoke all on function public.vessel_stock() from public, anon, authenticated;
+grant execute on function public.vessel_stock() to authenticated;
+
+CREATE OR REPLACE FUNCTION public.admin_spawning()
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+begin
+  if not private.admin_can('read') then raise exception 'forbidden'; end if;
+  return (
+    with cities as materialized (
+      select g.*, date_trunc('day', now() at time zone g.timezone) at time zone g.timezone as day_start,
+        date_trunc('week', now() at time zone g.timezone) at time zone g.timezone as week_start
+      from private.game_regions g where g.center_lat is not null
+    ), caught as (
+      select p.city, count(*) filter (where c.caught_at >= g.day_start) as today, count(*) as week
+      from cities g join public.corrupted_spots p on p.city = g.city
+      join public.corrupted_catches c on split_part(c.spawn_id, ':', 1) = p.id::text
+      where c.result = 'caught' and c.caught_at >= g.week_start
+        and p.source_ref not like 'qa:roy-taipei-game:%'
+      group by p.city
+    )
+    select jsonb_build_object(
+      'config', jsonb_build_object(
+        'wave_minutes', (select w.minutes from private.game_wave_at(now()) w),
+        'next_length', (select jsonb_build_object('minutes', w.minutes, 'starts_at', w.starts_at)
+          from private.game_wave_periods w where w.starts_at > now() order by w.starts_at limit 1),
+        'spawn_chance', cfg.spawn_chance, 'nearby_max', cfg.nearby_spawn_target,
+        'copies_per_catch', (select copies_per_catch from private.vessel_copy_settings where singleton),
+        'weights', jsonb_build_object('common', cfg.rarity_common_weight,
+          'uncommon', cfg.rarity_uncommon_weight, 'rare', cfg.rarity_rare_weight)),
+      'places', (select jsonb_agg(jsonb_build_object('id', g.id, 'parent', g.parent_id,
+        'name_zh', g.name_zh, 'name_en', g.name_en, 'country_zh', g.country_zh, 'country_en', g.country_en,
+        'has_spots', exists (select 1 from private.game_regions child
+          join public.corrupted_spots p on p.city = child.city and p.source_ref not like 'qa:%'
+          where g.id in (child.id, child.parent_id))) order by g.country_en, g.name_en)
+        from private.game_regions g),
+      'rules', (select coalesce(jsonb_agg(jsonb_build_object(
+        'vessel', v.id, 'unlimited_copies', v.unlimited_copies, 'rarity', r.rarity, 'habitat', r.habitat,
+        'hours', case when r.local_start_hour is not null then jsonb_build_array(r.local_start_hour, (r.local_end_hour + 23) % 24) end,
+        'dates', case when r.month_day_start is not null then jsonb_build_array(r.month_day_start, r.month_day_end) end,
+        'regions', (select coalesce(jsonb_agg(g.id order by g.id), '[]'::jsonb) from cities g
+          where exists (select 1 from private.vessel_spawn_places a where a.vessel = v.id
+            and a.region_id in (g.id, g.parent_id))),
+        'places', (select coalesce(jsonb_agg(a.region_id order by a.region_id), '[]'::jsonb)
+          from private.vessel_spawn_places a where a.vessel = v.id),
+        'never', case when v.earned_place is not null then 'earned'
+          when v.brand is not null or v.edition_total is not null then 'brand'
+          when v.id in ('dome', 'bottle', 'envelope', 'tin') then 'starter' end
+        ) order by v.sort, v.id), '[]'::jsonb)
+        from public.vessels v left join private.vessel_spawn_rules r on r.vessel = v.id),
+      'stats', (select coalesce(jsonb_object_agg(g.id, jsonb_build_object(
+        'out_now', (select count(*) from private.admin_wave(g.city) where not caught),
+        'caught_today', coalesce(c.today, 0), 'caught_week', coalesce(c.week, 0))), '{}'::jsonb)
+        from cities g left join caught c on c.city = g.city)
+    )
+    from private.game_config cfg where cfg.singleton
+  );
+end;
+$function$;
+
+-- Take the catalogue row lock before reading this snapshot. Sends, catches and
+-- ownership inserts take a shared lock on that same row.
+create function private.vessel_copy_snapshot(p_vessel text) returns jsonb
+language sql stable set search_path = '' as $$
+  select jsonb_build_object('unlimited_copies', v.unlimited_copies, 'balances',
+    coalesce((select jsonb_object_agg(o.user_id, o.copies)
+      from public.owned_vessels o where o.vessel = v.id), '{}'::jsonb))
+  from public.vessels v where v.id = p_vessel;
+$$;
+revoke all on function private.vessel_copy_snapshot(text) from public, anon, authenticated;
+
+create function public.admin_vessel_set_unlimited(vessel_id text, "on" boolean)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  before_state jsonb;
+  after_state jsonb;
+begin
+  perform private.require_game_editor();
+  perform private.lock_game_edits();
+  if "on" is null then raise exception 'invalid_unlimited'; end if;
+  perform 1 from public.vessels where id = vessel_id for update;
+  if not found then raise exception 'unknown vessel'; end if;
+  before_state := private.vessel_copy_snapshot(vessel_id);
+  if (before_state->>'unlimited_copies')::boolean = "on" then
+    return jsonb_build_object('unlimited_copies', "on");
+  end if;
+  if not "on" and exists (select 1 from public.vessels
+    where id = vessel_id and (id in ('dome','bottle','envelope','tin') or earned_place is not null))
+  then raise exception 'required_unlimited'; end if;
+
+  update public.vessels set unlimited_copies = "on" where id = vessel_id;
+  update public.owned_vessels set copies = case when "on" then null else 10 end where vessel = vessel_id;
+  after_state := private.vessel_copy_snapshot(vessel_id);
+  perform private.admin_log('vessel.unlimited', 'vessel_copies', vessel_id, vessel_id, before_state, after_state);
+  return jsonb_build_object('unlimited_copies', "on");
+end $$;
+
+create function public.admin_player_adjust_copies(user_id uuid, vessel_id text, delta integer, reason text)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  before_value integer;
+  after_value integer;
+  is_unlimited boolean;
+  target text := user_id::text || ':' || vessel_id;
+begin
+  perform private.require_game_editor();
+  perform private.lock_game_edits();
+  if delta is null or delta = 0 then raise exception 'invalid_delta'; end if;
+  if nullif(btrim(reason), '') is null then raise exception 'reason_required'; end if;
+  select unlimited_copies into is_unlimited from public.vessels where id = vessel_id for share;
+  if not found then raise exception 'unknown vessel'; end if;
+  if is_unlimited then raise exception 'unlimited_vessel'; end if;
+  select o.copies into before_value from public.owned_vessels o
+    where o.user_id = admin_player_adjust_copies.user_id and o.vessel = vessel_id for update;
+  if not found then raise exception 'vessel_not_owned'; end if;
+  if before_value::bigint + delta not between 0 and 2147483647 then raise exception 'invalid_copies'; end if;
+  update public.owned_vessels o set copies = before_value + delta
+    where o.user_id = admin_player_adjust_copies.user_id and o.vessel = vessel_id returning o.copies into after_value;
+  perform private.admin_log('vessel.player_copies', 'player_vessel', target, vessel_id,
+    jsonb_build_object('copies', before_value), jsonb_build_object('copies', after_value), btrim(reason));
+  return jsonb_build_object('copies', after_value);
+end $$;
+
+-- The existing game settings RPC also accepts an independent copies setting edit.
+create function public.admin_wave_config_set(p_copies_per_catch integer, p_note text default null)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  old_value integer;
+  result jsonb;
+begin
+  perform private.require_game_editor();
+  perform private.lock_game_edits();
+  if p_copies_per_catch is null or p_copies_per_catch not between 1 and 1000 then raise exception 'invalid_copies'; end if;
+  select copies_per_catch into old_value from private.vessel_copy_settings where singleton for update;
+  update private.vessel_copy_settings set copies_per_catch = p_copies_per_catch where singleton;
+  result := jsonb_build_object('copies_per_catch', p_copies_per_catch);
+  perform private.admin_log('config.copies_per_catch', 'config', 'copies_per_catch', 'copies_per_catch',
+    jsonb_build_object('copies_per_catch', old_value), result, p_note);
+  return result;
+end $$;
+
+revoke all on function public.admin_vessel_set_unlimited(text,boolean),
+  public.admin_player_adjust_copies(uuid,text,integer,text), public.admin_wave_config_set(integer,text)
+  from public, anon, authenticated, service_role;
+grant execute on function public.admin_vessel_set_unlimited(text,boolean),
+  public.admin_player_adjust_copies(uuid,text,integer,text), public.admin_wave_config_set(integer,text)
+  to authenticated;
+
+create or replace function public.admin_undo(p_action_id bigint, p_note text default null) returns jsonb
+language plpgsql security definer set search_path = '' as $$
+declare event private.admin_actions;
+declare post public.public_capsule_spots;
+declare restored public.public_capsule_spots;
+declare rule private.vessel_spawn_rules;
+declare current_state jsonb;
+declare saved jsonb;
+declare p_region text;
+declare p_vessel text;
+declare player uuid;
+begin
+  perform private.require_game_editor();
+  perform private.lock_game_edits();
+  select * into event from private.admin_actions a where a.id = p_action_id;
+  if not found then raise exception 'not_found'; end if;
+  if event.action not in ('waypost.add', 'waypost.move', 'waypost.edit', 'waypost.hide', 'waypost.show',
+    'spawn.place_add', 'spawn.place_remove', 'spawn.rule', 'config.wave', 'config.wave_length', 'vessel.unlimited', 'vessel.player_copies', 'config.copies_per_catch')
+  then raise exception 'not_undoable'; end if;
+  if exists (select 1 from private.admin_actions a where a.target_type = event.target_type
+      and a.target_id = event.target_id and a.id > event.id)
+  then raise exception 'stale'; end if;
+
+  case event.target_type
+    when 'vessel_copies' then
+      perform 1 from public.vessels where id = event.target_id for update;
+      current_state := private.vessel_copy_snapshot(event.target_id);
+      if current_state is distinct from event.after then raise exception 'stale'; end if;
+      update public.vessels set unlimited_copies = (event.before->>'unlimited_copies')::boolean
+        where id = event.target_id;
+      update public.owned_vessels o set copies = (event.before->'balances'->>o.user_id::text)::integer
+        where o.vessel = event.target_id;
+      saved := event.before;
+    when 'player_vessel' then
+      player := split_part(event.target_id, ':', 1)::uuid;
+      p_vessel := split_part(event.target_id, ':', 2);
+      perform 1 from public.vessels where id = p_vessel and not unlimited_copies for share;
+      if not found or exists (select 1 from private.admin_actions a where a.target_type = 'vessel_copies'
+        and a.target_id = p_vessel and a.id > event.id) then raise exception 'stale'; end if;
+      select jsonb_build_object('copies', o.copies) into current_state
+        from public.owned_vessels o where o.user_id = player and o.vessel = p_vessel for update;
+      if current_state is distinct from event.after then raise exception 'stale'; end if;
+      update public.owned_vessels o set copies = (event.before->>'copies')::integer
+        where o.user_id = player and o.vessel = p_vessel;
+      saved := event.before;
+    when 'waypost' then
+      post := private.admin_waypost_row(event.target_id::uuid);
+      current_state := to_jsonb(post);
+      if current_state is distinct from event.after then raise exception 'stale'; end if;
+      if event.action = 'waypost.add' then
+        -- Retain the pin and its history when undoing creation.
+        restored := post;
+        restored.game_enabled := false;
+        restored.hidden_at := now();
+      else
+        restored := jsonb_populate_record(null::public.public_capsule_spots, event.before);
+      end if;
+      saved := to_jsonb(private.save_admin_waypost(post, restored, p_note));
+    when 'spawn_place' then
+      p_region := event.after->>'region_id';
+      p_vessel := event.after->>'vessel';
+      select to_jsonb(a) into current_state from private.vessel_spawn_places a
+        where a.region_id = p_region and a.vessel = p_vessel;
+      if event.action = 'spawn.place_add' then
+        if current_state is null then raise exception 'stale'; end if;
+        saved := private.admin_spawn_write('admin_spawn_place_remove',
+          jsonb_build_object('p_region', p_region, 'p_vessel', p_vessel), p_note, false);
+        if (event.after->>'created_rule')::boolean and not exists (
+          select 1 from private.vessel_spawn_places a where a.vessel = p_vessel)
+          and not exists (select 1 from private.admin_actions a
+            where a.target_type = 'spawn_rule' and a.target_id = p_vessel and a.id > event.id)
+        then
+          delete from private.vessel_spawn_rules r where r.vessel = p_vessel
+            and r.rarity = 'common' and r.habitat is null
+            and r.local_start_hour is null and r.month_day_start is null;
+        end if;
+      else
+        if current_state is not null then raise exception 'stale'; end if;
+        saved := private.admin_spawn_write('admin_spawn_place_add',
+          jsonb_build_object('p_region', p_region, 'p_vessel', p_vessel), p_note, false);
+      end if;
+    when 'spawn_rule' then
+      select to_jsonb(r) into current_state from private.vessel_spawn_rules r
+        where r.vessel = event.target_id for update;
+      if current_state is distinct from event.after then raise exception 'stale'; end if;
+      if event.before is null then
+        if exists (select 1 from private.vessel_spawn_places a where a.vessel = event.target_id)
+        then raise exception 'stale'; end if;
+        delete from private.vessel_spawn_rules r where r.vessel = event.target_id;
+        saved := jsonb_build_object('vessel', event.target_id, 'rule', null);
+      else
+        rule := jsonb_populate_record(null::private.vessel_spawn_rules, event.before);
+        saved := private.admin_spawn_write('admin_spawn_rule_set', jsonb_build_object(
+          'p_vessel', rule.vessel, 'p_rarity', rule.rarity, 'p_habitat', rule.habitat,
+          'p_start_hour', rule.local_start_hour, 'p_end_hour', rule.local_end_hour,
+          'p_md_start', rule.month_day_start, 'p_md_end', rule.month_day_end), p_note, false);
+      end if;
+    when 'config' then
+      if event.action = 'config.copies_per_catch' then
+        select jsonb_build_object('copies_per_catch', c.copies_per_catch) into current_state
+          from private.vessel_copy_settings c where c.singleton for update;
+        if current_state is distinct from event.after then raise exception 'stale'; end if;
+        update private.vessel_copy_settings set copies_per_catch = (event.before->>'copies_per_catch')::integer where singleton;
+        saved := event.before;
+      elsif event.action = 'config.wave_length' then
+        current_state := private.admin_wave_length_state();
+        if (current_state - 'pending') is distinct from (event.after - 'pending') then raise exception 'stale'; end if;
+        saved := private.admin_schedule_wave_length((event.before->>'minutes')::integer,
+          case when (event.before->>'pending')::boolean then (event.before->>'starts_at')::timestamptz end);
+      else
+        select jsonb_build_object('spawn_chance', c.spawn_chance, 'common_weight', c.rarity_common_weight,
+          'uncommon_weight', c.rarity_uncommon_weight, 'rare_weight', c.rarity_rare_weight,
+          'nearby_target', c.nearby_spawn_target) into current_state from private.game_config c where c.singleton;
+        if current_state is distinct from event.after then raise exception 'stale'; end if;
+        saved := private.admin_spawn_write('admin_wave_config_set', jsonb_build_object(
+          'p_spawn_chance', event.before->'spawn_chance', 'p_common_weight', event.before->'common_weight',
+          'p_uncommon_weight', event.before->'uncommon_weight', 'p_rare_weight', event.before->'rare_weight',
+          'p_nearby_target', event.before->'nearby_target'), p_note, false);
+      end if;
+    else raise exception 'not_undoable';
+  end case;
+
+  if event.action like 'spawn.%' or event.action in ('config.wave', 'config.wave_length') then
+    perform private.admin_assert_spawn_pool();
+  end if;
+  perform private.admin_log('undo', event.target_type, event.target_id, event.target_label,
+    current_state, saved || jsonb_build_object('undo_of', event.id), p_note);
+  return saved;
+end;
+$$;
+commit;

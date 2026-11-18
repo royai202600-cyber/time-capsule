@@ -798,21 +798,21 @@ export type Database = {
       owned_vessels: {
         Row: {
           acquired_at: string
-          copies: number
+          copies: number | null
           edition_no: number | null
           user_id: string
           vessel: string
         }
         Insert: {
           acquired_at?: string
-          copies?: number
+          copies?: number | null
           edition_no?: number | null
           user_id: string
           vessel: string
         }
         Update: {
           acquired_at?: string
-          copies?: number
+          copies?: number | null
           edition_no?: number | null
           user_id?: string
           vessel?: string
@@ -1279,6 +1279,7 @@ export type Database = {
           id: string
           price_mop: number
           sort: number
+          unlimited_copies: boolean
         }
         Insert: {
           brand?: string | null
@@ -1287,6 +1288,7 @@ export type Database = {
           id: string
           price_mop?: number
           sort?: number
+          unlimited_copies?: boolean
         }
         Update: {
           brand?: string | null
@@ -1295,6 +1297,7 @@ export type Database = {
           id?: string
           price_mop?: number
           sort?: number
+          unlimited_copies?: boolean
         }
         Relationships: [
           {
@@ -1445,8 +1448,16 @@ export type Database = {
         Args: { p_action_id: number; p_note?: string }
         Returns: Json
       }
+      admin_player_adjust_copies: {
+        Args: { user_id: string; vessel_id: string; delta: number; reason: string }
+        Returns: Json
+      }
+      admin_vessel_set_unlimited: {
+        Args: { vessel_id: string; on: boolean }
+        Returns: Json
+      }
       admin_wave_config_set: {
-        Args: {
+        Args: { p_copies_per_catch: number; p_note?: string } | {
           p_common_weight: number
           p_nearby_target: number
           p_note?: string
@@ -1530,7 +1541,7 @@ export type Database = {
         }
         Returns: {
           attempts_left: number
-          copies: number
+          copies: number | null
           gold_balls: number
           is_new: boolean
           result: string
@@ -1556,7 +1567,7 @@ export type Database = {
         }
         Returns: {
           attempts_left: number
-          copies: number
+          copies: number | null
           gold_balls: number
           is_new: boolean
           result: string
@@ -1652,7 +1663,7 @@ export type Database = {
           p_ring: number
         }
         Returns: {
-          copies: number
+          copies: number | null
           cracks: number
           expires_at: string
           gold_balls: number
@@ -1682,7 +1693,7 @@ export type Database = {
         Args: never
         Returns: {
           acquired_at: string
-          copies: number
+          copies: number | null
           edition_no: number
           stars: number
           vessel: string
@@ -1920,6 +1931,7 @@ export type Database = {
       vessel_stock: {
         Args: never
         Returns: {
+          copies: number | null
           remaining: number
           vessel: string
         }[]

@@ -666,4 +666,4 @@ Roy approved question and price on 2026-11-18, then approved the revised arrive 
 
 All three frames come from one faceted source with one alpha mask. On the master canvas, the transparent circular window is centered at (506, 399) with radius 237 px. The tip anchor is (506, 955). The same values are in each manifest entry. The frames have a light rim. The app supplies the done tick and order number.
 
-[Pin review at 46 px and 138 px](_checks/quest-types-review.png) · [Asset audit](_checks/quest-types-assets.json) · [Contact sheet](_checks/contact-sheet.png). Roy approved landmark at `716ecf9`. Draft PR #153 shows the revised catch picture for the final set review.
+[Pin review at 46 px and 138 px](_checks/quest-types-review.png) · [Asset audit](_checks/quest-types-assets.json) · [Contact sheet](_checks/contact-sheet.png). Roy approved the full set in PR #153 at `e91fb44`, including the final cracked bottle catch picture.
