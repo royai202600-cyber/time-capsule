@@ -650,8 +650,18 @@ The wax-red canopy and upper bow swing rearward. The pleats gather, then the sta
 
 | Master | Size | Description |
 |---|---|---|
-| `quest-types/quest-type-arrive.png` | 1024×1024 | Opaque arrive quest picture for a 46 px pin and centred 16:9 crop. |
-| `quest-types/quest-type-question.png` | 1024×1024 | Opaque question quest picture for a 46 px pin and centred 16:9 crop. |
-| `quest-types/quest-type-price.png` | 1024×1024 | Opaque price quest picture for a 46 px pin and centred 16:9 crop. |
+| `quest-types/quest-type-arrive.png` | 1024×1024 | Opaque arrive quest picture for a 46 px circular pin. |
+| `quest-types/quest-type-question.png` | 1024×1024 | Opaque question quest picture for a 46 px circular pin. |
+| `quest-types/quest-type-price.png` | 1024×1024 | Opaque price quest picture for a 46 px circular pin. |
 
-[Pin and banner review](_checks/quest-types-review.png) · [Asset audit](_checks/quest-types-assets.json). Roy approved question and price on 2026-11-18. The revised arrive picture places the flag and two footprints side by side across about 81% of the square. Catch and landmark follow Roy’s approval of arrive.
+Roy approved question and price on 2026-11-18. The revised arrive picture puts two large footprints in front of the brass flagpole. Quest-type pictures fill the circular pin window. Quest card banners show the place photo.
+
+| Frame master | Size | Color |
+|---|---|---|
+| `quest-pins/quest-pin-blue.png` | 1024×1024 | Blue Waypost ramp |
+| `quest-pins/quest-pin-brass.png` | 1024×1024 | Brass centered on `#C9A15A` |
+| `quest-pins/quest-pin-plum.png` | 1024×1024 | Muted plum sampled from the spun Waypost gem |
+
+All three frames come from one faceted source with one alpha mask. On the master canvas, the transparent circular window is centered at (506, 399) with radius 237 px. The tip anchor is (506, 955). The same values are in each manifest entry. The frames have a light rim. The app supplies the done tick and order number.
+
+[Pin review at 46 px and 138 px](_checks/quest-types-review.png) · [Asset audit](_checks/quest-types-assets.json) · [Contact sheet](_checks/contact-sheet.png). Arrive and the 3D frame are awaiting Roy’s approval before catch and landmark are drawn.
