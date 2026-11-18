@@ -155,7 +155,7 @@ begin
   select w.* into post from public.public_capsule_spots w where w.id = capsule.public_capsule_spot for share;
   distance := private.rack_distance(post, lat, lng, accuracy);
   if distance is null or distance > 100 then raise exception 'too_far'; end if;
-  if capsule.open_at > clock_timestamp() then raise exception 'too_early'; end if;
+  if capsule.open_at > now() then raise exception 'too_early'; end if;
   if capsule.lock_question is not null and not exists (
     select 1 from public.capsule_contents cc where cc.capsule_id = capsule.id
       and cc.lock_answer = private.rack_normalize_answer(answer)
@@ -218,7 +218,7 @@ begin
       group by h.id
       union all
       select 'public_capsule_report', 'public_capsule', c.id::text, coalesce(c.lock_question, c.hint),
-        case when can_read_preview and c.opened_at is not null then (select x.message from public.capsule_contents x where x.capsule_id = c.id) end,
+        case when can_read_preview then (select x.message from public.capsule_contents x where x.capsule_id = c.id) end,
         c.sender, private.public_capsule_is_hidden(c.id), count(*), jsonb_agg(distinct r.reason order by r.reason),
         jsonb_agg(private.admin_person(r.reporter) order by r.reported_at, r.reporter),
         min(r.reported_at), max(r.reported_at)
@@ -294,6 +294,113 @@ begin
     jsonb_build_object('hidden', was_hidden), jsonb_build_object('hidden', p_decision = 'remove'), p_note);
 end;
 $$;
+
+create function public.admin_waypost_rack(waypost_id uuid, cursor jsonb default null)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  post public.public_capsule_spots;
+  result jsonb;
+  page_size constant integer := 24;
+begin
+  if not private.admin_can('read') then raise exception 'forbidden'; end if;
+  select w.* into post from public.public_capsule_spots w where w.id = waypost_id and w.kind = 'common';
+  if not found then raise exception 'not_found'; end if;
+  with rack as materialized (
+    select c.id, c.sender, c.hint, c.open_at, c.sealed_at, c.opened_at, c.lock_question, c.rack_removed_at
+    from public.capsules c where c.is_public and c.public_capsule_spot = post.id
+  ), page as materialized (
+    select * from rack
+    where cursor is null or (sealed_at, id) < ((cursor->>'sealed_at')::timestamptz, (cursor->>'id')::uuid)
+    order by sealed_at desc, id desc limit page_size + 1
+  ), items as (
+    select * from page order by sealed_at desc, id desc limit page_size
+  )
+  select jsonb_build_object(
+    'count', (select count(*) from rack),
+    'items', coalesce((select jsonb_agg(jsonb_build_object(
+      'capsule_id', i.id, 'sender', jsonb_build_object('portrait', p.avatar, 'name', p.name),
+      'hint', i.hint, 'opens_at', i.open_at, 'lock_question', i.lock_question,
+      'status', case when i.rack_removed_at is not null or review.action = 'queue.remove' then 'removed'
+        when private.public_capsule_is_hidden(i.id) then 'reported'
+        when i.opened_at is not null then 'opened'
+        when i.open_at <= statement_timestamp() then 'ready' else 'waiting' end,
+      'report_count', reports.total,
+      'body', case when reports.total > 0 and private.admin_can('letters') then cc.message end
+    ) order by i.sealed_at desc, i.id desc)
+    from items i join public.profiles p on p.id = i.sender
+    cross join lateral (select count(*) as total from public.public_capsule_reports r where r.capsule_id = i.id) reports
+    cross join lateral private.admin_latest_review('public_capsule', i.id::text) review
+    left join public.capsule_contents cc on cc.capsule_id = i.id
+      and reports.total > 0 and private.admin_can('letters')), '[]'::jsonb),
+    'next_cursor', case when (select count(*) from page) > page_size then
+      (select jsonb_build_object('sealed_at', i.sealed_at, 'id', i.id)
+       from items i order by i.sealed_at, i.id limit 1) end
+  ) into result;
+  perform private.admin_log('rack.list', 'waypost_rack', post.id::text, post.name_en, null,
+    jsonb_build_object('cursor', cursor, 'shown', jsonb_array_length(result->'items')));
+  return result;
+end;
+$$;
+
+create function public.admin_rack_remove(capsule_id uuid, reason text)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  capsule public.capsules;
+  removal_at timestamptz := clock_timestamp();
+  action_id bigint;
+begin
+  if not private.admin_can('queue') then raise exception 'forbidden'; end if;
+  if nullif(btrim(reason), '') is null then raise exception 'reason_required'; end if;
+  select c.* into capsule from public.capsules c where c.id = capsule_id and c.is_public
+    and c.public_capsule_spot is not null and c.rack_removed_at is null for update;
+  if not found then raise exception 'not_found'; end if;
+
+  update public.capsules set rack_removed_at = removal_at, recipient = null, seen_at = null
+  where id = capsule.id;
+  perform private.admin_log('rack.remove', 'public_capsule', capsule.id::text, capsule.hint,
+    jsonb_build_object('waypost_id', capsule.public_capsule_spot, 'opened_at', capsule.opened_at),
+    jsonb_build_object('removed_at', removal_at), btrim(reason));
+  select max(a.id) into action_id from private.admin_actions a
+    where a.action = 'rack.remove' and a.target_type = 'public_capsule' and a.target_id = capsule.id::text;
+  return jsonb_build_object('action_id', action_id, 'capsule_id', capsule.id);
+end;
+$$;
+
+-- Keep existing game edit undo behavior behind its own role check.
+alter function public.admin_undo(bigint, text) set schema private;
+revoke all on function private.admin_undo(bigint, text) from public, anon, authenticated, service_role;
+
+create function public.admin_undo(p_action_id bigint, p_note text default null)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  event private.admin_actions;
+  capsule public.capsules;
+  restored jsonb;
+begin
+  if not private.admin_can('queue') then raise exception 'forbidden'; end if;
+  select a.* into event from private.admin_actions a where a.id = p_action_id;
+  if event.action is distinct from 'rack.remove' then
+    return private.admin_undo(p_action_id, p_note);
+  end if;
+  select c.* into capsule from public.capsules c where c.id = event.target_id::uuid for update;
+  if not found or capsule.opened_at is not null then raise exception 'not_undoable'; end if;
+  if capsule.rack_removed_at is distinct from (event.after->>'removed_at')::timestamptz
+    or exists (select 1 from private.admin_actions a where a.target_type = event.target_type
+      and a.target_id = event.target_id and a.id > event.id)
+  then raise exception 'stale'; end if;
+
+  update public.capsules set rack_removed_at = null where id = capsule.id;
+  restored := jsonb_build_object('capsule_id', capsule.id, 'undo_of', event.id);
+  perform private.admin_log('undo', event.target_type, event.target_id, event.target_label,
+    event.after, restored, p_note);
+  return restored;
+end;
+$$;
+
+revoke all on function public.admin_waypost_rack(uuid, jsonb), public.admin_rack_remove(uuid, text),
+  public.admin_undo(bigint, text) from public, anon, authenticated, service_role;
+grant execute on function public.admin_waypost_rack(uuid, jsonb), public.admin_rack_remove(uuid, text),
+  public.admin_undo(bigint, text) to authenticated;
 
 notify pgrst, 'reload schema';
 commit;
