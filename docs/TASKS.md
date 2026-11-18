@@ -70,7 +70,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | HL-Q1 | Question pool for Taipei, Hong Kong, Singapore, Macau | Codex (`codex/question-pool`) | Data file + review doc with sources; loads into HL-C3 tables after review. |
 | HL-U1 | Quest pin component, Journey gem = Waypost only, Waypost card (Spin + rack + leave form) | Claude (`claude/hunt-racks-ui`) | Screens behind a mock flag; wired after HL-C1. |
 | HL-U2 | Copies in Create, Cabinet and Album | Claude (`claude/vessel-copies-ui`) | Behind a mock flag; wired after HL-C2. |
-| HL-C4 | Today's Hunt backend | Codex | Wave 2, after HL-C3 review. |
+| HL-C4 | Today's Hunt backend | Codex (`codex/todays-hunt`) | Draft [PR #161](https://github.com/royai202600-cyber/time-capsule/pull/161). Hold `20261118134846` for HL-U3. Pool data comes from HL-Q1. See the [API and verification notes](review/todays-hunt.md). |
 | HL-C5 | Route capsules backend and city route templates | Codex | Wave 2, after HL-C3 review. |
 | HL-U3 | Today's Hunt screen with motion | Claude | Wave 2. |
 | HL-U4 | Shared quest editor (private hunt + route), City Hunt quest pins, recipient route view | Claude | Wave 2. |
