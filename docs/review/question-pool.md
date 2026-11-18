@@ -1,6 +1,6 @@
 # Question pool review
 
-Taipei has 25 questions at 25 distinct places and coordinates for 20 existing Guess the price entries. Hong Kong, Singapore and Macau still have their earlier research rows and pending CE1 inventories. All new Taipei rows are drafts.
+Taipei has 25 questions at 25 distinct places and coordinates for 20 existing Guess the price entries. Hong Kong also has 25 questions at 25 distinct places and coordinates for 20 existing Guess the price entries. Singapore and Macau still have their earlier research rows and pending CE1 inventories. The completed city batches are drafts.
 
 ## Taipei
 
@@ -72,15 +72,71 @@ Retain these real locations with `outside_coverage: true` and exclude them from 
 | 8 | 臺北兒童新樂園摩天輪，士林區，台北 / Taipei Children’s Amusement Park Ferris wheel, Shilin, Taipei | Public side of amusement park entrance for the gated Ferris wheel | [OSM way/1346846075](https://www.openstreetmap.org/way/1346846075) · 25.0966999, 121.5153932 | [Location source](https://english.tcap.taipei/cp.aspx?n=244A93049FE0079E) · 2026-11-18 |
 | 10 | 國立故宮博物院北院第一展覽館，士林區，台北 / National Palace Museum Northern Branch, Exhibition Hall I, Shilin, Taipei | Pedestrian forecourt of the main exhibition building | [OSM way/244450380](https://www.openstreetmap.org/way/244450380) · 25.1018105, 121.5487377 | [Location source](https://www.npm.gov.tw/Articles.aspx?sno=02007001) · 2026-11-18 |
 
-## hong-kong
+## Hong Kong
 
-| ID | Place | Question (zh / en) | Answer (zh / en) | Source | Checked | Photo credit |
-|---|---|---|---|---|---|---|
-| hong-kong-001 | 香港科技大學紅鳥日晷 / HKUST Red Bird Sundial | 科大紅鳥雕塑具備哪種計時器的功能？ / What type of timepiece does HKUST’s Red Bird sculpture function as? | 日晷 / Sundial | [Official source](https://cmo.hkust.edu.hk/sundial-sculpture) | 2026-11-18 | None |
-| hong-kong-002 | 香港科技大學紅鳥日晷 / HKUST Red Bird Sundial | 科大紅鳥日晷主要由什麼材料製成？ / What is the HKUST Red Bird sundial made of? | 鋼 / Steel | [Official source](https://cmo.hkust.edu.hk/sundial-sculpture) | 2026-11-18 | None |
-| hong-kong-003 | 香港科技大學紅鳥日晷 / HKUST Red Bird Sundial | 科大紅鳥日晷是哪一年安裝的？ / In which year was the HKUST Red Bird sundial installed? | 1991 / 1991 | [Official source](https://cmo.hkust.edu.hk/sundial-sculpture) | 2026-11-18 | None |
-| hong-kong-004 | 香港科技大學紅鳥日晷 / HKUST Red Bird Sundial | 科大紅鳥日晷基座的浮雕描繪了多少項中國科技成就？ / How many Chinese science and technology achievements are depicted in the Red Bird podium mural? | 39項 / 39 | [Official source](https://cmo.hkust.edu.hk/sundial-sculpture) | 2026-11-18 | None |
-| hong-kong-005 | 香港科技大學紅鳥日晷 / HKUST Red Bird Sundial | 科大紅鳥雕塑會利用太陽光發揮哪種計時器的功能？ / What type of timepiece does the HKUST Red Bird sculpture use sunlight to function as? | 日晷 / sundial | [Official source](https://cmo.hkust.edu.hk/sundial-sculpture) | 2026-11-18 | None |
+The HKUST Landmark Waypost is at **22.3374255, 114.2629606**. **10 of 25** questions fall within 1.5 km, and all 25 are inside the [coverage rectangle](../design/public-sea-cities.geojson). The ten HKUST-area pins use public outdoor paths and open plazas under the campus exception. The other fifteen cover Kowloon, West Kowloon and Hong Kong Island. Geometry was checked against mapped buildings, restricted areas and road centre lines. Typed answers include Cantonese Jyutping alongside Traditional Chinese and English variants.
+
+| ID | Place | Type | Question (zh / en) | Answer (zh / en) | Location | Landmark distance | Fact source and checked date |
+|---|---|---|---|---|---|---:|---|
+| hongkong-001 | 科大紅鳥日晷 / HKUST Red Bird Sundial | text | 這座紅色雕塑能利用日影計時，這種儀器叫甚麼？ / What kind of instrument is this sculpture, which uses a shadow to tell the time? | 日晷 / sundial | [OSM way/235913807](https://www.openstreetmap.org/way/235913807) · 22.3374200, 114.2631500 | 19 m | [Source](https://cmo.hkust.edu.hk/sundial-sculpture) · 2026-11-18 |
+| hongkong-002 | 科大入口廣場 / HKUST Entrance Piazza | choice | 根據科大的疏散地圖，入口廣場在緊急時用作甚麼？ / On HKUST’s evacuation map, what is the Entrance Piazza used for during an emergency? | 集合地點 / Assembly point | [OSM way/235913807](https://www.openstreetmap.org/way/235913807) · 22.3377600, 114.2632200 | 46 m | [Source](https://hseo.hkust.edu.hk/sites/default/files/Assembly%20Points%20Location%20Map%2020250417.pdf) · 2026-11-18 |
+| hongkong-003 | 科大LG7草坪 / HKUST LG7 Lawn | choice | 科大曾把邵逸夫堂戶外花園的哪種座椅移到這片草坪？ / What kind of chair did HKUST move from the Shaw Auditorium garden to this lawn? | 躺椅 / Deck chairs | [OSM way/240091530](https://www.openstreetmap.org/way/240091530) · 22.3384884, 114.2642401 | 177 m | [Source](https://sust.hkust.edu.hk/news/touch-grass-movement-embracing-outdoor-and-wellness-0) · 2026-11-18 |
+| hongkong-004 | 方樹泉廊 / Fong Shu Chuen Promenade | choice | 方樹泉廊是用哪種結構跨過下方地面？ / What kind of structure carries Fong Shu Chuen Promenade above the ground below? | 行人橋 / Footbridge | [OSM way/233624050](https://www.openstreetmap.org/way/233624050) · 22.3374305, 114.2658844 | 301 m | [Source](https://www.openstreetmap.org/way/236145960) · 2026-11-18 |
+| hongkong-005 | 科大圓形露天劇場 / HKUST Amphitheatre | choice | 科大這座露天劇場的平面大致是甚麼形狀？ / What is the approximate plan shape of this outdoor theatre at HKUST? | 圓形 / Circular | [OSM way/235858072](https://www.openstreetmap.org/way/235858072) · 22.3371779, 114.2649142 | 203 m | [Source](https://fina.hkust.edu.hk/sites/finance/files/Campus-map.pdf) · 2026-11-18 |
+| hongkong-006 | 逸華廣場 / Mona Shaw Plaza | choice | 逸華廣場以邵逸夫的哪位家人命名？ / Which member of Run Run Shaw’s family was Mona Shaw Plaza named after? | 妻子 / His wife | [OSM way/1106268814](https://www.openstreetmap.org/way/1106268814) · 22.3339112, 114.2630922 | 391 m | [Source](https://giving.hkust.edu.hk/en/donation_news_detail.php?id=92) · 2026-11-18 |
+| hongkong-007 | 科大北門步道 / HKUST North Gate walkway | choice | 科大北門旁這條步道的暱稱，取自哪種兩棲動物？ / Which amphibian gives the footpath beside HKUST’s North Gate its name? | 青蛙 / Frog | [OSM way/235912763](https://www.openstreetmap.org/way/235912763) · 22.3383547, 114.2624550 | 116 m | [Source](https://www.openstreetmap.org/way/235912763) · 2026-11-18 |
+| hongkong-008 | 科大北門外村徑 / Village trail outside HKUST North Gate | text | 科大北門外這條村徑以哪條村命名？ / Which village shares its name with the trail outside the campus’s north entrance? | 大埔仔 / Tai Po Tsai | [OSM way/253214264](https://www.openstreetmap.org/way/253214264) · 22.3384503, 114.2615306 | 186 m | [Source](https://www.openstreetmap.org/way/253214264) · 2026-11-18 |
+| hongkong-009 | 科大渾儀 / HKUST Armillary Sphere | choice | 科大這座古代儀器的複製品是用來測量甚麼的位置？ / What kind of objects did the original instrument represented by this HKUST replica measure positions of? | 天體 / Celestial bodies | [OSM way/233624048](https://www.openstreetmap.org/way/233624048) · 22.3374265, 114.2658633 | 299 m | [Source](https://hkust.edu.hk/news/hkust-campus-inspired-ancient-chinese-astronomical-wisdom) · 2026-11-18 |
+| hongkong-010 | 科大智慧石 / HKUST Wisdom Stone | choice | 在科大官方校園導覽中，智慧石與哪一條行人連接通道列在同一站？ / Which pedestrian link does HKUST’s campus tour group with the Wisdom Stone? | 連接橋 / Bridge Link | [OSM way/233624051](https://www.openstreetmap.org/way/233624051) · 22.3374295, 114.2647990 | 189 m | [Source](https://bmundergrad.hkust.edu.hk/app/webroot/files/bys/2023/Campus%20Tour%20Map_To%20SA%20%282022_from%20LSK%29_Route.pdf) · 2026-11-18 |
+| hongkong-011 | 尖沙咀鐘樓 / Tsim Sha Tsui Clock Tower | choice | 尖沙咀鐘樓的主塔約高多少？ / Approximately how tall is the main shaft of the Tsim Sha Tsui Clock Tower? | 44米 / 44 metres | [OSM way/605420841](https://www.openstreetmap.org/way/605420841) · 22.2936177, 114.1694829 | 10779 m | [Source](https://www.discoverhongkong.com/eng/place-to-go/travel.guide-clock-tower.html) · 2026-11-18 |
+| hongkong-012 | 香港太空館 / Hong Kong Space Museum | text | 香港太空館的白色圓頂常被比作甚麼？ / What everyday object is the Hong Kong Space Museum’s white dome shaped like? | 蛋 / egg | [OSM way/1505853953](https://www.openstreetmap.org/way/1505853953) · 22.2942973, 114.1717176 | 10540 m | [Source](https://www.lcsd.gov.hk/en/content-in-other-languages/museumservice.html) · 2026-11-18 |
+| hongkong-013 | 香港文化中心 / Hong Kong Cultural Centre | choice | 香港文化中心在哪一年揭幕？ / In what year was the Hong Kong Cultural Centre inaugurated? | 1989年 / 1989 | [OSM way/605420847](https://www.openstreetmap.org/way/605420847) · 22.2937032, 114.1700527 | 10723 m | [Source](https://www.lcsd.gov.hk/en/hkcc/35A/35A_exhibition.html) · 2026-11-18 |
+| hongkong-014 | 星光大道 / Avenue of Stars | text | 星光大道把香港影星的哪種印記鑄在欄杆上？ / Which imprints of Hong Kong movie stars are set into the Avenue of Stars railing? | 手印 / handprint | [OSM way/459112971](https://www.openstreetmap.org/way/459112971) · 22.2937556, 114.1720493 | 10537 m | [Source](https://www.discoverhongkong.com/eng/attractions/top-things-to-see-and-do-around-tsim-sha-tsui-promenade.html) · 2026-11-18 |
+| hongkong-015 | 香港科學館 / Hong Kong Science Museum | choice | 香港科學館的能量穿梭機約有多高？ / How tall is the Hong Kong Science Museum’s Energy Machine? | 22米 / 22 metres | [OSM way/120343771](https://www.openstreetmap.org/way/120343771) · 22.3006869, 114.1784247 | 9608 m | [Source](https://hk.science.museum/en/web/scm/exhibition/em.html) · 2026-11-18 |
+| hongkong-016 | M+博物館 / M+ Museum | choice | M+面向維港的外牆以哪種燈光技術顯示影像？ / What lighting technology lets the M+ harbour facade display images? | 發光二極管 / LED | [OSM way/625487640](https://www.openstreetmap.org/way/625487640) · 22.3018795, 114.1588438 | 11416 m | [Source](https://www.mplus.org.hk/en/the-building/design/) · 2026-11-18 |
+| hongkong-017 | 香港故宮文化博物館 / Hong Kong Palace Museum | choice | 哪一家建築事務所設計了香港故宮文化博物館？ / Which architecture practice designed the Hong Kong Palace Museum? | 嚴迅奇建築師事務所 / Rocco Design Architects | [OSM way/701770950](https://www.openstreetmap.org/way/701770950) · 22.3010562, 114.1550859 | 11810 m | [Source](https://www.hkpm.org.hk/en/about/the-building) · 2026-11-18 |
+| hongkong-018 | 九龍公園 / Kowloon Park | choice | 九龍公園原址是哪一座兵房？ / Which barracks formerly occupied the site of Kowloon Park? | 威菲路兵房 / Whitfield Barracks | [OSM way/205701347](https://www.openstreetmap.org/way/205701347) · 22.3008612, 114.1703177 | 10361 m | [Source](https://www.lcsd.gov.hk/en/hkfs/2023/greening_spots.html) · 2026-11-18 |
+| hongkong-019 | 香港公園 / Hong Kong Park | choice | 香港公園在哪一年開放？ / In what year did Hong Kong Park open? | 1991年 / 1991 | [OSM way/114282528](https://www.openstreetmap.org/way/114282528) · 22.2775868, 114.1618305 | 12349 m | [Source](https://www.lcsd.gov.hk/dept/annualrpt/2014-15/en/leisure/facilities.html) · 2026-11-18 |
+| hongkong-020 | 旗杆屋茶具文物館 / Flagstaff House Museum of Tea Ware | choice | 旗杆屋改為茶具文物館前，曾用作甚麼？ / Before it became a museum, what was Flagstaff House used for? | 英軍三軍總司令官邸 / Residence of the British forces commander | [OSM way/42255486](https://www.openstreetmap.org/way/42255486) · 22.2782500, 114.1624600 | 12255 m | [Source](https://hkp.lcsd.gov.hk/en/facilities/heritage) · 2026-11-18 |
+| hongkong-021 | 維多利亞公園 / Victoria Park | choice | 維多利亞公園在1957年的哪一個月開放？ / In which month of 1957 did Victoria Park open? | 十月 / October | [OSM way/715873995](https://www.openstreetmap.org/way/715873995) · 22.2801200, 114.1878900 | 10012 m | [Source](https://www.lcsd.gov.hk/dept/annualrpt/2011-12/en/ls/index03.htm) · 2026-11-18 |
+| hongkong-022 | 灣仔藍屋 / Blue House, Wan Chai | text | 灣仔藍屋屬於香港哪一類傳統住宅建築？ / What traditional Hong Kong building type is Wan Chai’s Blue House? | 唐樓 / tong lau | [OSM way/742102541](https://www.openstreetmap.org/way/742102541) · 22.2739411, 114.1742543 | 11537 m | [Source](https://www.discoverhongkong.com/tc/place-to-go/travel.guide-the-blue-house.html) · 2026-11-18 |
+| hongkong-023 | 中環和平紀念碑 / The Cenotaph, Central | choice | 中環和平紀念碑最初為悼念哪場戰爭中的死難者而建？ / The Cenotaph in Central was originally built to remember those who died in which war? | 第一次世界大戰 / First World War | [OSM way/746368276](https://www.openstreetmap.org/way/746368276) · 22.2815853, 114.1607533 | 12211 m | [Source](https://www.amo.gov.hk/en/historic-buildings/monuments/hong-kong-island/monuments_102/index.html) · 2026-11-18 |
+| hongkong-024 | 山頂纜車花園道總站 / Peak Tram Garden Road Terminus | choice | 山頂纜車在哪一年開始載客？ / In what year did the Peak Tram begin passenger service? | 1888年 / 1888 | [OSM way/637117388](https://www.openstreetmap.org/way/637117388) · 22.2775862, 114.1595752 | 12545 m | [Source](https://www.thepeak.com.hk/en/heritage/history-of-the-peak-tram) · 2026-11-18 |
+| hongkong-025 | 香港動植物公園 / Hong Kong Zoological and Botanical Gardens | choice | 香港動植物公園自哪一年起飼養動物供公眾觀賞？ / In what year did the Hong Kong Zoological and Botanical Gardens begin keeping animals for display? | 1876年 / 1876 | [OSM way/580283492](https://www.openstreetmap.org/way/580283492) · 22.2775269, 114.1574264 | 12737 m | [Source](https://www.lcsd.gov.hk/en/green/common/doc/exhibition_panels.pdf) · 2026-11-18 |
+
+### Hong Kong CE1 price locations
+
+The original prices and dates carry forward by `city` and `ce1_seq`. Recheck prices before a new rotation. The MTR pin is above ground. Kam Fai uses the nearest mapped public approach on Johnston Road because the shop’s frontage has no separately mapped pavement in this extract.
+
+| CE1 seq | Named place (zh / en) | Public outdoor approach | Location | Venue location source and checked date |
+|---|---|---|---|---|
+| 1 | 海景嘉福洲際酒店 Café on M，尖沙咀東，香港 / Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong | Public footway outside the hotel | [OSM way/1194005835](https://www.openstreetmap.org/way/1194005835) · 22.2988843, 114.1796048 | [Location source](https://www.hongkong.intercontinental.com/dining/cafe-on-m/) · 2026-11-18 |
+| 2 | 香港電車西港城總站，上環，香港 / Hong Kong Tramways Western Market Terminus, Sheung Wan, Hong Kong | Sidewalk by the tram terminus | [OSM way/1309053373](https://www.openstreetmap.org/way/1309053373) · 22.2869676, 114.1507389 | [Location source](https://www.hktramways.com/en/interactive-map/) · 2026-11-18 |
+| 3 | 天星小輪灣仔碼頭，灣仔，香港 / Star Ferry, Wan Chai Pier, Hong Kong | Public approach to Wan Chai pier | [OSM way/1118341920](https://www.openstreetmap.org/way/1118341920) · 22.2835458, 114.1761172 | [Location source](https://fpf.ccidahk.gov.hk/en/location/detail.php?id=830) · 2026-11-18 |
+| 4 | 機場快綫香港站，中環，香港 / Airport Express Hong Kong Station, Central, Hong Kong | Street-level pedestrian access to Hong Kong Station | [OSM way/907226873](https://www.openstreetmap.org/way/907226873) · 22.2851962, 114.1576390 | [Location source](https://www.mtr.com.hk/digitalleaflet/en/detail.html?article=airport-express-service-guide) · 2026-11-18 |
+| 6 | 香港故宮文化博物館售票處，西九文化區，香港 / Hong Kong Palace Museum ticket office, West Kowloon Cultural District | Museum exterior | [OSM way/701770950](https://www.openstreetmap.org/way/701770950) · 22.3010562, 114.1550859 | [Location source](https://www.hkpm.org.hk/en/visit/ticket) · 2026-11-18 |
+| 7 | M+博物館售票處，西九文化區，香港 / M+ ticket office, West Kowloon Cultural District | Museum exterior | [OSM way/625487640](https://www.openstreetmap.org/way/625487640) · 22.3018795, 114.1588438 | [Location source](https://www.mplus.org.hk/en/admission-tickets/) · 2026-11-18 |
+| 8 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Mapped Johnston Road pedestrian approach to the Gresson Street shop | [OSM way/1308962558](https://www.openstreetmap.org/way/1308962558) · 22.2770239, 114.1702789 | [Location source](https://kamfaidimsum.com/en/visit) · 2026-11-18 |
+| 9 | 海景嘉福洲際酒店 Café on M，尖沙咀東，香港 / Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong | Public footway outside the hotel | [OSM way/1194005835](https://www.openstreetmap.org/way/1194005835) · 22.2988843, 114.1796048 | [Location source](https://www.hongkong.intercontinental.com/dining/cafe-on-m/) · 2026-11-18 |
+| 10 | 香港科學館售票處，尖沙咀東，香港 / Hong Kong Science Museum ticket office, Tsim Sha Tsui East, Hong Kong | Science Museum forecourt | [OSM way/120343771](https://www.openstreetmap.org/way/120343771) · 22.3006869, 114.1784247 | [Location source](https://hk.science.museum/tc/web/scm/visit.html) · 2026-11-18 |
+| 11 | 香港太空館天象廳售票處，尖沙咀，香港 / Hong Kong Space Museum Space Theatre box office, Tsim Sha Tsui | Space Museum plaza | [OSM way/1505853953](https://www.openstreetmap.org/way/1505853953) · 22.2942973, 114.1717176 | [Location source](https://hk.space.museum/en/web/spm/shows.html) · 2026-11-18 |
+| 12 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Mapped Johnston Road pedestrian approach to the Gresson Street shop | [OSM way/1308962558](https://www.openstreetmap.org/way/1308962558) · 22.2770239, 114.1702789 | [Location source](https://kamfaidimsum.com/en/visit) · 2026-11-18 |
+| 13 | 海景嘉福洲際酒店 Café on M，尖沙咀東，香港 / Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong | Public footway outside the hotel | [OSM way/1194005835](https://www.openstreetmap.org/way/1194005835) · 22.2988843, 114.1796048 | [Location source](https://www.hongkong.intercontinental.com/dining/cafe-on-m/) · 2026-11-18 |
+| 14 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Mapped Johnston Road pedestrian approach to the Gresson Street shop | [OSM way/1308962558](https://www.openstreetmap.org/way/1308962558) · 22.2770239, 114.1702789 | [Location source](https://kamfaidimsum.com/en/visit) · 2026-11-18 |
+| 15 | 海景嘉福洲際酒店 Café on M，尖沙咀東，香港 / Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong | Public footway outside the hotel | [OSM way/1194005835](https://www.openstreetmap.org/way/1194005835) · 22.2988843, 114.1796048 | [Location source](https://www.hongkong.intercontinental.com/dining/cafe-on-m/) · 2026-11-18 |
+| 16 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Mapped Johnston Road pedestrian approach to the Gresson Street shop | [OSM way/1308962558](https://www.openstreetmap.org/way/1308962558) · 22.2770239, 114.1702789 | [Location source](https://kamfaidimsum.com/en/visit) · 2026-11-18 |
+| 17 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Mapped Johnston Road pedestrian approach to the Gresson Street shop | [OSM way/1308962558](https://www.openstreetmap.org/way/1308962558) · 22.2770239, 114.1702789 | [Location source](https://kamfaidimsum.com/en/visit) · 2026-11-18 |
+| 18 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Mapped Johnston Road pedestrian approach to the Gresson Street shop | [OSM way/1308962558](https://www.openstreetmap.org/way/1308962558) · 22.2770239, 114.1702789 | [Location source](https://kamfaidimsum.com/en/visit) · 2026-11-18 |
+| 19 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Mapped Johnston Road pedestrian approach to the Gresson Street shop | [OSM way/1308962558](https://www.openstreetmap.org/way/1308962558) · 22.2770239, 114.1702789 | [Location source](https://kamfaidimsum.com/en/visit) · 2026-11-18 |
+| 20 | 山頂纜車中環花園道總站售票處，中環，香港 / Peak Tram Lower Terminus ticket office, Garden Road, Central | Lower Terminus street approach | [OSM way/637117388](https://www.openstreetmap.org/way/637117388) · 22.2775862, 114.1595752 | [Location source](https://www.thepeak.com.hk/en/heritage/history-of-the-peak-tram) · 2026-11-18 |
+
+### Hong Kong CE1 locations outside map coverage
+
+Exclude the Tung Chung entry from quest pin selection.
+
+| CE1 seq | Named place (zh / en) | Public outdoor approach | Location | Venue location source and checked date |
+|---|---|---|---|---|
+| 5 | 昂坪360東涌纜車站售票處，東涌，香港 / Ngong Ping 360 Tung Chung Terminal ticket office, Tung Chung, Hong Kong | Pedestrian approach to Tung Chung terminal | [OSM way/170999459](https://www.openstreetmap.org/way/170999459) · 22.2892200, 113.9409500 | [Location source](https://www.np360.com.hk/en/visitor-information/faqs) · 2026-11-18 |
 
 ## singapore
 
@@ -103,31 +159,6 @@ Retain these real locations with `outside_coverage: true` and exclude them from 
 | macau-005 | 議事亭前地 / Senado Square | 議事亭前地旁的民政總署大樓最初建於哪一年？請輸入四位數字。 / In what year was the former Leal Senado Building by Senado Square originally built? Enter four digits. | 1784 / 1784 | [Official source](https://www.wh.mo/en/site/detail/11) | 2026-11-18 | None |
 
 ## Pending CE1 locations in the other cities
-
-### hongkong
-
-| CE1 sequence | Named place (zh / en) | Location verification |
-|---|---|---|
-| 1 | 海景嘉福洲際酒店 Café on M，尖沙咀東，香港 / Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong | Pending |
-| 2 | 香港電車西港城總站，上環，香港 / Hong Kong Tramways Western Market Terminus, Sheung Wan, Hong Kong | Pending |
-| 3 | 天星小輪灣仔碼頭，灣仔，香港 / Star Ferry, Wan Chai Pier, Hong Kong | Pending |
-| 4 | 機場快綫香港站，中環，香港 / Airport Express Hong Kong Station, Central, Hong Kong | Pending |
-| 5 | 昂坪360東涌纜車站售票處，東涌，香港 / Ngong Ping 360 Tung Chung Terminal ticket office, Tung Chung, Hong Kong | Pending |
-| 6 | 香港故宮文化博物館售票處，西九文化區，香港 / Hong Kong Palace Museum ticket office, West Kowloon Cultural District | Pending |
-| 7 | M+博物館售票處，西九文化區，香港 / M+ ticket office, West Kowloon Cultural District | Pending |
-| 8 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Pending |
-| 9 | 海景嘉福洲際酒店 Café on M，尖沙咀東，香港 / Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong | Pending |
-| 10 | 香港科學館售票處，尖沙咀東，香港 / Hong Kong Science Museum ticket office, Tsim Sha Tsui East, Hong Kong | Pending |
-| 11 | 香港太空館天象廳售票處，尖沙咀，香港 / Hong Kong Space Museum Space Theatre box office, Tsim Sha Tsui | Pending |
-| 12 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Pending |
-| 13 | 海景嘉福洲際酒店 Café on M，尖沙咀東，香港 / Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong | Pending |
-| 14 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Pending |
-| 15 | 海景嘉福洲際酒店 Café on M，尖沙咀東，香港 / Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong | Pending |
-| 16 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Pending |
-| 17 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Pending |
-| 18 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Pending |
-| 19 | 金輝點心，灣仔，香港 / Kam Fai Dim Sum, Wan Chai, Hong Kong | Pending |
-| 20 | 山頂纜車中環花園道總站售票處，中環，香港 / Peak Tram Lower Terminus ticket office, Garden Road, Central | Pending |
 
 ### singapore
 

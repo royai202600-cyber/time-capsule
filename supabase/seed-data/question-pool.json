@@ -1346,192 +1346,1351 @@
     "outside_coverage": false
   },
   {
-    "id": "hong-kong-001",
-    "city": "hong-kong",
+    "id": "hongkong-001",
+    "city": "hongkong",
     "type": "question",
-    "kind": "choice",
-    "place_zh": "香港科技大學紅鳥日晷",
+    "place_zh": "科大紅鳥日晷",
     "place_en": "HKUST Red Bird Sundial",
-    "location_lat": 22.3374255,
-    "location_lng": 114.2629606,
-    "prompt_zh": "科大紅鳥雕塑具備哪種計時器的功能？",
-    "prompt_en": "What type of timepiece does HKUST’s Red Bird sculpture function as?",
-    "choices": [
-      {
-        "zh": "日晷",
-        "en": "Sundial"
-      },
-      {
-        "zh": "沙漏",
-        "en": "Hourglass"
-      },
-      {
-        "zh": "水鐘",
-        "en": "Water clock"
-      },
-      {
-        "zh": "擺鐘",
-        "en": "Pendulum clock"
-      }
-    ],
-    "answer": {
-      "choice": 0
-    },
+    "osm_ref": "way/235913807",
+    "location_lat": 22.33742,
+    "location_lng": 114.26315,
+    "prompt_zh": "這座紅色雕塑能利用日影計時，這種儀器叫甚麼？",
+    "prompt_en": "What kind of instrument is this sculpture, which uses a shadow to tell the time?",
     "source_url": "https://cmo.hkust.edu.hk/sundial-sculpture",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
-    "status": "draft"
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "text",
+    "choices": null,
+    "answer": "sundial",
+    "typed_aliases": [
+      "日晷",
+      "日規",
+      "jat6 gwai2",
+      "yat gwai",
+      "sun dial"
+    ]
   },
   {
-    "id": "hong-kong-002",
-    "city": "hong-kong",
+    "id": "hongkong-002",
+    "city": "hongkong",
     "type": "question",
+    "place_zh": "科大入口廣場",
+    "place_en": "HKUST Entrance Piazza",
+    "osm_ref": "way/235913807",
+    "location_lat": 22.33776,
+    "location_lng": 114.26322,
+    "prompt_zh": "根據科大的疏散地圖，入口廣場在緊急時用作甚麼？",
+    "prompt_en": "On HKUST’s evacuation map, what is the Entrance Piazza used for during an emergency?",
+    "source_url": "https://hseo.hkust.edu.hk/sites/default/files/Assembly%20Points%20Location%20Map%2020250417.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
     "kind": "choice",
-    "place_zh": "香港科技大學紅鳥日晷",
-    "place_en": "HKUST Red Bird Sundial",
-    "location_lat": 22.3374255,
-    "location_lng": 114.2629606,
-    "prompt_zh": "科大紅鳥日晷主要由什麼材料製成？",
-    "prompt_en": "What is the HKUST Red Bird sundial made of?",
     "choices": [
       {
-        "zh": "鋼",
-        "en": "Steel"
+        "zh": "集合地點",
+        "en": "Assembly point"
       },
       {
-        "zh": "木",
-        "en": "Wood"
+        "zh": "急救室",
+        "en": "First-aid room"
       },
       {
-        "zh": "玻璃",
-        "en": "Glass"
+        "zh": "物資倉庫",
+        "en": "Supply store"
       },
       {
-        "zh": "陶土",
-        "en": "Clay"
+        "zh": "消防控制室",
+        "en": "Fire control room"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://cmo.hkust.edu.hk/sundial-sculpture",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
-    "status": "draft"
+    "answer": 0
   },
   {
-    "id": "hong-kong-003",
-    "city": "hong-kong",
+    "id": "hongkong-003",
+    "city": "hongkong",
     "type": "question",
+    "place_zh": "科大LG7草坪",
+    "place_en": "HKUST LG7 Lawn",
+    "osm_ref": "way/240091530",
+    "location_lat": 22.3384884,
+    "location_lng": 114.2642401,
+    "prompt_zh": "科大曾把邵逸夫堂戶外花園的哪種座椅移到這片草坪？",
+    "prompt_en": "What kind of chair did HKUST move from the Shaw Auditorium garden to this lawn?",
+    "source_url": "https://sust.hkust.edu.hk/news/touch-grass-movement-embracing-outdoor-and-wellness-0",
+    "checked_on": "2026-11-18",
+    "status": "draft",
     "kind": "choice",
-    "place_zh": "香港科技大學紅鳥日晷",
-    "place_en": "HKUST Red Bird Sundial",
-    "location_lat": 22.3374255,
-    "location_lng": 114.2629606,
-    "prompt_zh": "科大紅鳥日晷是哪一年安裝的？",
-    "prompt_en": "In which year was the HKUST Red Bird sundial installed?",
     "choices": [
       {
-        "zh": "1991",
-        "en": "1991"
+        "zh": "搖椅",
+        "en": "Rocking chairs"
       },
       {
-        "zh": "1971",
+        "zh": "躺椅",
+        "en": "Deck chairs"
+      },
+      {
+        "zh": "吧枱凳",
+        "en": "Bar stools"
+      },
+      {
+        "zh": "長椅",
+        "en": "Benches"
+      }
+    ],
+    "answer": 1
+  },
+  {
+    "id": "hongkong-004",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "方樹泉廊",
+    "place_en": "Fong Shu Chuen Promenade",
+    "osm_ref": "way/233624050",
+    "location_lat": 22.3374305,
+    "location_lng": 114.2658844,
+    "prompt_zh": "方樹泉廊是用哪種結構跨過下方地面？",
+    "prompt_en": "What kind of structure carries Fong Shu Chuen Promenade above the ground below?",
+    "source_url": "https://www.openstreetmap.org/way/236145960",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "行車隧道",
+        "en": "Road tunnel"
+      },
+      {
+        "zh": "索道",
+        "en": "Cableway"
+      },
+      {
+        "zh": "行人橋",
+        "en": "Footbridge"
+      },
+      {
+        "zh": "浮橋",
+        "en": "Floating pontoon"
+      }
+    ],
+    "answer": 2
+  },
+  {
+    "id": "hongkong-005",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "科大圓形露天劇場",
+    "place_en": "HKUST Amphitheatre",
+    "osm_ref": "way/235858072",
+    "location_lat": 22.3371779,
+    "location_lng": 114.2649142,
+    "prompt_zh": "科大這座露天劇場的平面大致是甚麼形狀？",
+    "prompt_en": "What is the approximate plan shape of this outdoor theatre at HKUST?",
+    "source_url": "https://fina.hkust.edu.hk/sites/finance/files/Campus-map.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "長方形",
+        "en": "Rectangular"
+      },
+      {
+        "zh": "五角形",
+        "en": "Pentagonal"
+      },
+      {
+        "zh": "十字形",
+        "en": "Cross-shaped"
+      },
+      {
+        "zh": "圓形",
+        "en": "Circular"
+      }
+    ],
+    "answer": 3
+  },
+  {
+    "id": "hongkong-006",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "逸華廣場",
+    "place_en": "Mona Shaw Plaza",
+    "osm_ref": "way/1106268814",
+    "location_lat": 22.3339112,
+    "location_lng": 114.2630922,
+    "prompt_zh": "逸華廣場以邵逸夫的哪位家人命名？",
+    "prompt_en": "Which member of Run Run Shaw’s family was Mona Shaw Plaza named after?",
+    "source_url": "https://giving.hkust.edu.hk/en/donation_news_detail.php?id=92",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "妻子",
+        "en": "His wife"
+      },
+      {
+        "zh": "姊姊",
+        "en": "His sister"
+      },
+      {
+        "zh": "女兒",
+        "en": "His daughter"
+      },
+      {
+        "zh": "母親",
+        "en": "His mother"
+      }
+    ],
+    "answer": 0
+  },
+  {
+    "id": "hongkong-007",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "科大北門步道",
+    "place_en": "HKUST North Gate walkway",
+    "osm_ref": "way/235912763",
+    "location_lat": 22.3383547,
+    "location_lng": 114.262455,
+    "prompt_zh": "科大北門旁這條步道的暱稱，取自哪種兩棲動物？",
+    "prompt_en": "Which amphibian gives the footpath beside HKUST’s North Gate its name?",
+    "source_url": "https://www.openstreetmap.org/way/235912763",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "蠑螈",
+        "en": "Newt"
+      },
+      {
+        "zh": "青蛙",
+        "en": "Frog"
+      },
+      {
+        "zh": "火蠑螈",
+        "en": "Fire salamander"
+      },
+      {
+        "zh": "蚓螈",
+        "en": "Caecilian"
+      }
+    ],
+    "answer": 1
+  },
+  {
+    "id": "hongkong-008",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "科大北門外村徑",
+    "place_en": "Village trail outside HKUST North Gate",
+    "osm_ref": "way/253214264",
+    "location_lat": 22.3384503,
+    "location_lng": 114.2615306,
+    "prompt_zh": "科大北門外這條村徑以哪條村命名？",
+    "prompt_en": "Which village shares its name with the trail outside the campus’s north entrance?",
+    "source_url": "https://www.openstreetmap.org/way/253214264",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "text",
+    "choices": null,
+    "answer": "Tai Po Tsai",
+    "typed_aliases": [
+      "大埔仔",
+      "大埔仔村",
+      "daai6 bou3 zai2",
+      "daai bou zai",
+      "Tai Po Tsai Village"
+    ]
+  },
+  {
+    "id": "hongkong-009",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "科大渾儀",
+    "place_en": "HKUST Armillary Sphere",
+    "osm_ref": "way/233624048",
+    "location_lat": 22.3374265,
+    "location_lng": 114.2658633,
+    "prompt_zh": "科大這座古代儀器的複製品是用來測量甚麼的位置？",
+    "prompt_en": "What kind of objects did the original instrument represented by this HKUST replica measure positions of?",
+    "source_url": "https://hkust.edu.hk/news/hkust-campus-inspired-ancient-chinese-astronomical-wisdom",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "海上船隻",
+        "en": "Ships"
+      },
+      {
+        "zh": "地底礦藏",
+        "en": "Mineral deposits"
+      },
+      {
+        "zh": "天體",
+        "en": "Celestial bodies"
+      },
+      {
+        "zh": "河流入海口",
+        "en": "River mouths"
+      }
+    ],
+    "answer": 2
+  },
+  {
+    "id": "hongkong-010",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "科大智慧石",
+    "place_en": "HKUST Wisdom Stone",
+    "osm_ref": "way/233624051",
+    "location_lat": 22.3374295,
+    "location_lng": 114.264799,
+    "prompt_zh": "在科大官方校園導覽中，智慧石與哪一條行人連接通道列在同一站？",
+    "prompt_en": "Which pedestrian link does HKUST’s campus tour group with the Wisdom Stone?",
+    "source_url": "https://bmundergrad.hkust.edu.hk/app/webroot/files/bys/2023/Campus%20Tour%20Map_To%20SA%20%282022_from%20LSK%29_Route.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "行人隧道",
+        "en": "Pedestrian Tunnel"
+      },
+      {
+        "zh": "海旁長廊",
+        "en": "Seafront Walk"
+      },
+      {
+        "zh": "南門樓梯",
+        "en": "South Gate Steps"
+      },
+      {
+        "zh": "連接橋",
+        "en": "Bridge Link"
+      }
+    ],
+    "answer": 3
+  },
+  {
+    "id": "hongkong-011",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "尖沙咀鐘樓",
+    "place_en": "Tsim Sha Tsui Clock Tower",
+    "osm_ref": "way/605420841",
+    "location_lat": 22.2936177,
+    "location_lng": 114.1694829,
+    "prompt_zh": "尖沙咀鐘樓的主塔約高多少？",
+    "prompt_en": "Approximately how tall is the main shaft of the Tsim Sha Tsui Clock Tower?",
+    "source_url": "https://www.discoverhongkong.com/eng/place-to-go/travel.guide-clock-tower.html",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "44米",
+        "en": "44 metres"
+      },
+      {
+        "zh": "24米",
+        "en": "24 metres"
+      },
+      {
+        "zh": "64米",
+        "en": "64 metres"
+      },
+      {
+        "zh": "84米",
+        "en": "84 metres"
+      }
+    ],
+    "answer": 0
+  },
+  {
+    "id": "hongkong-012",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "香港太空館",
+    "place_en": "Hong Kong Space Museum",
+    "osm_ref": "way/1505853953",
+    "location_lat": 22.2942973,
+    "location_lng": 114.1717176,
+    "prompt_zh": "香港太空館的白色圓頂常被比作甚麼？",
+    "prompt_en": "What everyday object is the Hong Kong Space Museum’s white dome shaped like?",
+    "source_url": "https://www.lcsd.gov.hk/en/content-in-other-languages/museumservice.html",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "text",
+    "choices": null,
+    "answer": "egg",
+    "typed_aliases": [
+      "蛋",
+      "雞蛋",
+      "gai1 daan2",
+      "daan2",
+      "an egg"
+    ]
+  },
+  {
+    "id": "hongkong-013",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "香港文化中心",
+    "place_en": "Hong Kong Cultural Centre",
+    "osm_ref": "way/605420847",
+    "location_lat": 22.2937032,
+    "location_lng": 114.1700527,
+    "prompt_zh": "香港文化中心在哪一年揭幕？",
+    "prompt_en": "In what year was the Hong Kong Cultural Centre inaugurated?",
+    "source_url": "https://www.lcsd.gov.hk/en/hkcc/35A/35A_exhibition.html",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1979年",
+        "en": "1979"
+      },
+      {
+        "zh": "1989年",
+        "en": "1989"
+      },
+      {
+        "zh": "1999年",
+        "en": "1999"
+      },
+      {
+        "zh": "2009年",
+        "en": "2009"
+      }
+    ],
+    "answer": 1
+  },
+  {
+    "id": "hongkong-014",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "星光大道",
+    "place_en": "Avenue of Stars",
+    "osm_ref": "way/459112971",
+    "location_lat": 22.2937556,
+    "location_lng": 114.1720493,
+    "prompt_zh": "星光大道把香港影星的哪種印記鑄在欄杆上？",
+    "prompt_en": "Which imprints of Hong Kong movie stars are set into the Avenue of Stars railing?",
+    "source_url": "https://www.discoverhongkong.com/eng/attractions/top-things-to-see-and-do-around-tsim-sha-tsui-promenade.html",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "text",
+    "choices": null,
+    "answer": "handprint",
+    "typed_aliases": [
+      "手印",
+      "掌印",
+      "sau2 jan3",
+      "sau jan",
+      "hand print",
+      "handprints"
+    ]
+  },
+  {
+    "id": "hongkong-015",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "香港科學館",
+    "place_en": "Hong Kong Science Museum",
+    "osm_ref": "way/120343771",
+    "location_lat": 22.3006869,
+    "location_lng": 114.1784247,
+    "prompt_zh": "香港科學館的能量穿梭機約有多高？",
+    "prompt_en": "How tall is the Hong Kong Science Museum’s Energy Machine?",
+    "source_url": "https://hk.science.museum/en/web/scm/exhibition/em.html",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "2米",
+        "en": "2 metres"
+      },
+      {
+        "zh": "12米",
+        "en": "12 metres"
+      },
+      {
+        "zh": "22米",
+        "en": "22 metres"
+      },
+      {
+        "zh": "32米",
+        "en": "32 metres"
+      }
+    ],
+    "answer": 2
+  },
+  {
+    "id": "hongkong-016",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "M+博物館",
+    "place_en": "M+ Museum",
+    "osm_ref": "way/625487640",
+    "location_lat": 22.3018795,
+    "location_lng": 114.1588438,
+    "prompt_zh": "M+面向維港的外牆以哪種燈光技術顯示影像？",
+    "prompt_en": "What lighting technology lets the M+ harbour facade display images?",
+    "source_url": "https://www.mplus.org.hk/en/the-building/design/",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "白熾燈泡",
+        "en": "Incandescent bulbs"
+      },
+      {
+        "zh": "鹵素燈",
+        "en": "Halogen lamps"
+      },
+      {
+        "zh": "霓虹管",
+        "en": "Neon tubes"
+      },
+      {
+        "zh": "發光二極管",
+        "en": "LED"
+      }
+    ],
+    "answer": 3
+  },
+  {
+    "id": "hongkong-017",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "香港故宮文化博物館",
+    "place_en": "Hong Kong Palace Museum",
+    "osm_ref": "way/701770950",
+    "location_lat": 22.3010562,
+    "location_lng": 114.1550859,
+    "prompt_zh": "哪一家建築事務所設計了香港故宮文化博物館？",
+    "prompt_en": "Which architecture practice designed the Hong Kong Palace Museum?",
+    "source_url": "https://www.hkpm.org.hk/en/about/the-building",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "嚴迅奇建築師事務所",
+        "en": "Rocco Design Architects"
+      },
+      {
+        "zh": "福斯特建築事務所",
+        "en": "Foster + Partners"
+      },
+      {
+        "zh": "扎哈·哈迪德建築事務所",
+        "en": "Zaha Hadid Architects"
+      },
+      {
+        "zh": "建築師事務所OMA",
+        "en": "OMA"
+      }
+    ],
+    "answer": 0
+  },
+  {
+    "id": "hongkong-018",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "九龍公園",
+    "place_en": "Kowloon Park",
+    "osm_ref": "way/205701347",
+    "location_lat": 22.3008612,
+    "location_lng": 114.1703177,
+    "prompt_zh": "九龍公園原址是哪一座兵房？",
+    "prompt_en": "Which barracks formerly occupied the site of Kowloon Park?",
+    "source_url": "https://www.lcsd.gov.hk/en/hkfs/2023/greening_spots.html",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "美利兵房",
+        "en": "Murray Barracks"
+      },
+      {
+        "zh": "威菲路兵房",
+        "en": "Whitfield Barracks"
+      },
+      {
+        "zh": "赤柱兵房",
+        "en": "Stanley Barracks"
+      },
+      {
+        "zh": "三軍會兵房",
+        "en": "United Services Barracks"
+      }
+    ],
+    "answer": 1
+  },
+  {
+    "id": "hongkong-019",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "香港公園",
+    "place_en": "Hong Kong Park",
+    "osm_ref": "way/114282528",
+    "location_lat": 22.2775868,
+    "location_lng": 114.1618305,
+    "prompt_zh": "香港公園在哪一年開放？",
+    "prompt_en": "In what year did Hong Kong Park open?",
+    "source_url": "https://www.lcsd.gov.hk/dept/annualrpt/2014-15/en/leisure/facilities.html",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1961年",
+        "en": "1961"
+      },
+      {
+        "zh": "1971年",
         "en": "1971"
       },
       {
-        "zh": "2001",
-        "en": "2001"
+        "zh": "1991年",
+        "en": "1991"
       },
       {
-        "zh": "2011",
+        "zh": "2011年",
         "en": "2011"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://cmo.hkust.edu.hk/sundial-sculpture",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
-    "status": "draft"
+    "answer": 2
   },
   {
-    "id": "hong-kong-004",
-    "city": "hong-kong",
+    "id": "hongkong-020",
+    "city": "hongkong",
     "type": "question",
+    "place_zh": "旗杆屋茶具文物館",
+    "place_en": "Flagstaff House Museum of Tea Ware",
+    "osm_ref": "way/42255486",
+    "location_lat": 22.27825,
+    "location_lng": 114.16246,
+    "prompt_zh": "旗杆屋改為茶具文物館前，曾用作甚麼？",
+    "prompt_en": "Before it became a museum, what was Flagstaff House used for?",
+    "source_url": "https://hkp.lcsd.gov.hk/en/facilities/heritage",
+    "checked_on": "2026-11-18",
+    "status": "draft",
     "kind": "choice",
-    "place_zh": "香港科技大學紅鳥日晷",
-    "place_en": "HKUST Red Bird Sundial",
-    "location_lat": 22.3374255,
-    "location_lng": 114.2629606,
-    "prompt_zh": "科大紅鳥日晷基座的浮雕描繪了多少項中國科技成就？",
-    "prompt_en": "How many Chinese science and technology achievements are depicted in the Red Bird podium mural?",
     "choices": [
       {
-        "zh": "39項",
-        "en": "39"
+        "zh": "商船船員宿舍",
+        "en": "Merchant sailors’ quarters"
       },
       {
-        "zh": "9項",
-        "en": "9"
+        "zh": "法院",
+        "en": "Law court"
       },
       {
-        "zh": "19項",
-        "en": "19"
+        "zh": "郵政總局",
+        "en": "General post office"
       },
       {
-        "zh": "99項",
-        "en": "99"
+        "zh": "英軍三軍總司令官邸",
+        "en": "Residence of the British forces commander"
       }
     ],
-    "answer": {
-      "choice": 0
-    },
-    "source_url": "https://cmo.hkust.edu.hk/sundial-sculpture",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
-    "status": "draft"
+    "answer": 3
   },
   {
-    "id": "hong-kong-005",
-    "city": "hong-kong",
+    "id": "hongkong-021",
+    "city": "hongkong",
     "type": "question",
+    "place_zh": "維多利亞公園",
+    "place_en": "Victoria Park",
+    "osm_ref": "way/715873995",
+    "location_lat": 22.28012,
+    "location_lng": 114.18789,
+    "prompt_zh": "維多利亞公園在1957年的哪一個月開放？",
+    "prompt_en": "In which month of 1957 did Victoria Park open?",
+    "source_url": "https://www.lcsd.gov.hk/dept/annualrpt/2011-12/en/ls/index03.htm",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "十月",
+        "en": "October"
+      },
+      {
+        "zh": "三月",
+        "en": "March"
+      },
+      {
+        "zh": "六月",
+        "en": "June"
+      },
+      {
+        "zh": "十二月",
+        "en": "December"
+      }
+    ],
+    "answer": 0
+  },
+  {
+    "id": "hongkong-022",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "灣仔藍屋",
+    "place_en": "Blue House, Wan Chai",
+    "osm_ref": "way/742102541",
+    "location_lat": 22.2739411,
+    "location_lng": 114.1742543,
+    "prompt_zh": "灣仔藍屋屬於香港哪一類傳統住宅建築？",
+    "prompt_en": "What traditional Hong Kong building type is Wan Chai’s Blue House?",
+    "source_url": "https://www.discoverhongkong.com/tc/place-to-go/travel.guide-the-blue-house.html",
+    "checked_on": "2026-11-18",
+    "status": "draft",
     "kind": "text",
-    "place_zh": "香港科技大學紅鳥日晷",
-    "place_en": "HKUST Red Bird Sundial",
-    "location_lat": 22.3374255,
-    "location_lng": 114.2629606,
-    "prompt_zh": "科大紅鳥雕塑會利用太陽光發揮哪種計時器的功能？",
-    "prompt_en": "What type of timepiece does the HKUST Red Bird sculpture use sunlight to function as?",
     "choices": null,
-    "answer": {
-      "zh": [
-        "日晷"
-      ],
-      "en": [
-        "sundial"
-      ]
-    },
-    "source_url": "https://cmo.hkust.edu.hk/sundial-sculpture",
-    "checked_date": "2026-11-18",
-    "photo": null,
-    "photo_credit": null,
-    "photo_licence": null,
-    "recheck_within_six_months": false,
-    "status": "draft"
+    "answer": "tong lau",
+    "typed_aliases": [
+      "唐樓",
+      "唐楼",
+      "tong4 lau4",
+      "tong lau",
+      "tenement",
+      "tenement building"
+    ]
+  },
+  {
+    "id": "hongkong-023",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "中環和平紀念碑",
+    "place_en": "The Cenotaph, Central",
+    "osm_ref": "way/746368276",
+    "location_lat": 22.2815853,
+    "location_lng": 114.1607533,
+    "prompt_zh": "中環和平紀念碑最初為悼念哪場戰爭中的死難者而建？",
+    "prompt_en": "The Cenotaph in Central was originally built to remember those who died in which war?",
+    "source_url": "https://www.amo.gov.hk/en/historic-buildings/monuments/hong-kong-island/monuments_102/index.html",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "第二次世界大戰",
+        "en": "Second World War"
+      },
+      {
+        "zh": "第一次世界大戰",
+        "en": "First World War"
+      },
+      {
+        "zh": "朝鮮戰爭",
+        "en": "Korean War"
+      },
+      {
+        "zh": "克里米亞戰爭",
+        "en": "Crimean War"
+      }
+    ],
+    "answer": 1
+  },
+  {
+    "id": "hongkong-024",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "山頂纜車花園道總站",
+    "place_en": "Peak Tram Garden Road Terminus",
+    "osm_ref": "way/637117388",
+    "location_lat": 22.2775862,
+    "location_lng": 114.1595752,
+    "prompt_zh": "山頂纜車在哪一年開始載客？",
+    "prompt_en": "In what year did the Peak Tram begin passenger service?",
+    "source_url": "https://www.thepeak.com.hk/en/heritage/history-of-the-peak-tram",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1868年",
+        "en": "1868"
+      },
+      {
+        "zh": "1908年",
+        "en": "1908"
+      },
+      {
+        "zh": "1888年",
+        "en": "1888"
+      },
+      {
+        "zh": "1928年",
+        "en": "1928"
+      }
+    ],
+    "answer": 2
+  },
+  {
+    "id": "hongkong-025",
+    "city": "hongkong",
+    "type": "question",
+    "place_zh": "香港動植物公園",
+    "place_en": "Hong Kong Zoological and Botanical Gardens",
+    "osm_ref": "way/580283492",
+    "location_lat": 22.2775269,
+    "location_lng": 114.1574264,
+    "prompt_zh": "香港動植物公園自哪一年起飼養動物供公眾觀賞？",
+    "prompt_en": "In what year did the Hong Kong Zoological and Botanical Gardens begin keeping animals for display?",
+    "source_url": "https://www.lcsd.gov.hk/en/green/common/doc/exhibition_panels.pdf",
+    "checked_on": "2026-11-18",
+    "status": "draft",
+    "kind": "choice",
+    "choices": [
+      {
+        "zh": "1856年",
+        "en": "1856"
+      },
+      {
+        "zh": "1896年",
+        "en": "1896"
+      },
+      {
+        "zh": "1916年",
+        "en": "1916"
+      },
+      {
+        "zh": "1876年",
+        "en": "1876"
+      }
+    ],
+    "answer": 3
+  },
+  {
+    "id": "hongkong-ce1-01",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 1,
+    "place_zh": "海景嘉福洲際酒店 Café on M，尖沙咀東，香港",
+    "place_en": "Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong",
+    "osm_ref": "way/1194005835",
+    "location_lat": 22.2988843,
+    "location_lng": 114.1796048,
+    "prompt_zh": "香港海景嘉福洲際酒店 Café on M 一個菠蘿油的餐牌價要多少錢？",
+    "prompt_en": "What is the price of one buttered pineapple bun at Café on M at the InterContinental Grand Stanford Hong Kong, at menu price?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 38.0,
+    "usd": 4.84,
+    "source_url": "https://www.hongkong.intercontinental.com/wp-content/uploads/sites/33/2025/09/cha_chaan_teng_menu.pdf",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.hongkong.intercontinental.com/dining/cafe-on-m/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-02",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 2,
+    "place_zh": "香港電車西港城總站，上環，香港",
+    "place_en": "Hong Kong Tramways Western Market Terminus, Sheung Wan, Hong Kong",
+    "osm_ref": "way/1309053373",
+    "location_lat": 22.2869676,
+    "location_lng": 114.1507389,
+    "prompt_zh": "香港電車（叮叮）一程成人車資要多少錢？",
+    "prompt_en": "What is the price of an adult ride on Hong Kong’s Ding Ding tram?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 3.3,
+    "usd": 0.42,
+    "source_url": "https://www.hktramways.com/en/schedules-fares",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.hktramways.com/en/interactive-map/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-03",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 3,
+    "place_zh": "天星小輪灣仔碼頭，灣仔，香港",
+    "place_en": "Star Ferry, Wan Chai Pier, Hong Kong",
+    "osm_ref": "way/1118341920",
+    "location_lat": 22.2835458,
+    "location_lng": 114.1761172,
+    "prompt_zh": "平日搭天星小輪由灣仔往尖沙咀一張成人船票（公眾假期除外）要多少錢？",
+    "prompt_en": "What is the price of one adult Star Ferry crossing from Wan Chai to Tsim Sha Tsui on a weekday outside public holidays?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 5.0,
+    "usd": 0.64,
+    "source_url": "https://www.starferry.com.hk/en/service",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://fpf.ccidahk.gov.hk/en/location/detail.php?id=830",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-04",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 4,
+    "place_zh": "機場快綫香港站，中環，香港",
+    "place_en": "Airport Express Hong Kong Station, Central, Hong Kong",
+    "osm_ref": "way/907226873",
+    "location_lat": 22.2851962,
+    "location_lng": 114.157639,
+    "prompt_zh": "用八達通搭機場快綫從香港站到機場的成人單程車資要多少錢？",
+    "prompt_en": "What is the price of an adult Airport Express ride from Hong Kong Station to the airport using Octopus?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 120.0,
+    "usd": 15.29,
+    "source_url": "https://www.mtr.com.hk/digitalleaflet/en/detail.html?article=airport-express-service-guide",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.mtr.com.hk/digitalleaflet/en/detail.html?article=airport-express-service-guide",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-05",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 5,
+    "place_zh": "昂坪360東涌纜車站售票處，東涌，香港",
+    "place_en": "Ngong Ping 360 Tung Chung Terminal ticket office, Tung Chung, Hong Kong",
+    "osm_ref": "way/170999459",
+    "location_lat": 22.28922,
+    "location_lng": 113.94095,
+    "prompt_zh": "昂坪360標準車廂一張成人來回票要多少錢？",
+    "prompt_en": "What is the price of an adult round trip in an Ngong Ping 360 standard cabin?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 295.0,
+    "usd": 37.6,
+    "source_url": "https://www.np360.com.hk/en/tickets-promotions/tickets-tours/cable-car-tickets",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.np360.com.hk/en/visitor-information/faqs",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": true
+  },
+  {
+    "id": "hongkong-ce1-06",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 6,
+    "place_zh": "香港故宮文化博物館售票處，西九文化區，香港",
+    "place_en": "Hong Kong Palace Museum ticket office, West Kowloon Cultural District",
+    "osm_ref": "way/701770950",
+    "location_lat": 22.3010562,
+    "location_lng": 114.1550859,
+    "prompt_zh": "香港故宮文化博物館一張成人定時段標準門票要多少錢？",
+    "prompt_en": "What is the price of a timed adult general-admission ticket to the Hong Kong Palace Museum?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 70.0,
+    "usd": 8.92,
+    "source_url": "https://www.hkpm.org.hk/en/visit/ticket",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.hkpm.org.hk/en/visit/ticket",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-07",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 7,
+    "place_zh": "M+博物館售票處，西九文化區，香港",
+    "place_en": "M+ ticket office, West Kowloon Cultural District",
+    "osm_ref": "way/625487640",
+    "location_lat": 22.3018795,
+    "location_lng": 114.1588438,
+    "prompt_zh": "M+ 博物館一張正價門票要多少錢？",
+    "prompt_en": "What is the price of a standard admission ticket to the M+ museum?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 190.0,
+    "usd": 24.22,
+    "source_url": "https://www.mplus.org.hk/en/admission-tickets/",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.mplus.org.hk/en/admission-tickets/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-08",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 8,
+    "place_zh": "金輝點心，灣仔，香港",
+    "place_en": "Kam Fai Dim Sum, Wan Chai, Hong Kong",
+    "osm_ref": "way/1308962558",
+    "location_lat": 22.2770239,
+    "location_lng": 114.1702789,
+    "prompt_zh": "灣仔金輝點心一籠蝦餃要多少錢？",
+    "prompt_en": "What is the price of a basket of har gow at Kam Fai Dim Sum in Wan Chai?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 30.0,
+    "usd": 3.82,
+    "source_url": "https://kamfaidimsum.com/en/menu.html",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://kamfaidimsum.com/en/visit",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-09",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 9,
+    "place_zh": "海景嘉福洲際酒店 Café on M，尖沙咀東，香港",
+    "place_en": "Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong",
+    "osm_ref": "way/1194005835",
+    "location_lat": 22.2988843,
+    "location_lng": 114.1796048,
+    "prompt_zh": "香港海景嘉福洲際酒店 Café on M 兩件港式酥皮蛋撻的餐牌價要多少錢？",
+    "prompt_en": "What is the price of two Hong Kong-style egg tarts at Café on M at the InterContinental Grand Stanford Hong Kong, at menu price?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 28.0,
+    "usd": 3.57,
+    "source_url": "https://www.hongkong.intercontinental.com/wp-content/uploads/sites/33/2025/09/cha_chaan_teng_menu.pdf",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.hongkong.intercontinental.com/dining/cafe-on-m/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-10",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 10,
+    "place_zh": "香港科學館售票處，尖沙咀東，香港",
+    "place_en": "Hong Kong Science Museum ticket office, Tsim Sha Tsui East, Hong Kong",
+    "osm_ref": "way/120343771",
+    "location_lat": 22.3006869,
+    "location_lng": 114.1784247,
+    "prompt_zh": "在一般收費日參觀香港科學館常設展的一張標準票要多少錢？",
+    "prompt_en": "What is the price of a standard ticket to the Hong Kong Science Museum’s permanent exhibitions on a regular paid day?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 20.0,
+    "usd": 2.55,
+    "source_url": "https://hk.science.museum/tc/web/scm/visit.html",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://hk.science.museum/tc/web/scm/visit.html",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-11",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 11,
+    "place_zh": "香港太空館天象廳售票處，尖沙咀，香港",
+    "place_en": "Hong Kong Space Museum Space Theatre box office, Tsim Sha Tsui",
+    "osm_ref": "way/1505853953",
+    "location_lat": 22.2942973,
+    "location_lng": 114.1717176,
+    "prompt_zh": "香港太空館天象廳一張成人後座門票要多少錢？",
+    "prompt_en": "What is the price of one adult stalls ticket to a show at the Hong Kong Space Museum’s Space Theatre?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 40.0,
+    "usd": 5.1,
+    "source_url": "https://hk.space.museum/en/web/spm/shows.html",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://hk.space.museum/en/web/spm/shows.html",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-12",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 12,
+    "place_zh": "金輝點心，灣仔，香港",
+    "place_en": "Kam Fai Dim Sum, Wan Chai, Hong Kong",
+    "osm_ref": "way/1308962558",
+    "location_lat": 22.2770239,
+    "location_lng": 114.1702789,
+    "prompt_zh": "灣仔金輝點心一籠燒賣要多少錢？",
+    "prompt_en": "What is the price of a basket of siu mai at Kam Fai Dim Sum in Wan Chai?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 25.0,
+    "usd": 3.19,
+    "source_url": "https://kamfaidimsum.com/en/menu.html",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://kamfaidimsum.com/en/visit",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-13",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 13,
+    "place_zh": "海景嘉福洲際酒店 Café on M，尖沙咀東，香港",
+    "place_en": "Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong",
+    "osm_ref": "way/1194005835",
+    "location_lat": 22.2988843,
+    "location_lng": 114.1796048,
+    "prompt_zh": "香港海景嘉福洲際酒店 Café on M 一杯熱港式奶茶的餐牌價要多少錢？",
+    "prompt_en": "What is the price of one hot Hong Kong-style milk tea at Café on M at the InterContinental Grand Stanford Hong Kong, at menu price?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 38.0,
+    "usd": 4.84,
+    "source_url": "https://www.hongkong.intercontinental.com/wp-content/uploads/sites/33/2025/09/cha_chaan_teng_menu.pdf",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.hongkong.intercontinental.com/dining/cafe-on-m/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-14",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 14,
+    "place_zh": "金輝點心，灣仔，香港",
+    "place_en": "Kam Fai Dim Sum, Wan Chai, Hong Kong",
+    "osm_ref": "way/1308962558",
+    "location_lat": 22.2770239,
+    "location_lng": 114.1702789,
+    "prompt_zh": "灣仔金輝點心一份香菇滑雞煲仔飯要多少錢？",
+    "prompt_en": "What is the price of a chicken and mushroom claypot rice at Kam Fai Dim Sum in Wan Chai?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 37.0,
+    "usd": 4.72,
+    "source_url": "https://kamfaidimsum.com/en/menu.html",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://kamfaidimsum.com/en/visit",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-15",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 15,
+    "place_zh": "海景嘉福洲際酒店 Café on M，尖沙咀東，香港",
+    "place_en": "Café on M, InterContinental Grand Stanford, Tsim Sha Tsui East, Hong Kong",
+    "osm_ref": "way/1194005835",
+    "location_lat": 22.2988843,
+    "location_lng": 114.1796048,
+    "prompt_zh": "香港海景嘉福洲際酒店 Café on M 一份港式西多士的餐牌價要多少錢？",
+    "prompt_en": "What is the price of one Hong Kong-style French toast at Café on M at the InterContinental Grand Stanford Hong Kong, at menu price?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 48.0,
+    "usd": 6.12,
+    "source_url": "https://www.hongkong.intercontinental.com/wp-content/uploads/sites/33/2025/09/cha_chaan_teng_menu.pdf",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.hongkong.intercontinental.com/dining/cafe-on-m/",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-16",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 16,
+    "place_zh": "金輝點心，灣仔，香港",
+    "place_en": "Kam Fai Dim Sum, Wan Chai, Hong Kong",
+    "osm_ref": "way/1308962558",
+    "location_lat": 22.2770239,
+    "location_lng": 114.1702789,
+    "prompt_zh": "灣仔金輝點心一份馬拉糕要多少錢？",
+    "prompt_en": "What is the price of a serving of steamed ma lai go at Kam Fai Dim Sum in Wan Chai?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 23.0,
+    "usd": 2.93,
+    "source_url": "https://kamfaidimsum.com/en/menu.html",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://kamfaidimsum.com/en/visit",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-17",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 17,
+    "place_zh": "金輝點心，灣仔，香港",
+    "place_en": "Kam Fai Dim Sum, Wan Chai, Hong Kong",
+    "osm_ref": "way/1308962558",
+    "location_lat": 22.2770239,
+    "location_lng": 114.1702789,
+    "prompt_zh": "灣仔金輝點心一份鮮蝦腸粉要多少錢？",
+    "prompt_en": "What is the price of one order of whole-shrimp rice rolls at Kam Fai Dim Sum in Wan Chai?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 31.0,
+    "usd": 3.95,
+    "source_url": "https://kamfaidimsum.com/en/menu.html",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://kamfaidimsum.com/en/visit",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-18",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 18,
+    "place_zh": "金輝點心，灣仔，香港",
+    "place_en": "Kam Fai Dim Sum, Wan Chai, Hong Kong",
+    "osm_ref": "way/1308962558",
+    "location_lat": 22.2770239,
+    "location_lng": 114.1702789,
+    "prompt_zh": "灣仔金輝點心一份牛肉丸要多少錢？",
+    "prompt_en": "What is the price of one order of beef balls at Kam Fai Dim Sum in Wan Chai?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 22.0,
+    "usd": 2.8,
+    "source_url": "https://kamfaidimsum.com/en/menu.html",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://kamfaidimsum.com/en/visit",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-19",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 19,
+    "place_zh": "金輝點心，灣仔，香港",
+    "place_en": "Kam Fai Dim Sum, Wan Chai, Hong Kong",
+    "osm_ref": "way/1308962558",
+    "location_lat": 22.2770239,
+    "location_lng": 114.1702789,
+    "prompt_zh": "灣仔金輝點心一份黑芝麻蓉包要多少錢？",
+    "prompt_en": "What is the price of one order of black sesame buns at Kam Fai Dim Sum in Wan Chai?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 21.0,
+    "usd": 2.68,
+    "source_url": "https://kamfaidimsum.com/en/menu.html",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://kamfaidimsum.com/en/visit",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
+  },
+  {
+    "id": "hongkong-ce1-20",
+    "city": "hongkong",
+    "type": "price",
+    "kind": null,
+    "ce1_seq": 20,
+    "place_zh": "山頂纜車中環花園道總站售票處，中環，香港",
+    "place_en": "Peak Tram Lower Terminus ticket office, Garden Road, Central",
+    "osm_ref": "way/637117388",
+    "location_lat": 22.2775862,
+    "location_lng": 114.1595752,
+    "prompt_zh": "從中環搭山頂纜車上山的一張成人單程票要多少錢？",
+    "prompt_en": "What is the price of one adult Peak Tram single ticket uphill from Central?",
+    "choices": null,
+    "currency": "HK$",
+    "rate": 7.846,
+    "local_amount": 82.0,
+    "usd": 10.45,
+    "source_url": "https://www.landsd.gov.hk/doc/en/mapping/ehkg/individual_PDF/Notes_on_HongKong_2026.pdf",
+    "checked_on": "2026-11-17",
+    "location_source_url": "https://www.thepeak.com.hk/en/heritage/history-of-the-peak-tram",
+    "location_checked_on": "2026-11-18",
+    "status": "draft",
+    "recheck_within_six_months": true,
+    "outside_coverage": false
   },
   {
     "id": "singapore-001",
