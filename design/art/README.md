@@ -654,4 +654,4 @@ The wax-red canopy and upper bow swing rearward. The pleats gather, then the sta
 | `quest-types/quest-type-question.png` | 1024×1024 | Opaque question quest picture for a 46 px pin and centred 16:9 crop. |
 | `quest-types/quest-type-price.png` | 1024×1024 | Opaque price quest picture for a 46 px pin and centred 16:9 crop. |
 
-[Pin and banner review](_checks/quest-types-review.png) · [Asset audit](_checks/quest-types-assets.json). The first three pictures await Roy’s approval before catch and landmark are drawn.
+[Pin and banner review](_checks/quest-types-review.png) · [Asset audit](_checks/quest-types-assets.json). Roy approved question and price on 2026-11-18. The revised arrive picture places the flag and two footprints side by side across about 81% of the square. Catch and landmark follow Roy’s approval of arrive.
