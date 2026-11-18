@@ -83,6 +83,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-18: HL-C5 merged in PR #160. Hold migration `20261118135059` and apply it with the HL-U4 app release, after HL-C4 migration `20261118134846`.
 - 2026-11-18: Roy approved unpublishing Singapore Guess the price sequences 1, 2, 6, 12, 15, 16, 18 and 19 because the venue closed or exhibition ended. Preserve questions and historical plays; apply only just after Singapore midnight after hosted rollback, green CI and owner squash merge with [hold deploy]. Other held migrations remain held.
 - 2026-11-18: Roy approved the full HL-A1 quest pin art set in PR #153 at `e91fb44`: arrive, question, price, catch (the cracked message-in-a-bottle), landmark and all three faceted frame colours. The approved masters, exports, window and tip are fixed for the art-only squash merge after green CI.
 - 2026-11-18: Roy approved the Landmark tower at `716ecf9` and chose the app’s corked message-in-a-bottle vessel for catch. The catch redraw shows darkened glass, a visible letter, Crack A-style fractures and an incoming red wax ball. The approved artwork is preserved. Draft PR #153 awaits Roy’s whole-set approval.
