@@ -40,3 +40,22 @@ begin
     perform set_config('test.ce1_guess_before',baseline::text,true);
   end;
 end $$;
+
+-- This route existed before HL-C3 and includes both grandfathered rules.
+do $$
+declare h text;
+declare spot public.corrupted_spots;
+begin
+  select * into spot from public.corrupted_spots where hidden_at is null order by id limit 1;
+  update public.profiles set can_create_hunts=true where id=auth.uid();
+  h:=public.private_hunt_create(jsonb_build_object('name','Legacy quest fixture','route_mode','ordered',
+    'leaderboard_visible',false,'starts_at',now()-interval '1 hour','ends_at',now()+interval '1 hour',
+    'guide_mode','fixed','guide_lat',spot.lat,'guide_lng',spot.lng))->>'id';
+  perform public.private_hunt_quest_save(h,jsonb_build_object('name','Legacy Spin','quest_type','spin',
+    'ordinal',1,'points',10,'location_lat',spot.lat,'location_lng',spot.lng));
+  perform public.private_hunt_quest_save(h,jsonb_build_object('name','Legacy Catch','quest_type','restore',
+    'ordinal',2,'points',10,'catch_count',1));
+  perform set_config('test.legacy_hunt',h,true);
+  perform set_config('test.legacy_spot',spot.id::text,true);
+  perform set_config('test.legacy_code',public.private_hunt_publish(h)->>'join_code',true);
+end $$;
