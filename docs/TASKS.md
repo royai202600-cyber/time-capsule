@@ -1,3 +1,5 @@
+CE1 Macau correction (2026-11-19): migration `20261119000708` retires only Macau seq 15. Hosted rollback passed row/play preservation, 19 published questions, unchanged other cities, yesterday/new-player today/guess and an existing play on the retired question. Production application is pending the 2026-11-20 Macau midnight window, directly through SQL with only its history entry; no db push or held hunt-loop migration.
+
 # Task board
 
 CE1 Singapore price correction (2026-11-18): Roy approved unpublishing eight outdated questions; hosted rollback passed. Migration is held for the midnight Singapore window after green CI and owner squash merge; other held migrations must not be applied.
