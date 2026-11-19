@@ -1,6 +1,23 @@
 # Combined hunt-loop release — production validation stopped
 
-## PR #171 review stop — new entry loses its ID in the open form
+## Current resume — #171 live; calendar picker pagination stop
+
+Reviewed PR #171 head `528ea57b326c441115e1fbb397300a97f7a9dfc5`. The actual PoolSheet payload/save reproduction now includes the persisted ID on the second save for both choice and price, omitting unchanged answer/local_amount. TypeScript passed; Vitest 254 passed with 9 expected skips; CI `44480968580` passed. Roy's account squash-merged as `2877d0bae226cd28bb0eaf6c80e52513cad9a043`. Owner-authored identical-tree release `c79b212e92762aa4316e3b274fadca97addfd44a` is live at https://time-capsule-pi-two.vercel.app. Vercel deployment `9U5ZEkCMMKaceiCHbMWPURBEisDg` succeeded; production common/entry bundle hashes match the fresh web export (`__common-b24e7b4af09c8880242fd3db6d590a0d.js`, `entry-a22fe8e95a1edfa923c19f591ea7d90b.js`). No migration or art change.
+
+Production checks with two disposable accounts:
+
+- At 375 px in Chinese, created a choice draft, saved, edited English and saved again without selecting an answer. SQL confirmed exactly one row, edited prompt, original answer 0, and outside_coverage=false. Publish succeeded without crashing.
+- At 1280 px in English, created a price draft, saved twice without re-entering its amount. Exactly one row retained local_amount=64 and USD=2.00, with outside_coverage=false.
+- Edited the used Q1 Ferris-wheel entry, preserving Used in 1 place and Outside the map. A temporary old checked_on showed Not checked for 6 months; Today + Save removed it. Hide retained the metadata; Activity Undo restored Published. Then its original checked_on was restored through the admin RPC and the full list entry matched the saved original exactly.
+- Chinese desktop and English mobile pool views showed the hidden reasons. Calendar swap changed tomorrow's question/price ordering correctly. A typed-answer pool item was refused by the server as expected: Today's Hunt supports choice questions only. This negative check is not the stop.
+
+**Stop: calendar replacement picker silently truncates the published pool at 50 rows.** `mobile/src/features/admin/TodaysHuntCalendar.tsx:125` calls `adminHuntLoop.pool(city, "published")` once and discards `next_cursor`. PickSheet has no Load more control. The disposable published choice `dc508c89-8ae5-4648-8ee2-7763443831dd` was given a location at Civic Square; the backend's `private.todays_hunt_pool('taipei')` confirmed it eligible. The list API returned 50 rows, cursor `c70c914a-fc5c-5bb7-ae7a-a12050ed1ad9`, then six rows on page 2 including this choice. It never appeared in the production Change the question picker, even after closing and reopening it. Consequently the calendar set acceptance could not be completed through the UI. The same one-page load serves price replacements.
+
+Claude follow-up: load subsequent published-pool pages or expose paging in PickSheet, preserving city/type/current-selection handling and cancellation when the sheet closes or changes. Test valid choice and price entries beyond the first 50 mixed rows. No screen fix or backend change was made by Codex. Per Roy's stop instruction, remaining calendar set/catch, copies per catch, unlimited switch, player adjustment, rack moderation and remaining City Hunt/five-type acceptance are held. Memory Route is already complete from the prior release; do not repeat it unnecessarily.
+
+Cleanup: used Q1 row restored exactly; the calendar swap was undone through the admin RPC and tomorrow's full calendar, including original quest IDs, matched its snapshot. Both fixture pool rows and grading rows were deleted. Two Auth accounts, profiles, identities, sessions, refresh tokens, Auth audit records, temporary membership and 13 fixture-admin audit actions/secrets were removed; all checked fixture counts were zero and pool count returned to 220. No fixture quest rule or capsule remained. Append-only audit trigger restored/enabled within the cleanup transaction. Browser signed out and viewport reset; credential helper files removed. No Time Capsule Docker stack is running. Macau `20261119000708` remains absent; live types still match main. Done/status docs stay unmerged pending acceptance.
+
+## Earlier PR #171 review stop — new entry loses its ID in the open form
 
 Reviewed head `c11fc021523054ba48605d4be1d8ee7a4bdecd82`; CI `44479588961` is green and GitHub reports mergeable. The `PoolResult`/`mergePoolEntry` change fixes the missing `uses` shape for the card and open sheet, preserving an existing usage list.
 
