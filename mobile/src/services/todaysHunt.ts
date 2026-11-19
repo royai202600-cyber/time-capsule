@@ -6,7 +6,7 @@ import type { Quest, QuestAnswer, QuestResult } from "./quests";
 import { supabase } from "./supabase";
 
 /** Codex's HL-C4 backend is live. Switch on when `todays_hunt`, `todays_hunt_attempt` and `todays_hunt_friends` are applied. */
-export const TODAYS_HUNT_BACKEND = false;
+export const TODAYS_HUNT_BACKEND = true;
 export const TODAYS_HUNT_SAMPLE = !TODAYS_HUNT_BACKEND && typeof __DEV__ !== "undefined" && __DEV__;
 /** Today's Hunt replaces the daily price card in the City Explorer wherever this is on. */
 export const TODAYS_HUNT = TODAYS_HUNT_BACKEND || TODAYS_HUNT_SAMPLE;

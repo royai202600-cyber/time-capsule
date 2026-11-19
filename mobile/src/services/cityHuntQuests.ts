@@ -9,7 +9,7 @@ import { QUEST_ERRORS, type Quest, type QuestAttempt, type QuestErrorCode, type 
 import { supabase } from "./supabase";
 
 /** Codex's HL-C3 migrations are applied. Switch on with the app release that shows quest pins. */
-export const HUNT_QUESTS_BACKEND = false;
+export const HUNT_QUESTS_BACKEND = true;
 export const HUNT_QUESTS_SAMPLE = !HUNT_QUESTS_BACKEND && typeof __DEV__ !== "undefined" && __DEV__;
 export const HUNT_QUESTS = HUNT_QUESTS_BACKEND || HUNT_QUESTS_SAMPLE;
 

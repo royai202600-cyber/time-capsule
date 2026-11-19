@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           capsule_id: string
           drawing: string | null
+          lock_answer: string | null
           message: string | null
           photo: string | null
           prediction: string | null
@@ -27,6 +28,7 @@ export type Database = {
         Insert: {
           capsule_id: string
           drawing?: string | null
+          lock_answer?: string | null
           message?: string | null
           photo?: string | null
           prediction?: string | null
@@ -36,6 +38,7 @@ export type Database = {
         Update: {
           capsule_id?: string
           drawing?: string | null
+          lock_answer?: string | null
           message?: string | null
           photo?: string | null
           prediction?: string | null
@@ -63,6 +66,7 @@ export type Database = {
           id: string
           is_public: boolean
           kind: string
+          lock_question: string | null
           open_at: string
           opened_at: string | null
           opened_distance_m: number | null
@@ -75,6 +79,7 @@ export type Database = {
           public_capsule_drop_place: string | null
           public_capsule_returns: number
           public_capsule_spot: string | null
+          rack_removed_at: string | null
           recipient: string | null
           route_done: number
           route_total: number
@@ -98,6 +103,7 @@ export type Database = {
           id?: string
           is_public?: boolean
           kind?: string
+          lock_question?: string | null
           open_at: string
           opened_at?: string | null
           opened_distance_m?: number | null
@@ -110,6 +116,7 @@ export type Database = {
           public_capsule_drop_place?: string | null
           public_capsule_returns?: number
           public_capsule_spot?: string | null
+          rack_removed_at?: string | null
           recipient?: string | null
           route_done?: number
           route_total?: number
@@ -133,6 +140,7 @@ export type Database = {
           id?: string
           is_public?: boolean
           kind?: string
+          lock_question?: string | null
           open_at?: string
           opened_at?: string | null
           opened_distance_m?: number | null
@@ -145,6 +153,7 @@ export type Database = {
           public_capsule_drop_place?: string | null
           public_capsule_returns?: number
           public_capsule_spot?: string | null
+          rack_removed_at?: string | null
           recipient?: string | null
           route_done?: number
           route_total?: number
@@ -236,6 +245,7 @@ export type Database = {
           hunt_id: string
           joined_at: string
           landmark_count: number
+          located_run_at: string | null
           restore_count: number
           spin_count: number
           user_id: string
@@ -246,6 +256,7 @@ export type Database = {
           hunt_id: string
           joined_at?: string
           landmark_count?: number
+          located_run_at?: string | null
           restore_count?: number
           spin_count?: number
           user_id: string
@@ -256,6 +267,7 @@ export type Database = {
           hunt_id?: string
           joined_at?: string
           landmark_count?: number
+          located_run_at?: string | null
           restore_count?: number
           spin_count?: number
           user_id?: string
@@ -1073,6 +1085,7 @@ export type Database = {
           points: number
           puzzle_kind: string | null
           quest_type: string
+          rule_id: string | null
         }
         Insert: {
           arrive_check?: string
@@ -1089,6 +1102,7 @@ export type Database = {
           points: number
           puzzle_kind?: string | null
           quest_type: string
+          rule_id?: string | null
         }
         Update: {
           arrive_check?: string
@@ -1105,6 +1119,7 @@ export type Database = {
           points?: number
           puzzle_kind?: string | null
           quest_type?: string
+          rule_id?: string | null
         }
         Relationships: [
           {
@@ -1413,6 +1428,24 @@ export type Database = {
         Returns: undefined
       }
       admin_members_list: { Args: never; Returns: Json }
+      admin_player_adjust_copies: {
+        Args: {
+          delta: number
+          reason: string
+          user_id: string
+          vessel_id: string
+        }
+        Returns: Json
+      }
+      admin_question_pool_list: {
+        Args: { city: string; cursor?: string; filter?: string }
+        Returns: Json
+      }
+      admin_question_pool_save: { Args: { payload: Json }; Returns: Json }
+      admin_question_pool_set_status: {
+        Args: { id: string; status: string }
+        Returns: Json
+      }
       admin_queue: { Args: { p_status: string }; Returns: Json }
       admin_queue_resolve: {
         Args: {
@@ -1422,6 +1455,10 @@ export type Database = {
           p_note: string
         }
         Returns: undefined
+      }
+      admin_rack_remove: {
+        Args: { capsule_id: string; reason: string }
+        Returns: Json
       }
       admin_spawn_place_add: {
         Args: { p_note?: string; p_region: string; p_vessel: string }
@@ -1451,11 +1488,7 @@ export type Database = {
         Returns: Json
       }
       admin_todays_hunt_calendar: {
-        Args: {
-          p_city: string
-          p_days: number
-          p_from: string
-        }
+        Args: { p_city: string; p_days: number; p_from: string }
         Returns: Json
       }
       admin_todays_hunt_set: {
@@ -1473,37 +1506,33 @@ export type Database = {
         Returns: Json
       }
       admin_todays_hunt_swap: {
-        Args: {
-          p_a: number
-          p_b: number
-          p_city: string
-          p_date: string
-        }
+        Args: { p_a: number; p_b: number; p_city: string; p_date: string }
         Returns: Json
       }
       admin_undo: {
         Args: { p_action_id: number; p_note?: string }
         Returns: Json
       }
-      admin_player_adjust_copies: {
-        Args: { user_id: string; vessel_id: string; delta: number; reason: string }
-        Returns: Json
-      }
       admin_vessel_set_unlimited: {
-        Args: { vessel_id: string; on: boolean }
+        Args: { on: boolean; vessel_id: string }
         Returns: Json
       }
-      admin_wave_config_set: {
-        Args: { p_copies_per_catch: number; p_note?: string } | {
-          p_common_weight: number
-          p_nearby_target: number
-          p_note?: string
-          p_rare_weight: number
-          p_spawn_chance: number
-          p_uncommon_weight: number
-        }
-        Returns: Json
-      }
+      admin_wave_config_set:
+        | {
+            Args: { p_copies_per_catch: number; p_note?: string }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_common_weight: number
+              p_nearby_target: number
+              p_note?: string
+              p_rare_weight: number
+              p_spawn_chance: number
+              p_uncommon_weight: number
+            }
+            Returns: Json
+          }
       admin_wave_length_set: {
         Args: { p_minutes: number; p_note?: string }
         Returns: string
@@ -1523,6 +1552,10 @@ export type Database = {
       }
       admin_waypost_check: {
         Args: { p_id?: string; p_lat: number; p_lng: number; p_region: string }
+        Returns: Json
+      }
+      admin_waypost_rack: {
+        Args: { cursor?: Json; waypost_id: string }
         Returns: Json
       }
       admin_waypost_set_visible: {
@@ -1561,6 +1594,8 @@ export type Database = {
       }
       city_hunt_join: { Args: { p_hunt: string }; Returns: Json }
       city_hunt_list: { Args: { p_lat: number; p_lng: number }; Returns: Json }
+      city_hunt_quest_attempt: { Args: { payload: Json }; Returns: Json }
+      city_hunt_quests: { Args: { hunt_id: string }; Returns: Json }
       city_puzzle_guess: {
         Args: { p_city: string; p_usd: number }
         Returns: Json
@@ -1578,7 +1613,7 @@ export type Database = {
         }
         Returns: {
           attempts_left: number
-          copies: number | null
+          copies: number
           gold_balls: number
           is_new: boolean
           result: string
@@ -1604,7 +1639,7 @@ export type Database = {
         }
         Returns: {
           attempts_left: number
-          copies: number | null
+          copies: number
           gold_balls: number
           is_new: boolean
           result: string
@@ -1700,7 +1735,7 @@ export type Database = {
           p_ring: number
         }
         Returns: {
-          copies: number | null
+          copies: number
           cracks: number
           expires_at: string
           gold_balls: number
@@ -1730,7 +1765,7 @@ export type Database = {
         Args: never
         Returns: {
           acquired_at: string
-          copies: number | null
+          copies: number
           edition_no: number
           stars: number
           vessel: string
@@ -1806,6 +1841,7 @@ export type Database = {
       private_hunt_organized: { Args: never; Returns: Json }
       private_hunt_preview: { Args: { p_code: string }; Returns: Json }
       private_hunt_publish: { Args: { p_hunt: string }; Returns: Json }
+      private_hunt_quest_attempt: { Args: { payload: Json }; Returns: Json }
       private_hunt_quest_complete: {
         Args: {
           p_accuracy: number
@@ -1882,6 +1918,30 @@ export type Database = {
         Returns: undefined
       }
       public_capsule_return: { Args: { p_id: string }; Returns: undefined }
+      rack_leave: {
+        Args: {
+          accuracy: number
+          body: string
+          hint: string
+          lat: number
+          lng: number
+          lock_answer?: string
+          lock_question?: string
+          wait_days: number
+          waypost_id: string
+        }
+        Returns: Json
+      }
+      rack_open: {
+        Args: {
+          accuracy: number
+          answer?: string
+          capsule_id: string
+          lat: number
+          lng: number
+        }
+        Returns: Json
+      }
       route_attempt: {
         Args: { p_capsule: string; p_payload: Json }
         Returns: Json
@@ -1896,14 +1956,8 @@ export type Database = {
         }
         Returns: Json
       }
-      route_progress: {
-        Args: { p_capsule: string }
-        Returns: Json
-      }
-      route_templates: {
-        Args: { p_city: string }
-        Returns: Json
-      }
+      route_progress: { Args: { p_capsule: string }; Returns: Json }
+      route_templates: { Args: { p_city: string }; Returns: Json }
       sea_nearby: {
         Args: { p_accuracy: number; p_lat: number; p_lng: number }
         Returns: {
@@ -1990,21 +2044,21 @@ export type Database = {
       }
       todays_hunt: { Args: { p_city: string }; Returns: Json }
       todays_hunt_attempt: {
-        Args: {
-          p_answer: Json
-          p_city: string
-          p_ordinal: number
-        }
+        Args: { p_answer: Json; p_city: string; p_ordinal: number }
         Returns: Json
       }
       todays_hunt_friends: { Args: { p_city: string }; Returns: Json }
       vessel_stock: {
         Args: never
         Returns: {
-          copies: number | null
+          copies: number
           remaining: number
           vessel: string
         }[]
+      }
+      waypost_rack: {
+        Args: { cursor?: Json; filter?: string; waypost_id: string }
+        Returns: Json
       }
       waypost_spin: {
         Args: { p_accuracy: number; p_id: string; p_lat: number; p_lng: number }
@@ -2035,12 +2089,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends (DefaultSchemaTableNameOrOptions extends {
+  TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never) = never,
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2064,11 +2118,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends (DefaultSchemaTableNameOrOptions extends {
+  TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never) = never,
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2089,11 +2143,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends (DefaultSchemaTableNameOrOptions extends {
+  TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never) = never,
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2114,11 +2168,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never) = never,
+    : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2131,11 +2185,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never) = never,
+    : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

@@ -4,7 +4,7 @@
 import { isEarnedVessel, STARTER_VESSELS, type VesselAccess } from "./vesselAccess";
 
 /** Codex's HL-C2 backend is live. Switch on when `unlimited_copies` and the new `copies` meaning are applied. */
-export const COPIES_BACKEND = false;
+export const COPIES_BACKEND = true;
 export const COPIES_SAMPLE = !COPIES_BACKEND && typeof __DEV__ !== "undefined" && __DEV__;
 export const COPIES = COPIES_BACKEND || COPIES_SAMPLE;
 /** What existing owners start with, and what the sample gives every collected vessel. */

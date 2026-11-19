@@ -1,4 +1,4 @@
-// Run only against a disposable copy of local Supabase with the HL-C3 migrations.
+// Run only against a disposable copy of local Supabase with the full Hunt Loop migrations.
 // Its Auth and REST containers are attached to the existing Supabase Docker network.
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
@@ -181,4 +181,34 @@ for (const quest of cityQuests.slice(1)) {
 assert(call('city_hunt_quests', jwt, { hunt_id: city }).every(q => q.done))
 assert.equal(call('city_hunt_finish', jwt, { p_hunt: city, ...keeper }).state, 'finished')
 
+const choiceDraft = call('admin_question_pool_save', editor, { payload: {
+  ...pool, type: 'question', kind: 'choice', answer: 0,
+  choices: [{ zh: '茶', en: 'Tea' }, { zh: '水', en: 'Water' }],
+} })
+const priceDraft = call('admin_question_pool_save', editor, { payload: {
+  ...pool, type: 'price', currency: 'NT$', rate: 32, local_amount: 320,
+} })
+for (const draft of [choiceDraft, priceDraft]) {
+  assert.equal(draft.status, 'draft')
+  assert.equal(draft.outside_coverage, false)
+}
+const published = call('admin_question_pool_set_status', editor, { id: choiceDraft.id, status: 'published' })
+assert.equal(published.status, 'published')
+assert.equal(published.outside_coverage, false)
+
+const seed = JSON.parse(sql(`select to_jsonb(q) from private.question_pool q
+  where q.outside_coverage and q.city='taipei' order by q.id limit 1`))
+const edited = call('admin_question_pool_save', editor, { payload: {
+  id: seed.id, place_en: seed.place_en + ' (test edit)',
+} })
+assert.notEqual(edited.place_en, seed.place_en)
+assert.equal(edited.outside_coverage, true)
+assert.equal(edited.hidden_reason, seed.hidden_reason)
+const actionId = Number(sql(`select id from private.admin_actions where actor='${organizer.id}'
+  and action='question_pool.edit' and target_id='${seed.id}' order by id desc limit 1`))
+assert(actionId > 0)
+assert.deepEqual(call('admin_undo', editor, { p_action_id: actionId }), seed)
+assert.deepEqual(JSON.parse(sql(`select to_jsonb(q) from private.question_pool q where q.id='${seed.id}'`)), seed)
+
 console.log('PASS: Supabase Auth JWTs, PostgREST RPCs, all five private quest types and full Xinyi City Hunt')
+console.log('PASS: post-Q1 admin creation, publish, edit and Undo preserve outside_coverage')

@@ -5,7 +5,7 @@ import { ADMIN_SAMPLE, rpc, AdminError } from "./admin";
 import { sample as adminSample } from "./adminSample";
 
 /** HL-C1–C4 migrations are applied. Turn on with the app release that shows these screens. */
-export const ADMIN_HUNT_LOOP_BACKEND = false;
+export const ADMIN_HUNT_LOOP_BACKEND = true;
 export const ADMIN_HUNT_LOOP_SAMPLE = !ADMIN_HUNT_LOOP_BACKEND && ADMIN_SAMPLE;
 /** Whether the hunt-loop admin shows at all. */
 export const ADMIN_HUNT_LOOP = ADMIN_HUNT_LOOP_BACKEND || ADMIN_HUNT_LOOP_SAMPLE;

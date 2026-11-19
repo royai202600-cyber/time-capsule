@@ -10,7 +10,7 @@ import { supabase } from "./supabase";
 import { at, SAMPLES } from "./todaysHunt";
 
 /** Codex's HL-C5 backend is live. Switch on when route_templates, route_pool_pick, route_progress, route_attempt and send_capsule's p_route are applied. */
-export const ROUTES_BACKEND = false;
+export const ROUTES_BACKEND = true;
 export const ROUTES_SAMPLE = !ROUTES_BACKEND && typeof __DEV__ !== "undefined" && __DEV__;
 /** Create step 4 offers Anywhere or Walk a route wherever this is on. */
 export const ROUTES = ROUTES_BACKEND || ROUTES_SAMPLE;

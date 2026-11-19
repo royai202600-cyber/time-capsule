@@ -5,7 +5,7 @@ import type { Database } from "./database.types";
 import { supabase } from "./supabase";
 
 /** Codex's HL-C1 backend is live. Switch on when `waypost_rack`, `rack_leave` and `rack_open` are applied. */
-export const RACK_BACKEND = false;
+export const RACK_BACKEND = true;
 export const RACK_SAMPLE = !RACK_BACKEND && typeof __DEV__ !== "undefined" && __DEV__;
 /** Racks replace floating public capsules (and the Drop a capsule pill) wherever this is on. */
 export const RACKS = RACK_BACKEND || RACK_SAMPLE;
