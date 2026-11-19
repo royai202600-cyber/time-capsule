@@ -2,6 +2,8 @@ CE1 Macau correction (2026-11-19): migration `20261119000708` retires only Macau
 
 # Task board
 
+Hunt-loop release status (2026-11-19): PR #168 (`62b1028`) is live, all eight approved migrations are applied, and Macau remains excluded. The full combined rehearsal and release builds passed. Production API checks returned three daily pins and three route templates in every city. The next check stopped because Codex's Shop fixture incorrectly used collection-only `photo-strip`; the server correctly returned `collect_only`. All disposable fixtures were removed with zero remaining. HL-U1–U5, HL-C1–C5 and HL-Q1 stay open pending the remaining signed-in 375 px zh/en checklist; do not reapply migrations. Details: [combined release report](review/hunt-loop-release.md).
+
 CE1 Singapore price correction (2026-11-18): Roy approved unpublishing eight outdated questions; hosted rollback passed. Migration is held for the midnight Singapore window after green CI and owner squash merge; other held migrations must not be applied.
 
 CE1 release approved by Roy on 2026-11-17 after Claude reviewed `e80cb13`. Expo alignment #150 (`22343f7`), screens #147 (`09db461`) and backend #149 (`1fb35fe`) merged through Roy’s account after green CI. Migration `20261117110915` is applied, all 51 public photos verified and live types regenerated in owner release `276034a`. Production 375 px zh/en play, rewards, streak, Share and source links pass. Disposable fixtures removed.
