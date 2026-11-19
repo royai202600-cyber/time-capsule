@@ -20,7 +20,7 @@ import { uploadQuestImage } from "../../services/huntMedia";
 import { pickPhoto } from "../../components/pickPhoto";
 import type { PrivateHuntQuestType } from "../../services/privateHunt";
 import { Btn } from "./HuntViews";
-import { QuestGlyph } from "./PrivateHuntViews";
+import { QuestGlyph } from "./QuestGlyph";
 import { PointsSlider } from "./PointsSlider";
 import { useHuntText } from "./strings";
 import { useOrganizerText } from "./organizerStrings";

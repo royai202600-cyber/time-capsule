@@ -13,6 +13,8 @@ import { huntStatus, keeperSpot, landmarkName, questGoal, readyToReturn, type Hu
 import { clockText, runClock, runningLow, type RunClock, type RunTimes } from "../../services/huntClock";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { timeUntil, useHuntText, type HuntText } from "./strings";
+import { useQuestText, type QuestText } from "../quests/strings";
+import { QuestGlyph } from "./QuestGlyph";
 
 /** The Letter Keeper's round dialog portrait (City Hunt art). */
 export const keeperPortrait = characters.keeperPortrait;
@@ -133,8 +135,24 @@ export function TaskList({ rows, compact = false }: { rows: TaskRow[]; compact?:
   </View>;
 }
 
-/** City Hunt quests as checklist rows. */
-export const huntTasks = (hunt: Hunt, t: HuntText): TaskRow[] => hunt.quests.map((s) => ({
+/**
+ * A City Hunt's located quests (HL-C3) as checklist rows, the same quests as its blue pins: the number on the
+ * pin, the name, the type and the points. Tapping one opens its quest card.
+ */
+export const locatedTasks = (quests: Quest[], language: "zh" | "en", t: HuntText, q: QuestText, onPress?: (x: Quest) => void, compact = false): TaskRow[] =>
+  [...quests].sort((a, b) => a.ordinal - b.ordinal).map((x) => ({
+    key: x.quest_id, label: `${x.ordinal} · ${language === "zh" ? x.name_zh : x.name_en}`, done: x.done, locked: x.locked,
+    sub: compact ? undefined : q.kind[x.type] + (x.type === "catch" && x.catch_count ? ` × ${x.catch_count}` : "") + (x.locked && !x.done ? `　${t.questLocked}` : ""),
+    right: compact ? undefined : t.pointsShort(x.points),
+    glyph: <QuestGlyph type={x.type} size={compact ? 13 : 15} color={C.blue} />,
+    onPress: onPress && !x.locked && !x.done ? () => onPress(x) : undefined,
+  }));
+
+/** City Hunt quests as checklist rows (the step counts used before located quests). */
+export const huntTasks = (hunt: Hunt, t: HuntText): TaskRow[] => hunt.quests
+  // With located quests the spin and restore counts are gone; until the quests load (at the Keeper check-in),
+  // the only step left to show is meeting him.
+  .filter((s) => !HUNT_QUESTS || s.key === "checkin").map((s) => ({
   key: s.key, label: t.quests[s.key], done: s.count >= s.goal,
   right: s.goal > 1 ? `${s.count} / ${s.goal}` : undefined,
 }));
@@ -173,13 +191,17 @@ export function HuntCard({ kicker, kickerTone, portrait, title, subtitle, clock,
  * (docs/design/city-orienteering.md); with no private hunt joined, the tabs are still there so the
  * "enter a code" button has a home.
  */
-export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap, privateTab }: {
+export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap, privateTab, located, onOpenQuest }: {
   visible: boolean; hunts: Hunt[]; busy: boolean;
+  /** The checked-in hunt's located quests (HL-C3). That hunt lists them instead of the old step counts. */
+  located?: { huntId: string; quests: Quest[] };
+  onOpenQuest?: (h: Hunt, quest: Quest) => void;
   onClose: () => void; onJoin: (h: Hunt) => void; onShowOnMap: (h: Hunt) => void;
   /** The private-hunt tab's content and its "enter a code" button, or nothing to hide the tabs. */
   privateTab?: { count: number; onEnterCode: () => void; onMyHunts?: () => void; children: React.ReactNode };
 }) {
   const t = useHuntText();
+  const q = useQuestText();
   const { language } = useLanguage();
   const reduced = useReducedMotion();
   const list = hunts.filter((h) => huntStatus(h) !== "closed");
@@ -216,7 +238,8 @@ export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap,
           </View>}
           {list.map((h) => {
             const daily = h.ends_at === "infinity", done = !!h.finished_at;
-            const tasks = huntTasks(h, t);
+            const pins = located?.huntId === h.id && located.quests.length ? located.quests : null;
+            const tasks = pins ? locatedTasks(pins, language, t, q, onOpenQuest && ((x) => onOpenQuest(h, x))) : huntTasks(h, t);
             return <HuntCard key={h.id}
               kicker={`${t.huntKicker} · ${language === "zh" ? h.city_zh : h.city_en}`} kickerTone={C.blue}
               portrait={keeperPortrait}
@@ -225,7 +248,7 @@ export function QuestSheet({ visible, hunts, busy, onClose, onJoin, onShowOnMap,
                 : daily ? t.finishedToday
                   : t.finishedOn(new Date(h.finished_at!).toLocaleDateString(language === "zh" ? "zh-Hant" : "en-US"))}
               clock={h} startNote={t.limit} upNote={t.timeUpNote}
-              progress={h.joined_at && !done ? t.questCount(tasks.filter((x) => x.done).length, tasks.length) : undefined}
+              progress={h.joined_at && !done && (pins || !HUNT_QUESTS) ? t.questCount(tasks.filter((x) => x.done).length, tasks.length) : undefined}
               // A finished daily hunt says when it comes back instead of listing the ticks again.
               tasks={done ? undefined : h.joined_at ? tasks : undefined}
               note={done ? (daily ? t.backTomorrow : undefined) : h.joined_at ? undefined : t.reward(h.reward.gold, h.reward.xp)}
@@ -256,6 +279,7 @@ export function KeeperCard({ hunt, quests = [], meters, busy, onJoin, onCheckIn,
   onJoin: () => void; onCheckIn: () => void; onFinish: () => void; onClose: () => void;
 }) {
   const t = useHuntText();
+  const qt = useQuestText();
   const { language } = useLanguage();
   const near = meters <= GAME_ACTION_RADIUS_M;
   const spot = keeperSpot(hunt, language) ?? t.startSpot;
@@ -280,9 +304,7 @@ export function KeeperCard({ hunt, quests = [], meters, busy, onJoin, onCheckIn,
       </View>
       <Pressable accessibilityRole="button" accessibilityLabel={t.close} onPress={onClose} hitSlop={8} style={{ width: 32, height: 32, alignItems: "center", justifyContent: "center" }}><ArtIcon name="close" size={18} color={C.muted} /></Pressable>
     </View>
-    {showQuests && <TaskList rows={quests.length ? quests.map((q) => ({
-      key: q.quest_id, label: `${q.ordinal} · ${language === "zh" ? q.name_zh : q.name_en}`, done: q.done, locked: q.locked,
-    })) : huntTasks(hunt, t)} compact />}
+    {showQuests && <TaskList rows={quests.length ? locatedTasks(quests, language, t, qt, undefined, true) : huntTasks(hunt, t)} compact />}
     {!!note && <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue }}>{note}</Text>}
     {action && <Btn title={action.title} disabled={busy} onPress={action.run} />}
   </View>;

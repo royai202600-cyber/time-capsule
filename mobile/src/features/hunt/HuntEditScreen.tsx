@@ -20,7 +20,7 @@ import {
   type EditorQuestType, type HuntDraft, type HuntStatus, type Review, type QuestDraft,
 } from "../../services/privateHuntOrganizer";
 import { Btn, TaskList, keeperPortrait, type TaskRow } from "./HuntViews";
-import { QuestGlyph } from "./PrivateHuntViews";
+import { QuestGlyph } from "./QuestGlyph";
 import { useHuntText } from "./strings";
 import { useQuestText } from "../quests/strings";
 import { HUNT_QUESTS } from "../../services/cityHuntQuests";

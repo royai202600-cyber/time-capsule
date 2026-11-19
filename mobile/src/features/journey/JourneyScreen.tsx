@@ -704,6 +704,8 @@ export default function JourneyScreen() {
       hunts={[...huntStamps, ...(__DEV__ && !userId ? hunts.previewStamps() : []).filter((p) => !huntStamps.some((x) => x.id === p.id))]}
       privateHunts={[...privateHuntStamps, ...(__DEV__ && !userId ? privateHunts.demoStamps() : [])]} />
     <QuestSheet visible={questOpen} hunts={huntList} busy={busy} onClose={() => setQuestOpen(false)} onJoin={(x) => void joinHunt(x)} onShowOnMap={showHunt}
+      located={activeHunt ? { huntId: activeHunt.id, quests: cityQuests } : undefined}
+      onOpenQuest={(x, quest) => { setQuestOpen(false); setSelectedId(null); setGameCard(null); map.current?.focus(quest.location_lat, quest.location_lng); setPinQuest({ kind: "city", hunt: x, quest }); }}
       privateTab={{
         count: privateList.length,
         onEnterCode: () => { setQuestOpen(false); setLinkCode(null); setJoinFound(null); setJoinError(null); setJoinOpen(true); },
