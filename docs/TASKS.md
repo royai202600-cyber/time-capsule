@@ -2,7 +2,7 @@ CE1 Macau correction (2026-11-19): migration `20261119000708` retires only Macau
 
 # Task board
 
-Hunt-loop release status (2026-11-19): #177 (`d2b04e4`) and owner release `fe53bb4` are live. At 375 px, Catch and Landmark updated the City Hunt checklist in place to 7/8 and 8/8. Acceptance stopped on the Landmark win screen showing 0 copies for the unlimited Bamboo-tier tower tin. Claude's reward display fix, Keeper return and once-only reward/stamp checks, and the Done-doc merge are pending. All fixtures verified zero. HL-U1–U5, HL-C1–C5 and HL-Q1 remain open. Macau is excluded. Details are in the [combined release report](review/hunt-loop-release.md).
+Hunt-loop release (2026-11-19) is Done for HL-U1–U5, HL-C1–C5 and HL-Q1. All eight migrations are live in the combined release. The final owner build `b3ee125` passed the 375 px unlimited Landmark reward and once-only Keeper claim checks. All disposable fixtures were removed and verified at zero. Macau remains in its separate midnight window. See the [combined release report](review/hunt-loop-release.md).
 
 CE1 Singapore price correction (2026-11-18): Roy approved unpublishing eight outdated questions; hosted rollback passed. Migration is held for the midnight Singapore window after green CI and owner squash merge; other held migrations must not be applied.
 
@@ -61,8 +61,6 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 
 ## Next (in order)
 
-Roy’s 2026-11-19 decision schedules C1, C2, C3, C4, C5 and Q1 with HL-U1 through HL-U5 as one combined release. The migration order and required `--include-all` flag are recorded in [the Decisions log](../AGENTS.md#decisions-log). This supersedes the earlier per-screen release timing below.
-
 - V1 cleanup follow-up: remove unattached `voice-notes` uploads older than 24 hours through the Storage API, with an attachment re-check. Pending uploads remain unreadable. Never delete attached recordings or manipulate Storage metadata to delete blobs.
 | ID | Task | Owner | Done when |
 |---|---|---|---|
@@ -71,17 +69,6 @@ Roy’s 2026-11-19 decision schedules C1, C2, C3, C4, C5 and Q1 with HL-U1 throu
 | CE2 | Jigsaw lock on public capsules (Part C of the plan) | — | Dropped 2026-11-18: the hunt loop replaces it; a jigsaw may come back later as a lock option. |
 | HL-plan | Hunt loop plan and demo (`docs/design/hunt-loop.md`, `docs/design/demos/hunt-loop.html`) | Claude → Roy | Roy approved the direction 2026-11-18. Contracts and the wave work list are in the plan. |
 | HL-A1 | Five quest-type pictures for the circular pin window and one faceted pin frame in blue, brass and plum | Codex art (`codex/art-quest-types`) | Roy approved all five pictures and three frame colors at `e91fb44` in [PR #153](https://github.com/royai202600-cyber/time-capsule/pull/153). Green CI gates the art-only squash merge through Roy’s account. |
-| HL-C1 | Waypost racks backend, public capsule move/delete, retire drift/pass-on/drop places, admin rack contents | Codex (`codex/hunt-racks`) | Implemented in [PR #154](https://github.com/royai202600-cyber/time-capsule/pull/154). Hosted rollback after HL-C2 and local real-JWT checks passed, including both undo paths and the first-opener race. Merged after Claude’s re-review and Roy’s approval. Hold migration `20261118124925` for the HL-U1 app release, before any HL-C3 migrations. Refresh the rack inventory immediately before applying it. See `docs/review/hunt-racks.md`. |
-| HL-C2 | Vessel copies backend, unlimited switch, admin adjust | Codex (`codex/vessel-copies`) | [PR #155](https://github.com/royai202600-cyber/time-capsule/pull/155) squash-merged as `ec7cf1c` after CI 44310893918. Hosted rollback and local five-send race passed. Hold migration `20261118123808` for the HL-U2 app release (#158), then run the real-JWT checks in `docs/review/vessel-copies.md` immediately after applying it. |
-| HL-C3 | Shared quest model, five types, retire spin, City Hunt quest locations, question pool tables and admin RPCs | Codex (`codex/quest-types`) | PR #156. Three held migrations and the API handoff are in [the review notes](review/quest-types.md). Claude reviews and Roy approves before any production change. |
-| HL-Q1 | Question pool for Taipei, Hong Kong, Singapore, Macau | Codex (`codex/question-pool`) | Four-city seed complete. Loader `20261118141225` publishes reviewed new rows under Roy’s 2026-11-19 decision and preserves hidden prices. Ten HKUST prices rechecked. Claude approved `0d9ed96` and Roy approved the PR #152 merge. Migration held for the combined HL-U1 through HL-U5 release. |
-| HL-U1 | Quest pin component, Journey gem = Waypost only, Waypost card (Spin + rack + leave form) | Claude (`claude/hunt-racks-ui`) | Screens behind a mock flag; wired after HL-C1. |
-| HL-U2 | Copies in Create, Cabinet and Album | Claude (`claude/vessel-copies-ui`) | Behind a mock flag; wired after HL-C2. |
-| HL-C4 | Today's Hunt backend | Codex (`codex/todays-hunt`) | Merged in [PR #161](https://github.com/royai202600-cyber/time-capsule/pull/161). Hold `20261118134846` for HL-U3 (draft PR #163), after C2 → C1 → C3 and before C5. Pool data comes from HL-Q1. See the [API and verification notes](review/todays-hunt.md). |
-| HL-C5 | Route capsules backend and city route templates | Codex (`codex/route-capsules`) | [PR #160](https://github.com/royai202600-cyber/time-capsule/pull/160) merged. See the [API handoff](review/route-capsules.md). Hosted rollback and local real-JWT friend and Memory Routes passed. Hold migration `20261118135059` until HL-U4 ships. HL-Q1 supplies the real pool. |
-| HL-U3 | Today's Hunt screen with motion | Claude | Wave 2. |
-| HL-U4 | Shared quest editor (private hunt + route), City Hunt quest pins, recipient route view | Claude | Wave 2. Draft PR stacked on HL-U3, against samples; `HUNT_QUESTS_BACKEND` and `ROUTES_BACKEND` turn on when HL-C3 and HL-C5 migrations are applied. |
-| HL-U5 | Admin: question pool, Today's Hunt calendar, rack contents, copies | Claude | Wave 2. Draft PR against samples; `ADMIN_HUNT_LOOP_BACKEND` turns on with the HL-C1–C4 migrations. |
 | RV-plan | Regional vessels and Landmarks plan (`docs/design/regional-vessels.md`) | Claude → Roy | Updated 2026-11-15: draw what a place is known for, not its packaging; existing vessels unchanged; nine parallel art batches. Still open: Landmark picks, tram colour, whether new vessels start switched off. |
 | RV-TW / HK / SG / MO | Regional art wave 1, three vessels each (see the plan's batch table) | Codex art, one session per batch | Roy approves each batch's test vessel, then its art-only PR; merged one at a time. No wiring, migration or deploy. RV-TW reuses draft PR #134. |
 | RV-TW2 / HK2 / SG2 / MO2 | Regional art wave 2, three vessels each | Codex art, one session per batch | Same gates as wave 1. |
@@ -108,6 +95,12 @@ Roy’s 2026-11-19 decision schedules C1, C2, C3, C4, C5 and Q1 with HL-U1 throu
 - Send a capsule to a friend on Roy's phone and confirm it reaches the friend's Inbox.
 
 ## Done
+
+- HL-U1 and HL-C1 — Waypost rack, filters, paging, locked and unlocked leaves, first opener and moderation passed. Migration `20261118124925` is live.
+- HL-U2 and HL-C2 — Create, Cabinet, Album, Shop and admin copies passed. Finite purchases start at ten, sends consume a copy and zero-copy vessels stay collected. Starter and earned Landmark vessels are unlimited. Migration `20261118123808` is live.
+- HL-U3 and HL-C4 — Today's Hunt passed in four cities with remote play, completion colors, points, friends, motion, Speed up and Reduce Motion. Migration `20261118134846` is live.
+- HL-U4, HL-C3 and HL-C5 — Located City Hunt quests, all five types, zero points on a third price miss, friend and Memory Routes, and the once-only Keeper claim passed. Migrations `20261118125002`, `20261118125330`, `20261118130332` and `20261118135059` are live.
+- HL-U5 and HL-Q1 — Admin pool, calendar, copies and rack controls passed with Activity Undo. Migration `20261118141225` is live with 220 bilingual pool rows. See the [combined release report](review/hunt-loop-release.md).
 
 - Admin phase 2 — backend PR #146 (`3357f7d`) and edit screens PR #145 (`059eca2`) are merged. Supabase migration `20261115153118` is applied. Roy’s account checked the production-backed editor at 375 px and desktop in zh and en. The editor is enabled. Hosted rollback, real-JWT and browser checks are recorded in the [review report](review/admin-phase-2.md).
 

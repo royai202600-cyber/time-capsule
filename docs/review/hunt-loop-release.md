@@ -1,6 +1,16 @@
-# Combined hunt-loop release — production validation stopped
+# Combined hunt-loop release
 
-## Current resume — #177 live, Landmark reward copy label stop
+## Acceptance complete — #178 live
+
+Reviewed #178 at `d2373c5e8de32231e4a3578549c91e40b0421c7d`. TypeScript, Vitest (265 passed, 9 skipped), CI `44503714409` and web export passed. Roy's account squash-merged `8e01f8cf38e6bf451c259f46f102779c83099dff`. Owner release `b3ee1251b434080ff2af543b0d1f8ba60b78e306` is live at https://time-capsule-pi-two.vercel.app. Vercel deployment `B3y2y2YnajFk3GCdL6sxfDEKAu5h` succeeded. Production served the export's `__common-b9bfb0e35a7e8e01dab1e8981797c357.js` and `entry-7eba965b12c75d10b710d27aa00e57a6.js`. Main's live types match `8cf3a2a`.
+
+At 375 px with simulated GPS, the authenticated fixture reached 7/8 with the legacy Spin and Restore counts at zero. The Keeper pin had no check mark. Winning the Taipei 101 fight showed “Unlimited copies” for the Bamboo-tier tower tin. Closing the fight updated the checklist to 8/8 and the Keeper pin to ✓ without reopening Journey. Quests → Show on map took the player to the Keeper, and Take it issued the City Hunt stamp, 2 gold wax balls and 20 XP. Passport displayed the stamp. The duplicate authenticated claim returned “already finished”. A second fight in Traditional Chinese displayed 「無限份數」 and awarded no additional Landmark XP or stamp. The completed hunt showed its finish date and had no claim button or Keeper check mark. The database confirmed one City Hunt stamp, a single 20 XP event for the hunt, a two-ball payout, and one Landmark stamp and XP event across both wins.
+
+Removed the disposable account, hunt, quest rules, progress, spawn, catches, fight attempts, ownership, XP, stamps, sessions and Auth records. All fixture counts verified zero. The pool still has 220 rows. Hosted history contains all eight combined migrations. Macau `20261119000708` remains unapplied for its separate midnight window.
+
+HL-U1–U5, HL-C1–C5 and HL-Q1 are Done. The earlier sections retain the evidence for racks, copies, Today's Hunt in four cities, the five located City Hunt quest types, friend and Memory Routes, and admin checks, including Undo. The optional separate Today's Hunt terminal-arrow browser check was not repeated. The shared arrow logic passed Vitest and the production City Hunt and route checks in #176.
+
+## Previous resume — #177 live, Landmark reward copy label stop
 
 Reviewed #177 head `8fe38ccadb03e053c8170b3a43f5de0f4c2ecd11`. TypeScript, Vitest (262 passed, 9 skipped), CI `44501919877` and web export passed. Roy's account squash-merged `d2b04e4edf53c56e54ad45635a9eb52b0672443b`. Identical-tree owner release `fe53bb439e58f97928d7cf0da9013e6cfb62ea51` is live at https://time-capsule-pi-two.vercel.app. Vercel deployment `EEKme3oaP1ZEpHVZGA99YYEJqngM` succeeded. Production serves the export's entry bundle `entry-c95f4728b8d13a36df2c48479c505720.js`. Main's live types match `8cf3a2a`.
 
