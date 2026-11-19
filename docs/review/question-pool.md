@@ -157,7 +157,7 @@ Exclude the Tung Chung entry from quest pin selection.
 
 ### New Guess the price questions near HKUST
 
-Rates use **HK$7.846 per US$1**. The [exchange-rate source](https://ca.investing.com/currencies/usd-hkd-historical-data) is dated 2026-11-18. USD is the local amount divided by the stored rate, rounded to cents. Menu prices and locations were checked on 2026-11-18. Recheck menu prices before scheduling these drafts.
+Rates use **HK$7.846 per US$1**. The [exchange-rate source](https://ca.investing.com/currencies/usd-hkd-historical-data) is dated 2026-11-18. USD is the local amount divided by the stored rate, rounded to cents. Menu prices were rechecked on 2026-11-19 against all ten PDFs currently linked by the Campus Services Office. All ten amounts and offers match the seed. All ten are eligible to load as published. Locations were checked on 2026-11-18. [Current campus menu directory](https://cso.hkust.edu.hk/index.php/locations/restaurants)
 
 | ID | Named place (zh / en) | Question (zh / en) | Listed price | Outdoor point | Distance | Sources |
 |---|---|---|---|---|---:|---|
@@ -346,7 +346,7 @@ The stored rate is **8.082204 MOP per US$1**, using the Hong Kong dollar quotati
 
 ## Held HL-Q1 seed migration
 
-Migration `20261118141225_seed_hl_q1_question_pool.sql` matches all 80 CE1 records through `legacy_price_id` by city and sequence. It adds coordinates and coverage flags and hides the nine outdated prices in the question pool. It leaves the original daily puzzle rows and price amounts intact. The 140 new draft rows use UUIDv5 IDs derived from their seed IDs under namespace `a37d476f-1603-4d70-bde0-f72344c26eae`. Answers, aliases and price amounts are stored in `private.question_pool_secrets`.
+Migration `20261118141225_seed_hl_q1_question_pool.sql` matches all 80 CE1 records through `legacy_price_id` by city and sequence. It adds coordinates and coverage flags and hides the nine outdated prices in the question pool. It leaves the original daily puzzle rows and price amounts intact. The 140 reviewed new rows load as published and use UUIDv5 IDs derived from their seed IDs under namespace `a37d476f-1603-4d70-bde0-f72344c26eae`. Answers, aliases and price amounts are stored in `private.question_pool_secrets`.
 
 | City | Choice | Typed | New price | Located CE1 | CE1 outside coverage | CE1 hidden |
 |---|---:|---:|---:|---:|---:|---:|
@@ -356,3 +356,23 @@ Migration `20261118141225_seed_hl_q1_question_pool.sql` matches all 80 CE1 recor
 | Macau | 20 | 5 | 10 | 20 | 6 | 1 |
 
 Hosted rollback on 2026-11-18 ran C2, C1 and all three C3 files in order, then ran HL-Q1 twice. Both passes produced the same 220 pool rows and 220 secret rows, with 55 per city. Every point matched its live map coverage flag. Anonymous and signed-in non-admin database roles could not read the secrets. Rollback removed the test tables and fixtures, left all 80 live CE1 rows intact and recorded zero applied Hunt Loop migrations. PR #152 remains in draft.
+
+
+### Release publication decision
+
+Roy approved publishing the 140 reviewed new questions and prices on load on 2026-11-19. The loader promotes new seed drafts to published and retains hidden status for hidden seed rows. CE1 statuses retain their database value, with the nine obsolete seed prices forced hidden. Seed drafts retain their editorial status in the JSON.
+
+The ten HKUST prices were downloaded again from the current campus menu directory on 2026-11-19. All amounts were confirmed, including the regular-price column for HFT Life, the six-inch Subway sandwich, the UniBistro eight-inch pizza, and the weekday Passione lunch set. Their checked dates are updated in the seed and migration. No HKUST price requires a draft exception.
+
+Hosted rollback on 2026-11-19 ran C2, C1, all three C3 files, and the revised loader twice. Counts and complete row/secret snapshots matched after the second run.
+
+| City | New rows published | Total published | Hidden | Nearby published choice and price |
+|---|---:|---:|---:|---|
+| Taipei | 35 | 55 | 0 | Passed |
+| Hong Kong | 35 | 55 | 0 | Passed |
+| Singapore | 35 | 47 | 8 | Passed |
+| Macau | 35 | 54 | 1 | Passed |
+
+All 211 published rows have HTTPS sources and checked dates. All 220 pool rows have matching secret rows and correctly flagged map coverage. All original CE1 prices and live publication flags matched the pre-test snapshot. Anonymous and authenticated non-admin access to secrets was refused. Cleanup confirmed that the pool, secrets and test tables were rolled back, the live CE1 catalogue still had 80 rows, and none of C2, C1, C3 or this loader was applied. The separately applied Singapore daily-puzzle unpublish migration was retained.
+
+Local verification ran `python3 -m json.tool supabase/seed-data/question-pool.json`, matched the ten checked dates between seed and embedded loader payload, compared all ten source links against the current campus directory, verified USD conversions at the stored rate, and passed `git diff --check`.
