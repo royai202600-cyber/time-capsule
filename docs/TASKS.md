@@ -2,7 +2,7 @@ CE1 Macau correction (2026-11-19): migration `20261119000708` retires only Macau
 
 # Task board
 
-Hunt-loop release status (2026-11-19): #175 (`540388e`) and owner release `bbc6667` are live. English production price countdown 3 → 2 → 1, reopening and third-miss completion passed at mobile/desktop. Acceptance stopped because the terminal US$1000 miss against US$3.04 incorrectly displays Higher; Claude's final-hint fix is pending. Chinese/route price and remaining Catch/Landmark/return checks and Done/status-doc merge stay held. Prior checklist, Memory Route and admin checks remain passed. All fixtures verified zero; pool 220; existing hunts/Q1/calendar/settings unchanged. HL-U1–U5, HL-C1–C5 and HL-Q1 remain open. Macau excluded. Details: [combined release report](review/hunt-loop-release.md).
+Hunt-loop release status (2026-11-19): #176 (`8425266`) and owner release `a5ceba5` are live. City Hunt final price arrows, countdown and third-miss completion passed in zh/en at 375 px. The route price stop passed. City Hunt acceptance stopped when the server saved Catch completion but the mounted checklist stayed at 6/8 and Landmark remained locked until Journey reopened. Claude's quest refresh fix, Landmark and Keeper return checks, and the Done-doc merge are pending. All fixtures verified zero. HL-U1–U5, HL-C1–C5 and HL-Q1 remain open. Macau is excluded. Details are in the [combined release report](review/hunt-loop-release.md).
 
 CE1 Singapore price correction (2026-11-18): Roy approved unpublishing eight outdated questions; hosted rollback passed. Migration is held for the midnight Singapore window after green CI and owner squash merge; other held migrations must not be applied.
 

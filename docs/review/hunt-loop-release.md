@@ -1,6 +1,18 @@
 # Combined hunt-loop release — production validation stopped
 
-## Current resume — #175 live; final price hint stop
+## Current resume — #176 live, Catch progress refresh stop
+
+Reviewed #176 head `570bafbc9e0340256a051e2990c9bb34040e0f1c`. TypeScript, Vitest (262 passed, 9 skipped), CI `44499655877` and web export passed. Roy's account squash-merged `8425266d11e102319c84d45cda7b43283988f2d8`. Identical-tree owner release `a5ceba5b7838737b808ce3c38a935367f4fd353e` is live at https://time-capsule-pi-two.vercel.app. Vercel deployment `F6T8wzHVSFHLips9m7Bs66czXd6C` succeeded. Production serves `__common-3e545b21d641f7cbefd88382d4e6e56b.js` and `entry-12edbfc09a11e053dd34052335135f86.js`, matching the export. Main's live types match `8cf3a2a`.
+
+A disposable eight-stop City Hunt used simulated GPS and an allowance for that player only. Keeper check-in, Arrive and Question passed. At 375 px in English and Traditional Chinese, terminal guesses above US$3.04 showed Lower and guesses below showed Higher. The countdown moved 3 → 2 → 1 and reopened at the persisted 2. The Chinese second countdown was also checked at 1280 px. All four third misses completed without a points award, and the server recorded three tries and completion for each. A one-stop disposable Memory Route created through the real send RPC showed the same countdown and correct final Lower arrow at 375 px, recorded 1/1 stops walked and enabled the capsule's hold-to-open action. The optional live Today's Hunt price check was not run.
+
+**Stop on stale Catch progress after the successful throw.** Started Catch × 1 from the checklist, saw the quest spawn, and verified a replacement appeared after the first capsule broke free. Restored the replacement Pineapple cake through the usual throw screen, with normal odds. Add to Cabinet returned to Journey. Quests still showed 6/8, Catch incomplete and Landmark locked. The server had already recorded `caught = 1` and `completed_at` for the quest. Leaving and reopening Journey loaded 7/8 and unlocked Landmark. Screenshots capture both states.
+
+The throw completion handler in `mobile/src/features/journey/JourneyScreen.tsx:702` calls `loadGame()` but does not refresh the located quest lists. The active hunt IDs and timestamps used by `usePinQuests` did not change, so it kept the pre-throw rows and pins. Claude should refresh quest progress after the game screen closes and verify Catch, Landmark and the corresponding route stops without leaving Journey. Landmark fight, Keeper return and the Done-doc merge remain held under Roy's stop instruction.
+
+Signed out, reset the viewport and reloaded to clear simulated GPS. Deleted the disposable account, progress, hunt, route capsule, rules, spawns, catches and ownership. Verified zero fixtures and related records. Pool count remains 220 and the audit trigger is enabled. Macau `20261119000708` remains unapplied. No existing hunt, pool, calendar or game settings were modified.
+
+## Previous resume — #175 live; final price hint stop
 
 Reviewed #175 head `e2d4caf01348b04400717747d3e2fa117278e883`. TypeScript passed; Vitest 259 passed / 9 expected skips; CI `44497961041` passed; web export exited successfully. Roy's account squash-merged `540388ec709e790c7416c85462f7c8e76d1b84f9`. Identical-tree owner release `bbc66675f22fab443d9d7a09b43cd5516c02fca5` is live at https://time-capsule-pi-two.vercel.app, Vercel `FYWsDvGKwLTjsJ65GGn2BUdZQd5C` successful. Public script paths match the export: `__common-371f8ca9d161d88f64904c9b7796d727.js`, `entry-f5910f56307387693a908b4f9eaf46dd.js`. Main's database types still match `8cf3a2a`. No backend, migration, flag or art change.
 
