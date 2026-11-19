@@ -35,6 +35,9 @@ export function QuestPlay({ quest, zh, meters, onAttempt, onStarted, onClose }: 
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState("");
   const [started, setStarted] = useState(false);
+  // Guesses left as the server last counted them; the quest only carries the count from when it opened.
+  const [triesLeft, setTriesLeft] = useState<number | null>(null);
+  const shown = quest.price && triesLeft != null ? { ...quest, price: { ...quest.price, tries_left: triesLeft } } : quest;
   const away = quest.locked ? q.lockedNote : !Number.isFinite(meters) ? q.needLocation
     : meters > GAME_ACTION_RADIUS_M ? q.goCloser(formatDistance(meters - GAME_ACTION_RADIUS_M, zh ? "zh" : "en")) : null;
 
@@ -72,6 +75,7 @@ export function QuestPlay({ quest, zh, meters, onAttempt, onStarted, onClose }: 
     const out = await attempt({ usd });
     if (!out) return;
     setText("");
+    if (out.tries_left != null) setTriesLeft(out.tries_left);
     setMarks((m) => [...m, { usd, hint: out.ok ? "solved" : out.hint ?? "higher", close: false }]);
     if (out.done) finish(out); else void haptics.tick();
   };
@@ -96,7 +100,7 @@ export function QuestPlay({ quest, zh, meters, onAttempt, onStarted, onClose }: 
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} pointerEvents="box-none">
         <SafeAreaView edges={["bottom"]} style={{ paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>
           <View style={questCardStyle}>
-            <QuestCard quest={quest} zh={zh} result={result} picked={picked} wrong={wrong} marks={marks} text={text} busy={busy}
+            <QuestCard quest={shown} zh={zh} result={result} picked={picked} wrong={wrong} marks={marks} text={text} busy={busy}
               catchCount={quest.catch_count ?? 3} caught={0} onText={setText} onChoose={(i) => void choose(i)} onGuess={() => void guess()} onCatch={() => void start()}
               pin={{ away: quest.done ? null : away, onArrive: () => void arrive(), onStart: () => void start(), started }} />
             {result && <View style={{ gap: 6 }}>
