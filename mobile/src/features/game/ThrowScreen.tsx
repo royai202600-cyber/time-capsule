@@ -16,6 +16,8 @@ import { fxGlint, gameArt, lightBurst } from "../../art/manifest";
 import { crackOverlays } from "../../art/crackOverlays";
 import { useReducedMotion } from "../../useReducedMotion";
 import { errorKey, useGameText } from "./strings";
+import { COPIES } from "../../services/copies";
+import { useCopiesText } from "../copies/strings";
 import { FRAME_FIELDS, FRAMES_PER_SECOND, simulateThrow } from "./throwPhysics";
 
 const NATIVE = Platform.OS !== "web";
@@ -64,6 +66,7 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
   const insets = useSafeAreaInsets();
   const { t } = useLanguage();
   const s = useGameText();
+  const cp = useCopiesText();
   const reduced = useReducedMotion();
   const [height, setHeight] = useState(0);
   const [kind, setKind] = useState<BallKind>("wax");
@@ -451,9 +454,12 @@ export function ThrowScreen({ capsule, landmark, state, onState, onClose }: {
     </View>}
 
     {result && <View style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, alignItems: "center", gap: 6, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.lg, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
-      <Text style={{ fontFamily: sans, fontSize: 12, letterSpacing: 1.2, color: C.brass }}>{result.is_new ? s("newFind") : s("copies", result.copies)}</Text>
+      {/* With copies on, `copies` is the balance after the catch, shown below instead of stars. */}
+      {(result.is_new || !COPIES) && <Text style={{ fontFamily: sans, fontSize: 12, letterSpacing: 1.2, color: C.brass }}>{result.is_new ? s("newFind") : s("copies", result.copies)}</Text>}
       <Text style={{ fontFamily: serif, fontSize: 24, color: C.ink }}>{s("restored")} · {name}</Text>
-      <Text accessibilityLabel={`${result.stars} / 5`} style={{ fontSize: 16, letterSpacing: 3, color: C.brass }}>{"★".repeat(result.stars)}<Text style={{ color: C.line }}>{"★".repeat(5 - result.stars)}</Text></Text>
+      {COPIES
+        ? <Text style={{ fontFamily: serif, fontSize: 16, color: C.brass }}>{cp.label(result.copies)}</Text>
+        : <Text accessibilityLabel={`${result.stars} / 5`} style={{ fontSize: 16, letterSpacing: 3, color: C.brass }}>{"★".repeat(result.stars)}<Text style={{ color: C.line }}>{"★".repeat(5 - result.stars)}</Text></Text>}
       <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{s("xp", result.xp_gained)}</Text>
       <Pressable accessibilityRole="button" onPress={() => onClose(true)} style={{ marginTop: 8, alignSelf: "stretch", alignItems: "center", backgroundColor: C.wax, borderRadius: radii.pill, paddingVertical: 12 }}>
         <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("collect")}</Text>
