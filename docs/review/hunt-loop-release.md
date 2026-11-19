@@ -1,6 +1,20 @@
 # Combined hunt-loop release — production validation stopped
 
-## Current resume — Memory Route passed; admin save crash
+## PR #171 review stop — new entry loses its ID in the open form
+
+Reviewed head `c11fc021523054ba48605d4be1d8ee7a4bdecd82`; CI `44479588961` is green and GitHub reports mergeable. The `PoolResult`/`mergePoolEntry` change fixes the missing `uses` shape for the card and open sheet, preserving an existing usage list.
+
+A local deterministic reproduction extracted the actual `PoolSheet` hook initialization, payload construction and save handler from this head. A hook-state harness preserved state across the same mounted component, supplied a server-assigned ID on the first save, then edited the prompt and saved again. The second request still omitted `id` and `answer`. This is a client payload reproduction, not a hosted test. Q1's real server definition confirms the outcome: missing `id` selects the insert path, and a new choice without an answer raises `bad_rule`. If the admin selects an answer again, that same missing ID can create another draft instead of editing the first.
+
+Cause: `PoolSheet` initializes `f` from `entry` only once (`useState` initializer). Saving changes the parent's `entry` prop from null to the returned row, but the sheet remains mounted and `f` retains no ID. The save payload comes from `f`; `setAnswer(undefined)` clears the answer after the first save. This pre-existing form-state issue becomes reachable once #171 prevents the original crash.
+
+Claude follow-up: ensure subsequent saves use the persisted entry ID (or deliberately reinitialize/remount the form on new → saved identity transition). Cover create → save → edit → save without closing the sheet for both choice and price, and assert one row, unchanged identity, and retained answer/amount when those fields are left blank. Re-entering an answer must also update that same row. Keep the usage-preservation tests.
+
+The list also derives `needs_recheck`, which mutation rows omit; `PoolResult` still declares it required and the new merge retains the old value after changing `checked_on`. Align that shape and refresh/recompute the indicator when its source changes so the sample does not mask this difference.
+
+Per Roy's stop-on-failure instruction, #171 was not merged or deployed. No production test, fixture, database mutation, migration, art or screen change was made on this resume. Main remains `e80d0a7`; the previous zero-fixture cleanup and completed Memory Route checks remain valid. Admin acceptance, remaining City Hunt checks and Done/status-doc merge remain pending. Macau remains outside this task.
+
+## Previous production resume — Memory Route passed; admin save crash
 
 PR #170 head `3533590ee4e1fff328bb8a9ff4f41494ad44fc36` passed review, TypeScript, 249 tests (9 sample-only skips), CI `44474755813`, and a fresh web export. The delayed-response reproduction using the actual RouteBuilder functions kept Catch at the home place. Roy's account squash-merged #170 as `6753dc0e0035267afd1f9d3b7846bdf0444e2232`; the identical tree was released in owner-authored `e80d0a7b994212c8b8af673176b7c158cb8cbb63`. Vercel deployment `F2k6RysxYuh6oMa1tKVYPhNTVMNm` reports success. Production common/entry bundle hashes match the export (`__common-894f4221433d8188254e1e49c0d0b2c0.js`, `entry-c2e68e6cf3439d65dbad704b7894d472.js`). This is the current live version at https://time-capsule-pi-two.vercel.app.
 
