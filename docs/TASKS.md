@@ -58,6 +58,9 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | T11 | Backend hardening and bookkeeping | Codex | Distance function search path fixed, function grants reviewed, migration applied and deployment verified. |
 
 ## Next (in order)
+
+Roy’s 2026-11-19 decision schedules C1, C2, C3, C4, C5 and Q1 with HL-U1 through HL-U5 as one combined release. The migration order and required `--include-all` flag are recorded in [the Decisions log](../AGENTS.md#decisions-log). This supersedes the earlier per-screen release timing below.
+
 - V1 cleanup follow-up: remove unattached `voice-notes` uploads older than 24 hours through the Storage API, with an attachment re-check. Pending uploads remain unreadable. Never delete attached recordings or manipulate Storage metadata to delete blobs.
 | ID | Task | Owner | Done when |
 |---|---|---|---|
@@ -69,7 +72,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 | HL-C1 | Waypost racks backend, public capsule move/delete, retire drift/pass-on/drop places, admin rack contents | Codex (`codex/hunt-racks`) | Implemented in [PR #154](https://github.com/royai202600-cyber/time-capsule/pull/154). Hosted rollback after HL-C2 and local real-JWT checks passed, including both undo paths and the first-opener race. Merged after Claude’s re-review and Roy’s approval. Hold migration `20261118124925` for the HL-U1 app release, before any HL-C3 migrations. Refresh the rack inventory immediately before applying it. See `docs/review/hunt-racks.md`. |
 | HL-C2 | Vessel copies backend, unlimited switch, admin adjust | Codex (`codex/vessel-copies`) | [PR #155](https://github.com/royai202600-cyber/time-capsule/pull/155) squash-merged as `ec7cf1c` after CI 44310893918. Hosted rollback and local five-send race passed. Hold migration `20261118123808` for the HL-U2 app release (#158), then run the real-JWT checks in `docs/review/vessel-copies.md` immediately after applying it. |
 | HL-C3 | Shared quest model, five types, retire spin, City Hunt quest locations, question pool tables and admin RPCs | Codex (`codex/quest-types`) | PR #156. Three held migrations and the API handoff are in [the review notes](review/quest-types.md). Claude reviews and Roy approves before any production change. |
-| HL-Q1 | Question pool for Taipei, Hong Kong, Singapore, Macau | Codex (`codex/question-pool`) | Four-city seed complete. Loader `20261118141225` publishes reviewed new rows under Roy’s 2026-11-19 decision and preserves hidden prices. Ten HKUST prices rechecked. Draft PR #152 awaits Claude’s re-review; migration held. |
+| HL-Q1 | Question pool for Taipei, Hong Kong, Singapore, Macau | Codex (`codex/question-pool`) | Four-city seed complete. Loader `20261118141225` publishes reviewed new rows under Roy’s 2026-11-19 decision and preserves hidden prices. Ten HKUST prices rechecked. Claude approved `0d9ed96` and Roy approved the PR #152 merge. Migration held for the combined HL-U1 through HL-U5 release. |
 | HL-U1 | Quest pin component, Journey gem = Waypost only, Waypost card (Spin + rack + leave form) | Claude (`claude/hunt-racks-ui`) | Screens behind a mock flag; wired after HL-C1. |
 | HL-U2 | Copies in Create, Cabinet and Album | Claude (`claude/vessel-copies-ui`) | Behind a mock flag; wired after HL-C2. |
 | HL-C4 | Today's Hunt backend | Codex (`codex/todays-hunt`) | Merged in [PR #161](https://github.com/royai202600-cyber/time-capsule/pull/161). Hold `20261118134846` for HL-U3 (draft PR #163), after C2 → C1 → C3 and before C5. Pool data comes from HL-Q1. See the [API and verification notes](review/todays-hunt.md). |
