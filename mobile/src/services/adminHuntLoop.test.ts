@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 vi.mock('./supabase', () => ({ supabase: {} }));
 vi.mock('@react-native-async-storage/async-storage', () => ({ default: { getItem: vi.fn(), setItem: vi.fn() } }));
-import { addDays, afterSave, canPublish, hasPlace, huntCity, mergePoolEntry, needsRecheck, poolProblems, samplePool, usdOf, type PoolEntry, type PoolSave } from './adminHuntLoop';
+import { addDays, afterSave, allPoolPages, canPublish, hasPlace, huntCity, mergePoolEntry, needsRecheck, poolProblems, samplePool, usdOf, type PoolEntry, type PoolSave } from './adminHuntLoop';
 import { sample as adminSample } from './adminSample';
 import { undoable } from './admin';
 
@@ -97,5 +97,27 @@ describe('question pool: create, save, edit, save again (sheet stays open)', () 
     const stale = { ...({} as PoolEntry), id: 'x', checked_on: '2025-01-01', needs_recheck: true, uses: [] };
     const { needs_recheck: _n, uses: _u, ...rechecked } = { ...stale, checked_on: '2026-11-19' };
     expect(mergePoolEntry([stale], rechecked, '2026-11-19').entry.needs_recheck).toBe(false);
+  });
+});
+
+describe("Today's Hunt picker loads every page of the pool", () => {
+  const row = (id: string, type: 'question' | 'price') => ({ id, type, location_lat: 25, location_lng: 121 } as PoolEntry);
+  const pages: Record<string, { items: PoolEntry[]; next_cursor: string | null }> = {
+    start: { items: Array.from({ length: 50 }, (_, i) => row(`q${i}`, 'question')), next_cursor: 'q49' },
+    q49: { items: [row('page2-choice', 'question'), row('page2-price', 'price')], next_cursor: null },
+  };
+  it('follows next_cursor so page-2 choices and prices are offered', async () => {
+    const asked: (string | null)[] = [];
+    const all = await allPoolPages(async (c) => { asked.push(c); return pages[c ?? 'start']!; });
+    expect(asked).toEqual([null, 'q49']);
+    expect(all).toHaveLength(52);
+    expect(all.filter((e) => e.type === 'question').map((e) => e.id)).toContain('page2-choice');
+    expect(all.filter((e) => e.type === 'price').map((e) => e.id)).toEqual(['page2-price']);
+  });
+  it('stops on a repeated cursor and at the page cap', async () => {
+    const loop = vi.fn(async () => ({ items: [row('x', 'question')], next_cursor: 'same' }));
+    expect(await allPoolPages(loop)).toHaveLength(2);
+    const endless = vi.fn(async (c: string | null) => ({ items: [row(String(c), 'price')], next_cursor: `${c ?? 0}+` }));
+    expect(await allPoolPages(endless, 5)).toHaveLength(5);
   });
 });

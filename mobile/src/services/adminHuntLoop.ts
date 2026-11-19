@@ -37,6 +37,18 @@ export type PoolSave = Partial<Omit<PoolEntry, "status" | "needs_recheck" | "use
 export type PoolPage = { items: PoolEntry[]; next_cursor: string | null };
 /** What save and set_status return: the table row, without `uses` and `needs_recheck`, which only the list adds. */
 export type PoolResult = Omit<PoolEntry, "uses" | "needs_recheck"> & { uses?: PoolEntry["uses"]; needs_recheck?: boolean };
+/** Every page of a pool list, following next_cursor until the server says there are no more (capped as a guard). */
+export async function allPoolPages(page: (cursor: string | null) => Promise<PoolPage>, maxPages = 100): Promise<PoolEntry[]> {
+  const out: PoolEntry[] = [];
+  let cursor: string | null = null;
+  for (let i = 0; i < maxPages; i++) {
+    const p = await page(cursor);
+    out.push(...p.items);
+    if (!p.next_cursor || p.next_cursor === cursor) break;
+    cursor = p.next_cursor;
+  }
+  return out;
+}
 /** The form after a save: it now edits the saved row (a new entry gets the server's id). */
 export const afterSave = (form: PoolSave, saved: Pick<PoolResult, "id">): PoolSave => ({ ...form, id: saved.id });
 /** The list's rule: checked more than 6 calendar months before today (dates as YYYY-MM-DD). */

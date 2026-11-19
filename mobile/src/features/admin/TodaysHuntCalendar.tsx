@@ -6,7 +6,7 @@ import { Pressable, Text, View } from "react-native";
 import { useLanguage } from "../../i18n";
 import { can } from "../../services/admin";
 import {
-  addDays, adminHuntLoop, hasPlace, localDate,
+  addDays, adminHuntLoop, allPoolPages, hasPlace, localDate,
   type AdminQuest, type CalendarDay, type CatchSlot, type PoolEntry,
 } from "../../services/adminHuntLoop";
 import { C, radii, sans, serif, spacing } from "../../theme";
@@ -123,7 +123,9 @@ function PickSheet({ city, day, quest, onClose, onSaved }: { city: string; day: 
   const [note, setNote] = useState("");
   useEffect(() => {
     let live = true;
-    adminHuntLoop.pool(city, "published").then((p) => live && setItems(p.items.filter((e) => e.type === quest.type && hasPlace(e))), () => live && setItems([]));
+    // The list pages 50 at a time; the picker needs every published entry, so follow next_cursor to the end.
+    allPoolPages((cursor) => adminHuntLoop.pool(city, "published", cursor))
+      .then((all) => live && setItems(all.filter((e) => e.type === quest.type && hasPlace(e))), () => live && setItems([]));
     return () => { live = false; };
   }, [city, quest.type]);
   const pick = async (e: PoolEntry) => {
