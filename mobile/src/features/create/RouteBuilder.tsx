@@ -1,13 +1,13 @@
 // Create step 4, Walk a route (docs/design/hunt-loop.md, section 4): 1–5 brass quest stops built like a private
 // hunt's quests. A city template fills three stops in one tap; each stop can change type, swap its question or
 // price, take the sender's own question, or go. Places the sender taps on the map start as Arrive.
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, Pressable, Text, TextInput, View } from "react-native";
 import { haptics } from "../../components/haptics";
 import { CITIES } from "../../services/cityPuzzle";
 import type { QuestKind } from "../../services/quests";
 import {
-  arriveStop, cityAt, landmarkNear, ROUTE_LIMITS, routes, stopFromPool, stopProblems,
+  arriveStop, cityAt, homePlace, landmarkNear, pickGuard, retypeStop, ROUTE_LIMITS, routes, stopFromPool, stopProblems,
   type RouteStop, type RouteTemplate,
 } from "../../services/routes";
 import { C, radii, sans, serif, spacing } from "../../theme";
@@ -39,27 +39,42 @@ export function RouteBuilder({ stops, onChange, zh, you }: {
   }, [city]);
 
   const name = (s: { name_zh: string; name_en: string }) => zh ? s.name_zh || s.name_en : s.name_en || s.name_zh;
-  const update = (key: string, patch: Partial<RouteStop>) => onChange(stops.map((s) => s.key === key ? { ...s, ...patch } : s));
-  const used = (except?: string) => stops.filter((s) => s.key !== except && s.pool).map((s) => s.pool!.pool_id);
+  // A pick can land after other edits, so writes go through the latest stops, not the ones this render saw.
+  const latest = useRef(stops);
+  latest.current = stops;
+  const picks = useRef(pickGuard()).current;
+  const write = (next: RouteStop[]) => { latest.current = next; onChange(next); };
+  const apply = (key: string, patch: Partial<RouteStop>) => write(latest.current.map((s) => s.key === key ? { ...s, ...patch } : s));
+  /** A change the sender makes: it wins over any pick for this stop that is still loading. */
+  const cancelPick = (key: string) => { picks.cancel(key); setBusy((b) => b === key ? null : b); };
+  const update = (key: string, patch: Partial<RouteStop>) => { cancelPick(key); apply(key, patch); };
+  const used = (except?: string) => latest.current.filter((s) => s.key !== except && s.pool).map((s) => s.pool!.pool_id);
   // Another question / Another price: the nearest unused one to this stop. A stop with none keeps its place.
   const another = async (s: RouteStop, type: "question" | "price", skip: string[]) => {
+    const token = picks.start(s.key);
     setBusy(s.key);
     try {
       const item = await routes.pick(cityAt(s.location_lat, s.location_lng).id, type, s.location_lat, s.location_lng, skip);
+      if (!picks.current(s.key, token)) return;
       setMissing((m) => ({ ...m, [s.key]: !item }));
-      if (item) update(s.key, { type, pool: item, location_lat: item.location_lat, location_lng: item.location_lng, name_zh: item.name_zh, name_en: item.name_en, own_question: undefined, own_answer: undefined });
-      else update(s.key, { type, pool: null });
-    } catch { setMissing((m) => ({ ...m, [s.key]: true })); }
-    finally { setBusy(null); }
+      if (item) apply(s.key, { type, pool: item, location_lat: item.location_lat, location_lng: item.location_lng, name_zh: item.name_zh, name_en: item.name_en, own_question: undefined, own_answer: undefined });
+      else apply(s.key, { type, pool: null });
+    } catch { if (picks.current(s.key, token)) setMissing((m) => ({ ...m, [s.key]: true })); }
+    finally { if (picks.current(s.key, token)) setBusy(null); }
   };
   const retype = (s: RouteStop, type: QuestKind) => {
     void haptics.tick();
-    if (type === s.type) return;
+    // Tapping the type the stop already has keeps it, and drops a pick still loading for another type.
+    if (type === s.type) { cancelPick(s.key); return; }
     setMissing((m) => ({ ...m, [s.key]: false }));
-    if (type === "question" || type === "price") { void another(s, type, used(s.key)); return; }
-    update(s.key, { type, pool: null, own_question: undefined, own_answer: undefined, catch_count: type === "catch" ? s.catch_count ?? 3 : undefined });
+    const next = retypeStop(s, type);
+    if (next === "pool") void another(s, type as "question" | "price", used(s.key));
+    else update(s.key, next);
   };
-  const useTemplate = (t: RouteTemplate) => { void haptics.tick(); onChange(t.stops.map(stopFromPool)); setMissing({}); };
+  // Renaming a stop at the sender's own place renames that place too, so it survives a trip through the pool.
+  const rename = (s: RouteStop, patch: { name_zh: string } | { name_en: string }) =>
+    update(s.key, s.home && !s.pool ? { ...patch, home: { ...s.home, ...patch } } : patch);
+  const useTemplate = (t: RouteTemplate) => { void haptics.tick(); latest.current.forEach((s) => cancelPick(s.key)); write(t.stops.map(stopFromPool)); setMissing({}); };
   const full = stops.length >= ROUTE_LIMITS.stops;
 
   return <View style={{ gap: 12 }}>
@@ -91,9 +106,9 @@ export function RouteBuilder({ stops, onChange, zh, you }: {
             <Text style={{ fontFamily: serif, fontSize: 14, color: C.white }}>{i + 1}</Text>
           </View>
           <TextInput accessibilityLabel={`${q.stop(i + 1)} ${q.stopName}`} value={name(s)} maxLength={ROUTE_LIMITS.name}
-            onChangeText={(v) => update(s.key, zh ? { name_zh: v } : { name_en: v })}
+            onChangeText={(v) => rename(s, zh ? { name_zh: v } : { name_en: v })}
             style={[input, { flex: 1, paddingVertical: 8, fontFamily: serif }]} />
-          <Pressable accessibilityRole="button" accessibilityLabel={`${q.remove} ${q.stop(i + 1)}`} onPress={() => { void haptics.tap(); onChange(stops.filter((x) => x.key !== s.key)); }} style={{ paddingVertical: 6 }}>
+          <Pressable accessibilityRole="button" accessibilityLabel={`${q.remove} ${q.stop(i + 1)}`} onPress={() => { void haptics.tap(); cancelPick(s.key); write(latest.current.filter((x) => x.key !== s.key)); }} style={{ paddingVertical: 6 }}>
             <Text style={{ fontFamily: sans, fontSize: 13, color: C.wax, textDecorationLine: "underline" }}>{q.remove}</Text>
           </Pressable>
         </View>
@@ -104,7 +119,7 @@ export function RouteBuilder({ stops, onChange, zh, you }: {
             onAnother={s.pool ? () => void another(s, s.pool!.type, [...used(), s.pool!.pool_id]) : undefined} />}
         {s.type === "question" && <Pressable accessibilityRole="button" onPress={() => {
           if (own) void another(s, "question", used(s.key));
-          else update(s.key, { pool: null, own_question: s.own_question ?? "", own_answer: s.own_answer ?? "" });
+          else update(s.key, { ...homePlace(s), pool: null, own_question: s.own_question ?? "", own_answer: s.own_answer ?? "" });
         }} style={{ alignSelf: "flex-start" }}>
           <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue, textDecorationLine: "underline" }}>{own ? q.fromPool : q.writeOwn}</Text>
         </Pressable>}
@@ -128,6 +143,6 @@ export function RouteBuilder({ stops, onChange, zh, you }: {
 
     {picking && <PinPicker quest="arrive" at={stops.length ? { lat: stops[stops.length - 1]!.location_lat, lng: stops[stops.length - 1]!.location_lng } : you ?? playable.find((c) => c.id === city) ?? null}
       you={you} onClose={() => setPicking(false)}
-      onPick={(pin) => { setPicking(false); onChange([...stops, arriveStop(pin.lat, pin.lng, pin.name)]); void haptics.tick(); }} />}
+      onPick={(pin) => { setPicking(false); write([...latest.current, arriveStop(pin.lat, pin.lng, pin.name)]); void haptics.tick(); }} />}
   </View>;
 }
