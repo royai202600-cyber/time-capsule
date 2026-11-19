@@ -1,6 +1,20 @@
 # Combined hunt-loop release — production validation stopped
 
-## Current resume — #174 live; stale price-attempt count stop
+## Current resume — #175 live; final price hint stop
+
+Reviewed #175 head `e2d4caf01348b04400717747d3e2fa117278e883`. TypeScript passed; Vitest 259 passed / 9 expected skips; CI `44497961041` passed; web export exited successfully. Roy's account squash-merged `540388ec709e790c7416c85462f7c8e76d1b84f9`. Identical-tree owner release `bbc66675f22fab443d9d7a09b43cd5516c02fca5` is live at https://time-capsule-pi-two.vercel.app, Vercel `FYWsDvGKwLTjsJ65GGn2BUdZQd5C` successful. Public script paths match the export: `__common-371f8ca9d161d88f64904c9b7796d727.js`, `entry-f5910f56307387693a908b4f9eaf46dd.js`. Main's database types still match `8cf3a2a`. No backend, migration, flag or art change.
+
+Production used a disposable account and six-stop hunt (Arrive, Question, two prices, Catch and Landmark), with simulated GPS and a fixture-only speed allowance. Keeper check-in, Arrive and Question passed. English price at 375 px showed 3 → 2 after a wrong US$1000 guess. Closing and reopening retained 2. At desktop 1280 px the second miss showed 1; the third miss completed the quest, removed the input, revealed US$3.04 / NT$100 and showed Done without a points award. Database verification confirmed three attempts and a completion timestamp. The grading/attempt contract returns 0 points for this failed completion. Thus the observed stale count was fixed, including persisted count on reopening.
+
+**Stop: the final wrong price guess displays the wrong directional hint.** The third US$1000 guess against a revealed US$3.04 answer displays “↑ Higher”; it should not instruct the player to raise an already excessive guess. The prior wrong guess correctly displayed Lower. Screenshot saved as `city-hunt-final-hint.jpg` in this chat's visualization directory.
+
+Cause: the grading function deliberately omits `hint` when `done` is true and supplies `correct_answer`. `mobile/src/features/quests/QuestPlay.tsx:79` appends a row using `out.hint ?? "higher"`, inventing Higher for the final miss. Claude should derive the final direction from the revealed answer or use an appropriate terminal mark instead of guessing a direction. The same fallback exists in `mobile/src/features/todaysHunt/TodaysHuntScreen.tsx:190`; inspect that shared behavior too (not re-tested in production this resume). No screen or migration fix was made by Codex.
+
+Per Roy's stop instruction, Chinese price coverage, optional route price, Catch/Landmark/return completion and final Done/status-doc merge remain held. Earlier checklist zh/en viewport coverage, Memory Route and admin acceptance remain passed.
+
+Cleanup: signed out, reset viewport and fully navigated to clear simulated GPS. Removed the disposable hunt, six rules, legacy/located quests and progress, account/profile/identity/sessions/refresh tokens/Auth audit records and speed allowance. All fixture counts verified zero, including spawns, player game state, ownership, passport stamps and admin actions. No existing hunt/Q1/calendar/global state was modified. Pool remains 220; audit append-only trigger enabled; Time Capsule Docker stopped. Macau `20261119000708` remains unapplied. No credential helper files were created.
+
+## Previous resume — #174 live; stale price-attempt count stop
 
 Reviewed #174 head `3575efb1f27fb7b7a8a69adbc15ea1ffb7b0c702`. TypeScript passed; Vitest 259 passed / 9 expected skips; CI `44495020993` passed; web export passed. Roy's account squash-merged `c5aec85669e376ea4e270c670f445fb8ffee72ec`. Identical-tree owner release `5e3f879801f0f9f16ff34a1baf5af5b85796911a` is live at https://time-capsule-pi-two.vercel.app, Vercel `G3DK12rBunk5DXczRjguMFr3dpRe` successful. Public script paths match the export: `__common-d433445c5b1279b580fd9afc770b77a7.js`, `entry-f5910f56307387693a908b4f9eaf46dd.js`. Backend flags remain on; live types on main match `8cf3a2a` exactly. No migration, backend or art change.
 
