@@ -270,3 +270,6 @@ export function useHuntLoopText(): HuntLoopText {
 }
 /** The message for a refused write. */
 export const loopError = (h: HuntLoopText, e: unknown) => h.error[(e as Error)?.message] ?? h.error.failed;
+/** A notice kept in state as a way to say it, so it follows a language switch instead of freezing the old text. */
+export type Say = (h: HuntLoopText) => string;
+export const sayError = (e: unknown): Say => (h) => loopError(h, e);

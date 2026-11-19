@@ -11,7 +11,7 @@ import {
 } from "../../services/adminHuntLoop";
 import { C, radii, sans, serif, spacing } from "../../theme";
 import { useAdmin } from "./AdminShell";
-import { loopError, useHuntLoopText, type HuntLoopText } from "./huntLoopStrings";
+import { sayError, useHuntLoopText, type HuntLoopText, type Say } from "./huntLoopStrings";
 import { AButton, Card, Choice, Empty, Failed, Field, Loading, Notice, Pill, Sheet, Stepper, shortDate } from "./ui";
 
 const SPANS = [7, 14, 28];
@@ -24,21 +24,21 @@ export function TodaysHuntCalendar({ city, timezone }: { city: string; timezone:
   const today = localDate(timezone);
   const [span, setSpan] = useState(14);
   const [days, setDays] = useState<CalendarDay[] | null>(null);
-  const [failed, setFailed] = useState<string | null>(null);
+  const [failed, setFailed] = useState<Say | null>(null);
   const [change, setChange] = useState<{ day: CalendarDay; quest: AdminQuest } | null>(null);
-  const [note, setNote] = useState<{ date: string; text: string } | null>(null);
+  const [note, setNote] = useState<{ date: string; say: Say } | null>(null);
 
   const load = async () => {
     setFailed(null); setDays(null);
     try { setDays(await adminHuntLoop.calendar(city, today, span)); }
-    catch (e) { setFailed(loopError(h, e)); }
+    catch (e) { setFailed(() => sayError(e)); }
   };
   useEffect(() => { void load(); }, [city, span, role]);
   const put = (d: CalendarDay) => setDays((x) => x?.map((y) => y.date === d.date ? d : y) ?? null);
   const swap = async (day: CalendarDay, a: number, b: number) => {
     setNote(null);
     try { put(await adminHuntLoop.swap(city, day.date, a, b)); }
-    catch (e) { setNote({ date: day.date, text: loopError(h, e) }); }
+    catch (e) { setNote({ date: day.date, say: sayError(e) }); }
   };
 
   return <View style={{ gap: spacing.md }}>
@@ -46,7 +46,7 @@ export function TodaysHuntCalendar({ city, timezone }: { city: string; timezone:
       <Choice value={span} onChange={setSpan} options={SPANS.map((n) => ({ value: n, label: h.days(n) }))} />
       {mayEdit && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{h.undoNote}</Text>}
     </View>
-    {!mayEdit ? <Notice text={h.error.forbidden} /> : failed ? <View style={{ gap: spacing.sm }}><Notice tone="stop" text={failed} /><Failed onRetry={() => void load()} /></View>
+    {!mayEdit ? <Notice text={h.error.forbidden} /> : failed ? <View style={{ gap: spacing.sm }}><Notice tone="stop" text={failed(h)} /><Failed onRetry={() => void load()} /></View>
       : !days ? <Loading /> : !days.length ? <Empty text={h.reason.not_scheduled} /> : <View style={{ gap: spacing.sm }}>
       {days.map((d) => {
         const locked = d.started || !mayEdit;
@@ -61,7 +61,7 @@ export function TodaysHuntCalendar({ city, timezone }: { city: string; timezone:
             onUp={!locked && i > 0 ? () => void swap(d, d.quests[i - 1]!.ordinal, q.ordinal) : undefined}
             onDown={!locked && i < d.quests.length - 1 ? () => void swap(d, q.ordinal, d.quests[i + 1]!.ordinal) : undefined}
             onChange={!locked ? () => setChange({ day: d, quest: q }) : undefined} />)}
-          {note?.date === d.date && <Notice tone="stop" text={note.text} />}
+          {note?.date === d.date && <Notice tone="stop" text={note.say(h)} />}
         </Card>;
       })}
     </View>}
@@ -120,7 +120,7 @@ function PickSheet({ city, day, quest, onClose, onSaved }: { city: string; day: 
   const zh = language === "zh";
   const [items, setItems] = useState<PoolEntry[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState<Say | null>(null);
   useEffect(() => {
     let live = true;
     // The list pages 50 at a time; the picker needs every published entry, so follow next_cursor to the end.
@@ -129,14 +129,14 @@ function PickSheet({ city, day, quest, onClose, onSaved }: { city: string; day: 
     return () => { live = false; };
   }, [city, quest.type]);
   const pick = async (e: PoolEntry) => {
-    setBusy(e.id); setNote("");
+    setBusy(e.id); setNote(null);
     try { onSaved(await adminHuntLoop.setSlot(city, day.date, quest.ordinal, { pool_id: e.id })); }
-    catch (err) { setNote(loopError(h, err)); }
+    catch (err) { setNote(() => sayError(err)); }
     finally { setBusy(null); }
   };
   return <Sheet title={h.pickTitle(h.kindName[quest.type])} onClose={onClose}>
     <Text style={{ fontFamily: sans, fontSize: 12, lineHeight: 18, color: C.muted }}>{dayLabel(day.date, language)} · {h.pickNote}</Text>
-    {!!note && <Notice tone="stop" text={note} />}
+    {!!note && <Notice tone="stop" text={note(h)} />}
     {!items ? <Loading /> : !items.length ? <Empty text={h.noPick} /> : items.map((e) => {
       const current = e.id === quest.pool_id;
       return <Card key={e.id} onPress={current || busy ? undefined : () => void pick(e)} label={zh ? e.prompt_zh : e.prompt_en}
@@ -156,19 +156,19 @@ function CatchSheet({ city, day, quest, onClose, onSaved }: { city: string; day:
   const [nameZh, setNameZh] = useState("");
   const [nameEn, setNameEn] = useState("");
   const [busy, setBusy] = useState(false);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState<Say | null>(null);
   const m = whereText.trim().match(/^(-?\d+(?:\.\d+)?)\s*[, ]\s*(-?\d+(?:\.\d+)?)$/);
   const save = async () => {
     if (!m) return;
-    setBusy(true); setNote("");
+    setBusy(true); setNote(null);
     const slot: CatchSlot = { lat: Number(m[1]), lng: Number(m[2]), count, name_zh: nameZh, name_en: nameEn };
     try { onSaved(await adminHuntLoop.setSlot(city, day.date, quest.ordinal, slot)); }
-    catch (e) { setNote(loopError(h, e)); }
+    catch (e) { setNote(() => sayError(e)); }
     finally { setBusy(false); }
   };
   return <Sheet title={h.catchTitle} onClose={onClose}
     footer={<View style={{ gap: spacing.sm }}>
-      {!!note && <Notice tone="stop" text={note} />}
+      {!!note && <Notice tone="stop" text={note(h)} />}
       <View style={{ flexDirection: "row", gap: spacing.sm }}>
         <AButton title={h.save} disabled={busy || !m} onPress={() => void save()} />
         <AButton tone="ghost" title={h.cancel} onPress={onClose} />

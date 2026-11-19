@@ -5,7 +5,7 @@ import { Pressable, Text, View } from "react-native";
 import type { SpawnRule, WaveConfig } from "../../services/admin";
 import { adminHuntLoop, sampleCopies } from "../../services/adminHuntLoop";
 import { C, sans, spacing } from "../../theme";
-import { loopError, useHuntLoopText } from "./huntLoopStrings";
+import { sayError, useHuntLoopText, type Say } from "./huntLoopStrings";
 import { AButton, Field, Notice, Pill, Sheet, Stepper } from "./ui";
 
 /** Starters and earned Landmark vessels can never be finite (the server refuses). */
@@ -18,18 +18,18 @@ export function CopiesButton({ config, onSaved }: { config: WaveConfig; onSaved:
   const [open, setOpen] = useState(false);
   const [n, setN] = useState(perCatchOf(config));
   const [busy, setBusy] = useState(false);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState<Say | null>(null);
   const save = async () => {
-    setBusy(true); setNote("");
+    setBusy(true); setNote(null);
     try { await adminHuntLoop.setCopiesPerCatch(n, null); setOpen(false); onSaved(); }
-    catch (e) { setNote(loopError(h, e)); }
+    catch (e) { setNote(() => sayError(e)); }
     finally { setBusy(false); }
   };
   return <>
     <AButton small tone="ghost" title={h.editCopies} onPress={() => { setN(perCatchOf(config)); setOpen(true); }} />
     {open && <Sheet title={h.copiesTitle} onClose={() => setOpen(false)}
       footer={<View style={{ gap: spacing.sm }}>
-        {!!note && <Notice tone="stop" text={note} />}
+        {!!note && <Notice tone="stop" text={note(h)} />}
         <View style={{ flexDirection: "row", gap: spacing.sm }}>
           <AButton title={h.save} disabled={busy || n === perCatchOf(config)} onPress={() => void save()} />
           <AButton tone="ghost" title={h.cancel} onPress={() => setOpen(false)} />
@@ -48,11 +48,11 @@ export function VesselCopies({ rule, name, onSaved }: { rule: SpawnRule; name: s
   const [confirm, setConfirm] = useState(false);
   const [adjusting, setAdjusting] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState<Say | null>(null);
   const flip = async () => {
-    setBusy(true); setNote("");
+    setBusy(true); setNote(null);
     try { await adminHuntLoop.setUnlimited(rule.vessel, !on); setConfirm(false); onSaved?.(); }
-    catch (e) { setNote(loopError(h, e)); }
+    catch (e) { setNote(() => sayError(e)); }
     finally { setBusy(false); }
   };
   return <View style={{ gap: 6 }}>
@@ -67,7 +67,7 @@ export function VesselCopies({ rule, name, onSaved }: { rule: SpawnRule; name: s
     </Pressable>}
     {confirm && <Sheet title={`${name} · ${on ? h.unlimitedOff : h.unlimitedOn}`} onClose={() => setConfirm(false)}
       footer={<View style={{ gap: spacing.sm }}>
-        {!!note && <Notice tone="stop" text={note} />}
+        {!!note && <Notice tone="stop" text={note(h)} />}
         <View style={{ flexDirection: "row", gap: spacing.sm }}>
           <AButton title={on ? h.unlimitedOff : h.unlimitedOn} disabled={busy} onPress={() => void flip()} />
           <AButton tone="ghost" title={h.cancel} onPress={() => setConfirm(false)} />
@@ -85,16 +85,16 @@ function AdjustSheet({ vessel, name, onClose }: { vessel: string; name: string; 
   const [delta, setDelta] = useState(1);
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
-  const [note, setNote] = useState<{ tone: "info" | "stop"; text: string } | null>(null);
+  const [note, setNote] = useState<{ tone: "info" | "stop"; say: Say } | null>(null);
   const save = async () => {
     setBusy(true); setNote(null);
-    try { const out = await adminHuntLoop.adjustCopies(player.trim(), vessel, delta, reason.trim()); setNote({ tone: "info", text: h.adjusted(out.copies) }); }
-    catch (e) { setNote({ tone: "stop", text: loopError(h, e) }); }
+    try { const out = await adminHuntLoop.adjustCopies(player.trim(), vessel, delta, reason.trim()); setNote({ tone: "info", say: (t) => t.adjusted(out.copies) }); }
+    catch (e) { setNote({ tone: "stop", say: sayError(e) }); }
     finally { setBusy(false); }
   };
   return <Sheet title={h.adjustTitle(name)} onClose={onClose}
     footer={<View style={{ gap: spacing.sm }}>
-      {!!note && <Notice tone={note.tone} text={note.text} />}
+      {!!note && <Notice tone={note.tone} text={note.say(h)} />}
       <View style={{ flexDirection: "row", gap: spacing.sm }}>
         <AButton title={h.save} disabled={busy || !player.trim() || !reason.trim() || delta === 0} onPress={() => void save()} />
         <AButton tone="ghost" title={h.cancel} onPress={onClose} />

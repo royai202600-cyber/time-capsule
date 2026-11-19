@@ -10,7 +10,7 @@ import {
 } from "../../services/adminHuntLoop";
 import { C, radii, sans, serif, spacing } from "../../theme";
 import { useAdmin } from "./AdminShell";
-import { loopError, useHuntLoopText } from "./huntLoopStrings";
+import { sayError, useHuntLoopText, type Say } from "./huntLoopStrings";
 import { AButton, Card, Choice, Empty, Failed, Field, Loading, Notice, Pill, Sheet, type Tone } from "./ui";
 
 const FILTERS: PoolFilter[] = ["all", "draft", "published", "hidden", "needs_recheck"];
@@ -91,7 +91,7 @@ function PoolSheet({ city, entry, mayEdit, onClose, onSaved }: {
   const [aliases, setAliases] = useState("");
   const [local, setLocal] = useState("");
   const [busy, setBusy] = useState(false);
-  const [note, setNote] = useState<{ tone: "info" | "stop"; text: string } | null>(null);
+  const [note, setNote] = useState<{ tone: "info" | "stop"; say: Say } | null>(null);
   const set = (patch: Partial<PoolSave>) => { setF((x) => ({ ...x, ...patch })); setNote(null); };
   const spot = parseWhere(whereText);
   const rate = Number(f.rate);
@@ -116,8 +116,8 @@ function PoolSheet({ city, entry, mayEdit, onClose, onSaved }: {
       // The sheet stays open, so later saves must update this row: keep the id the server gave a new entry.
       // The answer and local price are kept on the server; leaving them out of the next save keeps them.
       setF((x) => afterSave(x, out));
-      onSaved(out); setNote({ tone: "info", text: h.saved }); setAnswer(undefined); setLocal("");
-    } catch (e) { setNote({ tone: "stop", text: loopError(h, e) }); }
+      onSaved(out); setNote({ tone: "info", say: (t) => t.saved }); setAnswer(undefined); setLocal("");
+    } catch (e) { setNote({ tone: "stop", say: sayError(e) }); }
     finally { setBusy(false); }
   };
   const status = async (s: PoolStatus) => {
@@ -125,7 +125,7 @@ function PoolSheet({ city, entry, mayEdit, onClose, onSaved }: {
     if (!id) return;
     setBusy(true);
     try { onSaved(await adminHuntLoop.setPoolStatus(id, s)); }
-    catch (e) { setNote({ tone: "stop", text: loopError(h, e) }); }
+    catch (e) { setNote({ tone: "stop", say: sayError(e) }); }
     finally { setBusy(false); }
   };
   const choices = f.choices ?? [];
@@ -133,7 +133,7 @@ function PoolSheet({ city, entry, mayEdit, onClose, onSaved }: {
 
   return <Sheet title={isNew ? h.newTitle : h.editTitle} onClose={onClose}
     footer={mayEdit && <View style={{ gap: spacing.sm }}>
-      {!!note && <Notice tone={note.tone} text={note.text} />}
+      {!!note && <Notice tone={note.tone} text={note.say(h)} />}
       {problems.map((p) => <Text key={p} style={{ fontFamily: sans, fontSize: 12, color: C.wax }}>· {h.problem[p]}</Text>)}
       {!spot && <Text style={{ fontFamily: sans, fontSize: 12, color: C.wax }}>· {h.locationHint}</Text>}
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>

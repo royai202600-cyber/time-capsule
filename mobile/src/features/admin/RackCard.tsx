@@ -9,7 +9,7 @@ import { can } from "../../services/admin";
 import { adminHuntLoop, type RackEntry, type RackPage, type RackStatus } from "../../services/adminHuntLoop";
 import { C, radii, sans, serif, spacing } from "../../theme";
 import { useAdmin } from "./AdminShell";
-import { loopError, useHuntLoopText } from "./huntLoopStrings";
+import { sayError, useHuntLoopText, type Say } from "./huntLoopStrings";
 import { AButton, Card, Field, Loading, Notice, Pill, shortDate, type Tone } from "./ui";
 
 const TONE: Record<RackStatus, Tone> = { waiting: "muted", ready: "blue", claimed: "ink", opened: "plum", reported: "wax", removed: "muted" };
@@ -18,13 +18,13 @@ export function RackCard({ waypost }: { waypost: string }) {
   const h = useHuntLoopText();
   const { role } = useAdmin();
   const [page, setPage] = useState<RackPage | null>(null);
-  const [failed, setFailed] = useState("");
+  const [failed, setFailed] = useState<Say | null>(null);
   const load = async (more = false) => {
-    setFailed("");
+    setFailed(null);
     try {
       const next = await adminHuntLoop.rack(waypost, more ? page?.next_cursor : null);
       setPage((x) => more && x ? { ...next, items: [...x.items, ...next.items] } : next);
-    } catch (e) { setFailed(loopError(h, e)); }
+    } catch (e) { setFailed(() => sayError(e)); }
   };
   useEffect(() => { setPage(null); void load(); }, [waypost, role]);
   const removed = (id: string) => setPage((x) => x && { ...x, items: x.items.map((c) => c.capsule_id === id ? { ...c, status: "removed" } : c) });
@@ -34,7 +34,7 @@ export function RackCard({ waypost }: { waypost: string }) {
       <Text style={{ fontFamily: serif, fontSize: 17, color: C.ink }}>{h.rack}</Text>
       {page && <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted }}>{h.rackCount(page.count)}</Text>}
     </View>
-    {failed ? <Notice tone="stop" text={failed} /> : !page ? <Loading /> : !page.items.length
+    {failed ? <Notice tone="stop" text={failed(h)} /> : !page ? <Loading /> : !page.items.length
       ? <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{h.rackEmpty}</Text>
       : page.items.map((c) => <RackRow key={c.capsule_id} entry={c} mayRemove={can(role, "queue")} onRemoved={() => removed(c.capsule_id)} />)}
     {!!page?.next_cursor && <View style={{ alignItems: "center" }}><AButton small tone="ghost" title={h.more} onPress={() => void load(true)} /></View>}
@@ -47,11 +47,11 @@ function RackRow({ entry: c, mayRemove, onRemoved }: { entry: RackEntry; mayRemo
   const [removing, setRemoving] = useState(false);
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
-  const [note, setNote] = useState<{ tone: "info" | "stop"; text: string } | null>(null);
+  const [note, setNote] = useState<{ tone: "info" | "stop"; say: Say } | null>(null);
   const remove = async () => {
     setBusy(true); setNote(null);
-    try { await adminHuntLoop.removeFromRack(c.capsule_id, reason.trim()); setRemoving(false); setNote({ tone: "info", text: h.removed }); onRemoved(); }
-    catch (e) { setNote({ tone: "stop", text: loopError(h, e) }); }
+    try { await adminHuntLoop.removeFromRack(c.capsule_id, reason.trim()); setRemoving(false); setNote({ tone: "info", say: (t) => t.removed }); onRemoved(); }
+    catch (e) { setNote({ tone: "stop", say: sayError(e) }); }
     finally { setBusy(false); }
   };
   return <View style={{ gap: 6, backgroundColor: C.paper, borderRadius: radii.sm, padding: spacing.sm, opacity: c.status === "removed" ? .6 : 1 }}>
@@ -70,7 +70,7 @@ function RackRow({ entry: c, mayRemove, onRemoved }: { entry: RackEntry; mayRemo
       <Text style={{ fontFamily: sans, fontSize: 11, color: C.muted }}>{h.body}</Text>
       <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 19, color: C.ink }}>{c.body}</Text>
     </View>}
-    {!!note && <Notice tone={note.tone} text={note.text} />}
+    {!!note && <Notice tone={note.tone} text={note.say(h)} />}
     {mayRemove && c.status !== "removed" && (removing
       ? <View style={{ gap: spacing.sm }}>
           <Field label={h.removeReason} value={reason} onChangeText={setReason} autoFocus />
