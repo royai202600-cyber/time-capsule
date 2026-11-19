@@ -6,6 +6,86 @@ alter table private.question_pool
   add column if not exists outside_coverage boolean not null default false,
   add column if not exists hidden_reason text;
 
+create or replace function public.admin_question_pool_save(payload jsonb)
+returns jsonb language plpgsql security definer set search_path = '' as $$
+declare
+  prior private.question_pool;
+  saved private.question_pool;
+  prior_secret private.question_pool_secrets;
+  secret private.question_pool_secrets;
+  target uuid := (payload->>'id')::uuid;
+  choice numeric;
+begin
+  perform private.require_game_editor();
+  if jsonb_typeof(payload) is distinct from 'object' then raise exception 'bad_rule'; end if;
+  if target is not null then
+    select * into prior from private.question_pool where id = target for update;
+    if not found then raise exception 'not_found'; end if;
+    select * into strict prior_secret from private.question_pool_secrets where id = target;
+  end if;
+  saved := jsonb_populate_record(prior,payload);
+  saved.id := coalesce(target,gen_random_uuid());
+  saved.status := coalesce(prior.status,'draft');
+  saved.legacy_price_id := prior.legacy_price_id;
+  saved.outside_coverage := coalesce(saved.outside_coverage, false);
+  secret := jsonb_populate_record(prior_secret,payload);
+  secret.id := saved.id;
+  if saved.type = 'price' then
+    saved.kind := null;
+    saved.choices := null;
+    secret.answer := null;
+    secret.typed_aliases := null;
+    if saved.rate is null or saved.rate <= 0 or secret.local_amount is null then raise exception 'bad_rule'; end if;
+    secret.usd := round(secret.local_amount / saved.rate,2);
+  elsif saved.type = 'question' then
+    saved.currency := null;
+    saved.rate := null;
+    secret.usd := null;
+    secret.local_amount := null;
+    if saved.kind = 'choice' then
+      secret.typed_aliases := null;
+      if jsonb_typeof(saved.choices) is distinct from 'array' or jsonb_typeof(secret.answer) is distinct from 'number'
+      then raise exception 'bad_rule'; end if;
+      choice := (secret.answer #>> '{}')::numeric;
+      if choice <> trunc(choice) or choice < 0 or choice >= jsonb_array_length(saved.choices)
+        or jsonb_array_length(saved.choices) not between 2 and 6
+        or exists (select 1 from jsonb_array_elements(saved.choices) c
+          where jsonb_typeof(c->'zh') is distinct from 'string' or jsonb_typeof(c->'en') is distinct from 'string'
+            or length(btrim(c->>'zh')) not between 1 and 120 or length(btrim(c->>'en')) not between 1 and 120)
+      then raise exception 'bad_rule'; end if;
+      -- Rebuild choices so unknown client fields cannot enter a player payload.
+      select jsonb_agg(jsonb_build_object('zh',c->>'zh','en',c->>'en') order by ord)
+      into saved.choices from jsonb_array_elements(saved.choices) with ordinality as a(c,ord);
+    elsif saved.kind = 'text' then
+      saved.choices := null;
+      if jsonb_typeof(secret.answer) is distinct from 'string'
+        or length(btrim(secret.answer #>> '{}')) not between 1 and 120
+        or cardinality(secret.typed_aliases) > 20
+        or exists (select 1 from unnest(secret.typed_aliases) a where a is null or length(btrim(a)) not between 1 and 120)
+      then raise exception 'bad_rule'; end if;
+    else raise exception 'bad_rule';
+    end if;
+  else raise exception 'bad_rule';
+  end if;
+  begin
+    insert into private.question_pool select saved.*
+    on conflict (id) do update set
+      (city,type,place_zh,place_en,location_lat,location_lng,prompt_zh,prompt_en,kind,choices,currency,rate,
+       source_url,checked_on,photo,photo_credit,photo_license,photo_link,vessel) =
+      (saved.city,saved.type,saved.place_zh,saved.place_en,saved.location_lat,saved.location_lng,
+       saved.prompt_zh,saved.prompt_en,saved.kind,saved.choices,saved.currency,saved.rate,saved.source_url,
+       saved.checked_on,saved.photo,saved.photo_credit,saved.photo_license,saved.photo_link,saved.vessel);
+    insert into private.question_pool_secrets select secret.*
+    on conflict (id) do update set (answer,typed_aliases,usd,local_amount) =
+      (secret.answer,secret.typed_aliases,secret.usd,secret.local_amount);
+  exception when check_violation or not_null_violation then raise exception 'bad_rule';
+  end;
+  perform private.log_question_pool(case when target is null then 'question_pool.add' else 'question_pool.edit' end,
+    saved.id,saved.prompt_en,case when target is not null then to_jsonb(prior) end,to_jsonb(saved),
+    case when target is not null then to_jsonb(prior_secret) end);
+  return to_jsonb(saved);
+end $$;
+
 do $migration$
 declare
   seed constant jsonb := $seed$[
