@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 vi.mock('./supabase', () => ({ supabase: {} }));
-import { answerMatches, fromServer, RackError, racks, RACK_FILTERS, RACK_PAGE, RACK_BACKEND } from './racks';
+import { answerMatches, fromServer, RackError, racks, rackStepTarget, RACK_FILTERS, RACK_PAGE, RACK_BACKEND } from './racks';
 
 const at = { lat: 0, lng: 0, accuracy: 10 };
 
@@ -45,5 +45,23 @@ describe('rack wire format (HL-C1 migration 20261118124925)', () => {
     const item = fromServer({ capsule_id: 'c', sender: { portrait: { set: 'illus', id: '02' }, name: 'Ken' }, hint: null, opens_at: '2026-11-20T00:00:00Z',
       ready: false, has_question: false, lock_question: null, is_friend: false, is_mine: false });
     expect(item.sender).toEqual({ id: '', name: 'Ken', avatar: { set: 'illus', id: '02' } });
+  });
+});
+
+describe('rack card arrows', () => {
+  it('fetches the next page from the last loaded capsule instead of wrapping to the first', () => {
+    expect(rackStepTarget(23, 24, true, 1)).toBe('load');
+    expect(rackStepTarget(22, 24, true, 1)).toBe(23);
+  });
+  it('stays on the first capsule going back while more pages exist', () => {
+    expect(rackStepTarget(0, 24, true, -1)).toBeNull();
+    expect(rackStepTarget(5, 24, true, -1)).toBe(4);
+  });
+  it('wraps both ends once everything is loaded', () => {
+    expect(rackStepTarget(29, 30, false, 1)).toBe(0);
+    expect(rackStepTarget(0, 30, false, -1)).toBe(29);
+  });
+  it('does nothing on an empty filter', () => {
+    expect(rackStepTarget(0, 0, false, 1)).toBeNull();
   });
 });

@@ -1,5 +1,5 @@
 import { useLanguage } from "../../i18n";
-import type { RackErrorCode } from "../../services/racks";
+import type { RackErrorCode, RackFilter } from "../../services/racks";
 
 // Only what racks add to existing screens: the Waypost card, the public capsule card and Create.
 const strings = {
@@ -12,6 +12,8 @@ const strings = {
     opensIn: (n: number) => `倒數 ${n} 天`,
     yourAnswer: "回答寄件人的問題",
     mine: "這是你放的膠囊，等別人來打開。",
+    filters: { all: "全部", ready: "可以打開", waiting: "倒數中", has_question: "有問題", friends: "朋友", mine: "我的" } as Record<RackFilter, string>,
+    filterEmpty: "這個篩選沒有膠囊",
     // Create
     rackNote: "膠囊會掛在這個 Waypost 的膠囊架上，第一個打開的人拿走它。",
     lock: "鎖",
@@ -45,6 +47,8 @@ const strings = {
     opensIn: (n: number) => `Opens in ${n} day${n === 1 ? "" : "s"}`,
     yourAnswer: "Answer the sender's question",
     mine: "You left this one. Someone else will open it.",
+    filters: { all: "All", ready: "Ready", waiting: "Waiting", has_question: "Question", friends: "Friends", mine: "Mine" } as Record<RackFilter, string>,
+    filterEmpty: "No capsules match this filter",
     rackNote: "It hangs on this Waypost's capsule rack. The first person to open it takes it.",
     lock: "Lock",
     noLock: "No lock",

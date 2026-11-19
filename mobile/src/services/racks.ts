@@ -27,6 +27,14 @@ export type RackItem = {
 export type RackCursor = { sealed_at: string; id: string };
 /** `count` is the whole filtered rack; a page holds up to 24. */
 export type RackPage = { count: number; items: RackItem[]; next_cursor: RackCursor | null };
+/** Where the rack card's arrows go. While more pages exist, Next from the last loaded capsule fetches the next page
+ *  (then moves onto its first capsule) and Back from the first stays put; the ends wrap only once everything is loaded. */
+export function rackStepTarget(index: number, loaded: number, hasMore: boolean, dir: 1 | -1): number | "load" | null {
+  if (loaded === 0) return null;
+  if (hasMore && dir === 1 && index === loaded - 1) return "load";
+  if (hasMore && dir === -1 && index === 0) return null;
+  return (index + dir + loaded) % loaded;
+}
 export type RackAt = { lat: number; lng: number; accuracy?: number | null } | null;
 export type RackLeave = { body: string; hint: string; wait: RackWait; question?: string; answer?: string };
 export type RackLeft = { capsule_id: string; opens_at: string };

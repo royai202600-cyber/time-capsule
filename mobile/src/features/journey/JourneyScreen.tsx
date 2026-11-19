@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Linking, Platform, Pressable, Text, View } from "react-native";
+import { Linking, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { ArtIcon } from "../../components/ArtIcon";
 import { Avatar } from "../../components/Avatar";
@@ -29,7 +29,7 @@ import { TODAYS_HUNT, todaysHunt } from "../../services/todaysHunt";
 import { PriceGuessScreen } from "../explorer/PriceGuessScreen";
 import { useExplorerText } from "../explorer/strings";
 import { SpinScreen } from "../game/SpinScreen";
-import { RACK_SAMPLE, RACKS, RackError, racks, type RackItem, type RackPage } from "../../services/racks";
+import { RACK_FILTERS, RACK_SAMPLE, RACKS, RackError, rackStepTarget, racks, type RackFilter, type RackItem, type RackPage } from "../../services/racks";
 import { useRackText } from "../racks/strings";
 import { errorKey, useGameText } from "../game/strings";
 import { ThrowScreen } from "../game/ThrowScreen";
@@ -186,7 +186,9 @@ export default function JourneyScreen() {
   const [spinning, setSpinning] = useState<Waypost | null>(null);
   // With racks, a common Waypost's card leads to Spin and its capsule rack; the rack is browsed with the public capsule card.
   const r = useRackText();
-  const [rackPage, setRackPage] = useState<{ waypost: Waypost; page: RackPage } | null>(null);
+  const [rackPage, setRackPage] = useState<{ waypost: Waypost; filter: RackFilter; page: RackPage } | null>(null);
+  // Only the newest rack request may land, so a slow page can't overwrite a newer filter.
+  const rackRequest = useRef(0);
   const [rackIndex, setRackIndex] = useState<number | null>(null);
   const [gameCard, setGameCard] = useState<{ waypost: Waypost; meters: number } | null>(null);
   const last = useRef<{ lat: number; lng: number } | null>(null);
@@ -393,11 +395,21 @@ export default function JourneyScreen() {
     setGameCard(null);
     select(id);
   };
-  const loadRack = async (waypost: Waypost, more = false) => {
+  // Resolves true once a further page has landed for the rack still on screen.
+  const loadRack = async (waypost: Waypost, more = false, filter: RackFilter = more ? rackPage?.filter ?? "all" : "all"): Promise<boolean> => {
+    const req = ++rackRequest.current;
     try {
-      const page = await racks.list(waypost.id, "all", more ? rackPage?.page.next_cursor ?? null : null);
-      setRackPage((prev) => more && prev?.waypost.id === waypost.id ? { waypost, page: { ...page, items: [...prev.page.items, ...page.items] } } : { waypost, page });
-    } catch { if (!more) setRackPage({ waypost, page: { count: 0, items: [], next_cursor: null } }); }
+      const page = await racks.list(waypost.id, filter, more ? rackPage?.page.next_cursor ?? null : null);
+      if (req !== rackRequest.current) return false;
+      setRackPage((prev) => more && prev?.waypost.id === waypost.id && prev.filter === filter ? { waypost, filter, page: { ...page, items: [...prev.page.items, ...page.items] } } : { waypost, filter, page });
+      return more && page.items.length > 0;
+    } catch { if (!more && req === rackRequest.current) setRackPage({ waypost, filter, page: { count: 0, items: [], next_cursor: null } }); return false; }
+  };
+  const pickRackFilter = (filter: RackFilter) => {
+    if (!rackPage || filter === rackPage.filter) return;
+    void haptics.tick(); setRackIndex(0);
+    setRackPage({ ...rackPage, filter, page: { count: 0, items: [], next_cursor: null } });
+    void loadRack(rackPage.waypost, false, filter);
   };
   // A rack capsule shown on the public capsule card, at its Waypost.
   const rackItem = (e: RackItem, w: Waypost): Extract<Item, { kind: "publicCapsule" }> => ({
@@ -405,12 +417,16 @@ export default function JourneyScreen() {
     publicCapsule: { id: e.capsule_id, hint: e.hint ?? "", vessel: "bottle", lat: w.lat, lng: w.lng, spot_zh: w.name_zh, spot_en: w.name_en,
       sealed_at: e.opens_at, available_at: e.opens_at, returns: 0, sender: { ...e.sender, city: null } },
   });
-  const rackStep = (dir: 1 | -1) => {
-    if (!rackPage || rackIndex === null) return;
-    const { items: list, next_cursor } = rackPage.page;
-    if (dir === 1 && rackIndex === list.length - 1 && next_cursor) void loadRack(rackPage.waypost, true);
-    void haptics.tick();
-    setRackIndex((rackIndex + dir + list.length) % list.length);
+  const rackPaging = useRef(false);
+  const rackStep = async (dir: 1 | -1) => {
+    if (!rackPage || rackIndex === null || rackPaging.current) return;
+    const loaded = rackPage.page.items.length, target = rackStepTarget(rackIndex, loaded, !!rackPage.page.next_cursor, dir);
+    if (target === null) return;
+    if (target !== "load") { void haptics.tick(); setRackIndex(target); return; }
+    rackPaging.current = true;
+    // Only move once the next page has landed for this rack and filter; loadRack drops a superseded request.
+    try { if (await loadRack(rackPage.waypost, true)) { void haptics.tick(); setRackIndex(loaded); } }
+    finally { rackPaging.current = false; }
   };
   const rackPickUp = async (item: Extract<Item, { kind: "publicCapsule" }>, answer?: string) => {
     if (busy || !rackPage) return;
@@ -427,7 +443,7 @@ export default function JourneyScreen() {
       void haptics.warn();
       const code = e instanceof RackError ? e.code : "unknown";
       setToast(r.err[code]);
-      if (code === "taken") { setRackIndex(null); void loadRack(rackPage.waypost); }
+      if (code === "taken") { setRackIndex(null); void loadRack(rackPage.waypost, false, rackPage.filter); }
     } finally { setBusy(false); }
   };
   const startLandmark = async (waypost: Waypost) => {
@@ -626,9 +642,17 @@ export default function JourneyScreen() {
             onRack: () => { if (!rackPage?.page.items.length) { setToast(r.empty); return; } void haptics.tap(); setGameCard(null); setRackIndex(0); },
             onLeave: () => { void haptics.tap(); router.push({ pathname: "/create", params: { to: PUBLIC_CAPSULE_RECIPIENT, waypost: gameCard.waypost.id, waypostZh: gameCard.waypost.name_zh, waypostEn: gameCard.waypost.name_en } }); },
           } : undefined} />}
-        {you && !gameCard && !keeperOpen && !openGuide && rackIndex !== null && rackPage?.page.items[rackIndex] && <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
-          <SelectedCard key={rackPage.page.items[rackIndex].capsule_id} item={rackItem(rackPage.page.items[rackIndex], rackPage.waypost)} rack={rackPage.page.items[rackIndex]} busy={busy}
-            onPickUp={rackPickUp} onDirections={directions} onView={() => {}} onMap={() => {}} onStep={rackStep} count={rackPage.page.count} index={rackIndex} />
+        {you && !gameCard && !keeperOpen && !openGuide && rackIndex !== null && rackPage && <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, gap: spacing.sm, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6 }} style={{ flexGrow: 0 }}>
+            {RACK_FILTERS.map((f) => { const on = rackPage.filter === f; return <Pressable key={f} accessibilityRole="button" accessibilityState={{ selected: on }} onPress={() => pickRackFilter(f)}
+              style={{ borderWidth: 1.5, borderColor: on ? C.blue : C.line, backgroundColor: on ? C.glass : C.white, borderRadius: radii.pill, paddingHorizontal: 11, paddingVertical: 5 }}>
+              <Text style={{ fontFamily: sans, fontSize: 12.5, color: on ? C.blue : C.ink, fontWeight: on ? "500" : "400" }}>{r.filters[f]}</Text>
+            </Pressable>; })}
+          </ScrollView>
+          {rackPage.page.items[rackIndex]
+            ? <SelectedCard key={rackPage.page.items[rackIndex].capsule_id} item={rackItem(rackPage.page.items[rackIndex], rackPage.waypost)} rack={rackPage.page.items[rackIndex]} busy={busy}
+              onPickUp={rackPickUp} onDirections={directions} onView={() => {}} onMap={() => {}} onStep={(d) => void rackStep(d)} count={rackPage.page.count} index={rackIndex} />
+            : <Text style={{ fontFamily: sans, fontSize: 14, color: C.muted, textAlign: "center", paddingVertical: spacing.lg }}>{r.filterEmpty}</Text>}
         </View>}
         {you && !gameCard && rackIndex === null && !keeperOpen && !openGuide && (selected
           ? <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
