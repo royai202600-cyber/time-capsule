@@ -23,7 +23,9 @@ import { organizer } from "../../services/privateHuntOrganizer";
 import { MAP_PMTILES_URL, PUBLIC_CAPSULE_ENABLED, PUBLIC_CAPSULE_PICKUP_RADIUS_M, PUBLIC_CAPSULE_RECIPIENT, publicCapsule, PublicCapsuleError, type PublicCapsule } from "../../services/publicCapsule";
 import { supabase } from "../../services/supabase";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
-import { CityExplorer } from "../explorer/CityExplorer";
+import { CityExplorer, type HuntDays } from "../explorer/CityExplorer";
+import { TodaysHuntScreen, type HuntMap } from "../todaysHunt/TodaysHuntScreen";
+import { TODAYS_HUNT, todaysHunt } from "../../services/todaysHunt";
 import { PriceGuessScreen } from "../explorer/PriceGuessScreen";
 import { useExplorerText } from "../explorer/strings";
 import { SpinScreen } from "../game/SpinScreen";
@@ -114,6 +116,15 @@ export default function JourneyScreen() {
   const [cityIndex, setCityIndex] = useState(0);
   const [puzzleDay, setPuzzleDay] = useState<PuzzleDay | null>(null);
   const [playing, setPlaying] = useState<string | null>(null);
+  // Today's Hunt (docs/design/hunt-loop.md, section 1) replaces the daily price card when it is on.
+  const [huntDays, setHuntDays] = useState<HuntDays | null>(null);
+  const [huntCity, setHuntCity] = useState<string | null>(null);
+  const [huntMap, setHuntMap] = useState<HuntMap | null>(null);
+  const loadHuntDays = () => {
+    if (!TODAYS_HUNT) return;
+    void Promise.all(CITIES.filter((c) => c.playable).map((c) => todaysHunt.today(c.id).then((d) => [c.id, { score: d.score, finished: d.finished, streak: d.streak }] as const).catch(() => null)))
+      .then((rows) => setHuntDays(Object.fromEntries(rows.filter((r) => r !== null))));
+  };
   const here = cityAt(fix ? { lat: fix.lat, lng: fix.lng } : null);
   // After the render, so it also works when opening the Explorer is what puts the map on screen.
   useEffect(() => { if (exploring) map.current?.city(CITIES[cityIndex].lat, CITIES[cityIndex].lng); }, [exploring, cityIndex]);
@@ -122,8 +133,10 @@ export default function JourneyScreen() {
     setExploring(true);
     if (here) setCityIndex(CITIES.indexOf(here));
     void cityPuzzle.today().then(setPuzzleDay).catch(() => {});
+    loadHuntDays();
   };
-  const closeExplorer = () => { setExploring(false); setPlaying(null); map.current?.recenter(); };
+  const closeExplorer = () => { setExploring(false); setPlaying(null); setHuntCity(null); map.current?.recenter(); };
+  const closeHunt = () => { setHuntCity(null); setHuntMap(null); loadHuntDays(); map.current?.city(CITIES[cityIndex].lat, CITIES[cityIndex].lng); };
   const onGuess = (r: GuessResult) => {
     setPuzzleDay((day) => day && { streak: r.streak, puzzles: day.puzzles.map((p) => p.city === r.puzzle.city ? r.puzzle : p) });
     if (r.state) setGameState(r.state);
@@ -255,14 +268,17 @@ export default function JourneyScreen() {
   const allPins = useMemo<LivePin[]>(() => [...items.map<LivePin>((i) => i.kind === "publicCapsule"
     ? { id: i.id, lat: i.lat, lng: i.lng, kind: "publicCapsule", vessel: vesselUri("bottle"), portrait: portraitUri(i.publicCapsule.sender.avatar), near: i.meters <= PUBLIC_CAPSULE_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= PUBLIC_CAPSULE_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
     : placePin(i)), ...gamePins, ...huntPins, ...questPins, ...guidePins], [items, selectedId, language, gamePins, huntPins, questPins, guidePins, senders, now]);
-  const mapState = useMemo(() => ({
+  const mapState = useMemo(() => huntMap ? {
+    // Today's Hunt: only its three pins, and your figure at the hunt instead of where you are; no pickup circle.
+    you: huntMap.you, heading: null, reach: 0, portrait: portraitUri(profile?.avatar), figure: assetUri(figureFor(profile?.avatar)), youLabel: null, pins: huntMap.pins,
+  } : {
     you, heading, reach: PUBLIC_CAPSULE_PICKUP_RADIUS_M,
     portrait: portraitUri(profile?.avatar),
     figure: assetUri(figureFor(profile?.avatar)),
     youLabel: youLabel && !throwing ? h.thisIsYou : null,
     // While throwing, the capsule is alone on the plain map.
     pins: throwing ? [] : allPins.filter((p) => showsPin(filter, p)),
-  }), [you?.lat, you?.lng, heading, profile?.avatar, allPins, filter, !!throwing, youLabel, h]);
+  }, [you?.lat, you?.lng, heading, profile?.avatar, allPins, filter, !!throwing, youLabel, h, huntMap]);
   const counts = useMemo(() => filterCounts(allPins), [allPins]);
   const pickFilter = (f: MapFilter) => {
     setFilter(f); setFilterOpen(false);
@@ -627,8 +643,10 @@ export default function JourneyScreen() {
         <Text style={{ fontFamily: serif, fontSize: 15, color: C.white }}>{g("close")}</Text>
       </Pressable>
     </View>}
-    {exploring && <CityExplorer day={puzzleDay} index={cityIndex} onIndex={setCityIndex} balls={gameState?.wax_balls ?? null} language={language}
-      onClose={closeExplorer} onPlay={(c) => setPlaying(c.id)} />}
+    {exploring && !huntCity && <CityExplorer day={puzzleDay} hunt={TODAYS_HUNT ? huntDays : undefined} index={cityIndex} onIndex={setCityIndex} balls={gameState?.wax_balls ?? null} language={language}
+      onClose={closeExplorer} onPlay={(c) => TODAYS_HUNT ? setHuntCity(c.id) : setPlaying(c.id)} />}
+    {exploring && huntCity && <TodaysHuntScreen city={CITIES.find((c) => c.id === huntCity)!} language={language} map={map} gameState={gameState}
+      onState={setGameState} onMap={setHuntMap} onFinish={() => void loadGame()} onClose={closeHunt} />}
     {exploring && playingCity && playingPuzzle && <PriceGuessScreen city={playingCity} puzzle={playingPuzzle} streak={puzzleDay?.streak ?? 0} language={language}
       onResult={onGuess} onClose={() => setPlaying(null)} />}
     {spinning && <SpinScreen waypost={spinning} language={language} onState={setGameState} onClose={() => { setSpinning(null); void loadGame().then(() => setGameCard((c) => c && { ...c, waypost: nearbyRef.current.wayposts.find((x) => x.id === c.waypost.id) ?? c.waypost })); }} />}

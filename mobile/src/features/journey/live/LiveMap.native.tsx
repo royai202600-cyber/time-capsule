@@ -12,7 +12,7 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(function LiveMap(
   const live = useRef(false);
   const send = (m: object) => web.current?.injectJavaScript(`window.__tcmap && window.__tcmap(${JSON.stringify(m)}); true;`);
   const post = (m: object) => { if (live.current) send(m); else waiting.current.push(m); };
-  useImperativeHandle(ref, () => ({ recenter: () => post({ type: "recenter" }), focus: (lat, lng) => post({ type: "focus", lat, lng }), walk: (lat, lng) => post({ type: "walk", lat, lng }), city: (lat, lng) => post({ type: "city", lat, lng }), fit: (points) => post({ type: "fit", points }) }));
+  useImperativeHandle(ref, () => ({ recenter: () => post({ type: "recenter" }), focus: (lat, lng) => post({ type: "focus", lat, lng }), walk: (lat, lng) => post({ type: "walk", lat, lng }), city: (lat, lng) => post({ type: "city", lat, lng }), fit: (points, view) => post({ type: "fit", points, ...view }), motion: (m) => post(m) }));
   useEffect(() => { if (ready) send({ type: "state", ...state }); }, [ready, state]);
   return <Web ref={web} originWhitelist={["*"]} source={{ html, baseUrl: "http://localhost/" }} style={{ flex: 1, backgroundColor: "transparent" }}
     javaScriptEnabled domStorageEnabled bounces={false} scrollEnabled={false}
