@@ -1,6 +1,18 @@
 # Combined hunt-loop release — production validation stopped
 
-## Current resume — #176 live, Catch progress refresh stop
+## Current resume — #177 live, Landmark reward copy label stop
+
+Reviewed #177 head `8fe38ccadb03e053c8170b3a43f5de0f4c2ecd11`. TypeScript, Vitest (262 passed, 9 skipped), CI `44501919877` and web export passed. Roy's account squash-merged `d2b04e4edf53c56e54ad45635a9eb52b0672443b`. Identical-tree owner release `fe53bb439e58f97928d7cf0da9013e6cfb62ea51` is live at https://time-capsule-pi-two.vercel.app. Vercel deployment `EEKme3oaP1ZEpHVZGA99YYEJqngM` succeeded. Production serves the export's entry bundle `entry-c95f4728b8d13a36df2c48479c505720.js`. Main's live types match `8cf3a2a`.
+
+Prepared an eight-quest disposable hunt through the live authenticated API. Keeper check-in and the first six quests reached 6/8, with all four third price misses returning zero points. At 375 px, with simulated GPS and a throw-ball balance for the fixture account, caught its Pineapple cake and closed the throw screen. The checklist showed 7/8 and unlocked Landmark in the same Journey view. Won the Taipei 101 fight with six gold wax hits and closed the result screen. The checklist showed 8/8 in place. The database confirmed all eight completions. Both refresh checks passed.
+
+**Stop on the Landmark win copy label.** The Bamboo-tier tower tin win showed “0 copies left”. Its ownership is unlimited in production (`vessels.unlimited_copies = true`, `owned_vessels.copies = null`). The finite catch result correctly displayed three copies. `mobile/src/services/game.ts:226` converts the Landmark RPC's null copies to 0 and `ThrowScreen.tsx:470` uses that count for the result label. Claude should preserve the unlimited value across the result and render it accurately. The ordinary throw result adapter at `game.ts:170` has the same null-to-zero conversion and should be checked as part of the fix.
+
+The Keeper return and once-only reward/stamp checks were held under Roy's stop instruction. Source review identified a related risk for that next check. `readyToReturn` in `cityHunt.ts:53` still reads the legacy checklist, and the completed fixture had spin/restore counters of zero despite 8/8 located completions. KeeperCard and Show on map use this legacy readiness. This was not exercised in the UI after the stop. Check that the Keeper accepts the located completion and that the server grants the reward and stamp only once. The optional Today's Hunt price check and Done-doc merge remain pending.
+
+Signed out, reset the viewport and reloaded to clear simulated GPS. Removed the disposable hunt, account, rules, progress, throw spawns, catches, fight attempt, XP, stamps and ownership. Verified zero fixture records. Pool count remains 220 and Macau `20261119000708` remains unapplied.
+
+## Previous resume — #176 live, Catch progress refresh stop
 
 Reviewed #176 head `570bafbc9e0340256a051e2990c9bb34040e0f1c`. TypeScript, Vitest (262 passed, 9 skipped), CI `44499655877` and web export passed. Roy's account squash-merged `8425266d11e102319c84d45cda7b43283988f2d8`. Identical-tree owner release `a5ceba5b7838737b808ce3c38a935367f4fd353e` is live at https://time-capsule-pi-two.vercel.app. Vercel deployment `F6T8wzHVSFHLips9m7Bs66czXd6C` succeeded. Production serves `__common-3e545b21d641f7cbefd88382d4e6e56b.js` and `entry-12edbfc09a11e053dd34052335135f86.js`, matching the export. Main's live types match `8cf3a2a`.
 

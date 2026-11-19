@@ -2,7 +2,7 @@ CE1 Macau correction (2026-11-19): migration `20261119000708` retires only Macau
 
 # Task board
 
-Hunt-loop release status (2026-11-19): #176 (`8425266`) and owner release `a5ceba5` are live. City Hunt final price arrows, countdown and third-miss completion passed in zh/en at 375 px. The route price stop passed. City Hunt acceptance stopped when the server saved Catch completion but the mounted checklist stayed at 6/8 and Landmark remained locked until Journey reopened. Claude's quest refresh fix, Landmark and Keeper return checks, and the Done-doc merge are pending. All fixtures verified zero. HL-U1–U5, HL-C1–C5 and HL-Q1 remain open. Macau is excluded. Details are in the [combined release report](review/hunt-loop-release.md).
+Hunt-loop release status (2026-11-19): #177 (`d2b04e4`) and owner release `fe53bb4` are live. At 375 px, Catch and Landmark updated the City Hunt checklist in place to 7/8 and 8/8. Acceptance stopped on the Landmark win screen showing 0 copies for the unlimited Bamboo-tier tower tin. Claude's reward display fix, Keeper return and once-only reward/stamp checks, and the Done-doc merge are pending. All fixtures verified zero. HL-U1–U5, HL-C1–C5 and HL-Q1 remain open. Macau is excluded. Details are in the [combined release report](review/hunt-loop-release.md).
 
 CE1 Singapore price correction (2026-11-18): Roy approved unpublishing eight outdated questions; hosted rollback passed. Migration is held for the midnight Singapore window after green CI and owner squash merge; other held migrations must not be applied.
 
