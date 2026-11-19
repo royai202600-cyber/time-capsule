@@ -26,3 +26,15 @@ export type QuestAttempt = { quest_id: string; lat: number; lng: number; accurac
 /** Errors every attempt RPC shares. A wrong answer is not one of them. */
 export const QUEST_ERRORS = ["too_far", "locked", "already_done", "time_up", "not_started", "closed", "not_joined", "bad_answer", "no_tries", "bad_rule"] as const;
 export type QuestErrorCode = (typeof QUEST_ERRORS)[number] | "unknown";
+
+/**
+ * The arrow on a price guess. A miss that ends the quest comes back with the answer instead of a hint,
+ * so the arrow is worked out from the answer; with neither, the guess is just marked missed as "higher".
+ */
+export function guessHint(out: QuestResult, usd: number): "higher" | "lower" | "solved" {
+  if (out.ok) return "solved";
+  if (out.hint) return out.hint;
+  const c = out.correct_answer;
+  if (c && "usd" in c) return c.usd > usd ? "higher" : "lower";
+  return "higher";
+}

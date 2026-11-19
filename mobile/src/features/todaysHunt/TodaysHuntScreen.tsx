@@ -8,7 +8,7 @@ import { haptics } from "../../components/haptics";
 import { useAuth } from "../../services/auth";
 import { localPriceText, localText, parseGuess, usdText, type ExplorerCity, type GuessMark } from "../../services/cityPuzzle";
 import type { GameState } from "../../services/game";
-import type { Quest, QuestResult } from "../../services/quests";
+import { guessHint, type Quest, type QuestResult } from "../../services/quests";
 import { CITY_STAMP, HOME_CATCH_VESSELS, todaysHunt, TODAYS_HUNT_REWARD, TODAYS_HUNT_SAMPLE, TodaysHuntError, type HuntFriend, type TodaysHunt } from "../../services/todaysHunt";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
@@ -187,7 +187,7 @@ export function TodaysHuntScreen({ city, language, map, gameState, onState, onMa
     const out = await attempt({ usd });
     if (!out) return;
     setText("");
-    setMarks((m) => [...m, { usd, hint: out.ok ? "solved" : out.hint ?? "higher", close: false }]);
+    setMarks((m) => [...m, { usd, hint: guessHint(out, usd), close: false }]);
     if (out.done) { void settle(quest, out); return; }
     void haptics.tick();
     void shakeCard();

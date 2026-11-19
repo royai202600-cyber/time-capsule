@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { haptics } from "../../components/haptics";
 import { localPriceText, parseGuess, usdText, type GuessMark } from "../../services/cityPuzzle";
 import { GAME_ACTION_RADIUS_M } from "../../services/game";
-import type { Quest, QuestAnswer, QuestResult } from "../../services/quests";
+import { guessHint, type Quest, type QuestAnswer, type QuestResult } from "../../services/quests";
 import { C, radii, sans, serif, spacing } from "../../theme";
 import { useExplorerText } from "../explorer/strings";
 import { formatDistance } from "../journey/CapsuleMapPage";
@@ -76,7 +76,7 @@ export function QuestPlay({ quest, zh, meters, onAttempt, onStarted, onClose }: 
     if (!out) return;
     setText("");
     if (out.tries_left != null) setTriesLeft(out.tries_left);
-    setMarks((m) => [...m, { usd, hint: out.ok ? "solved" : out.hint ?? "higher", close: false }]);
+    setMarks((m) => [...m, { usd, hint: guessHint(out, usd), close: false }]);
     if (out.done) finish(out); else void haptics.tick();
   };
   const arrive = async () => { const out = await attempt(); if (out) finish(out); };
