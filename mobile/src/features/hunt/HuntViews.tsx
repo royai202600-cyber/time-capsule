@@ -285,6 +285,7 @@ export function KeeperCard({ hunt, quests = [], meters, busy, onJoin, onCheckIn,
   const spot = keeperSpot(hunt, language) ?? t.startSpot;
   const farNote = near ? "" : t.walkCloser(distanceText(meters - GAME_ACTION_RADIUS_M));
   const clock = useRunClock(hunt);
+  const ready = readyToReturn(hunt, HUNT_QUESTS ? quests : null);
   let line = t.lineDuring, action: { title: string; run: () => void } | null = null, showQuests = false, note = "";
   if (hunt.finished_at) line = hunt.today_s != null && hunt.today_s === hunt.best_s ? t.lineRecord(clockText(hunt.today_s)) : t.lineAfter;
   // Out of time: the run is over, and checking in again starts a new one.
@@ -293,8 +294,8 @@ export function KeeperCard({ hunt, quests = [], meters, busy, onJoin, onCheckIn,
     if (!hunt.joined_at) { line = t.lineBefore; action = { title: t.join, run: onJoin }; }
     else if (near) { line = HUNT_QUESTS ? t.lineCheckInQuests(landmarkName(hunt, language) ?? t.theLandmark) : t.lineCheckIn(questGoal(hunt, "spin"), questGoal(hunt, "restore"), landmarkName(hunt, language) ?? t.theLandmark); action = { title: t.go, run: onCheckIn }; }
     else { line = t.lineWaiting(spot); note = farNote; }
-  } else if (readyToReturn(hunt) && near) { line = t.lineDone; action = { title: t.take, run: onFinish }; }
-  else { showQuests = true; note = readyToReturn(hunt) ? farNote : ""; }
+  } else if (ready && near) { line = t.lineDone; action = { title: t.take, run: onFinish }; }
+  else { showQuests = true; note = ready ? farNote : ""; }
   return <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", gap: spacing.md, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
     <View style={{ flexDirection: "row", gap: spacing.md, alignItems: "flex-start" }}>
       <Image source={keeperPortrait} style={{ width: 60, height: 60, borderRadius: 30, borderWidth: 3, borderColor: C.brass }} />

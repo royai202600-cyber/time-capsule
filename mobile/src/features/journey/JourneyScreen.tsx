@@ -52,13 +52,13 @@ import { MapFilterSheet } from "./MapFilterSheet";
 import { Passport } from "./Passport";
 import { SelectedCard } from "./SelectedCard";
 import { useCapsuleItems } from './useCapsuleItems';
-import { useCityHuntPins } from './useCityHuntPins';
+import { openCityHunt, useCityHuntPins } from './useCityHuntPins';
 import { useGamePins } from "./useGamePins";
 import { usePrivateQuestPins } from "./usePrivateQuestPins";
 import { usePinQuests, type PinQuest } from "./usePinQuests";
 import { QuestPlay } from "../quests/QuestPlay";
 import { routes } from "../../services/routes";
-import { cityHuntQuests } from "../../services/cityHuntQuests";
+import { cityHuntQuests, HUNT_QUESTS } from "../../services/cityHuntQuests";
 import type { QuestAnswer } from "../../services/quests";
 
 const FALLBACK = { lat: 22.19358, lng: 113.53917 };
@@ -258,10 +258,11 @@ export default function JourneyScreen() {
   const selected = items.find((i) => i.id === selectedId) ?? null;
 
   const metersTo = (lat: number, lng: number) => you ? distanceMeters(you.lat, you.lng, lat, lng) : Infinity;
-  const { activeHunt, keeperMeters, questDot, huntPins } = useCityHuntPins(huntList, you);
+  const activeHunt = openCityHunt(huntList);
   const { questPins, guidePins, guides } = usePrivateQuestPins(privateList, you, h);
   const gamePins = useGamePins(nearby, throwing, you);
   const { pinQuestPins, findPinQuest, nextStop, refresh: refreshPinQuests, routeQuests, cityQuests } = usePinQuests(capsules, activeHunt, you);
+  const { keeperMeters, questDot, huntPins } = useCityHuntPins(activeHunt, cityQuests, you);
   // From a capsule's pages ("Walk the route"): the map goes to the route's next stop once it has loaded.
   const routeShown = useRef<string | null>(null);
   useEffect(() => {
@@ -482,7 +483,7 @@ export default function JourneyScreen() {
   });
   const showHunt = (x: Hunt) => {
     setQuestOpen(false); setSelectedId(null); setGameCard(null);
-    if (x.checked_in_at && !x.finished_at && keeperMark(x) !== "✓") map.current?.recenter();
+    if (x.checked_in_at && !x.finished_at && keeperMark(x, HUNT_QUESTS ? (x.id === activeHunt?.id ? cityQuests : []) : null) !== "✓") map.current?.recenter();
     else { map.current?.focus(x.keeper.lat, x.keeper.lng); setKeeperOpen(true); }
   };
 

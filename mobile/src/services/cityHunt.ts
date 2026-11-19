@@ -9,6 +9,7 @@ import { runClock } from "./huntClock";
 
 
 import type { CityHuntQuestType } from "./questTypes";
+import type { Quest } from "./quests";
 export type { CityHuntQuestType } from "./questTypes";
 export type CityHuntQuest = { key: CityHuntQuestType; goal: number; count: number };
 export type Hunt = {
@@ -50,11 +51,16 @@ export const huntStatus = (h: Hunt, now = Date.now()) =>
   now < new Date(h.starts_at).getTime() ? "upcoming" : now > new Date(h.ends_at).getTime() ? "closed" : "open";
 const quest = (h: Hunt, key: CityHuntQuestType) => h.quests.find((s) => s.key === key);
 /** Quests between check-in and the return are all done: time to go back to the Keeper. */
-export const readyToReturn = (h: Hunt) => !!h.checked_in_at && !h.finished_at
-  && h.quests.filter((s) => s.key !== "checkin" && s.key !== "return").every((s) => s.count >= s.goal);
+/**
+ * Every quest is done, so it's time to go back to the Keeper. With located quests (HL-C3) that is every located
+ * quest done, as city_hunt_finish checks; pass null for a hunt still on the old step counts.
+ */
+export const readyToReturn = (h: Hunt, located: Quest[] | null = null) => !!h.checked_in_at && !h.finished_at
+  && (located ? located.length > 0 && located.every((q) => q.done)
+    : h.quests.filter((s) => s.key !== "checkin" && s.key !== "return").every((s) => s.count >= s.goal));
 /** The seal over the Keeper's head: ! (a quest for you), ✓ (come back) or nothing. */
-export const keeperMark = (h: Hunt): "!" | "✓" | null =>
-  h.finished_at ? null : readyToReturn(h) ? "✓" : !h.checked_in_at ? "!" : null;
+export const keeperMark = (h: Hunt, located: Quest[] | null = null): "!" | "✓" | null =>
+  h.finished_at ? null : readyToReturn(h, located) ? "✓" : !h.checked_in_at ? "!" : null;
 
 // ---------- live ----------
 // Call through the client (never a detached supabase.rpc, which loses its `this`).

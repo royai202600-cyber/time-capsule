@@ -464,7 +464,7 @@ export function ThrowScreen({ capsule, landmark, home, state, onState, onClose }
 
     {result && <View style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, alignItems: "center", gap: 6, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.lg, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
       {/* With copies on, `copies` is the balance after the catch, shown below instead of stars. */}
-      {(result.is_new || !COPIES) && <Text style={{ fontFamily: sans, fontSize: 12, letterSpacing: 1.2, color: C.brass }}>{result.is_new ? s("newFind") : s("copies", result.copies)}</Text>}
+      {(result.is_new || !COPIES) && <Text style={{ fontFamily: sans, fontSize: 12, letterSpacing: 1.2, color: C.brass }}>{result.is_new ? s("newFind") : s("copies", result.copies ?? 0)}</Text>}
       <Text style={{ fontFamily: serif, fontSize: 24, color: C.ink }}>{s("restored")} · {name}</Text>
       {COPIES
         ? <Text style={{ fontFamily: serif, fontSize: 16, color: C.brass }}>{cp.label(result.copies)}</Text>
