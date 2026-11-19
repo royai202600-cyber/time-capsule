@@ -699,7 +699,8 @@ export default function JourneyScreen() {
       onResult={onGuess} onClose={() => setPlaying(null)} />}
     {spinning && <SpinScreen waypost={spinning} language={language} onState={setGameState} onClose={() => { setSpinning(null); void loadGame().then(() => setGameCard((c) => c && { ...c, waypost: nearbyRef.current.wayposts.find((x) => x.id === c.waypost.id) ?? c.waypost })); }} />}
     {throwing && gameState && <ThrowScreen capsule={throwing} landmark={fight ?? undefined} state={gameState} onState={setGameState}
-      onClose={() => { setThrowing(null); setFight(null); map.current?.recenter(); void loadGame(); }} />}
+      // A catch or Landmark win can finish a quest on the server, so the quest pins and checklist reload too.
+      onClose={() => { setThrowing(null); setFight(null); map.current?.recenter(); void loadGame().finally(() => refreshPinQuests()); }} />}
     <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows}
       hunts={[...huntStamps, ...(__DEV__ && !userId ? hunts.previewStamps() : []).filter((p) => !huntStamps.some((x) => x.id === p.id))]}
       privateHunts={[...privateHuntStamps, ...(__DEV__ && !userId ? privateHunts.demoStamps() : [])]} />
