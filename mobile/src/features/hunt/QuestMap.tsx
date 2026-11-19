@@ -13,6 +13,7 @@ import { keeperPortrait } from "./HuntViews";
 import { questImageUri, useQuestImages } from "./questImage";
 import { useHuntText } from "./strings";
 import { C, radii, sans, shadows, spacing } from "../../theme";
+import { questPinFace } from "../quests/questArt";
 
 const TAIPEI = { lat: 25.033263, lng: 121.564887 };
 type Spot = { lat: number; lng: number };
@@ -50,7 +51,7 @@ export function QuestMap({ quests, ordered, hint, you, guide, placingGuide, onDr
   const signed = useQuestImages(inOrder.map((q) => q.image));
   const pins = useMemo<LivePin[]>(() => [...inOrder.map<LivePin>((q, i) => ({
     id: q.id ?? `new-${q.ordinal}`, lat: q.location_lat, lng: q.location_lng, kind: "quest", vessel: "",
-    quest: q.quest_type, photo: questImageUri(q.image), tag: `${i + 1} · ${h.pointsShort(q.points)}`,
+    quest: q.quest_type, ...questPinFace(q.quest_type, "brass", false, questImageUri(q.image)), tag: `${i + 1} · ${h.pointsShort(q.points)}`,
   })), ...(guide ? [{
     id: "guide", lat: guide.lat, lng: guide.lng, kind: "keeper" as const, vessel: "",
     portrait: assetUri(keeperPortrait), figure: assetUri(characters.keeper),

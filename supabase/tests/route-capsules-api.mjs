@@ -66,6 +66,7 @@ try {
   const memory = call('send_capsule', sender.jwt, { ...send, p_recipient: sender.id,
     p_route: [{ ...point, type: 'question', own_question: 'What did we drink?', own_answer: 'Tea' }] })
   const oldPlace = call('send_capsule', sender.jwt, { ...send, p_recipient: recipient.id, p_place: 'taipei101' })
+  const anywhere = call('send_capsule', sender.jwt, { ...send, p_recipient: recipient.id })
   const legacyPoint = call('send_capsule', sender.jwt, { ...send, p_recipient: recipient.id,
     p_place_lat: point.location_lat, p_place_lng: point.location_lng, p_place_name: point.name })
 
@@ -90,20 +91,21 @@ try {
   expectError(open(memory, sender.jwt), 'not yet')
 
   sql(`update public.capsules set open_at=now()-interval '1 second'
-    where id in ('${friend}','${memory}','${oldPlace}','${legacyPoint}');`)
+    where id in ('${friend}','${memory}','${oldPlace}','${anywhere}','${legacyPoint}');`)
   expectError(open(friend, recipient.jwt), 'route incomplete')
   assert.deepEqual(attempt(friend, recipient.jwt, arrive), { ok: true, done: true, points: 0 })
   assert.deepEqual(counts(friend, sender.jwt), [{ route_total: 1, route_done: 1 }])
   assert.deepEqual(counts(friend, recipient.jwt), [{ route_total: 1, route_done: 1 }])
   assert.equal(ok(open(friend, recipient.jwt))[0].message, send.p_message)
   assert.equal(ok(open(memory, sender.jwt))[0].message, send.p_message)
+  assert.equal(ok(open(anywhere, recipient.jwt))[0].message, send.p_message)
 
   const location = { p_lat: point.location_lat, p_lng: point.location_lng, p_accuracy: 10 }
   for (const legacy of [oldPlace, legacyPoint]) {
     expectError(open(legacy, recipient.jwt), 'location needed')
     assert.equal(ok(open(legacy, recipient.jwt, location))[0].message, send.p_message)
   }
-  console.log('PASS: GoTrue JWTs and PostgREST for friend routes, Memory Routes and both legacy place sends')
+  console.log('PASS: GoTrue JWTs and PostgREST for friend routes, Memory Routes, Anywhere, place id and point sends')
 } finally {
   for (const user of users) {
     ok(request(authHost + '/logout', {}, user.jwt))

@@ -10,18 +10,22 @@ import { goBack } from "../../navigation";
 import { useAuth } from "../../services/auth";
 import { vessels } from "../../services/data";
 import { game, GAME_ENABLED } from "../../services/game";
+import { copiesOf, COPIES } from "../../services/copies";
 import { isCollected } from "../../services/vesselAccess";
+import { useCopiesText } from "../copies/strings";
 import { C, sans, serif, spacing } from "../../theme";
 import { useGameText } from "../game/strings";
 
 type Row = { id: string; price_mop: number; edition_total?: number | null; sort: number; earned_place?: string | null };
-type Card = { id: VesselKind; no: number; collected: boolean; stars: number };
+/** `copies` replaces stars once copies are on: a number, null for unlimited. */
+type Card = { id: VesselKind; no: number; collected: boolean; stars: number; copies?: number | null };
 const isVessel = (id: string): id is VesselKind => id in VESSELS;
 const GAP = 8;
 const MAX_WIDTH = 960;
 const number = (no: number) => String(no).padStart(3, "0");
 
 function AlbumCard({ card, width, name }: { card: Card; width: number; name: string }) {
+  const cp = useCopiesText();
   const height = width * 1.34;
   if (!card.collected) {
     return <View accessibilityLabel={`No.${number(card.no)}`} style={{ width, height, borderRadius: 12, backgroundColor: "#E9EEF4", alignItems: "center", justifyContent: "center" }}>
@@ -32,7 +36,9 @@ function AlbumCard({ card, width, name }: { card: Card; width: number; name: str
     <Text style={{ alignSelf: "flex-start", marginLeft: 4, fontFamily: serif, fontSize: 11, color: C.brass }}>{number(card.no)}</Text>
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}><Vessel kind={card.id} size={width * .62} /></View>
     <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 11, color: C.ink }}>{name}</Text>
-    {card.stars > 0 && <Text accessibilityLabel={`${card.stars} / 5`} style={{ fontSize: 9, letterSpacing: 1, color: C.brass }}>{"★".repeat(card.stars)}</Text>}
+    {card.copies !== undefined
+      ? <Text accessibilityLabel={cp.label(card.copies)} style={{ fontFamily: serif, fontSize: 11, color: card.copies === 0 ? C.plum : C.brass }}>{cp.count(card.copies)}</Text>
+      : card.stars > 0 && <Text accessibilityLabel={`${card.stars} / 5`} style={{ fontSize: 9, letterSpacing: 1, color: C.brass }}>{"★".repeat(card.stars)}</Text>}
   </View>;
 }
 
@@ -43,7 +49,7 @@ export default function AlbumScreen() {
   const { session } = useAuth();
   const { width: windowWidth } = useWindowDimensions();
   const [all, setAll] = useState<Row[]>([]);
-  const [owned, setOwned] = useState<string[]>([]);
+  const [owned, setOwned] = useState<{ vessel: string; copies?: number | null }[]>([]);
   const [caught, setCaught] = useState<Record<string, { copies: number | null; stars: number }>>({});
 
   useFocusEffect(useCallback(() => {
@@ -56,15 +62,17 @@ export default function AlbumScreen() {
     void Promise.all([vessels.list(), vessels.owned(session.user.id)]).then(([list, mine]) => {
       if (!alive) return;
       setAll(list.data ?? []);
-      setOwned((mine.data ?? []).map((row) => row.vessel));
+      setOwned(mine.data ?? []);
     });
     return () => { alive = false; };
   }, [session?.user.id]));
 
   const cards = useMemo(() => {
-    return [...all].sort((a, b) => a.sort - b.sort).flatMap((v, index): Card[] => isVessel(v.id)
-      ? [{ id: v.id, no: index + 1, collected: isCollected(v, owned.includes(v.id) || !!caught[v.id], GAME_ENABLED), stars: caught[v.id]?.stars ?? 0 }]
-      : []);
+    return [...all].sort((a, b) => a.sort - b.sort).flatMap((v, index): Card[] => {
+      if (!isVessel(v.id)) return [];
+      const collected = isCollected(v, owned.some((o) => o.vessel === v.id) || !!caught[v.id], GAME_ENABLED);
+      return [{ id: v.id, no: index + 1, collected, stars: caught[v.id]?.stars ?? 0, copies: COPIES && collected ? copiesOf(v, owned) : undefined }];
+    });
   }, [all, owned, caught]);
 
   const columns = windowWidth >= 760 ? 5 : windowWidth >= 560 ? 4 : 3;

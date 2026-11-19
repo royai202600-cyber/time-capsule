@@ -15,11 +15,12 @@ export type Waypost = { id: string; kind: "common" | "landmark"; name_zh: string
 export type Nearby = { corrupted: CorruptedCapsule[]; wayposts: Waypost[] };
 export type ThrowResult = {
   result: "restored" | "broke_free" | "miss";
-  vessel: string; copies: number; stars: number; is_new: boolean; xp_gained: number;
+  /** Copies after the catch; null for an unlimited vessel (a starter or an earned Landmark vessel). */
+  vessel: string; copies: number | null; stars: number; is_new: boolean; xp_gained: number;
   attempts_left: number; state: GameState;
 };
 export type LandmarkAttempt = { id: string; waypost: string; vessel: string; cracks: number; expires_at: string };
-export type LandmarkHit = { result: "hit" | "won"; cracks: number; vessel: string; copies: number; stars: number; is_new: boolean; xp_gained: number; state: GameState };
+export type LandmarkHit = { result: "hit" | "won"; cracks: number; vessel: string; copies: number | null; stars: number; is_new: boolean; xp_gained: number; state: GameState };
 // Normalize names from the old server until the timed-hunt migration ships.
 export const cityHuntNameZh = (name: string) => name.replace("城市尋寶", "城市定向");
 export type PassportHunt = { id: string; name_zh: string; name_en: string; at: string };
@@ -167,7 +168,7 @@ export const game = {
       if (!row) throw new GameError("unknown");
       return {
         result: row.result === "restored" ? "restored" : row.result === "miss" ? "miss" : "broke_free",
-        vessel: row.vessel, copies: row.copies ?? 0, stars: row.stars ?? 0, is_new: row.is_new, xp_gained: row.xp_gained,
+        vessel: row.vessel, copies: row.copies, stars: row.stars ?? 0, is_new: row.is_new, xp_gained: row.xp_gained,
         attempts_left: row.attempts_left, state: await liveState(),
       };
     }
@@ -223,7 +224,7 @@ export const game = {
       fail(error);
       const row = data?.[0];
       if (!row) throw new GameError("unknown");
-      return { result: row.result === "won" ? "won" : "hit", cracks: row.cracks, vessel: row.vessel ?? "", copies: row.copies ?? 0, stars: row.stars ?? 0, is_new: row.is_new, xp_gained: row.xp_gained, state: await liveState() };
+      return { result: row.result === "won" ? "won" : "hit", cracks: row.cracks, vessel: row.vessel ?? "", copies: row.copies, stars: row.stars ?? 0, is_new: row.is_new, xp_gained: row.xp_gained, state: await liveState() };
     }
     const fight = dev.attempts.get(args.attempt);
     if (!fight || new Date(fight.attempt.expires_at).getTime() <= Date.now()) throw new GameError("expired");

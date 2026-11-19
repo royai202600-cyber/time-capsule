@@ -6,6 +6,11 @@ import {
   PrivateHuntError, byRank, cleanCode, totalPoints,
   type GuideMode, type LeaderRow, type PrivateHuntQuestType, type PrivateHunt, type Quest,
 } from "./privateHunt";
+import type { QuestKind } from "./quests";
+import { landmarkNear, ROUTE_LIMITS, type PoolItem } from "./routes";
+
+/** The kinds a quest can be saved as. The five shared kinds come with HL-C3; spin, puzzle and restore are older saves. */
+export type EditorQuestType = PrivateHuntQuestType | QuestKind;
 
 export type HuntStatus = "draft" | "published" | "closed";
 /** A hunt as its owner sees it: the player's view plus what only the owner may know. */
@@ -27,7 +32,9 @@ export type QuestDraft = {
   location_lat: number | null; location_lng: number | null;
   /** Catch quests only: how many Corrupted Capsules to catch inside the hunt area. */
   catch_count?: number | null;
-  quest_type: PrivateHuntQuestType; points: number; description: string;
+  quest_type: EditorQuestType; points: number; description: string;
+  /** Question and price quests from the city pool. A question without one is the organizer's own (saved as a puzzle). */
+  pool?: PoolItem | null;
   /** Arrive quests check GPS, or GPS plus a QR code the organizer prints and leaves at the spot. */
   arrive_check: "gps" | "gps_qr";
   /** Issued by the server once a GPS + QR quest is saved; the printed code carries it. Only the organizer sees it. */
@@ -86,16 +93,24 @@ export function huntProblems(draft: HuntDraft, quests: Pick<QuestDraft, "locatio
   if (!Number.isFinite(end) || end <= new Date(draft.starts_at).getTime()) problems.push("window");
   return problems;
 }
-export type QuestProblem = "name" | "place" | "answer" | "choices" | "points" | "catches";
+export type QuestProblem = "name" | "place" | "answer" | "choices" | "points" | "catches" | "pool" | "landmark";
 export function questProblems(w: QuestDraft): QuestProblem[] {
   const problems: QuestProblem[] = [];
   if (!w.name.trim()) problems.push("name");
   if (w.quest_type === "restore") {
     const n = w.catch_count ?? 0;
     if (!Number.isInteger(n) || n < 1 || n > LIMITS.catches) problems.push("catches");
-  } else if (!hasSpot(w)) problems.push("place");
+  } else if ((w.quest_type === "question" || w.quest_type === "price") && w.pool) {
+    // A pool question brings its own place.
+  } else if (w.quest_type === "price") problems.push("pool");
+  else if (!hasSpot(w)) problems.push("place");
+  if (w.quest_type === "catch") {
+    const n = w.catch_count ?? 0;
+    if (!Number.isInteger(n) || n < 1 || n > ROUTE_LIMITS.catches) problems.push("catches");
+  }
+  if (w.quest_type === "landmark" && hasSpot(w) && !landmarkNear(w.location_lat!, w.location_lng!)) problems.push("landmark");
   if (!Number.isInteger(w.points) || w.points < 1 || w.points > LIMITS.points) problems.push("points");
-  if (w.quest_type === "puzzle") {
+  if (w.quest_type === "puzzle" || (w.quest_type === "question" && !w.pool)) {
     // The server never sends a saved answer back, so a saved puzzle left blank keeps the answer it has.
     const keeps = !!w.id && !w.answer.trim();
     if (!w.answer.trim() && !keeps) problems.push("answer");
@@ -111,9 +126,26 @@ export const canPublish = (draft: HuntDraft, quests: Pick<QuestDraft, "location_
 /** A quest with a spot on the map. */
 export const hasSpot = (w: Pick<QuestDraft, "location_lat" | "location_lng">) => w.location_lat != null && w.location_lng != null;
 /** What goes to the server: a catch quest drops any spot, every other kind drops the catch count. */
-export const questForSave = (w: QuestDraft): QuestDraft => w.quest_type === "restore"
-  ? { ...w, location_lat: null, location_lng: null, catch_count: w.catch_count ?? 5 }
-  : { ...w, catch_count: null };
+export function questForSave({ pool, ...w }: QuestDraft): QuestDraft & { type?: string; pool_id?: string } {
+  if (w.quest_type === "restore") return { ...w, location_lat: null, location_lng: null, catch_count: w.catch_count ?? 5 };
+  // The organizer's own question still saves as a puzzle, which the server keeps answering the old way.
+  if (w.quest_type === "question" && !pool) return { ...w, quest_type: "puzzle", type: "puzzle", catch_count: null };
+  if ((w.quest_type === "question" || w.quest_type === "price") && pool)
+    return { ...w, type: w.quest_type, pool_id: pool.pool_id, location_lat: pool.location_lat, location_lng: pool.location_lng, catch_count: null };
+  if (w.quest_type === "catch") return { ...w, type: "catch", catch_count: w.catch_count ?? 3 };
+  if (w.quest_type === "landmark") return { ...w, type: "landmark", catch_count: null };
+  return { ...w, type: w.quest_type, catch_count: null };
+}
+/** The edit state returns a pool question's preview beside the quest; the editor holds it as `pool`. */
+type SavedQuest = QuestDraft & { pool_id?: string; type?: string; name_zh?: string; name_en?: string; question?: PoolItem["question"]; price?: PoolItem["price"] };
+export function questFromSaved(q: SavedQuest): QuestDraft {
+  const kind = (q.type ?? q.quest_type) as EditorQuestType;
+  if (!q.pool_id || (kind !== "question" && kind !== "price")) return q.type ? { ...q, quest_type: kind } : q;
+  return { ...q, quest_type: kind, pool: {
+    pool_id: q.pool_id, type: kind, location_lat: q.location_lat!, location_lng: q.location_lng!,
+    name_zh: q.name_zh ?? q.name, name_en: q.name_en ?? q.name, question: q.question, price: q.price,
+  } };
+}
 
 /** A fresh hunt, starting on the hour and running for a week. */
 export function blankDraft(): HuntDraft {
@@ -158,7 +190,9 @@ export const organizer = {
   /** `locked`: someone has joined, so the route, times and quests can no longer change (the server refuses with hunt_locked). */
   async get(userId: string, id: string): Promise<{ draft: HuntDraft; quests: QuestDraft[]; status: HuntStatus; code: string | null; locked?: boolean }> {
     const { data, error } = await rpc("private_hunt_edit_state", { p_hunt: id });
-    fail(error); return data as { draft: HuntDraft; quests: QuestDraft[]; status: HuntStatus; code: string | null; locked: boolean };
+    fail(error);
+    const state = data as { draft: HuntDraft; quests: SavedQuest[]; status: HuntStatus; code: string | null; locked: boolean };
+    return { ...state, quests: state.quests.map(questFromSaved) };
   },
   async create(userId: string, draft: HuntDraft): Promise<string> {
     const { data, error } = await rpc("private_hunt_create", { p_draft: draft });

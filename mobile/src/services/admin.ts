@@ -63,8 +63,12 @@ export type SpawnRule = {
   places?: string[];
   /** Why a vessel can never be a Corrupted Capsule. */
   never: "starter" | "earned" | "brand" | null;
+  /** Sends never use up a copy (HL-C2). Always on for starters and earned Landmark vessels. */
+  unlimited_copies?: boolean;
 };
-export type WaveConfig = { wave_minutes: number; spawn_chance: number; weights: Record<Rarity, number>; nearby_max: number;
+export type WaveConfig = { wave_minutes: number;
+  /** Copies a catch gives (HL-C2). */
+  copies_per_catch?: number; spawn_chance: number; weights: Record<Rarity, number>; nearby_max: number;
   /** A wave length chosen but not started yet: it starts at a moment that ends a wave under both lengths. */
   next_length?: { minutes: number; starts_at: string } | null };
 /** A place vessels can be assigned to: a country with several cities (Taiwan), or a city. */
@@ -139,7 +143,7 @@ export class AdminError extends Error {
   constructor(public code: string) { super(code); }
 }
 
-async function rpc<T>(name: string, args?: Record<string, unknown>): Promise<T> {
+export async function rpc<T>(name: string, args?: Record<string, unknown>): Promise<T> {
   const { data, error } = await (supabase.rpc as any)(name, args);
   if (error) throw new AdminError(error.message || "failed");
   return data as T;
@@ -210,7 +214,7 @@ export const adminEdit = {
 };
 
 /** Kinds of change Undo can put back. */
-export const undoable = (action: string) => /^(waypost|spawn|config)\./.test(action);
+export const undoable = (action: string) => /^(waypost|spawn|config|question_pool|todays_hunt|vessel)\./.test(action) || action === "rack.remove";
 
 /** When a new wave length would start: the next moment that ends a wave under both lengths (the server decides; this is for showing it). */
 export function nextLengthStart(from: number, to: number, now = Date.now()) {

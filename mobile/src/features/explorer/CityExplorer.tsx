@@ -7,16 +7,23 @@ import { haptics } from "../../components/haptics";
 import { CITIES, type CityPuzzle, type ExplorerCity, type PuzzleDay } from "../../services/cityPuzzle";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { Chip } from "../journey/JourneyControls";
+import { useTodaysHuntText } from "../todaysHunt/strings";
 import { useExplorerText } from "./strings";
+
+/** With Today's Hunt on, each city's day: its score so far, whether it is finished, and its streak. */
+export type HuntDays = Record<string, { score: number; finished: boolean; streak: number }>;
 
 const GAP = 12;
 
 /** Over the Journey map: swipe a city card and the map flies there; the button below starts that city's daily puzzle. */
-export function CityExplorer({ day, index, onIndex, balls, language, onClose, onPlay }: {
+export function CityExplorer({ day, hunt, index, onIndex, balls, language, onClose, onPlay }: {
   day: PuzzleDay | null; index: number; onIndex: (i: number) => void; balls: number | null; language: "zh" | "en";
+  /** Today's Hunt replaces the daily price card: the button plays the city's hunt instead. */
+  hunt?: HuntDays | null;
   onClose: () => void; onPlay: (city: ExplorerCity) => void;
 }) {
   const s = useExplorerText();
+  const t = useTodaysHuntText();
   const { width } = useWindowDimensions();
   const W = Math.min(width - 56, 420), STEP = W + GAP, inset = (width - W) / 2;
   const list = useRef<React.ComponentRef<typeof ScrollView>>(null);
@@ -55,13 +62,18 @@ export function CityExplorer({ day, index, onIndex, balls, language, onClose, on
           const next = Math.max(0, Math.min(CITIES.length - 1, Math.round(e.nativeEvent.contentOffset.x / STEP)));
           if (next !== shown.current) { shown.current = next; void haptics.page(); onIndex(next); }
         }}>
-        {CITIES.map((c, i) => <CityCard key={c.id} city={c} puzzle={puzzleOf(c)} streak={day?.streak ?? 0} width={W} active={i === index} language={language} onPress={() => go(i)} />)}
+        {CITIES.map((c, i) => <CityCard key={c.id} city={c} puzzle={puzzleOf(c)} hunt={hunt ? hunt[c.id] ?? null : undefined} streak={hunt ? hunt[c.id]?.streak ?? 0 : day?.streak ?? 0} width={W} active={i === index} language={language} onPress={() => go(i)} />)}
       </ScrollView>
       <View accessibilityElementsHidden pointerEvents="none" style={{ flexDirection: "row", justifyContent: "center", gap: 6 }}>
         {CITIES.map((c, i) => <View key={c.id} style={{ width: i === index ? 14 : 6, height: 6, borderRadius: 3, backgroundColor: i === index ? C.ink : C.line }} />)}
       </View>
       <View style={{ width: W, alignSelf: "center" }}>
-        {city.playable
+        {city.playable && hunt !== undefined
+          ? <Pressable accessibilityRole="button" onPress={() => { void haptics.tap(); onPlay(city); }}
+              style={({ pressed }) => ({ alignItems: "center", borderRadius: radii.pill, paddingVertical: 14, backgroundColor: hunt?.[city.id]?.finished ? C.white : C.blue, borderWidth: hunt?.[city.id]?.finished ? 1.5 : 0, borderColor: C.blue, opacity: pressed ? .88 : 1, ...shadows.card })}>
+              <Text style={{ fontFamily: serif, fontSize: 16, color: hunt?.[city.id]?.finished ? C.blue : C.white }}>{hunt?.[city.id]?.finished ? t.see : t.play}</Text>
+            </Pressable>
+          : city.playable
           ? <Pressable accessibilityRole="button" disabled={!puzzle} onPress={() => { void haptics.tap(); onPlay(city); }}
               style={({ pressed }) => ({ alignItems: "center", borderRadius: radii.pill, paddingVertical: 14, backgroundColor: puzzle?.done ? C.white : C.blue, borderWidth: puzzle?.done ? 1.5 : 0, borderColor: C.blue, opacity: !puzzle ? .5 : pressed ? .88 : 1, ...shadows.card })}>
               <Text style={{ fontFamily: serif, fontSize: 16, color: puzzle?.done ? C.blue : C.white }}>{puzzle?.done ? s.see : s.play}</Text>
@@ -74,10 +86,11 @@ export function CityExplorer({ day, index, onIndex, balls, language, onClose, on
   </View>;
 }
 
-function CityCard({ city, puzzle, streak, width, active, language, onPress }: {
-  city: ExplorerCity; puzzle: CityPuzzle | null; streak: number; width: number; active: boolean; language: "zh" | "en"; onPress: () => void;
+function CityCard({ city, puzzle, hunt, streak, width, active, language, onPress }: {
+  city: ExplorerCity; puzzle: CityPuzzle | null; hunt?: HuntDays[string] | null; streak: number; width: number; active: boolean; language: "zh" | "en"; onPress: () => void;
 }) {
   const s = useExplorerText();
+  const t = useTodaysHuntText();
   const zh = language === "zh";
   return <Pressable accessibilityRole="button" accessibilityLabel={zh ? city.name_zh : city.name_en} onPress={onPress}
     style={{ ...(Platform.OS === "web" ? { scrollSnapAlign: "center" } as object : null), width, minHeight: 150, gap: 8, backgroundColor: city.playable ? "rgba(255,255,255,.97)" : "rgba(251,252,253,.95)", borderRadius: 20, borderWidth: 1.5, borderColor: active ? "#5B6474" : C.line, padding: 18, opacity: active ? 1 : .7, ...shadows.card }}>
@@ -92,7 +105,10 @@ function CityCard({ city, puzzle, streak, width, active, language, onPress }: {
     <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: "auto" }}>
       {city.playable ? <>
         <Tag text={s.landmark((zh ? city.landmark_zh : city.landmark_en) ?? "")} />
-        {puzzle?.done ? <>
+        {hunt !== undefined ? hunt?.finished ? <>
+          <Tag text={t.tags(hunt.score)} done />
+          <Tag text={t.tomorrow} />
+        </> : <Tag text={t.today} /> : puzzle?.done ? <>
           <Tag text={puzzle.won ? s.doneWin(puzzle.guesses.length) : s.doneLose} done />
           <Tag text={s.tomorrow} />
         </> : <Tag text={s.today} />}

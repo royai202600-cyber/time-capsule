@@ -62,6 +62,7 @@ declare
   spawn text;
   fight uuid;
   result text;
+  catch_seed double precision;
 begin
   insert into auth.users(id,email) values
     (sender,sender||'@route.example.invalid'),(recipient,recipient||'@route.example.invalid'),
@@ -175,11 +176,26 @@ begin
   response:=public.route_attempt(capsule,pg_temp.route_payload(quests->2,'{"usd":20}'));
   assert response='{"ok":false,"done":true,"points":0,"tries_left":0,"correct_answer":{"usd":10,"local_amount":320}}';
   assert public.route_attempt(capsule,pg_temp.route_payload(quests->3))->>'done'='false';
+  -- Find a seed with a first roll well below the live restoration odds.
+  -- Only this rollback session's PRNG changes. The game config stays intact.
+  for i in 0..100 loop
+    perform setseed(i / 100.0);
+    if random() < 0.1 then
+      catch_seed := i / 100.0;
+      exit;
+    end if;
+  end loop;
+  assert catch_seed is not null, 'could not find a low restoration roll';
   for spawn in select s->>'spawn_id' from jsonb_array_elements(public.game_nearby(post.lat,post.lng,10)->'spawns') s
     where s->>'quest_id'=quests->3->>'quest_id'
   loop
     select t.result into result from public.corrupted_capsule_throw(spawn,post.lat,post.lng,10,'gold',1,true) t;
-    assert result='restored';
+    assert result in ('restored','not_restored'), 'normal throw returned an unexpected result';
+    if result = 'not_restored' then
+      perform setseed(catch_seed);
+      select t.result into result from public.corrupted_capsule_throw(spawn,post.lat,post.lng,10,'gold',1,true) t;
+    end if;
+    assert result='restored', 'catch did not restore with the low roll';
   end loop;
   assert (public.route_progress(capsule)->3->>'done')::boolean;
   assert public.route_attempt(capsule,pg_temp.route_payload(quests->4))->>'done'='false';

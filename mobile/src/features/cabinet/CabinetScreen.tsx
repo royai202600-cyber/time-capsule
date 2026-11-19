@@ -18,6 +18,8 @@ import { capsules, vessels } from "../../services/data";
 import { VESSELS } from "../../features/shop/strings";
 import { useReducedMotion } from "../../useReducedMotion";
 import { C, motion, sans, serif } from "../../theme";
+import { copiesOf, COPIES } from "../../services/copies";
+import { useCopiesText } from "../copies/strings";
 
 type Owned = { vessel: string; edition_no: number | null; acquired_at: string };
 type VesselRow = { earned_place?: string | null; id: string; price_mop: number; edition_total: number | null; sort: number };
@@ -27,6 +29,8 @@ export type CabinetItem = {
   key: string; kind: VesselKind; owned: boolean;
   editionNo?: number | null; editionTotal?: number | null; acquiredAt?: string; used: number;
   no?: number; stars?: number;
+  /** Once copies are on they replace stars: a number, or null for unlimited. */
+  copies?: number | null;
 };
 type Selection = { item: CabinetItem; rect: SlotRect };
 const isVessel = (id: string): id is VesselKind => id in VESSELS;
@@ -159,6 +163,7 @@ function ShelfSlot({ item, name, selected, left, surface, size, face, slotWidth,
 /** The scrolling cabinet itself. Rows are virtualised, so it holds a few vessels or thousands. */
 export function CabinetView({ items, notice, error }: { items: CabinetItem[]; notice?: string; error?: string }) {
   const g = useGameText();
+  const cp = useCopiesText();
   const { t, language } = useLanguage();
   const reduced = useReducedMotion();
   const [selected, setSelected] = useState<Selection | null>(null);
@@ -329,7 +334,8 @@ export function CabinetView({ items, notice, error }: { items: CabinetItem[]; no
             <ScrollView contentContainerStyle={{ padding: 18, paddingTop: 28, alignItems: "center", gap: 8 }}>
               <Pressable accessibilityRole="button" onPress={close} style={{ alignSelf: "flex-end", minHeight: 44, justifyContent: "center" }}><Text style={{ color: C.blue }}>{t("cabinet.close")}</Text></Pressable>
               <Text style={{ fontFamily: serif, color: C.ink, fontSize: 24, textAlign: "center" }}>{label(sel.kind).name[language]}</Text>
-              {!!sel.no && <Text style={{ fontFamily: serif, color: C.brass, letterSpacing: 2 }}>No.{String(sel.no).padStart(3, "0")}{sel.stars ? `  ${"★".repeat(sel.stars)}` : ""}</Text>}
+              {!!sel.no && <Text style={{ fontFamily: serif, color: C.brass, letterSpacing: 2 }}>No.{String(sel.no).padStart(3, "0")}{sel.copies !== undefined ? `  ${cp.count(sel.copies)}` : sel.stars ? `  ${"★".repeat(sel.stars)}` : ""}</Text>}
+              {sel.copies !== undefined && <Text style={{ fontFamily: sans, fontSize: 13, color: sel.copies === 0 ? C.plum : C.muted }}>{sel.copies === 0 ? cp.noCopies : cp.label(sel.copies)}</Text>}
               <Text style={{ fontFamily: sans, color: C.muted, textAlign: "center" }}>{label(sel.kind).desc[language]}</Text>
               {!!sel.editionNo && <Text style={{ color: C.brass, fontFamily: serif }}>{t("cabinet.edition", String(sel.editionNo).padStart(3, "0"), sel.editionTotal)}</Text>}
               {!!sel.acquiredAt && <Text style={{ color: C.muted }}>{t("cabinet.acquired", new Date(sel.acquiredAt).toLocaleDateString(language === "zh" ? "zh-TW" : "en-US"))}</Text>}
@@ -381,7 +387,7 @@ export default function CabinetScreen() {
       const own = owned.find(o => o.vessel === v.id);
       if (!isCollected(v, !!own || !!collected[v.id], GAME_ENABLED)) return [];
       return [{
-        key: v.id, kind: v.id, owned: true, no: index + 1, stars: collected[v.id]?.stars,
+        key: v.id, kind: v.id, owned: true, no: index + 1, stars: collected[v.id]?.stars, copies: COPIES ? copiesOf(v, owned) : undefined,
         editionNo: own?.edition_no, editionTotal: v.edition_total, acquiredAt: own?.acquired_at, used: usage[v.id] ?? 0,
       }];
     });

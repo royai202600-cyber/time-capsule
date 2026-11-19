@@ -1,0 +1,79 @@
+import { describe, expect, it, vi } from 'vitest';
+vi.mock('@react-native-async-storage/async-storage', () => ({ default: { getItem: vi.fn(async () => null), setItem: vi.fn() } }));
+vi.mock('./supabase', () => ({ supabase: {} }));
+import { CITIES } from './cityPuzzle';
+import { answerMatches, arriveStop, cityAt, homePlace, landmarkNear, pickGuard, retypeStop, routes, stopForSend, stopFromPool, stopProblems, type PoolItem, ROUTES_BACKEND } from './routes';
+
+const taipei = CITIES.find((c) => c.id === 'taipei')!;
+const pool: PoolItem = { pool_id: 'p1', type: 'price', location_lat: taipei.lat, location_lng: taipei.lng, name_zh: '店', name_en: 'Shop' };
+
+describe('route stops (HL-C5)', () => {
+  it('matches a typed answer ignoring case and spaces, never an empty one', () => {
+    expect(answerMatches(' Lin  Family ', 'lin family')).toBe(true);
+    expect(answerMatches('林家　花園', '林家花園')).toBe(true);
+    expect(answerMatches('', '')).toBe(false);
+    expect(answerMatches('no', 'yes')).toBe(false);
+  });
+  it('finds the city and the Landmark within 2 km', () => {
+    expect(cityAt(taipei.lat + 0.01, taipei.lng).id).toBe('taipei');
+    expect(landmarkNear(taipei.lat + 0.01, taipei.lng)?.id).toBe('taipei');
+    expect(landmarkNear(taipei.lat + 0.05, taipei.lng)).toBeNull();
+  });
+  it('lists what a stop still needs', () => {
+    const here = arriveStop(taipei.lat, taipei.lng, 'Gate');
+    expect(stopProblems(here)).toEqual([]);
+    expect(stopProblems({ ...here, name_zh: ' ', name_en: '' })).toEqual(['name']);
+    expect(stopProblems({ ...here, type: 'question' })).toEqual(['question']);
+    expect(stopProblems({ ...here, type: 'question', own_question: 'Colour of the door?', own_answer: 'red' })).toEqual([]);
+    expect(stopProblems({ ...here, type: 'price' })).toEqual(['price']);
+    expect(stopProblems({ ...here, type: 'landmark', location_lat: taipei.lat + 0.05 })).toEqual(['landmark']);
+  });
+  it('sends a pool id, an own question, or a catch count, and trims the name to 60', () => {
+    const fromPool = stopForSend(stopFromPool(pool), false);
+    expect(fromPool).toMatchObject({ type: 'price', pool_id: 'p1', name: 'Shop' });
+    expect(fromPool).not.toHaveProperty('own_answer');
+    const own = stopForSend({ ...arriveStop(1, 2, 'x'.repeat(80)), type: 'question', own_question: ' Q? ', own_answer: ' A ' }, true);
+    expect(own).toMatchObject({ own_question: 'Q?', own_answer: 'A' });
+    expect(own.name).toHaveLength(60);
+    expect(stopForSend({ ...arriveStop(1, 2, 'c'), type: 'catch' }, true)).toMatchObject({ catch_count: 3 });
+    expect(stopForSend(arriveStop(1, 2, 'a'), true)).toEqual({ type: 'arrive', location_lat: 1, location_lng: 2, name: 'a' });
+  });
+  it.skipIf(ROUTES_BACKEND)('sample templates use city pool items with no answers', async () => {
+    const t = await routes.templates('taipei');
+    expect(t.length).toBeGreaterThan(0);
+    expect(JSON.stringify(t)).not.toMatch(/"(usd|answer)"/);
+  });
+});
+
+describe('a place the sender picked (Memory Route)', () => {
+  const mine = arriveStop(taipei.lat + 0.003, taipei.lng + 0.002, 'Our bench');
+  const moved = { ...mine, type: 'question' as const, pool: { ...pool, type: 'question' as const }, location_lat: pool.location_lat, location_lng: pool.location_lng, name_zh: pool.name_zh, name_en: pool.name_en };
+  it('asks your own question there instead of moving to a pool question', () => {
+    expect(retypeStop(mine, 'question')).toMatchObject({ type: 'question', pool: null, location_lat: mine.location_lat, location_lng: mine.location_lng, name_en: 'Our bench', own_question: '', own_answer: '' });
+  });
+  it('comes back to your place after a pool question, for Write my own or any other type', () => {
+    expect(homePlace(moved)).toEqual({ location_lat: mine.location_lat, location_lng: mine.location_lng, name_zh: 'Our bench', name_en: 'Our bench' });
+    expect(retypeStop(moved, 'arrive')).toMatchObject({ type: 'arrive', pool: null, location_lat: mine.location_lat, name_en: 'Our bench' });
+    expect(retypeStop(moved, 'catch')).toMatchObject({ type: 'catch', catch_count: 3, location_lng: mine.location_lng });
+  });
+  it('still takes price from the pool, and a template stop keeps the pool for questions', () => {
+    expect(retypeStop(mine, 'price')).toBe('pool');
+    expect(retypeStop(stopFromPool(pool), 'question')).toBe('pool');
+  });
+  it("doesn't send the remembered place", () => {
+    expect(stopForSend(mine, false)).not.toHaveProperty('home');
+  });
+});
+
+describe('pool picks per stop', () => {
+  it('lets only the newest pick land, and a later change cancels one still loading', () => {
+    const g = pickGuard();
+    const price = g.start('a');
+    g.cancel('a'); // Price → Catch while the price is loading
+    expect(g.current('a', price)).toBe(false);
+    const q1 = g.start('a'), q2 = g.start('a');
+    expect(g.current('a', q1)).toBe(false);
+    expect(g.current('a', q2)).toBe(true);
+    expect(g.current('b', g.start('b'))).toBe(true);
+  });
+});

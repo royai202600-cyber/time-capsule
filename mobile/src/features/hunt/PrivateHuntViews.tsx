@@ -19,21 +19,12 @@ import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { Btn, HuntCard, TaskList, huntWindow, keeperPortrait, type TaskRow } from "./HuntViews";
 import { timeUntil, useHuntText, type HuntText } from "./strings";
 import { QrScanner } from "./QrScanner";
+import { QuestGlyph } from "./QuestGlyph";
 import { questImageSource, useQuestImages } from "./questImage";
 import { DISC, SpinDisc } from "../game/SpinDisc";
 import { ThrowBackground } from "../game/ThrowScreen";
 import { noWebSelect, useNoWebDrag } from "../game/noWebDrag";
 import { useGameText } from "../game/strings";
-
-/** One glyph per quest type, matching the glyph drawn on its brass pin. A catch quest's is a capsule. */
-export function QuestGlyph({ type, size = 18, color = C.blue }: { type: PrivateHuntQuestType; size?: number; color?: string }) {
-  return <Svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
-    {type === "arrive" && <Path d="M7 21V4m0 0 10 2.5L7 11" />}
-    {type === "spin" && <><Circle cx={12} cy={12} r={7.5} /><Path d="M12 4.5v15M4.5 12h15" /></>}
-    {type === "puzzle" && <Path d="M8.6 9a3.5 3.5 0 1 1 3.6 4v2.4M12 19v.1" />}
-    {type === "restore" && <><Rect x={4} y={8.5} width={16} height={7} rx={3.5} transform="rotate(-35 12 12)" /><Path d="m10.6 9.4 1.6 2.4-1.2 1.4 1.4 1.6" /></>}
-  </Svg>;
-}
 
 /** The bottom sheet every private-hunt screen sits in. The shade is a sibling, so its content isn't nested in a button. */
 function Sheet({ visible, title, onClose, children }: { visible: boolean; title: string; onClose: () => void; children: React.ReactNode }) {

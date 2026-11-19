@@ -31,8 +31,15 @@ import { Chip, Glyph, MonthCalendar, PickerRow, Sheet, SheetGroup, SheetOption, 
 import { usePredictionText } from '../prediction/strings';
 import { DRIFT_CHOICES, publicCapsule, PublicCapsuleError, PUBLIC_CAPSULE_ENABLED, PUBLIC_CAPSULE_MESSAGE_MAX, PUBLIC_CAPSULE_AVATAR, PUBLIC_CAPSULE_RECIPIENT, type DriftDays, type ThrowResult } from '../../services/publicCapsule';
 import { shortDate, usePublicCapsuleText } from '../publicCapsule/strings';
+import { RACKS, RackError, racks } from '../../services/racks';
+import { useRackText } from '../racks/strings';
+import { canSend, copiesOf, COPIES, COPIES_SAMPLE, sampleUseCopy } from '../../services/copies';
+import { useCopiesText } from '../copies/strings';
 import { openingCoordinates, useForegroundLocation } from '../journey/location';
 import { placeLabel, pointPlaceArgs, reversePlace, searchPlaces, type PointPlace } from '../../services/places';
+import { RouteError, routes, ROUTES, ROUTES_BACKEND, stopForSend, stopProblems, type RouteStop } from '../../services/routes';
+import { useQuestText } from '../quests/strings';
+import { RouteBuilder } from './RouteBuilder';
 
 type Quick = 'd1' | 'w1' | 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
 // The blocks a capsule can hold. Today's backend keeps one of each, and text or handwriting (docs/design/create-v2.md).
@@ -54,8 +61,10 @@ const label = { fontFamily: sans, color: C.ink } as const;
 export default function CreateScreen() {
   const { t, language } = useLanguage();
   const { session, profile, loading: authLoading } = useAuth();
-  const params = useLocalSearchParams<{ to?: string; recipient?: string; kind?: string }>();
+  const params = useLocalSearchParams<{ to?: string; recipient?: string; kind?: string; waypost?: string; waypostZh?: string; waypostEn?: string }>();
+  const rk = useRackText();
   const p = usePredictionText();
+  const cp = useCopiesText();
   const st = usePublicCapsuleText();
   // A prediction is a block on the page; a capsule holding one is sent as a prediction capsule.
   const [blocks, setBlocks] = useState<Block[]>(PREDICTION_ENABLED && params.kind === 'prediction' ? ['predict'] : ['text']), [prediction, setPrediction] = useState('');
@@ -74,10 +83,14 @@ export default function CreateScreen() {
   const [quick, setQuick] = useState<Quick>(startsWithPublicCapsule ? 'd1' : 'y1'), [dateText, setDateText] = useState('');
   const driftDays: DriftDays = PUBLIC_CAPSULE_DELAY[quick] ?? 7;
   const [publicCapsuleResult, setPublicCapsuleResult] = useState<ThrowResult | null>(null);
+  // From a Waypost's card: the public capsule hangs on that Waypost's rack, with an optional question lock.
+  const rackWaypost = RACKS && startsWithPublicCapsule && params.waypost ? params.waypost : null;
+  const rackName = (language === 'zh' ? params.waypostZh : params.waypostEn) ?? '';
+  const [lockMode, setLockMode] = useState<'none' | 'own'>('none'), [lockQuestion, setLockQuestion] = useState(''), [lockAnswer, setLockAnswer] = useState('');
   // Where: anywhere, the sender's current spot, or a specific place (one of our landmarks or a searched address).
-  const [placeMode, setPlaceMode] = useState<'anywhere' | 'current' | 'specific'>('anywhere'), [point, setPoint] = useState<PointPlace | null>(null);
+  const [placeMode, setPlaceMode] = useState<'anywhere' | 'current' | 'specific' | 'route'>('anywhere'), [stops, setStops] = useState<RouteStop[]>([]), q = useQuestText(), [point, setPoint] = useState<PointPlace | null>(null);
   const [placeQuery, setPlaceQuery] = useState(''), [placeResults, setPlaceResults] = useState<PointPlace[]>([]), [searching, setSearching] = useState(false);
-  const location = useForegroundLocation(placeMode === 'current');
+  const location = useForegroundLocation(placeMode === 'current' || placeMode === 'route');
   useEffect(() => {
     if (placeMode !== 'current' || !location.fix || point) return;
     const here = { lat: location.fix.lat, lng: location.fix.lng };
@@ -95,7 +108,7 @@ export default function CreateScreen() {
     }, 400);
     return () => { live = false; clearTimeout(timer); };
   }, [placeMode, placeQuery]);
-  const [sheet, setSheet] = useState<'to' | 'when' | 'where' | null>(null), [vesselQuery, setVesselQuery] = useState(''), [vesselCat, setVesselCat] = useState<'all' | VesselCategory>('all');
+  const [sheet, setSheet] = useState<'to' | 'when' | 'where' | 'lock' | null>(null), [vesselQuery, setVesselQuery] = useState(''), [vesselCat, setVesselCat] = useState<'all' | VesselCategory>('all');
   const [error, setError] = useState(''), [busy, setBusy] = useState(false), [phase, setPhase] = useState<'steps' | 'seal' | 'sealed'>('steps'), [sealedAt, setSealedAt] = useState<Date | null>(null), [stamped, setStamped] = useState(false);
   const drawing = useRef<DrawingHandle>(null);
   const drawingStrokes = useRef<DrawingStrokes>([]);
@@ -157,6 +170,9 @@ export default function CreateScreen() {
   const ownsVessel = (id: string) => !!owned.data?.some(o => o.vessel === id);
   // Once the game is on, you send what you've collected plus the four starters.
   const canUseVessel = (v: { id: string; price_mop: number }) => GAME_ENABLED ? isCollected(v, ownsVessel(v.id), true) : canAccessVessel(v, ownsVessel(v.id));
+  // With copies, a collected vessel at ×0 stays on the list but can't be sent until it's caught again.
+  const copiesFor = (v: { id: string; price_mop: number }) => copiesOf(v, owned.data);
+  const sendable = (v: { id: string; price_mop: number }) => !COPIES || canSend(copiesFor(v));
   const selectedPlace = places.data?.find(p => p.id === place);
   const recipientRow = friends.data?.find(f => f.friend_id === recipient);
   // A public capsule is an ordinary capsule addressed to whoever passes by: typed only, available after its delay.
@@ -180,14 +196,18 @@ export default function CreateScreen() {
     if (step >= 2 && predicting && !prediction.trim()) return p('need');
     if (step >= 2 && toPublicCapsule && !message.trim()) return t('create.needMessage');
     if (step >= 4 && toPublicCapsule && !openingCoordinates()) return st('needLocation');
+    if (step >= 4 && toPublicCapsule && rackWaypost && lockMode === 'own' && !(lockQuestion.trim() && lockAnswer.trim())) return rk.needQuestion;
     // Text and handwriting can sit together; one of them (or a prediction) must have content.
     const inked = hasHand && (step === 2 ? !!drawing.current?.hasInk() : !!drawingData);
     if (step >= 2 && !predicting && !(hasText && message.trim()) && !inked) return t('create.needMessage');
     if (step >= 3 && !vessel) return t('create.chooseFirst');
     if (step >= 3 && chosenVessel && !canUseVessel(chosenVessel)) return t('create.notOwned');
+    if (step >= 3 && chosenVessel && !sendable(chosenVessel)) return cp.noCopies;
     if (step >= 4 && !openAt) return t('create.badDate');
     if (step >= 4 && !toPublicCapsule && placeMode === 'current' && !point) return t('create2.needHere');
     if (step >= 4 && !toPublicCapsule && placeMode === 'specific' && !place && !point) return t('create2.needPlace');
+    if (step >= 4 && !toPublicCapsule && placeMode === 'route' && !stops.length) return q.needRoute;
+    if (step >= 4 && !toPublicCapsule && placeMode === 'route') { const bad = stops.flatMap(stopProblems)[0]; if (bad) return q.stopProblem[bad]; }
     return '';
   };
   const saveDrawingDraft = () => {
@@ -242,6 +262,17 @@ export default function CreateScreen() {
       ]),
     ]); contactMotion.start(() => resolve()); });
     try {
+      if (toPublicCapsule && rackWaypost) {
+        const hung = await racks.leave(rackWaypost, openingCoordinates(), { body: message, hint: hint.trim() || t('create.hintDefault'), wait: driftDays,
+          question: lockMode === 'own' ? lockQuestion.trim() : undefined, answer: lockMode === 'own' ? lockAnswer.trim() : undefined });
+        setPublicCapsuleResult({ id: hung.capsule_id, spot_zh: params.waypostZh ?? '', spot_en: params.waypostEn ?? '', available_at: hung.opens_at });
+        sentOnce.current = true;
+        setSealedAt(new Date(hung.opens_at));
+        await contact;
+        setStamped(true);
+        finishAnimation();
+        return;
+      }
       if (toPublicCapsule) {
         const thrown = await publicCapsule.dropPublicCapsule({ message, hint: hint.trim() || t('create.hintDefault'), vessel, driftDays, at: openingCoordinates() });
         setPublicCapsuleResult(thrown);
@@ -268,9 +299,12 @@ export default function CreateScreen() {
       if (placeMode === 'current' && point && point.name === t('create2.findingName')) {
         sendPoint = await reversePlace(point, language).catch(() => null) ?? { ...point, name: `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}` };
       }
-      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: hasText ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), ...(placeMode !== 'anywhere' && sendPoint ? pointPlaceArgs(sendPoint) : { p_place: place ?? undefined }), ...voiceArgs, ...predictionSendArgs(kind, prediction) });
+      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: hasText ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), ...(placeMode === 'route' ? {} : placeMode !== 'anywhere' && sendPoint ? pointPlaceArgs(sendPoint) : { p_place: place ?? undefined }), ...(placeMode === 'route' && ROUTES_BACKEND ? { p_route: stops.map(s => stopForSend(s, language === 'zh')) } : {}), ...voiceArgs, ...predictionSendArgs(kind, prediction) } as Parameters<typeof capsules.send>[0]);
       if (rpcError) throw rpcError;
+      // Until HL-C5 is live, the development sample keeps the route on this device.
+      if (placeMode === 'route' && !ROUTES_BACKEND && capsuleId) await routes.keepSample(String(capsuleId), stops, language === 'zh');
       sentOnce.current = true;
+      if (COPIES_SAMPLE && chosenVessel && copiesFor(chosenVessel) !== null) sampleUseCopy(vessel);
       setSealedAt(openAt);
       await contact;
       setStamped(true);
@@ -279,8 +313,11 @@ export default function CreateScreen() {
       contactMotion?.stop();
       wax.stopAnimation(); waxScale.stopAnimation();
       const msg = String((e as any)?.message ?? e).toLowerCase(), code = String((e as any)?.hint ?? '');
-      if (e instanceof PublicCapsuleError) setError(e.code === 'rejected' ? st('errRejected') : e.code === 'no_spot' ? st('errNoSpot') : t('create.sendError'));
-      else setError(code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('open time must be in the future') ? t('create.badDate') : msg.includes('voice') ? t('voice.uploadError') : t('create.sendError'));
+      const routeCode = placeMode === 'route' ? ['bad_rule', 'rejected', 'no_answer', 'blocked_words'].find(c => msg.includes(c) || code === c) : undefined;
+      if (e instanceof RackError) setError(rk.err[e.code]);
+      else if (routeCode) setError(q.sendErrors[routeCode]);
+      else if (e instanceof PublicCapsuleError) setError(e.code === 'rejected' ? st('errRejected') : e.code === 'no_spot' ? st('errNoSpot') : t('create.sendError'));
+      else setError(code === 'no_copies' || msg.includes('no_copies') ? cp.noCopies : code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('open time must be in the future') ? t('create.badDate') : msg.includes('voice') ? t('voice.uploadError') : t('create.sendError'));
       if (reduced) wax.setValue({ x: 0, y: 0 });
       else Animated.parallel([
         Animated.spring(wax, { toValue: { x: 0, y: 0 }, ...motion.spring.soft, useNativeDriver: true }),
@@ -384,7 +421,7 @@ export default function CreateScreen() {
     </View>
     <Toast message={error} /><Button title={t('create.back')} onPress={() => { setPhase('steps'); setError(''); }} disabled={busy || sentOnce.current} />
   </Screen>;
-  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={toPublicCapsule ? scenes.publicCapsuleSealed : scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{toPublicCapsule && publicCapsuleResult ? st('publicCapsuleSealed', language === 'zh' ? publicCapsuleResult.spot_zh : publicCapsuleResult.spot_en, shortDate(publicCapsuleResult.available_at, language)) : predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
+  if (phase === 'sealed') return <Screen><View style={{ flex: 1, minHeight: 570, alignItems: 'center', justifyContent: 'center', gap: 18 }}><Image source={toPublicCapsule ? scenes.publicCapsuleSealed : scenes.sealed} style={{ width: '100%', height: 220 }} resizeMode="contain" /><Heading>{t('create.sealed')}</Heading><Body>{rackWaypost && publicCapsuleResult ? rk.sealed(rackName, shortDate(publicCapsuleResult.available_at, language)) : toPublicCapsule && publicCapsuleResult ? st('publicCapsuleSealed', language === 'zh' ? publicCapsuleResult.spot_zh : publicCapsuleResult.spot_en, shortDate(publicCapsuleResult.available_at, language)) : predicting ? p('sealedBody', formatted, recipientName) : t('create.sealedBody', formatted, recipientName, placeName)}</Body><Button title={t('create.done')} onPress={() => router.replace({ pathname: '/', params: { tab: 'sent' } })} /></View></Screen>;
   const last = stepIndex === flow.length;
   const goTo = (n: number) => { saveDrawingDraft(); Keyboard.dismiss(); setStepIndex(n); setError(''); void haptics.tap(); };
   const blockOff = (b: Block) => blocks.includes(b) || (toPublicCapsule && b !== 'text') || (b === 'voice' && !VOICE_ENABLED) || (b === 'predict' && !PREDICTION_ENABLED);
@@ -411,7 +448,7 @@ export default function CreateScreen() {
   const sectionLabel = (text: string) => <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12, letterSpacing: .7, marginBottom: -8 }}>{text}</Text>;
 
   const shownLandmarks = (places.data ?? []).filter(pl => { const q = placeQuery.trim().toLowerCase(); return !q || `${pl.name_zh} ${pl.name_en} ${pl.city_zh} ${pl.city_en}`.toLowerCase().includes(q); });
-  const whereLabel = placeMode === 'anywhere' ? '' : selectedPlace ? placeName : point?.name ?? '';
+  const whereLabel = placeMode === 'anywhere' ? '' : placeMode === 'route' ? (stops.length ? q.routeSummary(stops.length) : '') : selectedPlace ? placeName : point?.name ?? '';
   const placeCard = (name: string, detail: string) => <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 12 }}>
     <Glyph><ToolIcon kind="landmark" color={C.wax} /></Glyph>
     <View style={{ flex: 1, gap: 2 }}><Text style={{ fontFamily: serif, color: C.ink, fontSize: 16 }}>{name}</Text>{!!detail && <Text style={muted}>{detail}</Text>}<Text style={{ fontFamily: sans, color: C.plum, fontSize: 12 }}>{t('create2.radius')}</Text></View>
@@ -503,12 +540,13 @@ export default function CreateScreen() {
         <Pressable accessibilityRole='button' onPress={() => { setVessel('fortune-cookie'); void haptics.tick(); }}><Text style={{ color: C.blue, fontFamily: sans }}>{t('create2.use')}</Text></Pressable>
       </View>}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-        {shownVessels.map(v => { const usable = canUseVessel(v), on = vessel === v.id; return <Pressable key={v.id} accessibilityRole='button' accessibilityState={{ selected: on }} onPress={() => { setVessel(v.id as VesselKind); if (selectedPlace?.brand_vessel && selectedPlace.brand_vessel !== v.id) setPlace(null); if (usable) void haptics.tick(); else router.push({ pathname: '/shop', params: { focus: v.id, returnTo: 'create' } }); }}
-          style={{ width: '31.5%', alignItems: 'center', gap: 4, paddingVertical: 8, paddingHorizontal: 4, borderRadius: 14, borderWidth: 1.5, borderColor: on ? C.blue : C.line, backgroundColor: C.white, opacity: usable ? 1 : .55 }}>
+        {shownVessels.map(v => { const usable = canUseVessel(v), on = vessel === v.id, copies = COPIES && usable ? copiesFor(v) : undefined, empty = copies === 0; return <Pressable key={v.id} accessibilityRole='button' accessibilityState={{ selected: on, disabled: empty }} accessibilityHint={copies !== undefined ? cp.label(copies) : undefined} onPress={() => { if (empty) { setError(cp.noCopies); void haptics.warn(); return; } setVessel(v.id as VesselKind); if (selectedPlace?.brand_vessel && selectedPlace.brand_vessel !== v.id) setPlace(null); if (usable) void haptics.tick(); else router.push({ pathname: '/shop', params: { focus: v.id, returnTo: 'create' } }); }}
+          style={{ width: '31.5%', alignItems: 'center', gap: 4, paddingVertical: 8, paddingHorizontal: 4, borderRadius: 14, borderWidth: 1.5, borderColor: on ? C.blue : C.line, backgroundColor: C.white, opacity: usable && !empty ? 1 : .55 }}>
           {on && <View style={{ position: 'absolute', top: 6, right: 6, width: 20, height: 20, borderRadius: 10, backgroundColor: C.blue, alignItems: 'center', justifyContent: 'center', zIndex: 1 }}><ArtIcon name="check" size={12} color={C.white} /></View>}
           <Vessel kind={v.id as VesselKind} size={78} idle={on} />
           <Text numberOfLines={2} style={{ fontFamily: serif, color: C.ink, fontSize: 13, textAlign: 'center' }}>{t(`shop.vessel.${v.id}`)}</Text>
           {!usable && <Text style={{ color: C.plum, fontSize: 10.5 }}>{t('create.getShop')}</Text>}
+          {copies !== undefined && <Text style={{ fontFamily: serif, color: empty ? C.plum : C.brass, fontSize: 11.5 }}>{empty ? cp.none : cp.count(copies)}</Text>}
         </Pressable>; })}
         {!catalog.loading && !shownVessels.length && <Text style={[muted, { width: '100%', textAlign: 'center', paddingVertical: 24 }]}>{t('create2.none')}</Text>}
       </View>
@@ -517,24 +555,32 @@ export default function CreateScreen() {
     </View>}
 
     {step === 4 && <View style={{ gap: 16 }}>
-      {title(toPublicCapsule ? t('create2.pubWhen') : t('create.whenWhere'))}
-      {sectionLabel(toPublicCapsule ? t('create2.appears') : t('create.when'))}
-      <PickerRow label={toPublicCapsule ? t('create2.appears') : t('create.when')} icon={<Glyph><ToolIcon kind={quick === 'custom' ? 'calendar' : 'clock'} /></Glyph>} title={quickLabel(quick)} sub={quick === 'custom' ? (openAt ? dateLabel(openAt) : t('create2.customSub')) : dateLabel(openAt)} onPress={() => setSheet('when')} />
+      {title(toPublicCapsule && !rackWaypost ? t('create2.pubWhen') : t('create.whenWhere'))}
+      {sectionLabel(toPublicCapsule && !rackWaypost ? t('create2.appears') : t('create.when'))}
+      <PickerRow label={toPublicCapsule && !rackWaypost ? t('create2.appears') : t('create.when')} icon={<Glyph><ToolIcon kind={quick === 'custom' ? 'calendar' : 'clock'} /></Glyph>} title={quickLabel(quick)} sub={quick === 'custom' ? (openAt ? dateLabel(openAt) : t('create2.customSub')) : dateLabel(openAt)} onPress={() => setSheet('when')} />
       {quick === 'custom' && <MonthCalendar value={dateText} onChange={setDateText} language={language} />}
-      {!!openAt && <Text style={{ fontFamily: serif, color: C.blue, fontSize: 15 }}>{toPublicCapsule ? t('create2.appearsOn', formatted) : t('create2.opensOn', formatted)}</Text>}
+      {!!openAt && <Text style={{ fontFamily: serif, color: C.blue, fontSize: 15 }}>{toPublicCapsule && !rackWaypost ? t('create2.appearsOn', formatted) : t('create2.opensOn', formatted)}</Text>}
       {sectionLabel(t('create.where'))}
       {toPublicCapsule ? <View style={{ gap: 10 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 12 }}>
           <Glyph><ToolIcon kind="here" /></Glyph>
-          <View style={{ flex: 1, gap: 2 }}><Text style={{ fontFamily: serif, color: C.ink, fontSize: 17 }}>{t('create2.here')}</Text><Text style={muted}>{st('spotNote')}</Text></View>
+          <View style={{ flex: 1, gap: 2 }}><Text style={{ fontFamily: serif, color: C.ink, fontSize: 17 }}>{rackWaypost ? rackName : t('create2.here')}</Text><Text style={muted}>{rackWaypost ? rk.rackNote : st('spotNote')}</Text></View>
         </View>
+        {rackWaypost && <>
+          {sectionLabel(rk.lock)}
+          <PickerRow label={rk.lock} icon={<Glyph><ArtIcon name="lock" size={20} color={C.blue} /></Glyph>} title={lockMode === 'own' ? rk.ownQuestion : rk.noLock} sub={lockMode === 'own' ? rk.ownQuestionSub : rk.noLockSub} onPress={() => setSheet('lock')} />
+          {lockMode === 'own' && [[lockQuestion, setLockQuestion, rk.question], [lockAnswer, setLockAnswer, rk.answer]].map(([value, set, placeholder]) =>
+            <TextInput key={placeholder as string} value={value as string} onChangeText={set as (v: string) => void} placeholder={placeholder as string} placeholderTextColor={PLACEHOLDER} maxLength={120}
+              style={{ backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 11, fontFamily: sans, color: C.ink }} />)}
+        </>}
         <Text style={muted}>{st('rules')}</Text>
       </View> : <>
-        <PickerRow label={t('create.where')} icon={<Glyph><ToolIcon kind={placeMode === 'current' ? 'here' : placeMode === 'specific' ? 'landmark' : 'anywhere'} /></Glyph>} title={t(`create2.where.${placeMode}`)} sub={placeMode === 'anywhere' ? t('create2.anywhereSub') : placeMode === 'current' ? (point && point.name !== t('create2.findingName') ? placeLabel(point) : t('create2.where.currentSub')) : whereLabel || t('create2.where.specificSub')} onPress={() => setSheet('where')} />
+        <PickerRow label={t('create.where')} icon={<Glyph><ToolIcon kind={placeMode === 'current' ? 'here' : placeMode === 'specific' || placeMode === 'route' ? 'landmark' : 'anywhere'} /></Glyph>} title={placeMode === 'route' ? q.whereRoute : t(`create2.where.${placeMode}`)} sub={placeMode === 'route' ? whereLabel || q.whereRouteSub : placeMode === 'anywhere' ? t('create2.anywhereSub') : placeMode === 'current' ? (point && point.name !== t('create2.findingName') ? placeLabel(point) : t('create2.where.currentSub')) : whereLabel || t('create2.where.specificSub')} onPress={() => setSheet('where')} />
         {placeMode === 'current' && (point ? placeCard(point.name, point.detail) : <View style={{ gap: 8 }}>
           <Text style={muted}>{location.status === 'denied' ? t('create2.locationDenied') : t('create2.locating')}</Text>
           {location.status === 'denied' && <Button title={t('create2.openSettings')} onPress={() => void location.openSettings()} />}
         </View>)}
+        {placeMode === 'route' && <RouteBuilder stops={stops} onChange={setStops} zh={language === 'zh'} you={location.fix ? { lat: location.fix.lat, lng: location.fix.lng } : null} />}
         {placeMode === 'specific' && <View style={{ gap: 10 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 12, paddingHorizontal: 12 }}>
             <ToolIcon kind="search" color={C.muted} size={18} />
@@ -554,7 +600,7 @@ export default function CreateScreen() {
       <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center', backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 14 }}>
         {vessel ? <Vessel kind={vessel} size={64} /> : null}
         <View style={{ flex: 1, gap: 8 }}>
-          {([['create2.sumTo', toPublicCapsule ? t('create2.anyone') : recipientName], ['create2.sumBody', insideSummary], ['create2.sumVessel', vessel ? t(`shop.vessel.${vessel}`) : '—'], ['create2.sumWhen', openAt ? formatted : '—'], ['create2.sumWhere', toPublicCapsule ? t('create2.nearPublicSpot') : whereLabel || t('create.anywhere')]] as const).map(([k, v]) => <View key={k}>
+          {([['create2.sumTo', toPublicCapsule ? t('create2.anyone') : recipientName], ['create2.sumBody', insideSummary], ['create2.sumVessel', vessel ? t(`shop.vessel.${vessel}`) : '—'], ['create2.sumWhen', openAt ? formatted : '—'], ['create2.sumWhere', rackWaypost ? rackName : toPublicCapsule ? t('create2.nearPublicSpot') : whereLabel || (placeMode === 'route' ? q.whereRoute : t('create.anywhere'))]] as const).map(([k, v]) => <View key={k}>
             <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12 }}>{t(k)}</Text><Text style={{ fontFamily: sans, color: C.ink, fontSize: 14 }}>{v}</Text>
           </View>)}
         </View>
@@ -570,12 +616,17 @@ export default function CreateScreen() {
       {!friends.loading && !friends.data?.length && <Text style={[muted, { marginHorizontal: 10 }]}>{t('create.noFriends')}</Text>}
       <SheetOption accent icon={<Glyph><ArtIcon name="plus" color={C.blue} /></Glyph>} title={t('create.invite')} sub={t('create2.inviteSub')} onPress={() => { setSheet(null); router.push('/invite'); }} />
     </Sheet>
-    <Sheet open={sheet === 'when'} title={toPublicCapsule ? t('create2.appears') : t('create.when')} onClose={() => setSheet(null)}>
+    <Sheet open={sheet === 'when'} title={toPublicCapsule && !rackWaypost ? t('create2.appears') : t('create.when')} onClose={() => setSheet(null)}>
       {quickList.map(q => <SheetOption key={q} selected={quick === q} icon={<Glyph><ToolIcon kind={q === 'custom' ? 'calendar' : 'clock'} /></Glyph>} title={quickLabel(q)} sub={q === 'custom' ? t('create2.customSub') : dateLabel(quickDate(q))} onPress={() => { setQuick(q); setSheet(null); setError(''); void haptics.tick(); }} />)}
     </Sheet>
+    <Sheet open={sheet === 'lock'} title={rk.lock} onClose={() => setSheet(null)}>
+      {(['none', 'own'] as const).map(m => <SheetOption key={m} selected={lockMode === m} icon={<Glyph><ArtIcon name={m === 'own' ? 'lock' : 'check'} size={20} color={C.blue} /></Glyph>} title={m === 'own' ? rk.ownQuestion : rk.noLock} sub={m === 'own' ? rk.ownQuestionSub : rk.noLockSub}
+        onPress={() => { setLockMode(m); setSheet(null); setError(''); void haptics.tick(); }} />)}
+    </Sheet>
     <Sheet open={sheet === 'where'} title={t('create.where')} onClose={() => setSheet(null)}>
-      {(['anywhere', 'current', 'specific'] as const).map(m => <SheetOption key={m} selected={placeMode === m} icon={<Glyph><ToolIcon kind={m === 'current' ? 'here' : m === 'specific' ? 'landmark' : 'anywhere'} /></Glyph>} title={t(`create2.where.${m}`)} sub={t(m === 'anywhere' ? 'create2.anywhereSub' : `create2.where.${m}Sub`)}
-        onPress={() => { setPlaceMode(m); setPlace(null); setPoint(null); setPlaceQuery(''); setSheet(null); setError(''); void haptics.tick(); if (m === 'current') void location.request(); }} />)}
+      {/* With routes (HL-C5) a place is a route of quests; there is no separate one-place option. */}
+      {(ROUTES ? ['anywhere', 'route'] as const : ['anywhere', 'current', 'specific'] as const).map(m => <SheetOption key={m} selected={placeMode === m} icon={<Glyph><ToolIcon kind={m === 'current' ? 'here' : m === 'specific' || m === 'route' ? 'landmark' : 'anywhere'} /></Glyph>} title={m === 'route' ? q.whereRoute : t(`create2.where.${m}`)} sub={m === 'route' ? q.whereRouteSub : t(m === 'anywhere' ? 'create2.anywhereSub' : `create2.where.${m}Sub`)}
+        onPress={() => { setPlaceMode(m); setPlace(null); setPoint(null); setPlaceQuery(''); setSheet(null); setError(''); void haptics.tick(); if (m === 'current' || m === 'route') void location.request(); }} />)}
     </Sheet>
   </Screen>;
 }

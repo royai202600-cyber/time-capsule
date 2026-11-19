@@ -2240,6 +2240,23 @@ export const questTemplates = {
   publicArt: require('../../../public/art/quest-templates/quest-template-public-art.webp'),
   oldStreet: require('../../../public/art/quest-templates/quest-template-old-street.webp'),
 };
+/**
+ * Quest-type pictures and faceted pin frames (HL-A1, PR #153, approved by Roy). The picture fills the frame's round
+ * window: on the 1024 canvas the window is centred at (506, 399) with radius 237 and the tip is at (506, 955).
+ */
+export const questTypePictures = {
+  arrive: require('../../../public/art/quest-types/quest-type-arrive.webp'),
+  question: require('../../../public/art/quest-types/quest-type-question.webp'),
+  price: require('../../../public/art/quest-types/quest-type-price.webp'),
+  catch: require('../../../public/art/quest-types/quest-type-catch.webp'),
+  landmark: require('../../../public/art/quest-types/quest-type-landmark.webp'),
+};
+export const questPinFrames = {
+  blue: require('../../../public/art/quest-pins/quest-pin-blue.webp'),
+  brass: require('../../../public/art/quest-pins/quest-pin-brass.webp'),
+  plum: require('../../../public/art/quest-pins/quest-pin-plum.webp'),
+};
+export const QUEST_PIN_GEOMETRY = { canvas: 1024, window: { x: 506, y: 399, radius: 237 }, tip: { x: 506, y: 955 } } as const;
 export const sealWax = require('../../../public/art/seal-wax.webp');
 export const lightBurst = require('../../../public/art/fx/fx-light-burst.webp');
 // Idle glints (art A2, PR #32): a small sparkle for wax and brass (the dome's glass highlight is in its spec).

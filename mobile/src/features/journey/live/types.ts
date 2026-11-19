@@ -1,12 +1,15 @@
 import { Image, type ImageSourcePropType } from "react-native";
 import type { PrivateHuntQuestType } from "../../../services/questTypes";
+import type { QuestKind } from "../../../services/quests";
 
 export type PinKind = "publicCapsule" | "place" | "corrupted" | "waypost" | "landmark" | "keeper" | "quest" | "spot";
 export type LivePin = { id: string; lat: number; lng: number; vessel: string; label?: string; cracks?: string; portrait?: string | null; tag?: string; kind: PinKind; hunt?: boolean;
   /** Which map filter shows this pin, when not its kind's (a private hunt's guide is drawn as a Keeper but belongs to private hunts). */
   filterAs?: PinKind;
   /** Private-hunt quests (kind "quest"): which glyph the brass pin carries, and whether the route still locks it. */
-  quest?: PrivateHuntQuestType; locked?: boolean; /** A quest's picture: shown as a big round photo pin instead of the brass pin. */ photo?: string | null; mark?: string | null; figure?: string | null; lift?: number; rarity?: "common" | "uncommon" | "rare"; done?: boolean; near?: boolean; far?: boolean; selected?: boolean; sealed?: boolean; private?: boolean; opened?: boolean; timer?: string };
+  quest?: PrivateHuntQuestType | QuestKind; locked?: boolean; /** The faceted pin frame (blue, brass or plum); without it the older code-drawn teardrop shows. */ frame?: string | null; /** A quest's picture: shown as a big round photo pin instead of the brass pin. */ photo?: string | null; mark?: string | null; figure?: string | null; lift?: number; rarity?: "common" | "uncommon" | "rare"; done?: boolean;
+  /** A quest made by us (Today's Hunt, City Hunt): the blue quest pin instead of brass. */ blue?: boolean;
+  /** Drops from the sky this many ms after it first appears (Today's Hunt). */ drop?: number; near?: boolean; far?: boolean; selected?: boolean; sealed?: boolean; private?: boolean; opened?: boolean; timer?: string };
 export type LiveState = { you: { lat: number; lng: number } | null; heading?: number | null; portrait?: string | null; figure?: string | null; youLabel?: string | null; reach: number; pins: LivePin[];
   /** A dotted line through these points, in order (an ordered hunt's route in the quest editor). */
   route?: { lat: number; lng: number }[] };
@@ -15,7 +18,17 @@ export type LiveMapHandle = { recenter: () => void; focus: (lat: number, lng: nu
   /** Fly to another city and look around it from above its buildings (the City Explorer). */
   city: (lat: number, lng: number) => void;
   /** Frame every point on screen (the quest editor shows the whole hunt). */
-  fit: (points: { lat: number; lng: number }[]) => void };
+  fit: (points: { lat: number; lng: number }[], view?: FitView) => void;
+  /** Today's Hunt's motion: the figure hops along a trail, pins bounce or burst, everything runs k times faster. */
+  motion: (m: MapMotion) => void };
+/** Optional framing for fit: room kept clear for cards, the camera's tilt and turn, and its duration at normal speed. */
+export type FitView = { padding?: { top: number; bottom: number; left: number; right: number }; pitch?: number; bearing?: number; ms?: number };
+/** ms are at normal speed; the map divides them by the current speed. Reduce Motion makes them instant. */
+export type MapMotion =
+  | { type: "hop"; lat: number; lng: number; ms: number }
+  | { type: "ping"; id: string; kind: "arrive" | "burst" | "shake" }
+  | { type: "speed"; k: number }
+  | { type: "hopReset" };
 export type LiveMapProps = {
   html: string;
   state: LiveState;

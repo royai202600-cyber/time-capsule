@@ -15,6 +15,7 @@ import { useOrganizerText } from "./organizerStrings";
 import { useLanguage } from "../../i18n";
 import { questImageUri, useQuestImages } from "./questImage";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
+import { questPinFace, type AnyQuestType } from "../quests/questArt";
 
 export type PickedPin = { lat: number; lng: number; name: string; detail: string };
 
@@ -22,7 +23,7 @@ export function PinPicker({ at, you, quest, image, onClose, onPick }: {
   /** Where the pin starts, or null to start on the player's own position. */
   at: { lat: number; lng: number } | null;
   you: { lat: number; lng: number } | null;
-  quest: PrivateHuntQuestType; image?: string | null;
+  quest: AnyQuestType; image?: string | null;
   onClose: () => void;
   onPick: (pin: PickedPin) => void;
 }) {
@@ -38,7 +39,7 @@ export function PinPicker({ at, you, quest, image, onClose, onPick }: {
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: start }), []);
   const signedVersion = useQuestImages([image]);
   const pins = useMemo<LivePin[]>(() => [{
-    id: "picked", lat: point.lat, lng: point.lng, kind: "quest", vessel: "", quest, photo: questImageUri(image), near: true,
+    id: "picked", lat: point.lat, lng: point.lng, kind: "quest", vessel: "", quest, ...questPinFace(quest, "brass", false, questImageUri(image)), near: true,
   }], [point.lat, point.lng, quest, image, signedVersion]);
   const state = useMemo(() => ({ you, reach: 0, pins }), [you?.lat, you?.lng, pins]);
 

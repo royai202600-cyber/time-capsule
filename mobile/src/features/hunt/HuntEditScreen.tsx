@@ -17,11 +17,15 @@ import { clockText } from "../../services/huntClock";
 import { PrivateHuntError } from "../../services/privateHunt";
 import {
   LIMITS, appLink, blankQuest, canPublish, hasSpot, huntArea, huntProblems, nextOrdinal, organizer, shareLink,
-  type HuntDraft, type HuntStatus, type Review, type QuestDraft,
+  type EditorQuestType, type HuntDraft, type HuntStatus, type Review, type QuestDraft,
 } from "../../services/privateHuntOrganizer";
 import { Btn, TaskList, keeperPortrait, type TaskRow } from "./HuntViews";
-import { QuestGlyph } from "./PrivateHuntViews";
+import { QuestGlyph } from "./QuestGlyph";
 import { useHuntText } from "./strings";
+import { useQuestText } from "../quests/strings";
+import { HUNT_QUESTS } from "../../services/cityHuntQuests";
+import type { QuestKind } from "../../services/quests";
+import type { PrivateHuntQuestType } from "../../services/questTypes";
 import { useOrganizerText, type OrganizerText } from "./organizerStrings";
 import { QuestQrCard } from "./QuestQrCard";
 import { QuestEditor } from "./QuestEditor";
@@ -37,6 +41,7 @@ type Section = "details" | "quests" | "share" | "review";
 export default function HuntEditScreen() {
   const o = useOrganizerText();
   const h = useHuntText();
+  const q = useQuestText();
   const { language } = useLanguage();
   const { session } = useAuth();
   const userId = session?.user.id ?? "";
@@ -143,12 +148,13 @@ export default function HuntEditScreen() {
   const orderedQuests = [...quests].sort((a, b) => a.ordinal - b.ordinal);
   const placedQuests = orderedQuests.filter(hasSpot);
   const mapNumber = (w: QuestDraft) => placedQuests.findIndex((q) => q.id === w.id) + 1 || w.ordinal;
+  const typeName = (type: EditorQuestType) => type in h.questTypes ? h.questTypes[type as PrivateHuntQuestType] : q.kind[type as QuestKind];
   const rows: TaskRow[] = orderedQuests.map((w) => {
     const hasQr = w.quest_type === "arrive" && w.arrive_check === "gps_qr" && !!w.qr_token;
     return {
       key: w.id ?? String(w.ordinal),
       label: w.name || o.newQuest,
-      sub: [h.questTypes[w.quest_type] + (w.quest_type === "restore" && w.catch_count ? ` × ${w.catch_count}` : ""), hasQr && o.viewQuestQr].filter(Boolean).join(" · "),
+      sub: [typeName(w.quest_type) + ((w.quest_type === "restore" || w.quest_type === "catch") && w.catch_count ? ` × ${w.catch_count}` : ""), hasQr && o.viewQuestQr].filter(Boolean).join(" · "),
       right: h.pointsShort(w.points),
       glyph: <QuestGlyph type={w.quest_type} size={15} color={C.blue} />,
       onPress: locked ? (hasQr ? () => setQrQuest(w) : undefined) : () => setEditing(w),
@@ -250,7 +256,7 @@ export default function HuntEditScreen() {
       {questView === "list" && <>
       {!rows.length && <View style={{ gap: 4, paddingVertical: spacing.sm }}>
         <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{o.noQuests}</Text>
-        <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{o.noQuestsNote}</Text>
+        <Text style={{ fontFamily: sans, fontSize: 13, lineHeight: 20, color: C.muted }}>{HUNT_QUESTS ? o.noQuestsNote5 : o.noQuestsNote}</Text>
       </View>}
       {!!rows.length && <TaskList rows={rows} />}
       {locked ? null : quests.length < LIMITS.quests

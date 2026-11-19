@@ -12,7 +12,7 @@ export const LiveMap = forwardRef<LiveMapHandle, LiveMapProps>(function LiveMap(
   const live = useRef(false);
   const send = (m: object) => frame.current?.contentWindow?.postMessage({ __tcin: JSON.stringify(m) }, "*");
   const post = (m: object) => { if (live.current) send(m); else waiting.current.push(m); };
-  useImperativeHandle(ref, () => ({ recenter: () => post({ type: "recenter" }), focus: (lat, lng) => post({ type: "focus", lat, lng }), walk: (lat, lng) => post({ type: "walk", lat, lng }), city: (lat, lng) => post({ type: "city", lat, lng }), fit: (points) => post({ type: "fit", points }) }));
+  useImperativeHandle(ref, () => ({ recenter: () => post({ type: "recenter" }), focus: (lat, lng) => post({ type: "focus", lat, lng }), walk: (lat, lng) => post({ type: "walk", lat, lng }), city: (lat, lng) => post({ type: "city", lat, lng }), fit: (points, view) => post({ type: "fit", points, ...view }), motion: (m) => post(m) }));
   useEffect(() => {
     const listen = (e: MessageEvent) => {
       if (e.source !== frame.current?.contentWindow || typeof e.data?.__tcmap !== "string") return;

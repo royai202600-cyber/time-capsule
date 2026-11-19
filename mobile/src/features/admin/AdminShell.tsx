@@ -13,22 +13,31 @@ import AuthScreen from "../auth/AuthScreen";
 import { useAuth } from "../../services/auth";
 import { ADMIN_SAMPLE, ROLES, admin, adminMe, can, type AdminRole, type Region } from "../../services/admin";
 import { sample } from "../../services/adminSample";
+import { ADMIN_HUNT_LOOP } from "../../services/adminHuntLoop";
 import { C, radii, sans, serif, spacing } from "../../theme";
 import { useAdminText } from "./strings";
+import { useHuntLoopText } from "./huntLoopStrings";
 import { AButton, Loading, Pill, useWide } from "./ui";
 
 type Ctx = { role: AdminRole; cities: Region[]; refresh: () => void };
 const AdminContext = createContext<Ctx>({ role: "viewer", cities: [], refresh: () => {} });
 export const useAdmin = () => useContext(AdminContext);
 
-type Tab = { href: string; key: "overview" | "capsules" | "queue" | "activity" | "members"; icon: IconName };
+type Tab = { href: string; key: "overview" | "capsules" | "hunts" | "queue" | "activity" | "members"; icon: IconName };
 const TABS: Tab[] = [
   { href: "/admin", key: "overview", icon: "map" },
   { href: "/admin/capsules", key: "capsules", icon: "album" },
+  { href: "/admin/hunts", key: "hunts", icon: "quest" },
   { href: "/admin/queue", key: "queue", icon: "check" },
   { href: "/admin/activity", key: "activity", icon: "pen" },
   { href: "/admin/members", key: "members", icon: "user" },
 ];
+/** Tab names: the hunt-loop tab keeps its wording beside the hunt-loop screens. */
+function useNavLabel() {
+  const a = useAdminText();
+  const h = useHuntLoopText();
+  return (key: Tab["key"]) => key === "hunts" ? h.nav : a.nav[key];
+}
 const isOn = (path: string, href: string) => href === "/admin" ? path === "/admin" || path.startsWith("/admin/city") : path.startsWith(href);
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -75,7 +84,7 @@ function Message({ title, note }: { title: string; note?: string }) {
 function Frame({ children }: { children: React.ReactNode }) {
   const wide = useWide();
   const { role } = useAdmin();
-  const tabs = TABS.filter((t) => t.key !== "members" || can(role, "members"));
+  const tabs = TABS.filter((t) => (t.key !== "members" || can(role, "members")) && (t.key !== "hunts" || ADMIN_HUNT_LOOP));
   return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}>
     {ADMIN_SAMPLE && <SampleBanner />}
     {wide
@@ -128,6 +137,7 @@ function LanguageToggle() {
 
 function Sidebar({ tabs }: { tabs: Tab[] }) {
   const a = useAdminText();
+  const navLabel = useNavLabel();
   const { language } = useLanguage();
   const { role, cities } = useAdmin();
   const { profile } = useAuth();
@@ -136,7 +146,7 @@ function Sidebar({ tabs }: { tabs: Tab[] }) {
     <ScrollView contentContainerStyle={{ padding: spacing.md, gap: spacing.lg, flexGrow: 1 }}>
       <View style={{ paddingHorizontal: 4, paddingTop: 4 }}><Brand /></View>
       <View style={{ gap: 2 }}>
-        {tabs.map((t) => <NavItem key={t.key} icon={t.icon} label={a.nav[t.key]} on={isOn(path, t.href) && !(t.key === "overview" && path.startsWith("/admin/city"))} onPress={() => router.push(t.href as any)} />)}
+        {tabs.map((t) => <NavItem key={t.key} icon={t.icon} label={navLabel(t.key)} on={isOn(path, t.href) && !(t.key === "overview" && path.startsWith("/admin/city"))} onPress={() => router.push(t.href as any)} />)}
       </View>
       {!!cities.length && <View style={{ gap: 2 }}>
         <Text style={{ fontFamily: sans, fontSize: 11, letterSpacing: 1, color: C.muted, paddingHorizontal: 12, marginBottom: 4 }}>{a.cities.toUpperCase()}</Text>
@@ -187,7 +197,7 @@ function TopBar() {
 }
 
 function BottomTabs({ tabs }: { tabs: Tab[] }) {
-  const a = useAdminText();
+  const navLabel = useNavLabel();
   const path = usePathname();
   return <View accessibilityRole="tablist" style={{ flexDirection: "row", borderTopWidth: 1, borderTopColor: C.line, backgroundColor: C.white, paddingBottom: 4 }}>
     {tabs.map((t) => {
@@ -195,7 +205,7 @@ function BottomTabs({ tabs }: { tabs: Tab[] }) {
       return <Pressable key={t.key} accessibilityRole="tab" accessibilityState={{ selected: on }} onPress={() => router.push(t.href as any)}
         style={{ flex: 1, alignItems: "center", paddingTop: 8, paddingBottom: 4, gap: 2 }}>
         <ArtIcon name={t.icon} size={22} color={on ? C.blue : C.muted} />
-        <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 10, color: on ? C.blue : C.muted }}>{a.nav[t.key]}</Text>
+        <Text numberOfLines={1} style={{ fontFamily: sans, fontSize: 10, color: on ? C.blue : C.muted }}>{navLabel(t.key)}</Text>
       </Pressable>;
     })}
   </View>;

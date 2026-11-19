@@ -236,6 +236,8 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 /* Private-hunt quest (docs/design/city-orienteering.md): its picture fills a brass teardrop pointing at the spot,
    with its points below. Done: purple, like a Waypost after its spin, with a tick badge. Locked by an in-order route: faded. */
 .pin.quest{width:76px;height:100px;--mp:${C.brass};--mp-hi:#E2C58A;--mp-lo:#A9843F;--mg:#fff}
+.pin.quest.blue{--mp:${C.blue};--mp-hi:#7FA6CC;--mp-lo:#1E3F63}
+.pin.quest.blue .tag{background:${C.blue}}.pin.quest.blue .disc{background:radial-gradient(${C.blue}66,transparent 70%)}
 .pin.quest.done{--mp:${C.plum};--mp-hi:#B98494;--mp-lo:#4A1C2A;--mg:#fff}
 .pin.quest .disc{left:20px;width:36px;height:10px;background:radial-gradient(${C.brass}66,transparent 70%)}
 .pin.quest .photo{position:absolute;left:5px;bottom:8px;width:66px;height:85px;animation:bob 3.6s ease-in-out infinite;filter:drop-shadow(0 3px 4px rgba(22,38,63,.32))}
@@ -243,12 +245,37 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.quest .ph{position:absolute;inset:4px;border-radius:50%;border:2.5px solid #fff;transform:rotate(45deg);background:${C.cream} center/cover no-repeat}
 .pin.quest .badge{position:absolute;right:-6px;top:-4px;width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--mp-hi),var(--mp) 62%,var(--mp-lo));box-shadow:0 1px 3px rgba(22,38,63,.35),inset 0 0 0 1.5px var(--mp-hi)}
 .pin.quest .badge svg{position:absolute;left:0;top:0;width:24px;height:24px}
+/* The approved faceted frame (HL-A1): the quest-type picture shows through its round window; tip on the spot. */
+.pin.quest .win{position:absolute;left:9.6px;top:8.1px;width:46px;height:46px;border-radius:50%;background:${C.cream} center/cover no-repeat}
+.pin.quest .fr{position:absolute;left:-16.5px;top:-7.6px;width:99px;height:99px;pointer-events:none}
+.pin.quest.done .win{filter:saturate(.7)}
 .pin.quest.locked .photo{opacity:.6}
 .pin.quest.done .ph{filter:saturate(.6)}
 .pin.quest.near:not(.done):not(.locked) .photo{filter:drop-shadow(0 0 7px ${C.brass})}
 .pin.quest.near:not(.done):not(.locked) .disc{background:radial-gradient(${C.brass}AA,transparent 70%)}
 .pin.quest .tag{bottom:-16px;font-size:11px;background:${C.brass};color:#fff}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+/* Today's Hunt: pins drop from the sky, bounce with a ripple on arrival, burst into purple when done, shake on a miss.
+   --k is the speed (Speed up sets 4); transform animates on its own, apart from the fan's translate and the zoom's scale. */
+.pin.dropin .pin-body{animation:dropin calc(700ms/var(--k,1)) cubic-bezier(.3,1.35,.55,1) var(--dd,0ms) both}
+@keyframes dropin{0%{transform:translateY(-320px);opacity:0}40%{opacity:1}100%{transform:none;opacity:1}}
+.pin.quest.arrive .photo{animation:qbounce calc(620ms/var(--k,1)) ease-out}
+@keyframes qbounce{0%{transform:none}30%{transform:translateY(-16px) scale(1.06)}60%{transform:translateY(0) scale(.96,1.04)}100%{transform:none}}
+.pin.quest .ring{position:absolute;left:8px;bottom:-6px;width:60px;height:20px;border-radius:50%;border:2.5px solid var(--mp);opacity:0;pointer-events:none}
+.pin.quest.arrive .ring{animation:ripple calc(800ms/var(--k,1)) ease-out}
+@keyframes ripple{0%{transform:scale(.3);opacity:.9}100%{transform:scale(2.2);opacity:0}}
+.pin.quest.burst .photo{animation:qburst calc(650ms/var(--k,1)) cubic-bezier(.3,1.6,.5,1)}
+@keyframes qburst{0%{transform:scale(1)}35%{transform:scale(1.35)}100%{transform:scale(1)}}
+.pin.quest .spark{position:absolute;left:36px;top:30px;width:7px;height:7px;border-radius:50%;background:#E2C58A;opacity:0;pointer-events:none}
+.pin.quest.burst .spark{animation:spark calc(700ms/var(--k,1)) ease-out}
+@keyframes spark{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--sx),var(--sy)) scale(.3);opacity:0}}
+.pin.quest.shake .photo{animation:qshake calc(420ms/var(--k,1)) ease-in-out}
+@keyframes qshake{0%,100%{transform:none}20%{transform:translateX(-7px) rotate(-4deg)}40%{transform:translateX(6px) rotate(3deg)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.you.hopping .me{animation:hop calc(340ms/var(--k,1)) ease-in-out infinite}
+@keyframes hop{0%,100%{translate:0 0}50%{translate:0 -12px}}
+.step{width:7px;height:4px;border-radius:50%;background:${C.blue};opacity:.55;animation:stepfade calc(1600ms/var(--k,1)) ease-out forwards;pointer-events:none}
+@keyframes stepfade{to{opacity:0}}
+@media (prefers-reduced-motion: reduce){.pin.dropin .pin-body,.pin.quest .photo,.pin.quest .ring,.pin.quest .spark,.you.hopping .me,.step{animation:none!important}}
 @media (prefers-reduced-motion: reduce){.pin .v,.pin .post,.pin .badge,.pin.quest .photo,.you .pulse,.pin.keeper .seal{animation:none}}
 </style></head><body><div id="map"></div>
 <script>
@@ -283,6 +310,9 @@ map.on('load',()=>{
   // An ordered hunt's route: a dotted brass line from quest to quest, in the order players walk it.
   map.addSource('route',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   map.addLayer({id:'route',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'${C.brass}','line-width':3.5,'line-dasharray':[2,1.5]}});
+  // Today's Hunt: the dotted trail the figure draws as it hops from pin to pin (blue: made by us).
+  map.addSource('trail',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+  map.addLayer({id:'trail',type:'line',source:'trail',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'${C.blue}','line-width':3.5,'line-dasharray':[1.2,1.6]}});
   send({type:'ready'});render();rescale();
 });
 map.on('dragstart',()=>{if(follow){follow=false;send({type:'follow',follow:false})}});
@@ -333,7 +363,9 @@ map.on('move',relift);map.on('resize',relift);
 // circle, the camera and every server check stay on your real position. Once you really move about 10 m,
 // the figure walks back to you.
 let walkAt=null,walkFrom=null,walkLeft=null,strolling=false,strollId=0;
-const shown=()=>walkAt?[walkAt.lng,walkAt.lat]:[you.lng,you.lat];
+// Today's Hunt keeps the figure where its last hop ended, apart from the player's real position.
+let hopAt=null,trail=[],speed=1;
+const shown=()=>hopAt?[hopAt.lng,hopAt.lat]:walkAt?[walkAt.lng,walkAt.lat]:[you.lng,you.lat];
 const metres=(a,b)=>Math.hypot((a.lng-b.lng)*111320*Math.cos(a.lat*Math.PI/180),(a.lat-b.lat)*110540);
 const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function stroll(to,after){if(!youMark)return;const from=youMark.getLngLat(),f={lat:from.lat,lng:from.lng},d=metres(f,to);
@@ -343,6 +375,23 @@ function stroll(to,after){if(!youMark)return;const from=youMark.getLngLat(),f={l
     youMark.setLngLat([f.lng+(to.lng-f.lng)*e,f.lat+(to.lat-f.lat)*e]);
     if(k<1)requestAnimationFrame(step);else{strolling=false;yel.classList.remove('walking');after&&after();render()}};
   requestAnimationFrame(step)}
+const setTrail=pts=>map.getSource('trail')&&map.getSource('trail').setData({type:'FeatureCollection',features:pts.length>1?[{type:'Feature',geometry:{type:'LineString',coordinates:pts.map(p=>[p.lng,p.lat])}}]:[]});
+const bearingTo=(a,b)=>Math.atan2((b.lng-a.lng)*Math.cos(a.lat*Math.PI/180),b.lat-a.lat)*180/Math.PI;
+function hop(to,ms0){if(!youMark)return;const from=youMark.getLngLat(),f={lat:from.lat,lng:from.lng};if(!trail.length)trail=[f];
+  const a=map.project([f.lng,f.lat]),b=map.project([to.lng,to.lat]);if(Math.abs(b.x-a.x)>4)walkLeft=b.x<a.x;
+  const ms=still?0:ms0/speed,t0=performance.now(),yel=youMark.getElement(),id=++strollId;strolling=true;yel.classList.add('hopping');render();
+  // The camera follows to the next pin and turns a little toward it as the figure sets off.
+  const turn=Math.max(-40,Math.min(40,bearingTo(f,to)));
+  map.easeTo({center:[to.lng,to.lat],bearing:turn,pitch:55,duration:ms,essential:true});
+  let lastStep=0;
+  const step=now=>{if(id!==strollId)return;const k=ms?Math.min(1,(now-t0)/ms):1,e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2,p={lng:f.lng+(to.lng-f.lng)*e,lat:f.lat+(to.lat-f.lat)*e};
+    youMark.setLngLat([p.lng,p.lat]);setTrail([...trail,p]);
+    if(!still&&now-lastStep>140/speed){lastStep=now;const d=document.createElement('div');d.className='step';const s=new maplibregl.Marker({element:d}).setLngLat([p.lng,p.lat]).addTo(map);setTimeout(()=>s.remove(),1700/speed)}
+    if(k<1)requestAnimationFrame(step);else{strolling=false;yel.classList.remove('hopping');hopAt={lat:to.lat,lng:to.lng};trail.push(hopAt);setTrail(trail);render()}};
+  requestAnimationFrame(step)}
+function ping(id,kind){const m=marks.get(id);if(!m)return;const el=m.marker.getElement();
+  if(kind==='burst'){const ph=el.querySelector('.photo');if(ph&&!ph.querySelector('.spark'))for(let i=0;i<8;i++){const s=document.createElement('div');s.className='spark';const a=i/8*Math.PI*2;s.style.setProperty('--sx',(Math.cos(a)*46).toFixed(0)+'px');s.style.setProperty('--sy',(Math.sin(a)*46).toFixed(0)+'px');ph.appendChild(s)}}
+  el.classList.remove('arrive','burst','shake');void el.offsetWidth;el.classList.add(kind);setTimeout(()=>el.classList.remove(kind),900/speed)}
 const walkTo=to=>{if(!you)return;walkFrom={lat:you.lat,lng:you.lng};walkAt={lat:to.lat,lng:to.lng};stroll(walkAt)};
 const walkHome=()=>{walkAt=null;walkFrom=null;stroll({lat:you.lat,lng:you.lng},()=>{walkLeft=null})};
 // The admin can receive over a thousand wave pins. At overview zoom, show one
@@ -388,12 +437,13 @@ function render(){
   for(const p of pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
       :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 1.5C12.8 8.2 15.8 11.2 22.5 12 15.8 12.8 12.8 15.8 12 22.5 11.2 15.8 8.2 12.8 1.5 12 8.2 11.2 11.2 8.2 12 1.5Z"/></svg></div></div>'
-      :p.kind==='quest'?'<div class="pin-body"><div class="disc"></div><div class="photo"><div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>'+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
+      :p.kind==='quest'?'<div class="pin-body"><div class="disc"></div><div class="ring"></div><div class="photo">'+(p.frame?'<div class="win" style="background-image:url('+p.photo+')"></div><img class="fr" alt="" src="'+p.frame+'">':'<div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>')+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
       :p.kind==='spot'?'<div class="pin-body"><div class="dot"></div></div>'
       :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait!==undefined&&(p.portrait||p.private)?'<div class="who">'+face(p.portrait)+(p.private?'<div class="lock">'+PADLOCK+'</div>':'')+'</div>':'')+(p.timer?'<div class="tag timer">'+HOURGLASS+p.timer+'</div>':p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
-    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'')+(p.private?' private':'')+(p.opened?' opened':'')+(p.locked?' locked':'');
+    const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'')+(p.private?' private':'')+(p.opened?' opened':'')+(p.locked?' locked':'')+(p.blue?' blue':'');
     let m=marks.get(p.id);
-    if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();tapPin(p.id)});m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
+    if(!m){const el=document.createElement('div');el.addEventListener('click',ev=>{ev.stopPropagation();tapPin(p.id)});
+      if(p.drop!=null&&!still){el.classList.add('dropin');el.style.setProperty('--dd',Math.round(p.drop/speed)+'ms');setTimeout(()=>el.classList.remove('dropin'),(p.drop+800)/speed)}m={marker:new maplibregl.Marker({element:el,anchor:'bottom',rotationAlignment:'viewport',pitchAlignment:'viewport'}).setLngLat([p.lng,p.lat]).addTo(map),html:'',cls:''};marks.set(p.id,m)}
     const el=m.marker.getElement();
     if(p.label){
       el.setAttribute('aria-label',p.label);
@@ -416,9 +466,13 @@ function recv(m){
   if(m.type==='state'){if(fan&&m.pins.map(p=>p.id).join()!==state.pins.map(p=>p.id).join())fold();const moved=!you||!m.you||Math.abs(you.lat-m.you.lat)+Math.abs(you.lng-m.you.lng)>1e-6;if(walkFrom&&m.you&&metres(walkFrom,m.you)>10){you=m.you;walkHome()}you=m.you;state=m;heading=m.heading||heading;render();rescale();if(follow&&you&&moved)map.easeTo({center:[you.lng,you.lat],duration:you?900:0,padding:cameraPadding})}
   if(m.type==='recenter'&&you){follow=true;map.easeTo({center:[you.lng,you.lat],zoom:pickupZoom(you.lat,state.reach||100),pitch:40,bearing:0,duration:900,padding:cameraPadding})}
   if(m.type==='walk'&&you)walkTo({lat:m.lat,lng:m.lng});
+  if(m.type==='hop')hop({lat:m.lat,lng:m.lng},m.ms);
+  if(m.type==='ping')ping(m.id,m.kind);
+  if(m.type==='speed'){speed=m.k||1;mapEl.style.setProperty('--k',String(speed))}
+  if(m.type==='hopReset'){strollId++;strolling=false;hopAt=null;trail=[];setTrail([]);if(youMark)youMark.getElement().classList.remove('hopping');render()}
   if(m.type==='fit'&&m.points.length){follow=false;send({type:'follow',follow:false});
-    if(m.points.length===1)map.easeTo({center:[m.points[0].lng,m.points[0].lat],zoom:pickupZoom(m.points[0].lat,100)-1,duration:700});
-    else{const b=new maplibregl.LngLatBounds();for(const p of m.points)b.extend([p.lng,p.lat]);map.fitBounds(b,{padding:{top:70,bottom:70,left:50,right:50},maxZoom:pickupZoom(m.points[0].lat,100)-1,duration:700})}}
+    if(m.points.length===1)map.easeTo({center:[m.points[0].lng,m.points[0].lat],zoom:pickupZoom(m.points[0].lat,100)-1,duration:still?0:700/speed});
+    else{const b=new maplibregl.LngLatBounds();for(const p of m.points)b.extend([p.lng,p.lat]);if(m.padding)map.setPadding(m.padding);map.fitBounds(b,{padding:m.padding?0:{top:70,bottom:70,left:50,right:50},maxZoom:pickupZoom(m.points[0].lat,100)-1,pitch:m.pitch==null?map.getPitch():m.pitch,bearing:m.bearing==null?map.getBearing():m.bearing,duration:still?0:(m.ms||700)/speed})}}
   // The City Explorer: fly to a city and sit above its Landmark, clear of the city cards at the bottom.
   if(m.type==='city'){follow=false;send({type:'follow',follow:false});map.flyTo({center:[m.lng,m.lat],zoom:15.2,pitch:55,bearing:-14,padding:{top:80,bottom:300,left:0,right:0},duration:still?0:2600,essential:true})}
   if(m.type==='focus'){follow=false;send({type:'follow',follow:false});map.easeTo({center:[m.lng,m.lat],zoom:pickupZoom(m.lat,state.reach||100),duration:700})}

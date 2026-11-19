@@ -129,7 +129,7 @@ const isLink = (source: string) => /^https?:\/\//.test(source);
 const siteName = (source: string) => { try { return isLink(source) ? new URL(source).hostname.replace(/^www\./, "") : source; } catch { return source; } };
 
 /** Where the price comes from: one named shop or ticket office. */
-function Venue({ text }: { text: string }) {
+export function Venue({ text }: { text: string }) {
   const s = useExplorerText();
   if (!text) return null;
   return <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
@@ -138,7 +138,7 @@ function Venue({ text }: { text: string }) {
   </View>;
 }
 
-function GuessRow({ n, mark, puzzle }: { n: number; mark?: GuessMark; puzzle: CityPuzzle }) {
+export function GuessRow({ n, mark, puzzle }: { n: number; mark?: GuessMark; puzzle: Pick<CityPuzzle, "currency" | "rate"> }) {
   const s = useExplorerText();
   if (!mark) return <View style={{ minHeight: 44, justifyContent: "center", borderWidth: 1, borderStyle: "dashed", borderColor: C.line, borderRadius: 12, paddingHorizontal: 14 }}>
     <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{s.slot(n)}</Text>

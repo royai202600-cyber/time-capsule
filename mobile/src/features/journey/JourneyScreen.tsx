@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Linking, Platform, Pressable, Text, View } from "react-native";
+import { Linking, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { ArtIcon } from "../../components/ArtIcon";
 import { Avatar } from "../../components/Avatar";
@@ -23,10 +23,14 @@ import { organizer } from "../../services/privateHuntOrganizer";
 import { MAP_PMTILES_URL, PUBLIC_CAPSULE_ENABLED, PUBLIC_CAPSULE_PICKUP_RADIUS_M, PUBLIC_CAPSULE_RECIPIENT, publicCapsule, PublicCapsuleError, type PublicCapsule } from "../../services/publicCapsule";
 import { supabase } from "../../services/supabase";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
-import { CityExplorer } from "../explorer/CityExplorer";
+import { CityExplorer, type HuntDays } from "../explorer/CityExplorer";
+import { TodaysHuntScreen, type HuntMap } from "../todaysHunt/TodaysHuntScreen";
+import { TODAYS_HUNT, todaysHunt } from "../../services/todaysHunt";
 import { PriceGuessScreen } from "../explorer/PriceGuessScreen";
 import { useExplorerText } from "../explorer/strings";
 import { SpinScreen } from "../game/SpinScreen";
+import { RACK_FILTERS, RACK_SAMPLE, RACKS, RackError, rackStepTarget, racks, type RackFilter, type RackItem, type RackPage } from "../../services/racks";
+import { useRackText } from "../racks/strings";
 import { errorKey, useGameText } from "../game/strings";
 import { ThrowScreen } from "../game/ThrowScreen";
 import { KeeperCard, QuestSheet, RunChip } from "../hunt/HuntViews";
@@ -48,9 +52,14 @@ import { MapFilterSheet } from "./MapFilterSheet";
 import { Passport } from "./Passport";
 import { SelectedCard } from "./SelectedCard";
 import { useCapsuleItems } from './useCapsuleItems';
-import { useCityHuntPins } from './useCityHuntPins';
+import { openCityHunt, useCityHuntPins } from './useCityHuntPins';
 import { useGamePins } from "./useGamePins";
 import { usePrivateQuestPins } from "./usePrivateQuestPins";
+import { usePinQuests, type PinQuest } from "./usePinQuests";
+import { QuestPlay } from "../quests/QuestPlay";
+import { routes } from "../../services/routes";
+import { cityHuntQuests, HUNT_QUESTS } from "../../services/cityHuntQuests";
+import type { QuestAnswer } from "../../services/quests";
 
 const FALLBACK = { lat: 22.19358, lng: 113.53917 };
 export default function JourneyScreen() {
@@ -97,7 +106,8 @@ export default function JourneyScreen() {
   const [questError, setQuestError] = useState<string | null>(null);
   const [questResult, setQuestResult] = useState<{ points: number; finished: boolean } | null>(null);
   const [board, setBoard] = useState<{ hunt: PrivateHunt; rows: LeaderRow[] | null } | null>(null);
-  const { huntCode: huntCodeParam } = useLocalSearchParams<{ huntCode?: string }>();
+  const { huntCode: huntCodeParam, route: routeParam } = useLocalSearchParams<{ huntCode?: string; route?: string }>();
+  const [pinQuest, setPinQuest] = useState<PinQuest | null>(null);
   const [linkCode, setLinkCode] = useState<string | null>(null);
   const [keeperOpen, setKeeperOpen] = useState(false);
   // The private hunt whose guide card is open, by id.
@@ -112,16 +122,27 @@ export default function JourneyScreen() {
   const [cityIndex, setCityIndex] = useState(0);
   const [puzzleDay, setPuzzleDay] = useState<PuzzleDay | null>(null);
   const [playing, setPlaying] = useState<string | null>(null);
+  // Today's Hunt (docs/design/hunt-loop.md, section 1) replaces the daily price card when it is on.
+  const [huntDays, setHuntDays] = useState<HuntDays | null>(null);
+  const [huntCity, setHuntCity] = useState<string | null>(null);
+  const [huntMap, setHuntMap] = useState<HuntMap | null>(null);
+  const loadHuntDays = () => {
+    if (!TODAYS_HUNT) return;
+    void Promise.all(CITIES.filter((c) => c.playable).map((c) => todaysHunt.today(c.id).then((d) => [c.id, { score: d.score, finished: d.finished, streak: d.streak }] as const).catch(() => null)))
+      .then((rows) => setHuntDays(Object.fromEntries(rows.filter((r) => r !== null))));
+  };
   const here = cityAt(fix ? { lat: fix.lat, lng: fix.lng } : null);
   // After the render, so it also works when opening the Explorer is what puts the map on screen.
   useEffect(() => { if (exploring) map.current?.city(CITIES[cityIndex].lat, CITIES[cityIndex].lng); }, [exploring, cityIndex]);
   const openExplorer = () => {
-    setSelectedId(null); setGameCard(null); setKeeperOpen(false); setGuideOpen(null); setFilterOpen(false); setWalkTo(null);
+    setSelectedId(null); setGameCard(null); setKeeperOpen(false); setGuideOpen(null); setFilterOpen(false); setWalkTo(null); setRackIndex(null);
     setExploring(true);
     if (here) setCityIndex(CITIES.indexOf(here));
     void cityPuzzle.today().then(setPuzzleDay).catch(() => {});
+    loadHuntDays();
   };
-  const closeExplorer = () => { setExploring(false); setPlaying(null); map.current?.recenter(); };
+  const closeExplorer = () => { setExploring(false); setPlaying(null); setHuntCity(null); map.current?.recenter(); };
+  const closeHunt = () => { setHuntCity(null); setHuntMap(null); loadHuntDays(); map.current?.city(CITIES[cityIndex].lat, CITIES[cityIndex].lng); };
   const onGuess = (r: GuessResult) => {
     setPuzzleDay((day) => day && { streak: r.streak, puzzles: day.puzzles.map((p) => p.city === r.puzzle.city ? r.puzzle : p) });
     if (r.state) setGameState(r.state);
@@ -163,6 +184,12 @@ export default function JourneyScreen() {
     return () => clearTimeout(id);
   }, [youLabel, !!fix]);
   const [spinning, setSpinning] = useState<Waypost | null>(null);
+  // With racks, a common Waypost's card leads to Spin and its capsule rack; the rack is browsed with the public capsule card.
+  const r = useRackText();
+  const [rackPage, setRackPage] = useState<{ waypost: Waypost; filter: RackFilter; page: RackPage } | null>(null);
+  // Only the newest rack request may land, so a slow page can't overwrite a newer filter.
+  const rackRequest = useRef(0);
+  const [rackIndex, setRackIndex] = useState<number | null>(null);
   const [gameCard, setGameCard] = useState<{ waypost: Waypost; meters: number } | null>(null);
   const last = useRef<{ lat: number; lng: number } | null>(null);
   // Heading from movement: the cone points the way you walked.
@@ -178,7 +205,8 @@ export default function JourneyScreen() {
   }, [you?.lat, you?.lng]);
   const cell = you ? `${you.lat.toFixed(3)},${you.lng.toFixed(3)}` : "";
   const loadPublicCapsules = useCallback(async () => {
-    if (!PUBLIC_CAPSULE_ENABLED || !you) return;
+    // With racks, public capsules hang on Waypost racks instead of floating on the map.
+    if (!PUBLIC_CAPSULE_ENABLED || RACKS || !you) return;
     const test = __DEV__ && !userId && GAME_ENABLED ? game.devPublicCapsules(you) : [];
     setPublicCapsules(test);
     try {
@@ -230,9 +258,20 @@ export default function JourneyScreen() {
   const selected = items.find((i) => i.id === selectedId) ?? null;
 
   const metersTo = (lat: number, lng: number) => you ? distanceMeters(you.lat, you.lng, lat, lng) : Infinity;
-  const { activeHunt, keeperMeters, questDot, huntPins } = useCityHuntPins(huntList, you);
+  const activeHunt = openCityHunt(huntList);
   const { questPins, guidePins, guides } = usePrivateQuestPins(privateList, you, h);
   const gamePins = useGamePins(nearby, throwing, you);
+  const { pinQuestPins, findPinQuest, nextStop, refresh: refreshPinQuests, routeQuests, cityQuests } = usePinQuests(capsules, activeHunt, you);
+  const { keeperMeters, questDot, huntPins } = useCityHuntPins(activeHunt, cityQuests, you);
+  // From a capsule's pages ("Walk the route"): the map goes to the route's next stop once it has loaded.
+  const routeShown = useRef<string | null>(null);
+  useEffect(() => {
+    if (!routeParam || routeShown.current === routeParam) return;
+    const stop = nextStop(String(routeParam));
+    if (!stop) return;
+    routeShown.current = String(routeParam);
+    map.current?.focus(stop.location_lat, stop.location_lng);
+  }, [routeParam, routeQuests]);
 
   // The Explorer can open the map before a position is known; the page is then kept when one arrives.
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: you ?? FALLBACK }), [!!you || exploring]);
@@ -247,15 +286,18 @@ export default function JourneyScreen() {
   };
   const allPins = useMemo<LivePin[]>(() => [...items.map<LivePin>((i) => i.kind === "publicCapsule"
     ? { id: i.id, lat: i.lat, lng: i.lng, kind: "publicCapsule", vessel: vesselUri("bottle"), portrait: portraitUri(i.publicCapsule.sender.avatar), near: i.meters <= PUBLIC_CAPSULE_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= PUBLIC_CAPSULE_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
-    : placePin(i)), ...gamePins, ...huntPins, ...questPins, ...guidePins], [items, selectedId, language, gamePins, huntPins, questPins, guidePins, senders, now]);
-  const mapState = useMemo(() => ({
+    : placePin(i)), ...gamePins, ...huntPins, ...questPins, ...guidePins, ...pinQuestPins], [items, selectedId, language, gamePins, huntPins, questPins, guidePins, pinQuestPins, senders, now]);
+  const mapState = useMemo(() => huntMap ? {
+    // Today's Hunt: only its three pins, and your figure at the hunt instead of where you are; no pickup circle.
+    you: huntMap.you, heading: null, reach: 0, portrait: portraitUri(profile?.avatar), figure: assetUri(figureFor(profile?.avatar)), youLabel: null, pins: huntMap.pins,
+  } : {
     you, heading, reach: PUBLIC_CAPSULE_PICKUP_RADIUS_M,
     portrait: portraitUri(profile?.avatar),
     figure: assetUri(figureFor(profile?.avatar)),
     youLabel: youLabel && !throwing ? h.thisIsYou : null,
     // While throwing, the capsule is alone on the plain map.
     pins: throwing ? [] : allPins.filter((p) => showsPin(filter, p)),
-  }), [you?.lat, you?.lng, heading, profile?.avatar, allPins, filter, !!throwing, youLabel, h]);
+  }, [you?.lat, you?.lng, heading, profile?.avatar, allPins, filter, !!throwing, youLabel, h, huntMap]);
   const counts = useMemo(() => filterCounts(allPins), [allPins]);
   const pickFilter = (f: MapFilter) => {
     setFilter(f); setFilterOpen(false);
@@ -315,6 +357,14 @@ export default function JourneyScreen() {
       map.current?.focus(g.spot.lat, g.spot.lng); setGuideOpen(g.hunt.id);
       return;
     }
+    if (id.startsWith("route-") || id.startsWith("cityq-")) {
+      const found = findPinQuest(id);
+      if (!found) return;
+      setSelectedId(null); setGameCard(null); void haptics.tick();
+      map.current?.focus(found.quest.location_lat, found.quest.location_lng);
+      setPinQuest(found);
+      return;
+    }
     if (id.startsWith("quest-")) {
       const pin = questPins.find((p) => p.id === id);
       const found = findQuest(id);
@@ -338,12 +388,64 @@ export default function JourneyScreen() {
       if (!waypost) return;
       setSelectedId(null); void haptics.tick();
       const meters = metersTo(waypost.lat, waypost.lng);
-      if (waypost.kind === "common" && meters <= GAME_ACTION_RADIUS_M) { setGameCard(null); setSpinning(waypost); }
+      if (waypost.kind === "common" && RACKS) { setRackIndex(null); setGameCard({ waypost, meters }); void loadRack(waypost); }
+      else if (waypost.kind === "common" && meters <= GAME_ACTION_RADIUS_M) { setGameCard(null); setSpinning(waypost); }
       else setGameCard({ waypost, meters });
       return;
     }
     setGameCard(null);
     select(id);
+  };
+  // Resolves true once a further page has landed for the rack still on screen.
+  const loadRack = async (waypost: Waypost, more = false, filter: RackFilter = more ? rackPage?.filter ?? "all" : "all"): Promise<boolean> => {
+    const req = ++rackRequest.current;
+    try {
+      const page = await racks.list(waypost.id, filter, more ? rackPage?.page.next_cursor ?? null : null);
+      if (req !== rackRequest.current) return false;
+      setRackPage((prev) => more && prev?.waypost.id === waypost.id && prev.filter === filter ? { waypost, filter, page: { ...page, items: [...prev.page.items, ...page.items] } } : { waypost, filter, page });
+      return more && page.items.length > 0;
+    } catch { if (!more && req === rackRequest.current) setRackPage({ waypost, filter, page: { count: 0, items: [], next_cursor: null } }); return false; }
+  };
+  const pickRackFilter = (filter: RackFilter) => {
+    if (!rackPage || filter === rackPage.filter) return;
+    void haptics.tick(); setRackIndex(0);
+    setRackPage({ ...rackPage, filter, page: { count: 0, items: [], next_cursor: null } });
+    void loadRack(rackPage.waypost, false, filter);
+  };
+  // A rack capsule shown on the public capsule card, at its Waypost.
+  const rackItem = (e: RackItem, w: Waypost): Extract<Item, { kind: "publicCapsule" }> => ({
+    kind: "publicCapsule", id: e.capsule_id, lat: w.lat, lng: w.lng, meters: metersTo(w.lat, w.lng),
+    publicCapsule: { id: e.capsule_id, hint: e.hint ?? "", vessel: "bottle", lat: w.lat, lng: w.lng, spot_zh: w.name_zh, spot_en: w.name_en,
+      sealed_at: e.opens_at, available_at: e.opens_at, returns: 0, sender: { ...e.sender, city: null } },
+  });
+  const rackPaging = useRef(false);
+  const rackStep = async (dir: 1 | -1) => {
+    if (!rackPage || rackIndex === null || rackPaging.current) return;
+    const loaded = rackPage.page.items.length, target = rackStepTarget(rackIndex, loaded, !!rackPage.page.next_cursor, dir);
+    if (target === null) return;
+    if (target !== "load") { void haptics.tick(); setRackIndex(target); return; }
+    rackPaging.current = true;
+    // Only move once the next page has landed for this rack and filter; loadRack drops a superseded request.
+    try { if (await loadRack(rackPage.waypost, true)) { void haptics.tick(); setRackIndex(loaded); } }
+    finally { rackPaging.current = false; }
+  };
+  const rackPickUp = async (item: Extract<Item, { kind: "publicCapsule" }>, answer?: string) => {
+    if (busy || !rackPage) return;
+    setBusy(true);
+    try {
+      const out = await racks.open(item.id, at(), answer);
+      void haptics.success();
+      setRackIndex(null);
+      setRackPage((prev) => prev && { ...prev, page: { ...prev.page, count: prev.page.count - 1, items: prev.page.items.filter((x) => x.capsule_id !== item.id) } });
+      // The sample has no real capsule to show on the capsule pages, so it uses the development letter card.
+      if (RACK_SAMPLE) setDevLetter({ publicCapsule: item.publicCapsule, message: out.message ?? "" });
+      else router.push({ pathname: "/capsule/[id]", params: { id: item.id } });
+    } catch (e) {
+      void haptics.warn();
+      const code = e instanceof RackError ? e.code : "unknown";
+      setToast(r.err[code]);
+      if (code === "taken") { setRackIndex(null); void loadRack(rackPage.waypost, false, rackPage.filter); }
+    } finally { setBusy(false); }
   };
   const startLandmark = async (waypost: Waypost) => {
     if (busy) return;
@@ -381,7 +483,7 @@ export default function JourneyScreen() {
   });
   const showHunt = (x: Hunt) => {
     setQuestOpen(false); setSelectedId(null); setGameCard(null);
-    if (x.checked_in_at && !x.finished_at && keeperMark(x) !== "✓") map.current?.recenter();
+    if (x.checked_in_at && !x.finished_at && keeperMark(x, HUNT_QUESTS ? (x.id === activeHunt?.id ? cityQuests : []) : null) !== "✓") map.current?.recenter();
     else { map.current?.focus(x.keeper.lat, x.keeper.lng); setKeeperOpen(true); }
   };
 
@@ -490,7 +592,7 @@ export default function JourneyScreen() {
     {you || exploring
       ? <LiveMap ref={map} html={html} state={mapState} onSelect={(id) => { if (!exploring) onPin(id); }}
         // Another city is for looking only: nothing on the map answers a tap while exploring.
-        onTap={(lat, lng) => { if (exploring) return; if (filterOpen) setFilterOpen(false); else if (keeperOpen) setKeeperOpen(false); else if (guideOpen) setGuideOpen(null); else if (gameCard) setGameCard(null); else if (selectedId) setSelectedId(null);
+        onTap={(lat, lng) => { if (exploring) return; if (filterOpen) setFilterOpen(false); else if (keeperOpen) setKeeperOpen(false); else if (guideOpen) setGuideOpen(null); else if (gameCard) setGameCard(null); else if (rackIndex !== null) setRackIndex(null); else if (selectedId) setSelectedId(null);
           // Inside the pickup circle your figure walks there (only the picture moves); outside, only the test account can jump.
           else if (you && distanceMeters(you.lat, you.lng, lat, lng) <= PUBLIC_CAPSULE_PICKUP_RADIUS_M) { setWalkTo(null); map.current?.walk(lat, lng); }
           else if (__DEV__ || isTestLocationUser(userId)) setWalkTo({ lat, lng }); }} />
@@ -529,13 +631,31 @@ export default function JourneyScreen() {
         </View>
         {you && filterOpen && <MapFilterSheet value={filter} counts={counts} onChange={pickFilter} onClose={() => setFilterOpen(false)} />}
         {!!toast && <Text accessibilityRole="alert" style={{ alignSelf: "center", backgroundColor: C.ink, color: C.white, fontFamily: sans, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, overflow: "hidden" }}>{toast}</Text>}
-        {you && keeperOpen && activeHunt && <KeeperCard hunt={activeHunt} meters={keeperMeters} busy={busy}
+        {you && keeperOpen && activeHunt && <KeeperCard hunt={activeHunt} quests={cityQuests} meters={keeperMeters} busy={busy}
           onJoin={() => void joinHunt(activeHunt)} onCheckIn={() => void huntAction(() => hunts.checkIn(activeHunt, at()), () => map.current?.recenter())}
           onFinish={() => void finishHunt(activeHunt)} onClose={() => setKeeperOpen(false)} />}
         {you && openGuide && <GuideCard hunt={openGuide.hunt} near={atGuide(openGuide.hunt, at())} busy={busy}
           onStart={() => startPrivate(openGuide.hunt)} onCollect={() => collectPrivate(openGuide.hunt)} onClose={() => setGuideOpen(null)} />}
-        {you && !selected && !keeperOpen && !openGuide && gameCard && <GameCard card={gameCard} busy={busy} g={g} language={language} onChallenge={startLandmark} />}
-        {you && !gameCard && !keeperOpen && !openGuide && (selected
+        {you && !selected && !keeperOpen && !openGuide && gameCard && <GameCard card={gameCard} busy={busy} g={g} language={language} onChallenge={startLandmark}
+          rack={RACKS && gameCard.waypost.kind === "common" ? {
+            count: rackPage?.waypost.id === gameCard.waypost.id ? rackPage.page.count : null,
+            onSpin: () => setSpinning(gameCard.waypost),
+            onRack: () => { if (!rackPage?.page.items.length) { setToast(r.empty); return; } void haptics.tap(); setGameCard(null); setRackIndex(0); },
+            onLeave: () => { void haptics.tap(); router.push({ pathname: "/create", params: { to: PUBLIC_CAPSULE_RECIPIENT, waypost: gameCard.waypost.id, waypostZh: gameCard.waypost.name_zh, waypostEn: gameCard.waypost.name_en } }); },
+          } : undefined} />}
+        {you && !gameCard && !keeperOpen && !openGuide && rackIndex !== null && rackPage && <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, gap: spacing.sm, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6 }} style={{ flexGrow: 0 }}>
+            {RACK_FILTERS.map((f) => { const on = rackPage.filter === f; return <Pressable key={f} accessibilityRole="button" accessibilityState={{ selected: on }} onPress={() => pickRackFilter(f)}
+              style={{ borderWidth: 1.5, borderColor: on ? C.blue : C.line, backgroundColor: on ? C.glass : C.white, borderRadius: radii.pill, paddingHorizontal: 11, paddingVertical: 5 }}>
+              <Text style={{ fontFamily: sans, fontSize: 12.5, color: on ? C.blue : C.ink, fontWeight: on ? "500" : "400" }}>{r.filters[f]}</Text>
+            </Pressable>; })}
+          </ScrollView>
+          {rackPage.page.items[rackIndex]
+            ? <SelectedCard key={rackPage.page.items[rackIndex].capsule_id} item={rackItem(rackPage.page.items[rackIndex], rackPage.waypost)} rack={rackPage.page.items[rackIndex]} busy={busy}
+              onPickUp={rackPickUp} onDirections={directions} onView={() => {}} onMap={() => {}} onStep={(d) => void rackStep(d)} count={rackPage.page.count} index={rackIndex} />
+            : <Text style={{ fontFamily: sans, fontSize: 14, color: C.muted, textAlign: "center", paddingVertical: spacing.lg }}>{r.filterEmpty}</Text>}
+        </View>}
+        {you && !gameCard && rackIndex === null && !keeperOpen && !openGuide && (selected
           ? <View style={{ width: "100%", maxWidth: 560, alignSelf: "center", backgroundColor: "rgba(255,255,255,.96)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
             <SelectedCard item={selected} busy={busy} onPickUp={pickUp} onDirections={directions}
               onView={(item) => router.push({ pathname: "/capsule/[id]", params: { id: item.capsuleId } })}
@@ -546,12 +666,12 @@ export default function JourneyScreen() {
               style={{ alignSelf: "flex-end", marginRight: -spacing.md - insets.right, backgroundColor: "rgba(255,255,255,.9)", borderTopLeftRadius: 12, borderBottomLeftRadius: 12, padding: 12, paddingRight: 12 + insets.right, borderWidth: 1, borderRightWidth: 0, borderColor: C.line, ...shadows.card }}>
             <Text style={{ fontFamily: sans, fontSize: 11, fontWeight: "700", letterSpacing: 1.2, color: C.blue }}>{s("kicker")}</Text>
           </Pressable>)}
-        {!selected && !gameCard && !keeperOpen && !openGuide && <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        {!selected && !gameCard && rackIndex === null && !keeperOpen && !openGuide && <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <View pointerEvents="box-none" style={{ flexDirection: "row", gap: spacing.sm }}>
           <RoundButton label={s("passport")} onPress={() => setPassport(true)}><ArtIcon name="passport" size={27} color={C.blue} /></RoundButton>
           {GAME_ENABLED && <RoundButton label={h.quest} dot={questDot} onPress={() => setQuestOpen(true)}><ArtIcon name="quest" size={26} color={C.blue} /></RoundButton>}
         </View>
-        {PUBLIC_CAPSULE_ENABLED ? <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
+        {PUBLIC_CAPSULE_ENABLED && !RACKS ? <Pressable accessibilityRole="button" accessibilityLabel={s("throwCta")}
           onPress={() => { void haptics.tap(); router.push({ pathname: "/create", params: { to: PUBLIC_CAPSULE_RECIPIENT } }); }}
           style={({ pressed }) => ({ alignSelf: "center", flexShrink: 0, flexDirection: "row", alignItems: "center", gap: 10, backgroundColor: C.wax, borderRadius: radii.pill, paddingLeft: 8, paddingRight: 20, paddingVertical: 7, opacity: pressed ? .9 : 1, ...shadows.card })}>
           <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.white, alignItems: "center", justifyContent: "center" }}><Vessel kind="hourglass" size={26} /></View>
@@ -572,17 +692,22 @@ export default function JourneyScreen() {
         <Text style={{ fontFamily: serif, fontSize: 15, color: C.white }}>{g("close")}</Text>
       </Pressable>
     </View>}
-    {exploring && <CityExplorer day={puzzleDay} index={cityIndex} onIndex={setCityIndex} balls={gameState?.wax_balls ?? null} language={language}
-      onClose={closeExplorer} onPlay={(c) => setPlaying(c.id)} />}
+    {exploring && !huntCity && <CityExplorer day={puzzleDay} hunt={TODAYS_HUNT ? huntDays : undefined} index={cityIndex} onIndex={setCityIndex} balls={gameState?.wax_balls ?? null} language={language}
+      onClose={closeExplorer} onPlay={(c) => TODAYS_HUNT ? setHuntCity(c.id) : setPlaying(c.id)} />}
+    {exploring && huntCity && <TodaysHuntScreen city={CITIES.find((c) => c.id === huntCity)!} language={language} map={map} gameState={gameState}
+      onState={setGameState} onMap={setHuntMap} onFinish={() => void loadGame()} onClose={closeHunt} />}
     {exploring && playingCity && playingPuzzle && <PriceGuessScreen city={playingCity} puzzle={playingPuzzle} streak={puzzleDay?.streak ?? 0} language={language}
       onResult={onGuess} onClose={() => setPlaying(null)} />}
-    {spinning && <SpinScreen waypost={spinning} language={language} onState={setGameState} onClose={() => { setSpinning(null); void loadGame(); }} />}
+    {spinning && <SpinScreen waypost={spinning} language={language} onState={setGameState} onClose={() => { setSpinning(null); void loadGame().then(() => setGameCard((c) => c && { ...c, waypost: nearbyRef.current.wayposts.find((x) => x.id === c.waypost.id) ?? c.waypost })); }} />}
     {throwing && gameState && <ThrowScreen capsule={throwing} landmark={fight ?? undefined} state={gameState} onState={setGameState}
-      onClose={() => { setThrowing(null); setFight(null); map.current?.recenter(); void loadGame(); }} />}
+      // A catch or Landmark win can finish a quest on the server, so the quest pins and checklist reload too.
+      onClose={() => { setThrowing(null); setFight(null); map.current?.recenter(); void loadGame().finally(() => refreshPinQuests()); }} />}
     <Passport visible={passport} onClose={() => setPassport(false)} userId={userId} stamps={stampRows}
       hunts={[...huntStamps, ...(__DEV__ && !userId ? hunts.previewStamps() : []).filter((p) => !huntStamps.some((x) => x.id === p.id))]}
       privateHunts={[...privateHuntStamps, ...(__DEV__ && !userId ? privateHunts.demoStamps() : [])]} />
     <QuestSheet visible={questOpen} hunts={huntList} busy={busy} onClose={() => setQuestOpen(false)} onJoin={(x) => void joinHunt(x)} onShowOnMap={showHunt}
+      located={activeHunt ? { huntId: activeHunt.id, quests: cityQuests } : undefined}
+      onOpenQuest={(x, quest) => { setQuestOpen(false); setSelectedId(null); setGameCard(null); map.current?.focus(quest.location_lat, quest.location_lng); setPinQuest({ kind: "city", hunt: x, quest }); }}
       privateTab={{
         count: privateList.length,
         onEnterCode: () => { setQuestOpen(false); setLinkCode(null); setJoinFound(null); setJoinError(null); setJoinOpen(true); },
@@ -593,6 +718,16 @@ export default function JourneyScreen() {
       }} />
     <JoinPrivateSheet visible={joinOpen} initialCode={linkCode} found={joinFound} busy={busy} error={joinError}
       onClose={() => setJoinOpen(false)} onFind={findCode} onJoin={joinPrivate} />
+    {pinQuest && <QuestPlay quest={pinQuest.quest} zh={language === "zh"} meters={metersTo(pinQuest.quest.location_lat, pinQuest.quest.location_lng)}
+      onAttempt={(answer?: QuestAnswer) => {
+        if (!fix) return Promise.reject(Object.assign(new Error("too_far"), { code: "too_far" }));
+        const payload = { quest_id: pinQuest.quest.quest_id, lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy ?? null, answer };
+        const run = pinQuest.kind === "route" ? routes.attempt(pinQuest.capsuleId, payload) : cityHuntQuests.attempt(pinQuest.hunt, payload);
+        return run.finally(() => refreshPinQuests());
+      }}
+      // The catch releases or the Landmark fight show up through the usual game refresh.
+      onStarted={() => void loadGame()}
+      onClose={() => { setPinQuest(null); refreshPinQuests(); }} />}
     {openPrivateHunt && openQuest && <QuestScreen hunt={openPrivateHunt} quest={openQuest} result={questResult}
       meters={placed(openQuest) ? metersTo(openQuest.location_lat, openQuest.location_lng) : Infinity} busy={busy} error={questError}
       tries={openQuest.tries ? 3 - (openQuest.tries % 3) : undefined}
