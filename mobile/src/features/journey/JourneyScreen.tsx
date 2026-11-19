@@ -55,6 +55,11 @@ import { useCapsuleItems } from './useCapsuleItems';
 import { useCityHuntPins } from './useCityHuntPins';
 import { useGamePins } from "./useGamePins";
 import { usePrivateQuestPins } from "./usePrivateQuestPins";
+import { usePinQuests, type PinQuest } from "./usePinQuests";
+import { QuestPlay } from "../quests/QuestPlay";
+import { routes } from "../../services/routes";
+import { cityHuntQuests } from "../../services/cityHuntQuests";
+import type { QuestAnswer } from "../../services/quests";
 
 const FALLBACK = { lat: 22.19358, lng: 113.53917 };
 export default function JourneyScreen() {
@@ -101,7 +106,8 @@ export default function JourneyScreen() {
   const [questError, setQuestError] = useState<string | null>(null);
   const [questResult, setQuestResult] = useState<{ points: number; finished: boolean } | null>(null);
   const [board, setBoard] = useState<{ hunt: PrivateHunt; rows: LeaderRow[] | null } | null>(null);
-  const { huntCode: huntCodeParam } = useLocalSearchParams<{ huntCode?: string }>();
+  const { huntCode: huntCodeParam, route: routeParam } = useLocalSearchParams<{ huntCode?: string; route?: string }>();
+  const [pinQuest, setPinQuest] = useState<PinQuest | null>(null);
   const [linkCode, setLinkCode] = useState<string | null>(null);
   const [keeperOpen, setKeeperOpen] = useState(false);
   // The private hunt whose guide card is open, by id.
@@ -253,6 +259,16 @@ export default function JourneyScreen() {
   const { activeHunt, keeperMeters, questDot, huntPins } = useCityHuntPins(huntList, you);
   const { questPins, guidePins, guides } = usePrivateQuestPins(privateList, you, h);
   const gamePins = useGamePins(nearby, throwing, you);
+  const { pinQuestPins, findPinQuest, nextStop, refresh: refreshPinQuests, routeQuests, cityQuests } = usePinQuests(capsules, activeHunt, you);
+  // From a capsule's pages ("Walk the route"): the map goes to the route's next stop once it has loaded.
+  const routeShown = useRef<string | null>(null);
+  useEffect(() => {
+    if (!routeParam || routeShown.current === routeParam) return;
+    const stop = nextStop(String(routeParam));
+    if (!stop) return;
+    routeShown.current = String(routeParam);
+    map.current?.focus(stop.location_lat, stop.location_lng);
+  }, [routeParam, routeQuests]);
 
   // The Explorer can open the map before a position is known; the page is then kept when one arrives.
   const html = useMemo(() => mapHtml({ pmtiles: MAP_PMTILES_URL, center: you ?? FALLBACK }), [!!you || exploring]);
@@ -267,7 +283,7 @@ export default function JourneyScreen() {
   };
   const allPins = useMemo<LivePin[]>(() => [...items.map<LivePin>((i) => i.kind === "publicCapsule"
     ? { id: i.id, lat: i.lat, lng: i.lng, kind: "publicCapsule", vessel: vesselUri("bottle"), portrait: portraitUri(i.publicCapsule.sender.avatar), near: i.meters <= PUBLIC_CAPSULE_PICKUP_RADIUS_M, far: i.meters > 600, selected: i.id === selectedId, tag: i.meters <= PUBLIC_CAPSULE_PICKUP_RADIUS_M ? undefined : distanceText(i.meters) }
-    : placePin(i)), ...gamePins, ...huntPins, ...questPins, ...guidePins], [items, selectedId, language, gamePins, huntPins, questPins, guidePins, senders, now]);
+    : placePin(i)), ...gamePins, ...huntPins, ...questPins, ...guidePins, ...pinQuestPins], [items, selectedId, language, gamePins, huntPins, questPins, guidePins, pinQuestPins, senders, now]);
   const mapState = useMemo(() => huntMap ? {
     // Today's Hunt: only its three pins, and your figure at the hunt instead of where you are; no pickup circle.
     you: huntMap.you, heading: null, reach: 0, portrait: portraitUri(profile?.avatar), figure: assetUri(figureFor(profile?.avatar)), youLabel: null, pins: huntMap.pins,
@@ -336,6 +352,14 @@ export default function JourneyScreen() {
       if (!g) return;
       setSelectedId(null); setGameCard(null); void haptics.tick();
       map.current?.focus(g.spot.lat, g.spot.lng); setGuideOpen(g.hunt.id);
+      return;
+    }
+    if (id.startsWith("route-") || id.startsWith("cityq-")) {
+      const found = findPinQuest(id);
+      if (!found) return;
+      setSelectedId(null); setGameCard(null); void haptics.tick();
+      map.current?.focus(found.quest.location_lat, found.quest.location_lng);
+      setPinQuest(found);
       return;
     }
     if (id.startsWith("quest-")) {
@@ -590,7 +614,7 @@ export default function JourneyScreen() {
         </View>
         {you && filterOpen && <MapFilterSheet value={filter} counts={counts} onChange={pickFilter} onClose={() => setFilterOpen(false)} />}
         {!!toast && <Text accessibilityRole="alert" style={{ alignSelf: "center", backgroundColor: C.ink, color: C.white, fontFamily: sans, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, overflow: "hidden" }}>{toast}</Text>}
-        {you && keeperOpen && activeHunt && <KeeperCard hunt={activeHunt} meters={keeperMeters} busy={busy}
+        {you && keeperOpen && activeHunt && <KeeperCard hunt={activeHunt} quests={cityQuests} meters={keeperMeters} busy={busy}
           onJoin={() => void joinHunt(activeHunt)} onCheckIn={() => void huntAction(() => hunts.checkIn(activeHunt, at()), () => map.current?.recenter())}
           onFinish={() => void finishHunt(activeHunt)} onClose={() => setKeeperOpen(false)} />}
         {you && openGuide && <GuideCard hunt={openGuide.hunt} near={atGuide(openGuide.hunt, at())} busy={busy}
@@ -666,6 +690,16 @@ export default function JourneyScreen() {
       }} />
     <JoinPrivateSheet visible={joinOpen} initialCode={linkCode} found={joinFound} busy={busy} error={joinError}
       onClose={() => setJoinOpen(false)} onFind={findCode} onJoin={joinPrivate} />
+    {pinQuest && <QuestPlay quest={pinQuest.quest} zh={language === "zh"} meters={metersTo(pinQuest.quest.location_lat, pinQuest.quest.location_lng)}
+      onAttempt={(answer?: QuestAnswer) => {
+        if (!fix) return Promise.reject(Object.assign(new Error("too_far"), { code: "too_far" }));
+        const payload = { quest_id: pinQuest.quest.quest_id, lat: fix.lat, lng: fix.lng, accuracy: fix.accuracy ?? null, answer };
+        const run = pinQuest.kind === "route" ? routes.attempt(pinQuest.capsuleId, payload) : cityHuntQuests.attempt(pinQuest.hunt, payload);
+        return run.finally(() => refreshPinQuests());
+      }}
+      // The catch releases or the Landmark fight show up through the usual game refresh.
+      onStarted={() => void loadGame()}
+      onClose={() => { setPinQuest(null); refreshPinQuests(); }} />}
     {openPrivateHunt && openQuest && <QuestScreen hunt={openPrivateHunt} quest={openQuest} result={questResult}
       meters={placed(openQuest) ? metersTo(openQuest.location_lat, openQuest.location_lng) : Infinity} busy={busy} error={questError}
       tries={openQuest.tries ? 3 - (openQuest.tries % 3) : undefined}

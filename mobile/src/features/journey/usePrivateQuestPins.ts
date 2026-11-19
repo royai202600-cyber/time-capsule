@@ -7,6 +7,7 @@ import { keeperPortrait } from "../hunt/HuntViews";
 import { questImageUri, useQuestImages } from "../hunt/questImage";
 import { useHuntText } from "../hunt/strings";
 import { assetUri, type LivePin } from "./live/types";
+import { questPinFace } from "../quests/questArt";
 
 type Spot = { lat: number; lng: number };
 /** A guide who appears near you stays put until you wander this far from him, so he doesn't trail you. */
@@ -20,7 +21,7 @@ export function usePrivateQuestPins(privateList: PrivateHunt[], you: Spot | null
   // you finish, or your time runs out. Catch quests have no spot, so no pin.
   const questPins = useMemo<LivePin[]>(() => privateList.filter((ph) => guideStage(ph) === "playing").flatMap((ph) => inOrder(ph).filter(placed).map<LivePin>((w) => ({
     id: `quest-${ph.id}-${w.id}`, lat: w.location_lat, lng: w.location_lng, kind: "quest", vessel: "",
-    quest: w.quest_type, done: !!w.done_at, locked: questLocked(ph, w), photo: questImageUri(w.image),
+    quest: w.quest_type, done: !!w.done_at, locked: questLocked(ph, w), ...questPinFace(w.quest_type, "brass", !!w.done_at, questImageUri(w.image)),
     near: metersTo(w.location_lat, w.location_lng) <= GAME_ACTION_RADIUS_M,
     tag: w.done_at ? undefined : h.pointsShort(w.points),
   }))), [privateList, you?.lat, you?.lng, h, questPhotos]);

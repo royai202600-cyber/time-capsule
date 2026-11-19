@@ -37,6 +37,9 @@ import { canSend, copiesOf, COPIES, COPIES_SAMPLE, sampleUseCopy } from '../../s
 import { useCopiesText } from '../copies/strings';
 import { openingCoordinates, useForegroundLocation } from '../journey/location';
 import { placeLabel, pointPlaceArgs, reversePlace, searchPlaces, type PointPlace } from '../../services/places';
+import { RouteError, routes, ROUTES, ROUTES_BACKEND, stopForSend, stopProblems, type RouteStop } from '../../services/routes';
+import { useQuestText } from '../quests/strings';
+import { RouteBuilder } from './RouteBuilder';
 
 type Quick = 'd1' | 'w1' | 'm1' | 'm6' | 'y1' | 'y5' | 'custom' | 'dev';
 // The blocks a capsule can hold. Today's backend keeps one of each, and text or handwriting (docs/design/create-v2.md).
@@ -85,9 +88,9 @@ export default function CreateScreen() {
   const rackName = (language === 'zh' ? params.waypostZh : params.waypostEn) ?? '';
   const [lockMode, setLockMode] = useState<'none' | 'own'>('none'), [lockQuestion, setLockQuestion] = useState(''), [lockAnswer, setLockAnswer] = useState('');
   // Where: anywhere, the sender's current spot, or a specific place (one of our landmarks or a searched address).
-  const [placeMode, setPlaceMode] = useState<'anywhere' | 'current' | 'specific'>('anywhere'), [point, setPoint] = useState<PointPlace | null>(null);
+  const [placeMode, setPlaceMode] = useState<'anywhere' | 'current' | 'specific' | 'route'>('anywhere'), [stops, setStops] = useState<RouteStop[]>([]), q = useQuestText(), [point, setPoint] = useState<PointPlace | null>(null);
   const [placeQuery, setPlaceQuery] = useState(''), [placeResults, setPlaceResults] = useState<PointPlace[]>([]), [searching, setSearching] = useState(false);
-  const location = useForegroundLocation(placeMode === 'current');
+  const location = useForegroundLocation(placeMode === 'current' || placeMode === 'route');
   useEffect(() => {
     if (placeMode !== 'current' || !location.fix || point) return;
     const here = { lat: location.fix.lat, lng: location.fix.lng };
@@ -203,6 +206,8 @@ export default function CreateScreen() {
     if (step >= 4 && !openAt) return t('create.badDate');
     if (step >= 4 && !toPublicCapsule && placeMode === 'current' && !point) return t('create2.needHere');
     if (step >= 4 && !toPublicCapsule && placeMode === 'specific' && !place && !point) return t('create2.needPlace');
+    if (step >= 4 && !toPublicCapsule && placeMode === 'route' && !stops.length) return q.needRoute;
+    if (step >= 4 && !toPublicCapsule && placeMode === 'route') { const bad = stops.flatMap(stopProblems)[0]; if (bad) return q.stopProblem[bad]; }
     return '';
   };
   const saveDrawingDraft = () => {
@@ -294,8 +299,10 @@ export default function CreateScreen() {
       if (placeMode === 'current' && point && point.name === t('create2.findingName')) {
         sendPoint = await reversePlace(point, language).catch(() => null) ?? { ...point, name: `${point.lat.toFixed(4)}, ${point.lng.toFixed(4)}` };
       }
-      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: hasText ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), ...(placeMode !== 'anywhere' && sendPoint ? pointPlaceArgs(sendPoint) : { p_place: place ?? undefined }), ...voiceArgs, ...predictionSendArgs(kind, prediction) });
+      const { data: capsuleId, error: rpcError } = await capsules.send({ p_recipient: recipient, p_vessel: vessel, p_message: hasText ? message.trim() : '', p_drawing: ink ?? undefined, p_photo: photo ?? undefined, p_hint: hint.trim() || t('create.hintDefault'), p_open_at: openAt.toISOString(), ...(placeMode === 'route' ? {} : placeMode !== 'anywhere' && sendPoint ? pointPlaceArgs(sendPoint) : { p_place: place ?? undefined }), ...(placeMode === 'route' && ROUTES_BACKEND ? { p_route: stops.map(s => stopForSend(s, language === 'zh')) } : {}), ...voiceArgs, ...predictionSendArgs(kind, prediction) } as Parameters<typeof capsules.send>[0]);
       if (rpcError) throw rpcError;
+      // Until HL-C5 is live, the development sample keeps the route on this device.
+      if (placeMode === 'route' && !ROUTES_BACKEND && capsuleId) await routes.keepSample(String(capsuleId), stops, language === 'zh');
       sentOnce.current = true;
       if (COPIES_SAMPLE && chosenVessel && copiesFor(chosenVessel) !== null) sampleUseCopy(vessel);
       setSealedAt(openAt);
@@ -306,7 +313,9 @@ export default function CreateScreen() {
       contactMotion?.stop();
       wax.stopAnimation(); waxScale.stopAnimation();
       const msg = String((e as any)?.message ?? e).toLowerCase(), code = String((e as any)?.hint ?? '');
+      const routeCode = placeMode === 'route' ? ['bad_rule', 'rejected', 'no_answer', 'blocked_words'].find(c => msg.includes(c) || code === c) : undefined;
       if (e instanceof RackError) setError(rk.err[e.code]);
+      else if (routeCode) setError(q.sendErrors[routeCode]);
       else if (e instanceof PublicCapsuleError) setError(e.code === 'rejected' ? st('errRejected') : e.code === 'no_spot' ? st('errNoSpot') : t('create.sendError'));
       else setError(code === 'no_copies' || msg.includes('no_copies') ? cp.noCopies : code === 'not_owned' || msg.includes('not owned') ? t('create.notOwned') : code === 'brand_place' || msg.includes('brand vessel') ? t('create.brandRefusal') : msg.includes('not a friend') ? t('create.friendRefusal') : msg.includes('open time must be in the future') ? t('create.badDate') : msg.includes('voice') ? t('voice.uploadError') : t('create.sendError'));
       if (reduced) wax.setValue({ x: 0, y: 0 });
@@ -439,7 +448,7 @@ export default function CreateScreen() {
   const sectionLabel = (text: string) => <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12, letterSpacing: .7, marginBottom: -8 }}>{text}</Text>;
 
   const shownLandmarks = (places.data ?? []).filter(pl => { const q = placeQuery.trim().toLowerCase(); return !q || `${pl.name_zh} ${pl.name_en} ${pl.city_zh} ${pl.city_en}`.toLowerCase().includes(q); });
-  const whereLabel = placeMode === 'anywhere' ? '' : selectedPlace ? placeName : point?.name ?? '';
+  const whereLabel = placeMode === 'anywhere' ? '' : placeMode === 'route' ? (stops.length ? q.routeSummary(stops.length) : '') : selectedPlace ? placeName : point?.name ?? '';
   const placeCard = (name: string, detail: string) => <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 12 }}>
     <Glyph><ToolIcon kind="landmark" color={C.wax} /></Glyph>
     <View style={{ flex: 1, gap: 2 }}><Text style={{ fontFamily: serif, color: C.ink, fontSize: 16 }}>{name}</Text>{!!detail && <Text style={muted}>{detail}</Text>}<Text style={{ fontFamily: sans, color: C.plum, fontSize: 12 }}>{t('create2.radius')}</Text></View>
@@ -566,11 +575,12 @@ export default function CreateScreen() {
         </>}
         <Text style={muted}>{st('rules')}</Text>
       </View> : <>
-        <PickerRow label={t('create.where')} icon={<Glyph><ToolIcon kind={placeMode === 'current' ? 'here' : placeMode === 'specific' ? 'landmark' : 'anywhere'} /></Glyph>} title={t(`create2.where.${placeMode}`)} sub={placeMode === 'anywhere' ? t('create2.anywhereSub') : placeMode === 'current' ? (point && point.name !== t('create2.findingName') ? placeLabel(point) : t('create2.where.currentSub')) : whereLabel || t('create2.where.specificSub')} onPress={() => setSheet('where')} />
+        <PickerRow label={t('create.where')} icon={<Glyph><ToolIcon kind={placeMode === 'current' ? 'here' : placeMode === 'specific' || placeMode === 'route' ? 'landmark' : 'anywhere'} /></Glyph>} title={placeMode === 'route' ? q.whereRoute : t(`create2.where.${placeMode}`)} sub={placeMode === 'route' ? whereLabel || q.whereRouteSub : placeMode === 'anywhere' ? t('create2.anywhereSub') : placeMode === 'current' ? (point && point.name !== t('create2.findingName') ? placeLabel(point) : t('create2.where.currentSub')) : whereLabel || t('create2.where.specificSub')} onPress={() => setSheet('where')} />
         {placeMode === 'current' && (point ? placeCard(point.name, point.detail) : <View style={{ gap: 8 }}>
           <Text style={muted}>{location.status === 'denied' ? t('create2.locationDenied') : t('create2.locating')}</Text>
           {location.status === 'denied' && <Button title={t('create2.openSettings')} onPress={() => void location.openSettings()} />}
         </View>)}
+        {placeMode === 'route' && <RouteBuilder stops={stops} onChange={setStops} zh={language === 'zh'} you={location.fix ? { lat: location.fix.lat, lng: location.fix.lng } : null} />}
         {placeMode === 'specific' && <View style={{ gap: 10 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 12, paddingHorizontal: 12 }}>
             <ToolIcon kind="search" color={C.muted} size={18} />
@@ -590,7 +600,7 @@ export default function CreateScreen() {
       <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center', backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 14, padding: 14 }}>
         {vessel ? <Vessel kind={vessel} size={64} /> : null}
         <View style={{ flex: 1, gap: 8 }}>
-          {([['create2.sumTo', toPublicCapsule ? t('create2.anyone') : recipientName], ['create2.sumBody', insideSummary], ['create2.sumVessel', vessel ? t(`shop.vessel.${vessel}`) : '—'], ['create2.sumWhen', openAt ? formatted : '—'], ['create2.sumWhere', rackWaypost ? rackName : toPublicCapsule ? t('create2.nearPublicSpot') : whereLabel || t('create.anywhere')]] as const).map(([k, v]) => <View key={k}>
+          {([['create2.sumTo', toPublicCapsule ? t('create2.anyone') : recipientName], ['create2.sumBody', insideSummary], ['create2.sumVessel', vessel ? t(`shop.vessel.${vessel}`) : '—'], ['create2.sumWhen', openAt ? formatted : '—'], ['create2.sumWhere', rackWaypost ? rackName : toPublicCapsule ? t('create2.nearPublicSpot') : whereLabel || (placeMode === 'route' ? q.whereRoute : t('create.anywhere'))]] as const).map(([k, v]) => <View key={k}>
             <Text style={{ fontFamily: sans, color: C.muted, fontSize: 12 }}>{t(k)}</Text><Text style={{ fontFamily: sans, color: C.ink, fontSize: 14 }}>{v}</Text>
           </View>)}
         </View>
@@ -614,8 +624,9 @@ export default function CreateScreen() {
         onPress={() => { setLockMode(m); setSheet(null); setError(''); void haptics.tick(); }} />)}
     </Sheet>
     <Sheet open={sheet === 'where'} title={t('create.where')} onClose={() => setSheet(null)}>
-      {(['anywhere', 'current', 'specific'] as const).map(m => <SheetOption key={m} selected={placeMode === m} icon={<Glyph><ToolIcon kind={m === 'current' ? 'here' : m === 'specific' ? 'landmark' : 'anywhere'} /></Glyph>} title={t(`create2.where.${m}`)} sub={t(m === 'anywhere' ? 'create2.anywhereSub' : `create2.where.${m}Sub`)}
-        onPress={() => { setPlaceMode(m); setPlace(null); setPoint(null); setPlaceQuery(''); setSheet(null); setError(''); void haptics.tick(); if (m === 'current') void location.request(); }} />)}
+      {/* With routes (HL-C5) a place is a route of quests; there is no separate one-place option. */}
+      {(ROUTES ? ['anywhere', 'route'] as const : ['anywhere', 'current', 'specific'] as const).map(m => <SheetOption key={m} selected={placeMode === m} icon={<Glyph><ToolIcon kind={m === 'current' ? 'here' : m === 'specific' || m === 'route' ? 'landmark' : 'anywhere'} /></Glyph>} title={m === 'route' ? q.whereRoute : t(`create2.where.${m}`)} sub={m === 'route' ? q.whereRouteSub : t(m === 'anywhere' ? 'create2.anywhereSub' : `create2.where.${m}Sub`)}
+        onPress={() => { setPlaceMode(m); setPlace(null); setPoint(null); setPlaceQuery(''); setSheet(null); setError(''); void haptics.tick(); if (m === 'current' || m === 'route') void location.request(); }} />)}
     </Sheet>
   </Screen>;
 }

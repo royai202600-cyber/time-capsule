@@ -57,9 +57,10 @@ export const todaysHunt = {
 
 // ---- development sample (made-up places and prices, for trying the screens only) ----
 type Secret = { choice?: number; usd?: number; local?: number };
-type SampleCity = { question: Omit<Quest, "ordinal" | "done" | "locked" | "points" | "type">; answer: number; price: Omit<Quest, "ordinal" | "done" | "locked" | "points" | "type">; usd: number; local: number };
-const at = (city: string, dLat: number, dLng: number) => { const c = CITIES.find((x) => x.id === city)!; return { location_lat: c.lat + dLat, location_lng: c.lng + dLng }; };
-const SAMPLES: Record<string, SampleCity> = {
+export type SampleCity = { question: Omit<Quest, "ordinal" | "done" | "locked" | "points" | "type">; answer: number; price: Omit<Quest, "ordinal" | "done" | "locked" | "points" | "type">; usd: number; local: number };
+export const at = (city: string, dLat: number, dLng: number) => { const c = CITIES.find((x) => x.id === city)!; return { location_lat: c.lat + dLat, location_lng: c.lng + dLng }; };
+/** Shared with the route sample, so a development route asks the same made-up questions. */
+export const SAMPLES: Record<string, SampleCity> = {
   taipei: {
     question: { quest_id: "s-taipei-q", ...at("taipei", .0042, -.0016), name_zh: "台北101 觀景台入口", name_en: "Taipei 101 observatory entrance", image: "tpl:square",
       question: { kind: "choice", prompt_zh: "台北101 地面上有幾層樓？", prompt_en: "How many floors does Taipei 101 have above ground?", choices: [{ zh: "88 層", en: "88" }, { zh: "101 層", en: "101" }, { zh: "108 層", en: "108" }] } },

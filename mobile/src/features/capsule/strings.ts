@@ -8,6 +8,7 @@ export const capsuleStrings = {
     storyHere: "。你已經在這裡了，可以打開。",
     storyGo: "，但你首先要到以下地點取出時光膠囊。",
     storyNow: "。現在就可以打開。",
+    storyRoute: "。先走完寄件人留下的路線，就能打開。",
     storyWaiting: (s, d, n, u, o) =>
       `時光膠囊在<em>${s}</em>發出，已經沉澱了<em>${d}天</em>，還要再等<em>${n}${u}</em>，會在<em>${o}</em>送到你的手裡。`,
     goNow: "立即出發到",
@@ -132,6 +133,7 @@ export const capsuleStrings = {
     storyHere: ". You are already here, so you can open it.",
     storyGo: ", but first you need to go to this place to collect it.",
     storyNow: ". You can open it now.",
+    storyRoute: ". Walk the route the sender left, then open it.",
     storyWaiting: (s, d, n, u, o) =>
       `This time capsule was sent on <em>${s}</em> and has been waiting for <em>${d} days</em>. In <em>${n} ${u}</em>, on <em>${o}</em>, it will reach you.`,
     goNow: "Head out to",

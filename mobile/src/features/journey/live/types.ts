@@ -1,12 +1,13 @@
 import { Image, type ImageSourcePropType } from "react-native";
 import type { PrivateHuntQuestType } from "../../../services/questTypes";
+import type { QuestKind } from "../../../services/quests";
 
 export type PinKind = "publicCapsule" | "place" | "corrupted" | "waypost" | "landmark" | "keeper" | "quest" | "spot";
 export type LivePin = { id: string; lat: number; lng: number; vessel: string; label?: string; cracks?: string; portrait?: string | null; tag?: string; kind: PinKind; hunt?: boolean;
   /** Which map filter shows this pin, when not its kind's (a private hunt's guide is drawn as a Keeper but belongs to private hunts). */
   filterAs?: PinKind;
   /** Private-hunt quests (kind "quest"): which glyph the brass pin carries, and whether the route still locks it. */
-  quest?: PrivateHuntQuestType; locked?: boolean; /** A quest's picture: shown as a big round photo pin instead of the brass pin. */ photo?: string | null; mark?: string | null; figure?: string | null; lift?: number; rarity?: "common" | "uncommon" | "rare"; done?: boolean;
+  quest?: PrivateHuntQuestType | QuestKind; locked?: boolean; /** The faceted pin frame (blue, brass or plum); without it the older code-drawn teardrop shows. */ frame?: string | null; /** A quest's picture: shown as a big round photo pin instead of the brass pin. */ photo?: string | null; mark?: string | null; figure?: string | null; lift?: number; rarity?: "common" | "uncommon" | "rare"; done?: boolean;
   /** A quest made by us (Today's Hunt, City Hunt): the blue quest pin instead of brass. */ blue?: boolean;
   /** Drops from the sky this many ms after it first appears (Today's Hunt). */ drop?: number; near?: boolean; far?: boolean; selected?: boolean; sealed?: boolean; private?: boolean; opened?: boolean; timer?: string };
 export type LiveState = { you: { lat: number; lng: number } | null; heading?: number | null; portrait?: string | null; figure?: string | null; youLabel?: string | null; reach: number; pins: LivePin[];

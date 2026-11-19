@@ -7,6 +7,8 @@ import { useReducedMotion } from "../../useReducedMotion";
 import { characters } from "../../art/manifest";
 import { distanceText } from "../publicCapsule/strings";
 import { GAME_ACTION_RADIUS_M } from "../../services/game";
+import { HUNT_QUESTS } from "../../services/cityHuntQuests";
+import type { Quest } from "../../services/quests";
 import { huntStatus, keeperSpot, landmarkName, questGoal, readyToReturn, type Hunt } from "../../services/cityHunt";
 import { clockText, runClock, runningLow, type RunClock, type RunTimes } from "../../services/huntClock";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
@@ -247,8 +249,10 @@ function Tab({ title, count, active, onPress }: { title: string; count: number; 
 }
 
 /** The card that opens when you tap the Letter Keeper on the map. His lines are set text, never generated. */
-export function KeeperCard({ hunt, meters, busy, onJoin, onCheckIn, onFinish, onClose }: {
+export function KeeperCard({ hunt, quests = [], meters, busy, onJoin, onCheckIn, onFinish, onClose }: {
   hunt: Hunt; meters: number; busy: boolean;
+  /** The run's quest pins once checked in (HL-C3); they replace the old step list. */
+  quests?: Quest[];
   onJoin: () => void; onCheckIn: () => void; onFinish: () => void; onClose: () => void;
 }) {
   const t = useHuntText();
@@ -263,7 +267,7 @@ export function KeeperCard({ hunt, meters, busy, onJoin, onCheckIn, onFinish, on
   else if (clock.state === "up") { line = t.lineTimeUp; if (near) action = { title: t.again, run: onCheckIn }; else note = farNote; }
   else if (!hunt.checked_in_at) {
     if (!hunt.joined_at) { line = t.lineBefore; action = { title: t.join, run: onJoin }; }
-    else if (near) { line = t.lineCheckIn(questGoal(hunt, "spin"), questGoal(hunt, "restore"), landmarkName(hunt, language) ?? t.theLandmark); action = { title: t.go, run: onCheckIn }; }
+    else if (near) { line = HUNT_QUESTS ? t.lineCheckInQuests(landmarkName(hunt, language) ?? t.theLandmark) : t.lineCheckIn(questGoal(hunt, "spin"), questGoal(hunt, "restore"), landmarkName(hunt, language) ?? t.theLandmark); action = { title: t.go, run: onCheckIn }; }
     else { line = t.lineWaiting(spot); note = farNote; }
   } else if (readyToReturn(hunt) && near) { line = t.lineDone; action = { title: t.take, run: onFinish }; }
   else { showQuests = true; note = readyToReturn(hunt) ? farNote : ""; }
@@ -276,7 +280,9 @@ export function KeeperCard({ hunt, meters, busy, onJoin, onCheckIn, onFinish, on
       </View>
       <Pressable accessibilityRole="button" accessibilityLabel={t.close} onPress={onClose} hitSlop={8} style={{ width: 32, height: 32, alignItems: "center", justifyContent: "center" }}><ArtIcon name="close" size={18} color={C.muted} /></Pressable>
     </View>
-    {showQuests && <TaskList rows={huntTasks(hunt, t)} compact />}
+    {showQuests && <TaskList rows={quests.length ? quests.map((q) => ({
+      key: q.quest_id, label: `${q.ordinal} · ${language === "zh" ? q.name_zh : q.name_en}`, done: q.done, locked: q.locked,
+    })) : huntTasks(hunt, t)} compact />}
     {!!note && <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue }}>{note}</Text>}
     {action && <Btn title={action.title} disabled={busy} onPress={action.run} />}
   </View>;

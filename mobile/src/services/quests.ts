@@ -20,3 +20,9 @@ export type QuestAnswer = { choice?: number; text?: string; usd?: number; qr?: s
 export type QuestCorrect = { choice: number } | { text: string } | { usd: number; local_amount: number };
 /** A wrong answer is ok: false, not an error. correct_answer only comes back once the quest is done. */
 export type QuestResult = { ok: boolean; done: boolean; points: number; hint?: "higher" | "lower"; tries_left?: number; correct_answer?: QuestCorrect };
+
+/** What a quest attempt at a pin sends (City Hunt, private hunt, route): the quest, where you are, and the answer if it asks for one. */
+export type QuestAttempt = { quest_id: string; lat: number; lng: number; accuracy: number | null; answer?: QuestAnswer };
+/** Errors every attempt RPC shares. A wrong answer is not one of them. */
+export const QUEST_ERRORS = ["too_far", "locked", "already_done", "time_up", "not_started", "closed", "not_joined", "bad_answer", "no_tries", "bad_rule"] as const;
+export type QuestErrorCode = (typeof QUEST_ERRORS)[number] | "unknown";

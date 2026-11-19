@@ -1,0 +1,171 @@
+import { useLanguage } from "../../i18n";
+import type { QuestKind } from "../../services/quests";
+import type { StopProblem } from "../../services/routes";
+
+// The five quest types, as the quest editor, the route builder and the quest card show them
+// (docs/design/hunt-loop.md, "Five quest types").
+const strings = {
+  zh: {
+    kind: { arrive: "抵達", question: "問答", price: "猜價格", catch: "抓破損膠囊", landmark: "地標" } satisfies Record<QuestKind, string>,
+    sub: {
+      arrive: "走到圖釘就完成。",
+      question: "在圖釘回答一個問題：選擇題或自己打答案。",
+      price: "在圖釘猜一個價格，用美元猜，三次機會。",
+      catch: "破損膠囊會在圖釘出現，抓到指定數量就完成。",
+      landmark: "在地標打敗巨大膠囊。只有離地標 2 公里內才能選。",
+    } satisfies Record<QuestKind, string>,
+    fromPool: "城市題庫",
+    writeOwn: "自己出題",
+    anotherQuestion: "換一題",
+    anotherPrice: "換一個價格",
+    noPool: "附近 2 公里內沒有可用的題目。",
+    noPoolPrice: "附近 2 公里內沒有可用的價格題。",
+    poolNear: "從這個地點附近找題目",
+    poolNeedSpot: "先選一個地點，就會找附近的題目。",
+    poolPlace: (name: string) => `題目地點：${name}`,
+    priceQuestion: (prompt: string, place: string) => `${prompt}（${place}）`,
+    catchCount: "要抓幾個",
+    landmarkNote: "圖釘會移到地標上。",
+    landmarkFar: "離地標太遠：地標任務只能放在地標 2 公里內。",
+    ownQuestion: "你的問題",
+    ownQuestionPlaceholder: "例如：我們第一次見面喝了什麼？",
+    ownAnswer: "答案",
+    ownAnswerNote: "打字回答，大小寫和空格不計較。答案只存在伺服器。",
+
+    // The card at a pin
+    youAreHere: "我到了",
+    goCloser: (m: string) => `再走近一點：還差 ${m}`,
+    needLocation: "需要你的位置才能完成這個任務。",
+    startCatch: (n: number) => `開始抓（${n} 個）`,
+    catchStarted: (n: number) => `破損膠囊出現在圖釘旁邊了。抓到 ${n} 個就完成。`,
+    startFight: "開始地標挑戰",
+    fightStarted: "點地標的寶石開始挑戰。",
+    answerPlaceholder: "打你的答案",
+    submit: "送出",
+    right: "答對了",
+    wrong: "不對，再試一次",
+    done: "完成",
+    lockedNote: "先完成前面的任務。",
+    triesLeft: (n: number) => `還有 ${n} 次機會`,
+    wait: "錯太多次了，等一分鐘再試。",
+    answerWas: (a: string) => `答案是：${a}`,
+    errors: {
+      too_far: "離圖釘太遠了。", locked: "先完成前面的任務。", already_done: "這個任務已經完成了。",
+      time_up: "時間到了。", not_started: "還沒開始。", closed: "活動已經結束。", not_joined: "你還沒參加。",
+      bad_answer: "這個答案不能送出。", no_tries: "錯太多次了，等一分鐘再試。", bad_rule: "這個任務出了問題。", unknown: "出了點問題，再試一次。",
+    } as Record<string, string>,
+
+    // Create step 4: Walk a route
+    whereRoute: "走一條路線",
+    whereRouteSub: "收件人走完 1 到 5 站，時間到了才能打開。",
+    templates: "現成路線",
+    noTemplates: "這個城市還沒有現成路線，在地圖上點你自己的地點吧。",
+    addOnMap: "在地圖上點你自己的地點",
+    stop: (n: number) => `第 ${n} 站`,
+    stopName: "站名",
+    remove: "移除",
+    routeEmpty: "選一條現成路線，或在地圖上加你自己的地點。",
+    routeFull: (n: number) => `最多 ${n} 站`,
+    routeSummary: (n: number) => `${n} 站的路線`,
+    needRoute: "路線至少要有一站。",
+    routeCity: "城市",
+    sendErrors: {
+      bad_rule: "路線有一站不能用，檢查一下再寄。", rejected: "有一站的文字沒通過檢查，改一下再寄。",
+      no_answer: "自己出的題目需要答案。", blocked_words: "有一站的文字沒通過檢查，改一下再寄。",
+    } as Record<string, string>,
+    // The recipient's capsule pages
+    routeLabel: "路線",
+    routeProgress: (d: number, t: number) => `已走 ${d} / ${t} 站`,
+    routeTitle: "依順序走完這些站",
+    routeNote: "每一站都要走到圖釘旁邊才能完成。時間到了、路線也走完，就能打開。",
+    walkRoute: "出發走路線",
+    routeLeft: (n: number) => `還有 ${n} 站要走`,
+    // Route stops while sending
+    stopProblem: {
+      name: "這一站要有名稱", question: "寫下問題和答案，或換成題庫的題目", price: "猜價格要用題庫的題目", landmark: "地標任務只能在地標 2 公里內",
+    } satisfies Record<StopProblem, string>,
+  },
+  en: {
+    kind: { arrive: "Arrive", question: "Question", price: "Guess the price", catch: "Catch", landmark: "Landmark" } satisfies Record<QuestKind, string>,
+    sub: {
+      arrive: "Reach the pin and it's done.",
+      question: "Answer a question at the pin: multiple choice or typed.",
+      price: "Guess a price at the pin in US dollars, with three tries.",
+      catch: "Corrupted Capsules appear at the pin. Catch the set number to finish.",
+      landmark: "Beat the giant capsule at the Landmark. Only within 2 km of a Landmark.",
+    } satisfies Record<QuestKind, string>,
+    fromPool: "City questions",
+    writeOwn: "Write my own",
+    anotherQuestion: "Another question",
+    anotherPrice: "Another price",
+    noPool: "No questions within 2 km.",
+    noPoolPrice: "No prices within 2 km.",
+    poolNear: "Find questions near this place",
+    poolNeedSpot: "Choose a place and we'll find a question near it.",
+    poolPlace: (name: string) => `At ${name}`,
+    priceQuestion: (prompt: string, place: string) => `${prompt} (${place})`,
+    catchCount: "How many to catch",
+    landmarkNote: "The pin moves onto the Landmark.",
+    landmarkFar: "Too far from a Landmark: a Landmark quest must be within 2 km of one.",
+    ownQuestion: "Your question",
+    ownQuestionPlaceholder: "e.g. What did we drink the first time we met?",
+    ownAnswer: "Answer",
+    ownAnswerNote: "Typed answers ignore capitals and spaces. Only the server keeps the answer.",
+
+    youAreHere: "I'm here",
+    goCloser: (m: string) => `Get a bit closer: ${m} to go`,
+    needLocation: "This quest needs your location.",
+    startCatch: (n: number) => `Start catching (${n})`,
+    catchStarted: (n: number) => `Corrupted Capsules have appeared by the pin. Catch ${n} to finish.`,
+    startFight: "Start the Landmark fight",
+    fightStarted: "Tap the Landmark gem to start the fight.",
+    answerPlaceholder: "Type your answer",
+    submit: "Submit",
+    right: "Right",
+    wrong: "Not quite. Try again",
+    done: "Done",
+    lockedNote: "Finish the quests before this one first.",
+    triesLeft: (n: number) => `${n} ${n === 1 ? "try" : "tries"} left`,
+    wait: "Too many misses. Try again in a minute.",
+    answerWas: (a: string) => `The answer was ${a}`,
+    errors: {
+      too_far: "You're too far from the pin.", locked: "Finish the quests before this one first.", already_done: "This quest is already done.",
+      time_up: "Time's up.", not_started: "It hasn't started yet.", closed: "This has ended.", not_joined: "You haven't joined yet.",
+      bad_answer: "That answer can't be sent.", no_tries: "Too many misses. Try again in a minute.", bad_rule: "Something is wrong with this quest.", unknown: "Something went wrong. Try again.",
+    } as Record<string, string>,
+
+    whereRoute: "Walk a route",
+    whereRouteSub: "They walk 1–5 stops before it can open, once the time comes.",
+    templates: "Ready-made routes",
+    noTemplates: "No ready-made routes in this city yet. Tap your own places on the map.",
+    addOnMap: "Tap your own places on the map",
+    stop: (n: number) => `Stop ${n}`,
+    stopName: "Stop name",
+    remove: "Remove",
+    routeEmpty: "Pick a ready-made route, or add your own places on the map.",
+    routeFull: (n: number) => `Up to ${n} stops`,
+    routeSummary: (n: number) => `A route of ${n} ${n === 1 ? "stop" : "stops"}`,
+    needRoute: "A route needs at least one stop.",
+    routeCity: "City",
+    sendErrors: {
+      bad_rule: "One of the stops can't be used. Check the route and send again.", rejected: "Some words in a stop didn't pass the check. Change them and send again.",
+      no_answer: "Your own question needs an answer.", blocked_words: "Some words in a stop didn't pass the check. Change them and send again.",
+    } as Record<string, string>,
+    routeLabel: "Route",
+    routeProgress: (d: number, t: number) => `${d} of ${t} stops walked`,
+    routeTitle: "Walk these stops in order",
+    routeNote: "Each stop is done at its pin. Once the route is walked and the time has come, it opens.",
+    walkRoute: "Walk the route",
+    routeLeft: (n: number) => `${n} ${n === 1 ? "stop" : "stops"} left to walk`,
+    stopProblem: {
+      name: "This stop needs a name", question: "Write a question and answer, or use a city question", price: "Guess the price needs a city question", landmark: "A Landmark stop must be within 2 km of a Landmark",
+    } satisfies Record<StopProblem, string>,
+  },
+};
+
+export type QuestText = typeof strings.zh;
+export function useQuestText(): QuestText {
+  const { language } = useLanguage();
+  return strings[language] as QuestText;
+}
+export const questStrings = strings;

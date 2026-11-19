@@ -245,6 +245,10 @@ html,body,#map{margin:0;height:100%;width:100%;background:${C.paper};overflow:hi
 .pin.quest .ph{position:absolute;inset:4px;border-radius:50%;border:2.5px solid #fff;transform:rotate(45deg);background:${C.cream} center/cover no-repeat}
 .pin.quest .badge{position:absolute;right:-6px;top:-4px;width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--mp-hi),var(--mp) 62%,var(--mp-lo));box-shadow:0 1px 3px rgba(22,38,63,.35),inset 0 0 0 1.5px var(--mp-hi)}
 .pin.quest .badge svg{position:absolute;left:0;top:0;width:24px;height:24px}
+/* The approved faceted frame (HL-A1): the quest-type picture shows through its round window; tip on the spot. */
+.pin.quest .win{position:absolute;left:9.6px;top:8.1px;width:46px;height:46px;border-radius:50%;background:${C.cream} center/cover no-repeat}
+.pin.quest .fr{position:absolute;left:-16.5px;top:-7.6px;width:99px;height:99px;pointer-events:none}
+.pin.quest.done .win{filter:saturate(.7)}
 .pin.quest.locked .photo{opacity:.6}
 .pin.quest.done .ph{filter:saturate(.6)}
 .pin.quest.near:not(.done):not(.locked) .photo{filter:drop-shadow(0 0 7px ${C.brass})}
@@ -433,7 +437,7 @@ function render(){
   for(const p of pins){
     const html=p.kind==='keeper'?'<div class="pin-body"><div class="disc"></div>'+(p.figure?'<div class="fig full" style="background-image:url('+p.figure+')"></div>':'<div class="fig">'+face(p.portrait)+'</div>')+(p.mark?'<div class="seal">'+p.mark+'</div>':'')+'</div>'
       :p.kind==='landmark'?'<div class="pin-body"><div class="badge"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 1.5C12.8 8.2 15.8 11.2 22.5 12 15.8 12.8 12.8 15.8 12 22.5 11.2 15.8 8.2 12.8 1.5 12 8.2 11.2 11.2 8.2 12 1.5Z"/></svg></div></div>'
-      :p.kind==='quest'?'<div class="pin-body"><div class="disc"></div><div class="ring"></div><div class="photo"><div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>'+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
+      :p.kind==='quest'?'<div class="pin-body"><div class="disc"></div><div class="ring"></div><div class="photo">'+(p.frame?'<div class="win" style="background-image:url('+p.photo+')"></div><img class="fr" alt="" src="'+p.frame+'">':'<div class="drop"><div class="ph" style="background-image:url('+p.photo+')"></div></div>')+(p.done?'<div class="badge">'+glyphBadge('done')+'</div>':'')+'</div>'+(p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>'
       :p.kind==='spot'?'<div class="pin-body"><div class="dot"></div></div>'
       :p.kind==='waypost'?'<div class="pin-body"><div class="disc"></div>'+'<div class="post" style="background-image:url('+p.vessel+')"></div></div>':'<div class="pin-body"><div class="disc"></div><img class="v" src="'+p.vessel+'">'+(p.kind==='corrupted'&&p.cracks?'<img class="v cracks" src="'+p.cracks+'">':'')+(p.portrait!==undefined&&(p.portrait||p.private)?'<div class="who">'+face(p.portrait)+(p.private?'<div class="lock">'+PADLOCK+'</div>':'')+'</div>':'')+(p.timer?'<div class="tag timer">'+HOURGLASS+p.timer+'</div>':p.tag?'<div class="tag">'+p.tag+'</div>':'')+'</div>';
     const cls='pin '+(p.kind||'')+(p.near?' near':'')+(p.far?' far':'')+(p.selected?' sel':'')+(p.sealed?' sealed':'')+(p.rarity?' '+p.rarity:'')+(p.done?' done':'')+(p.hunt?' hunt':'')+(p.lift?' top':'')+(p.private?' private':'')+(p.opened?' opened':'')+(p.locked?' locked':'')+(p.blue?' blue':'');

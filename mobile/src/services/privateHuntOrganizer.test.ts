@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 // The rules under test are pure; these two keep the module's native imports out of the test run.
 vi.mock("@react-native-async-storage/async-storage", () => ({ default: { getItem: vi.fn(), setItem: vi.fn() } }));
 vi.mock("./supabase", () => ({ supabase: { auth: { getSession: vi.fn() }, rpc: vi.fn() } }));
-import { LIMITS, appLink, blankDraft, huntArea, blankQuest, canPublish, huntProblems, nextOrdinal, questForSave, shareLink, questProblems, type HuntDraft, type QuestDraft } from "./privateHuntOrganizer";
+import { LIMITS, appLink, questFromSaved, blankDraft, huntArea, blankQuest, canPublish, huntProblems, nextOrdinal, questForSave, shareLink, questProblems, type HuntDraft, type QuestDraft } from "./privateHuntOrganizer";
 
 const draft = (over: Partial<HuntDraft> = {}): HuntDraft => ({ ...blankDraft(), name: "Park hunt", ...over });
 const wp = (over: Partial<QuestDraft> = {}): QuestDraft => ({ ...blankQuest(1, { lat: 25, lng: 121 }), name: "Gate", ...over });
@@ -83,4 +83,19 @@ describe("huntArea", () => {
     expect(a.radius_m).toBeGreaterThan(680);
     expect(a.radius_m).toBeLessThan(700);
   });
+});
+
+describe("the five quest types (HL-C3)", () => {
+  const item = { pool_id: "p9", type: "price" as const, location_lat: 25.1, location_lng: 121.1, name_zh: "店", name_en: "Shop" };
+  it("saves a pool quest at the pool's place with its id", () =>
+    expect(questForSave(wp({ quest_type: "price", pool: item }))).toMatchObject({ type: "price", pool_id: "p9", location_lat: 25.1, location_lng: 121.1, catch_count: null }));
+  it("saves the organizer's own question as a puzzle", () =>
+    expect(questForSave(wp({ quest_type: "question", answer: "red" }))).toMatchObject({ quest_type: "puzzle", type: "puzzle" }));
+  it("needs a pool item for price, and catch 1 to 5", () => {
+    expect(questProblems(wp({ quest_type: "price" }))).toContain("pool");
+    expect(questProblems(wp({ quest_type: "catch", catch_count: 6 }))).toContain("catches");
+    expect(questForSave(wp({ quest_type: "catch" }))).toMatchObject({ type: "catch", catch_count: 3, ...spot });
+  });
+  it("rebuilds the pool card from a saved pool quest", () =>
+    expect(questFromSaved({ ...wp(), quest_type: "puzzle", type: "price", pool_id: "p9", ...spot }).pool).toMatchObject({ pool_id: "p9", type: "price" }));
 });

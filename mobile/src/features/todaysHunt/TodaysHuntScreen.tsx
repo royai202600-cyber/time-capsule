@@ -12,13 +12,14 @@ import type { Quest, QuestResult } from "../../services/quests";
 import { CITY_STAMP, HOME_CATCH_VESSELS, todaysHunt, TODAYS_HUNT_REWARD, TODAYS_HUNT_SAMPLE, TodaysHuntError, type HuntFriend, type TodaysHunt } from "../../services/todaysHunt";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
-import { GuessRow, Venue } from "../explorer/PriceGuessScreen";
 import { useExplorerText } from "../explorer/strings";
 import { ThrowScreen } from "../game/ThrowScreen";
 import { questImageSource, questImageUri } from "../hunt/questImage";
 import { Btn, Chip } from "../journey/JourneyControls";
 import type { LiveMapHandle, LivePin } from "../journey/live/types";
 import { useTodaysHuntText } from "./strings";
+import { questPinFace } from "../quests/questArt";
+import { QuestCard, questCardStyle as card } from "../quests/QuestCard";
 
 type Spot = { lat: number; lng: number };
 /** What Today's Hunt puts on the Journey map: its three blue quest pins and where the figure stands. */
@@ -77,7 +78,7 @@ export function TodaysHuntScreen({ city, language, map, gameState, onState, onMa
   // The map always shows the day's pins: blue until done, then purple; numbered in order.
   const pins = (d: TodaysHunt, drop: boolean): LivePin[] => d.quests.map((q, i) => ({
     id: pinId(q), lat: q.location_lat, lng: q.location_lng, kind: "quest", vessel: "", blue: true, done: q.done,
-    photo: questImageUri(q.image), tag: q.done ? undefined : String(q.ordinal), drop: drop ? 350 + i * 420 : undefined,
+    ...questPinFace(q.type, "blue", q.done, questImageUri(q.image)), tag: q.done ? undefined : String(q.ordinal), drop: drop ? 350 + i * 420 : undefined,
     label: zh ? q.name_zh : q.name_en,
   }));
   const show = (d: TodaysHunt, drop = false) => onMap({ pins: pins(d, drop), you: start.current });
@@ -314,75 +315,3 @@ export function TodaysHuntScreen({ city, language, map, gameState, onState, onMa
   </View>;
 }
 
-const card = { width: "100%" as const, maxWidth: 560, alignSelf: "center" as const, gap: spacing.sm, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.md, borderWidth: 1, borderColor: C.line, ...shadows.card };
-
-/** The card that flips up out of a pin: the quest's picture and name, then what it asks. */
-function QuestCard({ quest, zh, result, picked, marks, text, busy, catchCount, caught, onText, onChoose, onGuess, onCatch }: {
-  quest: Quest; zh: boolean; result: QuestResult | null; picked: number | null; marks: GuessMark[]; text: string; busy: boolean; catchCount: number; caught: number;
-  onText: (v: string) => void; onChoose: (i: number) => void; onGuess: () => void; onCatch: () => void;
-}) {
-  const t = useTodaysHuntText();
-  const x = useExplorerText();
-  const typed = parseGuess(text);
-  const correct = result?.correct_answer && "choice" in result.correct_answer ? result.correct_answer.choice : null;
-  const head = <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-    <Image source={questImageSource(quest.image)} style={{ width: 52, height: 52, borderRadius: 26, borderWidth: 2.5, borderColor: C.blue }} />
-    <View style={{ flex: 1 }}>
-      <Text style={{ fontFamily: sans, fontSize: 11, letterSpacing: .6, color: C.blue }}>{quest.ordinal} · {t.kind[quest.type]}</Text>
-      <Text numberOfLines={1} style={{ fontFamily: serif, fontSize: 17, color: C.ink }}>{zh ? quest.name_zh : quest.name_en}</Text>
-    </View>
-  </View>;
-
-  if (quest.type === "question" && quest.question) {
-    const q = quest.question;
-    return <>
-      {head}
-      <Text style={{ fontFamily: serif, fontSize: 18, lineHeight: 27, color: C.ink }}>{zh ? q.prompt_zh : q.prompt_en}</Text>
-      <View style={{ gap: 8 }}>
-        {(q.choices ?? []).map((c, i) => {
-          const isRight = correct === i, isWrong = result && picked === i && correct !== i;
-          return <Pressable key={i} accessibilityRole="button" accessibilityState={{ selected: picked === i, disabled: !!result || busy }} disabled={!!result || busy} onPress={() => onChoose(i)}
-            style={({ pressed }) => ({ borderRadius: 14, borderWidth: 1.5, paddingVertical: 11, paddingHorizontal: 14,
-              borderColor: isRight ? C.brass : isWrong ? C.wax : picked === i ? C.blue : C.line,
-              backgroundColor: isRight ? "#FBF4E6" : C.white, opacity: pressed ? .85 : 1 })}>
-            <Text style={{ fontFamily: sans, fontSize: 15, color: isWrong ? C.wax : C.ink }}>{zh ? c.zh : c.en}{isRight ? "  ✓" : ""}</Text>
-          </Pressable>;
-        })}
-      </View>
-    </>;
-  }
-
-  if (quest.type === "price" && quest.price) {
-    const p = quest.price;
-    return <>
-      {head}
-      <Text style={{ fontFamily: serif, fontSize: 18, lineHeight: 27, color: C.ink }}>{zh ? p.prompt_zh : p.prompt_en}</Text>
-      {(zh ? p.place_zh : p.place_en) !== (zh ? quest.name_zh : quest.name_en) && <Venue text={zh ? p.place_zh : p.place_en} />}
-      {marks.map((m, i) => <GuessRow key={i} n={i + 1} mark={m} puzzle={p} />)}
-      {!result && <>
-        <View style={{ flexDirection: "row", gap: 8 }}>
-          <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: C.white, borderWidth: 1.5, borderColor: C.line, borderRadius: 14, paddingHorizontal: 14 }}>
-            <Text style={{ fontFamily: serif, fontSize: 16, color: C.muted }}>US$</Text>
-            <TextInput accessibilityLabel={x.guessLabel} value={text} onChangeText={onText} onSubmitEditing={onGuess} keyboardType="decimal-pad" inputMode="decimal" returnKeyType="done"
-              style={[{ flex: 1, minWidth: 0, paddingVertical: 12, fontFamily: serif, fontSize: 19, color: C.ink }, Platform.OS === "web" ? { outlineStyle: "none" } as object : null]} />
-            {typed != null && <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>≈ {localText(typed, p)}</Text>}
-          </View>
-          <Pressable accessibilityRole="button" disabled={busy || typed == null} onPress={onGuess}
-            style={({ pressed }) => ({ borderRadius: 14, paddingHorizontal: 20, justifyContent: "center", backgroundColor: typed == null ? "#E6EBF1" : C.blue, opacity: busy ? .6 : pressed ? .88 : 1 })}>
-            <Text style={{ fontFamily: sans, fontWeight: "600", color: typed == null ? C.muted : C.white }}>{x.guess}</Text>
-          </Pressable>
-        </View>
-        <Text style={{ fontFamily: sans, fontSize: 12.5, color: C.muted }}>{t.tries(p.tries_left)} {x.inUsd(localText(1, p))}</Text>
-      </>}
-    </>;
-  }
-
-  // Catch from home.
-  return <>
-    {head}
-    <Text style={{ fontFamily: sans, fontSize: 14, lineHeight: 21, color: C.ink }}>{result ? t.caught(caught, catchCount) : t.catchBody(catchCount)}</Text>
-    {!result && <Pressable accessibilityRole="button" disabled={busy} onPress={onCatch} style={({ pressed }) => ({ alignItems: "center", backgroundColor: C.wax, borderRadius: radii.pill, paddingVertical: 12, opacity: busy ? .6 : pressed ? .88 : 1 })}>
-      <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{t.start}</Text>
-    </Pressable>}
-  </>;
-}
