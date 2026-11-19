@@ -65,6 +65,16 @@ Stop-on-failure was honored. Pending: repaired Memory Route send/walk/open, rema
 
 The missing rack controls were recorded in `9f6186c`, and the old modulo page-boundary bug in `54e4feb`. Both are fixed and production-verified by #169. The initial Shop-fixture correction was recorded in `02ceed3`.
 
+## PR #170 review stop
+
+Reviewed head `c887608735f0f8de9de84657c89cdc7bd7fb24fc`; CI `44472236346` passed. The new home-place helpers address the normal sequential Memory Route flow, and `stopForSend` excludes the editor-only home field.
+
+A delayed-response reproduction using the PR's actual `homePlace`, `retypeStop`, `update`, `another` and `retype` functions found a remaining race: from a hand-placed Arrive stop, choose Price (pool request pending), then Catch. Catch correctly restores the home place, but when the older pool request resolves, `another` unconditionally calls `update` and changes the stop back to Price at the pool location. Type chips remain available during that request. This async path predates the PR, but still defeats the required place restoration under normal network latency.
+
+Claude follow-up: track and invalidate pending requests per stop on subsequent type/place/source changes or removal; only a response for the current intent may update the stop. Add a delayed-response regression covering Price → Catch (and a pool request superseded by a personal question). The four helper tests do not cover the asynchronous component path.
+
+Per Roy's stop instruction, #170 remains unmerged. No production changes, fixtures or browser tests were performed on this resume. The prior cleanup remains intact. Memory Route production checks, remaining City Hunt/admin acceptance and Done/status-doc merge are still pending. Macau was untouched.
+
 ## Cleanup
 
 All four accounts were globally signed out and deleted, along with their temporary admin membership and 31 disposable capsules. Verified zero fixture users, profiles, Auth identities, sessions, refresh tokens, Auth audit entries, friendships, capsules, ownership rows, daily plays, game-player rows, City Hunt progress, admin memberships and admin actions. Friend-route stops and content were also zero. No custom pool, vessel, calendar edit or game setting was created; calendar reads only initialized legitimate production schedules. No audit-trigger override was needed on this resume.
