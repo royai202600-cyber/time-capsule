@@ -1,5 +1,26 @@
 # Combined hunt-loop release — production validation stopped
 
+## Current resume — Memory Route passed; admin save crash
+
+PR #170 head `3533590ee4e1fff328bb8a9ff4f41494ad44fc36` passed review, TypeScript, 249 tests (9 sample-only skips), CI `44474755813`, and a fresh web export. The delayed-response reproduction using the actual RouteBuilder functions kept Catch at the home place. Roy's account squash-merged #170 as `6753dc0e0035267afd1f9d3b7846bdf0444e2232`; the identical tree was released in owner-authored `e80d0a7b994212c8b8af673176b7c158cb8cbb63`. Vercel deployment `F2k6RysxYuh6oMa1tKVYPhNTVMNm` reports success. Production common/entry bundle hashes match the export (`__common-894f4221433d8188254e1e49c0d0b2c0.js`, `entry-c2e68e6cf3439d65dbad704b7894d472.js`). This is the current live version at https://time-capsule-pi-two.vercel.app.
+
+Production at 375 × 812, with disposable accounts:
+
+- Memory Route in English: hand-picked Civic Square-area home → Question stayed home → City questions moved to Rainbow Starting Line → Write my own restored home. Catch, Landmark and Arrive also restored/kept home. Sent a personal Question route to Future me, answered at the original location, observed 1/1 completion and held to open the exact test letter.
+- Traditional Chinese repeated the editor flow and sent an Arrive Memory Route, completed it and opened its Chinese test letter. A browser-only 3-second delay on `route_pool_pick` reproduced Price → Catch; after the delayed reply the stop remained Catch at the original home. The delay wrapper was removed. Walking used simulated coordinates; only the two disposable capsule opening times were advanced.
+- Chinese City Hunt: joined Taipei and agreed with the Keeper, observed five blue numbered pins and sequential locks. Completed the first Arrive; its done state and the next unlocked pin were verified. English Keeper/pin acceptance was already recorded in the prior resume. Full five-type completion remains pending. The temporary player's speed allowance was removed during cleanup.
+- Admin question-pool cards displayed the outside-map pill in Chinese. Adding a new choice question through the production UI succeeded as a draft with `outside_coverage=false`, but crashed the page immediately afterward.
+
+**Stop: admin pool save response is not a complete PoolEntry.** Browser error: `TypeError: Cannot read properties of undefined (reading 'length')`, in `QuestionPool` (production `hunts-65a052db35ec1e4263446928c1066869.js`). Reproduce: `/admin/hunts` → Taipei → Add → enter bilingual place/prompt/two choices, select the answer → Save. The draft persists, but the app becomes blank. Location may be left empty for a draft; this is unrelated to the failure.
+
+`mobile/src/features/admin/QuestionPool.tsx:41–43` inserts the mutation response directly into the list, and line 61 reads `e.uses.length`. The list RPC adds `uses` and derived metadata; `admin_question_pool_save` returns `to_jsonb(saved)` without `uses` (Q1 line 86). The service incorrectly types both shapes as `PoolEntry`. Status mutation also returns a plain row. Claude should reconcile mutation responses with the list shape (for example, reload the authoritative list after mutations), preserve accurate usage/derived metadata for edits, and test save/edit/status with the real response shape. Do not merely fabricate an empty usage list for an existing used question. No screen or migration body was changed by Codex.
+
+Per Roy's stop instruction, no further acceptance actions were attempted. Pending: admin price draft, publish/edit/Undo (including Q1 outside-coverage preservation), hidden-reason/bilingual checks, copies settings, player adjustment, rack moderation, calendar, and remaining five-type City Hunt checks including third price miss = 0. Done/status-doc merge stays held.
+
+Cleanup verified: zero temporary Auth users/identities/sessions/refresh tokens/audit entries, profiles, capsules and route stops, ownership/game/hunt/located-progress rows, admin memberships/actions/secrets and speed allowances. The single draft was deleted; pool count returned to 220. Its one audit action was removed in a transaction with the append-only trigger restored and verified enabled. No existing pool row, calendar, vessel, game setting or production odds was edited. Browser signed out; viewport reset; full navigation cleared simulated GPS; credential-bearing helper files removed. Time Capsule Docker remains stopped. Macau `20261119000708` remains absent; no migration ran. Live types still match main.
+
+## Prior resume history
+
 Rack follow-up release `dde7aaf7118b0a153d7868bbfc84d4e226971736` is live at https://time-capsule-pi-two.vercel.app. Vercel reports success for deployment `Aqtq8FMsK3M6GXDerNEts5zrXGzR`; its production entry and common JavaScript bundle hashes match the verified web export (`entry-5c9d685f64a97ed6829e861fd60a4cf3.js`, `__common-600764e1d077e9d748f72cf9bcd29e2e.js`). PR #169 merged through Roy's account as `c3e25f5`; GitHub retained the fork author on that squash, so the identical tree was released in Roy-authored `dde7aaf`. The initial combined release was `62b1028`. Approved art and migration bodies are unchanged.
 
 ## Merges and verification
