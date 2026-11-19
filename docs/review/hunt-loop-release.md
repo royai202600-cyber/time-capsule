@@ -1,6 +1,6 @@
 # Combined hunt-loop release — production validation stopped
 
-Release `62b102831501d4e0cdff587ddbccb22abdecf8ca` is live at https://time-capsule-pi-two.vercel.app. Vercel reports success for deployment `A1iKDNHiLNNYyN3qqdA1vNmXK7uS`; the production entry and common JavaScript bundle hashes exactly match the verified web export. The release commit is authored by Roy. Approved art is unchanged.
+Rack follow-up release `dde7aaf7118b0a153d7868bbfc84d4e226971736` is live at https://time-capsule-pi-two.vercel.app. Vercel reports success for deployment `Aqtq8FMsK3M6GXDerNEts5zrXGzR`; its production entry and common JavaScript bundle hashes match the verified web export (`entry-5c9d685f64a97ed6829e861fd60a4cf3.js`, `__common-600764e1d077e9d748f72cf9bcd29e2e.js`). PR #169 merged through Roy's account as `c3e25f5`; GitHub retained the fork author on that squash, so the identical tree was released in Roy-authored `dde7aaf`. The initial combined release was `62b1028`. Approved art and migration bodies are unchanged.
 
 ## Merges and verification
 
@@ -11,7 +11,8 @@ Release `62b102831501d4e0cdff587ddbccb22abdecf8ca` is live at https://time-capsu
 | #163 | `7bdb6d7` | held |
 | #165 | `fb0b13a` | held |
 | #167 | `cec8fa2` | held |
-| #168 | `62b1028` | released |
+| #168 | `62b1028` | initial combined release |
+| #169 | `c3e25f5` | rack filters/paging; owner release `dde7aaf` |
 
 #165 and #167 needed the authorized ancestry refresh after the preceding squash. Every file touched by the preceding squash matched its PR head; branch-side conflict resolutions preserved both complete trees byte-for-byte. Local tsc/Vitest passed, then CI passed on refreshed heads `b1e802f` (238 pass / 1 skip) and `2d8faf0` (248 pass / 1 skip).
 
@@ -36,30 +37,38 @@ The scoped migration directory copied all repository migrations except Macau `20
 
 Immediately before cutover, rack inventory still showed 14 move, 4 delete and 1 keep. After application there were 15 public capsules. The live pool has 55 rows per city (220 total); the approved Q1 admin-save line is present.
 
-## Production checks and stop
+## Production checks and current stop
 
-Four disposable accounts signed in with real hosted GoTrue JWTs and the public API key. Every city returned three Today's Hunt pins in question/price/catch order and three route templates. The browser signed into a disposable account and rendered Home/Me at 375 px in English. This is only a smoke check, not the requested complete bilingual gameplay validation.
+The earlier `photo-strip` Shop assertion is a passing negative check (`collect_only`). The subsequent Maison check passed purchase at 10 copies, one send leaving 9, and retention at ×0 in Cabinet/Album with Create and the send RPC refusing it. Cabinet/Album/Create were checked at 375 px in zh/en. Those fixtures were cleaned before this resume.
 
-The previous `photo-strip` Shop stop was a test-fixture mistake. Roy accepted `collect_only` as a passing negative check and authorized resuming with finite Shop vessel `maison`.
+PR #169 at `86f1421bd535623d26a202c27fa53ca6536f8b5c` resolved the prior missing-filter and page-boundary stops. CI `44467523999` succeeded. Local `npm exec -- tsc --noEmit`, `npm exec -- vitest run` (244 passed, 9 expected skips) and `npx expo export --platform web --output-dir /tmp/tc-hl-rack-export` passed. The mobile tree matched main after squash; live types still match `8cf3a2a` exactly.
 
-On the production resume, four fresh disposable accounts authenticated with real GoTrue JWTs. At 375 px, the English Shop purchase acquired Maison edition 006 with 10 copies. Cabinet, Album and Create showed ×10; sending a capsule through Create consumed one copy (9 remained). A disposable admin's player adjustment set that ownership to zero. Cabinet and Album retained it at ×0 in Traditional Chinese and English; Create showed ×0 and refused selection with the localized no-copies message. The real send RPC also returned `no_copies`, while `my_collection` retained the ownership. Starter vessels showed unlimited copies.
+Four fresh disposable accounts used real hosted GoTrue JWTs. Production browser checks used 375 × 812 and simulated location, not a physical walk:
 
-Rack RPC assertions passed all six filters (`all`, `ready`, `waiting`, `has_question`, `friends`, `mine`) using disposable locked, unlocked and waiting capsules. The zh production Create flow successfully left a public capsule without a question at Taipei Civic Square. Location checks used simulated browser coordinates, not a physical walk.
+- **Racks:** all six chips in zh/en matched API counts and contents. Before claiming: All 29, Ready 28, Waiting 1, Question 26, Friends 26, Mine 0. Question loaded 24 items, then 2; browser navigation passed 24 → 25 → 26 → 1, with Back from the first staying put before all pages loaded. English repeated the boundary after a claim (24 → 25 of 25). Mine kept the empty rack card open. Create sealed one question-locked and one unlocked public capsule. A wrong answer was refused; the correct answer displayed the letter, assigned the first reader, and a second reader got `taken`.
+- **Today's Hunt:** each city displayed three quest pins. Taipei completed question, price and all three catches for 30 points; Hong Kong, Macau and Singapore exercised incomplete-catch completion for 22 points. All paid the once-only 3 wax balls, ending at 42 from 30. Completed pins displayed purple with ticks. Speed up showed ×4; Macau and Singapore ran with emulated Reduce Motion. All four completed summaries were checked in zh/en. Taipei's friends board showed the player at 30 and the disposable friend at 10.
+- **City Hunt:** joined Taipei, met the Keeper and selected Let's go. The 60-minute timer began and five blue numbered pins appeared (three Arrive, Catch, Landmark). The remaining pins were locked in sequence. This English check passed; the full bilingual five-type City Hunt checklist remains incomplete.
+- **Friend route:** sent through the real RPC from the disposable friend, received its one brass Arrive stop, completed it through the production map, observed the checklist change to 1 of 1, and held to open the letter. Only this fixture's opening time was advanced for the test.
 
-**New stop: rack filters are missing from the production screen.** At 375 px in zh, opening the Waypost rack displays the capsule card and previous/next pagination, but no rack filter controls. The map filter sheet only selects map categories. `mobile/src/features/journey/JourneyScreen.tsx:398` hardcodes `racks.list(waypost.id, "all", ...)`; lines 629–632 render only the selected card. `mobile/src/services/racks.ts` already defines all six filters. This is a screen integration gap for Claude, not a failing filter RPC. No screen code was changed, and no further gameplay checks ran after this failure.
+**Current stop: Memory Route loses the user's selected place when adding their own question.** Reproduction at 375 px in English:
 
-Pending: filter UI and bilingual rack checks, wrong/right answer and first-opener checks, Today's Hunt motion/friends/progress in every city, Keeper/City Hunt quest pins and five quest types, friend and Memory Route walks/opening, and the remaining admin/Undo checklist. Do not mark HL-U1–U5, HL-C1–C5 or HL-Q1 Done or merge the status docs as completed until these checks pass. Do not reapply migrations. The live-types file on `origin/main` is byte-identical to commit `8cf3a2a` (included through the release squash).
+1. Create → Future me → Walk a route → Tap your own places on the map.
+2. Use the selected Civic Square-area spot, labelled `府前停車場 (行人出口)`. It starts as Arrive.
+3. Choose Question. The stop changes to `Rainbow Starting Line` and its pool question.
+4. Choose Write my own. The free-text question fields appear, but the replacement place remains.
 
-## PR #169 review stop
+`mobile/src/features/create/RouteBuilder.tsx:59` automatically calls the pool picker on a change to Question. Line 50 overwrites the chosen coordinates and both names with the pool location. Lines 105–107 switch to a personal question without restoring the chosen place. There is no control to reposition that existing stop. This prevents the own-place/own-question Memory Route described in `docs/design/hunt-loop.md:59` and `:61`. Claude should preserve the manually selected place for a personal question and make a move to a pool location explicit. No screen fix was made by Codex, and the Memory Route draft was not sent.
 
-PR #169 at `201a418b0ab49cbd57a5bd0870d3e93ffa842a21` adds the six localized rack chips, filter-aware fetches, request sequencing and the empty-filter message. Only JourneyScreen and rack strings change. GitHub reports mergeable and CI run `44465361656` succeeded; the connected merge account is Roy's `royai202600-cyber`.
+Stop-on-failure was honored. Pending: repaired Memory Route send/walk/open, remaining bilingual City Hunt/five-type checks (including third price miss = 0 points), and the full production admin checklist (pool create/publish/edit/Undo, outside-map/hidden metadata, copies settings, player adjustment, rack moderation and calendar). HL-U1–U5, HL-C1–C5 and HL-Q1 are not marked Done, and the status docs remain unmerged. No migration was reapplied; Macau remains excluded.
 
-Review stopped before merge because the existing `rackStep` logic at PR lines 418–423 still breaks forward navigation across a server page boundary. It starts `loadRack(..., true)` without awaiting it, then computes the next index modulo the old list length. A Node VM reproduction extracted that exact function body from the PR: with 20 loaded Ready capsules, index 19 and a next cursor, pressing Next loads capsule 21 but selects index 0 (capsule 1). The same arithmetic fails for any page size. The chosen filter is preserved; the selected capsule is wrong. This predates #169 but fails the requested filtered-pagination acceptance check.
+## Earlier stops (resolved)
 
-Claude follow-up: advance to the first appended capsule only after a successful current-page response; preserve the active filter and request sequencing, and wrap only when no next page exists. Cover the page boundary and a filter change during an in-flight page request. No screen edits were made by Codex. PR #169 remains unmerged, no deployment was triggered, and no production fixtures were created on this resume. All remaining production checks and Done/status-doc merge remain pending; Macau was untouched.
+The missing rack controls were recorded in `9f6186c`, and the old modulo page-boundary bug in `54e4feb`. Both are fixed and production-verified by #169. The initial Shop-fixture correction was recorded in `02ceed3`.
 
 ## Cleanup
 
-After the resumed checks, all four disposable accounts were globally signed out, their temporary admin membership removed, and users deleted. Verified zero fixture users, profiles, Auth identities, sessions, refresh tokens, Auth audit entries, friendships, capsules, ownership rows, daily plays, admin memberships and admin actions. The disposable copy-adjustment audit row was removed within a transaction; the append-only audit trigger was re-enabled and verified. Maison ownership returned to its original five rows (295 editions remaining). No custom pool, route or vessel fixture was created. Automatically initialized city schedules contain production Q1 content, not disposable test content. Temporary credential-bearing harness/session files were deleted. Browser signed out and viewport override reset. Time Capsule Docker containers remain stopped; other projects' containers were untouched.
+All four accounts were globally signed out and deleted, along with their temporary admin membership and 31 disposable capsules. Verified zero fixture users, profiles, Auth identities, sessions, refresh tokens, Auth audit entries, friendships, capsules, ownership rows, daily plays, game-player rows, City Hunt progress, admin memberships and admin actions. Friend-route stops and content were also zero. No custom pool, vessel, calendar edit or game setting was created; calendar reads only initialized legitimate production schedules. No audit-trigger override was needed on this resume.
+
+The unsent Memory Route draft was discarded. Credential-bearing harness/session files were deleted. Browser signed out; viewport and Reduce Motion overrides reset; navigation cleared the simulated geolocation. Time Capsule Docker containers remain stopped, and other projects' containers were untouched. Macau `20261119000708` was verified absent after cleanup.
 
 Local run command: `cd mobile && npm run web`, at http://localhost:8088.
