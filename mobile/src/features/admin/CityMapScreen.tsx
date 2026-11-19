@@ -21,6 +21,8 @@ import { useAdmin } from "./AdminShell";
 import { useAdminText } from "./strings";
 import { AButton, Card, Failed, Loading, Notice, Pill, Stat, VesselThumb, useLoad, useWide } from "./ui";
 import { EditBar, VisibilityCard, WaypostForm } from "./WaypostEditor";
+import { RackCard } from "./RackCard";
+import { ADMIN_HUNT_LOOP } from "../../services/adminHuntLoop";
 
 type Layer = "wayposts" | "wave" | "hunts" | "spots";
 /** Pins reach full size a couple of zooms in from the whole city, and stay readable (never vanish) out at city scale. */
@@ -159,6 +161,7 @@ function CityMapView({ map, onChanged }: { map: CityMap; onChanged: () => void }
                 {editing && picked?.kind === "landmark" && <Notice text={a.ed.landmarkNote} />}
               </>
             : !(editing && mode) && <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{a.tapAPin}</Text>}
+    {ADMIN_HUNT_LOOP && picked?.kind === "common" && mode !== "move" && <RackCard key={picked.id} waypost={picked.id} />}
     <View style={{ gap: spacing.sm }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
         <Text style={{ fontFamily: serif, fontSize: 17, color: C.ink }}>{a.layer.wave}</Text>

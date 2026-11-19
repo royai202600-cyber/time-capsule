@@ -11,6 +11,9 @@ import { useAdmin } from "./AdminShell";
 import { useAdminText, type AdminText } from "./strings";
 import { AButton, Card, Failed, Loading, Page, Pill, Section, Segmented, Stat, VesselThumb, useColumns, useLoad, type Tone } from "./ui";
 import { PlaceEditor, RuleSheet, WaveEditButtons } from "./SpawnEditor";
+import { ADMIN_HUNT_LOOP } from "../../services/adminHuntLoop";
+import { CopiesButton, VesselCopies, perCatchOf } from "./CopiesControls";
+import { useHuntLoopText } from "./huntLoopStrings";
 
 const RARITY_TONE: Record<string, Tone> = { common: "blue", uncommon: "plum", rare: "brass" };
 const vesselName = (v: string, lang: "zh" | "en") => (VESSELS as any)[v]?.name[lang] ?? v;
@@ -32,7 +35,7 @@ export default function CapsulesScreen() {
       {mayEdit && <AButton small tone={editing ? "blue" : "ghost"} title={editing ? a.ed.done : a.ed.edit} onPress={() => setEditing((x) => !x)} />}
     </View>}>
     {data.error ? <Failed onRetry={data.reload} /> : !data.data ? <Loading /> : <>
-      <WaveSettings config={data.data.config}>{on && <WaveEditButtons data={data.data} cities={cities} onSaved={saved} />}</WaveSettings>
+      <WaveSettings config={data.data.config}>{on && <WaveEditButtons data={data.data} cities={cities} onSaved={saved} />}{on && ADMIN_HUNT_LOOP && <CopiesButton config={data.data.config} onSaved={saved} />}</WaveSettings>
       {view === "vessel" ? <ByVessel data={data.data} cities={cities} onSaved={on ? saved : undefined} />
         : on ? <PlaceEditor data={data.data} cities={cities} onSaved={saved} />
         : <ByPlace data={data.data} cities={cities} focus={place} />}
@@ -43,10 +46,12 @@ export default function CapsulesScreen() {
 
 function WaveSettings({ config, children }: { config: Spawning["config"]; children?: React.ReactNode }) {
   const a = useAdminText();
+  const h = useHuntLoopText();
   const next = config.next_length;
   const at = next ? new Date(next.starts_at) : null;
   const items = [a.waveEvery(config.wave_minutes), a.showChance(Math.round(config.spawn_chance * 100)),
-    a.weights(config.weights.common, config.weights.uncommon, config.weights.rare), a.nearbyMax(config.nearby_max)];
+    a.weights(config.weights.common, config.weights.uncommon, config.weights.rare), a.nearbyMax(config.nearby_max),
+    ...(ADMIN_HUNT_LOOP ? [h.copiesPerCatch(perCatchOf(config))] : [])];
   return <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm, alignItems: "center" }}>
     <Text style={{ fontFamily: serif, fontSize: 14, color: C.ink, marginRight: 4 }}>{a.waveSettings}</Text>
     {items.map((x) => <Pill key={x} label={x} />)}
@@ -138,6 +143,7 @@ function ByVessel({ data, cities, onSaved }: { data: Spawning; cities: Region[];
                   <Text style={{ fontFamily: sans, fontSize: 13, color: C.blue }}>{a.ed.edit} ›</Text>
                 </Pressable>}
               </>}
+          {ADMIN_HUNT_LOOP && <VesselCopies rule={r} name={vesselName(r.vessel, language)} onSaved={onSaved} />}
         </View>)}
       </View>
     </Section>)}
