@@ -126,6 +126,7 @@ try {
 
   let attempt = await landmark();
   assert.equal(attempt.cracks, 40);
+  assert.equal(attempt.max_health, 40);
   assert(Math.abs(Date.parse(attempt.expires_at) - Date.now() - 150000) < 3000);
   const landmarkWin = finishArgs(attempt.attempt_id, 'won', 0, 20);
   denied(await rival.rpc('landmark_finish', landmarkWin), 'expired');
@@ -147,6 +148,10 @@ try {
   const [legacy] = ok(await rpc('landmark_hit', { p_attempt: attempt.attempt_id, p_ball: 'wax', p_ring: 1, ...coords }));
   assert.equal(legacy.result, 'hit');
   assert(legacy.cracks < 40);
+  const resumedLandmark = await landmark();
+  assert.equal(resumedLandmark.attempt_id, attempt.attempt_id);
+  assert.equal(resumedLandmark.cracks, legacy.cracks);
+  assert.equal(resumedLandmark.max_health, 40);
   const loss = finishArgs(attempt.attempt_id, 'lost', 1, 0);
   allowTime('public.landmark_attempts', attempt.attempt_id);
   const lost = ok(await rpc('landmark_finish', loss));

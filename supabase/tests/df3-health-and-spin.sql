@@ -21,6 +21,8 @@ declare
   target record;
   fight record;
   attempt record;
+  resumed record;
+  legacy_attempt uuid;
   outcome jsonb;
   reward jsonb;
   audit private.admin_actions;
@@ -47,6 +49,15 @@ begin
   perform pg_temp.df3_expect_error(format('select * from public.landmark_start(%L,%L,%L,10)',
     landmark,lat,lng),'no_balls');
   assert not exists (select 1 from public.landmark_attempts where user_id=player);
+  -- Resuming a pre-DF3 fight requires enough stock for the remaining cracks.
+  insert into public.landmark_attempts(user_id,waypost_id,cracks_left,max_health,started_at,expires_at)
+    values(player,landmark,12,20,clock_timestamp(),clock_timestamp()+interval '150 seconds')
+    returning id into legacy_attempt;
+  update public.player_game set wax_balls=12 where user_id=player;
+  select * into strict resumed from public.landmark_start(landmark,lat,lng,10);
+  assert resumed.attempt_id = legacy_attempt and resumed.cracks = 12 and resumed.max_health = 20;
+  outcome := public.landmark_finish(legacy_attempt,'lost',0,0,lat,lng,10);
+  assert outcome->>'result' = 'lost';
   update public.player_game set wax_balls=100,gold_balls=20 where user_id=player;
 
   for target in select * from (values ('common',10),('uncommon',12),('rare',14)) t(rarity,hp) loop
@@ -65,9 +76,14 @@ begin
   assert (select wax_balls=64 and gold_balls=20 from public.player_game where user_id=player);
 
   select * into strict attempt from public.landmark_start(landmark,lat,lng,10);
-  assert attempt.cracks = 40;
-  assert (select cracks_left=40 and expires_at-started_at=interval '150 seconds'
+  assert attempt.cracks = 40 and attempt.max_health = 40;
+  assert (select cracks_left=40 and max_health=40 and expires_at-started_at=interval '150 seconds'
     from public.landmark_attempts where id=attempt.attempt_id);
+  update public.landmark_attempts set cracks_left=39 where id=attempt.attempt_id;
+  select * into strict resumed from public.landmark_start(landmark,lat,lng,10);
+  assert resumed.attempt_id = attempt.attempt_id and resumed.cracks = 39 and resumed.max_health = 40;
+  assert resumed.expires_at = attempt.expires_at;
+  update public.landmark_attempts set cracks_left=40 where id=attempt.attempt_id;
   perform pg_temp.df3_expect_error(format('select public.landmark_finish(%L,''won'',0,19,%L,%L,10)',
     attempt.attempt_id,lat,lng),'not_enough_damage');
   perform pg_temp.df3_expect_error(format('select public.landmark_finish(%L,''won'',0,20,%L,%L,10)',
@@ -124,6 +140,9 @@ begin
   end loop;
   assert (select spin_count=3 from public.city_hunt_quest_progress where user_id=player and hunt_id=hunt.id);
   assert (select wax_balls=92 from public.player_game where user_id=player);
+  assert not has_function_privilege('anon','public.landmark_start(uuid,double precision,double precision,double precision)','execute');
+  assert has_function_privilege('authenticated','public.landmark_start(uuid,double precision,double precision,double precision)','execute');
+  assert has_function_privilege('service_role','public.landmark_start(uuid,double precision,double precision,double precision)','execute');
   assert not has_function_privilege('anon','public.admin_set_spin_reward(integer,integer,text)','execute');
   assert has_function_privilege('authenticated','public.admin_set_spin_reward(integer,integer,text)','execute');
 end $$;

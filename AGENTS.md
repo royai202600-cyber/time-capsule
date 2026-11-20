@@ -83,6 +83,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-20: DF3's held migration returns stored `max_health` from `landmark_start` alongside remaining `cracks` and the original expiry. Pre-DF3 attempts keep a 20 HP maximum, and fresh attempts record 40 HP. Resume checks stock against remaining cracks. Hosted rollback verified new, resumed, and pre-migration attempts.
 - 2026-11-20: DF3 backend starts new Corrupted fights at 10/12/14 and Landmark attempts at 40 for 150 seconds. Existing attempts use their recorded health. Default Waypost wax reward is 10. Owners and admins can edit both bounds through `admin_set_spin_reward`, with Activity Undo. The migration is held until Roy approves release and the DF3 UI deployment is verified live.
 - 2026-11-20: Roy chose the faceted spike row (PR #188 option B). Its PNG and WebP are renamed to `jump-spikes` byte-for-byte, with the base at row 632 and the highest tip at row 470. The DF3 demo uses this approved asset.
 - 2026-11-20: Roy removed the ground fissure and requested a second spike row in draft PR #188, based on the angular brown shapes in his attached photo. Option A stays byte-identical. Option B uses the fixed 1536×1024 canvas with its base at row 632 and tallest tip at row 470. Compare both at 375 px before choosing.

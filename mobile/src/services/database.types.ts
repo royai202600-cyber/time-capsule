@@ -773,6 +773,7 @@ export type Database = {
           cracks_left: number
           expires_at: string
           id: string
+          max_health: number
           started_at: string
           user_id: string
           waypost_id: string
@@ -782,6 +783,7 @@ export type Database = {
           cracks_left: number
           expires_at: string
           id?: string
+          max_health: number
           started_at?: string
           user_id: string
           waypost_id: string
@@ -791,6 +793,7 @@ export type Database = {
           cracks_left?: number
           expires_at?: string
           id?: string
+          max_health?: number
           started_at?: string
           user_id?: string
           waypost_id?: string
@@ -1801,6 +1804,7 @@ export type Database = {
           attempt_id: string
           cracks: number
           expires_at: string
+          max_health: number
         }[]
       }
       mark_seen: { Args: { p_id: string }; Returns: undefined }

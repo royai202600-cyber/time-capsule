@@ -44,10 +44,20 @@ update private.game_config
 set landmark_cracks = 40, landmark_seconds = 150, spin_wax_min = 10, spin_wax_max = 10
 where singleton;
 
-create or replace function public.landmark_start(
+-- Pre-DF3 fights have a 20 HP bar. Keep their remaining cracks and expiry.
+alter table public.landmark_attempts
+  add column max_health integer not null default 20,
+  add constraint landmark_attempts_health_check check (max_health > 0 and cracks_left <= max_health);
+
+alter table public.landmark_attempts alter column max_health drop default;
+
+-- PostgreSQL requires recreating a function when its returned columns change.
+drop function public.landmark_start(uuid,double precision,double precision,double precision);
+
+create function public.landmark_start(
   p_waypost uuid, p_lat double precision, p_lng double precision, p_accuracy double precision
 )
-returns table(attempt_id uuid, cracks integer, expires_at timestamptz)
+returns table(attempt_id uuid, cracks integer, expires_at timestamptz, max_health integer)
 language plpgsql security definer set search_path = '' as $$
 declare
   player public.player_game;
@@ -70,8 +80,9 @@ begin
   if found then
     if active.waypost_id<>p_waypost then raise exception 'active_attempt'; end if;
   else
-    insert into public.landmark_attempts(user_id,waypost_id,cracks_left,started_at,expires_at)
-      values(auth.uid(),p_waypost,cfg.landmark_cracks,started,started+make_interval(secs=>cfg.landmark_seconds))
+    insert into public.landmark_attempts(user_id,waypost_id,cracks_left,max_health,started_at,expires_at)
+      values(auth.uid(),p_waypost,cfg.landmark_cracks,cfg.landmark_cracks,started,
+        started+make_interval(secs=>cfg.landmark_seconds))
       returning * into active;
   end if;
   if player.wax_balls + 2::bigint * player.gold_balls < active.cracks_left then
@@ -80,8 +91,14 @@ begin
   attempt_id := active.id;
   cracks := active.cracks_left;
   expires_at := active.expires_at;
+  max_health := active.max_health;
   return next;
 end $$;
+
+revoke all on function public.landmark_start(uuid,double precision,double precision,double precision)
+from public, anon, authenticated, service_role;
+grant execute on function public.landmark_start(uuid,double precision,double precision,double precision)
+to authenticated, service_role;
 
 create or replace function public.admin_spawning()
  RETURNS jsonb
