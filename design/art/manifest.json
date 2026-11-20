@@ -13084,75 +13084,256 @@
     }
   },
   {
-    "path": "design/art/characters/fight-01-arm-windup.png",
-    "what": "Cocked overhand windup with the ball behind the head and elbow raised",
+    "path": "design/art/characters/fight-01-throw-1-upper.png",
+    "what": "Upper body. Cock after a low lead-leg lift and short step, with the torso turned and the lead arm reaching toward the target.",
     "size_px": [
       1024,
       1024
     ],
     "transparent": true,
     "model": "gpt-image-2",
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: precise-object-edit. The first input is the approved style sheet. The second input is the actual assembled fight-01 sprite to edit. Use the approved back view directly behind and slightly above; player faces away toward the top center. Return ONLY the isolated viewer-right throwing arm from rounded blue shoulder cap through fingertips, in the original 1024×1024 coordinate system. Match the original faded medium blue sleeve, cuff, dark plum outline, fine texture, and warm skin. The shoulder joint is at (566,393), cap centered on this point about 57 px wide; arm must overlap the torso there for compositing. Do not recenter or enlarge the isolated arm. Keep the arm on the right of the composition. Delete all other pixels, including the head, torso, other arm and legs. True transparent alpha. No ball, text or visual effects.\n\nDraw the cocked overhand windup: upper arm reaches out toward viewer-right and a little upward, elbow near (700,348), elbow bends sharply, forearm rises inward toward (665,255). Cupped right hand around the edge of an imaginary small ball near (639,215), pulled back toward the camera and next to the rear-right of the head. Strong angular elbow silhouette with clean open space inside the bend. Keep fingertips right of x=600 so they are visible with the unmodified head layered over the arm. Entire arm and fingertips stay attached and anatomically plausible.",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: identity-preserve. Image 1 is the Time Capsule style sheet. Image 2 is the exact assembled figure 01 to edit. Image 3 is real baseball pitching motion reference, for biomechanics only. Keep the same woman, short rounded dark brown bob, dusty medium blue long-sleeved crewneck with blue cuff, slim dark ink-navy cuffed trousers, warm skin, and navy flat slip-on shoes with cream soles. Match the modest texture, fine plum contour and adult proportions exactly. No hat, glove, baseball uniform, props, or ball. Render one entire connected character, all limbs feet and fingers, on transparent alpha, original square sprite framing. Approved camera exception: from behind at a small elevation, looking along the ball's path toward an unseen target in the upper middle distance (slightly viewer-left), like a center-field baseball camera that stays fixed. Main visible surface is the person's back, no face visible. Character is right-handed. Original waist centered around (512,530) on a conceptual 1024 canvas; supporting shoe sole around y=900; retain same apparent head size, waist width, scale and empty side margins. Legs must take only a compact step toward depth and stay in the original lane; shoe span roughly one shoulder width, not a big lunge. One figure, no ground or shadow.\n\nDraw the late COCK at the end of a very short leg lift and stride. Right shoe grounded back, left shoe lightly arriving a short step into depth toward target, left knee softly bent; hips begin to turn toward target while upper torso is still side-on and coiled, shoulder line in depth from the near viewer-right shoulder toward the far viewer-left shoulder. Nondominant bare left arm reaches straight ahead toward the target in perspective (seen beyond left shoulder). Right elbow sticks back to viewer-right LEVEL with the right shoulder, bent approximately 90 degrees, forearm and gripped hand drawn back just behind the head on the camera side, close to the right edge of hair (hand grips an imaginary wax ball between fingers; ball is omitted). Head tracks the target while the chest remains turned. Knees soft, back tall, clearly loaded. Show torso turn through the shoulder and panel of the top, not a flat symmetrical rear stance.",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/characters/fight-01.png at 1fd08ac"
+      "design/art/characters/fight-01.png at 1fd08ac",
+      "https://commons.wikimedia.org/wiki/File:Aroldis_Chapman_pitching_in_Game_7_of_the_2016_World_Series.jpg"
     ],
-    "generated_source_sha256": "f16473c3d8ba7e363afd1cbd8008242496ad643e5732af017ff7bbce5bf03629",
-    "postprocess": "Removed isolated low-alpha noise. Resampled the 1254 px output at x/y scale (0.36, 0.295) and translated by (336, 161) onto the original 1024 px canvas under the unchanged torso. For the second review, rotated the registered arm 18° counterclockwise around (566, 393) at the existing scale and transformed the ball center by the same angle. In the preview the ball overlaps the rear edge of the hair.",
-    "pivot": {
-      "x": 566,
-      "y": 393
+    "generated_source_sha256": "c822bf36c0f33098606e6c41ffb179e85d6de0a8f43cd7ed6d15d6c748c1c8f0",
+    "postprocess": "Removed disconnected alpha noise from the whole pose and registered the hip and support-foot depth to the existing rig. Fitted the hip locally to match the jump legs and split the same illustration at the waist using overlapping alpha masks. The complete hands remain on the upper layer.",
+    "anchor": {
+      "x": 512,
+      "y": 900
     },
+    "waist_anchor": {
+      "x": 516,
+      "y": 552
+    },
+    "shared_scale": 0.6715063520871143,
+    "throw_phase": "cock",
+    "preview_duration_ms": 140,
     "ball_point": {
-      "x": 568,
-      "y": 230
-    }
+      "x": 658,
+      "y": 264
+    },
+    "ball_state": "held"
   },
   {
-    "path": "design/art/characters/fight-01-arm-release.png",
-    "what": "Foreshortened release over the crown with fingers together",
+    "path": "design/art/characters/fight-01-throw-1-lower.png",
+    "what": "Lower body. Cock after a low lead-leg lift and short step, with the torso turned and the lead arm reaching toward the target.",
     "size_px": [
       1024,
       1024
     ],
     "transparent": true,
     "model": "gpt-image-2",
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: precise-object-edit. First image is the approved style sheet. Second image is the assembled game sprite to edit. Approved camera exception: directly behind the woman and a little above, looking in the same direction as the woman toward the target in the distance. Preserve her arm identity: dusty blue long sleeve, same narrow blue cuff, warm skin, dark plum ink outline and paper texture. Output only the FULL right arm, from the rounded shoulder cap to fingertips, isolated on transparent alpha. The unchanged body and hair will be layered over this arm in the game. Draw the whole limb even where the body will later cover it. Same square coordinate space as the source, shoulder centered at (566,393) on the 1024 canvas, with extra cap overlap for seamless registration. No body, no hair, no ball, no labels or effects.\n\nThis single frame shows right-handed overhand ball release, reaching straight AWAY from the camera toward the capsule, with the path crossing inward over the crown. Use a strong diagonal from the right shoulder up and left toward the center of the head, curved sleeve folds and aggressive depth foreshortening. Project the elbow around (570,260), wrist around (533,185), and short visible hand just above and ahead of the head around (511,148). Hair crown in the rig is (510,171). The wrist snaps toward the distant target and the visually short fingers trail together and point forward, aligned as one tapered tip with subtly separated fingernails at most. See the dorsal knuckles from behind, with the fingertips leading into depth. Thumb tucked. Each finger points in the same direction. This is a compact athletic reaching gesture along the depth axis. Avoid spread or upward waving fingers, raised palm, pointing index finger, or a vertical sleeve.",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: identity-preserve. Image 1 is the Time Capsule style sheet. Image 2 is the exact assembled figure 01 to edit. Image 3 is real baseball pitching motion reference, for biomechanics only. Keep the same woman, short rounded dark brown bob, dusty medium blue long-sleeved crewneck with blue cuff, slim dark ink-navy cuffed trousers, warm skin, and navy flat slip-on shoes with cream soles. Match the modest texture, fine plum contour and adult proportions exactly. No hat, glove, baseball uniform, props, or ball. Render one entire connected character, all limbs feet and fingers, on transparent alpha, original square sprite framing. Approved camera exception: from behind at a small elevation, looking along the ball's path toward an unseen target in the upper middle distance (slightly viewer-left), like a center-field baseball camera that stays fixed. Main visible surface is the person's back, no face visible. Character is right-handed. Original waist centered around (512,530) on a conceptual 1024 canvas; supporting shoe sole around y=900; retain same apparent head size, waist width, scale and empty side margins. Legs must take only a compact step toward depth and stay in the original lane; shoe span roughly one shoulder width, not a big lunge. One figure, no ground or shadow.\n\nDraw the late COCK at the end of a very short leg lift and stride. Right shoe grounded back, left shoe lightly arriving a short step into depth toward target, left knee softly bent; hips begin to turn toward target while upper torso is still side-on and coiled, shoulder line in depth from the near viewer-right shoulder toward the far viewer-left shoulder. Nondominant bare left arm reaches straight ahead toward the target in perspective (seen beyond left shoulder). Right elbow sticks back to viewer-right LEVEL with the right shoulder, bent approximately 90 degrees, forearm and gripped hand drawn back just behind the head on the camera side, close to the right edge of hair (hand grips an imaginary wax ball between fingers; ball is omitted). Head tracks the target while the chest remains turned. Knees soft, back tall, clearly loaded. Show torso turn through the shoulder and panel of the top, not a flat symmetrical rear stance.",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/characters/fight-01.png at 1fd08ac"
+      "design/art/characters/fight-01.png at 1fd08ac",
+      "https://commons.wikimedia.org/wiki/File:Aroldis_Chapman_pitching_in_Game_7_of_the_2016_World_Series.jpg"
     ],
-    "generated_source_sha256": "95464edd5f1873cac659654e86ab76072ede4c82ed676c6c6b3151af086ec0e8",
-    "postprocess": "Removed isolated low-alpha noise, sheared the arm on x by 0.16 × (y − 967) in source pixels, resampled at x/y scale (0.25, 0.32) and translated by (414, 84) onto the original 1024 px canvas under the unchanged torso and hair.",
-    "pivot": {
-      "x": 566,
-      "y": 393
+    "generated_source_sha256": "c822bf36c0f33098606e6c41ffb179e85d6de0a8f43cd7ed6d15d6c748c1c8f0",
+    "postprocess": "Removed disconnected alpha noise from the whole pose and registered the hip and support-foot depth to the existing rig. Fitted the hip locally to match the jump legs and split the same illustration at the waist using overlapping alpha masks. The complete hands remain on the upper layer.",
+    "anchor": {
+      "x": 512,
+      "y": 900
     },
-    "ball_point": {
-      "x": 515,
-      "y": 140
-    }
+    "waist_anchor": {
+      "x": 516,
+      "y": 552
+    },
+    "shared_scale": 0.6715063520871143,
+    "throw_phase": "cock",
+    "preview_duration_ms": 140
   },
   {
-    "path": "design/art/characters/fight-01-arm-follow.png",
-    "what": "Cross-body follow-through with the right hand partly hidden at the left hip",
+    "path": "design/art/characters/fight-01-throw-2-upper.png",
+    "what": "Upper body. Release over the top after the hips turn, with a forward lean toward the lead side.",
     "size_px": [
       1024,
       1024
     ],
     "transparent": true,
     "model": "gpt-image-2",
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: precise-object-edit. First image is the approved style sheet. Second image is the assembled game sprite to edit. Approved camera exception: directly behind the woman and a little above, looking in the same direction as the woman toward the target in the distance. Preserve her arm identity: dusty blue long sleeve, same narrow blue cuff, warm skin, dark plum ink outline and paper texture. Output only the FULL right arm, from the rounded shoulder cap to fingertips, isolated on transparent alpha. The unchanged body and hair will be layered over this arm in the game. Draw the whole limb even where the body will later cover it. Same square coordinate space as the source, shoulder centered at (566,393) on the 1024 canvas, with extra cap overlap for seamless registration. No body, no hair, no ball, no labels or effects.\n\nThis single frame shows the throw already released, right arm crossing DIAGONALLY DOWN toward the opposite LEFT hip in front of the fixed body, on the far side from the camera. In frame coordinates the upper sleeve leaves the right shoulder (566,393), wraps tight to the right contour at about (597,436), and the elbow bends gently around (548,453). The forearm continues uninterrupted down and to the left across the front toward the opposite hip, with cuff around (452,497) and right hand ending around (415,530). Keep the swing tight to the body, reaching across its full width. Because the body will mask the central arm, the viewer will see the curling upper sleeve just outside the viewer-right edge, and the distal cuff and a little hand at viewer-left at hip height, partly hidden by the torso and resting left arm. Make the upper arm and forearm form a single long down-left sweep; no hook shape, no fingers near the right hip, no hand placed behind the back. Relaxed fingers point down-left and slightly forward as they pass the opposite hip. Use a smooth, moderate bend in the elbow and foreshortening where the arm turns away.",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: identity-preserve. Image 1 is the Time Capsule style sheet. Image 2 is the exact assembled figure 01 to edit. Image 3 is real baseball pitching motion reference, for biomechanics only. Keep the same woman, short rounded dark brown bob, dusty medium blue long-sleeved crewneck with blue cuff, slim dark ink-navy cuffed trousers, warm skin, and navy flat slip-on shoes with cream soles. Match the modest texture, fine plum contour and adult proportions exactly. No hat, glove, baseball uniform, props, or ball. Render one entire connected character, all limbs feet and fingers, on transparent alpha, original square sprite framing. Approved camera exception: from behind at a small elevation, looking along the ball's path toward an unseen target in the upper middle distance (slightly viewer-left), like a center-field baseball camera that stays fixed. Main visible surface is the person's back, no face visible. Character is right-handed. Original waist centered around (512,530) on a conceptual 1024 canvas; supporting shoe sole around y=900; retain same apparent head size, waist width, scale and empty side margins. Legs must take only a compact step toward depth and stay in the original lane; shoe span roughly one shoulder width, not a big lunge. One figure, no ground or shadow.\n\nDraw the instant of RELEASE from the same short step. Left foot is planted just ahead toward depth (viewer-left), right foot pivots on the toe at the rear, heel lifting slightly. Hips are already rotated toward target, torso rotates after them and leans convincingly forward and toward viewer-left, with shoulder line plainly sloping, body mass over the lead leg. Right arm is coming OVER THE TOP into extension toward the target, moving up-left in projection and foreshortening away from the camera; the wrist snaps forward with grouped fingers. Right hand should sit above and ahead of the head, silhouette separated, reaching into depth. Left arm is folded and tucked toward the left ribs, helping turn the body. The two arms must have visibly different positions, and this must read as a pitching delivery with heel pivot, hip rotation and weight transfer.",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/characters/fight-01.png at 1fd08ac"
+      "design/art/characters/fight-01.png at 1fd08ac",
+      "https://tenor.com/view/pitching-gerrit-cole-fast-ball-world-series-major-league-baseball-gif-3188694275409995082"
     ],
-    "generated_source_sha256": "196715b5dc9e33c5201c3bc01a0be385ed0671a9ebe3554a9c88bf2a494e0e4e",
-    "postprocess": "Removed isolated low-alpha noise. Bent the upper sleeve up to 84 source pixels outward in a smooth taper and moved the distal cuff and hand up to 42 source pixels toward the opposite hip. Resampled at x/y scale (0.39, 0.265) and translated by (284, 246) onto the original 1024 px canvas under the unchanged torso.",
-    "pivot": {
-      "x": 566,
-      "y": 393
-    }
+    "generated_source_sha256": "323b6ced1a21f4af168e11f2e9b6e9c5ddc1d71b264d1753411e793f7e33c369",
+    "postprocess": "Removed disconnected alpha noise from the whole pose and registered the hip and support-foot depth to the existing rig. Fitted the hip locally to match the jump legs and split the same illustration at the waist using overlapping alpha masks. The complete hands remain on the upper layer.",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "waist_anchor": {
+      "x": 516,
+      "y": 552
+    },
+    "shared_scale": 0.6715063520871143,
+    "throw_phase": "release",
+    "preview_duration_ms": 80,
+    "ball_point": {
+      "x": 530,
+      "y": 219
+    },
+    "ball_state": "release"
+  },
+  {
+    "path": "design/art/characters/fight-01-throw-2-lower.png",
+    "what": "Lower body. Release over the top after the hips turn, with a forward lean toward the lead side.",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: identity-preserve. Image 1 is the Time Capsule style sheet. Image 2 is the exact assembled figure 01 to edit. Image 3 is real baseball pitching motion reference, for biomechanics only. Keep the same woman, short rounded dark brown bob, dusty medium blue long-sleeved crewneck with blue cuff, slim dark ink-navy cuffed trousers, warm skin, and navy flat slip-on shoes with cream soles. Match the modest texture, fine plum contour and adult proportions exactly. No hat, glove, baseball uniform, props, or ball. Render one entire connected character, all limbs feet and fingers, on transparent alpha, original square sprite framing. Approved camera exception: from behind at a small elevation, looking along the ball's path toward an unseen target in the upper middle distance (slightly viewer-left), like a center-field baseball camera that stays fixed. Main visible surface is the person's back, no face visible. Character is right-handed. Original waist centered around (512,530) on a conceptual 1024 canvas; supporting shoe sole around y=900; retain same apparent head size, waist width, scale and empty side margins. Legs must take only a compact step toward depth and stay in the original lane; shoe span roughly one shoulder width, not a big lunge. One figure, no ground or shadow.\n\nDraw the instant of RELEASE from the same short step. Left foot is planted just ahead toward depth (viewer-left), right foot pivots on the toe at the rear, heel lifting slightly. Hips are already rotated toward target, torso rotates after them and leans convincingly forward and toward viewer-left, with shoulder line plainly sloping, body mass over the lead leg. Right arm is coming OVER THE TOP into extension toward the target, moving up-left in projection and foreshortening away from the camera; the wrist snaps forward with grouped fingers. Right hand should sit above and ahead of the head, silhouette separated, reaching into depth. Left arm is folded and tucked toward the left ribs, helping turn the body. The two arms must have visibly different positions, and this must read as a pitching delivery with heel pivot, hip rotation and weight transfer.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 1fd08ac",
+      "https://tenor.com/view/pitching-gerrit-cole-fast-ball-world-series-major-league-baseball-gif-3188694275409995082"
+    ],
+    "generated_source_sha256": "323b6ced1a21f4af168e11f2e9b6e9c5ddc1d71b264d1753411e793f7e33c369",
+    "postprocess": "Removed disconnected alpha noise from the whole pose and registered the hip and support-foot depth to the existing rig. Fitted the hip locally to match the jump legs and split the same illustration at the waist using overlapping alpha masks. The complete hands remain on the upper layer.",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "waist_anchor": {
+      "x": 516,
+      "y": 552
+    },
+    "shared_scale": 0.6715063520871143,
+    "throw_phase": "release",
+    "preview_duration_ms": 80
+  },
+  {
+    "path": "design/art/characters/fight-01-throw-3-upper.png",
+    "what": "Upper body. Follow-through folded over the lead leg, with the right hand across toward the left knee and the rear shoe lifting.",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: identity-preserve. Image 1 is the Time Capsule style sheet. Image 2 is the exact assembled figure 01 to edit. Image 3 is real baseball pitching motion reference, for biomechanics only. Keep the same woman, short rounded dark brown bob, dusty medium blue long-sleeved crewneck with blue cuff, slim dark ink-navy cuffed trousers, warm skin, and navy flat slip-on shoes with cream soles. Match the modest texture, fine plum contour and adult proportions exactly. No hat, glove, baseball uniform, props, or ball. Render one entire connected character, all limbs feet and fingers, on transparent alpha, original square sprite framing. Approved camera exception: from behind at a small elevation, looking along the ball's path toward an unseen target in the upper middle distance (slightly viewer-left), like a center-field baseball camera that stays fixed. Main visible surface is the person's back, no face visible. Character is right-handed. Original waist centered around (512,530) on a conceptual 1024 canvas; supporting shoe sole around y=900; retain same apparent head size, waist width, scale and empty side margins. Legs must take only a compact step toward depth and stay in the original lane; shoe span roughly one shoulder width, not a big lunge. One figure, no ground or shadow.\n\nDraw the FOLLOW-THROUGH immediately after release. Strongly hinge the trunk forward into depth over the planted LEFT lead leg and slightly to viewer-left. Back is the main visible surface and appears foreshortened, the bob tips forward, shoulder line rolls and the right shoulder rotates toward the target. Right throwing arm has swept diagonally downward ACROSS the front of the body toward the opposite LEFT knee, with the bent wrist and hand clearly peeking out near the viewer-left thigh or knee. Left arm is bent and held close to the left ribcage. Right rear foot has just lifted: bend the right knee and show the rear heel or cream sole coming up behind her to viewer-right only a small amount. Keep lead foot close to the lane center. Make the folded trunk and raised back heel obvious, with no exaggerated kick.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 1fd08ac",
+      "https://www.mlb.com/cut4/carlos-carrasco-unleashed-a-crazy-pitch-c273564308"
+    ],
+    "generated_source_sha256": "af0e51eca597e8c3f9f5d089c1c2fd0329c6daf315a2da565f222b0bfe106280",
+    "postprocess": "Removed disconnected alpha noise from the whole pose and registered the hip and support-foot depth to the existing rig. Fitted the hip locally to match the jump legs and split the same illustration at the waist using overlapping alpha masks. The complete hands remain on the upper layer.",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "waist_anchor": {
+      "x": 516,
+      "y": 552
+    },
+    "shared_scale": 0.6715063520871143,
+    "throw_phase": "follow-through",
+    "preview_duration_ms": 150,
+    "ball_point": {
+      "x": 377,
+      "y": 616
+    },
+    "ball_state": "empty"
+  },
+  {
+    "path": "design/art/characters/fight-01-throw-3-lower.png",
+    "what": "Lower body. Follow-through folded over the lead leg, with the right hand across toward the left knee and the rear shoe lifting.",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: identity-preserve. Image 1 is the Time Capsule style sheet. Image 2 is the exact assembled figure 01 to edit. Image 3 is real baseball pitching motion reference, for biomechanics only. Keep the same woman, short rounded dark brown bob, dusty medium blue long-sleeved crewneck with blue cuff, slim dark ink-navy cuffed trousers, warm skin, and navy flat slip-on shoes with cream soles. Match the modest texture, fine plum contour and adult proportions exactly. No hat, glove, baseball uniform, props, or ball. Render one entire connected character, all limbs feet and fingers, on transparent alpha, original square sprite framing. Approved camera exception: from behind at a small elevation, looking along the ball's path toward an unseen target in the upper middle distance (slightly viewer-left), like a center-field baseball camera that stays fixed. Main visible surface is the person's back, no face visible. Character is right-handed. Original waist centered around (512,530) on a conceptual 1024 canvas; supporting shoe sole around y=900; retain same apparent head size, waist width, scale and empty side margins. Legs must take only a compact step toward depth and stay in the original lane; shoe span roughly one shoulder width, not a big lunge. One figure, no ground or shadow.\n\nDraw the FOLLOW-THROUGH immediately after release. Strongly hinge the trunk forward into depth over the planted LEFT lead leg and slightly to viewer-left. Back is the main visible surface and appears foreshortened, the bob tips forward, shoulder line rolls and the right shoulder rotates toward the target. Right throwing arm has swept diagonally downward ACROSS the front of the body toward the opposite LEFT knee, with the bent wrist and hand clearly peeking out near the viewer-left thigh or knee. Left arm is bent and held close to the left ribcage. Right rear foot has just lifted: bend the right knee and show the rear heel or cream sole coming up behind her to viewer-right only a small amount. Keep lead foot close to the lane center. Make the folded trunk and raised back heel obvious, with no exaggerated kick.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 1fd08ac",
+      "https://www.mlb.com/cut4/carlos-carrasco-unleashed-a-crazy-pitch-c273564308"
+    ],
+    "generated_source_sha256": "af0e51eca597e8c3f9f5d089c1c2fd0329c6daf315a2da565f222b0bfe106280",
+    "postprocess": "Removed disconnected alpha noise from the whole pose and registered the hip and support-foot depth to the existing rig. Fitted the hip locally to match the jump legs and split the same illustration at the waist using overlapping alpha masks. The complete hands remain on the upper layer.",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "waist_anchor": {
+      "x": 516,
+      "y": 552
+    },
+    "shared_scale": 0.6715063520871143,
+    "throw_phase": "follow-through",
+    "preview_duration_ms": 150
+  },
+  {
+    "path": "design/art/characters/fight-01-throw-4-upper.png",
+    "what": "Upper body. Recover nearly upright, with the rear shoe returning beside the lead shoe.",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: identity-preserve. Image 1 is the Time Capsule style sheet. Image 2 is the exact assembled figure 01 to edit. Image 3 is real baseball pitching motion reference, for biomechanics only. Keep the same woman, short rounded dark brown bob, dusty medium blue long-sleeved crewneck with blue cuff, slim dark ink-navy cuffed trousers, warm skin, and navy flat slip-on shoes with cream soles. Match the modest texture, fine plum contour and adult proportions exactly. No hat, glove, baseball uniform, props, or ball. Render one entire connected character, all limbs feet and fingers, on transparent alpha, original square sprite framing. Approved camera exception: from behind at a small elevation, looking along the ball's path toward an unseen target in the upper middle distance (slightly viewer-left), like a center-field baseball camera that stays fixed. Main visible surface is the person's back, no face visible. Character is right-handed. Original waist centered around (512,530) on a conceptual 1024 canvas; supporting shoe sole around y=900; retain same apparent head size, waist width, scale and empty side margins. Legs must take only a compact step toward depth and stay in the original lane; shoe span roughly one shoulder width, not a big lunge. One figure, no ground or shadow.\n\nDraw the RECOVERY toward original rest after the pitch. Torso is coming back up, nearly upright and back-facing with a slight residual twist, shoulders lowering toward level. Both hands naturally low, the throwing right hand has finished its sweep and is descending near the right side, left arm relaxed and slightly out to balance. Left foot balances in original lane and right back foot has nearly stepped back beside it, toe about to settle. Keep small bend in the knees and modest asymmetry, so this pose bridges follow-through to the original fully upright neutral position.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 1fd08ac",
+      "https://commons.wikimedia.org/wiki/File:Pitcher_High_school_baseball_in_Japan_2007.gif"
+    ],
+    "generated_source_sha256": "e9cf12cc6df4ea2ff2a8f93dd7ac0207d4fb957be419374135b64aa0c4cac2af",
+    "postprocess": "Removed disconnected alpha noise from the whole pose and registered the hip and support-foot depth to the existing rig. Fitted the hip locally to match the jump legs and split the same illustration at the waist using overlapping alpha masks. The complete hands remain on the upper layer.",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "waist_anchor": {
+      "x": 516,
+      "y": 552
+    },
+    "shared_scale": 0.6715063520871143,
+    "throw_phase": "recover",
+    "preview_duration_ms": 130,
+    "ball_point": {
+      "x": 642,
+      "y": 608
+    },
+    "ball_state": "empty"
+  },
+  {
+    "path": "design/art/characters/fight-01-throw-4-lower.png",
+    "what": "Lower body. Recover nearly upright, with the rear shoe returning beside the lead shoe.",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: identity-preserve. Image 1 is the Time Capsule style sheet. Image 2 is the exact assembled figure 01 to edit. Image 3 is real baseball pitching motion reference, for biomechanics only. Keep the same woman, short rounded dark brown bob, dusty medium blue long-sleeved crewneck with blue cuff, slim dark ink-navy cuffed trousers, warm skin, and navy flat slip-on shoes with cream soles. Match the modest texture, fine plum contour and adult proportions exactly. No hat, glove, baseball uniform, props, or ball. Render one entire connected character, all limbs feet and fingers, on transparent alpha, original square sprite framing. Approved camera exception: from behind at a small elevation, looking along the ball's path toward an unseen target in the upper middle distance (slightly viewer-left), like a center-field baseball camera that stays fixed. Main visible surface is the person's back, no face visible. Character is right-handed. Original waist centered around (512,530) on a conceptual 1024 canvas; supporting shoe sole around y=900; retain same apparent head size, waist width, scale and empty side margins. Legs must take only a compact step toward depth and stay in the original lane; shoe span roughly one shoulder width, not a big lunge. One figure, no ground or shadow.\n\nDraw the RECOVERY toward original rest after the pitch. Torso is coming back up, nearly upright and back-facing with a slight residual twist, shoulders lowering toward level. Both hands naturally low, the throwing right hand has finished its sweep and is descending near the right side, left arm relaxed and slightly out to balance. Left foot balances in original lane and right back foot has nearly stepped back beside it, toe about to settle. Keep small bend in the knees and modest asymmetry, so this pose bridges follow-through to the original fully upright neutral position.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 1fd08ac",
+      "https://commons.wikimedia.org/wiki/File:Pitcher_High_school_baseball_in_Japan_2007.gif"
+    ],
+    "generated_source_sha256": "e9cf12cc6df4ea2ff2a8f93dd7ac0207d4fb957be419374135b64aa0c4cac2af",
+    "postprocess": "Removed disconnected alpha noise from the whole pose and registered the hip and support-foot depth to the existing rig. Fitted the hip locally to match the jump legs and split the same illustration at the waist using overlapping alpha masks. The complete hands remain on the upper layer.",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "waist_anchor": {
+      "x": 516,
+      "y": 552
+    },
+    "shared_scale": 0.6715063520871143,
+    "throw_phase": "recover",
+    "preview_duration_ms": 130
   },
   {
     "path": "design/art/characters/fight-01-leg-left.png",

@@ -10,7 +10,13 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 
 ## Corrupted Capsule fight review
 
-Figure 01’s overhand throw is the approval sample. The cycle reuses the hanging arm for rest and layers the three new right arms under the existing body with either set of legs. The legacy arm-up stays in the rig. All three poses share the shoulder at (566, 393). The windup tucks the ball behind the head at (568, 230), and release starts from the fingertips over the crown at (515, 140). In follow-through the torso occludes the middle of the arm, leaving sleeve visible along the right contour and the cuff and partly hidden hand near the left hip. Follow-through has no ball point. [160 px frame strip](_checks/fight-01-throw.png) · [120 ms loop](_checks/fight-01-throw.gif) · [120 px and full-size shoulder checks](_checks/fight-01-throw-seams.png).
+Figure 01’s whole-body throw is the approval sample in draft PR #189. The existing rest pose is the set. The four drawn poses are cock (140 ms), release (80 ms), follow-through (150 ms), and recover (130 ms), for 500 ms of throw followed by 500 ms at rest in the preview. Cock rolls the shallow leg lift, side-on turn and short stride into one key pose. Each 1024 px upper layer stacks over its matching lower layer or the existing jump legs. The upper layer carries both arms and the ball point. The follow-through and recover points track the empty right hand. [160 px flipbook](_checks/fight-01-throw.png) · [Standing and jump loop](_checks/fight-01-throw.gif) · [Waist checks at full size](_checks/fight-01-throw-seams.png).
+
+Pitching references used for pose and camera:
+
+- Carlos Carrasco’s MLB replay shows the delivery from behind, including the loaded turn and the forward fold after release. [MLB replay](https://www.mlb.com/cut4/carlos-carrasco-unleashed-a-crazy-pitch-c273564308)
+- The rear-oblique photos of Aroldis Chapman and Chris Capuano show the lead arm reaching and the stride taking the weight as the throwing side loads. Both pitchers are left-handed. Figure 01 throws right-handed and takes a much shorter step. [Chapman photo](https://commons.wikimedia.org/wiki/File:Aroldis_Chapman_pitching_in_Game_7_of_the_2016_World_Series.jpg) · [Capuano photo](https://commons.wikimedia.org/wiki/File:Chris_Capuano_of_the_Milwaukee_Brewers_throwing_the_ball.jpg)
+- Gerrit Cole’s MLB slow motion shows the hand coming from behind the head and the hips opening before the hand comes over the top. The Koshien sequence shows the rear foot lifting and stepping back under the body during recovery. [Cole slow motion](https://tenor.com/view/pitching-gerrit-cole-fast-ball-world-series-major-league-baseball-gif-3188694275409995082) · [Koshien sequence](https://commons.wikimedia.org/wiki/File:Pitcher_High_school_baseball_in_Japan_2007.gif)
 
 | Figure | Motion at 120 and 64 px | Shoulder and hip close-ups |
 |---|---|---|
@@ -473,9 +479,14 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `characters/fight-01-body.png` | Head, torso, left arm, closed shoulder and full hip seat | 1024×1024 | test batch; see manifest |
 | `characters/fight-01-arm-down.png` | Relaxed hanging right arm | 1024×1024 | shared shoulder pivot |
 | `characters/fight-01-arm-up.png` | Overhead right arm with cupped hand | 1024×1024 | shoulder pivot and ball point in manifest |
-| `characters/fight-01-arm-windup.png` | Cocked overhand windup, ball behind the head | 1024×1024 | shared shoulder pivot and held-ball point |
-| `characters/fight-01-arm-release.png` | Foreshortened forward reach over the crown, fingers together | 1024×1024 | shared shoulder pivot and release point |
-| `characters/fight-01-arm-follow.png` | Right arm sweeps across to the left hip | 1024×1024 | shared shoulder pivot |
+| `characters/fight-01-throw-1-upper.png` | Cock, upper body | 1024×1024 | waist anchor and right-hand ball point in manifest |
+| `characters/fight-01-throw-1-lower.png` | Cock, legs | 1024×1024 | shared waist and feet anchors |
+| `characters/fight-01-throw-2-upper.png` | Release, upper body | 1024×1024 | waist anchor and right-hand ball point in manifest |
+| `characters/fight-01-throw-2-lower.png` | Release, legs | 1024×1024 | shared waist and feet anchors |
+| `characters/fight-01-throw-3-upper.png` | Follow-through, upper body | 1024×1024 | waist anchor and right-hand ball point in manifest |
+| `characters/fight-01-throw-3-lower.png` | Follow-through, legs | 1024×1024 | shared waist and feet anchors |
+| `characters/fight-01-throw-4-upper.png` | Recover, upper body | 1024×1024 | waist anchor and right-hand ball point in manifest |
+| `characters/fight-01-throw-4-lower.png` | Recover, legs | 1024×1024 | shared waist and feet anchors |
 | `characters/fight-01-leg-left.png` | Left hip, trouser leg and shoe | 1024×1024 | test batch; see manifest |
 | `characters/fight-01-leg-right.png` | Right hip, trouser leg and shoe | 1024×1024 | test batch; see manifest |
 | `characters/fight-01-legs-jump.png` | Both legs bent with heels lifted | 1024×1024 | replaces both standing legs for the jump |
