@@ -1,10 +1,10 @@
-CE1 Macau correction (2026-11-19): migration `20261119000708` retires only Macau seq 15. Hosted rollback passed row/play preservation, 19 published questions, unchanged other cities, yesterday/new-player today/guess and an existing play on the retired question. Production application is pending the 2026-11-20 Macau midnight window, directly through SQL with only its history entry; no db push or held hunt-loop migration.
+CE1 Macau correction (2026-11-20): PR #166 merged as `1ef5d61` after CI 44426566462. Migration `20261119000708` applied directly in one transaction between 00:01:00 and 00:01:04 Macau time. Exactly one row changed; seq 15 remains unpublished, Macau has 19 published questions, other city catalogs are unchanged, today returns published seq 4, and no fixtures remain. History gained only this version; hunt-loop versions were already applied by the combined release.
 
 # Task board
 
 Hunt-loop release (2026-11-19) is Done for HL-U1–U5, HL-C1–C5 and HL-Q1. All eight migrations are live in the combined release. The final owner build `b3ee125` passed the 375 px unlimited Landmark reward and once-only Keeper claim checks. All disposable fixtures were removed and verified at zero. Macau remains in its separate midnight window. See the [combined release report](review/hunt-loop-release.md).
 
-CE1 Singapore price correction (2026-11-18): Roy approved unpublishing eight outdated questions; hosted rollback passed. Migration is held for the midnight Singapore window after green CI and owner squash merge; other held migrations must not be applied.
+CE1 Singapore price correction (2026-11-19): PR #162 merged as `43ab294` after green CI. Migration `20261118140304` applied directly just after Singapore midnight; all eight target rows remain unpublished, Singapore has 12 published questions, and today returned published seq 5. The newer version required `--include-all` when applying older hunt-loop migrations; the combined release has since applied them.
 
 CE1 release approved by Roy on 2026-11-17 after Claude reviewed `e80cb13`. Expo alignment #150 (`22343f7`), screens #147 (`09db461`) and backend #149 (`1fb35fe`) merged through Roy’s account after green CI. Migration `20261117110915` is applied, all 51 public photos verified and live types regenerated in owner release `276034a`. Production 375 px zh/en play, rewards, streak, Share and source links pass. Disposable fixtures removed.
 
