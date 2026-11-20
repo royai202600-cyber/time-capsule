@@ -10,7 +10,7 @@ const manifest = JSON.parse(fs.readFileSync(path.join(artRoot, 'manifest.json'),
 
 function maxEdge(relativePath) {
   if (relativePath === 'game/catch-background.png') return null;
-  if (relativePath === 'game/jump-spikes-b.png') return 1600;
+  if (relativePath === 'game/jump-spikes.png') return 1600;
   if (/^(vessels|stamps|portraits|game|characters|quest-templates|quest-types|quest-pins)\//.test(relativePath) || relativePath === 'seal-wax.png') return 512;
   if (relativePath === 'fx/fx-glint.png') return 512;
   if (relativePath === 'map-asia.png') return 1600;

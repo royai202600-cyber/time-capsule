@@ -14751,25 +14751,7 @@
   },
   {
     "path": "design/art/game/jump-spikes.png",
-    "what": "Corrupted brown-wax spikes for the dodge fight jump attack",
-    "size_px": [
-      1536,
-      1024
-    ],
-    "transparent": true,
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nLayout exception for this asset: use a transparent 1536×1024 landscape canvas. It is a wide horizontal game effect strip, not a centred object filling 70% of a square. Span from around x=20 to x=1516 with tapered endpoints fully inside the canvas. Shared ground baseline y=640, flat left to right. The viewpoint is behind the player, looking a little down across the ground like the third reference. Draw only the isolated requested layer, using true alpha with empty corners, no scenery, grass, ground surface, character, capsule, lettering, warning band, or other UI.\nFirst attachment is style sheet A, second is the Corrupted Capsule crack reference, third is camera context only. Match their hand-inked rendering. Use the style palette above.\nPalette exception for this redraw: Roy requests natural earth-brown wax for the spikes. Use deep raw umber, warm walnut brown, and muted light ochre-brown edge accents. Match the brown inked shading in the music box on the style sheet, but the material is dense wax, not timber and has no wood grain. No red, burgundy, plum or blue fills on the spikes, no white lightning marks, and no bright gold.\n\nSpikes layer only. Make an organic row of corrupted brown wax thorns that rose straight up from one horizontal split in the ground. Draw about 14–18 pointed thorns, in irregular little groups with irregular spacing. Give the thorns varied asymmetric forms: a few lean gently outward, some slightly bend like thorns, some are lower and broad at the foot, and a few higher ones punctuate the middle of each third. Every spike tapers to a clear sharp point and stays distinct at phone size. Hand-inked natural edges and flat warm-brown faces with restrained fine cracks in dark umber, sparse hatching and soft amber highlights on only a few edges. The ensemble is low across the whole canvas, tallest thorn about 140 pixels, with short disappearing tips at both ends. The physical roots all sit on the same flat y=640 baseline so this layer can scale upward from the fissure; leave only clear alpha beneath it. Avoid perfect repeated triangles, symmetrical patterns, alternating colors, a fence rail, faceted gemstones, chunky boulders, props, flames, aura, ground surface, or cast shadow.",
-    "model": "gpt-image-2",
-    "references": [
-      "design/art/style-sheet.png",
-      "design/art/game/crack-overlay.png",
-      "design/art/game/catch-background.png"
-    ],
-    "ground_y_px": 640,
-    "normalization": "Removed residual alpha up to 12/255. Resampled to 1488×157 with flat roots overlapping the y=640 fissure by 2 px."
-  },
-  {
-    "path": "design/art/game/jump-spikes-b.png",
-    "what": "Angular earth-brown spikes for the dodge fight, alternative B",
+    "what": "Angular earth-brown spikes for the dodge fight",
     "size_px": [
       1536,
       1024
@@ -14783,6 +14765,6 @@
     ],
     "ground_y_px": 632,
     "normalization": "Removed residual alpha up to 12/255 and resampled the visible strip to 1488×163 at x=24, y=470, with the flat base ending at row 632.",
-    "web_export": "public/art/game/jump-spikes-b.webp"
+    "web_export": "public/art/game/jump-spikes.webp"
   }
 ]

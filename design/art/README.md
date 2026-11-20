@@ -146,8 +146,7 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | File | What | Size | Notes |
 |---|---|---:|---|
 | `game/catch-background.png` | Fight-screen park background | 1024×1536 | Roy-approved Option 3; exact source copy; opaque; full-resolution WebP |
-| `game/jump-spikes.png` | Earth-brown wax spikes, option A | 1536×1024 | [Phone-size comparison](_checks/jump-spikes.png) |
-| `game/jump-spikes-b.png` | Photo-inspired faceted spikes, option B | 1536×1024 | Transparent WebP at full size. Base on row 632, highest tip at row 470. |
+| `game/jump-spikes.png` | Photo-inspired faceted spikes (approved option B) | 1536×1024 | Transparent WebP at full size. Base on row 632, highest tip at row 470. |
 | `game/ball-wax.png` | Wax keyhole ball | 1024×1024 | requested redraw/edit |
 | `game/ball-gold.png` | Gold-veined keyhole ball | 1024×1024 | exact approved copy |
 | `game/ball-ink.png` | Ink-blue wax ball with light-blue marbling | 1024×1024 | test batch; see manifest |
