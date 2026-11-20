@@ -35,11 +35,11 @@ begin
     (moderator,'DF3 moderator'),(viewer,'DF3 viewer') on conflict do nothing;
   insert into private.admin_members(user_id,role) values (editor,'admin'),(moderator,'moderator'),(viewer,'viewer');
   insert into private.game_speed_allowlist(user_id) values (player);
+  perform set_config('request.jwt.claim.sub',player::text,true);
   perform private.ensure_player(player);
 
   select * into strict cfg from private.game_config where singleton;
   assert cfg.spin_wax_min = 10 and cfg.spin_wax_max = 10;
-  perform set_config('request.jwt.claim.sub',player::text,true);
   update public.player_game set wax_balls=9,gold_balls=0 where user_id=player;
   perform pg_temp.df3_expect_error(format('select * from public.corrupted_fight_start(%L,%L,%L,10)',
     fixture->'spawns'->'common'->>0,lat,lng),'no_balls');
