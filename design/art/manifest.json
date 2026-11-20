@@ -12958,7 +12958,7 @@
       "design/art/portraits/portrait-01.png"
     ],
     "generated_source_sha256": "926da848ac7e9fd2f9c7f1bf7c3076d18310661559edbee96359d3ea884b1ab5",
-    "postprocess": "Retained the approved 1024 canvas, scale, head, outfit and standing legs from 4d78e285. Composited the registered arm-up and extended body with the original standing legs. See layer entries for the exact source edit prompts.",
+    "postprocess": "Retained the approved 1024 canvas, scale, head, outfit and standing legs from 4d78e285. Composited the registered arm-up and extended body with the original standing legs. See layer entries for the exact source edit prompts. Localized follow-up fills the hip/underarm seams, trims the armpit edge and relaxes the release fingers.",
     "anchor": {
       "x": 512,
       "y": 900
@@ -13014,7 +13014,8 @@
         "arm-down",
         "body"
       ]
-    }
+    },
+    "seat_core_bottom_y_px": 595
   },
   {
     "path": "design/art/characters/fight-01-body.png",
@@ -13032,7 +13033,7 @@
       "design/art/characters/fight-01.png at 4d78e285"
     ],
     "generated_source_sha256": "caf501cd49804b397e966c0e0e4c77c8c5630e1dd8eb41cfdfd2958f66e728a4",
-    "postprocess": "Registered the generated closed shoulder to the preserved torso. Extended the seat with original opaque trouser pixels over the hip joints."
+    "postprocess": "Registered the generated closed shoulder to the preserved torso. Extended the seat with original opaque trouser pixels over the hip joints. Locally extended the left hip rim, seat apex and underarm using neighboring source ink pixels."
   },
   {
     "path": "design/art/characters/fight-01-arm-down.png",
@@ -13072,7 +13073,7 @@
       "design/art/characters/fight-01.png at 4d78e285"
     ],
     "generated_source_sha256": "09c17583530faa5d1fd9b1cd24e521e06188dbf6a5d7ba49fb3c4d94cde68165",
-    "postprocess": "Downsampled and registered the generated isolated arm to the right shoulder, rotating to the overhead hold. Ball kept as a separate preview layer.",
+    "postprocess": "Downsampled and registered the generated isolated arm to the right shoulder, rotating to the overhead hold. Ball kept as a separate preview layer. Trimmed the armpit spur and opened the raised fingertips with a local scripted warp.",
     "pivot": {
       "x": 566,
       "y": 393
@@ -13207,5 +13208,1545 @@
     ],
     "generated_source_sha256": "7750a38b42945e7709683504678af186a7f0c37c717ce48d2a6879c8e7774a50",
     "postprocess": "Registered the generated surface pigment and transferred it over the original ball lighting and keyhole. Original silhouette alpha is byte-identical."
+  },
+  {
+    "path": "design/art/characters/fight-02-body.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 02 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 02 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult man, short tousled dark brown hair, round navy glasses only if frame/temple is naturally visible from behind, long-sleeved plum sweater, navy cuffed trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-02.png",
+      "design/art/portraits/portrait-02.png"
+    ],
+    "postprocess": "Scripted the stationary head, torso, hanging left arm and fully backed seat directly from the generated gathering pixels.",
+    "generated_source_sha256": "b884f6240113012822e12213ba00cd76e61c1988262dd7e8e5f4260d539647ae",
+    "web_export": "public/art/characters/fight-02-body.webp",
+    "what": "Player 02 body and closed shoulder/hip seat"
+  },
+  {
+    "path": "design/art/characters/fight-02-arm-down.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 02 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 02 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult man, short tousled dark brown hair, round navy glasses only if frame/temple is naturally visible from behind, long-sleeved plum sweater, navy cuffed trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-02.png",
+      "design/art/portraits/portrait-02.png"
+    ],
+    "postprocess": "Extracted the assembled figure’s relaxed left sleeve and hand, reflected them to the shared right shoulder and registered them on the standing canvas.",
+    "generated_source_sha256": "b884f6240113012822e12213ba00cd76e61c1988262dd7e8e5f4260d539647ae",
+    "web_export": "public/art/characters/fight-02-arm-down.webp",
+    "what": "Player 02 relaxed right arm",
+    "pivot": {
+      "x": 560,
+      "y": 393
+    }
+  },
+  {
+    "path": "design/art/characters/fight-02-arm-up.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 02 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 02 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult man, short tousled dark brown hair, round navy glasses only if frame/temple is naturally visible from behind, long-sleeved plum sweater, navy cuffed trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-02.png",
+      "design/art/portraits/portrait-02.png"
+    ],
+    "postprocess": "Extracted the raised arm and kept its hidden shoulder overlap from the assembled generation. Opened the extreme fingertips slightly for the release.",
+    "generated_source_sha256": "b884f6240113012822e12213ba00cd76e61c1988262dd7e8e5f4260d539647ae",
+    "web_export": "public/art/characters/fight-02-arm-up.webp",
+    "what": "Player 02 overhead throwing arm and ball point",
+    "pivot": {
+      "x": 560,
+      "y": 393
+    },
+    "ball_point": {
+      "x": 600,
+      "y": 176
+    }
+  },
+  {
+    "path": "design/art/characters/fight-02-leg-left.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 02 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 02 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult man, short tousled dark brown hair, round navy glasses only if frame/temple is naturally visible from behind, long-sleeved plum sweater, navy cuffed trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-02.png",
+      "design/art/portraits/portrait-02.png"
+    ],
+    "postprocess": "Split the left standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "b884f6240113012822e12213ba00cd76e61c1988262dd7e8e5f4260d539647ae",
+    "web_export": "public/art/characters/fight-02-leg-left.webp",
+    "what": "Player 02 standing left leg",
+    "pivot": {
+      "x": 480,
+      "y": 570
+    }
+  },
+  {
+    "path": "design/art/characters/fight-02-leg-right.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 02 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 02 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult man, short tousled dark brown hair, round navy glasses only if frame/temple is naturally visible from behind, long-sleeved plum sweater, navy cuffed trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-02.png",
+      "design/art/portraits/portrait-02.png"
+    ],
+    "postprocess": "Split the right standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "b884f6240113012822e12213ba00cd76e61c1988262dd7e8e5f4260d539647ae",
+    "web_export": "public/art/characters/fight-02-leg-right.webp",
+    "what": "Player 02 standing right leg",
+    "pivot": {
+      "x": 545,
+      "y": 570
+    }
+  },
+  {
+    "path": "design/art/characters/fight-02-legs-jump.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the newly assembled figure 02; edit this person directly. Input 3 is figure 01's two-leg jump pose as a guide to anatomy and registration only. Return only both legs together from the waist down, on a transparent canvas, with the same outfit, skin, trouser and shoe design as assembled figure 02 exactly. Keep the hip waist position, width and age proportions unchanged. Both knees are bent with heels lifted behind the upright person. From behind and slightly above, both original soles point back toward us and shins are foreshortened. Make both shoes complete and mildly asymmetrical. Keep the original navy trouser folds and specific shoe colors. Fully draw clean hip cloth and seat above the crotch with no holes. Crop all other body parts to transparent. No ground, cast shadow, labels or props.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-02.png (native generation before registration)",
+      "design/art/characters/fight-01-legs-jump.png"
+    ],
+    "postprocess": "Downsampled and registered the generated bent pair to the same hips as the standing figure.",
+    "generated_source_sha256": "02b47885c599c0e69743b1b75d4fd3418312c97896a2759c3bd14fe6183e61bf",
+    "web_export": "public/art/characters/fight-02-legs-jump.webp",
+    "what": "Player 02 bent jump legs",
+    "hip_pivots": {
+      "leg-left": {
+        "x": 480,
+        "y": 570
+      },
+      "leg-right": {
+        "x": 545,
+        "y": 570
+      }
+    }
+  },
+  {
+    "path": "design/art/characters/fight-02.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 02 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 02 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult man, short tousled dark brown hair, round navy glasses only if frame/temple is naturally visible from behind, long-sleeved plum sweater, navy cuffed trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-02.png",
+      "design/art/portraits/portrait-02.png"
+    ],
+    "postprocess": "One downsample registered the generated gathering pose to its map figure’s adult height and the shared feet midpoint. The master is composited from the rig layers.",
+    "generated_source_sha256": "b884f6240113012822e12213ba00cd76e61c1988262dd7e8e5f4260d539647ae",
+    "web_export": "public/art/characters/fight-02.webp",
+    "what": "Player 02 back view, assembled gathering pose",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "effective_downsample": 0.6865817825661117,
+    "crown_y_px": 199,
+    "pivots": {
+      "arm-up": {
+        "x": 560,
+        "y": 393
+      },
+      "arm-down": {
+        "x": 560,
+        "y": 393
+      },
+      "leg-left": {
+        "x": 480,
+        "y": 570
+      },
+      "leg-right": {
+        "x": 545,
+        "y": 570
+      }
+    },
+    "ball_point": {
+      "x": 600,
+      "y": 176
+    },
+    "ball_diameter_preview_px": 63,
+    "jump_preview_lift_px": 105,
+    "seat_core_bottom_y_px": 601,
+    "pose_layers": {
+      "idle": [
+        "leg-left",
+        "leg-right",
+        "arm-down",
+        "body"
+      ],
+      "gather": [
+        "leg-left",
+        "leg-right",
+        "arm-up",
+        "body"
+      ],
+      "jump": [
+        "legs-jump",
+        "arm-down",
+        "body"
+      ]
+    }
+  },
+  {
+    "path": "design/art/characters/fight-03-body.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 03 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 03 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older woman, silver hair swept into a high bun with loose wisps at ears, warm skin, dark navy long-sleeved sweater and matching navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-03.png",
+      "design/art/portraits/portrait-03.png"
+    ],
+    "postprocess": "Scripted the stationary head, torso, hanging left arm and fully backed seat directly from the generated gathering pixels.",
+    "generated_source_sha256": "8b4f209862630a8b1886723158bee1aeb3b2a307a9de454531f93940b0386ef3",
+    "web_export": "public/art/characters/fight-03-body.webp",
+    "what": "Player 03 body and closed shoulder/hip seat"
+  },
+  {
+    "path": "design/art/characters/fight-03-arm-down.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 03 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 03 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older woman, silver hair swept into a high bun with loose wisps at ears, warm skin, dark navy long-sleeved sweater and matching navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-03.png",
+      "design/art/portraits/portrait-03.png"
+    ],
+    "postprocess": "Extracted the assembled figure’s relaxed left sleeve and hand, reflected them to the shared right shoulder and registered them on the standing canvas.",
+    "generated_source_sha256": "8b4f209862630a8b1886723158bee1aeb3b2a307a9de454531f93940b0386ef3",
+    "web_export": "public/art/characters/fight-03-arm-down.webp",
+    "what": "Player 03 relaxed right arm",
+    "pivot": {
+      "x": 561,
+      "y": 400
+    }
+  },
+  {
+    "path": "design/art/characters/fight-03-arm-up.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 03 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 03 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older woman, silver hair swept into a high bun with loose wisps at ears, warm skin, dark navy long-sleeved sweater and matching navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-03.png",
+      "design/art/portraits/portrait-03.png"
+    ],
+    "postprocess": "Extracted the raised arm and kept its hidden shoulder overlap from the assembled generation. Opened the extreme fingertips slightly for the release.",
+    "generated_source_sha256": "8b4f209862630a8b1886723158bee1aeb3b2a307a9de454531f93940b0386ef3",
+    "web_export": "public/art/characters/fight-03-arm-up.webp",
+    "what": "Player 03 overhead throwing arm and ball point",
+    "pivot": {
+      "x": 561,
+      "y": 400
+    },
+    "ball_point": {
+      "x": 601,
+      "y": 163
+    }
+  },
+  {
+    "path": "design/art/characters/fight-03-leg-left.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 03 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 03 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older woman, silver hair swept into a high bun with loose wisps at ears, warm skin, dark navy long-sleeved sweater and matching navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-03.png",
+      "design/art/portraits/portrait-03.png"
+    ],
+    "postprocess": "Split the left standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "8b4f209862630a8b1886723158bee1aeb3b2a307a9de454531f93940b0386ef3",
+    "web_export": "public/art/characters/fight-03-leg-left.webp",
+    "what": "Player 03 standing left leg",
+    "pivot": {
+      "x": 475,
+      "y": 550
+    }
+  },
+  {
+    "path": "design/art/characters/fight-03-leg-right.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 03 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 03 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older woman, silver hair swept into a high bun with loose wisps at ears, warm skin, dark navy long-sleeved sweater and matching navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-03.png",
+      "design/art/portraits/portrait-03.png"
+    ],
+    "postprocess": "Split the right standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "8b4f209862630a8b1886723158bee1aeb3b2a307a9de454531f93940b0386ef3",
+    "web_export": "public/art/characters/fight-03-leg-right.webp",
+    "what": "Player 03 standing right leg",
+    "pivot": {
+      "x": 544,
+      "y": 550
+    }
+  },
+  {
+    "path": "design/art/characters/fight-03-legs-jump.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the newly assembled figure 03; edit this person directly. Input 3 is figure 01's two-leg jump pose as a guide to anatomy and registration only. Return only both legs together from the waist down, on a transparent canvas, with the same outfit, skin, trouser and shoe design as assembled figure 03 exactly. Keep the hip waist position, width and age proportions unchanged. Both knees are bent with heels lifted behind the upright person. From behind and slightly above, both original soles point back toward us and shins are foreshortened. Make both shoes complete and mildly asymmetrical. Keep the original navy trouser folds and specific shoe colors. Fully draw clean hip cloth and seat above the crotch with no holes. Crop all other body parts to transparent. No ground, cast shadow, labels or props.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-03.png (native generation before registration)",
+      "design/art/characters/fight-01-legs-jump.png"
+    ],
+    "postprocess": "Downsampled and registered the generated bent pair to the same hips as the standing figure.",
+    "generated_source_sha256": "2f4c92d0b343fb1ffa8fd90b8fa664c6ed7eabb5b4f1542b03fccd65d46a2f05",
+    "web_export": "public/art/characters/fight-03-legs-jump.webp",
+    "what": "Player 03 bent jump legs",
+    "hip_pivots": {
+      "leg-left": {
+        "x": 475,
+        "y": 550
+      },
+      "leg-right": {
+        "x": 544,
+        "y": 550
+      }
+    }
+  },
+  {
+    "path": "design/art/characters/fight-03.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 03 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 03 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older woman, silver hair swept into a high bun with loose wisps at ears, warm skin, dark navy long-sleeved sweater and matching navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-03.png",
+      "design/art/portraits/portrait-03.png"
+    ],
+    "postprocess": "One downsample registered the generated gathering pose to its map figure’s adult height and the shared feet midpoint. The master is composited from the rig layers.",
+    "generated_source_sha256": "8b4f209862630a8b1886723158bee1aeb3b2a307a9de454531f93940b0386ef3",
+    "web_export": "public/art/characters/fight-03.webp",
+    "what": "Player 03 back view, assembled gathering pose",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "effective_downsample": 0.7296747967479674,
+    "crown_y_px": 182,
+    "pivots": {
+      "arm-up": {
+        "x": 561,
+        "y": 400
+      },
+      "arm-down": {
+        "x": 561,
+        "y": 400
+      },
+      "leg-left": {
+        "x": 475,
+        "y": 550
+      },
+      "leg-right": {
+        "x": 544,
+        "y": 550
+      }
+    },
+    "ball_point": {
+      "x": 601,
+      "y": 163
+    },
+    "ball_diameter_preview_px": 63,
+    "jump_preview_lift_px": 105,
+    "seat_core_bottom_y_px": 603,
+    "pose_layers": {
+      "idle": [
+        "leg-left",
+        "leg-right",
+        "arm-down",
+        "body"
+      ],
+      "gather": [
+        "leg-left",
+        "leg-right",
+        "arm-up",
+        "body"
+      ],
+      "jump": [
+        "legs-jump",
+        "arm-down",
+        "body"
+      ]
+    }
+  },
+  {
+    "path": "design/art/characters/fight-04-body.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 04 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 04 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult man, deep warm brown skin, close short black curls, beard only at extreme jawline if visible naturally from behind, ink-blue long-sleeved top, navy trousers, navy shoes with cream soles. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-04.png",
+      "design/art/portraits/portrait-04.png"
+    ],
+    "postprocess": "Scripted the stationary head, torso, hanging left arm and fully backed seat directly from the generated gathering pixels.",
+    "generated_source_sha256": "720c1e3dc07eae181d2cc967a5dad338381c33f8fe8b9ba82e052a697bb1a428",
+    "web_export": "public/art/characters/fight-04-body.webp",
+    "what": "Player 04 body and closed shoulder/hip seat"
+  },
+  {
+    "path": "design/art/characters/fight-04-arm-down.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 04 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 04 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult man, deep warm brown skin, close short black curls, beard only at extreme jawline if visible naturally from behind, ink-blue long-sleeved top, navy trousers, navy shoes with cream soles. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-04.png",
+      "design/art/portraits/portrait-04.png"
+    ],
+    "postprocess": "Extracted the assembled figure’s relaxed left sleeve and hand, reflected them to the shared right shoulder and registered them on the standing canvas.",
+    "generated_source_sha256": "720c1e3dc07eae181d2cc967a5dad338381c33f8fe8b9ba82e052a697bb1a428",
+    "web_export": "public/art/characters/fight-04-arm-down.webp",
+    "what": "Player 04 relaxed right arm",
+    "pivot": {
+      "x": 572,
+      "y": 344
+    }
+  },
+  {
+    "path": "design/art/characters/fight-04-arm-up.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 04 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 04 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult man, deep warm brown skin, close short black curls, beard only at extreme jawline if visible naturally from behind, ink-blue long-sleeved top, navy trousers, navy shoes with cream soles. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-04.png",
+      "design/art/portraits/portrait-04.png"
+    ],
+    "postprocess": "Extracted the raised arm and kept its hidden shoulder overlap from the assembled generation. Opened the extreme fingertips slightly for the release.",
+    "generated_source_sha256": "720c1e3dc07eae181d2cc967a5dad338381c33f8fe8b9ba82e052a697bb1a428",
+    "web_export": "public/art/characters/fight-04-arm-up.webp",
+    "what": "Player 04 overhead throwing arm and ball point",
+    "pivot": {
+      "x": 572,
+      "y": 344
+    },
+    "ball_point": {
+      "x": 614,
+      "y": 119
+    }
+  },
+  {
+    "path": "design/art/characters/fight-04-leg-left.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 04 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 04 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult man, deep warm brown skin, close short black curls, beard only at extreme jawline if visible naturally from behind, ink-blue long-sleeved top, navy trousers, navy shoes with cream soles. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-04.png",
+      "design/art/portraits/portrait-04.png"
+    ],
+    "postprocess": "Split the left standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "720c1e3dc07eae181d2cc967a5dad338381c33f8fe8b9ba82e052a697bb1a428",
+    "web_export": "public/art/characters/fight-04-leg-left.webp",
+    "what": "Player 04 standing left leg",
+    "pivot": {
+      "x": 479,
+      "y": 536
+    }
+  },
+  {
+    "path": "design/art/characters/fight-04-leg-right.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 04 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 04 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult man, deep warm brown skin, close short black curls, beard only at extreme jawline if visible naturally from behind, ink-blue long-sleeved top, navy trousers, navy shoes with cream soles. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-04.png",
+      "design/art/portraits/portrait-04.png"
+    ],
+    "postprocess": "Split the right standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "720c1e3dc07eae181d2cc967a5dad338381c33f8fe8b9ba82e052a697bb1a428",
+    "web_export": "public/art/characters/fight-04-leg-right.webp",
+    "what": "Player 04 standing right leg",
+    "pivot": {
+      "x": 551,
+      "y": 536
+    }
+  },
+  {
+    "path": "design/art/characters/fight-04-legs-jump.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the newly assembled figure 04; edit this person directly. Input 3 is figure 01's two-leg jump pose as a guide to anatomy and registration only. Return only both legs together from the waist down, on a transparent canvas, with the same outfit, skin, trouser and shoe design as assembled figure 04 exactly. Keep the hip waist position, width and age proportions unchanged. Both knees are bent with heels lifted behind the upright person. From behind and slightly above, both original soles point back toward us and shins are foreshortened. Make both shoes complete and mildly asymmetrical. Keep the original navy trouser folds and specific shoe colors. Fully draw clean hip cloth and seat above the crotch with no holes. Crop all other body parts to transparent. No ground, cast shadow, labels or props.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-04.png (native generation before registration)",
+      "design/art/characters/fight-01-legs-jump.png"
+    ],
+    "postprocess": "Downsampled and registered the generated bent pair to the same hips as the standing figure.",
+    "generated_source_sha256": "e3560635b109eab37c467abaa2faa5bdf5195f2607bc18e77a98ce6b83bcdf5a",
+    "web_export": "public/art/characters/fight-04-legs-jump.webp",
+    "what": "Player 04 bent jump legs",
+    "hip_pivots": {
+      "leg-left": {
+        "x": 479,
+        "y": 536
+      },
+      "leg-right": {
+        "x": 551,
+        "y": 536
+      }
+    }
+  },
+  {
+    "path": "design/art/characters/fight-04.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 04 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 04 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult man, deep warm brown skin, close short black curls, beard only at extreme jawline if visible naturally from behind, ink-blue long-sleeved top, navy trousers, navy shoes with cream soles. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-04.png",
+      "design/art/portraits/portrait-04.png"
+    ],
+    "postprocess": "One downsample registered the generated gathering pose to its map figure’s adult height and the shared feet midpoint. The master is composited from the rig layers.",
+    "generated_source_sha256": "720c1e3dc07eae181d2cc967a5dad338381c33f8fe8b9ba82e052a697bb1a428",
+    "web_export": "public/art/characters/fight-04.webp",
+    "what": "Player 04 back view, assembled gathering pose",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "effective_downsample": 0.757884028484232,
+    "crown_y_px": 155,
+    "pivots": {
+      "arm-up": {
+        "x": 572,
+        "y": 344
+      },
+      "arm-down": {
+        "x": 572,
+        "y": 344
+      },
+      "leg-left": {
+        "x": 479,
+        "y": 536
+      },
+      "leg-right": {
+        "x": 551,
+        "y": 536
+      }
+    },
+    "ball_point": {
+      "x": 614,
+      "y": 119
+    },
+    "ball_diameter_preview_px": 63,
+    "jump_preview_lift_px": 105,
+    "seat_core_bottom_y_px": 579,
+    "pose_layers": {
+      "idle": [
+        "leg-left",
+        "leg-right",
+        "arm-down",
+        "body"
+      ],
+      "gather": [
+        "leg-left",
+        "leg-right",
+        "arm-up",
+        "body"
+      ],
+      "jump": [
+        "legs-jump",
+        "arm-down",
+        "body"
+      ]
+    }
+  },
+  {
+    "path": "design/art/characters/fight-05-body.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 05 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 05 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult woman, warm light skin, short side-swept dark brown pixie haircut, plum long-sleeved crewneck sweater, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-05.png",
+      "design/art/portraits/portrait-05.png"
+    ],
+    "postprocess": "Scripted the stationary head, torso, hanging left arm and fully backed seat directly from the generated gathering pixels.",
+    "generated_source_sha256": "ca08d8ad93b5d13101e51f01be5ae46e0c7069880f41088088a2e1c14e9d1123",
+    "web_export": "public/art/characters/fight-05-body.webp",
+    "what": "Player 05 body and closed shoulder/hip seat"
+  },
+  {
+    "path": "design/art/characters/fight-05-arm-down.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 05 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 05 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult woman, warm light skin, short side-swept dark brown pixie haircut, plum long-sleeved crewneck sweater, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-05.png",
+      "design/art/portraits/portrait-05.png"
+    ],
+    "postprocess": "Extracted the assembled figure’s relaxed left sleeve and hand, reflected them to the shared right shoulder and registered them on the standing canvas.",
+    "generated_source_sha256": "ca08d8ad93b5d13101e51f01be5ae46e0c7069880f41088088a2e1c14e9d1123",
+    "web_export": "public/art/characters/fight-05-arm-down.webp",
+    "what": "Player 05 relaxed right arm",
+    "pivot": {
+      "x": 557,
+      "y": 405
+    }
+  },
+  {
+    "path": "design/art/characters/fight-05-arm-up.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 05 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 05 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult woman, warm light skin, short side-swept dark brown pixie haircut, plum long-sleeved crewneck sweater, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-05.png",
+      "design/art/portraits/portrait-05.png"
+    ],
+    "postprocess": "Extracted the raised arm and kept its hidden shoulder overlap from the assembled generation. Opened the extreme fingertips slightly for the release.",
+    "generated_source_sha256": "ca08d8ad93b5d13101e51f01be5ae46e0c7069880f41088088a2e1c14e9d1123",
+    "web_export": "public/art/characters/fight-05-arm-up.webp",
+    "what": "Player 05 overhead throwing arm and ball point",
+    "pivot": {
+      "x": 557,
+      "y": 405
+    },
+    "ball_point": {
+      "x": 598,
+      "y": 176
+    }
+  },
+  {
+    "path": "design/art/characters/fight-05-leg-left.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 05 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 05 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult woman, warm light skin, short side-swept dark brown pixie haircut, plum long-sleeved crewneck sweater, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-05.png",
+      "design/art/portraits/portrait-05.png"
+    ],
+    "postprocess": "Split the left standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "ca08d8ad93b5d13101e51f01be5ae46e0c7069880f41088088a2e1c14e9d1123",
+    "web_export": "public/art/characters/fight-05-leg-left.webp",
+    "what": "Player 05 standing left leg",
+    "pivot": {
+      "x": 478,
+      "y": 556
+    }
+  },
+  {
+    "path": "design/art/characters/fight-05-leg-right.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 05 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 05 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult woman, warm light skin, short side-swept dark brown pixie haircut, plum long-sleeved crewneck sweater, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-05.png",
+      "design/art/portraits/portrait-05.png"
+    ],
+    "postprocess": "Split the right standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "ca08d8ad93b5d13101e51f01be5ae46e0c7069880f41088088a2e1c14e9d1123",
+    "web_export": "public/art/characters/fight-05-leg-right.webp",
+    "what": "Player 05 standing right leg",
+    "pivot": {
+      "x": 546,
+      "y": 556
+    }
+  },
+  {
+    "path": "design/art/characters/fight-05-legs-jump.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the newly assembled figure 05; edit this person directly. Input 3 is figure 01's two-leg jump pose as a guide to anatomy and registration only. Return only both legs together from the waist down, on a transparent canvas, with the same outfit, skin, trouser and shoe design as assembled figure 05 exactly. Keep the hip waist position, width and age proportions unchanged. Both knees are bent with heels lifted behind the upright person. From behind and slightly above, both original soles point back toward us and shins are foreshortened. Make both shoes complete and mildly asymmetrical. Keep the original navy trouser folds and specific shoe colors. Fully draw clean hip cloth and seat above the crotch with no holes. Crop all other body parts to transparent. No ground, cast shadow, labels or props.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-05.png (native generation before registration)",
+      "design/art/characters/fight-01-legs-jump.png"
+    ],
+    "postprocess": "Downsampled and registered the generated bent pair to the same hips as the standing figure.",
+    "generated_source_sha256": "9894d4e7f48e2093a95025aee62c06771e6bc21e632af8eb3fd3520cbc95d1bc",
+    "web_export": "public/art/characters/fight-05-legs-jump.webp",
+    "what": "Player 05 bent jump legs",
+    "hip_pivots": {
+      "leg-left": {
+        "x": 478,
+        "y": 556
+      },
+      "leg-right": {
+        "x": 546,
+        "y": 556
+      }
+    }
+  },
+  {
+    "path": "design/art/characters/fight-05.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 05 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 05 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same young adult woman, warm light skin, short side-swept dark brown pixie haircut, plum long-sleeved crewneck sweater, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-05.png",
+      "design/art/portraits/portrait-05.png"
+    ],
+    "postprocess": "One downsample registered the generated gathering pose to its map figure’s adult height and the shared feet midpoint. The master is composited from the rig layers.",
+    "generated_source_sha256": "ca08d8ad93b5d13101e51f01be5ae46e0c7069880f41088088a2e1c14e9d1123",
+    "web_export": "public/art/characters/fight-05.webp",
+    "what": "Player 05 back view, assembled gathering pose",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "effective_downsample": 0.7132505175983437,
+    "crown_y_px": 211,
+    "pivots": {
+      "arm-up": {
+        "x": 557,
+        "y": 405
+      },
+      "arm-down": {
+        "x": 557,
+        "y": 405
+      },
+      "leg-left": {
+        "x": 478,
+        "y": 556
+      },
+      "leg-right": {
+        "x": 546,
+        "y": 556
+      }
+    },
+    "ball_point": {
+      "x": 598,
+      "y": 176
+    },
+    "ball_diameter_preview_px": 63,
+    "jump_preview_lift_px": 105,
+    "seat_core_bottom_y_px": 592,
+    "pose_layers": {
+      "idle": [
+        "leg-left",
+        "leg-right",
+        "arm-down",
+        "body"
+      ],
+      "gather": [
+        "leg-left",
+        "leg-right",
+        "arm-up",
+        "body"
+      ],
+      "jump": [
+        "legs-jump",
+        "arm-down",
+        "body"
+      ]
+    }
+  },
+  {
+    "path": "design/art/characters/fight-06-body.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 06 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 06 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older man, salt-and-pepper neatly combed back wavy hair, warm skin, cream collared button-up shirt with long sleeves tucked into navy trousers with dark belt, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-06.png",
+      "design/art/portraits/portrait-06.png"
+    ],
+    "postprocess": "Scripted the stationary head, torso, hanging left arm and fully backed seat directly from the generated gathering pixels.",
+    "generated_source_sha256": "b6e7f82c16ca3067bccd5e7161e6b2f368d51e1a866a73468376a8d96b35c2c8",
+    "web_export": "public/art/characters/fight-06-body.webp",
+    "what": "Player 06 body and closed shoulder/hip seat"
+  },
+  {
+    "path": "design/art/characters/fight-06-arm-down.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 06 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 06 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older man, salt-and-pepper neatly combed back wavy hair, warm skin, cream collared button-up shirt with long sleeves tucked into navy trousers with dark belt, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-06.png",
+      "design/art/portraits/portrait-06.png"
+    ],
+    "postprocess": "Extracted the assembled figure’s relaxed left sleeve and hand, reflected them to the shared right shoulder and registered them on the standing canvas.",
+    "generated_source_sha256": "b6e7f82c16ca3067bccd5e7161e6b2f368d51e1a866a73468376a8d96b35c2c8",
+    "web_export": "public/art/characters/fight-06-arm-down.webp",
+    "what": "Player 06 relaxed right arm",
+    "pivot": {
+      "x": 564,
+      "y": 365
+    }
+  },
+  {
+    "path": "design/art/characters/fight-06-arm-up.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 06 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 06 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older man, salt-and-pepper neatly combed back wavy hair, warm skin, cream collared button-up shirt with long sleeves tucked into navy trousers with dark belt, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-06.png",
+      "design/art/portraits/portrait-06.png"
+    ],
+    "postprocess": "Extracted the raised arm and kept its hidden shoulder overlap from the assembled generation. Opened the extreme fingertips slightly for the release.",
+    "generated_source_sha256": "b6e7f82c16ca3067bccd5e7161e6b2f368d51e1a866a73468376a8d96b35c2c8",
+    "web_export": "public/art/characters/fight-06-arm-up.webp",
+    "what": "Player 06 overhead throwing arm and ball point",
+    "pivot": {
+      "x": 564,
+      "y": 365
+    },
+    "ball_point": {
+      "x": 602,
+      "y": 122
+    }
+  },
+  {
+    "path": "design/art/characters/fight-06-leg-left.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 06 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 06 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older man, salt-and-pepper neatly combed back wavy hair, warm skin, cream collared button-up shirt with long sleeves tucked into navy trousers with dark belt, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-06.png",
+      "design/art/portraits/portrait-06.png"
+    ],
+    "postprocess": "Split the left standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "b6e7f82c16ca3067bccd5e7161e6b2f368d51e1a866a73468376a8d96b35c2c8",
+    "web_export": "public/art/characters/fight-06-leg-left.webp",
+    "what": "Player 06 standing left leg",
+    "pivot": {
+      "x": 475,
+      "y": 516
+    }
+  },
+  {
+    "path": "design/art/characters/fight-06-leg-right.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 06 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 06 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older man, salt-and-pepper neatly combed back wavy hair, warm skin, cream collared button-up shirt with long sleeves tucked into navy trousers with dark belt, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-06.png",
+      "design/art/portraits/portrait-06.png"
+    ],
+    "postprocess": "Split the right standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "b6e7f82c16ca3067bccd5e7161e6b2f368d51e1a866a73468376a8d96b35c2c8",
+    "web_export": "public/art/characters/fight-06-leg-right.webp",
+    "what": "Player 06 standing right leg",
+    "pivot": {
+      "x": 549,
+      "y": 516
+    }
+  },
+  {
+    "path": "design/art/characters/fight-06-legs-jump.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the newly assembled figure 06; edit this person directly. Input 3 is figure 01's two-leg jump pose as a guide to anatomy and registration only. Return only both legs together from the waist down, on a transparent canvas, with the same outfit, skin, trouser and shoe design as assembled figure 06 exactly. Keep the hip waist position, width and age proportions unchanged. Both knees are bent with heels lifted behind the upright person. From behind and slightly above, both original soles point back toward us and shins are foreshortened. Make both shoes complete and mildly asymmetrical. Keep the original navy trouser folds and specific shoe colors. Fully draw clean hip cloth and seat above the crotch with no holes. Crop all other body parts to transparent. No ground, cast shadow, labels or props.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-06.png (native generation before registration)",
+      "design/art/characters/fight-01-legs-jump.png"
+    ],
+    "postprocess": "Downsampled and registered the generated bent pair to the same hips as the standing figure.",
+    "generated_source_sha256": "1614573c788c71cccc843046250a3c0797dddf3aa4b4db1eafde38fe6f6c9506",
+    "web_export": "public/art/characters/fight-06-legs-jump.webp",
+    "what": "Player 06 bent jump legs",
+    "hip_pivots": {
+      "leg-left": {
+        "x": 475,
+        "y": 516
+      },
+      "leg-right": {
+        "x": 549,
+        "y": 516
+      }
+    }
+  },
+  {
+    "path": "design/art/characters/fight-06.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 06 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 06 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same older man, salt-and-pepper neatly combed back wavy hair, warm skin, cream collared button-up shirt with long sleeves tucked into navy trousers with dark belt, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-06.png",
+      "design/art/portraits/portrait-06.png"
+    ],
+    "postprocess": "One downsample registered the generated gathering pose to its map figure’s adult height and the shared feet midpoint. The master is composited from the rig layers.",
+    "generated_source_sha256": "b6e7f82c16ca3067bccd5e7161e6b2f368d51e1a866a73468376a8d96b35c2c8",
+    "web_export": "public/art/characters/fight-06.webp",
+    "what": "Player 06 back view, assembled gathering pose",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "effective_downsample": 0.7760252365930599,
+    "crown_y_px": 162,
+    "pivots": {
+      "arm-up": {
+        "x": 564,
+        "y": 365
+      },
+      "arm-down": {
+        "x": 564,
+        "y": 365
+      },
+      "leg-left": {
+        "x": 475,
+        "y": 516
+      },
+      "leg-right": {
+        "x": 549,
+        "y": 516
+      }
+    },
+    "ball_point": {
+      "x": 602,
+      "y": 122
+    },
+    "ball_diameter_preview_px": 63,
+    "jump_preview_lift_px": 105,
+    "seat_core_bottom_y_px": 581,
+    "pose_layers": {
+      "idle": [
+        "leg-left",
+        "leg-right",
+        "arm-down",
+        "body"
+      ],
+      "gather": [
+        "leg-left",
+        "leg-right",
+        "arm-up",
+        "body"
+      ],
+      "jump": [
+        "legs-jump",
+        "arm-down",
+        "body"
+      ]
+    }
+  },
+  {
+    "path": "design/art/characters/fight-07-body.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 07 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 07 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, deep warm brown skin, abundant dark brown ringlet curls with rounded shoulder-length silhouette, brass/mustard long-sleeved top, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-07.png",
+      "design/art/portraits/portrait-07.png"
+    ],
+    "postprocess": "Scripted the stationary head, torso, hanging left arm and fully backed seat directly from the generated gathering pixels.",
+    "generated_source_sha256": "464032c047ca3b66ce94770f66992ae5cb97999a1d02b889819fe6aed545cdba",
+    "web_export": "public/art/characters/fight-07-body.webp",
+    "what": "Player 07 body and closed shoulder/hip seat"
+  },
+  {
+    "path": "design/art/characters/fight-07-arm-down.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 07 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 07 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, deep warm brown skin, abundant dark brown ringlet curls with rounded shoulder-length silhouette, brass/mustard long-sleeved top, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-07.png",
+      "design/art/portraits/portrait-07.png"
+    ],
+    "postprocess": "Extracted the assembled figure’s relaxed left sleeve and hand, reflected them to the shared right shoulder and registered them on the standing canvas.",
+    "generated_source_sha256": "464032c047ca3b66ce94770f66992ae5cb97999a1d02b889819fe6aed545cdba",
+    "web_export": "public/art/characters/fight-07-arm-down.webp",
+    "what": "Player 07 relaxed right arm",
+    "pivot": {
+      "x": 559,
+      "y": 406
+    }
+  },
+  {
+    "path": "design/art/characters/fight-07-arm-up.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 07 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 07 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, deep warm brown skin, abundant dark brown ringlet curls with rounded shoulder-length silhouette, brass/mustard long-sleeved top, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-07.png",
+      "design/art/portraits/portrait-07.png"
+    ],
+    "postprocess": "Extracted the raised arm and kept its hidden shoulder overlap from the assembled generation. Opened the extreme fingertips slightly for the release.",
+    "generated_source_sha256": "464032c047ca3b66ce94770f66992ae5cb97999a1d02b889819fe6aed545cdba",
+    "web_export": "public/art/characters/fight-07-arm-up.webp",
+    "what": "Player 07 overhead throwing arm and ball point",
+    "pivot": {
+      "x": 559,
+      "y": 406
+    },
+    "ball_point": {
+      "x": 597,
+      "y": 174
+    }
+  },
+  {
+    "path": "design/art/characters/fight-07-leg-left.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 07 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 07 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, deep warm brown skin, abundant dark brown ringlet curls with rounded shoulder-length silhouette, brass/mustard long-sleeved top, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-07.png",
+      "design/art/portraits/portrait-07.png"
+    ],
+    "postprocess": "Split the left standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "464032c047ca3b66ce94770f66992ae5cb97999a1d02b889819fe6aed545cdba",
+    "web_export": "public/art/characters/fight-07-leg-left.webp",
+    "what": "Player 07 standing left leg",
+    "pivot": {
+      "x": 477,
+      "y": 548
+    }
+  },
+  {
+    "path": "design/art/characters/fight-07-leg-right.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 07 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 07 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, deep warm brown skin, abundant dark brown ringlet curls with rounded shoulder-length silhouette, brass/mustard long-sleeved top, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-07.png",
+      "design/art/portraits/portrait-07.png"
+    ],
+    "postprocess": "Split the right standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "464032c047ca3b66ce94770f66992ae5cb97999a1d02b889819fe6aed545cdba",
+    "web_export": "public/art/characters/fight-07-leg-right.webp",
+    "what": "Player 07 standing right leg",
+    "pivot": {
+      "x": 545,
+      "y": 548
+    }
+  },
+  {
+    "path": "design/art/characters/fight-07-legs-jump.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the newly assembled figure 07; edit this person directly. Input 3 is figure 01's two-leg jump pose as a guide to anatomy and registration only. Return only both legs together from the waist down, on a transparent canvas, with the same outfit, skin, trouser and shoe design as assembled figure 07 exactly. Keep the hip waist position, width and age proportions unchanged. Both knees are bent with heels lifted behind the upright person. From behind and slightly above, both original soles point back toward us and shins are foreshortened. Make both shoes complete and mildly asymmetrical. Keep the original navy trouser folds and specific shoe colors. Fully draw clean hip cloth and seat above the crotch with no holes. Crop all other body parts to transparent. No ground, cast shadow, labels or props.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-07.png (native generation before registration)",
+      "design/art/characters/fight-01-legs-jump.png"
+    ],
+    "postprocess": "Downsampled and registered the generated bent pair to the same hips as the standing figure.",
+    "generated_source_sha256": "d2da38109dfb2c9f10088837322d9a7642c9d8a366694b9ecbb251d204493371",
+    "web_export": "public/art/characters/fight-07-legs-jump.webp",
+    "what": "Player 07 bent jump legs",
+    "hip_pivots": {
+      "leg-left": {
+        "x": 477,
+        "y": 548
+      },
+      "leg-right": {
+        "x": 545,
+        "y": 548
+      }
+    }
+  },
+  {
+    "path": "design/art/characters/fight-07.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 07 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 07 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, deep warm brown skin, abundant dark brown ringlet curls with rounded shoulder-length silhouette, brass/mustard long-sleeved top, navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-07.png",
+      "design/art/portraits/portrait-07.png"
+    ],
+    "postprocess": "One downsample registered the generated gathering pose to its map figure’s adult height and the shared feet midpoint. The master is composited from the rig layers.",
+    "generated_source_sha256": "464032c047ca3b66ce94770f66992ae5cb97999a1d02b889819fe6aed545cdba",
+    "web_export": "public/art/characters/fight-07.webp",
+    "what": "Player 07 back view, assembled gathering pose",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "effective_downsample": 0.7134020618556701,
+    "crown_y_px": 208,
+    "pivots": {
+      "arm-up": {
+        "x": 559,
+        "y": 406
+      },
+      "arm-down": {
+        "x": 559,
+        "y": 406
+      },
+      "leg-left": {
+        "x": 477,
+        "y": 548
+      },
+      "leg-right": {
+        "x": 545,
+        "y": 548
+      }
+    },
+    "ball_point": {
+      "x": 597,
+      "y": 174
+    },
+    "ball_diameter_preview_px": 63,
+    "jump_preview_lift_px": 105,
+    "seat_core_bottom_y_px": 602,
+    "pose_layers": {
+      "idle": [
+        "leg-left",
+        "leg-right",
+        "arm-down",
+        "body"
+      ],
+      "gather": [
+        "leg-left",
+        "leg-right",
+        "arm-up",
+        "body"
+      ],
+      "jump": [
+        "legs-jump",
+        "arm-down",
+        "body"
+      ]
+    }
+  },
+  {
+    "path": "design/art/characters/fight-08-body.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 08 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 08 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, warm light skin, long dark brown hair tied into a low ponytail falling on her right, fitted navy-blue long-sleeved crewneck and navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-08.png",
+      "design/art/portraits/portrait-08.png"
+    ],
+    "postprocess": "Scripted the stationary head, torso, hanging left arm and fully backed seat directly from the generated gathering pixels.",
+    "generated_source_sha256": "3f5a592937abca3696e04f6d101d202ed955232f4278311d172ce9f4775bf520",
+    "web_export": "public/art/characters/fight-08-body.webp",
+    "what": "Player 08 body and closed shoulder/hip seat"
+  },
+  {
+    "path": "design/art/characters/fight-08-arm-down.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 08 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 08 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, warm light skin, long dark brown hair tied into a low ponytail falling on her right, fitted navy-blue long-sleeved crewneck and navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-08.png",
+      "design/art/portraits/portrait-08.png"
+    ],
+    "postprocess": "Extracted the assembled figure’s relaxed left sleeve and hand, reflected them to the shared right shoulder and registered them on the standing canvas.",
+    "generated_source_sha256": "3f5a592937abca3696e04f6d101d202ed955232f4278311d172ce9f4775bf520",
+    "web_export": "public/art/characters/fight-08-arm-down.webp",
+    "what": "Player 08 relaxed right arm",
+    "pivot": {
+      "x": 561,
+      "y": 378
+    }
+  },
+  {
+    "path": "design/art/characters/fight-08-arm-up.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 08 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 08 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, warm light skin, long dark brown hair tied into a low ponytail falling on her right, fitted navy-blue long-sleeved crewneck and navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-08.png",
+      "design/art/portraits/portrait-08.png"
+    ],
+    "postprocess": "Extracted the raised arm and kept its hidden shoulder overlap from the assembled generation. Opened the extreme fingertips slightly for the release.",
+    "generated_source_sha256": "3f5a592937abca3696e04f6d101d202ed955232f4278311d172ce9f4775bf520",
+    "web_export": "public/art/characters/fight-08-arm-up.webp",
+    "what": "Player 08 overhead throwing arm and ball point",
+    "pivot": {
+      "x": 561,
+      "y": 378
+    },
+    "ball_point": {
+      "x": 601,
+      "y": 134
+    }
+  },
+  {
+    "path": "design/art/characters/fight-08-leg-left.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 08 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 08 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, warm light skin, long dark brown hair tied into a low ponytail falling on her right, fitted navy-blue long-sleeved crewneck and navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-08.png",
+      "design/art/portraits/portrait-08.png"
+    ],
+    "postprocess": "Split the left standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "3f5a592937abca3696e04f6d101d202ed955232f4278311d172ce9f4775bf520",
+    "web_export": "public/art/characters/fight-08-leg-left.webp",
+    "what": "Player 08 standing left leg",
+    "pivot": {
+      "x": 475,
+      "y": 538
+    }
+  },
+  {
+    "path": "design/art/characters/fight-08-leg-right.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 08 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 08 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, warm light skin, long dark brown hair tied into a low ponytail falling on her right, fitted navy-blue long-sleeved crewneck and navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-08.png",
+      "design/art/portraits/portrait-08.png"
+    ],
+    "postprocess": "Split the right standing leg directly from the assembled generation, including opaque hip overlap.",
+    "generated_source_sha256": "3f5a592937abca3696e04f6d101d202ed955232f4278311d172ce9f4775bf520",
+    "web_export": "public/art/characters/fight-08-leg-right.webp",
+    "what": "Player 08 standing right leg",
+    "pivot": {
+      "x": 546,
+      "y": 538
+    }
+  },
+  {
+    "path": "design/art/characters/fight-08-legs-jump.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the newly assembled figure 08; edit this person directly. Input 3 is figure 01's two-leg jump pose as a guide to anatomy and registration only. Return only both legs together from the waist down, on a transparent canvas, with the same outfit, skin, trouser and shoe design as assembled figure 08 exactly. Keep the hip waist position, width and age proportions unchanged. Both knees are bent with heels lifted behind the upright person. From behind and slightly above, both original soles point back toward us and shins are foreshortened. Make both shoes complete and mildly asymmetrical. Keep the original navy trouser folds and specific shoe colors. Fully draw clean hip cloth and seat above the crotch with no holes. Crop all other body parts to transparent. No ground, cast shadow, labels or props.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-08.png (native generation before registration)",
+      "design/art/characters/fight-01-legs-jump.png"
+    ],
+    "postprocess": "Downsampled and registered the generated bent pair to the same hips as the standing figure.",
+    "generated_source_sha256": "0f9a3be310987b8055bb0249e63f1619bae4e9fd3ae2195bb89b771a2a0bd8d5",
+    "web_export": "public/art/characters/fight-08-legs-jump.webp",
+    "what": "Player 08 bent jump legs",
+    "hip_pivots": {
+      "leg-left": {
+        "x": 475,
+        "y": 538
+      },
+      "leg-right": {
+        "x": 546,
+        "y": 538
+      }
+    }
+  },
+  {
+    "path": "design/art/characters/fight-08.png",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved style sheet. Input 2 is the assembled figure 01 rig for exact body placement and pose ONLY. Input 3 is the full-body figure 08 for strict identity, age, hairstyle, natural skin tone, clothes and footwear. Input 4 is portrait 08 for strict identity and hair/skin color. Edit input 2 by replacing the person with this same adult woman, warm light skin, long dark brown hair tied into a low ponytail falling on her right, fitted navy-blue long-sleeved crewneck and navy trousers, warm brown shoes. Keep input 2's exact joint placement: upright level shoulders, viewer-left arm relaxed and hanging with a gap beside the hip, both feet on the shared baseline, legs standing apart, right shoulder to elbow diagonally up and out and then mostly vertical to a cupped palm above and to the right of the head, exactly as input 2. Leave the cupped hand empty. Keep generous clear separation from head to arm and from hanging hand to hip. Complete both hands and shoes. Only a single full figure on true transparent square canvas, no floor, effects, writing or props. Preserve input 3's adult scale and outfit as seen from behind.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 9a932c8",
+      "design/art/characters/figure-08.png",
+      "design/art/portraits/portrait-08.png"
+    ],
+    "postprocess": "One downsample registered the generated gathering pose to its map figure’s adult height and the shared feet midpoint. The master is composited from the rig layers.",
+    "generated_source_sha256": "3f5a592937abca3696e04f6d101d202ed955232f4278311d172ce9f4775bf520",
+    "web_export": "public/art/characters/fight-08.webp",
+    "what": "Player 08 back view, assembled gathering pose",
+    "anchor": {
+      "x": 512,
+      "y": 900
+    },
+    "shared_scale": 0.6715063520871143,
+    "effective_downsample": 0.7448132780082988,
+    "crown_y_px": 182,
+    "pivots": {
+      "arm-up": {
+        "x": 561,
+        "y": 378
+      },
+      "arm-down": {
+        "x": 561,
+        "y": 378
+      },
+      "leg-left": {
+        "x": 475,
+        "y": 538
+      },
+      "leg-right": {
+        "x": 546,
+        "y": 538
+      }
+    },
+    "ball_point": {
+      "x": 601,
+      "y": 134
+    },
+    "ball_diameter_preview_px": 63,
+    "jump_preview_lift_px": 105,
+    "seat_core_bottom_y_px": 580,
+    "pose_layers": {
+      "idle": [
+        "leg-left",
+        "leg-right",
+        "arm-down",
+        "body"
+      ],
+      "gather": [
+        "leg-left",
+        "leg-right",
+        "arm-up",
+        "body"
+      ],
+      "jump": [
+        "legs-jump",
+        "arm-down",
+        "body"
+      ]
+    }
   }
 ]
