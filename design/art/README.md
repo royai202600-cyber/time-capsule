@@ -10,6 +10,8 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 
 ## Corrupted Capsule fight review
 
+Figure 01’s overhand throw is the approval sample. The cycle reuses the hanging arm for rest and layers the three new right arms under the existing body with either set of legs. The legacy arm-up stays in the rig. All three poses share the shoulder at (566, 393). The windup ball center is (618, 239), and the release starts from (622, 199). Follow-through has no ball point. [160 px frame strip](_checks/fight-01-throw.png) · [120 ms loop](_checks/fight-01-throw.gif) · [120 px and full-size shoulder checks](_checks/fight-01-throw-seams.png).
+
 | Figure | Motion at 120 and 64 px | Shoulder and hip close-ups |
 |---|---|---|
 | 01 | [Motion](_checks/fight-01-motion.png) | [Seams](_checks/fight-01-seams.png) |
@@ -471,6 +473,9 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `characters/fight-01-body.png` | Head, torso, left arm, closed shoulder and full hip seat | 1024×1024 | test batch; see manifest |
 | `characters/fight-01-arm-down.png` | Relaxed hanging right arm | 1024×1024 | shared shoulder pivot |
 | `characters/fight-01-arm-up.png` | Overhead right arm with cupped hand | 1024×1024 | shoulder pivot and ball point in manifest |
+| `characters/fight-01-arm-windup.png` | Cocked overhand windup | 1024×1024 | shared shoulder pivot and held-ball point |
+| `characters/fight-01-arm-release.png` | Foreshortened forward reach with open hand | 1024×1024 | shared shoulder pivot and release point |
+| `characters/fight-01-arm-follow.png` | Right arm sweeps down and inward after release | 1024×1024 | shared shoulder pivot |
 | `characters/fight-01-leg-left.png` | Left hip, trouser leg and shoe | 1024×1024 | test batch; see manifest |
 | `characters/fight-01-leg-right.png` | Right hip, trouser leg and shoe | 1024×1024 | test batch; see manifest |
 | `characters/fight-01-legs-jump.png` | Both legs bent with heels lifted | 1024×1024 | replaces both standing legs for the jump |

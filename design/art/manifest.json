@@ -13084,6 +13084,77 @@
     }
   },
   {
+    "path": "design/art/characters/fight-01-arm-windup.png",
+    "what": "Cocked overhand windup with cupped right hand",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: precise-object-edit. The first input is the approved style sheet. The second input is the actual assembled fight-01 sprite to edit. Use the approved back view directly behind and slightly above; player faces away toward the top center. Return ONLY the isolated viewer-right throwing arm from rounded blue shoulder cap through fingertips, in the original 1024×1024 coordinate system. Match the original faded medium blue sleeve, cuff, dark plum outline, fine texture, and warm skin. The shoulder joint is at (566,393), cap centered on this point about 57 px wide; arm must overlap the torso there for compositing. Do not recenter or enlarge the isolated arm. Keep the arm on the right of the composition. Delete all other pixels, including the head, torso, other arm and legs. True transparent alpha. No ball, text or visual effects.\n\nDraw the cocked overhand windup: upper arm reaches out toward viewer-right and a little upward, elbow near (700,348), elbow bends sharply, forearm rises inward toward (665,255). Cupped right hand around the edge of an imaginary small ball near (639,215), pulled back toward the camera and next to the rear-right of the head. Strong angular elbow silhouette with clean open space inside the bend. Keep fingertips right of x=600 so they are visible with the unmodified head layered over the arm. Entire arm and fingertips stay attached and anatomically plausible.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 1fd08ac"
+    ],
+    "generated_source_sha256": "f16473c3d8ba7e363afd1cbd8008242496ad643e5732af017ff7bbce5bf03629",
+    "postprocess": "Removed isolated low-alpha noise. Resampled the 1254 px output at x/y scale (0.36, 0.295) and translated by (336, 161) onto the original 1024 px canvas under the unchanged torso.",
+    "pivot": {
+      "x": 566,
+      "y": 393
+    },
+    "ball_point": {
+      "x": 618,
+      "y": 239
+    }
+  },
+  {
+    "path": "design/art/characters/fight-01-arm-release.png",
+    "what": "Foreshortened forward reach with open right hand",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: precise-object-edit. The first input is the approved style sheet. The second input is the actual assembled fight-01 sprite to edit. Use the approved back view directly behind and slightly above; player faces away toward the top center. Return ONLY the isolated viewer-right throwing arm from rounded blue shoulder cap through fingertips, in the original 1024×1024 coordinate system. Match the original faded medium blue sleeve, cuff, dark plum outline, fine texture, and warm skin. The shoulder joint is at (566,393), cap centered on this point about 57 px wide; arm must overlap the torso there for compositing. Do not recenter or enlarge the isolated arm. Keep the arm on the right of the composition. Delete all other pixels, including the head, torso, other arm and legs. True transparent alpha. No ball, text or visual effects.\n\nDraw the instant the ball is let go, in overhand follow direction away from the camera. Upper arm rises from the shoulder toward (602,320) and forearm reaches up and away toward (624,248). Foreshorten both segments and taper toward the smaller hand in depth; explicit finger extension open along the line of the throw, back of hand visible, fingertips near (618,204). Should read as a swift forward reach with slight inward wrist snap, a much narrower silhouette than windup. Keep visible hand slightly right of the head (x>598).",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 1fd08ac"
+    ],
+    "generated_source_sha256": "bc7442cb71eea8facd96547633a53496800fe7ecdf05a13d4b973108d567ec82",
+    "postprocess": "Removed isolated low-alpha noise. Resampled the 1254 px output at x/y scale (0.39, 0.52) and translated by (319, 55) onto the original 1024 px canvas under the unchanged torso.",
+    "pivot": {
+      "x": 566,
+      "y": 393
+    },
+    "ball_point": {
+      "x": 622,
+      "y": 199
+    }
+  },
+  {
+    "path": "design/art/characters/fight-01-arm-follow.png",
+    "what": "Right arm sweeps down and inward after release",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: precise-object-edit. The first input is the approved style sheet. The second input is the actual assembled fight-01 sprite to edit. Use the approved back view directly behind and slightly above; player faces away toward the top center. Return ONLY the isolated viewer-right throwing arm from rounded blue shoulder cap through fingertips, in the original 1024×1024 coordinate system. Match the original faded medium blue sleeve, cuff, dark plum outline, fine texture, and warm skin. The shoulder joint is at (566,393), cap centered on this point about 57 px wide; arm must overlap the torso there for compositing. Do not recenter or enlarge the isolated arm. Keep the arm on the right of the composition. Delete all other pixels, including the head, torso, other arm and legs. True transparent alpha. No ball, text or visual effects.\n\nDraw the immediate follow-through of the same overhand throw: right shoulder at (566,393), upper arm arcs along the right side toward elbow near (638,445), forearm angles down and inward toward (600,490), and relaxed fingers continue inward toward the far side of the torso near (581,507). This foreshortened bent arm is sweeping across the front of the body, so the fixed torso will mask part of the innermost hand. Keep the outward curved elbow and at least a little wrist clearly visible to the right of the torso. Distinct from a hanging vertical rest arm.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 1fd08ac"
+    ],
+    "generated_source_sha256": "bd9ab1ed25b69bc30f16595edea9084b18c9d881b20b8c084de5b9430d244555",
+    "postprocess": "Removed isolated low-alpha noise. Sheared the distal arm toward the visible side of the torso (x += 0.38 × (y − 526) in source pixels). Resampled the 1254 px output at x/y scale (0.31, 0.346) and translated by (357, 211) onto the original 1024 px canvas under the unchanged torso.",
+    "pivot": {
+      "x": 566,
+      "y": 393
+    }
+  },
+  {
     "path": "design/art/characters/fight-01-leg-left.png",
     "what": "Player 01 left hip, trouser leg and shoe",
     "size_px": [
