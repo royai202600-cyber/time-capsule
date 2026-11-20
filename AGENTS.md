@@ -83,7 +83,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
-- 2026-11-20: Roy approved figure 01’s four whole-body throw poses at `e06042a` and authorized the other seven rigs. Draft PR #189 includes the full eight-figure set and WebP registrations, pending Roy’s approval of the complete set.
+- 2026-11-20: Roy approved figure 01’s four whole-body throw poses at `e06042a` and authorized the other seven rigs. Draft PR #189 includes the full eight-figure set and WebP exports, pending Roy’s approval of the complete set.
 - 2026-11-20: Roy replaced the arm-only throw and code-tilted body with four drawn whole-body poses based on an overhand baseball pitch from behind. Figure 01 uses a compact step and 500 ms of motion. Each upper can stack over its own legs or the existing jump legs. Draft PR #189 awaits Roy’s review before figures 02–08.
 - 2026-11-20: Roy and Claude approved the figure 01 shoulder joins, standing and jump layering, and rest pose in draft PR #189. Roy asked to tuck the windup ball behind the head, reach over the crown at release, and follow through to the opposite hip. The revised figure 01 remains in draft for Roy’s review before figures 02–08.
 - 2026-11-20: Roy chose the faceted spike row (PR #188 option B). Its PNG and WebP are renamed to `jump-spikes` byte-for-byte, with the base at row 632 and the highest tip at row 470. The DF3 demo uses this approved asset.

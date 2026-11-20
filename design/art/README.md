@@ -10,7 +10,7 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 
 ## Corrupted Capsule fight review
 
-Draft PR #189 has four waist-split throw poses for each of the eight approved back-view figures. Figure 01’s approved layers are from `e06042a`. The existing rest pose is the set. The drawn poses are cock (140 ms), release (80 ms), follow-through (150 ms), and recover (130 ms). Each 1024 px master upper stacks over its matching lower or the original jump legs. The 512 px WebPs are registered in `mobile/src/art/manifest.ts` as `fightThrowPoses`. The ball point is measured at the right hand on the 1024 px canvas. The game shows the held ball during cock and starts the flying ball at the release point.
+Draft PR #189 has four waist-split throw poses for each of the eight approved back-view figures. Figure 01’s approved layers are from `e06042a`. The existing rest pose is the set. The drawn poses are cock (140 ms), release (80 ms), follow-through (150 ms), and recover (130 ms). Each 1024 px master upper stacks over its matching lower or the original jump legs. Figure 01’s WebPs are lossless 1024 px copies of the approved masters. Figures 02–08 have 512 px WebPs on the same proportional canvas. Claude registers the sprites in `fightRigs.ts`. The ball point is measured at the right hand on the 1024 px canvas. The game shows the held ball during cock and starts the flying ball at the release point.
 
 [Eight-figure flipbook strip](_checks/fight-throw-flipbook.png) · [Standing and jump waist seams](_checks/fight-throw-seams.png) · [Figure 01 timed loop](_checks/fight-01-throw.gif). The gold ring in the strip marks the ball point during cock and release.
 
