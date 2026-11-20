@@ -25,12 +25,12 @@ begin
   perform set_config('request.jwt.claim.sub',player::text,true);
   select * into strict fight from public.corrupted_fight_start(spawn,lat,lng,10);
   select * into strict resumed from public.corrupted_fight_start(spawn,lat,lng,10);
-  assert resumed.fight_id=fight.fight_id and fight.health=5 and fight.max_health=5;
+  assert resumed.fight_id=fight.fight_id and fight.health=10 and fight.max_health=10;
 
   perform set_config('request.jwt.claim.sub',rival::text,true);
   perform pg_temp.expect_fight_error(format('select public.corrupted_fight_finish(%L,''lost'',0,0,%L,%L,10)',fight.fight_id,lat,lng),'expired');
   perform set_config('request.jwt.claim.sub',player::text,true);
-  update private.corrupted_fights set started_at=clock_timestamp()-interval '10 seconds' where id=fight.fight_id;
+  update private.corrupted_fights set started_at=clock_timestamp()-interval '15 seconds' where id=fight.fight_id;
   update public.player_game set last_lat=lat+.004,last_position_at=clock_timestamp() where user_id=player;
   perform pg_temp.expect_fight_error(format('select public.corrupted_fight_finish(%L,''lost'',1,0,%L,%L,10)',fight.fight_id,lat,lng),'too_fast');
   update public.player_game set last_lat=lat where user_id=player;
@@ -56,7 +56,7 @@ begin
     update private.corrupted_fights set started_at=clock_timestamp()-interval '50 seconds',
       expires_at=clock_timestamp()-interval '30 seconds' where id=fight.fight_id;
   else
-    update private.corrupted_fights set started_at=clock_timestamp()-interval '10 seconds' where id=fight.fight_id;
+    update private.corrupted_fights set started_at=clock_timestamp()-interval '15 seconds' where id=fight.fight_id;
   end if;
   outcome := public.corrupted_fight_finish(fight.fight_id,'won',fight.max_health,0,lat,lng,10);
   assert outcome->>'result'='won';

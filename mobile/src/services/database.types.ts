@@ -1460,6 +1460,10 @@ export type Database = {
         Args: { capsule_id: string; reason: string }
         Returns: Json
       }
+      admin_set_spin_reward: {
+        Args: { p_wax_max: number; p_wax_min: number }
+        Returns: Json
+      }
       admin_spawn_place_add: {
         Args: { p_note?: string; p_region: string; p_vessel: string }
         Returns: Json

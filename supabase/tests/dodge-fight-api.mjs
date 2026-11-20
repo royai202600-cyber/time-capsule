@@ -4,10 +4,10 @@ import { randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 
-const { API_URL, ANON_KEY, SERVICE_ROLE_KEY } = process.env;
+const { API_URL, ANON_KEY, SERVICE_ROLE_KEY, DB_CONTAINER = 'supabase_db_time-capsule' } = process.env;
 assert(API_URL && ['127.0.0.1', 'localhost'].includes(new URL(API_URL).hostname), 'Use local Supabase');
 assert(ANON_KEY && SERVICE_ROLE_KEY, 'Provide the local API keys');
-const sql = (body) => execFileSync('docker', ['exec', '-i', 'supabase_db_time-capsule',
+const sql = (body) => execFileSync('docker', ['exec', '-i', DB_CONTAINER,
   'psql', '-X', '-qAt', '-U', 'postgres', '-v', 'ON_ERROR_STOP=1'],
 { input: body, encoding: 'utf8' }).trim();
 const literal = (value) => "'" + String(value).replaceAll("'", "''") + "'";
@@ -38,11 +38,11 @@ function denied(response, message) {
 
 async function player() {
   const credentials = { email: `df-finish-${randomUUID()}@example.com`, password: randomUUID() };
-  const user = ok(await request('/auth/v1/admin/users', { ...credentials, email_confirm: true }, null, SERVICE_ROLE_KEY));
+  const user = ok(await request('/auth/v1/admin/users', { ...credentials, email_confirm: true }, SERVICE_ROLE_KEY, SERVICE_ROLE_KEY));
   users.push(user.id);
   sql(`insert into public.profiles(id,name) values (${literal(user.id)},'Finish RPC QA') on conflict do nothing;
     select private.ensure_player(${literal(user.id)});
-    update public.player_game set wax_balls=100,gold_balls=12 where user_id=${literal(user.id)};`);
+    update public.player_game set wax_balls=100,gold_balls=22 where user_id=${literal(user.id)};`);
   const session = ok(await request('/auth/v1/token?grant_type=password', credentials));
   assert.equal(session.user.id, user.id);
   assert.equal(session.access_token.split('.').length, 3);
@@ -62,9 +62,9 @@ try {
   const expire = (table, fight) => sql(`update ${table} set expires_at=clock_timestamp()-interval '1 second' where id=${literal(fight)};`);
 
   let fight = await start();
-  assert.equal(fight.health, 5);
-  assert.equal(fight.max_health, 5);
-  for (const [rarity, health] of [['uncommon', 6], ['rare', 7]]) {
+  assert.equal(fight.health, 10);
+  assert.equal(fight.max_health, 10);
+  for (const [rarity, health] of [['uncommon', 12], ['rare', 14]]) {
     const started = await start(fixture.spawns[rarity][0]);
     assert.equal(started.health, health);
     assert.equal(started.max_health, health);
@@ -80,16 +80,16 @@ try {
     assert.equal(resumed.health, health);
     assert.equal(resumed.max_health, health);
   }
-  console.log('PASS real JWT: 5/6/7 starting health and legacy 3/4 HP fights resume unchanged');
+  console.log('PASS real JWT: 10/12/14 starting health and legacy 3/4 HP fights resume unchanged');
   assert.deepEqual(await start(), fight);
-  const win = finishArgs(fight.fight_id, 'won', 3, 1);
+  const win = finishArgs(fight.fight_id, 'won', 8, 1);
   denied(await rival.rpc('corrupted_fight_finish', win), 'expired');
-  denied(await rpc('corrupted_fight_finish', { ...win, p_wax_used: 2 }), 'not_enough_damage');
+  denied(await rpc('corrupted_fight_finish', { ...win, p_wax_used: 7 }), 'not_enough_damage');
   denied(await rpc('corrupted_fight_finish', { ...win, p_wax_used: 101 }), 'no_balls');
   denied(await rpc('corrupted_fight_finish', win), 'too_soon');
   const unspent = await state();
   assert.equal(unspent.wax_balls, 100);
-  assert.equal(unspent.gold_balls, 12);
+  assert.equal(unspent.gold_balls, 22);
   allowTime('private.corrupted_fights', fight.fight_id);
   sql(`update public.player_game set last_lat=${coords.p_lat + .004},last_position_at=clock_timestamp() where user_id=${literal(id)};`);
   denied(await rpc('corrupted_fight_finish', win), 'too_fast');
@@ -99,10 +99,10 @@ try {
   assert.deepEqual(ok(replies[1]), outcome);
   assert.equal(outcome.result, 'won');
   assert(outcome.vessel && outcome.copies > 0 && outcome.xp_gained > 0);
-  assert.equal((await state()).wax_balls, 97);
-  assert.equal((await state()).gold_balls, 11);
+  assert.equal((await state()).wax_balls, 92);
+  assert.equal((await state()).gold_balls, 21);
   assert.deepEqual(ok(await rpc('corrupted_fight_finish', win)), outcome);
-  assert.equal((await state()).wax_balls, 97);
+  assert.equal((await state()).wax_balls, 92);
   denied(await rival.rpc('corrupted_fight_finish', win), 'expired');
 
   for (const remaining of [2, 1, 0]) {
@@ -125,12 +125,12 @@ try {
   console.log('PASS real JWT: Corrupted win, validation, rival, loss, expiry and concurrent replay with one spend');
 
   let attempt = await landmark();
-  assert.equal(attempt.cracks, 20);
+  assert.equal(attempt.cracks, 40);
   assert(Math.abs(Date.parse(attempt.expires_at) - Date.now() - 150000) < 3000);
-  const landmarkWin = finishArgs(attempt.attempt_id, 'won', 0, 10);
+  const landmarkWin = finishArgs(attempt.attempt_id, 'won', 0, 20);
   denied(await rival.rpc('landmark_finish', landmarkWin), 'expired');
-  denied(await rpc('landmark_finish', { ...landmarkWin, p_gold_used: 12 }), 'no_balls');
-  denied(await rpc('landmark_finish', { ...landmarkWin, p_gold_used: 9 }), 'not_enough_damage');
+  denied(await rpc('landmark_finish', { ...landmarkWin, p_gold_used: 22 }), 'no_balls');
+  denied(await rpc('landmark_finish', { ...landmarkWin, p_gold_used: 19 }), 'not_enough_damage');
   denied(await rpc('landmark_finish', landmarkWin), 'too_soon');
   allowTime('public.landmark_attempts', attempt.attempt_id);
   const results = await Promise.all([rpc('landmark_finish', landmarkWin), rpc('landmark_finish', landmarkWin)]);
@@ -146,7 +146,7 @@ try {
   attempt = await landmark();
   const [legacy] = ok(await rpc('landmark_hit', { p_attempt: attempt.attempt_id, p_ball: 'wax', p_ring: 1, ...coords }));
   assert.equal(legacy.result, 'hit');
-  assert(legacy.cracks < 20);
+  assert(legacy.cracks < 40);
   const loss = finishArgs(attempt.attempt_id, 'lost', 1, 0);
   allowTime('public.landmark_attempts', attempt.attempt_id);
   const lost = ok(await rpc('landmark_finish', loss));
