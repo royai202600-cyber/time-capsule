@@ -62,9 +62,11 @@ The fight must play well on both. It is portrait-shaped on both.
 Roy chose device-played fights on 2026-11-20. The device handles movement, throws, damage and ball counts. Journey sends one request to start and one to finish. Today's Hunt still submits the aggregate quest result only.
 
 - **Start:** `corrupted_fight_start` and `landmark_start` check the existing location, speed and eligibility rules and record the fight's initial health, start and expiry. Landmarks have 20 HP and 150 seconds.
-- **Finish:** the app submits the outcome and wax and gold totals to `corrupted_fight_finish` or `landmark_finish`. The server checks ownership, expiry, the finish location and speed, and inventory. A win requires enough damage to cover the fight's health. The attempt must have lasted at least 0.8 s per thrown ball.
+- **Stock:** Start requires enough wax and gold to cover the fight's full health. The app shows the wax-ball requirement and Waypost hint when the player falls short.
+- **Finish:** the app submits the outcome and wax and gold totals to `corrupted_fight_finish` or `landmark_finish`. The server checks ownership, expiry, the finish location and speed, and inventory. A win requires enough damage to cover the fight's health. The attempt must have lasted at least 0.8 s per thrown ball. A Corrupted fight started before its spawn expired can finish in the next 60 seconds.
 - **Settlement:** the server spends both totals and applies the reward or loss in one transaction. A Corrupted loss uses one try and a Landmark loss ends the attempt. If the player runs out of balls after throwing and cannot win, the app submits a loss. With zero throws, the no-balls screen closes without submitting a result.
-- **Retry:** an accepted finish stores a receipt. Repeating it returns the same result and balance. The screen offers a retry after a transport failure. Quitting or letting the fight expire without submitting spends nothing.
+- **Leaving:** after the first throw, leaving a Journey fight through the close button asks for confirmation and submits a loss with the balls thrown. Before the first throw and in Today's Hunt, the close button exits immediately. Backgrounding pauses play.
+- **Retry:** an accepted finish stores a receipt. Repeating it returns the same result and balance. The screen offers a retry after a transport failure.
 - **Compatibility:** `corrupted_capsule_throw` and `landmark_hit` remain callable by the flick screen. Release the app with `EXPO_PUBLIC_DODGE_FIGHT` off, apply `20261120035407`, then set the flag to `1` and redeploy.
 
 ## Work list

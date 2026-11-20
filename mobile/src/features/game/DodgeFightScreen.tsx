@@ -10,7 +10,7 @@ import { DODGE_FIGHT_RPC, dodgeFights, GameError, type DodgeSession, type DodgeT
 import { C, sans, serif, shadows } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
 import { VESSELS } from "../shop/strings";
-import { DodgeFight, dodgeSwipe, fightHealthTicks, initialFrame, LIVES, type DodgeInput } from "./dodgeFightRules";
+import { DodgeFight, dodgeSwipe, fightHealth, fightHealthTicks, initialFrame, LIVES, type DodgeInput } from "./dodgeFightRules";
 import { FightAttack, FightBoss, GatherBall, HitEdge, PlayerThrow } from "./DodgeEffects";
 import { DodgePlayer } from "./DodgePlayer";
 import { fightRigFor } from "./fightRigs";
@@ -51,6 +51,8 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   const [pointer, setPointer] = useState(false);
   const [phase, setPhase] = useState<"intro" | "playing" | "finished">("intro");
   const [paused, setPaused] = useState(false);
+  const [confirmLeave, setConfirmLeave] = useState(false);
+  const [needed, setNeeded] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<ReturnType<typeof errorKey> | null>(null);
   const [submission, setSubmission] = useState<"idle" | "saving" | "retry" | "refused">("idle");
@@ -65,6 +67,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   const away = useRef(false);
   const resolving = useRef(false);
   const noticeDone = useRef(false);
+  const leaving = useRef(false);
   const finish = useRef<(fight: DodgeFight) => void>(() => {});
   const motion = useSharedValue(initialFrame);
   const finishTime = useSharedValue(0);
@@ -115,13 +118,24 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
 
   const start = async () => {
     if (resolving.current) return;
+    setError(null);
+    const damage = stock.wax + 2 * stock.gold;
+    const healthNeeded = fightHealth(mode, capsule.rarity);
+    if (!home && damage < healthNeeded) {
+      setNeeded(healthNeeded);
+      return;
+    }
+    setNeeded(null);
     resolving.current = true;
     setBusy(true);
-    setError(null);
     try {
       if (remote) {
         const initialized = await dodgeFights.start({ capsule, landmark });
         if (!live.current) return;
+        if (damage < initialized.health) {
+          setNeeded(initialized.health);
+          return;
+        }
         session.current = initialized;
         setAttempts(initialized.attemptsLeft);
       } else if (mode === "corrupted") {
@@ -149,10 +163,17 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   };
 
   const close = () => {
-    if (!resolving.current && !(home && fight.end === "won")) {
-      if (home) home.onQuit();
-      else onClose(fight.end === "won" && submission === "idle");
+    if (resolving.current || confirmLeave) return;
+    if (home) {
+      if (fight.end !== "won") home.onQuit();
+      return;
     }
+    if (phase === "playing" && fight.used.wax + fight.used.gold > 0) {
+      blocked.current = true;
+      setConfirmLeave(true);
+      return;
+    }
+    onClose(fight.end === "won" && submission === "idle");
   };
 
   const celebrate = (out: Restored) => {
@@ -177,6 +198,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
       onState({ ...state, wax_balls: out.wax_balls, gold_balls: out.gold_balls });
       active.stock = { wax: out.wax_balls, gold: out.gold_balls };
       setAttempts(out.attempts_left);
+      if (leaving.current) { onClose(false); return; }
       setSubmission("idle");
       if (out.result === "won" && out.vessel) celebrate({ ...out, vessel: out.vessel, stars: out.stars ?? 0 });
       else if (active.end === "won") active.finish("lost");
@@ -213,6 +235,19 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
       mockLosses.set(capsule.id, { left, expiresAt: Date.parse(capsule.expires_at) });
       setAttempts(left);
     }
+    if (leaving.current) {
+      onState({ ...state, wax_balls: active.stock.wax, gold_balls: active.stock.gold });
+      onClose(false);
+    }
+  };
+
+  const leave = () => {
+    if (leaving.current) return;
+    leaving.current = true;
+    setConfirmLeave(false);
+    fight.finish("lost");
+    motion.value = { ...fight.frame };
+    finish.current(fight);
   };
 
   useEffect(() => {
@@ -241,7 +276,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
     return () => cancelAnimationFrame(frameId);
   }, [motion, phase, paused]);
 
-  const playing = phase === "playing" && !paused;
+  const playing = phase === "playing" && !paused && !confirmLeave;
   const input = useRef<(key: DodgeInput) => void>(() => {});
   input.current = (key) => {
     if (playing && !blocked.current) engine.current?.input(key);
@@ -332,7 +367,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
                   <Text style={styles.lang}>{x.languageButton}</Text>
                 </Pressable>
                 {(phase !== "finished" || (fight.end === "won" && submission === "idle")) && <Pressable accessibilityRole="button" accessibilityLabel={s("close")} style={styles.pill}
-                  disabled={busy || (!!home && fight.end === "won")} onPress={close}>
+                  disabled={busy || confirmLeave || (!!home && fight.end === "won")} onPress={close}>
                   <ArtIcon name="close" size={19} />
                 </Pressable>}
               </View>
@@ -345,14 +380,27 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
             <View style={styles.rule}><View style={styles.symbol}><WaxBall kind="wax" size={28} /></View><Text style={styles.ruleText}>{x.gatherRule}</Text></View>
             <View style={styles.rule}><View style={styles.symbol}><Text style={styles.redSymbol}>← →</Text></View><Text style={styles.ruleText}>{x.dodgeRule}</Text></View>
             <View style={styles.rule}><View style={styles.symbol}><Text style={styles.jumpSymbol}>↑</Text></View><Text style={styles.ruleText}>{x.jumpRule}</Text></View>
-            <Text style={styles.detail}>{errorText ?? (pointer ? x.keyHint : x.touchHint)}</Text>
+            {needed !== null ? <View accessibilityLiveRegion="polite" style={styles.requirement}>
+              <Text style={styles.detail}>{x.needBalls(needed)}</Text>
+              <Text style={styles.detail}>{x.waypostHint}</Text>
+            </View> : <Text style={styles.detail}>{errorText ?? (pointer ? x.keyHint : x.touchHint)}</Text>}
             <Action label={x.start} disabled={busy} onPress={() => void start()} />
           </View>
         </View>}
-        {paused && phase === "playing" && <View style={styles.overlay}>
+        {paused && !confirmLeave && phase === "playing" && <View style={styles.overlay}>
           <View style={styles.card}>
             <Text accessibilityRole="header" style={styles.title}>{x.paused}</Text>
             <Action label={x.resume} onPress={() => { if (!away.current) { blocked.current = false; setPaused(false); } }} />
+          </View>
+        </View>}
+        {confirmLeave && <View style={styles.overlay}>
+          <View accessibilityViewIsModal style={styles.card}>
+            <Text accessibilityRole="header" style={styles.title}>{x.leavingLoss}</Text>
+            <Action label={x.keepPlaying} onPress={() => {
+              blocked.current = paused || away.current;
+              setConfirmLeave(false);
+            }} />
+            <Action label={x.leave} secondary onPress={leave} />
           </View>
         </View>}
         {phase === "finished" && (fight.end !== "won" || submission !== "idle") && <View style={styles.overlay}>
@@ -379,7 +427,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
         {home ? <Text style={styles.detail}>{x.homeFree}</Text> : <View style={styles.balls}>
           {(["wax", "gold"] as const).map((ball) => <Pressable key={ball} accessibilityRole="button"
             accessibilityLabel={`${s(ball)} · ${fight.stock[ball]}`} accessibilityState={{ selected: fight.selected === ball }}
-            disabled={paused || phase === "finished" || fight.stock[ball] <= 0} onPress={() => { fight.chooseBall(ball); redraw(); }}
+            disabled={paused || confirmLeave || phase === "finished" || fight.stock[ball] <= 0} onPress={() => { fight.chooseBall(ball); redraw(); }}
             style={[styles.ball, fight.selected === ball && styles.ballSelected, fight.stock[ball] <= 0 && styles.ballEmpty]}>
             <WaxBall kind={ball} size={23} /><Text style={styles.controlLabel}>{s(ball)} · {fight.stock[ball]}</Text>
           </Pressable>)}
@@ -389,10 +437,10 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   </View>;
 }
 
-function Action({ label, onPress, disabled }: { label: string; onPress: () => void; disabled?: boolean }) {
+function Action({ label, onPress, disabled, secondary }: { label: string; onPress: () => void; disabled?: boolean; secondary?: boolean }) {
   return <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress}
-    style={({ pressed }) => [styles.action, (pressed || disabled) && { opacity: .65 }]}>
-    <Text style={styles.actionText}>{label}</Text>
+    style={({ pressed }) => [styles.action, secondary && styles.secondary, (pressed || disabled) && { opacity: .65 }]}>
+    <Text style={[styles.actionText, secondary && styles.secondaryText]}>{label}</Text>
   </Pressable>;
 }
 
@@ -435,6 +483,7 @@ const styles = StyleSheet.create({
   card: { backgroundColor: C.paper, borderRadius: 18, width: "100%", maxWidth: 330, gap: 10, padding: 16, ...shadows.card },
   title: { fontFamily: serif, fontSize: 19, fontWeight: "700", textAlign: "center", color: C.ink },
   detail: { color: C.muted, fontFamily: sans, textAlign: "center", fontSize: 12 },
+  requirement: { gap: 4 },
   rule: { flexDirection: "row", gap: 9, alignItems: "center" },
   ruleText: { flex: 1, color: C.ink, fontFamily: sans, fontSize: 13 },
   symbol: { width: 40, height: 34, borderRadius: 9, backgroundColor: "#E7EEF5", alignItems: "center", justifyContent: "center" },
@@ -442,4 +491,6 @@ const styles = StyleSheet.create({
   jumpSymbol: { fontSize: 19, fontWeight: "700", color: C.ink },
   action: { minHeight: 44, justifyContent: "center", alignItems: "center", backgroundColor: C.wax, borderRadius: 22, paddingHorizontal: 10 },
   actionText: { fontFamily: serif, fontSize: 16, color: C.white },
+  secondary: { backgroundColor: C.white, borderWidth: 1, borderColor: C.line },
+  secondaryText: { color: C.wax },
 });

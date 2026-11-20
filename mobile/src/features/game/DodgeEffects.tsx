@@ -20,6 +20,21 @@ const FillCircle = Animated.createAnimatedComponent(Circle);
 const fillLength = Math.PI * 36;
 const motes = Array.from({ length: 6 }, (_, i) => i / 6);
 
+export function FightShadow({ kind }: { kind: "boss" | "player" }) {
+  const id = `fight-${kind}-shadow`;
+  const opacity = kind === "boss" ? .16 : .2;
+  return <Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <Defs>
+      <RadialGradient id={id} cx="50%" cy="50%" r="50%">
+        <Stop offset="0" stopColor={C.ink} stopOpacity={opacity} />
+        <Stop offset=".42" stopColor={C.ink} stopOpacity={opacity * .72} />
+        <Stop offset="1" stopColor={C.ink} stopOpacity={0} />
+      </RadialGradient>
+    </Defs>
+    <Circle cx={50} cy={50} r={50} fill={`url(#${id})`} />
+  </Svg>;
+}
+
 function Glow({ warning = false }: { warning?: boolean }) {
   return <Svg width="100%" height="100%" viewBox="0 0 100 100">
     <Defs>
@@ -66,7 +81,9 @@ export function FightBoss({ width, height, motion, reduced, vessel, health, warn
   const darken = Platform.OS === "web"
     ? ({ filter: "saturate(.55) brightness(.8)" } as object) : { tintColor: C.ink, opacity: .3 };
   return <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-    <View style={[styles.shadow, { left: "35%", width: "30%", height: "4.5%", top: `${(BOSS_Y + .1025) * 100}%` }]} />
+    <View style={{ position: "absolute", left: "35%", width: "30%", height: "4.5%", top: `${(BOSS_Y + .1025) * 100}%` }}>
+      <FightShadow kind="boss" />
+    </View>
     <View style={{ position: "absolute", top: height * BOSS_Y - size / 2, width: "100%", height: size, alignItems: "center" }}>
       {!reduced && <RestoreLightBurst size={size} burst={burst} />}
       <Animated.View style={[{ width: size, height: size }, pose]}>
@@ -250,7 +267,6 @@ export function HitEdge({ motion, finishTime }: { motion: SharedValue<FightFrame
 
 const styles = StyleSheet.create({
   layer: { ...StyleSheet.absoluteFill, width: "100%", height: "100%" },
-  shadow: { position: "absolute", borderRadius: 1000, backgroundColor: C.ink, opacity: .16 },
   warning: { fontFamily: sans, fontSize: 12, fontWeight: "700", color: C.white, paddingHorizontal: 8, paddingVertical: 3, overflow: "hidden", borderRadius: 20 },
   mote: { position: "absolute", backgroundColor: "#FFF4D6", borderRadius: 8, shadowColor: C.brass, shadowOpacity: 1, shadowRadius: 5, shadowOffset: { width: 0, height: 0 } },
   damage: { position: "absolute", width: "100%", textAlign: "center", fontFamily: serif, fontSize: 20, fontWeight: "700", color: C.white,

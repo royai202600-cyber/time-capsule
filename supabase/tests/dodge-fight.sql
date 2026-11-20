@@ -45,12 +45,19 @@ end $$;
 select 'PASS: fight starts, ownership, finish GPS and idempotent receipt grants' as result;
 
 -- A win through the public fight RPCs must count in both current hunt contexts.
-create function pg_temp.dodge_win(spawn text, lat double precision, lng double precision)
+create function pg_temp.dodge_win(spawn text, lat double precision, lng double precision, late boolean default false)
 returns void language plpgsql as $$
 declare fight record; outcome jsonb;
 begin
   select * into strict fight from public.corrupted_fight_start(spawn,lat,lng,10);
-  update private.corrupted_fights set started_at=clock_timestamp()-interval '10 seconds' where id=fight.fight_id;
+  if late then
+    update private.quest_spawns set expires_at=clock_timestamp()-interval '30 seconds'
+      where id=split_part(spawn,':',2)::uuid;
+    update private.corrupted_fights set started_at=clock_timestamp()-interval '50 seconds',
+      expires_at=clock_timestamp()-interval '30 seconds' where id=fight.fight_id;
+  else
+    update private.corrupted_fights set started_at=clock_timestamp()-interval '10 seconds' where id=fight.fight_id;
+  end if;
   outcome := public.corrupted_fight_finish(fight.fight_id,'won',fight.max_health,0,lat,lng,10);
   assert outcome->>'result'='won';
 end $$;
@@ -92,7 +99,7 @@ begin
   assert out->>'done'='false';
   select 'quest:'||id as spawn_id into strict spawn from private.quest_spawns
     where quest_id=quest and user_id=player;
-  perform pg_temp.dodge_win(spawn.spawn_id,lat,lng);
+  perform pg_temp.dodge_win(spawn.spawn_id,lat,lng,true);
   assert (select catch_count=1 and completed_at is not null from public.private_hunt_quest_progress
     where quest_id=quest and user_id=player);
   assert (select points=10 from public.private_hunt_members where hunt_id=hunt and user_id=player);

@@ -83,6 +83,7 @@ A mobile-first web app for sending someone a sealed **capsule** that can only be
 - To run the production web app locally: `cd mobile && npm install && npm run web` → http://localhost:8088. Legal pages are also copied by `npx expo export --platform web`.
 
 ## Decisions log
+- 2026-11-20: Roy confirmed that leaving a Journey dodge fight after the first throw asks for confirmation and settles a loss. Start requires enough ball damage to cover the fight's health. Corrupted fights already underway can finish for 60 seconds after their spawn expires.
 - 2026-11-20: Roy chose device-played dodge fights with server start and finish checks. Finishing validates eligibility, elapsed time, position and inventory, then spends the balls and settles the outcome once. Edit the unapplied DF1 migration in PR #185. The fight uses the eight approved back-view rigs from PR #182.
 - 2026-11-20: Roy confirmed the combined dodge fight release order. Ship the app with the feature off, apply migration `20261120035407`, then set `EXPO_PUBLIC_DODGE_FIGHT=1` and redeploy to enable the screen and DF1 RPCs together. PR #185 keeps the front figures. Wiring the approved back-view rigs from PR #182 is a separate step.
 - 2026-11-20: DF2 is in draft review in PR #185. Expo development uses the local dodge fight by default. Set `EXPO_PUBLIC_DODGE_FIGHT=0` for the flick screen, or `=1` for the DF1 RPCs when those functions are installed. Today's Hunt keeps its throws local and submits the existing aggregate quest result. The initial DF2 review uses the portrait-matched front figures.

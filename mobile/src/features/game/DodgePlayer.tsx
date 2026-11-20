@@ -1,7 +1,7 @@
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import Animated, { useAnimatedStyle, type SharedValue } from "react-native-reanimated";
-import { C } from "../../theme";
+import { FightShadow } from "./DodgeEffects";
 import { GROUND, INVULNERABLE, THROW_RECOVERY, type FightFrame } from "./dodgeFightRules";
 import { RELEASE_ANGLE, RIG_CANVAS, RIG_FEET, RIG_WIDTH, type FightRig } from "./fightRigs";
 
@@ -55,7 +55,7 @@ export function DodgePlayer({ figure, width, height, motion, reduced }: {
   return <View pointerEvents="none" style={StyleSheet.absoluteFill}>
     <Animated.View style={[styles.shadow, {
       width: width * .17, top: height * .847, height: height * .036,
-    }, shadow]} />
+    }, shadow]}><FightShadow kind="player" /></Animated.View>
     <Animated.View style={[styles.figure, {
       width: size, height: size, top: height * GROUND - feet,
     }, player]}>
@@ -74,7 +74,7 @@ export function DodgePlayer({ figure, width, height, motion, reduced }: {
 }
 
 const styles = StyleSheet.create({
-  shadow: { position: "absolute", left: 0, borderRadius: 1000, backgroundColor: C.ink, opacity: .2 },
+  shadow: { position: "absolute", left: 0 },
   figure: { position: "absolute", left: 0 },
   layer: { ...StyleSheet.absoluteFill, width: "100%", height: "100%" },
 });

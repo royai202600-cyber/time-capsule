@@ -12,6 +12,8 @@ const sql = (body) => execFileSync('docker', ['exec', '-i', 'supabase_db_time-ca
 { input: body, encoding: 'utf8' }).trim();
 const literal = (value) => "'" + String(value).replaceAll("'", "''") + "'";
 const users = [];
+let graceWave;
+const graceRevisions = [];
 const waveStarts = "select starts_at from private.game_wave_at(now()) union select ends_at from private.game_wave_at(now())";
 const revisions = sql(`select coalesce(jsonb_agg(r),'[]') from private.game_spawn_revisions r where starts_at in (${waveStarts})`);
 const config = sql("select jsonb_build_array(restore_common,restore_uncommon,restore_rare) from private.game_config where singleton");
@@ -97,7 +99,8 @@ try {
 
   fight = await start(fixture.spawns.common[2]);
   const beforeExpiry = await state();
-  expire('private.corrupted_fights', fight.fight_id);
+  sql(`update private.corrupted_fights set expires_at=clock_timestamp()-interval '61 seconds',
+    started_at=clock_timestamp()-interval '70 seconds' where id=${literal(fight.fight_id)};`);
   denied(await rpc('corrupted_fight_finish', finishArgs(fight.fight_id, 'lost', 2, 0)), 'expired');
   assert.equal((await state()).wax_balls, beforeExpiry.wax_balls);
   console.log('PASS real JWT: Corrupted win, validation, rival, loss, expiry and concurrent replay with one spend');
@@ -140,7 +143,49 @@ try {
   }));
   assert.equal(oldCapsule.result, 'restored');
   console.log('PASS real JWT: Landmark win, stamp, loss, expiry, validation, concurrent replay and both legacy RPCs');
+
+  // Give the disposable fixture wave its own clock, then move the wave and the fight
+  // back together to exercise a real wave rollover without waiting for it.
+  const period = JSON.parse(sql(`with added as (
+    insert into private.game_wave_periods(starts_at,first_wave,minutes)
+    values(clock_timestamp()-interval '4 minutes',
+      (select max(first_wave) from private.game_wave_periods)
+        +(select wave from private.game_wave_at(now()))+10, 5)
+    returning starts_at,first_wave
+  ) select row_to_json(added) from added;`));
+  graceWave = period.first_wave;
+  graceRevisions.push(period.starts_at);
+  const stageGraceRevision = (startsAt) => sql(`insert into private.game_spawn_revisions(starts_at,config,rules,places)
+    select ${literal(startsAt)},r.config,r.rules,r.places from private.game_spawn_revisions r
+    where r.starts_at in (${waveTimes}) order by r.starts_at limit 1;`);
+  stageGraceRevision(period.starts_at);
+  const graceSpawn = fixture.spawns.common[4].split(':')[0] + ':' + graceWave;
+  const graceFight = await start(graceSpawn);
+  const shifted = sql(`update private.game_wave_periods p
+    set starts_at=clock_timestamp()-interval '330 seconds'
+    where p.first_wave=${graceWave} returning p.starts_at;`);
+  graceRevisions.push(shifted);
+  stageGraceRevision(shifted);
+  sql(`update private.corrupted_fights
+    set started_at=${literal(shifted)}::timestamptz+interval '4 minutes',
+      expires_at=${literal(shifted)}::timestamptz+interval '5 minutes'
+    where id=${literal(graceFight.fight_id)};`);
+  assert.equal(sql(`select extract(epoch from clock_timestamp()-r.expires_at) between 30 and 35
+    from private.resolve_spawn(${literal(graceSpawn.split(':')[0])},${graceWave}) r;`), 't');
+  denied(await rpc('corrupted_fight_start', { p_spawn: graceSpawn, ...coords }), 'expired');
+  denied(await rpc('corrupted_capsule_throw', {
+    p_spawn: graceSpawn, p_ball: 'wax', p_hit: true, p_ring: 1, ...coords,
+  }), 'expired');
+  const graceBalance = await state();
+  const lateWin = finishArgs(graceFight.fight_id, 'won', graceFight.health, 0);
+  const lateResult = ok(await rpc('corrupted_fight_finish', lateWin));
+  assert.equal(lateResult.result, 'won');
+  assert.equal((await state()).wax_balls, graceBalance.wax_balls - graceFight.health);
+  assert.deepEqual(ok(await rpc('corrupted_fight_finish', lateWin)), lateResult);
+  console.log('PASS real JWT: Corrupted win 30 seconds after the wave expired and expired starts refused');
 } finally {
+  if (graceWave !== undefined) sql(`delete from private.game_wave_periods where first_wave=${graceWave};`);
+  if (graceRevisions.length) sql(`delete from private.game_spawn_revisions where starts_at in (${graceRevisions.map(literal).join(',')});`);
   if (users.length) {
     const ids = users.map(literal).join(',');
     sql(`delete from auth.users where id in (${ids})`);

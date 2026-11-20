@@ -60,7 +60,8 @@ end $$;
 update private.game_config set landmark_cracks=20, landmark_seconds=150 where singleton;
 
 create function private.corrupted_target(
-  p_spawn text, p_lat double precision, p_lng double precision, p_config private.game_config
+  p_spawn text, p_lat double precision, p_lng double precision, p_config private.game_config,
+  p_fight_started_at timestamptz default null
 )
 returns table(spot_id uuid, quest_spawn private.quest_spawns, vessel text, rarity text,
   expires_at timestamptz, attempts_left integer)
@@ -80,8 +81,7 @@ begin
   if p_spawn like 'quest:%' then
     select * into quest from private.quest_spawns
       where id=split_part(p_spawn,':',2)::uuid and user_id=auth.uid();
-    if not found or not private.quest_spawn_available(quest) then raise exception 'expired'; end if;
-    quest_spawn := quest;
+    if not found then raise exception 'expired'; end if;
     spot.lat := quest.location_lat;
     spot.lng := quest.location_lng;
     vessel := quest.vessel;
@@ -102,7 +102,17 @@ begin
     expires_at := released.expires_at;
   end if;
 
-  if expires_at<=clock_timestamp() then raise exception 'expired'; end if;
+  if expires_at<=clock_timestamp() then
+    if p_fight_started_at is null or p_fight_started_at>=expires_at
+       or expires_at+interval '60 seconds'<=clock_timestamp()
+      then raise exception 'expired'; end if;
+    -- Preserve the quest's run and completion checks while accepting this fight's late finish.
+    quest.expires_at := expires_at+interval '60 seconds';
+  end if;
+  if quest.id is not null then
+    if not private.quest_spawn_available(quest) then raise exception 'expired'; end if;
+    quest_spawn := quest;
+  end if;
   if public.distance_m(p_lat,p_lng,spot.lat,spot.lng)>p_config.action_radius_m
     then raise exception 'too_far'; end if;
   select * into caught from public.corrupted_catches
@@ -226,7 +236,8 @@ begin
   perform private.track_position(p_lat,p_lng,p_accuracy);
   select * into strict cfg from private.game_config where singleton;
   select * into strict target from private.corrupted_target(p_spawn,p_lat,p_lng,cfg);
-  delete from private.corrupted_fights f where f.user_id=auth.uid() and f.expires_at<=clock_timestamp();
+  delete from private.corrupted_fights f
+    where f.user_id=auth.uid() and f.expires_at+interval '60 seconds'<=clock_timestamp();
   select * into fight from private.corrupted_fights where user_id=auth.uid() and spawn_id=p_spawn;
   if not found then
     max_health := case target.rarity when 'common' then 3 when 'uncommon' then 4 else 5 end;
@@ -236,7 +247,7 @@ begin
   fight_id := fight.id;
   health := fight.health;
   max_health := fight.max_health;
-  expires_at := fight.expires_at;
+  expires_at := fight.expires_at+interval '60 seconds';
   attempts_left := target.attempts_left;
   return next;
 end $$;
@@ -258,10 +269,12 @@ begin
   if response is not null then return response; end if;
 
   select * into fight from private.corrupted_fights where id=p_fight and user_id=auth.uid() for update;
-  if not found or fight.expires_at<=clock_timestamp() then raise exception 'expired'; end if;
+  if not found or fight.started_at>=fight.expires_at
+     or fight.expires_at+interval '60 seconds'<=clock_timestamp()
+    then raise exception 'expired'; end if;
   player := private.track_position(p_lat,p_lng,p_accuracy);
   select * into strict cfg from private.game_config where singleton;
-  select * into strict target from private.corrupted_target(fight.spawn_id,p_lat,p_lng,cfg);
+  select * into strict target from private.corrupted_target(fight.spawn_id,p_lat,p_lng,cfg,fight.started_at);
   player := private.spend_fight_balls(p_result,p_wax_used,p_gold_used,fight.health,fight.started_at,player);
   select * into strict reward from private.finish_corrupted_try(fight.spawn_id,target.vessel,target.spot_id,target.quest_spawn,
     p_lat,p_lng,p_result='won',target.attempts_left-1,cfg);
@@ -377,7 +390,7 @@ begin
 end $$;
 
 revoke all on function
-  private.corrupted_target(text,double precision,double precision,private.game_config),
+  private.corrupted_target(text,double precision,double precision,private.game_config,timestamptz),
   private.fight_spend_ball(text,public.player_game),
   private.finish_corrupted_try(text,text,uuid,private.quest_spawns,double precision,double precision,boolean,integer,private.game_config),
   private.active_landmark_attempt(uuid,double precision,double precision,private.game_config),
