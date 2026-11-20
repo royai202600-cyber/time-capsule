@@ -1,26 +1,19 @@
 #!/usr/bin/env python3
-"""Check the resting fight stack and render art review sheets at game sizes."""
+"""Audit the figure 01 rig and render the art review sheets."""
 
 import json
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parents[1]
 CHECKS = ROOT / '_checks'
 PAPER = '#F6F8FB'
 NAVY = '#16263F'
+ORB = '#341C31'
 ARIAL = Path('/System/Library/Fonts/Supplemental/Arial.ttf')
-FONT = ImageFont.truetype(ARIAL, 12) if ARIAL.exists() else ImageFont.load_default(size=12)
-POSES = (
-    ('Idle', {}),
-    ('Gather power', {'arm': -36}),
-    ('Draw back −60°', {'arm': -60}),
-    ('Follow-through +70°', {'arm': 70}),
-    ('Side-step ±8°', {'leg-left': 8, 'leg-right': -8}),
-    ('Jump tuck', {'arm': -26, 'leg-left': -22, 'leg-right': -30}),
-)
+FONT = ImageFont.truetype(ARIAL, 13) if ARIAL.exists() else ImageFont.load_default(size=13)
 
 
 def master(path):
@@ -31,112 +24,148 @@ def label(draw, x, y, text):
     draw.text((x, y), text, anchor='mt', fill=NAVY, font=FONT)
 
 
-def check_connected(image, label_text):
-    """Measure connectivity on alpha so a thin anti-aliased edge cannot bridge a joint."""
-    alpha = image.getchannel('A').point(lambda a: 255 if a >= 128 else 0)
-    # Rotation and resampling can create isolated edge pixels. Ignore those.
-    while bounds := alpha.getbbox():
-        row = alpha.crop((bounds[0], bounds[1], bounds[2], bounds[1] + 1))
-        seed = row.getbbox()
-        ImageDraw.floodfill(alpha, (bounds[0] + seed[0], bounds[1]), 128)
-        remaining = alpha.point(lambda a: 255 if a == 255 else 0)
-        count = alpha.histogram()[128]
-        if count > 64:
-            assert remaining.histogram()[255] < 65, f'Detached joint in {label_text}'
-            return
-        alpha = remaining
-    raise AssertionError(f'Empty pose {label_text}')
+def assert_joint(image, name, box, core):
+    """Check that each joint core is solid and the surrounding seam has no enclosed gap."""
+    alpha = image.getchannel('A')
+    assert alpha.crop(core).getextrema()[0] >= 245, f'{name}: translucent joint center'
+    exterior = alpha.point(lambda a: 255 if a >= 160 else 0)
+    ImageDraw.floodfill(exterior, (0, 0), 128)
+    assert exterior.crop(box).histogram()[0] == 0, f'{name}: enclosed gap in joint'
+
+
+def thumbnail(ball, bounds, size):
+    return ImageOps.contain(ball.crop(bounds), (size, size), Image.Resampling.LANCZOS)
+
+
+def check_skins():
+    wax = master('game/ball-wax.png')
+    wax_alpha = wax.getchannel('A')
+    bounds = wax_alpha.getbbox()
+    review = Image.new('RGBA', (760, 371), PAPER)
+    draw = ImageDraw.Draw(review)
+    label(draw, 380, 9, 'Wax-ball skins')
+    park = ImageOps.fit(master('game/catch-background.png'), (144, 76), centering=(.5, .69))
+    for idx, skin in enumerate(('wax', 'gold', 'ink', 'plum', 'brass')):
+        ball = master(f'game/ball-{skin}.png')
+        if skin not in ('wax', 'gold'):
+            assert ball.getchannel('A').tobytes() == wax_alpha.tobytes(), f'Ball outline differs: {skin}'
+            assert ImageChops.difference(ball.convert('RGB'), wax.convert('RGB')).getbbox()
+        center = 76 + idx * 152
+        label(draw, center, 33, skin.title())
+        for size, top in ((120, 53), (40, 195)):
+            thumb = thumbnail(ball, bounds, size)
+            review.alpha_composite(thumb, (center-thumb.width//2, top))
+            label(draw, center, top+size+5, f'{size} px')
+        x, y = center-72, 276
+        review.alpha_composite(park, (x, y))
+        review.alpha_composite(thumbnail(ball, bounds, 40), (x+22, y+18))
+        draw.ellipse((x+84, y+18, x+123, y+57), fill=ORB)
+    label(draw, 380, 257, '40 px on the catch background, with a dark plum attack orb')
+    review.convert('RGB').save(CHECKS / 'fight-wax-skins.png', optimize=True)
 
 
 def main():
     manifest = json.loads((ROOT / 'manifest.json').read_text())
     entries = {item['path'].removeprefix('design/art/'): item for item in manifest}
-    fight = entries['characters/fight-01.png']
-    order = fight['layer_order']
-    parts = {name: master(f'characters/fight-01-{name}.png') for name in order}
-    assembled = master('characters/fight-01.png')
+    prefix = 'characters/fight-01'
+    fight = entries[f'{prefix}.png']
+    parts = {part: master(f'{prefix}-{part}.png') for part in (
+        'leg-left', 'leg-right', 'legs-jump', 'arm-down', 'arm-up', 'body')}
+    assembled = master(f'{prefix}.png')
+    wax = master('game/ball-wax.png')
 
-    def pose(angles):
+    def pose(pose_name, angles=None, ball=False):
         result = Image.new('RGBA', assembled.size)
-        for name in order:
-            part = parts[name]
-            if angle := angles.get(name):
-                pivot = fight['pivots'][name]
-                # Pose angles are clockwise on screen. Pillow rotates counterclockwise.
+        for part_name in fight['pose_layers'][pose_name]:
+            part = parts[part_name]
+            if angle := (angles or {}).get(part_name):
+                pivot = fight['pivots'][part_name]
+                # The motion spec uses screen angles. Pillow rotates counterclockwise.
                 part = part.rotate(-angle, Image.Resampling.BICUBIC, center=(pivot['x'], pivot['y']))
             result.alpha_composite(part)
+        if ball:
+            art = thumbnail(wax, wax.getbbox(), fight['ball_diameter_preview_px'])
+            point = fight['ball_point']
+            result.alpha_composite(art, (point['x']-art.width//2, point['y']-art.height//2))
         return result
 
-    stack = pose({})
-    assert stack.tobytes() == assembled.tobytes(), 'The 1024 px resting stack differs'
-    alpha = assembled.getchannel('A').point(lambda a: 255 if a >= 16 else 0)
+    gathering = pose('gather')
+    assert gathering.tobytes() == assembled.tobytes(), 'The 1024 px gathering stack differs'
+    assert parts['arm-up'].tobytes() != parts['arm-down'].tobytes()
+    arm_up = entries[f'{prefix}-arm-up.png']
+    assert arm_up['ball_point'] == fight['ball_point']
+    assert arm_up['pivot'] == entries[f'{prefix}-arm-down.png']['pivot']
+    point = fight['ball_point']
+    assert 0 < point['y'] < fight['crown_y_px'] and point['x'] > fight['anchor']['x']
+
+    idle = pose('idle')
+    alpha = idle.getchannel('A').point(lambda a: 255 if a >= 16 else 0)
     left = alpha.crop((0, 850, 512, 930)).getbbox()
     right = alpha.crop((512, 850, 1024, 930)).getbbox()
     assert left and right and all(897 <= 850 + shoe[3] <= 903 for shoe in (left, right))
-    assert abs(((left[0] + right[2] + 512) / 2) - 512) <= 2, 'Feet are off the shared x anchor'
-    figure_bounds = alpha.getbbox()
-    height = figure_bounds[3] - figure_bounds[1]
-    map_reference = entries['characters/figure-01.png']
-    assert fight['anchor'] == map_reference['anchor'] == {'x': 512, 'y': 900}
-    assert fight['shared_scale'] == map_reference['shared_scale'] == 0.6715063520871143
-    reference_alpha = master('characters/figure-01.png').getchannel('A')
-    reference_bounds = reference_alpha.point(lambda a: 255 if a >= 16 else 0).getbbox()
-    assert abs(height - (reference_bounds[3] - reference_bounds[1])) <= 3, 'Adult figure scale drifted'
+    assert abs((left[0] + right[2] + 512) / 2 - 512) <= 2, 'Feet are off the shared x anchor'
+    reference = entries['characters/figure-01.png']
+    assert fight['anchor'] == reference['anchor'] == {'x': 512, 'y': 900}
+    assert fight['shared_scale'] == reference['shared_scale'] == 0.6715063520871143
+    height = fight['anchor']['y'] - fight['crown_y_px']
+    assert abs(height - reference['standing_height_px']) <= 5
+    edge = round(120 * assembled.width / height)
+    assert assembled.resize((edge, edge), Image.Resampling.LANCZOS).tobytes() == gathering.resize(
+        (edge, edge), Image.Resampling.LANCZOS).tobytes()
+    assert parts['legs-jump'].getbbox()[3] < idle.getbbox()[3] - 80, 'Jump shoes are not tucked'
 
-    def at_height(frame, height_px):
-        canvas_edge = round(frame.width * height_px / height)
-        return frame.resize((canvas_edge, canvas_edge), Image.Resampling.LANCZOS)
-
-    frames = [('Master', assembled), *((title, pose(angles)) for title, angles in POSES)]
-    for title, frame in frames:
-        check_connected(frame, title)
-        bounds = frame.getbbox()
-        assert 0 < bounds[0] < bounds[2] < frame.width
-        assert 0 < bounds[1] < bounds[3] < frame.height
-    assert at_height(stack, 120).tobytes() == at_height(assembled, 120).tobytes()
-    sheet = Image.new('RGBA', (884, 314), PAPER)
-    draw = ImageDraw.Draw(sheet)
-    label(draw, 442, 9, 'Fight player 01 • resting master and rotated parts')
+    frames = (
+        ('Idle', idle),
+        ('Moving ±8°', pose('idle', {'leg-left': 8, 'leg-right': -8})),
+        ('Gathering', pose('gather', ball=True)),
+        ('Release 25°', pose('gather', {'arm-up': -25})),
+        ('Jump', pose('jump')),
+    )
+    motion = Image.new('RGBA', (800, 322), PAPER)
+    seams = Image.new('RGBA', (940, 437), PAPER)
+    draw = ImageDraw.Draw(motion)
+    zoom_draw = ImageDraw.Draw(seams)
+    label(draw, 400, 9, 'Fight player 01 at standing display scale')
+    label(zoom_draw, 470, 9, 'Fight player 01 · magnified shoulder and hip seams')
     for idx, (title, frame) in enumerate(frames):
-        center = 78 + idx * 123
-        label(draw, center, 32, title)
-        for height_px, top, line in ((120, 52, 198), (64, 220, 299)):
-            preview = at_height(frame, height_px)
-            if title == 'Jump tuck':
-                top -= round(height_px * .075)
-            sheet.alpha_composite(preview, (center-preview.width//2, top-round(figure_bounds[1]*height_px/height)))
-            label(draw, center, line, f'{height_px} px')
-    sheet.convert('RGB').save(CHECKS / 'fight-01-motion.png', optimize=True)
+        assert_joint(frame, f'{title} shoulder', (544, 361, 633, 450), (552, 382, 574, 409))
+        assert_joint(frame, f'{title} hips', (452, 531, 579, 590), (468, 539, 552, 574))
+        center = 80 + idx * 160
+        label(draw, center, 33, title)
+        for size, top in ((120, 51), (64, 220)):
+            ratio = size / height
+            edge = round(frame.width * ratio)
+            preview = frame.resize((edge, edge), Image.Resampling.LANCZOS)
+            lift = fight['jump_preview_lift_px'] if title == 'Jump' else 0
+            motion.alpha_composite(preview, (center-round(512*ratio), top-round(lift*ratio)))
+        label(draw, center, 207, '120 px')
+        label(draw, center, 307, '64 px')
 
-    skins = (('Wax', 'wax'), ('Gold', 'gold'), ('Ink', 'ink'), ('Plum', 'plum'), ('Brass', 'brass'))
-    wax = master('game/ball-wax.png')
-    wax_alpha = wax.getchannel('A')
-    bound = wax_alpha.getbbox()
-    review = Image.new('RGBA', (715, 259), PAPER)
-    draw = ImageDraw.Draw(review)
-    label(draw, 357, 9, 'Wax-ball skins • original wax and gold at left')
-    for idx, (title, skin) in enumerate(skins):
-        ball = master(f'game/ball-{skin}.png')
-        if skin not in ('wax', 'gold'):
-            assert ball.getchannel('A').tobytes() == wax_alpha.tobytes(), f'Ball outline differs: {skin}'
-            assert ImageChops.difference(ball.convert('RGB'), wax.convert('RGB')).getbbox()
-        center = 72 + idx * 142
-        label(draw, center, 35, title)
-        for size, top in ((120, 57), (40, 197)):
-            thumb = ball.crop(bound)
-            thumb.thumbnail((size, size), Image.Resampling.LANCZOS)
-            review.alpha_composite(thumb, (center-thumb.width//2, top))
-            label(draw, center, top+size+7, f'{size} px')
-    review.convert('RGB').save(CHECKS / 'fight-wax-skins.png', optimize=True)
+        center = 94 + idx * 188
+        label(zoom_draw, center, 32, title)
+        for crop, y, name in (
+            ((524, 338, 662, 471), 56, 'Shoulder'),
+            ((427, 514, 600, 645), 243, 'Hips'),
+        ):
+            patch = frame.crop(crop)
+            patch = ImageOps.contain(patch, (164, 148), Image.Resampling.LANCZOS)
+            x = center - patch.width // 2
+            zoom_draw.rectangle((center-87, y, center+87, y+150), fill='#DCE8F2')
+            seams.alpha_composite(patch, (x, y+(150-patch.height)//2))
+            label(zoom_draw, center, y+155, name)
 
-    added = [f'characters/fight-01{suffix}.png' for suffix in ('', *(f'-{part}' for part in order))]
-    added.extend(f'game/ball-{skin}.png' for _, skin in skins[2:])
-    for path in added:
+    motion.convert('RGB').save(CHECKS / 'fight-01-motion.png', optimize=True)
+    seams.convert('RGB').save(CHECKS / 'fight-01-seams.png', optimize=True)
+    check_skins()
+
+    paths = [f'{prefix}.png', *(f'{prefix}-{part}.png' for part in parts)]
+    paths += [f'game/ball-{skin}.png' for skin in ('ink', 'plum', 'brass')]
+    for path in paths:
         exported = Image.open(REPO / entries[path]['web_export'])
         assert exported.format == 'WEBP' and exported.mode == 'RGBA' and exported.size == (512, 512), path
         assert all(exported.getpixel(p)[3] == 0 for p in ((0, 0), (511, 0), (0, 511), (511, 511))), path
-    print(f'Exact 1024/120 px rest stack, {height} px standing height, {len(POSES)} connected poses,'
-          f' exact skin silhouettes and {len(added)} alpha WebPs passed.')
+    print(f'Exact 1024/120 px gathering stack, five shoulder/hip seam checks, '
+          f'exact skin silhouettes and {len(paths)} alpha WebPs passed.')
 
 
 if __name__ == '__main__':

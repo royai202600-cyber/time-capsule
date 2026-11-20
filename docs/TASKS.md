@@ -34,7 +34,7 @@ Status: `todo` → `doing` → `review` (report sent to Claude) → `done`. Move
 ## Review
 | ID | Task | Owner | Note |
 |---|---|---|---|
-| Corrupted Capsule fight art | Back-view player 01 and three wax-ball skins | Codex / Roy | Test assets and review sheets on `codex/art-fight-player`. Roy reviews the 120/64 px motion and 120/40 px skin comparison before more figures. |
+| Corrupted Capsule fight art | Back-view player 01 and three wax-ball skins | Codex / Roy | Draft #182 includes separate arm poses and bent jump legs, magnified seam checks, and lighter plum and wider brass skins over the catch background. Roy reviews before more figures. |
 | RV-HK | Hong Kong wave 1 regional vessel art | Codex / Roy | Roy approved `bolo-bun` at `b6cdf2a` and the reference-based tram at `743133d`, and approved the full art PR #140. Shared records refreshed from main. Green CI precedes owner-account squash merge. The red-white-blue bag is already in #134. |
 | RV-SG | Singapore wave 1 vessel art | Codex / Roy | Roy approved kamcheng and the revised Miss Joaquim orchid in PR #139 at `36471e1`. Refreshed from main with every approved PNG and WebP byte-identical. Owner-account squash merge follows green CI. Tingkat landed separately in #134. Art only. |
 | RV-L-art | Earned Landmark vessels and Passport stamps | Codex / Roy | Roy approved the North Gate test in #137 and requested its 2.5% idle roof lift. The complete art batch includes Durian, Guia Lighthouse, and ink-blue Beimen, Esplanade and Guia stamps. Roy approved the full set at `543b9cc` in #137. Refreshed from main with the approved art preserved. Green CI precedes owner-account squash merge. |

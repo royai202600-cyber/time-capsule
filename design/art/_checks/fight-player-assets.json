@@ -1,10 +1,29 @@
 {
-  "count": 8,
-  "passed": 8,
+  "count": 10,
+  "passed": 10,
   "failed": [],
   "assets": [
     {
-      "path": "characters/fight-01-arm.png",
+      "path": "characters/fight-01-arm-down.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "characters/fight-01-arm-up.png",
       "size": [
         1024,
         1024
@@ -62,6 +81,25 @@
     },
     {
       "path": "characters/fight-01-leg-right.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "characters/fight-01-legs-jump.png",
       "size": [
         1024,
         1024

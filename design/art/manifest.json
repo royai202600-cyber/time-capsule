@@ -12943,7 +12943,7 @@
   },
   {
     "path": "design/art/characters/fight-01.png",
-    "what": "Player 01 from behind, assembled at rest",
+    "what": "Player 01 from behind, assembled in the gathering pose",
     "size_px": [
       1024,
       1024
@@ -12958,7 +12958,7 @@
       "design/art/portraits/portrait-01.png"
     ],
     "generated_source_sha256": "926da848ac7e9fd2f9c7f1bf7c3076d18310661559edbee96359d3ea884b1ab5",
-    "postprocess": "Cleaned stray alpha <=8. Converted the generator framing to the map figure’s native standing scale, then combined it with the shared scale in one downsample applied to the entire rig. Centered the soles at the shared anchor. Visible resting pixels come from the assembled generation.",
+    "postprocess": "Retained the approved 1024 canvas, scale, head, outfit and standing legs from 4d78e285. Composited the registered arm-up and extended body with the original standing legs. See layer entries for the exact source edit prompts.",
     "anchor": {
       "x": 512,
       "y": 900
@@ -12972,9 +12972,13 @@
     ],
     "standing_height_px": 733,
     "pivots": {
-      "arm": {
-        "x": 561,
-        "y": 397
+      "arm-down": {
+        "x": 566,
+        "y": 393
+      },
+      "arm-up": {
+        "x": 566,
+        "y": 393
       },
       "leg-left": {
         "x": 480,
@@ -12985,16 +12989,36 @@
         "y": 531
       }
     },
-    "layer_order": [
-      "leg-left",
-      "leg-right",
-      "arm",
-      "body"
-    ]
+    "ball_point": {
+      "x": 604,
+      "y": 119
+    },
+    "ball_diameter_preview_px": 63,
+    "crown_y_px": 171,
+    "jump_preview_lift_px": 105,
+    "pose_layers": {
+      "idle": [
+        "leg-left",
+        "leg-right",
+        "arm-down",
+        "body"
+      ],
+      "gather": [
+        "leg-left",
+        "leg-right",
+        "arm-up",
+        "body"
+      ],
+      "jump": [
+        "legs-jump",
+        "arm-down",
+        "body"
+      ]
+    }
   },
   {
     "path": "design/art/characters/fight-01-body.png",
-    "what": "Player 01 head, hair, torso with waistband, and resting left arm",
+    "what": "Head, torso, left arm, closed shoulder and full hip seat",
     "size_px": [
       1024,
       1024
@@ -13002,34 +13026,60 @@
     "transparent": true,
     "model": "gpt-image-2",
     "web_export": "public/art/characters/fight-01-body.webp",
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person facing away from the viewer toward the top of the canvas.\nInput 1 is style-sheet.png, match exactly. Input 2 is the assembled fight-01 figure; edit it directly. Keep only the head, hair, neck, complete blue-shirt torso and the entire hanging viewer-left arm and hand. Remove the viewer-right throwing arm and both navy trouser legs and shoes. Close the viewer-right shoulder joint with a smoothly rounded blue fabric shoulder contour so there is no hole behind the rotating arm. Finish the shirt hem over the hips. Keep exactly the same position and scale on the original square canvas with everything else fully transparent. Do not center the extracted part, zoom, redraw, rotate or shift the retained visible pixels. Preserve their outline, texture and colors for pixel-aligned restacking. No shadow, guides, text, other object or background.",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved Time Capsule style sheet. Input 2 is the exact source image to edit. Keep only a fully drawn stationary head, hair, neck, torso, hanging viewer-left arm and the full waist and seat of her navy trousers down to the crotch, all in the exact approved native scale and positions. Remove the viewer-right arm and both legs below the hip seat, all other pixels transparent. Precisely fill the previously hidden or cut shoulder with a rounded fully drawn light-blue sweater shoulder following the outer contour naturally. Fully draw an unbroken round hip seat with clean navy fabric matching the original above the existing crotch seam. Preserve the approved face-away view, shoulder-length dark brown bob, clothing and shirt shading. No holes. Preserve true transparency, square original framing, no labels or extra objects.",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/characters/fight-01.png (native generation before normalization)"
+      "design/art/characters/fight-01.png at 4d78e285"
     ],
-    "generated_source_sha256": "eca8df9964b405898ff15b3814099e8b0f6248a5e163e6cdb1f9dd8651d61897",
-    "postprocess": "Registered edited layer to the assembled sprite, locking visible RGBA to the assembled pixels. Shared canvas transform. Generated shoulder/hip continuations are masked to the opaque overlap where applicable."
+    "generated_source_sha256": "caf501cd49804b397e966c0e0e4c77c8c5630e1dd8eb41cfdfd2958f66e728a4",
+    "postprocess": "Registered the generated closed shoulder to the preserved torso. Extended the seat with original opaque trouser pixels over the hip joints."
   },
   {
-    "path": "design/art/characters/fight-01-arm.png",
-    "what": "Player 01 right throwing arm and open hand",
+    "path": "design/art/characters/fight-01-arm-down.png",
+    "what": "Relaxed hanging right arm",
     "size_px": [
       1024,
       1024
     ],
     "transparent": true,
     "model": "gpt-image-2",
-    "web_export": "public/art/characters/fight-01-arm.webp",
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person facing away from the viewer toward the top of the canvas.\nInput 1 is style-sheet.png, match exactly. Input 2 is the assembled fight-01 figure; edit it directly. Keep only the viewer-right throwing arm only, from the blue sleeve shoulder cap down its existing bend to the open hand and every fingertip. Remove head, neck, torso, hanging arm and both legs. Complete the sleeve's rounded hidden shoulder cap with blue fabric at the joint. Keep exactly the same position and scale on the original square canvas with everything else fully transparent. Do not center the extracted part, zoom, redraw, rotate or shift the retained visible pixels. Preserve their outline, texture and colors for pixel-aligned restacking. No shadow, guides, text, other object or background.",
+    "web_export": "public/art/characters/fight-01-arm-down.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved Time Capsule style sheet. Input 2 is the exact source image to edit. Return only the viewer-right arm isolated, complete rounded shoulder sleeve cap to fingers, all other pixels transparent, at the same exact position on the canvas. Repose this arm naturally down at the person's right side, closely matching the posture, sleeve length, cuff, scale and hanging relaxed hand of the existing viewer-left arm in reference 2. The right shoulder stays at exactly the same position. Fingers down to the same height as the left fingers. Stay near torso with a very slight gap beside the hip, no hand over the trousers. Preserve true transparency, square original framing, no labels or extra objects.",
     "references": [
       "design/art/style-sheet.png",
-      "design/art/characters/fight-01.png (native generation before normalization)"
+      "design/art/characters/fight-01.png at 4d78e285"
     ],
-    "generated_source_sha256": "1061eb84621eb1e63d1be09ea436fd0d8638ae2fecf3e06be12fa14a4d7ac7cb",
-    "postprocess": "Registered edited layer to the assembled sprite, locking visible RGBA to the assembled pixels. Shared canvas transform. Generated shoulder/hip continuations are masked to the opaque overlap where applicable.",
+    "generated_source_sha256": "13817fb24ca45843a41856d193b5f6f9ebd72ea0f904816f1d532c9a3eab7ec9",
+    "postprocess": "Reflected the isolated generated hanging sleeve to the right side. Downsampled and registered to the shared shoulder.",
     "pivot": {
-      "x": 561,
-      "y": 397
+      "x": 566,
+      "y": 393
+    }
+  },
+  {
+    "path": "design/art/characters/fight-01-arm-up.png",
+    "what": "Overhead right arm, cupped hand",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "web_export": "public/art/characters/fight-01-arm-up.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved Time Capsule style sheet. Input 2 is the exact source image to edit. Edit only the viewer-right arm. Return only this isolated arm from the full rounded blue sleeve cap through its fingers, on the exact original canvas, same shoulder origin and scale, with all else transparent. The right upper arm goes UP from the right shoulder and slightly outward; the elbow is slightly bent, then the forearm points up, toward the upper-right of the head. The complete hand is above the head's crown, visibly cupped palms-up like a small shallow U supporting a ball from below, wrist turned to let the fingers curve around the right side of an imaginary sphere. An empty hand. No actual ball. Make an overhead one-handed ball hold, not a flat raised waving hand, no stretched waving fingers. Keep the matching light-blue long sleeve, cuff and original skin. Preserve true transparency, square original framing, no labels or extra objects.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 4d78e285"
+    ],
+    "generated_source_sha256": "09c17583530faa5d1fd9b1cd24e521e06188dbf6a5d7ba49fb3c4d94cde68165",
+    "postprocess": "Downsampled and registered the generated isolated arm to the right shoulder, rotating to the overhead hold. Ball kept as a separate preview layer.",
+    "pivot": {
+      "x": 566,
+      "y": 393
+    },
+    "ball_point": {
+      "x": 604,
+      "y": 119
     }
   },
   {
@@ -13077,6 +13127,34 @@
     }
   },
   {
+    "path": "design/art/characters/fight-01-legs-jump.png",
+    "what": "Both legs bent with lifted heels for the jump",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "web_export": "public/art/characters/fight-01-legs-jump.webp",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nApproved camera exception: BACK view, directly behind and slightly above, the person faces away from the viewer toward the top of the canvas. No face is visible.\nInput 1 is the approved Time Capsule style sheet. Input 2 is the exact source image to edit. Return only the two legs together from the hips down, as one transparent sprite, same hip alignment, camera and scale. Both knees bend with both feet lifted behind the body, with a little natural asymmetry so the two knees and both shoes remain legible. This is a jump tuck seen from behind, with both shin lengths foreshortened as the heels kick back toward the camera, cream soles pointing slightly toward the viewer. Hip waist level and width unchanged, so the part can replace the two straight legs. Keep the navy trouser fabric and ankle cuffs, navy and cream shoes and same natural skin. Show completed upper seat and hip cloth with no holes. No torso, arms, ground, edge or lines around the image. Preserve true transparency, square original framing, no labels or extra objects.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/characters/fight-01.png at 4d78e285"
+    ],
+    "generated_source_sha256": "7887dc40716b0c9d4bc535aba99d802df403b3d2566b160b3dfbb564fbefea47",
+    "postprocess": "Downsampled the generated bent pair to the original hip axes. Composites below the stationary hip seat.",
+    "hip_pivots": {
+      "leg-left": {
+        "x": 480,
+        "y": 531
+      },
+      "leg-right": {
+        "x": 551,
+        "y": 531
+      }
+    }
+  },
+  {
     "path": "design/art/game/ball-ink.png",
     "what": "Ink-blue wax ball with light-blue marbling",
     "size_px": [
@@ -13096,7 +13174,7 @@
   },
   {
     "path": "design/art/game/ball-plum.png",
-    "what": "Plum wax ball with tiny cream speckles",
+    "what": "Dusty plum-rose wax ball with cream speckles",
     "size_px": [
       1024,
       1024
@@ -13104,17 +13182,17 @@
     "transparent": true,
     "model": "gpt-image-2",
     "web_export": "public/art/game/ball-plum.webp",
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nInput 1 is style-sheet.png, match exactly. Input 2 is the original ball-wax.png; make a strict surface-only edit of this same ball. Plum #6E2B3F wax with sparse tiny warm cream #F3E2BB speckles embedded in the wax. Keep the speckling understated but recognizable at 40 px. Keep precisely the source ball's canvas position, size, round silhouette, outline, grain, top-left highlights, shadow direction, hatching, and shallow embossed keyhole (same shape, size and position). The pattern must leave the keyhole clean. True transparent square background. No glow, halo, text, band, shadow outside the original silhouette, additional object, or extra keyhole decoration.",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nInput 1 is the approved Time Capsule style sheet. Input 2 is the exact source image to edit. Edit only the ball surface. Light dusty plum-rose wax, clearly lighter in middle values than #6E2B3F, achieved as a lighter blend of the palette's plum, wax red and paper. Several clean cream #F3E2BB speckles about 16–22 px diameter on the ball's native painted surface so they survive 40 px display. Scatter them organically, clear of the keyhole. Keep the upper-left highlights and shallow keyhole exactly as on ball-wax. Preserve true transparency, square original framing, no labels or extra objects.",
     "references": [
       "design/art/style-sheet.png",
       "design/art/game/ball-wax.png"
     ],
-    "generated_source_sha256": "ed792241f56ee957717eb775e0baa487ab496d4bbe5ca0efb40cedf9f8b91125",
-    "postprocess": "Registered the generated surface finish to the source ball and transferred its pigment over the original wax lighting and keyhole. Used the original silhouette alpha byte-for-byte."
+    "generated_source_sha256": "e16df692920c55909980068b72c4ab0deb72f612d08bac7cf37410448d07da1d",
+    "postprocess": "Registered the generated surface pigment and transferred it over the original ball lighting and keyhole. Original silhouette alpha is byte-identical."
   },
   {
     "path": "design/art/game/ball-brass.png",
-    "what": "Wax-red ball with a thin brass swirl",
+    "what": "Wax-red ball with a wide curved brass band",
     "size_px": [
       1024,
       1024
@@ -13122,12 +13200,12 @@
     "transparent": true,
     "model": "gpt-image-2",
     "web_export": "public/art/game/ball-brass.webp",
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nInput 1 is style-sheet.png, match exactly. Input 2 is the original ball-wax.png; make a strict surface-only edit of this same ball. Keep the original wax-red #A3364F wax. Add a single thin unbranched brass #C9A15A swirl wrapping on the curved surface, graceful and softly tapering, distinct from the thick branched gold veins of ball-gold.png. Keep it visibly thin, a swirl in the wax surface. Keep precisely the source ball's canvas position, size, round silhouette, outline, grain, top-left highlights, shadow direction, hatching, and shallow embossed keyhole (same shape, size and position). The pattern must leave the keyhole clean. True transparent square background. No glow, halo, text, band, shadow outside the original silhouette, additional object, or extra keyhole decoration.",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nInput 1 is the approved Time Capsule style sheet. Input 2 is the exact source image to edit. Edit the ball surface, keep the underlying wax-red finish and existing geometry. Add one smooth wide brass #C9A15A band following a curved path around its lower/front surface, diagonal from lower-left to mid-right, about 45–55 px wide at native scale (2–3 px wide at 40 px). A single uniform curved belt of brass inlay, distinct from branched gold veins. Keep the band continuously away from the shallow central keyhole. Preserve the original outline, lighting, hatching, size and exact canvas placement. Preserve true transparency, square original framing, no labels or extra objects.",
     "references": [
       "design/art/style-sheet.png",
       "design/art/game/ball-wax.png"
     ],
-    "generated_source_sha256": "26b8402adbbf6f6cdc3ee850c12cf3a4fdc317a009d291b7da9bc04b3967fd6c",
-    "postprocess": "Registered the generated surface finish to the source ball and transferred its pigment over the original wax lighting and keyhole. Used the original silhouette alpha byte-for-byte."
+    "generated_source_sha256": "7750a38b42945e7709683504678af186a7f0c37c717ce48d2a6879c8e7774a50",
+    "postprocess": "Registered the generated surface pigment and transferred it over the original ball lighting and keyhole. Original silhouette alpha is byte-identical."
   }
 ]

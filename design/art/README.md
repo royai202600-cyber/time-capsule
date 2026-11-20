@@ -10,7 +10,7 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 
 ## Rules and checks
 
-- Corrupted Capsule fight test: figure 01 is viewed from behind. Its four layers share the original resting pixels at 1024 px and the map figures’ adult scale and feet anchor. Stack left leg → right leg → throwing arm → body. The body holds the waistband over the hip joints. The rig uses shoulder and hip rotations. The jump preview approximates a tuck with rigid legs. The three skins inherit the original wax ball’s alpha, lighting and keyhole. Roy reviews the test batch before figures 02–08. [Motion sheet](_checks/fight-01-motion.png) · [Wax-ball comparison](_checks/fight-wax-skins.png) · [Contact sheet](_checks/contact-sheet.png).
+- Corrupted Capsule fight test: figure 01 keeps the approved back view, outfit, adult scale and feet anchor. The five poses share one 1024 px canvas. Draw the standing legs or the bent-leg jump layer first, then the chosen arm, then the body with its closed shoulder and full hip seat. The master shows the arm-up gathering pose. The shared shoulder is at (566, 393) and the gathering ball center is at (604, 119). During the jump the upright figure lifts with the bent legs swapped in. The lighter dusty plum-rose and wide brass band are checked against the dark plum attack orb. The approved ink skin is byte-identical. [Motion sheet](_checks/fight-01-motion.png) · [Seam close-ups](_checks/fight-01-seams.png) · [Wax-ball comparison](_checks/fight-wax-skins.png) · [Contact sheet](_checks/contact-sheet.png).
 
 - T10f-fix: wishing-lamp is redrawn as a traditional antique brass oil lamp with low oval body, long tapering spout, soft smoke at the tip, curled handle and domed lid. Same four filenames and lamp → smoke → lid stack on a 1024 canvas. Measured mouth/pivot 542,685; sparkle 532,662; baseY 889. Lid lifts y −0.40 and fades; smoke drifts up. All other vessel master/export bytes are preserved. Roy approved PR #72; final main refresh and checks precede merge.
 
@@ -134,8 +134,8 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `game/ball-wax.png` | Wax keyhole ball | 1024×1024 | requested redraw/edit |
 | `game/ball-gold.png` | Gold-veined keyhole ball | 1024×1024 | exact approved copy |
 | `game/ball-ink.png` | Ink-blue wax ball with light-blue marbling | 1024×1024 | test batch; see manifest |
-| `game/ball-plum.png` | Plum wax ball with tiny cream speckles | 1024×1024 | test batch; see manifest |
-| `game/ball-brass.png` | Wax-red ball with a thin brass swirl | 1024×1024 | test batch; see manifest |
+| `game/ball-plum.png` | Dusty plum-rose wax ball with cream speckles | 1024×1024 | test batch; see manifest |
+| `game/ball-brass.png` | Wax-red ball with a wide curved brass band | 1024×1024 | test batch; see manifest |
 | `game/waypost-gem.png` | Floating purple Waypost | 1024×1024 | exact approved copy |
 | `game/landmark-gem.png` | Floating Landmark Waypost | 1024×1024 | exact approved copy |
 | `game/crack-overlay.png` | Crack A overlay | 1024×1024 | exact approved copy; top-left alpha 238 retained |
@@ -452,11 +452,13 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-wishing-lamp.png` | wishing-lamp assembled vessel | 1024×1024 | processed; see manifest |
 | `characters/keeper.png` | Letter Keeper map figure; faithful A1 identity | 1024×1024 | test batch; see manifest |
 | `characters/figure-01.png` | Player 01 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
-| `characters/fight-01.png` | Player 01 from behind, assembled at rest | 1024×1024 | test batch; see manifest |
-| `characters/fight-01-body.png` | Head, hair, torso with waistband, and left arm | 1024×1024 | test batch; see manifest |
-| `characters/fight-01-arm.png` | Right throwing arm and open hand | 1024×1024 | test batch; see manifest |
+| `characters/fight-01.png` | Player 01 from behind, assembled in the gathering pose | 1024×1024 | test batch; see manifest |
+| `characters/fight-01-body.png` | Head, torso, left arm, closed shoulder and full hip seat | 1024×1024 | test batch; see manifest |
+| `characters/fight-01-arm-down.png` | Relaxed hanging right arm | 1024×1024 | shared shoulder pivot |
+| `characters/fight-01-arm-up.png` | Overhead right arm with cupped hand | 1024×1024 | shoulder pivot and ball point in manifest |
 | `characters/fight-01-leg-left.png` | Left hip, trouser leg and shoe | 1024×1024 | test batch; see manifest |
 | `characters/fight-01-leg-right.png` | Right hip, trouser leg and shoe | 1024×1024 | test batch; see manifest |
+| `characters/fight-01-legs-jump.png` | Both legs bent with heels lifted | 1024×1024 | replaces both standing legs for the jump |
 | `characters/figure-04.png` | Player 04 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
 | `characters/figure-06.png` | Player 06 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
 | `portraits/portrait-keeper.png` | Letter Keeper round dialog portrait with cap and pale brass-cream disc | 1024×1024 | test batch; see manifest |
