@@ -146,6 +146,9 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | File | What | Size | Notes |
 |---|---|---:|---|
 | `game/catch-background.png` | Fight-screen park background | 1024×1536 | Roy-approved Option 3; exact source copy; opaque; full-resolution WebP |
+| `game/jump-wave-options/option-1.png` | Rolling dark wax | 1536×1024 | Transparent concept master, [phone review](_checks/jump-wave-options.png) |
+| `game/jump-wave-options/option-2.png` | Ink shockwave | 1536×1024 | Transparent concept master, [phone review](_checks/jump-wave-options.png) |
+| `game/jump-wave-options/option-3.png` | Cracked wax shards | 1536×1024 | Transparent concept master, [phone review](_checks/jump-wave-options.png) |
 | `game/ball-wax.png` | Wax keyhole ball | 1024×1024 | requested redraw/edit |
 | `game/ball-gold.png` | Gold-veined keyhole ball | 1024×1024 | exact approved copy |
 | `game/ball-ink.png` | Ink-blue wax ball with light-blue marbling | 1024×1024 | test batch; see manifest |

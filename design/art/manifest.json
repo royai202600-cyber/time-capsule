@@ -14748,5 +14748,68 @@
         "body"
       ]
     }
+  },
+  {
+    "path": "design/art/game/jump-wave-options/option-1.png",
+    "what": "Dodge fight jump attack concept 1: Rolling dark wax",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nLayout exception for this asset: generate a true transparent 1536×1024 landscape PNG, with one wide horizontal strip instead of a centred object filling 70% of a square. Span almost the full width, from approximately x=16 to x=1520, with gently tapered or fading ends inside the canvas. Total inked height is about 25–35% of the canvas height. Keep all of it on one shared horizontal ground line, with generous transparent space above and below. The fight camera looks from behind the player, slightly down across the ground toward the distant capsule, as in the third attachment. Show only the attack isolated on genuine alpha, with completely transparent corners and clean edges. No background, ground plane, character, capsule, stripes, lettering or graphic UI. The image will scroll toward the camera and grow from about 112 to 420 pixels wide on a phone, so prioritize a clear silhouette and a strong reading at 112 pixels.\nReference roles: first attachment is the approved style sheet, second is the Corrupted Capsule crack overlay for the branching navy fissures and their light edge, third is for ground perspective only. Match the hand-inked rendering and use only the palette in the style block. Do not reproduce the reference objects or scenery.\nOption 1. Draw a low rolling wave of corrupted dark wax, a dense plum and navy body with shallow curling wax folds advancing toward the viewer. A broken thin cream or brass highlight catches the crest. Use a few branching, pale-edged fissures on the body. Keep the wave low and broad across all three lanes, with an unbroken read and no towering central crest.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/game/crack-overlay.png",
+      "design/art/game/catch-background.png"
+    ],
+    "generated_size_px": [
+      1536,
+      1024
+    ],
+    "normalization": "Removed residual alpha up to 12/255, resampled visible art into a 1488×264 strip on transparent 1536×1024, and aligned its base at y=640."
+  },
+  {
+    "path": "design/art/game/jump-wave-options/option-2.png",
+    "what": "Dodge fight jump attack concept 2: Ink shockwave",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nLayout exception for this asset: generate a true transparent 1536×1024 landscape PNG, with one wide horizontal strip instead of a centred object filling 70% of a square. Span almost the full width, from approximately x=16 to x=1520, with gently tapered or fading ends inside the canvas. Total inked height is about 25–35% of the canvas height. Keep all of it on one shared horizontal ground line, with generous transparent space above and below. The fight camera looks from behind the player, slightly down across the ground toward the distant capsule, as in the third attachment. Show only the attack isolated on genuine alpha, with completely transparent corners and clean edges. No background, ground plane, character, capsule, stripes, lettering or graphic UI. The image will scroll toward the camera and grow from about 112 to 420 pixels wide on a phone, so prioritize a clear silhouette and a strong reading at 112 pixels.\nReference roles: first attachment is the approved style sheet, second is the Corrupted Capsule crack overlay for the branching navy fissures and their light edge, third is for ground perspective only. Match the hand-inked rendering and use only the palette in the style block. Do not reproduce the reference objects or scenery.\nOption 2. Draw a dark ink shockwave, a broad, low swirling band of navy and plum ink and dust skimming the ground toward the viewer. Use a few broad interlocking hand-inked strokes, and tapered eddies and specks close to the ground. Leave some transparent gaps behind the leading front. Keep a dense readable leading edge with sparse paper-blue glints like the crack reference, no glossy glow or ring.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/game/crack-overlay.png",
+      "design/art/game/catch-background.png"
+    ],
+    "generated_size_px": [
+      2172,
+      724
+    ],
+    "normalization": "Removed residual alpha up to 12/255, resampled visible art into a 1488×264 strip on transparent 1536×1024, and aligned its base at y=640."
+  },
+  {
+    "path": "design/art/game/jump-wave-options/option-3.png",
+    "what": "Dodge fight jump attack concept 3: Cracked wax shards",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nLayout exception for this asset: generate a true transparent 1536×1024 landscape PNG, with one wide horizontal strip instead of a centred object filling 70% of a square. Span almost the full width, from approximately x=16 to x=1520, with gently tapered or fading ends inside the canvas. Total inked height is about 25–35% of the canvas height. Keep all of it on one shared horizontal ground line, with generous transparent space above and below. The fight camera looks from behind the player, slightly down across the ground toward the distant capsule, as in the third attachment. Show only the attack isolated on genuine alpha, with completely transparent corners and clean edges. No background, ground plane, character, capsule, stripes, lettering or graphic UI. The image will scroll toward the camera and grow from about 112 to 420 pixels wide on a phone, so prioritize a clear silhouette and a strong reading at 112 pixels.\nReference roles: first attachment is the approved style sheet, second is the Corrupted Capsule crack overlay for the branching navy fissures and their light edge, third is for ground perspective only. Match the hand-inked rendering and use only the palette in the style block. Do not reproduce the reference objects or scenery.\nOption 3. Draw a row of cracked dark-wax shards bursting out of the ground in a line. Arrange irregular low navy and plum wedges with branching pale-edged cracks, sharing one narrow base of broken wax. Use big readable shapes, with smaller chips dissolving toward both ends. The row should read as a continuous barrier across all three lanes; keep the shards squat and avoid tall spikes or flying debris.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/game/crack-overlay.png",
+      "design/art/game/catch-background.png"
+    ],
+    "generated_size_px": [
+      2172,
+      724
+    ],
+    "normalization": "Removed residual alpha up to 12/255, resampled visible art into a 1488×264 strip on transparent 1536×1024, and aligned its base at y=640."
   }
 ]
