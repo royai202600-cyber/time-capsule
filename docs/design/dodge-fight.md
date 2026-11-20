@@ -2,7 +2,7 @@
 
 Roy approved this direction on 2026-11-20 after playing the demo (`docs/design/demos/dodge-fight.html`; open it from a local server at the repo root, for example `python3 -m http.server 8000` then `/docs/design/demos/dodge-fight.html`). It replaces flicking a ball at a target ring.
 
-**Who does what:** Claude plans, designs and reviews. Codex builds everything: backend, the fight screen, art, merging and release. The eight back-view player rigs were approved in PR #182.
+**Who does what:** Claude plans, designs, builds the fight screen and other UI, and reviews. Codex does the backend, art, merging and release. (Corrected 2026-11-20: Codex built DF2's screen by mistake; from DF3 on, the UI is Claude's.) The eight back-view player rigs were approved in PR #182.
 
 ## Where it applies
 
@@ -91,3 +91,17 @@ Roy chose device-played fights on 2026-11-20. The device handles movement, throw
 | DF2 | The fight screen in the app for all three entry points, phone and desktop, behind `DODGE_FIGHT` | Codex |
 | DF review | Review DF1 and DF2 against this plan, 375 px and desktop, both languages | Claude |
 | Release | Ship with the flag off, apply DF1, then enable and redeploy | Codex, after Roy's OK |
+
+## Simplified fight (DF3, Roy approved 2026-11-20)
+
+Roy's colleague found the fight hard to pick up. This keeps the look and the attacks and only simplifies how you play. Roy approved it after playing the demo: `docs/design/demos/dodge-fight-simple.html` (its top row of switches is for the demo only). Where this section differs from the sections above, this section wins.
+
+- **Moving:** no buttons and no ball panel under the fight. Hold anywhere and drag, as in Survivor: Ace; the figure stays in the same three areas and snaps to the next one for about every quarter screen you drag. A quick flick up jumps. On a computer, each arrow key press moves one area and Space jumps. The first-fight card teaches this.
+- **Throwing:** one ball every second, whether you move or not. Standing still to gather is gone. Each ball still hits for 1 (gold 2), so balls spent still equal the damage dealt.
+- **Aim:** unchanged. A shot aims at your area, and a double also hits one other area and always leaves one safe. The triple stays unavoidable and never takes the last life.
+- **Health:** a small capsule bar sits right under the capsule and a small blue player bar under the figure's feet (three sections), instead of the big top bar and the wax seals. Each is one smooth bar with no section lines, shows only the number left (such as 4), and turns from green to red as it drops.
+- **Today's Hunt:** the three capsules are numbered 1, 2, 3 down the left side. A number is grey until that capsule is restored and blue once it is; the current one has a blue ring. Each is its own fight with full health, and the next drops in without leaving the screen.
+- **Jump attack:** nothing travels from the capsule. During the warning (the striped band and 「↑ 往上跳！」) nothing else shows; at the hit moment spikes burst up from the ground at the player's feet, hold briefly and sink back. No crack (Roy found it strange). Art: PR #188, faceted option B (Roy chose B on 2026-11-20).
+- **Throwing motion:** the whole body throws, like an overhand pitch seen from behind: cock (short step, ball behind the head) 140 ms before the ball leaves, then release 80 ms, follow-through 150 ms and recover 130 ms, then the rest pose. Each pose is split at the waist, so the upper body also plays over the jump legs. The ball shows in the hand only during the cock pose, at 80% of the flying ball's size (Roy chose −20%), and leaves from the release pose's ball point. Load all four poses for the player's figure before the fight starts and switch which one is visible; swapping one image's source mid-throw skips frames that haven't decoded yet. Art: PR #189 (fight-0X-throw-1…4-upper/lower).
+- **Health doubles so fights last as long as today.** Measured with a bot that dodges everything, the current fight throws about every 1.9–2.1 s (common about 9.6 s, Landmark about 42 s). Throwing every second with twice the health keeps that length: Corrupted common 10, uncommon 12, rare 14, Today's Hunt 10 each, Landmark 40 in 150 s. Balls spent per fight double too (a common capsule takes 10 wax balls or 5 gold), so Waypost spin rewards may need to rise to match. Roy raised a common Waypost spin to 10 wax balls (from 3–5) and asked for the amount to be editable in admin, next to the wave settings, with Activity Undo.
+- **Later:** Archero-style choice cards now and then during Landmark fights. Not designed yet.

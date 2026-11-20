@@ -10,7 +10,9 @@ The original SVG art remains in `src/art.js` and is recoverable from Git tag `ar
 
 ## Corrupted Capsule fight review
 
-Figure 01’s whole-body throw is the approval sample in draft PR #189. The existing rest pose is the set. The four drawn poses are cock (140 ms), release (80 ms), follow-through (150 ms), and recover (130 ms), for 500 ms of throw followed by 500 ms at rest in the preview. Cock rolls the shallow leg lift, side-on turn and short stride into one key pose. Each 1024 px upper layer stacks over its matching lower layer or the existing jump legs. The upper layer carries both arms and the ball point. The follow-through and recover points track the empty right hand. [160 px flipbook](_checks/fight-01-throw.png) · [Standing and jump loop](_checks/fight-01-throw.gif) · [Waist checks at full size](_checks/fight-01-throw-seams.png).
+Draft PR #189 has four waist-split throw poses for each of the eight approved back-view figures. Figure 01’s approved layers are from `e06042a`. The existing rest pose is the set. The drawn poses are cock (140 ms), release (80 ms), follow-through (150 ms), and recover (130 ms). Each 1024 px master upper stacks over its matching lower or the original jump legs. The 512 px WebPs are registered in `mobile/src/art/manifest.ts` as `fightThrowPoses`. The ball point is measured at the right hand on the 1024 px canvas. The game shows the held ball during cock and starts the flying ball at the release point.
+
+[Eight-figure flipbook strip](_checks/fight-throw-flipbook.png) · [Standing and jump waist seams](_checks/fight-throw-seams.png) · [Figure 01 timed loop](_checks/fight-01-throw.gif). The gold ring in the strip marks the ball point during cock and release.
 
 Pitching references used for pose and camera:
 
@@ -154,6 +156,7 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | File | What | Size | Notes |
 |---|---|---:|---|
 | `game/catch-background.png` | Fight-screen park background | 1024×1536 | Roy-approved Option 3; exact source copy; opaque; full-resolution WebP |
+| `game/jump-spikes.png` | Photo-inspired faceted spikes (approved option B) | 1536×1024 | Transparent WebP at full size. Base on row 632, highest tip at row 470. |
 | `game/ball-wax.png` | Wax keyhole ball | 1024×1024 | requested redraw/edit |
 | `game/ball-gold.png` | Gold-veined keyhole ball | 1024×1024 | exact approved copy |
 | `game/ball-ink.png` | Ink-blue wax ball with light-blue marbling | 1024×1024 | test batch; see manifest |

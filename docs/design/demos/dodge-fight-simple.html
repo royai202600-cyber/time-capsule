@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simpler Dodge Fight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap">
+<style>
+/* Same fight as production, simplified: no buttons under the stage, constant throwing,
+   small health bars next to the capsule and the player, a progress column for Today's Hunt. */
+:root {
+  --paper: #F6F8FB; --card: #FFFFFF; --ink: #16263F; --muted: #5B6B82; --line: #DCE3EC;
+  --blue: #2F5D8A; --plum: #6E2B3F; --brass: #C9A15A; --wax: #A3364F;
+  --serif: "Noto Serif TC", "Songti TC", Georgia, serif;
+  --sans: "Noto Sans TC", "PingFang TC", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper: #0F1A2C; --card: #16263F; --ink: #EEF2F7; --muted: #A5B2C4; --line: #2A3B57; --blue: #7FA8D4; color-scheme: dark } }
+:root[data-theme="dark"] { --paper: #0F1A2C; --card: #16263F; --ink: #EEF2F7; --muted: #A5B2C4; --line: #2A3B57; --blue: #7FA8D4; color-scheme: dark }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); padding-block: 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 8px; overflow-x: hidden; }
+header { width: min(100%, 420px); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+header h1 { font-family: var(--serif); font-size: 18px; font-weight: 700; margin: 0; }
+header small { display: block; font-size: 12px; color: var(--muted); font-weight: 400; font-family: var(--sans); }
+.lang { font: 500 13px var(--sans); color: var(--blue); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+/* Demo-only pickers (not part of the fight screen) */
+.pick { width: min(100%, 420px); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.pick > span { min-width: 3.5em; }
+.pick button { font: 500 12px var(--sans); color: var(--ink); background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+.pick button[aria-pressed="true"] { border-color: var(--blue); background: var(--blue); color: #fff; }
+button:focus-visible { outline: 3px solid var(--brass); outline-offset: 2px; }
+
+.stage { position: relative; width: min(100%, 420px, calc((100dvh - 150px) * .6)); min-width: 240px; aspect-ratio: 3 / 5; border-radius: 22px; overflow: hidden; background: #DDEBD3 url(../../../public/art/game/catch-background.webp) center / cover; touch-action: none; user-select: none; -webkit-user-select: none; box-shadow: 0 8px 28px rgba(22,38,63,.18); flex: none; }
+.stage img { -webkit-user-drag: none; pointer-events: none; }
+.abs { position: absolute; left: 0; top: 0; will-change: transform; }
+.dim { position: absolute; inset: 0; background: #16263F; opacity: .12; pointer-events: none; }
+.vign { position: absolute; inset: 0; pointer-events: none; opacity: 0; box-shadow: inset 0 0 80px 20px rgba(163,54,79,.85); transition: opacity .12s; }
+
+/* Top corners: pause on the left, timer in the middle (Landmark), balls left on the right */
+.top { position: absolute; left: 10px; right: 10px; top: 10px; display: flex; justify-content: space-between; align-items: center; z-index: 20; pointer-events: none; }
+.chip { pointer-events: auto; display: flex; align-items: center; gap: 4px; font: 700 13px var(--sans); color: #F6F8FB; background: rgba(22,38,63,.78); border-radius: 999px; padding: 4px 10px 4px 5px; font-variant-numeric: tabular-nums; }
+.chip img { width: 20px; height: 20px; }
+.pause { pointer-events: auto; width: 34px; height: 34px; border-radius: 12px; border: 0; background: rgba(22,38,63,.78); color: #fff; font: 700 14px var(--sans); cursor: pointer; }
+.timer { font: 700 15px var(--serif); color: #F6F8FB; background: rgba(22,38,63,.78); border-radius: 999px; padding: 3px 12px; font-variant-numeric: tabular-nums; }
+
+/* Small boss bar right under the capsule */
+.bossbar { width: 34%; display: flex; align-items: center; gap: 5px; z-index: 6; }
+.bossbar .hp { position: relative; flex: 1; height: 9px; border-radius: 5px; background: #0B1424; overflow: hidden; box-shadow: inset 0 0 0 1.5px #C9A15A; }
+.bossbar .hp i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; }
+.bossbar .lag { background: #F3E2BB; transition: width .5s .25s ease-out; }
+.bossbar .now { background: linear-gradient(#C24A63, #A3364F 55%, #6E2B3F); transition: width .12s ease-out; }
+.bossbar b { font: 700 11px var(--sans); color: #fff; text-shadow: 0 1px 2px rgba(22,38,63,.9); font-variant-numeric: tabular-nums; min-width: 1.4em; }
+
+/* Player health bar right under the feet, same shape as the capsule's, in ink blue */
+.lives { width: 24%; display: flex; align-items: center; gap: 4px; z-index: 6; }
+.lives .hp { flex: 1; }
+.lives b { font: 700 11px var(--sans); color: #fff; text-shadow: 0 1px 2px rgba(22,38,63,.9); font-variant-numeric: tabular-nums; }
+.lives .hp { position: relative; height: 8px; border-radius: 4px; background: #0B1424; overflow: hidden; box-shadow: inset 0 0 0 1.5px #F6F8FB; }
+.lives .hp i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; }
+.lives .lag { background: #F3E2BB; transition: width .5s .25s ease-out; }
+.lives .now { background: linear-gradient(#5C8DBE, #2F5D8A 55%, #1F4266); transition: width .12s ease-out; }
+
+/* Today's Hunt: the three capsules down the left side, numbered; grey until restored, blue once restored */
+.track { position: absolute; left: 10px; top: 56px; z-index: 20; display: flex; flex-direction: column; align-items: center; pointer-events: none; }
+.step { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 700 14px var(--serif); background: #C9D1DC; color: #5B6B82; box-shadow: 0 1px 3px rgba(22,38,63,.25); }
+.step.now { box-shadow: 0 0 0 3px #2F5D8A, 0 1px 3px rgba(22,38,63,.25); color: #16263F; background: #F6F8FB; }
+.step.done { background: #2F5D8A; color: #fff; }
+.link { width: 3px; height: 12px; background: #C9D1DC; }
+.link.done { background: #2F5D8A; }
+
+/* Capsule */
+.capsule { width: 36%; aspect-ratio: 1; }
+.capsule img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.capsule .glow { position: absolute; inset: 8%; border-radius: 50%; background: radial-gradient(circle, rgba(110,43,63,.75), rgba(22,38,63,0) 70%); opacity: 0; transform: scale(1.2); }
+.cshadow { width: 30%; height: 4%; border-radius: 50%; background: rgba(22,38,63,.16); }
+
+/* Player (production back-view figure) */
+.player { width: 34%; aspect-ratio: 1; transform-origin: 50% 88%; }
+.player img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.upper, #tLower, #tUpper { position: absolute; inset: 0; }
+/* All throw poses stay loaded and decoded in the page; only the current one is visible. */
+#tLower img, #tUpper img { visibility: hidden; }
+#tLower img.on, #tUpper img.on { visibility: visible; }
+#arm { transform-origin: 55.3% 38.4%; }
+#legL { transform-origin: 46% 62%; } #legR { transform-origin: 54% 62%; }
+.pshadow { width: 15%; height: 3%; border-radius: 50%; background: rgba(22,38,63,.2); }
+.held { width: 10%; aspect-ratio: 1; }
+.held img { width: 100%; height: 100%; }
+
+/* Attacks */
+.reticle { width: 26%; aspect-ratio: 2.6; border-radius: 50%; border: 3px dashed #A3364F; background: rgba(163,54,79,.18); box-sizing: border-box; display: grid; place-items: center; }
+.reticle b { font: 700 12px var(--sans); color: #fff; background: #A3364F; padding: 2px 8px; border-radius: 999px; transform: translateY(-160%); white-space: nowrap; }
+.shard { width: 9%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #8C5B8F, #3B1E3D 45%, #16263F 70%); box-shadow: 0 0 0 2px rgba(22,38,63,.6), 0 0 18px 6px rgba(110,43,63,.55); }
+.band { left: 0; width: 100%; height: 11%; display: grid; place-items: center; background: repeating-linear-gradient(135deg, rgba(22,38,63,.22) 0 10px, rgba(22,38,63,.08) 10px 20px); border-block: 2px dashed rgba(22,38,63,.55); }
+.band b { font: 700 14px var(--sans); color: #fff; background: #16263F; padding: 3px 12px; border-radius: 999px; }
+/* Jump attack (Codex art, PR #188): spikes burst up from the ground at the feet */
+.jwrap { overflow: hidden; }
+.jwrap img { position: absolute; left: 0; max-width: none; }
+
+.ball { width: 10%; aspect-ratio: 1; }
+.ball img, .fx img { width: 100%; height: 100%; }
+.fx { width: 40%; aspect-ratio: 1; }
+.praise { font: 700 26px var(--serif); color: #A3364F; text-shadow: 0 2px 0 #fff, 0 0 12px rgba(255,255,255,.9); white-space: nowrap; }
+.dmg { font: 700 17px var(--serif); color: #F6F8FB; text-shadow: 0 1px 0 #6E2B3F, 0 0 6px rgba(110,43,63,.9); }
+.hint { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; padding: 0 14px; pointer-events: none; z-index: 5; font: 700 12px var(--sans); color: rgba(22,38,63,.55); transition: opacity .6s; }
+
+/* Overlays */
+.overlay { position: absolute; inset: 0; z-index: 30; display: grid; place-items: center; padding: 18px; background: rgba(22,38,63,.38); }
+.card { background: #F6F8FB; color: #16263F; border-radius: 18px; padding: 18px; width: 100%; max-width: 330px; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 30px rgba(22,38,63,.3); }
+.card h2 { margin: 0; font: 700 20px var(--serif); text-align: center; text-wrap: balance; }
+.card p { margin: 0; font-size: 13px; color: #5B6B82; text-align: center; line-height: 1.55; }
+.rule { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: center; font-size: 13.5px; line-height: 1.45; }
+.ico { width: 52px; height: 40px; border-radius: 10px; background: #E7EEF5; display: grid; place-items: center; font: 700 16px var(--sans); color: #2F5D8A; }
+.btn { font: 700 16px var(--serif); color: #fff; background: #A3364F; border: 0; border-radius: 999px; padding: 12px 18px; cursor: pointer; }
+.result-img { width: 46%; margin: 0 auto; position: relative; aspect-ratio: 1; }
+.result-img img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.legend { width: min(100%, 420px); font-size: 12px; color: var(--muted); margin: 0; line-height: 1.5; }
+@media (prefers-reduced-motion: reduce) { .vign, .bossbar .hp i { transition: none; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="tTitle">閃避戰 · 簡化試玩<small id="tSub">按住拖動，往上一撥跳，會一直自動投擲</small></h1>
+  <button class="lang" id="lang" type="button">EN</button>
+</header>
+<div class="pick" role="group" id="modes"><span id="tMode">戰鬥</span>
+  <button type="button" data-mode="corrupted" id="mC">破損膠囊</button>
+  <button type="button" data-mode="hunt" id="mH">今日尋寶 ×3</button>
+  <button type="button" data-mode="landmark" id="mL">地標</button>
+  <span id="tBall">手上的球</span>
+  <button type="button" data-bsz="1" id="b100">100%</button>
+  <button type="button" data-bsz=".8" id="b80">−20%</button>
+  <button type="button" data-bsz=".7" id="b70">−30%</button>
+</div>
+<div class="stage" id="stage" aria-label="Dodge fight">
+  <div class="dim"></div>
+  <div class="top">
+    <button class="pause" type="button" id="pause" aria-label="Pause">❚❚</button>
+    <span class="timer" id="timer" hidden>2:30</span>
+    <span class="chip" id="stock"><img id="stockImg" src="../../../public/art/game/ball-wax.webp" alt=""><span id="stockN">24</span></span>
+  </div>
+  <div class="track" id="track" hidden></div>
+  <div class="abs cshadow" id="cshadow"></div>
+  <div class="abs capsule" id="capsule">
+    <div class="glow" id="cglow"></div>
+    <img id="vessel" src="" alt="">
+    <img id="crack" src="" alt="">
+  </div>
+  <div class="abs bossbar" id="bossbar"><div class="hp"><i class="lag" id="hpLag"></i><i class="now" id="hpNow"></i></div><b id="hpText"></b></div>
+  <div class="abs band" id="band" hidden><b id="tJump">↑ 往上跳！</b></div>
+  <div id="layer"></div>
+  <div class="abs pshadow" id="pshadow"></div>
+  <!-- Back-view rig 01: legs, jump legs, one throwing-arm layer that swaps pose, body on top (same order as the app) -->
+  <div class="abs player" id="player">
+    <img id="legL" src="../../../public/art/characters/fight-01-leg-left.webp" alt="">
+    <img id="legR" src="../../../public/art/characters/fight-01-leg-right.webp" alt="">
+    <img id="legsJump" src="../../../public/art/characters/fight-01-legs-jump.webp" alt="" hidden>
+    <div id="tLower"></div>
+    <div id="upper" class="upper">
+      <img id="arm" src="../../../public/art/characters/fight-01-arm-down.webp" alt="">
+      <img id="bodyImg" src="../../../public/art/characters/fight-01-body.webp" alt="">
+    </div>
+    <div id="tUpper"></div>
+  </div>
+  <div class="abs jwrap" id="jwrap" hidden><img id="jspikes" src="../../../public/art/game/jump-spikes.webp" alt=""></div>
+  <div class="abs held" id="held"><img id="heldImg" src="../../../public/art/game/ball-wax.webp" alt=""></div>
+  <div class="abs lives" id="lives" aria-label="lives"><div class="hp"><i class="lag" id="lifeLag"></i><i class="now" id="lifeNow"></i></div><b id="lifeText"></b></div>
+  <div class="hint" id="hint"><span id="tHL">‹ 按住拖動 ›</span></div>
+  <div class="vign" id="vign"></div>
+
+  <div class="overlay" id="intro">
+    <div class="card">
+      <h2 id="tIntroH">打敗破損膠囊</h2>
+      <div class="rule"><div class="ico">‹ ›</div><div id="tR1">按住畫面任何地方，左右拖動人物。</div></div>
+      <div class="rule"><div class="ico">↑</div><div id="tR2">腳下出現黑色斜紋帶時，手指往上一撥跳起來，躲開冒出的尖刺。</div></div>
+      <div class="rule"><div class="ico"><img src="../../../public/art/game/ball-wax.webp" alt="" style="width:26px;height:26px"></div><div id="tR3">蠟球會一直自動丟出去，你只管閃。</div></div>
+      <p id="tKeys">電腦：方向鍵移動，空白鍵跳。</p>
+      <button class="btn" id="start" type="button">開始</button>
+    </div>
+  </div>
+  <div class="overlay" id="end" hidden>
+    <div class="card">
+      <div class="result-img"><img id="endVessel" src="" alt=""><img id="endCrack" src="" alt=""></div>
+      <h2 id="endH"></h2>
+      <p id="endP"></p>
+      <button class="btn" id="again" type="button"></button>
+    </div>
+  </div>
+</div>
+<p class="legend" id="tLegend">比較：按鈕與球的面板拿掉了，改成按住拖動；不用站著聚光；血條移到膠囊和人物旁邊。上面一排只是試玩用的切換，不會出現在 app 裡。</p>
+
+<script>
+(() => {
+  const ART = "../../../public/art/";
+  const STR = {
+    zh: { title: "閃避戰 · 簡化試玩", sub: "按住拖動，往上一撥跳，會一直自動投擲", lang: "EN", mode: "戰鬥", hball: "手上的球",
+      mC: "破損膠囊", mH: "今日尋寶 ×3", mL: "地標",
+      jump: "↑ 往上跳！", dodge: "← 閃開 →", brace: "撐住！", hl: "‹ 按住拖動 ›", keys: "電腦：方向鍵移動，空白鍵跳。",
+      introH: { corrupted: "打敗破損膠囊", hunt: "修復三個破損膠囊", landmark: "挑戰地標" },
+      r1: "按住畫面任何地方，左右拖動人物。", r2: "腳下出現黑色斜紋帶時，手指往上一撥跳起來，躲開冒出的尖刺。", r3: "蠟球會一直自動丟出去，你只管閃。", start: "開始",
+      hit: ["命中了！", "很好！", "漂亮！"], ouch: "被打中了", next: "下一個！",
+      winH: { corrupted: "已修復 · 珍珠奶茶", landmark: "地標挑戰成功" },
+      winP: "破損膠囊恢復原樣，加入你的收藏。", loseH: "膠囊逃走了", loseP: "三次被擊中。看到紅圈就換一格，看到黑帶就跳。",
+      timeH: "時間到了", again: "再玩一次", huntH: (n) => `修好 ${n}/3 個`, huntP: "修好的數量會交給今日尋寶計分。",
+      legend: "比較：按鈕與球的面板拿掉了，改成按住拖動；不用站著聚光；血條移到膠囊和人物旁邊。上面一排只是試玩用的切換，不會出現在 app 裡。" },
+    en: { title: "Dodge fight · simpler demo", sub: "Hold and drag to move, flick up to jump, throwing never stops", lang: "中文", mode: "Fight", hball: "Ball in hand",
+      mC: "Corrupted", mH: "Today's Hunt ×3", mL: "Landmark",
+      jump: "↑ Jump!", dodge: "← Move →", brace: "Brace!", hl: "‹ Hold and drag ›", keys: "On a computer: arrow keys to move, Space to jump.",
+      introH: { corrupted: "Restore the Corrupted Capsule", hunt: "Restore three Corrupted Capsules", landmark: "Landmark challenge" },
+      r1: "Hold anywhere on the screen and drag to move.", r2: "When the striped band shows at your feet, flick up to jump over the spikes.", r3: "Your wax balls fly on their own. You just dodge.", start: "Start",
+      hit: ["Hit!", "Good!", "Lovely!"], ouch: "Ouch", next: "Next one!",
+      winH: { corrupted: "Restored · Bubble tea", landmark: "Landmark won" },
+      winP: "The capsule is whole again and joins your collection.", loseH: "The capsule got away", loseP: "You were hit three times. Step aside on a red circle, jump on a dark band.",
+      timeH: "Time's up", again: "Play again", huntH: (n) => `Restored ${n} of 3`, huntP: "Today's Hunt scores the capsules you restored.",
+      legend: "Compared with now: no buttons or ball panel (hold and drag instead), no standing still to gather, and the health bars sit next to the capsule and the player. The row above is a demo switch only." },
+  };
+  const store = { get(k, d) { try { return localStorage.getItem(k) || d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+  let lang = store.get("tc-dodge2-lang", "zh"), mode = store.get("tc-dodge2-mode", "corrupted");
+  const $ = (id) => document.getElementById(id);
+  const T = () => STR[lang];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const stage = $("stage"), layer = $("layer");
+  const LANES = [.2, .5, .8], GROUND = .86, CAP_Y = .3, LIVES = 3, JUMP = .7, FLIGHT = .62, FIRE = 1.0, LANDMARK_SECONDS = 150;
+  const HUNT = ["bubble-tea", "bento", "hot-air-balloon"];
+  // Rig 01 geometry from design/art/manifest.json (fractions of the 1024 canvas): feet at y 900, ball points from PR #189.
+  const RIG_FEET = 900 / 1024, WINDUP = .32;
+  // Whole-body throw from PR #189 (waist-split upper/lower layers): cock 140 ms before the ball leaves,
+  // then release 80, follow-through 150 and recover 130, then the rest pose.
+  const BALL_WINDUP = [658 / 1024, 264 / 1024], BALL_RELEASE = [530 / 1024, 219 / 1024];
+  const THROW_POSES = [["cock", -.14, 0, 1], ["release", 0, .08, 2], ["follow", .08, .23, 3], ["recover", .23, .36, 4]];
+  // Load every throw pose once at start. Swapping one <img>'s src four times in half a second made the
+  // browser skip frames that hadn't decoded yet, so some throws looked complete and some didn't.
+  for (const part of ["upper", "lower"]) for (let k = 1; k <= 4; k++) {
+    const im = new Image(); im.alt = ""; im.decoding = "sync"; im.src = `${ART}characters/fight-01-throw-${k}-${part}.webp`;
+    $(part === "upper" ? "tUpper" : "tLower").appendChild(im);
+  }
+  // Demo-only: size of the ball held in the hand before it's thrown (100%, 20% or 30% smaller).
+  let bsz = Number(store.get("tc-dodge2-bsz", "1"));
+  // Jump art from PR #188 on its 1536-wide canvas: the ground line is row ~632, the spikes fill rows 470–645.
+  const SPIKE_SPAN = 1.06, CRACK_ROW = 632, SPIKE_TOP = 470, SPIKE_BASE = 645, SPIKE_UP = .12, SPIKE_HOLD = .2, SPIKE_DOWN = .18;
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const place = (el, x, y, extra = "") => { el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%) ${extra}`; };
+  const vesselOf = () => mode === "landmark" ? "bamboo-tower" : mode === "hunt" ? HUNT[G.round] : "bubble-tea";
+  // Twice the current health: the demo throws every second, about twice as often as the app today, so fights last as long.
+  const maxHp = () => mode === "landmark" ? 40 : 10;
+
+  function applyLang() {
+    const s = T();
+    document.documentElement.lang = lang === "zh" ? "zh-Hant" : "en";
+    $("tTitle").firstChild.nodeValue = s.title; $("tSub").textContent = s.sub; $("lang").textContent = s.lang;
+    $("tMode").textContent = s.mode; $("tBall").textContent = s.hball;
+    for (const k of ["mC", "mH", "mL"]) $(k).textContent = s[k];
+    $("tJump").textContent = s.jump; $("tHL").textContent = s.hl; $("tKeys").textContent = s.keys;
+    $("tIntroH").textContent = s.introH[mode]; $("tR1").textContent = s.r1; $("tR2").textContent = s.r2; $("tR3").textContent = s.r3;
+    $("start").textContent = s.start; $("tLegend").textContent = s.legend;
+    if (!$("end").hidden) showEnd(G.result);
+  }
+  function applyPicks() {
+    document.querySelectorAll("[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+    document.querySelectorAll("[data-bsz]").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.bsz) === bsz)));
+  }
+  $("lang").onclick = () => { lang = lang === "zh" ? "en" : "zh"; store.set("tc-dodge2-lang", lang); applyLang(); };
+  document.querySelectorAll("[data-bsz]").forEach((b) => (b.onclick = () => { bsz = Number(b.dataset.bsz); store.set("tc-dodge2-bsz", String(bsz)); applyPicks(); }));
+  document.querySelectorAll("[data-mode]").forEach((b) => (b.onclick = () => { mode = b.dataset.mode; store.set("tc-dodge2-mode", mode); applyPicks(); toIntro(); }));
+
+  let G;
+  function reset(round = 0, keep) {
+    layer.innerHTML = "";
+    const hp = maxHp();
+    G = { t: 0, lane: 1, x: .5, tx: .5, speed: 0, jumpT: -1, hp, lives: LIVES, results: keep ? keep.results : [], hurtT: -9, throwT: -9,
+      nextThrow: .8, balls: [], attacks: [], fx: [], nextAttack: 1.8, running: false, paused: false, result: null, shakeT: -9,
+      round, stock: keep ? keep.stock : { wax: 24, gold: 4 }, triples: 0, recent: [], dropT: round > 0 ? 0 : -1, spikeDoneT: -9 };
+    $("band").hidden = true;
+    $("vessel").src = `${ART}vessels/vessel-${vesselOf()}.webp`; $("crack").src = `${ART}game/cracks/${vesselOf()}.webp`;
+    $("timer").hidden = mode !== "landmark"; $("stock").hidden = mode === "hunt";
+    drawHud();
+  }
+  function drawHud() {
+    // Both bars show only the number left, and turn from green through amber to red as it drops.
+    const tint = (f) => `linear-gradient(hsl(${lerp(4, 128, f)} 52% 52%), hsl(${lerp(4, 128, f)} 55% 38%))`;
+    $("lifeNow").style.width = $("lifeLag").style.width = G.lives / LIVES * 100 + "%";
+    $("lifeNow").style.background = tint(G.lives / LIVES); $("lifeText").textContent = String(G.lives);
+    const p = G.hp / maxHp();
+    $("hpNow").style.width = p * 100 + "%"; $("hpLag").style.width = p * 100 + "%";
+    $("hpText").textContent = String(G.hp); $("hpNow").style.background = tint(p);
+    $("crack").style.opacity = String(.15 + p * .85);
+    $("vessel").style.filter = `saturate(${lerp(1, .55, p)}) brightness(${lerp(1, .8, p)})`;
+    const ball = G.stock.wax > 0 ? "wax" : "gold";
+    $("stockImg").src = $("heldImg").src = `${ART}game/ball-${mode === "hunt" ? "wax" : ball}.webp`;
+    $("stockN").textContent = mode === "hunt" ? "∞" : String(G.stock.wax + G.stock.gold);
+    const left = Math.max(0, Math.ceil(LANDMARK_SECONDS - G.t));
+    $("timer").textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+    const track = $("track");
+    track.hidden = mode !== "hunt";
+    if (mode === "hunt") {
+      track.innerHTML = HUNT.map((v, i) => {
+        const res = G.results[i] ?? (i === G.round ? G.result : null);
+        const cls = res === "won" ? "done" : i === G.round && !res ? "now" : "";
+        return (i ? `<div class="link ${res === "won" ? "done" : ""}"></div>` : "") + `<div class="step ${cls}">${i + 1}</div>`;
+      }).join("");
+    }
+  }
+
+  // Input: hold anywhere and drag to move between the three areas,
+  // flick up to jump. On a computer: each arrow press moves one area, Space or ↑ jumps.
+  const airborne = () => G.jumpT >= 0;
+  // Three areas, as in the app. Dragging about a quarter of the screen sideways moves one area; the figure snaps to it.
+  const LANE_DRAG = .24, FLICK_PX = 30, FLICK_MS = 160;
+  function toLane(lane) { if (!canAct()) return; G.lane = Math.max(0, Math.min(2, lane)); G.tx = LANES[G.lane]; }
+  const canAct = () => G.running && !G.paused;
+  function jump() { if (!canAct() || airborne()) return; G.jumpT = 0; }
+    function setKey(e, down) {
+    if (e.target.closest && e.target.closest("button") && (e.key === " " || e.key === "Enter")) return;
+    const k = e.key.toLowerCase();
+    if (k === "arrowleft" || k === "a") { if (down && !e.repeat) toLane(G.lane - 1); }
+    else if (k === "arrowright" || k === "d") { if (down && !e.repeat) toLane(G.lane + 1); }
+    else if (k === "arrowup" || k === "w" || k === " ") { if (down && !e.repeat) jump(); }
+    else return;
+    e.preventDefault();
+  }
+  addEventListener("keydown", (e) => setKey(e, true));
+  addEventListener("keyup", (e) => setKey(e, false));
+  let drag = null;
+  stage.addEventListener("pointerdown", (e) => {
+    if (e.target.closest("button, .overlay") || !canAct()) return;
+    stage.setPointerCapture?.(e.pointerId);
+    drag = { id: e.pointerId, x: e.clientX, from: G.lane, hist: [{ y: e.clientY, t: e.timeStamp }] };
+    $("hint").style.opacity = "0";
+  });
+  stage.addEventListener("pointermove", (e) => {
+    if (!drag || e.pointerId !== drag.id || !canAct()) return;
+    const lane = drag.from + Math.round((e.clientX - drag.x) / stage.clientWidth / LANE_DRAG);
+    if (Math.max(0, Math.min(2, lane)) !== G.lane) toLane(lane);
+    // A quick upward flick jumps: the finger rose FLICK_PX within the last FLICK_MS. A slow drift does nothing.
+    drag.hist = drag.hist.filter((p) => e.timeStamp - p.t <= FLICK_MS);
+    drag.hist.push({ y: e.clientY, t: e.timeStamp });
+    if (Math.max(...drag.hist.map((p) => p.y)) - e.clientY > FLICK_PX) { jump(); drag.hist = [{ y: e.clientY, t: e.timeStamp }]; }
+  });
+  const endDrag = (e) => { if (drag && e.pointerId === drag.id) drag = null; };
+  stage.addEventListener("pointerup", endDrag);
+  stage.addEventListener("pointercancel", endDrag);
+  $("pause").onclick = () => { if (G.running) G.paused = !G.paused; $("pause").textContent = G.paused ? "▶" : "❚❚"; };
+
+  // Spawning
+  function el(cls, html = "") { const d = document.createElement("div"); d.className = "abs " + cls; d.innerHTML = html; layer.appendChild(d); return d; }
+  function attack() {
+    const tough = 1 - G.hp / maxHp(), landmark = mode === "landmark";
+    const [a, b] = G.recent.slice(-2);
+    const table = landmark ? { shot: 30, double: 25, wave: 30, triple: 15 } : tough >= .4 ? { shot: 35, double: 25, wave: 25, triple: 15 } : { shot: 50, double: 20, wave: 25, triple: 5 };
+    const allowTriple = G.lives >= 2 && G.triples < (landmark ? 2 : 1);
+    const opts = Object.keys(table).filter((k) => (k !== "triple" || allowTriple) && !(a === k && b === k));
+    let roll = Math.random() * opts.reduce((s, k) => s + table[k], 0), kind = opts[opts.length - 1];
+    for (const k of opts) { roll -= table[k]; if (roll < 0) { kind = k; break; } }
+    if (kind === "triple") G.triples++;
+    G.recent = [...G.recent.slice(-1), kind];
+    const warn = .85 - .23 * tough - (landmark ? .12 : 0) + (kind === "triple" ? .3 : 0);
+    if (kind === "wave") {
+      G.attacks.push({ kind: "wave", t: 0, warn, fly: .62 });
+    } else {
+      // Shots aim at your area. A double also hits one other area and always leaves one safe.
+      const others = [0, 1, 2].filter((l) => l !== G.lane);
+      const lanes = kind === "triple" ? [0, 1, 2] : kind === "double" ? [G.lane, others[Math.random() < .5 ? 0 : 1]] : [G.lane];
+      const spots = lanes.map((l) => LANES[l]);
+      spots.forEach((ax, i) => {
+        const label = kind === "triple" ? (i === 1 ? T().brace : "") : T().dodge; // every dodgeable circle gets its own pill, like the app
+        G.attacks.push({ kind: kind === "triple" ? "triple" : "shot", ax, mid: i === 1, t: 0, warn, fly: .7 - .15 * tough, ret: el("reticle", label ? `<b>${label}</b>` : "") });
+      });
+    }
+    G.nextAttack = G.t + warn + 1.25 + Math.random() * .85 - tough * .5;
+  }
+  function popFx(src, x, y, size, life) { const d = el("fx", `<img src="${src}" alt="">`); d.style.width = size * 100 + "%"; G.fx.push({ el: d, x, y, t: 0, life, kind: "img" }); }
+  function floatText(cls, text, x, y, life, color) { const d = el(cls); d.textContent = text; if (color) d.style.color = color; G.fx.push({ el: d, x, y, t: 0, life, kind: "text" }); }
+  const removeAttack = (a) => { a.el?.remove(); a.ret?.remove(); };
+
+  function hurt(unavoidable) {
+    if (G.t - G.hurtT < 1) return;
+    if (unavoidable && G.lives <= 1) return; // a triple never takes the last life
+    G.hurtT = G.t; G.lives--; drawHud();
+    floatText("praise", T().ouch, G.x, GROUND - .28, .8, "#16263F");
+    $("vign").style.opacity = "1"; setTimeout(() => ($("vign").style.opacity = "0"), 220);
+    if (G.lives <= 0) finish("lost");
+  }
+  function landHit(ball) {
+    const dmg = ball === "gold" ? 2 : 1;
+    G.hp = Math.max(0, G.hp - dmg); G.shakeT = G.t; drawHud();
+    popFx(`${ART}game/hit-dust.webp`, .5, CAP_Y, .3, .5);
+    floatText("dmg", `-${dmg}`, .5 + rand(-.08, .08), CAP_Y - .06, .7);
+    if (Math.random() < .4) { const w = T().hit; floatText("praise", w[Math.floor(Math.random() * w.length)], .5, CAP_Y - .15, .8); }
+    if (G.hp <= 0) { popFx(`${ART}fx/fx-light-burst.webp`, .5, CAP_Y, .8, 1.2); finish("won"); }
+  }
+  function finish(result) {
+    G.running = false; G.result = result;
+    for (const a of G.attacks) removeAttack(a);
+    G.attacks = []; $("band").hidden = true; drawHud();
+    // Today's Hunt: each capsule is its own fight with full health; a miss just moves on to the next one.
+    if (mode === "hunt" && G.round < 2) {
+      floatText("praise", T().next, .5, .55, 1.1, "#2F5D8A");
+      const keep = { stock: G.stock, results: [...G.results, result] }, next = G.round + 1;
+      setTimeout(() => { reset(next, keep); G.running = true; }, 1300);
+      return;
+    }
+    setTimeout(() => showEnd(result), result === "won" ? 1000 : 500);
+  }
+  function showEnd(result) {
+    const s = T();
+    $("endVessel").src = `${ART}vessels/vessel-${vesselOf()}.webp`; $("endCrack").src = `${ART}game/cracks/${vesselOf()}.webp`;
+    const huntWins = mode === "hunt" ? [...G.results, result].filter((r) => r === "won").length : 0;
+    $("endH").textContent = mode === "hunt" ? s.huntH(huntWins) : result === "won" ? s.winH[mode] : result === "timeout" ? s.timeH : s.loseH;
+    $("endP").textContent = mode === "hunt" ? s.huntP : result === "won" ? s.winP : s.loseP; $("again").textContent = s.again;
+    $("endCrack").style.opacity = result === "won" ? "0" : "1";
+    $("endVessel").style.filter = result === "won" ? "none" : "saturate(.55) brightness(.8)";
+    $("end").hidden = false;
+  }
+  function toIntro() { $("end").hidden = true; $("intro").hidden = false; reset(); applyLang(); $("hint").style.opacity = "1"; }
+  $("start").onclick = () => { $("intro").hidden = true; reset(); G.running = true; };
+  $("again").onclick = () => { $("end").hidden = true; reset(); G.running = true; $("hint").style.opacity = "1"; };
+
+  // Loop
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    if (G.running && !G.paused) update(dt);
+    render(stage.clientWidth, stage.clientHeight);
+    requestAnimationFrame(frame);
+  }
+  function update(dt) {
+    G.t += dt;
+    if (G.dropT >= 0) { G.dropT += dt; if (G.dropT > .5) G.dropT = -1; }
+    const before = G.x;
+    G.x += (G.tx - G.x) * Math.min(1, dt * 18); // the figure slides into its area in a blink
+    G.speed = Math.abs(G.x - before) / Math.max(dt, .001);
+    if (airborne()) { G.jumpT += dt; if (G.jumpT >= JUMP) G.jumpT = -1; }
+    if (mode === "landmark") { drawHud(); if (G.t >= LANDMARK_SECONDS) return finish("timeout"); }
+
+    G.hasBall = mode === "hunt" || G.stock.wax + G.stock.gold > 0;
+    // Throwing never stops: one ball every FIRE seconds, moving or not.
+    if (G.t >= G.nextThrow) {
+      const ball = mode === "hunt" ? "wax" : G.stock.wax > 0 ? "wax" : G.stock.gold > 0 ? "gold" : null;
+      if (ball) {
+        if (mode !== "hunt") G.stock[ball]--;
+        G.balls.push({ t: 0, x: G.x, y: airborne() ? Math.sin(Math.PI * G.jumpT / JUMP) : 0, ball, el: el("ball", `<img src="${ART}game/ball-${ball}.webp" alt="">`) });
+        G.throwT = G.t; drawHud();
+      } else if (!G.balls.length) return finish("lost");
+      G.nextThrow = G.t + FIRE;
+    }
+    if (G.t >= G.nextAttack) attack();
+
+    for (const b of G.balls) { b.t += dt / FLIGHT; if (b.t >= 1 && !b.done) { b.done = true; b.el.remove(); if (G.running) landHit(b.ball); } }
+    G.balls = G.balls.filter((b) => !b.done);
+    for (const a of G.attacks) {
+      a.t += dt;
+      if (a.t >= a.warn && !a.el && a.kind !== "wave") a.el = el("shard");
+      if (a.t >= a.warn + a.fly && !a.done) {
+        a.done = true;
+        if (a.kind === "triple") { if (a.mid) hurt(true); }
+        else if (a.kind === "shot") { if (Math.abs(G.x - a.ax) < .14) hurt(false); }
+        else { G.spikeDoneT = G.t; if (!airborne() || G.jumpT > JUMP - .06) hurt(false); }
+      }
+    }
+    for (const a of G.attacks.filter((a) => a.done)) removeAttack(a);
+    G.attacks = G.attacks.filter((a) => !a.done);
+    $("band").hidden = !G.attacks.some((a) => a.kind === "wave");
+    for (const f of G.fx) { f.t += dt; if (f.t >= f.life) f.el.remove(); }
+    G.fx = G.fx.filter((f) => f.t < f.life);
+  }
+
+  function render(W, H) {
+    const t = G.t;
+    const warning = G.attacks.some((a) => a.t < a.warn);
+    const drop = G.dropT >= 0 ? 1 - G.dropT / .5 : 0;
+    let cx = .5 * W, cy = CAP_Y * H + (reduce ? 0 : Math.sin(t * 2.2) * H * .008) - drop * drop * H * .4;
+    if (!reduce && t - G.shakeT < .25) { cx += rand(-1, 1) * W * .015; cy += rand(-1, 1) * W * .01; }
+    $("cglow").style.opacity = String(warning ? .55 + .45 * Math.sin(t * 18) : 0);
+    place($("capsule"), cx, cy, warning && !reduce ? `scale(${1 + .03 * Math.sin(t * 18)})` : "");
+    place($("cshadow"), .5 * W, (CAP_Y + .115) * H);
+    place($("bossbar"), .5 * W + W * .035, (CAP_Y + .145) * H);
+
+    const jumpOff = airborne() ? Math.sin(Math.PI * G.jumpT / JUMP) * H * .15 : 0;
+    const feetY = GROUND * H, px = G.x * W, pw = .34 * W;
+    const since = t - G.throwT;
+    let sx = 1, sy = 1;
+    if (!reduce) {
+      if (since < .18) { const k = since / .18; sy = lerp(1.06, 1, k); sx = lerp(.97, 1, k); }
+      sx *= 1 + Math.min(.06, G.speed * .03);
+    }
+    const pEl = $("player");
+    place(pEl, px, feetY - pw * .38 - jumpOff, `scale(${sx}, ${sy})`);
+    pEl.style.opacity = t - G.hurtT < 1 ? (Math.floor(t * 14) % 2 ? ".35" : "1") : "1";
+    place($("pshadow"), px, feetY, `scale(${1 - (jumpOff / (H * .15)) * .45})`);
+    place($("lives"), px, feetY + H * .04);
+    // The next ball sits in the hand and swells just before it flies.
+    // Throw cycle on the rig's arm layer: rest → windup (ball behind the head) → release → follow-through → rest.
+    const top = feetY - pw * RIG_FEET - jumpOff, at = (u, v) => [px + (u - .5) * pw, top + v * pw];
+    const until = G.nextThrow - t, after = t - G.throwT;
+    const tp = G.running ? THROW_POSES.find(([, a, b]) => (a < 0 ? until <= -a && G.hasBall : after >= a && after < b)) : null;
+    const pose = tp ? tp[0] : "rest", air = airborne();
+    if ($("player").dataset.pose !== pose) {
+      $("player").dataset.pose = pose;
+      for (const part of ["tUpper", "tLower"]) [...$(part).children].forEach((im, k) => im.classList.toggle("on", !!tp && k === tp[3] - 1));
+    }
+    $("upper").hidden = !!tp; $("tLower").hidden = air;
+    $("legsJump").hidden = !air; $("legL").hidden = $("legR").hidden = air || !!tp;
+    const ready = pose === "cock" ? 1 : 0;
+    $("held").style.opacity = String(ready);
+    const [hx, hy] = at(...BALL_WINDUP);
+    place($("held"), hx, hy, `scale(${bsz})`);
+    // Jump attack: during the warning only the striped band shows; the spikes shoot up at the hit moment, hold, then sink back.
+    const wave = G.attacks.find((a) => a.kind === "wave");
+    const sinceDone = t - G.spikeDoneT;
+    const rise = wave ? Math.max(0, Math.min(1, (wave.t - (wave.warn + wave.fly - SPIKE_UP)) / SPIKE_UP))
+      : sinceDone < SPIKE_HOLD ? 1 : Math.max(0, 1 - (sinceDone - SPIKE_HOLD) / SPIKE_DOWN);
+    const spikesOn = rise > 0;
+    $("jwrap").hidden = rise <= 0;
+    if (spikesOn) {
+      const cw = W * SPIKE_SPAN, sc = cw / 1536, left = (W - cw) / 2, canvasTop = feetY - CRACK_ROW * sc;
+      const wrap = $("jwrap"), img = $("jspikes"), hgt = (SPIKE_BASE - SPIKE_TOP) * sc;
+      wrap.style.width = cw + "px"; wrap.style.height = hgt + "px";
+      wrap.style.transform = `translate(${left}px, ${canvasTop + SPIKE_TOP * sc}px)`;
+      img.style.width = cw + "px"; img.style.top = (-SPIKE_TOP * sc + (1 - rise) * hgt) + "px";
+    }
+
+    for (const b of G.balls) {
+      const k = Math.min(1, b.t);
+      const sxp = b.x * W + (BALL_RELEASE[0] - .5) * pw, syp = feetY - pw * RIG_FEET + BALL_RELEASE[1] * pw - b.y * H * .15;
+      const x = lerp(sxp, cx, k), y = lerp(syp, cy, k) - Math.sin(Math.PI * k) * H * .14;
+      place(b.el, x, y, `scale(${lerp(1, .45, Math.pow(k, .8))}) rotate(${reduce ? 0 : k * 720}deg)`);
+    }
+    const band = $("band");
+    band.style.transform = `translate(0, ${feetY}px) translateY(-50%)`;
+    band.style.opacity = String(reduce ? 1 : .75 + .25 * Math.sin(t * 16));
+    for (const a of G.attacks) {
+      if (a.kind !== "wave") {
+        const lx = a.ax * W;
+        place(a.ret, lx, feetY, reduce ? "" : `scale(${1 + .08 * Math.sin(t * 16)})`);
+        a.ret.style.opacity = a.t < a.warn ? "1" : ".7";
+        if (a.el) {
+          const k = Math.min(1, (a.t - a.warn) / a.fly);
+          place(a.el, lerp(cx, lx, k), lerp(cy, feetY - pw * .3, k) - Math.sin(Math.PI * k) * H * .06, `scale(${lerp(.6, 1.9, k * k)})`);
+        }
+        continue;
+      }
+    }
+    for (const f of G.fx) {
+      const k = f.t / f.life;
+      if (f.kind === "text") { place(f.el, f.x * W, f.y * H - k * H * .06, `scale(${k < .15 ? .6 + k * 2.7 : 1})`); f.el.style.opacity = String(k > .7 ? (1 - k) / .3 : 1); }
+      else { place(f.el, f.x * W, f.y * H, `scale(${.7 + k * .6})`); f.el.style.opacity = String(1 - k); }
+    }
+  }
+
+  document.addEventListener("visibilitychange", () => { last = performance.now(); if (document.hidden && G.running) { G.paused = true; $("pause").textContent = "▶"; } });
+  reset(); applyPicks(); applyLang(); requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>
