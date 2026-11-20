@@ -14750,24 +14750,6 @@
     }
   },
   {
-    "path": "design/art/game/jump-crack.png",
-    "what": "Ground fissure for the dodge fight jump warning",
-    "size_px": [
-      1536,
-      1024
-    ],
-    "transparent": true,
-    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nLayout exception for this asset: use a transparent 1536×1024 landscape canvas. It is a wide horizontal game effect strip, not a centred object filling 70% of a square. Span from around x=20 to x=1516 with tapered endpoints fully inside the canvas. Shared ground baseline y=640, flat left to right. The viewpoint is behind the player, looking a little down across the ground like the third reference. Draw only the isolated requested layer, using true alpha with empty corners, no scenery, grass, ground surface, character, capsule, lettering, warning band, or other UI.\nFirst attachment is style sheet A, second is the Corrupted Capsule crack reference, third is camera context only. Match their hand-inked rendering. Use the style palette above.\nGround crack layer only. Draw one thin, continuous and irregular jagged fissure running horizontally left to right. Its dark navy-plum split is recessed, with a faint warm plum glow inside the seam and just a few short delicate hairline branches. Keep the main fissure hugging the shared y=640 centreline; its meander is shallow enough that another layer's flat-based spikes can emerge exactly from it across all three lanes. Aim for about 30–45 pixels total height including branches, with the dark gash itself several pixels wide, visible when the whole picture shrinks to phone width. Avoid a neon ribbon, lightning bolt, big crater, rubble, spikes, broad shadows and color outside the seam.",
-    "model": "gpt-image-2",
-    "references": [
-      "design/art/style-sheet.png",
-      "design/art/game/crack-overlay.png",
-      "design/art/game/catch-background.png"
-    ],
-    "ground_y_px": 640,
-    "normalization": "Removed residual alpha up to 12/255, fit the fissure to a 1488 px strip, and registered the shallow central seam to the shared y=640 ground line."
-  },
-  {
     "path": "design/art/game/jump-spikes.png",
     "what": "Corrupted brown-wax spikes for the dodge fight jump attack",
     "size_px": [
@@ -14784,5 +14766,23 @@
     ],
     "ground_y_px": 640,
     "normalization": "Removed residual alpha up to 12/255. Resampled to 1488×157 with flat roots overlapping the y=640 fissure by 2 px."
+  },
+  {
+    "path": "design/art/game/jump-spikes-b.png",
+    "what": "Angular earth-brown spikes for the dodge fight, alternative B",
+    "size_px": [
+      1536,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nLayout exception for this asset: use a truly transparent 1536×1024 landscape canvas. Make one very wide horizontal sprite strip. On this exact canvas the flat lower edges of the spikes sit together on pixel row 632, and their highest tips stay at or below row 470. Nothing drawn below row 645. The strip covers essentially the full width, tapering at both ends, and is viewed almost head-on from slightly above as if seen by a player looking forward over a park floor. All spike bases need the same y coordinate, even at far left and right; do not reproduce the diagonal recession or camera tilt in the photo.\n\nPalette exception for this asset: subdued earth-brown for the spikes, as requested by Roy. Use warm walnut, umber, muted clay and a light ochre or cream edge, with hand-inked plum/navy lines used sparingly. The palette is earthy and cohesive.\n\nFirst attachment is the Time Capsule style sheet: use its flat restrained ink lines, simple shading and quiet paper grain. Second attachment is Roy's screenshot for spike shape only. Redraw the angular, broad-rooted, sharp stone wedges as original 2D game art: irregular faceted spikes with several different heights, some upright and some slightly leaning with angular straight-sided silhouettes. Use broad front and side planes, a few angled inner facet lines, fine matte texture, and small gaps between some roots. A low, dense row of about thirteen distinct angular spikes covers all three lanes, with readable large spikes in each third of the strip and smaller tapering spikes near the ends. At 375 px wide the facets should read as clean grouped tones. Keep the tips obviously pointed. Each root stops flush on the flat baseline. No scenery, dirt, debris, casting shadows, ground cracks, crater, floor, border, shared base, symbols, logo, lettering, checkered background, or glow. Ignore those features and the exact arrangement in the photo. Only the isolated spikes should be visible.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "Roy’s chat attachment, Screenshot 2026-11-20 at 9.29.59 PM.png (spike shapes only)"
+    ],
+    "ground_y_px": 632,
+    "normalization": "Removed residual alpha up to 12/255 and resampled the visible strip to 1488×163 at x=24, y=470, with the flat base ending at row 632.",
+    "web_export": "public/art/game/jump-spikes-b.webp"
   }
 ]
