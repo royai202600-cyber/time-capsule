@@ -25,7 +25,7 @@ begin
   perform set_config('request.jwt.claim.sub',player::text,true);
   select * into strict fight from public.corrupted_fight_start(spawn,lat,lng,10);
   select * into strict resumed from public.corrupted_fight_start(spawn,lat,lng,10);
-  assert resumed.fight_id=fight.fight_id and fight.health=3;
+  assert resumed.fight_id=fight.fight_id and fight.health=5 and fight.max_health=5;
 
   perform set_config('request.jwt.claim.sub',rival::text,true);
   perform pg_temp.expect_fight_error(format('select public.corrupted_fight_finish(%L,''lost'',0,0,%L,%L,10)',fight.fight_id,lat,lng),'expired');
@@ -34,7 +34,7 @@ begin
   update public.player_game set last_lat=lat+.004,last_position_at=clock_timestamp() where user_id=player;
   perform pg_temp.expect_fight_error(format('select public.corrupted_fight_finish(%L,''lost'',1,0,%L,%L,10)',fight.fight_id,lat,lng),'too_fast');
   update public.player_game set last_lat=lat where user_id=player;
-  outcome := public.corrupted_fight_finish(fight.fight_id,'won',3,0,lat,lng,10);
+  outcome := public.corrupted_fight_finish(fight.fight_id,'won',fight.max_health,0,lat,lng,10);
   assert outcome->>'result'='won';
   -- Replay returns the exact stored outcome without reading the current balance or GPS again.
   assert public.corrupted_fight_finish(fight.fight_id,'lost',0,0,0,0,10)=outcome;

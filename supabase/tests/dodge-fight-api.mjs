@@ -62,10 +62,29 @@ try {
   const expire = (table, fight) => sql(`update ${table} set expires_at=clock_timestamp()-interval '1 second' where id=${literal(fight)};`);
 
   let fight = await start();
+  assert.equal(fight.health, 5);
+  assert.equal(fight.max_health, 5);
+  for (const [rarity, health] of [['uncommon', 6], ['rare', 7]]) {
+    const started = await start(fixture.spawns[rarity][0]);
+    assert.equal(started.health, health);
+    assert.equal(started.max_health, health);
+  }
+  for (const [rarity, health] of [['common', 3], ['uncommon', 4]]) {
+    const spawn = fixture.spawns[rarity][0];
+    const [spot, wave] = spawn.split(':');
+    const id = sql(`insert into private.corrupted_fights(user_id,spawn_id,max_health,health,expires_at)
+      select ${literal(rival.id)},${literal(spawn)},${health},${health},s.expires_at
+      from private.resolve_spawn(${literal(spot)},${Number(wave)}) s returning id;`);
+    const [resumed] = ok(await rival.rpc('corrupted_fight_start', { p_spawn: spawn, ...coords }));
+    assert.equal(resumed.fight_id, id);
+    assert.equal(resumed.health, health);
+    assert.equal(resumed.max_health, health);
+  }
+  console.log('PASS real JWT: 5/6/7 starting health and legacy 3/4 HP fights resume unchanged');
   assert.deepEqual(await start(), fight);
-  const win = finishArgs(fight.fight_id, 'won', 1, 1);
+  const win = finishArgs(fight.fight_id, 'won', 3, 1);
   denied(await rival.rpc('corrupted_fight_finish', win), 'expired');
-  denied(await rpc('corrupted_fight_finish', { ...win, p_wax_used: 0, p_gold_used: 0 }), 'not_enough_damage');
+  denied(await rpc('corrupted_fight_finish', { ...win, p_wax_used: 2 }), 'not_enough_damage');
   denied(await rpc('corrupted_fight_finish', { ...win, p_wax_used: 101 }), 'no_balls');
   denied(await rpc('corrupted_fight_finish', win), 'too_soon');
   const unspent = await state();
@@ -80,10 +99,10 @@ try {
   assert.deepEqual(ok(replies[1]), outcome);
   assert.equal(outcome.result, 'won');
   assert(outcome.vessel && outcome.copies > 0 && outcome.xp_gained > 0);
-  assert.equal((await state()).wax_balls, 99);
+  assert.equal((await state()).wax_balls, 97);
   assert.equal((await state()).gold_balls, 11);
   assert.deepEqual(ok(await rpc('corrupted_fight_finish', win)), outcome);
-  assert.equal((await state()).wax_balls, 99);
+  assert.equal((await state()).wax_balls, 97);
   denied(await rival.rpc('corrupted_fight_finish', win), 'expired');
 
   for (const remaining of [2, 1, 0]) {
