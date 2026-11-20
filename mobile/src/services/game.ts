@@ -291,3 +291,48 @@ export const game = {
     return { wax, gold, state: stateNow() };
   },
 };
+
+/** DF1's migration ships separately. Keep the hosted RPCs opt-in until it is applied. */
+export const DODGE_FIGHT_RPC = process.env.EXPO_PUBLIC_DODGE_FIGHT === "1";
+export const DODGE_FIGHT = DODGE_FIGHT_RPC || (typeof __DEV__ !== "undefined" && __DEV__ && process.env.EXPO_PUBLIC_DODGE_FIGHT !== "0");
+
+export type DodgeTarget = { capsule: CorruptedCapsule; landmark?: Waypost };
+export type DodgeSession = { id: string; health: number; maxHealth: number; expiresAt: number; attemptsLeft: number };
+async function dodgeRow<Row>(request: PromiseLike<{ data: Row[] | null; error: { message?: string } | null }>): Promise<Row> {
+  const { data, error } = await request;
+  fail(error);
+  const row = data?.[0];
+  if (!row) throw new GameError("unknown");
+  return row;
+}
+
+/** Session methods serve the located fights only. Today's Hunt plays entirely on the device. */
+export const dodgeFights = {
+  landmarkVessel: (waypost: Waypost) => LANDMARK_VESSEL[waypost.place ?? ""] ?? "hourglass",
+  async start(target: DodgeTarget): Promise<DodgeSession> {
+    if (target.landmark) {
+      const row = await game.landmarkStartOnce(target.landmark);
+      return { id: row.id, health: row.cracks, maxHealth: 20, expiresAt: Date.parse(row.expires_at), attemptsLeft: 1 };
+    }
+    const row = await dodgeRow(supabase.rpc("corrupted_fight_start", { p_spawn: target.capsule.id, ...coords() }));
+    return { id: row.fight_id, health: row.health, maxHealth: row.max_health, expiresAt: Date.parse(row.expires_at), attemptsLeft: row.attempts_left };
+  },
+  async hit(target: DodgeTarget, session: DodgeSession, ball: BallKind) {
+    if (target.landmark) {
+      const out = await dodgeRow(supabase.rpc("landmark_hit", { p_attempt: session.id, p_ball: ball, ...coords() }));
+      if (out.result === "won") emit({ kind: "landmark", waypost: target.landmark.id });
+      return { ...out, health: out.cracks };
+    }
+    const out = await dodgeRow(supabase.rpc("corrupted_fight_throw", { p_fight: session.id, p_ball: ball, ...coords() }));
+    if (out.result === "restored") emit({ kind: "restore", lat: target.capsule.lat, lng: target.capsule.lng });
+    return out;
+  },
+  async loss(target: DodgeTarget, session: DodgeSession) {
+    if (target.landmark) {
+      await dodgeRow(supabase.rpc("landmark_loss", { p_attempt: session.id, ...coords() }));
+      return 0;
+    }
+    const row = await dodgeRow(supabase.rpc("corrupted_fight_loss", { p_fight: session.id, ...coords() }));
+    return row.attempts_left;
+  },
+};

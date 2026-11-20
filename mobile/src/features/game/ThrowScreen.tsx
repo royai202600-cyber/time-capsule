@@ -6,18 +6,16 @@ import { vesselParts } from "../../art/manifest";
 import { ArtIcon } from "../../components/ArtIcon";
 import { haptics } from "../../components/haptics";
 import type { VesselKind } from "../../components/Vessel";
-import { useLanguage } from "../../i18n";
 import { game, GameError, type BallKind, type GameState, type CorruptedCapsule, type LandmarkAttempt, type Rarity, type ThrowResult } from "../../services/game";
 import { mapPalette } from "../journey/live/mapHtml";
 import { noWebSelect, useNoWebDrag } from "./noWebDrag";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import Reanimated, { cancelAnimation, Easing as Curve, runOnJS, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
-import { fxGlint, gameArt, lightBurst } from "../../art/manifest";
+import { fxGlint, gameArt } from "../../art/manifest";
 import { crackOverlays } from "../../art/crackOverlays";
 import { useReducedMotion } from "../../useReducedMotion";
 import { errorKey, useGameText } from "./strings";
-import { COPIES } from "../../services/copies";
-import { useCopiesText } from "../copies/strings";
+import { RestoreLightBurst, RestoreResultCard, type Restored } from "./RestoreResult";
 import { FRAME_FIELDS, FRAMES_PER_SECOND, simulateThrow } from "./throwPhysics";
 
 const NATIVE = Platform.OS !== "web";
@@ -55,20 +53,19 @@ const PRAISE_COLOR: Record<Praise, string> = { praiseGood: C.blue, praiseLovely:
 const praiseFor = (ring: number): Praise => ring >= .8 ? "praisePerfect" : ring >= .45 ? "praiseLovely" : "praiseGood";
 const finished = (animation: Animated.CompositeAnimation) => new Promise<void>((done) => animation.start(() => done()));
 
-type Restored = Pick<ThrowResult, "vessel" | "copies" | "stars" | "is_new" | "xp_gained">;
 
-export function ThrowScreen({ capsule, landmark, home, state, onState, onClose }: {
+export type ThrowScreenProps = {
   capsule: CorruptedCapsule; landmark?: LandmarkAttempt; state: GameState; onState: (s: GameState) => void; onClose: (caught: boolean) => void;
   /** Today's Hunt catch from home: throws are free and only counted, never sent to the server, and a restore gives no vessel or copies. */
   home?: { onQuit: () => void };
-}) {
+};
+
+export function ThrowScreen({ capsule, landmark, home, state, onState, onClose }: ThrowScreenProps) {
   const vesselSize = landmark ? GIANT_VESSEL : VESSEL;
   const ringSize = landmark ? GIANT_RING : RING;
   const hitHalfWidth = landmark ? GIANT_HIT_HALF_WIDTH : HIT_HALF_WIDTH;
   const insets = useSafeAreaInsets();
-  const { t } = useLanguage();
   const s = useGameText();
-  const cp = useCopiesText();
   const reduced = useReducedMotion();
   const [height, setHeight] = useState(0);
   const [kind, setKind] = useState<BallKind>("wax");
@@ -354,7 +351,6 @@ export function ThrowScreen({ capsule, landmark, home, state, onState, onClose }
 
   const count = kind === "gold" ? state.gold_balls : state.wax_balls;
   const source = vesselParts[capsule.vessel as VesselKind]?.assembled;
-  const name = t(`shop.vessel.${result?.vessel ?? capsule.vessel}`);
   const timedOut = !!landmark && secondsLeft === 0 && !result;
   const clock = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, "0")}`;
   const ringScale = ringPhase.interpolate({ inputRange: [0, 1], outputRange: [MIN_RING, 1] });
@@ -367,14 +363,7 @@ export function ThrowScreen({ capsule, landmark, home, state, onState, onClose }
     {height > 0 && <>
       <Svg pointerEvents="none" style={{ position: "absolute", left: "50%", marginLeft: -80, top: capsuleY(height) + vesselSize / 2 - 26 }} width={160} height={44}><Ellipse cx={80} cy={22} rx={78} ry={20} fill={C.ink} opacity={.14} /></Svg>
       <View pointerEvents="none" style={{ position: "absolute", left: 0, right: 0, top: capsuleY(height) - vesselSize / 2, height: vesselSize, alignItems: "center" }}>
-        <Animated.Image source={lightBurst} resizeMode="contain" style={{
-          position: "absolute", left: "50%", marginLeft: -vesselSize * 1.4, top: -vesselSize * .9, width: vesselSize * 2.8, height: vesselSize * 2.8,
-          opacity: burst.interpolate({ inputRange: [0, .12, .3, .75, 1], outputRange: [0, .35, 1, .75, .38] }),
-          transform: [
-            { scale: burst.interpolate({ inputRange: [0, .12, .4, 1], outputRange: [.3, .45, 1, 1.08] }) },
-            { rotate: burst.interpolate({ inputRange: [0, 1], outputRange: ["0deg", "38deg"] }) },
-          ],
-        }} />
+        <RestoreLightBurst size={vesselSize} burst={burst} />
         <Animated.View style={{ width: vesselSize, height: vesselSize, alignItems: "center", justifyContent: "center", transform: [{ translateY: hop }, { translateX: shake }, { rotate: rock.interpolate({ inputRange: [-1, 1], outputRange: ["-10deg", "10deg"] }) }, { scale: pop }] }}>
           {source ? <Image source={source} style={{ width: vesselSize, height: vesselSize }} resizeMode="contain" accessibilityLabel={s("corruptedCapsule")} /> : null}
           <Animated.View pointerEvents="none" style={{ position: "absolute", top: 0, left: 0, width: vesselSize, height: vesselSize, opacity: crack }}>
@@ -462,18 +451,7 @@ export function ThrowScreen({ capsule, landmark, home, state, onState, onClose }
       </View>
     </View>}
 
-    {result && <View style={{ position: "absolute", left: spacing.md, right: spacing.md, bottom: insets.bottom + spacing.md, alignItems: "center", gap: 6, backgroundColor: "rgba(255,255,255,.97)", borderRadius: 22, padding: spacing.lg, borderWidth: 1, borderColor: C.line, ...shadows.card }}>
-      {/* With copies on, `copies` is the balance after the catch, shown below instead of stars. */}
-      {(result.is_new || !COPIES) && <Text style={{ fontFamily: sans, fontSize: 12, letterSpacing: 1.2, color: C.brass }}>{result.is_new ? s("newFind") : s("copies", result.copies ?? 0)}</Text>}
-      <Text style={{ fontFamily: serif, fontSize: 24, color: C.ink }}>{s("restored")} · {name}</Text>
-      {COPIES
-        ? <Text style={{ fontFamily: serif, fontSize: 16, color: C.brass }}>{cp.label(result.copies)}</Text>
-        : <Text accessibilityLabel={`${result.stars} / 5`} style={{ fontSize: 16, letterSpacing: 3, color: C.brass }}>{"★".repeat(result.stars)}<Text style={{ color: C.line }}>{"★".repeat(5 - result.stars)}</Text></Text>}
-      <Text style={{ fontFamily: sans, fontSize: 13, color: C.muted }}>{s("xp", result.xp_gained)}</Text>
-      <Pressable accessibilityRole="button" onPress={() => onClose(true)} style={{ marginTop: 8, alignSelf: "stretch", alignItems: "center", backgroundColor: C.wax, borderRadius: radii.pill, paddingVertical: 12 }}>
-        <Text style={{ fontFamily: serif, fontSize: 16, color: C.white }}>{s("collect")}</Text>
-      </Pressable>
-    </View>}
+    {result && <RestoreResultCard result={result} bottom={insets.bottom} onCollect={() => onClose(true)} />}
   </View>;
 }
 
