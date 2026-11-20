@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CHARGE, DodgeFight, FLIGHT, LIVES, WIND, fightHealth } from "./dodgeFightRules";
+import { CHARGE, DodgeFight, dodgeSwipe, fightHealthTicks, FLIGHT, LIVES, WIND, fightHealth } from "./dodgeFightRules";
 
 const stock = { wax: 30, gold: 2 };
 function advance(fight: DodgeFight, seconds: number, remote = false) {
@@ -158,16 +158,72 @@ describe("dodge fight rules", () => {
     expect(fight.lives).toBe(3);
   });
 
-  it("uses the server's starting HP and waits for its response before resolving a throw", () => {
+  it("uses early server HP at impact while keeping the ball in flight", () => {
     const fight = new DodgeFight("corrupted", "rare", stock, () => .5, { health: 2, maxHealth: 5 });
-    advance(fight, 1.75, true);
-    expect(fight.pendingHit).toBe("wax");
+    advance(fight, 1.1, true);
+    const flight = fight.flight!;
+    expect(flight.ball).toBe("wax");
+    expect(fight.awaitingThrow).toBe(true);
+    fight.confirmThrow(flight, 0);
     expect(fight.hp).toBe(2);
-    const now = fight.frame.now;
-    advance(fight, 2, true);
-    expect(fight.frame.now).toBe(now);
-    fight.applyImpact(1);
-    expect(fight.hp).toBe(1);
-    expect(fight.pendingHit).toBeNull();
+    expect(fight.end).toBeNull();
+    advance(fight, FLIGHT, true);
+    expect(fight.hp).toBe(0);
+    expect(fight.damage).toBe(2);
+    expect(fight.end).toBe("won");
+  });
+
+  it("shows the impact and keeps movement, attacks and gathering going during a slow response", () => {
+    const fight = new DodgeFight("landmark", "common", stock, () => .5);
+    advance(fight, 1.1, true);
+    const flight = fight.flight!;
+    fight.input("right");
+    advance(fight, .75, true);
+    expect(fight.frame.x).toBeCloseTo(.8);
+    expect(fight.flight).toBeNull();
+    expect(fight.hp).toBe(20);
+    expect(fight.damage).toBe(1);
+    const impactAt = fight.frame.hitAt;
+    expect(impactAt).toBeGreaterThan(flight.at);
+    expect(fight.attack?.lanes).toEqual([2]);
+    fight.input("left");
+    advance(fight, 1.55, true);
+    expect(fight.frame.x).toBeCloseTo(.5);
+    expect(fight.frame.charge).toBe(1);
+    expect(fight.lives).toBe(3);
+    expect(fight.stock.wax).toBe(stock.wax - 1);
+    expect(fight.flight).toBeNull();
+    fight.confirmThrow(flight, 19);
+    expect(fight.hp).toBe(19);
+    expect(fight.frame.hitAt).toBe(impactAt);
+    advance(fight, .2, true);
+    expect(fight.flight?.ball).toBe("wax");
+    expect(fight.stock.wax).toBe(stock.wax - 2);
+  });
+
+  it("waits for the last launched throw before resolving the third lost seal", () => {
+    const fight = new DodgeFight("landmark", "common", stock, () => .5);
+    advance(fight, 1.1, true);
+    const flight = fight.flight!;
+    advance(fight, .8, true);
+    fight.lives = 1;
+    advance(fight, 1.5, true);
+    expect(fight.lives).toBe(0);
+    expect(fight.end).toBeNull();
+    expect(fight.awaitingThrow).toBe(true);
+    fight.confirmThrow(flight, 19);
+    expect(fight.end).toBe("lost");
+  });
+
+  it("marks hits on the health bar and recognizes swipes from movement", () => {
+    expect(fightHealthTicks("home", 3)).toEqual([1 / 3, 2 / 3]);
+    expect(fightHealthTicks("corrupted", 4)).toEqual([.25, .5, .75]);
+    expect(fightHealthTicks("corrupted", 5)).toEqual([.2, .4, .6, .8]);
+    expect(fightHealthTicks("landmark", 20)).toEqual([.25, .5, .75]);
+    expect(dodgeSwipe(23, 0)).toBeNull();
+    expect(dodgeSwipe(24, 6)).toBe("right");
+    expect(dodgeSwipe(-24, -5)).toBe("left");
+    expect(dodgeSwipe(10, -24)).toBe("jump");
+    expect(dodgeSwipe(0, 50)).toBeNull();
   });
 });

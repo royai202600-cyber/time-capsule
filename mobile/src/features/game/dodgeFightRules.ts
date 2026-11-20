@@ -2,7 +2,7 @@ import type { BallKind, Rarity } from "../../services/game";
 
 export type FightMode = "corrupted" | "landmark" | "home";
 export type DodgeInput = "left" | "jump" | "right";
-export type FightEnd = "won" | "lost" | "timeout" | "empty";
+export type FightEnd = "won" | "lost" | "timeout" | "expired" | "empty" | "error";
 export type BallStock = Record<BallKind, number>;
 export const LANES = [.2, .5, .8] as const;
 export const GROUND = .865;
@@ -18,6 +18,17 @@ export const LANDMARK_SECONDS = 150;
 
 export const fightHealth = (mode: FightMode, rarity: Rarity) =>
   mode === "landmark" ? 20 : mode === "home" ? 3 : { common: 3, uncommon: 4, rare: 5 }[rarity];
+
+export function fightHealthTicks(mode: FightMode, maxHp: number) {
+  const section = mode === "landmark" ? 5 : 1;
+  return Array.from({ length: Math.ceil(maxHp / section) - 1 }, (_, index) => (index + 1) * section / maxHp);
+}
+
+export function dodgeSwipe(dx: number, dy: number): DodgeInput | null {
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return null;
+  if (Math.abs(dx) > Math.abs(dy)) return dx < 0 ? "left" : "right";
+  return dy < 0 ? "jump" : null;
+}
 
 export const otherBall = (ball: BallKind): BallKind => ball === "wax" ? "gold" : "wax";
 export function availableBall(ball: BallKind, stock: BallStock): BallKind | null {
@@ -55,7 +66,7 @@ export class DodgeFight {
   frame = { ...initialFrame };
   attack: Attack | null = null;
   flight: Flight | null = null;
-  pendingHit: BallKind | null = null;
+  private remoteShot: { flight: Flight; health?: number } | null = null;
   damage = 0;
   private lane = 1;
   private moveAt = -10;
@@ -73,6 +84,8 @@ export class DodgeFight {
     this.stock = { ...stock };
     this.selected = mode === "home" ? "wax" : availableBall("wax", stock) ?? "wax";
   }
+
+  get awaitingThrow() { return this.remoteShot !== null; }
 
   get secondsLeft() {
     return this.mode === "landmark" ? Math.max(0, Math.ceil(this.timer - this.frame.now)) : null;
@@ -142,23 +155,30 @@ export class DodgeFight {
 
   finish(end: FightEnd) {
     this.end = end;
-    this.attack = this.flight = this.pendingHit = null;
+    this.attack = this.flight = this.remoteShot = null;
     this.frame.charge = 0;
     this.frame.wind = false;
   }
 
-  applyImpact(health: number) {
-    this.pendingHit = null;
+  /** A response can arrive on either side of the impact. Only the authoritative HP settles the throw. */
+  confirmThrow(flight: Flight, health: number) {
+    if (this.remoteShot?.flight !== flight) return;
+    if (this.flight) this.remoteShot.health = health;
+    else this.settleHit(health);
+  }
+
+  private settleHit(health: number) {
+    this.remoteShot = null;
+    this.gatherFrom = Math.max(this.gatherFrom, this.frame.now - CHARGE);
     this.damage = Math.max(0, this.hp - health);
     this.hp = health;
-    this.frame.hitAt = this.frame.now;
     if (health === 0) this.finish("won");
     else if (this.lives === 0) this.finish("lost");
   }
 
   /** Only advance while visible and playing. No timestamp from outside the fight enters these rules. */
   advance(delta: number, serverHit = false) {
-    if (this.end || this.pendingHit) return;
+    if (this.end) return;
     const frame = this.frame;
     const now = frame.now += Math.min(delta, .05);
     const move = Math.min(1, (now - this.moveAt) / MOVE);
@@ -170,12 +190,15 @@ export class DodgeFight {
     if (this.flight && now - this.flight.at >= FLIGHT) {
       const ball = this.flight.ball;
       this.flight = null;
-      if (serverHit) { this.pendingHit = ball; return; }
-      this.applyImpact(Math.max(0, this.hp - (ball === "gold" ? 2 : 1)));
+      const predicted = Math.max(0, this.hp - (ball === "gold" ? 2 : 1));
+      const health = serverHit ? this.remoteShot?.health : predicted;
+      this.damage = this.hp - (health ?? predicted);
+      frame.hitAt = now;
+      if (health !== undefined) this.settleHit(health);
       if (this.end) return;
     }
     if (this.lives === 0) return;
-    if (this.secondsLeft === 0) { this.finish("timeout"); return; }
+    if (this.secondsLeft === 0 && !this.awaitingThrow) { this.finish("timeout"); return; }
 
     if (this.attack && now >= this.attack.at + this.attack.warning + this.attack.travel) {
       const hit = this.attack.kind === "wave" ? jumpTime >= JUMP - .06
@@ -186,23 +209,25 @@ export class DodgeFight {
         this.lives--;
         this.interrupt(now);
         if (this.lives === 0) {
-          if (!this.flight) this.finish("lost");
+          this.attack = null;
+          if (!this.flight && !this.awaitingThrow) this.finish("lost");
           return;
         }
       }
     }
 
     const ball = this.ball;
-    if (!ball && !this.flight) { this.finish("empty"); return; }
+    if (!ball && !this.flight && !this.awaitingThrow) { this.finish("empty"); return; }
     if (!this.attack && now >= this.nextAttackAt) this.announceAttack();
 
     if (!ball || move < 1 || jumpTime < JUMP) return;
     const standing = Math.max(0, now - this.gatherFrom);
     frame.charge = Math.min(1, standing / CHARGE);
-    frame.wind = standing >= CHARGE;
-    if (standing < CHARGE + WIND) return;
+    frame.wind = standing >= CHARGE && !this.awaitingThrow;
+    if (standing < CHARGE + WIND || this.awaitingThrow) return;
 
     this.flight = { at: now, x: frame.x, ball };
+    if (serverHit) this.remoteShot = { flight: this.flight };
     if (this.mode !== "home") this.stock[ball]--;
     this.selected = this.ball ?? ball;
     this.gatherFrom = now;

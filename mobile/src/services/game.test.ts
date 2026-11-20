@@ -57,6 +57,34 @@ describe("DF1 dodge fight RPCs", () => {
     unsub();
   });
 
+  it("retries the same throw after 200 ms on too_soon", async () => {
+    const { dodgeFights, game } = await import("./game");
+    game.setPosition(at);
+    mocks.rpc
+      .mockResolvedValueOnce({ error: { message: "too_soon" }, status: 400, data: null })
+      .mockResolvedValueOnce({ error: null, data: [{ health: 2, wax_balls: 10 }] });
+    const session = { id: "fight", health: 3, maxHealth: 3, expiresAt: Date.parse(capsule.expires_at), attemptsLeft: 3 };
+    const original = dodgeFights.hit({ capsule }, session, "wax");
+    await vi.advanceTimersByTimeAsync(199);
+    expect(mocks.rpc).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1);
+    await expect(original).resolves.toMatchObject({ health: 2 });
+    expect(mocks.rpc.mock.calls).toEqual(Array(2).fill(["corrupted_fight_throw", { p_fight: "fight", p_ball: "wax", ...gps }]));
+  });
+
+  it("retries transport failures once, but never retries an expired fight", async () => {
+    const { dodgeFights, game } = await import("./game");
+    game.setPosition(at);
+    const session = { id: "fight", health: 3, maxHealth: 3, expiresAt: Date.parse(capsule.expires_at), attemptsLeft: 3 };
+    const network = { status: 0, data: null, error: { message: "TypeError: Failed to fetch" } };
+    mocks.rpc.mockResolvedValueOnce(network).mockResolvedValueOnce(network);
+    await expect(dodgeFights.hit({ capsule }, session, "gold")).rejects.toMatchObject({ code: "network" });
+    expect(mocks.rpc.mock.calls).toEqual(Array(2).fill(["corrupted_fight_throw", { p_fight: "fight", p_ball: "gold", ...gps }]));
+    mocks.rpc.mockClear().mockResolvedValueOnce({ status: 400, data: null, error: { message: "expired" } });
+    await expect(dodgeFights.hit({ capsule }, session, "gold")).rejects.toMatchObject({ code: "expired" });
+    expect(mocks.rpc).toHaveBeenCalledTimes(1);
+  });
+
   it("uses the Landmark attempt, omits the legacy ring, and ends the attempt on loss", async () => {
     const { dodgeFights, game } = await import("./game");
     mocks.getSession.mockResolvedValue({ data: { session: { user: { id: "test" } } } });

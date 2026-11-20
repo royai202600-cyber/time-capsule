@@ -7,11 +7,11 @@ import { ArtIcon } from "../../components/ArtIcon";
 import { figureFor } from "../../components/Figure";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
-import { DODGE_FIGHT_RPC, dodgeFights, GameError, type BallKind, type DodgeSession, type DodgeTarget } from "../../services/game";
+import { DODGE_FIGHT_RPC, dodgeFights, GameError, type DodgeSession, type DodgeTarget } from "../../services/game";
 import { C, sans, serif, shadows } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
 import { VESSELS } from "../shop/strings";
-import { DodgeFight, initialFrame, LIVES, type DodgeInput } from "./dodgeFightRules";
+import { DodgeFight, dodgeSwipe, fightHealthTicks, initialFrame, LIVES, type DodgeInput, type Flight } from "./dodgeFightRules";
 import { FightAttack, FightBoss, GatherBall, HitEdge, PlayerThrow } from "./DodgeEffects";
 import { DodgePlayer } from "./DodgePlayer";
 import fightStrings from "./dodgeStrings";
@@ -32,7 +32,7 @@ const moves = [
 ] as const;
 const keyInputs: Record<string, DodgeInput> = {
   arrowleft: "left", a: "left", arrowup: "jump", w: "jump", " ": "jump",
-  arrowright: "right", d: "right", s: "jump",
+  arrowright: "right", d: "right",
 };
 const mockLosses = new Map<string, { left: number; expiresAt: number }>();
 
@@ -66,7 +66,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   const noticeDone = useRef(false);
   const outcome = useRef<Restored | null>(null);
   const finish = useRef<(fight: DodgeFight) => void>(() => {});
-  const remoteHit = useRef<(ball: BallKind) => void>(() => {});
+  const remoteHit = useRef<(flight: Flight) => void>(() => {});
   const motion = useSharedValue(initialFrame);
   const finishTime = useSharedValue(0);
   const burst = useRef(new RNAnimated.Value(0)).current;
@@ -193,27 +193,25 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
     });
   };
 
-  remoteHit.current = (ball) => {
+  remoteHit.current = (flight) => {
     const active = engine.current!;
     const current = session.current;
-    if (!current || resolving.current) return;
-    resolving.current = true;
-    void dodgeFights.hit({ capsule, landmark }, current, ball).then((out) => {
-      resolving.current = false;
-      if (!live.current) return;
+    if (!current) return;
+    const isCurrent = () => live.current && active === engine.current;
+    void dodgeFights.hit({ capsule, landmark }, current, flight.ball, isCurrent).then((out) => {
+      if (!isCurrent()) return;
       active.stock = { wax: out.wax_balls, gold: out.gold_balls };
       active.selected = active.ball ?? active.selected;
       onState({ ...state, wax_balls: out.wax_balls, gold_balls: out.gold_balls });
       if (out.health === 0) outcome.current = { ...out, stars: out.stars ?? 0 };
-      active.applyImpact(out.health);
-      motion.value = { ...active.frame };
+      active.confirmThrow(flight, out.health);
       redraw();
       if (active.end) finish.current(active);
     }).catch((e) => {
-      resolving.current = false;
-      if (!live.current) return;
-      active.finish(e instanceof GameError && e.code === "no_balls" ? "empty" : "timeout");
-      setError(describeError(e));
+      if (!isCurrent()) return;
+      const key = describeError(e);
+      active.finish(key === "noBalls" ? "empty" : key === "expired" ? "expired" : "error");
+      setError(key);
       finish.current(active);
     });
   };
@@ -230,14 +228,16 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
       const expiry = session.current?.expiresAt;
       const remaining = expiry === undefined ? Infinity : (expiry - Date.now()) / 1000;
       active.syncTimer(remaining);
-      if (remaining <= 0 && !active.pendingHit) active.finish("timeout");
+      if (remaining <= 0 && !active.awaitingThrow) active.finish("expired");
       else active.advance(last === undefined ? 0 : (now - last) / 1000, remote);
       last = now;
       motion.value = { ...active.frame };
-      if (active.flight && active.flight !== flight) void haptics.tick();
+      if (active.flight && active.flight !== flight) {
+        void haptics.tick();
+        if (remote) remoteHit.current(active.flight);
+      }
       if (active.lives !== lives) void haptics.warn();
       if (active.hp !== hp || active.lives !== lives || active.flight !== flight || active.attack !== attack || active.secondsLeft !== secondsLeft) redraw();
-      if (active.pendingHit && !resolving.current) remoteHit.current(active.pendingHit);
       if (active.end) { finish.current(active); return; }
       frameId = requestAnimationFrame(frame);
     };
@@ -250,14 +250,21 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   input.current = (key) => {
     if (playing && !blocked.current) engine.current?.input(key);
   };
-  const pan = useMemo(() => PanResponder.create({
-    onMoveShouldSetPanResponder: (_, g) => Math.max(Math.abs(g.dx), Math.abs(g.dy)) > 16,
-    onPanResponderRelease: (_, { dx, dy }) => {
-      if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
-      if (Math.abs(dx) > Math.abs(dy)) input.current(dx < 0 ? "left" : "right");
-      else if (dy < 0) input.current("jump");
-    },
-  }), []);
+  const pan = useMemo(() => {
+    let fired = false;
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => { fired = false; },
+      onPanResponderMove: (_, { dx, dy }) => {
+        if (fired) return;
+        const action = dodgeSwipe(dx, dy);
+        if (action) {
+          fired = true;
+          input.current(action);
+        }
+      },
+    });
+  }, []);
 
   useEffect(() => {
     if (!web || !playing) return;
@@ -281,9 +288,13 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   const name = VESSELS[capsule.vessel as keyof typeof VESSELS]?.name[language];
   const title = s(landmark ? "challenge" : "corruptedCapsule");
   const boss = name ? `${title} · ${name}` : title;
-  const errorText = error === "expired" ? x.remoteExpired : error ? s(error) : null;
+  const expiredText = landmark ? x.remoteExpired : s("expired");
+  const errorText = error === "expired" ? expiredText : error ? s(error) : null;
   const ending = fight.end === "empty" ? s("noBalls")
-    : fight.end === "timeout" ? s("timeUp") : mode === "corrupted" ? s("gone") : x.noLives;
+    : fight.end === "expired" ? expiredText
+    : fight.end === "timeout" ? s("timeUp")
+    : mode === "corrupted" && fight.end === "lost" && !busy
+      ? (attempts > 0 ? x.brokeFree : s("gone")) : x.noLives;
 
   return <View style={[styles.root, noWebSelect]} onLayout={(e) => setLayout(e.nativeEvent.layout)}>
     {desktop && <><ThrowBackground /><View pointerEvents="none" style={styles.backdrop} /></>}
@@ -310,7 +321,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
               <View style={styles.bar}>
                 <Animated.View style={[styles.barFill, { backgroundColor: "#F3E2BB" }, trailingStyle]} />
                 <Animated.View style={[styles.barFill, { backgroundColor: C.wax }, fillStyle]} />
-                {Array.from({ length: 7 }, (_, n) => <View key={n} style={[styles.tick, { left: `${(n + 1) * 12.5}%` }]} />)}
+                {fightHealthTicks(mode, fight.maxHp).map((tick) => <View key={tick} style={[styles.tick, { left: `${tick * 100}%` }]} />)}
               </View>
             </View>
             <View style={styles.hudRow}>
@@ -349,7 +360,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
         {phase === "finished" && fight.end !== "won" && <View style={styles.overlay}>
           <View style={styles.card}>
             <Text accessibilityRole="header" style={styles.title}>{errorText ?? ending}</Text>
-            {fight.end === "lost" && mode === "corrupted" && !busy && !error && <Text style={styles.detail}>{x.triesLeft(attempts)}</Text>}
+            {fight.end === "lost" && mode === "corrupted" && attempts > 0 && !busy && !error && <Text style={styles.detail}>{x.triesLeft(attempts)}</Text>}
             {home && <Action label={x.retry} onPress={() => void start()} />}
             <Action label={s("close")} disabled={busy} onPress={home ? home.onBack : () => onClose(false)} />
           </View>
