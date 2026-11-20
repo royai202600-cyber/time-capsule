@@ -8,6 +8,7 @@ import type { VesselKind } from "../../components/Vessel";
 import type { BallKind } from "../../services/game";
 import { C, sans, serif } from "../../theme";
 import { BOSS_Y, FLIGHT, GROUND, LANES, type Attack, type FightFrame, type Flight } from "./dodgeFightRules";
+import { fightHandPoint, RELEASE_ANGLE, RIG_CANVAS, RIG_FEET, RIG_WIDTH, type HandGeometry } from "./fightRigs";
 import { RestoreLightBurst } from "./RestoreResult";
 
 type Scene = { width: number; height: number; motion: SharedValue<FightFrame>; reduced: boolean };
@@ -82,19 +83,31 @@ export function FightBoss({ width, height, motion, reduced, vessel, health, warn
   </View>;
 }
 
-function Mote({ offset, width, height, motion }: Omit<Scene, "reduced"> & { offset: number }) {
+type BallScene = Scene & { hand: HandGeometry };
+const ballSize = (width: number) => width * .085;
+
+function handAt(width: number, height: number, lane: number, jump: number, hand: HandGeometry, angle: number) {
+  "worklet";
+  const scale = width * RIG_WIDTH / RIG_CANVAS;
+  const [x, y] = fightHandPoint(hand, angle);
+  return [lane * width + (x - RIG_CANVAS / 2) * scale,
+    height * (GROUND - jump * .17) + (y - RIG_FEET) * scale] as const;
+}
+
+function Mote({ offset, width, height, motion, hand }: Omit<BallScene, "reduced"> & { offset: number }) {
   const style = useAnimatedStyle(() => {
-    const { now, x, charge, jump, scatterAt, scatterX } = motion.value;
+    const { now, x, charge, jump, wind, scatterAt, scatterX } = motion.value;
     const scatter = Math.min(1, (now - scatterAt) / .25);
     const k = (now * 1.6 + offset) % 1;
     const angle = offset * Math.PI * 2 + now * 1.4;
-    const r = width * (scatter < 1 ? lerp(.02, .22, scatter) : lerp(.2, .02, k));
+    const r = width * (scatter < 1 ? lerp(.02, .22, scatter) : lerp(.18, .02, k));
     const opacity = scatter < 1 ? 1 - scatter : Math.sin(k * Math.PI) * Math.min(1, charge * 2);
+    const [handX, handY] = handAt(width, height, scatter < 1 ? scatterX : x, jump, hand, wind * RELEASE_ANGLE);
     return {
       opacity,
       transform: [
-        { translateX: (scatter < 1 ? scatterX : x) * width + Math.cos(angle) * r },
-        { translateY: height * (GROUND - jump * .17) - width * .344 + Math.sin(angle) * r * .9 },
+        { translateX: handX + Math.cos(angle) * r },
+        { translateY: handY + Math.sin(angle) * r * .9 },
         { scale: lerp(.5, 1.1, k) },
       ],
     };
@@ -102,24 +115,25 @@ function Mote({ offset, width, height, motion }: Omit<Scene, "reduced"> & { offs
   return <Animated.View style={[styles.mote, { width: width * .018, height: width * .018 }, style]} />;
 }
 
-export function GatherBall({ width, height, motion, reduced, ball }: Scene & { ball: BallKind }) {
-  const size = width * .13;
+export function GatherBall({ width, height, motion, reduced, hand, ball }: BallScene & { ball: BallKind }) {
+  const size = ballSize(width);
   const gather = useAnimatedStyle(() => {
     const { now, x, jump, charge, wind } = motion.value;
     const p = 1 - (1 - charge) ** 2;
-    const beat = reduced ? 0 : Math.sin(now * lerp(6, 22, charge)) * .05 * charge;
+    const beat = reduced ? 0 : Math.sin(now * lerp(6, 22, charge)) * .05 * charge * (1 - wind);
+    const [handX, handY] = handAt(width, height, x, jump, hand, reduced ? 0 : wind * RELEASE_ANGLE);
     return {
       opacity: Math.min(1, charge * 4),
       transform: [
-        { translateX: x * width - size / 2 },
-        { translateY: height * (GROUND - jump * .17) - width * (wind ? .36 : .344) - size / 2 },
+        { translateX: handX - size / 2 },
+        { translateY: handY - size / 2 },
         { scale: lerp(.35, 1, p) + beat },
       ],
     };
   });
   const fill = useAnimatedProps(() => ({ strokeDashoffset: fillLength * (1 - motion.value.charge) }));
   return <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-    {!reduced && motes.map((offset) => <Mote key={offset} offset={offset} width={width} height={height} motion={motion} />)}
+    {!reduced && motes.map((offset) => <Mote key={offset} offset={offset} width={width} height={height} motion={motion} hand={hand} />)}
     <Animated.View style={[{ position: "absolute", width: size, height: size }, gather]}>
       <View style={{ position: "absolute", width: "210%", height: "210%", top: "-55%", left: "-55%" }}><Glow /></View>
       <Svg width="144%" height="144%" viewBox="0 0 40 40" style={{ position: "absolute", top: "-22%", left: "-22%" }}>
@@ -132,16 +146,16 @@ export function GatherBall({ width, height, motion, reduced, ball }: Scene & { b
   </View>;
 }
 
-function InFlight({ width, height, motion, reduced, flight, delay = 0 }: Scene & { flight: Flight; delay?: number }) {
-  const size = width * .13;
+function InFlight({ width, height, motion, reduced, hand, flight, delay = 0 }: BallScene & { flight: Flight; delay?: number }) {
+  const size = ballSize(width);
   const style = useAnimatedStyle(() => {
     const age = motion.value.now - flight.at - delay;
     const k = Math.max(0, Math.min(1, age / FLIGHT));
-    const startY = height * GROUND - width * .344;
+    const [startX, startY] = handAt(width, height, flight.x, 0, hand, reduced ? 0 : RELEASE_ANGLE);
     return {
       opacity: age < 0 ? 0 : delay === 0 ? 1 : .36 - delay * 1.6,
       transform: [
-        { translateX: width * lerp(flight.x, .5, k) - size / 2 },
+        { translateX: lerp(startX, width * .5, k) - size / 2 },
         { translateY: lerp(startY, height * BOSS_Y, k) - Math.sin(Math.PI * k) * height * .16 - size / 2 },
         { scale: lerp(1, .42, k ** .8) },
         { rotate: `${reduced ? 0 : k * 720}deg` },
@@ -151,7 +165,7 @@ function InFlight({ width, height, motion, reduced, flight, delay = 0 }: Scene &
   return <Animated.Image source={gameArt.ball[flight.ball]} resizeMode="contain" style={[{ position: "absolute", width: size, height: size }, style]} />;
 }
 
-export function PlayerThrow(props: Scene & { flight: Flight }) {
+export function PlayerThrow(props: BallScene & { flight: Flight }) {
   return <View pointerEvents="none" style={StyleSheet.absoluteFill}>
     {!props.reduced && [.15, .1, .05].map((delay) => <InFlight key={delay} {...props} delay={delay} />)}
     <InFlight {...props} />

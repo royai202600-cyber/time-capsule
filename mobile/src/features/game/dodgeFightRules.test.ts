@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { CHARGE, DodgeFight, dodgeSwipe, fightHealthTicks, FLIGHT, LIVES, WIND, fightHealth } from "./dodgeFightRules";
 
 const stock = { wax: 30, gold: 2 };
-function advance(fight: DodgeFight, seconds: number, remote = false) {
-  for (let elapsed = 0; elapsed < seconds; elapsed += .01) fight.advance(Math.min(.01, seconds - elapsed), remote);
+function advance(fight: DodgeFight, seconds: number) {
+  for (let elapsed = 0; elapsed < seconds; elapsed += .01) fight.advance(Math.min(.01, seconds - elapsed));
 }
 
 describe("dodge fight rules", () => {
@@ -16,7 +16,7 @@ describe("dodge fight rules", () => {
   it("gathers, winds up, launches, then hits for one wax damage", () => {
     const fight = new DodgeFight("corrupted", "common", stock, () => .5);
     advance(fight, CHARGE + .02);
-    expect(fight.frame.wind).toBe(true);
+    expect(fight.frame.wind).toBeGreaterThan(0);
     expect(fight.flight).toBeNull();
     advance(fight, WIND);
     expect(fight.flight?.ball).toBe("wax");
@@ -53,7 +53,7 @@ describe("dodge fight rules", () => {
     expect(fight.ball).toBe("wax");
     advance(fight, .62);
     expect(fight.hp).toBe(18);
-    advance(fight, 1.1);
+    advance(fight, 1.3);
     expect(fight.hp).toBe(17);
     expect(fight.end).toBe("empty");
   });
@@ -158,61 +158,28 @@ describe("dodge fight rules", () => {
     expect(fight.lives).toBe(3);
   });
 
-  it("uses early server HP at impact while keeping the ball in flight", () => {
-    const fight = new DodgeFight("corrupted", "rare", stock, () => .5, { health: 2, maxHealth: 5 });
-    advance(fight, 1.1, true);
-    const flight = fight.flight!;
-    expect(flight.ball).toBe("wax");
-    expect(fight.awaitingThrow).toBe(true);
-    fight.confirmThrow(flight, 0);
-    expect(fight.hp).toBe(2);
-    expect(fight.end).toBeNull();
-    advance(fight, FLIGHT, true);
-    expect(fight.hp).toBe(0);
-    expect(fight.damage).toBe(2);
+  it("counts the balls actually thrown and resolves damage locally", () => {
+    const fight = new DodgeFight("corrupted", "rare", { wax: 1, gold: 2 }, () => .5);
+    advance(fight, 1.14);
+    expect(fight.used).toEqual({ wax: 1, gold: 0 });
+    expect(fight.hp).toBe(5);
+    advance(fight, FLIGHT);
+    expect(fight.hp).toBe(4);
+    for (let n = 0; n < 14 && !fight.end; n++) advance(fight, .5);
     expect(fight.end).toBe("won");
+    expect(fight.used).toEqual({ wax: 1, gold: 2 });
+    expect(fight.stock).toEqual({ wax: 0, gold: 0 });
   });
 
-  it("shows the impact and keeps movement, attacks and gathering going during a slow response", () => {
-    const fight = new DodgeFight("landmark", "common", stock, () => .5);
-    advance(fight, 1.1, true);
-    const flight = fight.flight!;
-    fight.input("right");
-    advance(fight, .75, true);
-    expect(fight.frame.x).toBeCloseTo(.8);
-    expect(fight.flight).toBeNull();
-    expect(fight.hp).toBe(20);
-    expect(fight.damage).toBe(1);
-    const impactAt = fight.frame.hitAt;
-    expect(impactAt).toBeGreaterThan(flight.at);
-    expect(fight.attack?.lanes).toEqual([2]);
+  it("does not count a charge interrupted before launch or free home throws", () => {
+    const fight = new DodgeFight("corrupted", "common", stock);
+    advance(fight, CHARGE);
     fight.input("left");
-    advance(fight, 1.55, true);
-    expect(fight.frame.x).toBeCloseTo(.5);
-    expect(fight.frame.charge).toBe(1);
-    expect(fight.lives).toBe(3);
-    expect(fight.stock.wax).toBe(stock.wax - 1);
-    expect(fight.flight).toBeNull();
-    fight.confirmThrow(flight, 19);
-    expect(fight.hp).toBe(19);
-    expect(fight.frame.hitAt).toBe(impactAt);
-    advance(fight, .2, true);
-    expect(fight.flight?.ball).toBe("wax");
-    expect(fight.stock.wax).toBe(stock.wax - 2);
-  });
-
-  it("waits for the last launched throw before resolving the third lost seal", () => {
-    const fight = new DodgeFight("landmark", "common", stock, () => .5);
-    advance(fight, 1.1, true);
-    const flight = fight.flight!;
-    advance(fight, .8, true);
-    fight.lives = 1;
-    advance(fight, 1.5, true);
-    expect(fight.lives).toBe(0);
-    expect(fight.end).toBeNull();
-    expect(fight.awaitingThrow).toBe(true);
-    fight.confirmThrow(flight, 19);
-    expect(fight.end).toBe("lost");
+    expect(fight.used).toEqual({ wax: 0, gold: 0 });
+    const home = new DodgeFight("home", "common", { wax: 0, gold: 0 });
+    advance(home, 2);
+    expect(home.hp).toBe(2);
+    expect(home.used).toEqual({ wax: 0, gold: 0 });
   });
 
   it("marks hits on the health bar and recognizes swipes from movement", () => {

@@ -16,8 +16,9 @@ const strings = {
     brokeFree: "差一點，再試一次",
     gone: "它飄走了",
     noBalls: "沒有蠟球了，去驛站轉一轉",
-    throwTooSoon: "投得太快了，請再試一次。",
-    throwNetwork: "連線中斷，請重新挑戰。",
+    finishTooSoon: "挑戰結束得太快，請重新挑戰。",
+    finishDamage: "投擲的蠟球不足以修復膠囊。",
+    fightNetwork: "連線中斷，請再試一次。",
     expired: "這個膠囊已經消失了",
     error: "暫時沒有回應，請再試一次。",
     tooFar: "距離太遠了，走近一點再試。",
@@ -57,8 +58,9 @@ const strings = {
     brokeFree: "So close. Try again",
     gone: "It drifted away",
     noBalls: "Out of wax balls. Spin a Waypost",
-    throwTooSoon: "That throw was too soon. Try again.",
-    throwNetwork: "Connection lost. Start the fight again.",
+    finishTooSoon: "The fight ended too quickly. Start it again.",
+    finishDamage: "The throws did not do enough damage to restore the capsule.",
+    fightNetwork: "Connection lost. Please try again.",
     expired: "This capsule has gone",
     error: "No answer just now. Please try again.",
     tooFar: "Too far away. Walk closer and try again.",
@@ -89,7 +91,8 @@ const strings = {
 export type GameKey = keyof typeof strings.zh;
 export const errorKey = (code: GameErrorCode): GameKey =>
   code === "no_balls" ? "noBalls" : code === "too_far" ? "tooFar" : code === "too_fast" ? "tooFast" : code === "cooldown" ? "cooldown"
-    : code === "network" ? "throwNetwork" : code === "too_soon" ? "throwTooSoon"
+    : code === "network" ? "fightNetwork" : code === "too_soon" ? "finishTooSoon"
+    : code === "not_enough_damage" ? "finishDamage"
     : code === "expired" || code === "no_attempts" || code === "already_caught" ? "expired" : "error";
 export function useGameText() {
   const { language } = useLanguage();

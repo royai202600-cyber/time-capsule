@@ -6,14 +6,57 @@ create table private.corrupted_fights (
   spawn_id text not null,
   max_health integer not null check (max_health between 3 and 5),
   health integer not null check (health between 1 and max_health),
+  started_at timestamptz not null default clock_timestamp(),
   expires_at timestamptz not null,
-  last_throw_at timestamptz,
   unique (user_id, spawn_id)
 );
 alter table private.corrupted_fights enable row level security;
 revoke all on private.corrupted_fights from public, anon, authenticated, service_role;
 
-alter table public.landmark_attempts add column last_throw_at timestamptz;
+-- Keep accepted outcomes after the fight expires so a lost reply can be retried.
+create table private.fight_finish_receipts (
+  kind text not null check (kind in ('corrupted','landmark')),
+  fight_id uuid not null,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  response jsonb not null,
+  primary key (kind,fight_id)
+);
+create index fight_finish_receipts_user_idx on private.fight_finish_receipts (user_id);
+alter table private.fight_finish_receipts enable row level security;
+revoke all on private.fight_finish_receipts from public, anon, authenticated, service_role;
+
+-- Serialize receipts and ball spending with legacy actions using the same player lock.
+create function private.fight_finish_receipt(p_kind text,p_fight uuid)
+returns jsonb language plpgsql set search_path = '' as $$
+declare accepted jsonb;
+begin
+  perform 1 from public.player_game where user_id=auth.uid() for update;
+  if not found then raise exception 'expired'; end if;
+  select r.response into accepted from private.fight_finish_receipts r
+    where r.kind=p_kind and r.fight_id=p_fight and r.user_id=auth.uid();
+  return accepted;
+end $$;
+
+create function private.spend_fight_balls(
+  p_result text,p_wax_used integer,p_gold_used integer,p_health integer,
+  p_started_at timestamptz,p_player public.player_game
+)
+returns public.player_game language plpgsql set search_path = '' as $$
+declare player public.player_game;
+begin
+  if p_result is null or p_result not in ('won','lost')
+     or p_wax_used is null or p_gold_used is null or p_wax_used<0 or p_gold_used<0
+    then raise exception 'rejected'; end if;
+  if p_player.wax_balls<p_wax_used or p_player.gold_balls<p_gold_used
+    then raise exception 'no_balls'; end if;
+  if p_result='won' and p_wax_used+2::bigint*p_gold_used<p_health
+    then raise exception 'not_enough_damage'; end if;
+  if extract(epoch from clock_timestamp()-p_started_at)<(p_wax_used::bigint+p_gold_used)*0.8
+    then raise exception 'too_soon'; end if;
+  update public.player_game set wax_balls=wax_balls-p_wax_used,gold_balls=gold_balls-p_gold_used
+    where user_id=auth.uid() returning * into strict player;
+  return player;
+end $$;
 update private.game_config set landmark_cracks=20, landmark_seconds=150 where singleton;
 
 create function private.corrupted_target(
@@ -198,73 +241,36 @@ begin
   return next;
 end $$;
 
-create function public.corrupted_fight_throw(
-  p_fight uuid, p_lat double precision, p_lng double precision, p_accuracy double precision, p_ball text
+create function public.corrupted_fight_finish(
+  p_fight uuid,p_result text,p_wax_used integer,p_gold_used integer,
+  p_lat double precision,p_lng double precision,p_accuracy double precision
 )
-returns table(result text, health integer, vessel text, copies integer, stars integer,
-  is_new boolean, xp_gained integer, wax_balls integer, gold_balls integer, attempts_left integer)
-language plpgsql security definer set search_path = '' as $$
+returns jsonb language plpgsql security definer set search_path = '' as $$
 declare
   player public.player_game;
   cfg private.game_config;
   target record;
   fight private.corrupted_fights;
-  thrown_at timestamptz;
+  reward record;
+  response jsonb;
 begin
-  if p_ball is null or p_ball not in ('wax','gold') then raise exception 'rejected'; end if;
+  response := private.fight_finish_receipt('corrupted',p_fight);
+  if response is not null then return response; end if;
+
+  select * into fight from private.corrupted_fights where id=p_fight and user_id=auth.uid() for update;
+  if not found or fight.expires_at<=clock_timestamp() then raise exception 'expired'; end if;
   player := private.track_position(p_lat,p_lng,p_accuracy);
-  select * into fight from private.corrupted_fights where id=p_fight and user_id=auth.uid();
-  if not found or fight.expires_at<=clock_timestamp() then raise exception 'expired'; end if;
   select * into strict cfg from private.game_config where singleton;
   select * into strict target from private.corrupted_target(fight.spawn_id,p_lat,p_lng,cfg);
-
-  thrown_at := clock_timestamp();
-  if thrown_at<fight.last_throw_at+interval '800 milliseconds' then raise exception 'too_soon'; end if;
-  player := private.fight_spend_ball(p_ball,player);
-  health := greatest(0,fight.health-case when p_ball='gold' then 2 else 1 end);
-  vessel := target.vessel;
-  attempts_left := target.attempts_left;
-  is_new := false;
-  xp_gained := 0;
-  result := 'hit';
-  if health=0 then
-    delete from private.corrupted_fights where id=p_fight;
-    attempts_left := attempts_left-1;
-    select f.copies,f.stars,f.is_new,f.xp_gained into copies,stars,is_new,xp_gained
-      from private.finish_corrupted_try(fight.spawn_id,vessel,target.spot_id,target.quest_spawn,
-        p_lat,p_lng,true,attempts_left,cfg) f;
-    result := 'restored';
-  else
-    update private.corrupted_fights f set health=corrupted_fight_throw.health, last_throw_at=thrown_at
-      where f.id=p_fight;
-  end if;
-  wax_balls := player.wax_balls;
-  gold_balls := player.gold_balls;
-  return next;
-end $$;
-
-create function public.corrupted_fight_loss(
-  p_fight uuid, p_lat double precision, p_lng double precision, p_accuracy double precision
-)
-returns table(result text, attempts_left integer)
-language plpgsql security definer set search_path = '' as $$
-declare
-  cfg private.game_config;
-  target record;
-  fight private.corrupted_fights;
-begin
-  perform private.track_position(p_lat,p_lng,p_accuracy);
-  select * into fight from private.corrupted_fights where id=p_fight and user_id=auth.uid();
-  if not found or fight.expires_at<=clock_timestamp() then raise exception 'expired'; end if;
-  select * into strict cfg from private.game_config where singleton;
-  select * into strict target from private.corrupted_target(fight.spawn_id,p_lat,p_lng,cfg);
-
+  player := private.spend_fight_balls(p_result,p_wax_used,p_gold_used,fight.health,fight.started_at,player);
+  select * into strict reward from private.finish_corrupted_try(fight.spawn_id,target.vessel,target.spot_id,target.quest_spawn,
+    p_lat,p_lng,p_result='won',target.attempts_left-1,cfg);
+  response := jsonb_build_object('result',p_result,'vessel',target.vessel,
+    'copies',reward.copies,'stars',reward.stars,'is_new',reward.is_new,'xp_gained',reward.xp_gained,
+    'wax_balls',player.wax_balls,'gold_balls',player.gold_balls,'attempts_left',target.attempts_left-1);
   delete from private.corrupted_fights where id=p_fight;
-  attempts_left := target.attempts_left-1;
-  perform private.finish_corrupted_try(fight.spawn_id,target.vessel,target.spot_id,target.quest_spawn,
-    p_lat,p_lng,false,attempts_left,cfg);
-  result := 'lost';
-  return next;
+  insert into private.fight_finish_receipts values('corrupted',p_fight,auth.uid(),response);
+  return response;
 end $$;
 
 create or replace function public.landmark_start(
@@ -319,103 +325,76 @@ begin
   return next;
 end $$;
 
-create or replace function public.landmark_hit(
-  p_attempt uuid, p_lat double precision, p_lng double precision, p_accuracy double precision,
-  p_ball text, p_ring double precision default null
+-- The legacy landmark_hit implementation and signature stay available to the flick screen.
+create function public.landmark_finish(
+  p_fight uuid,p_result text,p_wax_used integer,p_gold_used integer,
+  p_lat double precision,p_lng double precision,p_accuracy double precision
 )
-returns table(result text, cracks integer, expires_at timestamptz, vessel text, copies integer,
-  stars integer, is_new boolean, xp_gained integer, wax_balls integer, gold_balls integer)
-language plpgsql security definer set search_path = '' as $$
+returns jsonb language plpgsql security definer set search_path = '' as $$
 declare
+  response jsonb;
   player public.player_game;
   cfg private.game_config;
   attempt public.landmark_attempts;
   post public.public_capsule_spots;
   target record;
-  damage integer;
   reward text;
-  thrown_at timestamptz;
+  is_new boolean := false;
+  xp_gained integer := 0;
 begin
-  if p_ball is null or p_ball not in ('wax','gold') then raise exception 'rejected'; end if;
+  response := private.fight_finish_receipt('landmark',p_fight);
+  if response is not null then return response; end if;
+
   player := private.track_position(p_lat,p_lng,p_accuracy);
   select * into strict cfg from private.game_config where singleton;
-  select * into strict target from private.active_landmark_attempt(p_attempt,p_lat,p_lng,cfg);
+  select * into strict target from private.active_landmark_attempt(p_fight,p_lat,p_lng,cfg);
   attempt := target.attempt;
   post := target.waypost;
-  thrown_at := clock_timestamp();
-  if attempt.expires_at<=thrown_at then raise exception 'expired'; end if;
-  if thrown_at<attempt.last_throw_at+interval '800 milliseconds' then raise exception 'too_soon'; end if;
-  player := private.fight_spend_ball(p_ball,player);
-
-  -- p_ring is only retained for the old client's request signature.
-  damage := case when p_ball='gold' then 2 else 1 end;
-  update public.landmark_attempts a
-    set cracks_left=greatest(0,a.cracks_left-damage), last_throw_at=thrown_at,
-      won_at=case when a.cracks_left<=damage then thrown_at end
-    where id=p_attempt returning a.cracks_left,a.expires_at into cracks,expires_at;
-  result := 'hit';
-  is_new := false;
-  xp_gained := 0;
-  if cracks=0 then
+  player := private.spend_fight_balls(p_result,p_wax_used,p_gold_used,attempt.cracks_left,attempt.started_at,player);
+  if p_result='won' then
+    update public.landmark_attempts set cracks_left=0,won_at=clock_timestamp() where id=p_fight;
     select id into reward from public.vessels where earned_place=post.place;
     if reward is null then raise exception 'missing landmark vessel'; end if;
-    vessel := reward;
-    is_new := not exists (select 1 from public.owned_vessels o
-      where o.user_id=auth.uid() and o.vessel=reward);
+    is_new := not exists (select 1 from public.owned_vessels where user_id=auth.uid() and vessel=reward);
     insert into public.owned_vessels(user_id,vessel,copies)
       values(auth.uid(),reward,null) on conflict on constraint owned_vessels_pkey do nothing;
-    stars := 1;
     insert into public.passport_stamps(user_id,place,first_at,how_earned)
       values(auth.uid(),post.place,now(),'landmark') on conflict (user_id,place) do nothing;
     xp_gained := private.award_xp(auth.uid(),'landmark_win',post.place,cfg.xp_landmark);
-    result := 'won';
     begin
       perform private.city_hunt_record_quest('landmark',post.id,p_lat,p_lng);
     exception when others then
       raise warning 'hunt landmark bookkeeping failed: %',sqlerrm;
     end;
+  else
+    update public.landmark_attempts set expires_at=least(expires_at,clock_timestamp()) where id=p_fight;
   end if;
-  wax_balls := player.wax_balls;
-  gold_balls := player.gold_balls;
-  return next;
-end $$;
-
-create function public.landmark_loss(
-  p_attempt uuid, p_lat double precision, p_lng double precision, p_accuracy double precision
-)
-returns table(result text, cracks integer, expires_at timestamptz)
-language plpgsql security definer set search_path = '' as $$
-declare
-  cfg private.game_config;
-begin
-  perform private.track_position(p_lat,p_lng,p_accuracy);
-  select * into strict cfg from private.game_config where singleton;
-  perform private.active_landmark_attempt(p_attempt,p_lat,p_lng,cfg);
-  update public.landmark_attempts a set expires_at=least(a.expires_at,clock_timestamp())
-    where a.id=p_attempt returning a.cracks_left,a.expires_at into cracks,expires_at;
-  result := 'lost';
-  return next;
+  response := jsonb_build_object('result',p_result,'vessel',reward,'copies',null,
+    'stars',case when p_result='won' then 1 else 0 end,'is_new',is_new,'xp_gained',xp_gained,
+    'wax_balls',player.wax_balls,'gold_balls',player.gold_balls,'attempts_left',0);
+  insert into private.fight_finish_receipts values('landmark',p_fight,auth.uid(),response);
+  return response;
 end $$;
 
 revoke all on function
   private.corrupted_target(text,double precision,double precision,private.game_config),
   private.fight_spend_ball(text,public.player_game),
   private.finish_corrupted_try(text,text,uuid,private.quest_spawns,double precision,double precision,boolean,integer,private.game_config),
-  private.active_landmark_attempt(uuid,double precision,double precision,private.game_config)
+  private.active_landmark_attempt(uuid,double precision,double precision,private.game_config),
+  private.fight_finish_receipt(text,uuid),
+  private.spend_fight_balls(text,integer,integer,integer,timestamptz,public.player_game)
 from public, anon, authenticated, service_role;
 
 revoke all on function
   public.corrupted_fight_start(text,double precision,double precision,double precision),
-  public.corrupted_fight_throw(uuid,double precision,double precision,double precision,text),
-  public.corrupted_fight_loss(uuid,double precision,double precision,double precision),
-  public.landmark_loss(uuid,double precision,double precision,double precision)
+  public.corrupted_fight_finish(uuid,text,integer,integer,double precision,double precision,double precision),
+  public.landmark_finish(uuid,text,integer,integer,double precision,double precision,double precision)
 from public, anon, authenticated, service_role;
 
 grant execute on function
   public.corrupted_fight_start(text,double precision,double precision,double precision),
-  public.corrupted_fight_throw(uuid,double precision,double precision,double precision,text),
-  public.corrupted_fight_loss(uuid,double precision,double precision,double precision),
-  public.landmark_loss(uuid,double precision,double precision,double precision)
+  public.corrupted_fight_finish(uuid,text,integer,integer,double precision,double precision,double precision),
+  public.landmark_finish(uuid,text,integer,integer,double precision,double precision,double precision)
 to authenticated;
 
 notify pgrst, 'reload schema';

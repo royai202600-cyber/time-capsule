@@ -2,18 +2,18 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Animated as RNAnimated, AppState, Easing, Image, PanResponder, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withDelay, withTiming } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { characters, sealWax } from "../../art/manifest";
+import { sealWax } from "../../art/manifest";
 import { ArtIcon } from "../../components/ArtIcon";
-import { figureFor } from "../../components/Figure";
 import { haptics } from "../../components/haptics";
 import { useLanguage } from "../../i18n";
 import { DODGE_FIGHT_RPC, dodgeFights, GameError, type DodgeSession, type DodgeTarget } from "../../services/game";
 import { C, sans, serif, shadows } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
 import { VESSELS } from "../shop/strings";
-import { DodgeFight, dodgeSwipe, fightHealthTicks, initialFrame, LIVES, type DodgeInput, type Flight } from "./dodgeFightRules";
+import { DodgeFight, dodgeSwipe, fightHealthTicks, initialFrame, LIVES, type DodgeInput } from "./dodgeFightRules";
 import { FightAttack, FightBoss, GatherBall, HitEdge, PlayerThrow } from "./DodgeEffects";
 import { DodgePlayer } from "./DodgePlayer";
+import { fightRigFor } from "./fightRigs";
 import fightStrings from "./dodgeStrings";
 import { noWebSelect, useNoWebDrag } from "./noWebDrag";
 import { RestoreResultCard, type Restored } from "./RestoreResult";
@@ -53,6 +53,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   const [paused, setPaused] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<ReturnType<typeof errorKey> | null>(null);
+  const [submission, setSubmission] = useState<"idle" | "saving" | "retry" | "refused">("idle");
   const [result, setResult] = useState<Restored | null>(null);
   const [, render] = useState(0);
   const engine = useRef<DodgeFight | null>(null);
@@ -64,9 +65,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   const away = useRef(false);
   const resolving = useRef(false);
   const noticeDone = useRef(false);
-  const outcome = useRef<Restored | null>(null);
   const finish = useRef<(fight: DodgeFight) => void>(() => {});
-  const remoteHit = useRef<(flight: Flight) => void>(() => {});
   const motion = useSharedValue(initialFrame);
   const finishTime = useSharedValue(0);
   const burst = useRef(new RNAnimated.Value(0)).current;
@@ -75,7 +74,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   const fillStyle = useAnimatedStyle(() => ({ width: `${fill.value * 100}%` }));
   const trailingStyle = useAnimatedStyle(() => ({ width: `${trailing.value * 100}%` }));
   const health = fight.hp / fight.maxHp;
-  const portrait = useMemo(() => ({ body: figureFor(avatar), feetY: characters.feetY }), [avatar]);
+  const portrait = fightRigFor(avatar);
   const redraw = () => render((n) => n + 1);
   const describeError = (e: unknown) => errorKey(e instanceof GameError ? e.code : "unknown");
 
@@ -134,6 +133,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
       } : undefined);
       next.chooseBall(fight.selected);
       engine.current = next;
+      setSubmission("idle");
       finishTime.value = 0;
       motion.value = { ...next.frame };
       noticeDone.current = false;
@@ -151,7 +151,46 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   const close = () => {
     if (!resolving.current && !(home && fight.end === "won")) {
       if (home) home.onQuit();
-      else onClose(fight.end === "won");
+      else onClose(fight.end === "won" && submission === "idle");
+    }
+  };
+
+  const celebrate = (out: Restored) => {
+    void haptics.success();
+    burst.setValue(0);
+    RNAnimated.timing(burst, { toValue: 1, duration: reduced ? 420 : 1150, easing: Easing.linear, useNativeDriver: !web }).start(({ finished }) => {
+      if (!finished || !live.current) return;
+      if (home) onClose(true);
+      else setResult(out);
+    });
+  };
+
+  const submitFinish = async (active: DodgeFight, current: DodgeSession) => {
+    if (resolving.current) return;
+    resolving.current = true;
+    setSubmission("saving");
+    setError(null);
+    try {
+      const reported = active.end === "won" ? "won" : "lost";
+      const out = await dodgeFights.finish({ capsule, landmark }, current, reported, active.used);
+      if (!live.current) return;
+      onState({ ...state, wax_balls: out.wax_balls, gold_balls: out.gold_balls });
+      active.stock = { wax: out.wax_balls, gold: out.gold_balls };
+      setAttempts(out.attempts_left);
+      setSubmission("idle");
+      if (out.result === "won" && out.vessel) celebrate({ ...out, vessel: out.vessel, stars: out.stars ?? 0 });
+      else if (active.end === "won") active.finish("lost");
+    } catch (e) {
+      if (!live.current) return;
+      const network = e instanceof GameError && e.code === "network";
+      if (!network) {
+        active.hp = current.health;
+        active.stock = { ...stock };
+      }
+      setError(describeError(e));
+      setSubmission(network ? "retry" : "refused");
+    } finally {
+      resolving.current = false;
     }
   };
 
@@ -160,60 +199,20 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
     noticeDone.current = true;
     setPhase("finished");
     finishTime.value = withTiming(1, { duration: 1000 });
-    if (active.end === "won") {
-      const out = outcome.current ?? {
-        vessel: capsule.vessel, copies: landmark ? null : 1, stars: 1, is_new: true,
-        xp_gained: home ? 0 : landmark ? 2000 : 600,
-      };
-      void haptics.success();
-      burst.setValue(0);
-      RNAnimated.timing(burst, { toValue: 1, duration: reduced ? 420 : 1150, easing: Easing.linear, useNativeDriver: !web }).start(({ finished }) => {
-        if (!finished || !live.current) return;
-        if (home) onClose(true);
-        else setResult(out);
-      });
+    const usedBalls = active.used.wax + active.used.gold > 0;
+    const submit = active.end === "won" || active.end === "lost" || (active.end === "empty" && usedBalls);
+    if (submit && session.current) {
+      void submitFinish(active, session.current);
       return;
     }
-    if (active.end !== "lost" || home) return;
-    if (!session.current && mode === "corrupted") {
+    if (active.end === "won") {
+      celebrate({ vessel: capsule.vessel, copies: landmark ? null : 1, stars: 1, is_new: true,
+        xp_gained: home ? 0 : landmark ? 2000 : 600 });
+    } else if (submit && mode === "corrupted") {
       const left = Math.max(0, attempts - 1);
       mockLosses.set(capsule.id, { left, expiresAt: Date.parse(capsule.expires_at) });
       setAttempts(left);
     }
-    if (!session.current) return;
-    resolving.current = true;
-    setBusy(true);
-    void dodgeFights.loss({ capsule, landmark }, session.current).then((left) => {
-      if (live.current) setAttempts(left);
-    }).catch((e) => {
-      if (live.current) setError(describeError(e));
-    }).finally(() => {
-      resolving.current = false;
-      if (live.current) setBusy(false);
-    });
-  };
-
-  remoteHit.current = (flight) => {
-    const active = engine.current!;
-    const current = session.current;
-    if (!current) return;
-    const isCurrent = () => live.current && active === engine.current;
-    void dodgeFights.hit({ capsule, landmark }, current, flight.ball, isCurrent).then((out) => {
-      if (!isCurrent()) return;
-      active.stock = { wax: out.wax_balls, gold: out.gold_balls };
-      active.selected = active.ball ?? active.selected;
-      onState({ ...state, wax_balls: out.wax_balls, gold_balls: out.gold_balls });
-      if (out.health === 0) outcome.current = { ...out, stars: out.stars ?? 0 };
-      active.confirmThrow(flight, out.health);
-      redraw();
-      if (active.end) finish.current(active);
-    }).catch((e) => {
-      if (!isCurrent()) return;
-      const key = describeError(e);
-      active.finish(key === "noBalls" ? "empty" : key === "expired" ? "expired" : "error");
-      setError(key);
-      finish.current(active);
-    });
   };
 
   useEffect(() => {
@@ -228,14 +227,11 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
       const expiry = session.current?.expiresAt;
       const remaining = expiry === undefined ? Infinity : (expiry - Date.now()) / 1000;
       active.syncTimer(remaining);
-      if (remaining <= 0 && !active.awaitingThrow) active.finish("expired");
-      else active.advance(last === undefined ? 0 : (now - last) / 1000, remote);
+      if (remaining <= 0) active.finish("expired");
+      else active.advance(last === undefined ? 0 : (now - last) / 1000);
       last = now;
       motion.value = { ...active.frame };
-      if (active.flight && active.flight !== flight) {
-        void haptics.tick();
-        if (remote) remoteHit.current(active.flight);
-      }
+      if (active.flight && active.flight !== flight) void haptics.tick();
       if (active.lives !== lives) void haptics.warn();
       if (active.hp !== hp || active.lives !== lives || active.flight !== flight || active.attack !== attack || active.secondsLeft !== secondsLeft) redraw();
       if (active.end) { finish.current(active); return; }
@@ -243,7 +239,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
     };
     frameId = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(frameId);
-  }, [motion, phase, paused, remote]);
+  }, [motion, phase, paused]);
 
   const playing = phase === "playing" && !paused;
   const input = useRef<(key: DodgeInput) => void>(() => {});
@@ -290,10 +286,12 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
   const boss = name ? `${title} · ${name}` : title;
   const expiredText = landmark ? x.remoteExpired : s("expired");
   const errorText = error === "expired" ? expiredText : error ? s(error) : null;
+  const submitting = submission === "saving";
+  const needsRetry = submission === "retry";
   const ending = fight.end === "empty" ? s("noBalls")
     : fight.end === "expired" ? expiredText
     : fight.end === "timeout" ? s("timeUp")
-    : mode === "corrupted" && fight.end === "lost" && !busy
+    : mode === "corrupted" && fight.end === "lost"
       ? (attempts > 0 ? x.brokeFree : s("gone")) : x.noLives;
 
   return <View style={[styles.root, noWebSelect]} onLayout={(e) => setLayout(e.nativeEvent.layout)}>
@@ -305,11 +303,11 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
         <View pointerEvents="none" style={styles.dim} />
         {arena.width > 0 && <>
           <View style={[StyleSheet.absoluteFill, web ? ({ touchAction: "none" } as object) : null]} {...pan.panHandlers}>
-            <FightBoss {...scene} vessel={capsule.vessel} health={health} warning={fight.attack} damage={fight.damage} burst={burst} finishTime={finishTime} />
+            <FightBoss {...scene} vessel={capsule.vessel} health={submission !== "idle" ? Math.max(.16, health) : health} warning={fight.attack} damage={fight.damage} burst={burst} finishTime={finishTime} />
             <DodgePlayer {...scene} figure={portrait} />
             {fight.attack && <FightAttack {...scene} attack={fight.attack} shotLabel={x.shot} waveLabel={x.wave} />}
-            {playing && fight.ball && <GatherBall {...scene} ball={fight.ball} />}
-            {fight.flight && <PlayerThrow {...scene} flight={fight.flight} />}
+            {playing && fight.ball && <GatherBall {...scene} ball={fight.ball} hand={portrait.hand} />}
+            {fight.flight && <PlayerThrow {...scene} flight={fight.flight} hand={portrait.hand} />}
             <HitEdge motion={motion} finishTime={finishTime} />
           </View>
           <View pointerEvents="box-none" style={styles.hud}>
@@ -333,7 +331,7 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
                 <Pressable accessibilityRole="button" accessibilityLabel={x.otherLanguage} style={styles.pill} onPress={() => setLanguage(language === "zh" ? "en" : "zh")}>
                   <Text style={styles.lang}>{x.languageButton}</Text>
                 </Pressable>
-                {(phase !== "finished" || fight.end === "won") && <Pressable accessibilityRole="button" accessibilityLabel={s("close")} style={styles.pill}
+                {(phase !== "finished" || (fight.end === "won" && submission === "idle")) && <Pressable accessibilityRole="button" accessibilityLabel={s("close")} style={styles.pill}
                   disabled={busy || (!!home && fight.end === "won")} onPress={close}>
                   <ArtIcon name="close" size={19} />
                 </Pressable>}
@@ -357,12 +355,14 @@ export function DodgeFightScreen({ capsule, landmark, home, avatar, state, onSta
             <Action label={x.resume} onPress={() => { if (!away.current) { blocked.current = false; setPaused(false); } }} />
           </View>
         </View>}
-        {phase === "finished" && fight.end !== "won" && <View style={styles.overlay}>
+        {phase === "finished" && (fight.end !== "won" || submission !== "idle") && <View style={styles.overlay}>
           <View style={styles.card}>
-            <Text accessibilityRole="header" style={styles.title}>{errorText ?? ending}</Text>
-            {fight.end === "lost" && mode === "corrupted" && attempts > 0 && !busy && !error && <Text style={styles.detail}>{x.triesLeft(attempts)}</Text>}
+            <Text accessibilityRole="header" style={styles.title}>{submitting ? x.saving : errorText ?? ending}</Text>
+            {submission === "idle" && (fight.end === "lost" || (fight.end === "empty" && fight.used.wax + fight.used.gold > 0))
+              && mode === "corrupted" && attempts > 0 && <Text style={styles.detail}>{x.triesLeft(attempts)}</Text>}
             {home && <Action label={x.retry} onPress={() => void start()} />}
-            <Action label={s("close")} disabled={busy} onPress={home ? home.onBack : () => onClose(false)} />
+            {needsRetry && <Action label={x.retryFinish} onPress={() => { if (session.current) void submitFinish(fight, session.current); }} />}
+            <Action label={s("close")} disabled={submitting} onPress={home ? home.onBack : () => onClose(false)} />
           </View>
         </View>}
         {result && <RestoreResultCard result={result} bottom={0} onCollect={() => onClose(true)} />}

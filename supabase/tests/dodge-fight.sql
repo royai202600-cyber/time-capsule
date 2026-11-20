@@ -12,142 +12,47 @@ declare
   player uuid := gen_random_uuid();
   rival uuid := gen_random_uuid();
   fixture jsonb := pg_temp.dodge_fixture();
-  spawns jsonb := fixture->'spawns';
+  spawn text := fixture->'spawns'->'common'->>0;
   lat double precision := (fixture->>'lat')::double precision;
   lng double precision := (fixture->>'lng')::double precision;
-  post uuid := (fixture->>'waypost')::uuid;
-  cfg private.game_config;
-  tier text;
-  spawn text;
-  hp integer;
   fight record;
   resumed record;
-  out record;
-  first_fight uuid;
-  prev_balance integer;
-  request text;
+  outcome jsonb;
 begin
   insert into auth.users(id,email) values (player,'df1-'||player||'@example.invalid'),
     (rival,'df1-'||rival||'@example.invalid');
-  insert into public.profiles(id,name) values (player,'DF1 rollback'),(rival,'DF1 rival') on conflict do nothing;
+  insert into public.profiles(id,name) values (player,'DF1 player'),(rival,'DF1 rival') on conflict do nothing;
   perform set_config('request.jwt.claim.sub',player::text,true);
-  perform private.ensure_player(player);
-  update public.player_game set wax_balls=100,gold_balls=100 where user_id=player;
-  select * into strict cfg from private.game_config where singleton;
-  assert cfg.landmark_cracks=20 and cfg.landmark_seconds=150;
-
-  for tier,hp in select * from (values ('common',3),('uncommon',4),('rare',5)) v loop
-    spawn := spawns->tier->>0;
-    select * into strict fight from public.corrupted_fight_start(spawn,lat,lng,10);
-    assert fight.health=hp and fight.max_health=hp and fight.attempts_left=cfg.max_attempts;
-    for i in 1..hp loop
-      select * into strict out from public.corrupted_fight_throw(fight.fight_id,lat,lng,10,'wax');
-      assert out.health=hp-i;
-      if i<hp then
-        assert out.result='hit' and out.attempts_left=cfg.max_attempts and out.xp_gained=0;
-        if i=1 then
-          request := format('select public.corrupted_fight_throw(%L,%L,%L,10,''wax'')',fight.fight_id,lat,lng);
-          perform pg_temp.expect_fight_error(request,'too_soon');
-          select * into strict resumed from public.corrupted_fight_start(spawn,lat,lng,10);
-          assert resumed.fight_id=fight.fight_id and resumed.health=hp-1;
-          assert (select wax_balls=out.wax_balls from public.player_game where user_id=player);
-        end if;
-        update private.corrupted_fights set last_throw_at=clock_timestamp()-interval '800 milliseconds'
-          where id=fight.fight_id;
-      else
-        assert out.result='restored' and out.attempts_left=cfg.max_attempts-1 and out.stars=1;
-        assert out.is_new and out.copies=(select copies_per_catch from private.vessel_copy_settings where singleton);
-        assert out.xp_gained=cfg.xp_catch+cfg.xp_new_vessel+
-          case when tier='common' then cfg.xp_first_daily_catch else 0 end;
-        perform pg_temp.expect_fight_error(format('select public.corrupted_fight_start(%L,%L,%L,10)',spawn,lat,lng),'already_caught');
-      end if;
-    end loop;
-  end loop;
-
-  spawn := spawns->'common'->>1;
   select * into strict fight from public.corrupted_fight_start(spawn,lat,lng,10);
-  first_fight := fight.fight_id;
-  select * into strict out from public.corrupted_fight_throw(first_fight,lat,lng,10,'gold');
-  assert out.result='hit' and out.health=1 and out.gold_balls=99;
-  prev_balance := out.gold_balls;
+  select * into strict resumed from public.corrupted_fight_start(spawn,lat,lng,10);
+  assert resumed.fight_id=fight.fight_id and fight.health=3;
+
   perform set_config('request.jwt.claim.sub',rival::text,true);
-  perform pg_temp.expect_fight_error(format('select public.corrupted_fight_loss(%L,%L,%L,10)',first_fight,lat,lng),'expired');
+  perform pg_temp.expect_fight_error(format('select public.corrupted_fight_finish(%L,''lost'',0,0,%L,%L,10)',fight.fight_id,lat,lng),'expired');
   perform set_config('request.jwt.claim.sub',player::text,true);
-  for i in 1..cfg.max_attempts loop
-    select * into strict out from public.corrupted_fight_loss(fight.fight_id,lat,lng,10);
-    assert out.result='lost' and out.attempts_left=cfg.max_attempts-i;
-    perform pg_temp.expect_fight_error(format('select public.corrupted_fight_loss(%L,%L,%L,10)',fight.fight_id,lat,lng),'expired');
-    if i<cfg.max_attempts then
-      select * into strict fight from public.corrupted_fight_start(spawn,lat,lng,10);
-      assert fight.fight_id<>first_fight and fight.health=3 and fight.attempts_left=cfg.max_attempts-i;
-    end if;
-  end loop;
-  assert (select gold_balls=prev_balance from public.player_game where user_id=player);
-  assert (select result='failed' and attempts=cfg.max_attempts from public.corrupted_catches
-    where user_id=player and spawn_id=spawn);
-  perform pg_temp.expect_fight_error(format('select public.corrupted_fight_start(%L,%L,%L,10)',spawn,lat,lng),'no_attempts');
-
-  spawn := spawns->'common'->>2;
-  select * into strict fight from public.corrupted_fight_start(spawn,lat,lng,10);
-  select * into strict out from public.corrupted_capsule_throw(spawn,lat,lng,10,'wax',1,false);
-  assert out.result='miss' and out.attempts_left=cfg.max_attempts;
-  select * into strict out from public.corrupted_capsule_throw(spawn,lat,lng,10,'wax',1,true);
-  assert out.result='restored' and not out.is_new and out.xp_gained=cfg.xp_catch;
-  perform pg_temp.expect_fight_error(format('select public.corrupted_fight_throw(%L,%L,%L,10,''gold'')',fight.fight_id,lat,lng),'expired');
-
-  spawn := spawns->'common'->>3;
-  select * into strict fight from public.corrupted_fight_start(spawn,lat,lng,10);
-  perform pg_temp.expect_fight_error(format('select public.corrupted_fight_throw(%L,%L,%L,10,''wax'')',fight.fight_id,lat+(cfg.speed_ignore_m+10)/111195.0,lng),'too_fast');
-  update public.player_game set last_position_at=null where user_id=player;
-  perform pg_temp.expect_fight_error(format('select public.corrupted_fight_throw(%L,%L,%L,10,''wax'')',fight.fight_id,0,0),'too_far');
-  update public.corrupted_spots set hidden_at=now() where id=split_part(spawn,':',1)::uuid;
-  perform pg_temp.expect_fight_error(format('select public.corrupted_fight_throw(%L,%L,%L,10,''wax'')',fight.fight_id,lat,lng),'expired');
-
-  select * into strict fight from public.landmark_start(post,lat,lng,10);
-  assert fight.cracks=20 and (select expires_at-started_at=interval '150 seconds'
-    from public.landmark_attempts where id=fight.attempt_id);
-  -- The legacy caller still sends p_ring. Even a strong wax throw deals one.
-  select * into strict out from public.landmark_hit(fight.attempt_id,lat,lng,10,'wax',1);
-  assert out.result='hit' and out.cracks=19;
-  request := format('select public.landmark_hit(%L,%L,%L,10,''gold'')',fight.attempt_id,lat,lng);
-  perform pg_temp.expect_fight_error(request,'too_soon');
-  for i in 1..10 loop
-    update public.landmark_attempts set last_throw_at=clock_timestamp()-interval '800 milliseconds' where id=fight.attempt_id;
-    select * into strict out from public.landmark_hit(fight.attempt_id,lat,lng,10,'gold');
-    assert out.cracks=greatest(0,19-i*2);
-  end loop;
-  assert out.result='won' and out.stars=1 and out.is_new and out.copies is null and out.xp_gained=cfg.xp_landmark;
-  assert exists(select 1 from public.passport_stamps where user_id=player and place='taipei101');
-  perform pg_temp.expect_fight_error(request,'expired');
-
-  select * into strict fight from public.landmark_start(post,lat,lng,10);
-  select * into strict out from public.landmark_loss(fight.attempt_id,lat,lng,10);
-  assert out.result='lost' and out.expires_at<=clock_timestamp();
-  perform pg_temp.expect_fight_error(format('select public.landmark_hit(%L,%L,%L,10,''wax'')',fight.attempt_id,lat,lng),'expired');
-  select * into strict resumed from public.landmark_start(post,lat,lng,10);
-  assert resumed.attempt_id<>fight.attempt_id and resumed.cracks=20;
-  update public.landmark_attempts set expires_at=clock_timestamp()-interval '1 second' where id=resumed.attempt_id;
-  perform pg_temp.expect_fight_error(format('select public.landmark_hit(%L,%L,%L,10,''wax'')',resumed.attempt_id,lat,lng),'expired');
-  perform pg_temp.expect_fight_error(format('select public.landmark_loss(%L,%L,%L,10)',resumed.attempt_id,lat,lng),'expired');
-  assert not has_function_privilege('anon','public.landmark_loss(uuid,double precision,double precision,double precision)','execute');
-  assert not has_table_privilege('authenticated','private.corrupted_fights','select');
+  update private.corrupted_fights set started_at=clock_timestamp()-interval '10 seconds' where id=fight.fight_id;
+  update public.player_game set last_lat=lat+.004,last_position_at=clock_timestamp() where user_id=player;
+  perform pg_temp.expect_fight_error(format('select public.corrupted_fight_finish(%L,''lost'',1,0,%L,%L,10)',fight.fight_id,lat,lng),'too_fast');
+  update public.player_game set last_lat=lat where user_id=player;
+  outcome := public.corrupted_fight_finish(fight.fight_id,'won',3,0,lat,lng,10);
+  assert outcome->>'result'='won';
+  -- Replay returns the exact stored outcome without reading the current balance or GPS again.
+  assert public.corrupted_fight_finish(fight.fight_id,'lost',0,0,0,0,10)=outcome;
+  assert not has_table_privilege('authenticated','private.fight_finish_receipts','select');
+  assert not has_function_privilege('anon','public.landmark_finish(uuid,text,integer,integer,double precision,double precision,double precision)','execute');
 end $$;
 
-select 'PASS: dodge health, rewards, spacing, losses, expiry, GPS and legacy calls' as result;
+select 'PASS: fight starts, ownership, finish GPS and idempotent receipt grants' as result;
 
 -- A win through the public fight RPCs must count in both current hunt contexts.
 create function pg_temp.dodge_win(spawn text, lat double precision, lng double precision)
 returns void language plpgsql as $$
-declare fight record; hit record;
+declare fight record; outcome jsonb;
 begin
   select * into strict fight from public.corrupted_fight_start(spawn,lat,lng,10);
-  for i in 1..fight.max_health loop
-    select * into strict hit from public.corrupted_fight_throw(fight.fight_id,lat,lng,10,'wax');
-    exit when hit.result='restored';
-    update private.corrupted_fights set last_throw_at=clock_timestamp()-interval '800 milliseconds'
-    where id=fight.fight_id;
-  end loop;
-  assert hit.result='restored';
+  update private.corrupted_fights set started_at=clock_timestamp()-interval '10 seconds' where id=fight.fight_id;
+  outcome := public.corrupted_fight_finish(fight.fight_id,'won',fight.max_health,0,lat,lng,10);
+  assert outcome->>'result'='won';
 end $$;
 
 do $$

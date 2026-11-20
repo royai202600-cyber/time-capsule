@@ -26,10 +26,10 @@ export const cityHuntNameZh = (name: string) => name.replace("城市尋寶", "�
 export type PassportHunt = { id: string; name_zh: string; name_en: string; at: string };
 export type PrivateHuntStamp = { id: string; name: string; at: string };
 export type DevLetter = { publicCapsule: PublicCapsule; message: string };
-export type GameErrorCode = "no_balls" | "expired" | "no_attempts" | "already_caught" | "too_far" | "too_fast" | "cooldown" | "active_attempt" | "too_soon" | "network" | "unknown";
+export type GameErrorCode = "no_balls" | "expired" | "no_attempts" | "already_caught" | "too_far" | "too_fast" | "cooldown" | "active_attempt" | "too_soon" | "not_enough_damage" | "network" | "unknown";
 export class GameError extends Error { constructor(public code: GameErrorCode) { super(code); } }
 
-const CODES: GameErrorCode[] = ["no_balls", "expired", "no_attempts", "already_caught", "too_far", "too_fast", "cooldown", "active_attempt", "too_soon"];
+const CODES: GameErrorCode[] = ["no_balls", "expired", "no_attempts", "already_caught", "too_far", "too_fast", "cooldown", "active_attempt", "too_soon", "not_enough_damage"];
 const fail = (error: { message?: string } | null) => {
   if (error) throw new GameError(CODES.find((c) => error.message?.includes(c)) ?? "unknown");
 };
@@ -307,30 +307,17 @@ async function dodgeRow<Row>(request: PromiseLike<{ data: Row[] | null; error: {
   return row;
 }
 
-/** Hold the same launch and ball through each delay. DF1 only guarantees spacing, so do not
- * retry a too-soon response after an ambiguous network failure: the first request may have landed. */
-async function retryDodgeThrow<T>(request: () => Promise<T>, stillPlaying: () => boolean): Promise<T> {
-  let retriedEarly = false;
-  let retriedNetwork = false;
-  while (true) {
-    try {
-      return await request();
-    } catch (error) {
-      if (!(error instanceof GameError) || !stillPlaying()) throw error;
-      if (error.code === "too_soon" && !retriedEarly && !retriedNetwork) {
-        retriedEarly = true;
-        await new Promise((resume) => setTimeout(resume, 200));
-        if (!stillPlaying()) throw error;
-      } else if (error.code === "network" && !retriedNetwork) {
-        retriedNetwork = true;
-      } else {
-        // An early rejection after a network failure leaves the result of the first request unknown.
-        if (error.code === "too_soon" && retriedNetwork) throw new GameError("network");
-        throw error;
-      }
-    }
-  }
-}
+export type DodgeFinish = {
+  result: "won" | "lost";
+  vessel: string | null;
+  copies: number | null;
+  stars: number | null;
+  is_new: boolean;
+  xp_gained: number;
+  wax_balls: number;
+  gold_balls: number;
+  attempts_left: number;
+};
 
 /** Session methods serve the located fights only. Today's Hunt plays entirely on the device. */
 export const dodgeFights = {
@@ -343,27 +330,19 @@ export const dodgeFights = {
     const row = await dodgeRow(supabase.rpc("corrupted_fight_start", { p_spawn: target.capsule.id, ...coords() }));
     return { id: row.fight_id, health: row.health, maxHealth: row.max_health, expiresAt: Date.parse(row.expires_at), attemptsLeft: row.attempts_left };
   },
-  async hit(target: DodgeTarget, session: DodgeSession, ball: BallKind, stillPlaying = () => true) {
-    const position = coords();
-    if (target.landmark) {
-      const out = await retryDodgeThrow(() => dodgeRow(supabase.rpc("landmark_hit", {
-        p_attempt: session.id, p_ball: ball, ...position,
-      })), stillPlaying);
-      if (out.result === "won") emit({ kind: "landmark", waypost: target.landmark.id });
-      return { ...out, health: out.cracks };
+  async finish(target: DodgeTarget, session: DodgeSession, result: DodgeFinish["result"], used: Record<BallKind, number>) {
+    const args = {
+      p_fight: session.id, p_result: result, p_wax_used: used.wax, p_gold_used: used.gold, ...coords(),
+    };
+    const { data, error, status } = await supabase.rpc(target.landmark ? "landmark_finish" : "corrupted_fight_finish", args);
+    if (error && (status === 0 || status === 502 || status === 503 || status === 504)) throw new GameError("network");
+    fail(error);
+    if (!data || typeof data !== "object" || !("result" in data)) throw new GameError("unknown");
+    const out = data as DodgeFinish;
+    if (out.result === "won") {
+      if (target.landmark) emit({ kind: "landmark", waypost: target.landmark.id });
+      else emit({ kind: "restore", lat: target.capsule.lat, lng: target.capsule.lng });
     }
-    const out = await retryDodgeThrow(() => dodgeRow(supabase.rpc("corrupted_fight_throw", {
-      p_fight: session.id, p_ball: ball, ...position,
-    })), stillPlaying);
-    if (out.result === "restored") emit({ kind: "restore", lat: target.capsule.lat, lng: target.capsule.lng });
     return out;
-  },
-  async loss(target: DodgeTarget, session: DodgeSession) {
-    if (target.landmark) {
-      await dodgeRow(supabase.rpc("landmark_loss", { p_attempt: session.id, ...coords() }));
-      return 0;
-    }
-    const row = await dodgeRow(supabase.rpc("corrupted_fight_loss", { p_fight: session.id, ...coords() }));
-    return row.attempts_left;
   },
 };

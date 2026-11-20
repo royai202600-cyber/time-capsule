@@ -27,81 +27,64 @@ describe("development capsule waves",()=>{
  });
 });
 
-describe("DF1 dodge fight RPCs", () => {
+describe("DF1 start and finish RPCs", () => {
   const at = { lat: 25, lng: 121, accuracy: 10 };
   const gps = { p_lat: 25, p_lng: 121, p_accuracy: 10 };
-  const capsule = { id: "spawn", vessel: "bubble-tea", rarity: "common" as const, ...at, expires_at: "2026-11-09T03:30:00Z", attempts_left: 3 };
+  const capsule = { id: "spawn", vessel: "bubble-tea", rarity: "common" as const,
+    ...at, expires_at: "2026-11-09T03:30:00Z", attempts_left: 3 };
+  const response = { result: "won", vessel: capsule.vessel, wax_balls: 10, gold_balls: 1 };
 
-  it("opens a corrupted session, sends just the selected ball, and reports authoritative reward and loss", async () => {
+  it("sends the Corrupted Capsule result and both ball totals once", async () => {
     const { dodgeFights, game, onGameEvent } = await import("./game");
-    const { expires_at } = capsule;
-    mocks.rpc
-      .mockResolvedValueOnce({ error: null, data: [{ fight_id: "fight", health: 2, max_health: 3, expires_at, attempts_left: 3 }] })
-      .mockResolvedValueOnce({ error: null, data: [{ result: "restored", health: 0, wax_balls: 10, gold_balls: 1, vessel: capsule.vessel }] })
-      .mockResolvedValueOnce({ error: null, data: [{ fight_id: "retry", health: 3, max_health: 3, expires_at, attempts_left: 3 }] })
-      .mockResolvedValueOnce({ error: null, data: [{ result: "lost", attempts_left: 2 }] });
-    game.setPosition(at);
     const event = vi.fn();
     const unsub = onGameEvent(event);
-
-    const target = { capsule };
-    const session = await dodgeFights.start(target);
-    expect(session).toEqual({ id: "fight", health: 2, maxHealth: 3, expiresAt: Date.parse(expires_at), attemptsLeft: 3 });
+    game.setPosition(at);
+    mocks.rpc
+      .mockResolvedValueOnce({ error: null, data: [{ fight_id: "fight", health: 3, max_health: 3,
+        expires_at: capsule.expires_at, attempts_left: 3 }] })
+      .mockResolvedValueOnce({ error: null, data: response });
+    const session = await dodgeFights.start({ capsule });
+    expect(session).toMatchObject({ id: "fight", health: 3, attemptsLeft: 3 });
     expect(mocks.rpc).toHaveBeenCalledWith("corrupted_fight_start", { p_spawn: "spawn", ...gps });
-    expect(await dodgeFights.hit(target, session, "gold")).toMatchObject({ health: 0, gold_balls: 1, result: "restored" });
-    expect(mocks.rpc).toHaveBeenCalledWith("corrupted_fight_throw", { p_fight: "fight", p_ball: "gold", ...gps });
+    expect(await dodgeFights.finish({ capsule }, session, "won", { wax: 1, gold: 1 })).toEqual(response);
+    expect(mocks.rpc).toHaveBeenCalledWith("corrupted_fight_finish", {
+      p_fight: "fight", p_result: "won", p_wax_used: 1, p_gold_used: 1, ...gps,
+    });
+    expect(mocks.rpc).toHaveBeenCalledTimes(2);
     expect(event).toHaveBeenCalledWith({ kind: "restore", lat: at.lat, lng: at.lng });
-    const retry = await dodgeFights.start({ capsule: { ...capsule, id: "another-spawn" } });
-    expect(await dodgeFights.loss(target, retry)).toBe(2);
-    expect(mocks.rpc).toHaveBeenCalledWith("corrupted_fight_loss", { p_fight: "retry", ...gps });
     unsub();
   });
 
-  it("retries the same throw after 200 ms on too_soon", async () => {
+  it("allows an explicit retry of the same finish after a transport failure", async () => {
     const { dodgeFights, game } = await import("./game");
     game.setPosition(at);
+    const session = { id: "fight", health: 3, maxHealth: 3, expiresAt: Date.parse(capsule.expires_at), attemptsLeft: 3 };
     mocks.rpc
-      .mockResolvedValueOnce({ error: { message: "too_soon" }, status: 400, data: null })
-      .mockResolvedValueOnce({ error: null, data: [{ health: 2, wax_balls: 10 }] });
-    const session = { id: "fight", health: 3, maxHealth: 3, expiresAt: Date.parse(capsule.expires_at), attemptsLeft: 3 };
-    const original = dodgeFights.hit({ capsule }, session, "wax");
-    await vi.advanceTimersByTimeAsync(199);
+      .mockResolvedValueOnce({ status: 0, data: null, error: { message: "TypeError: Failed to fetch" } })
+      .mockResolvedValueOnce({ error: null, data: response });
+    const submit = () => dodgeFights.finish({ capsule }, session, "won", { wax: 3, gold: 0 });
+    await expect(submit()).rejects.toMatchObject({ code: "network" });
     expect(mocks.rpc).toHaveBeenCalledTimes(1);
-    await vi.advanceTimersByTimeAsync(1);
-    await expect(original).resolves.toMatchObject({ health: 2 });
-    expect(mocks.rpc.mock.calls).toEqual(Array(2).fill(["corrupted_fight_throw", { p_fight: "fight", p_ball: "wax", ...gps }]));
+    await expect(submit()).resolves.toEqual(response);
+    expect(mocks.rpc.mock.calls[0]).toEqual(mocks.rpc.mock.calls[1]);
   });
 
-  it("retries transport failures once, but never retries an expired fight", async () => {
-    const { dodgeFights, game } = await import("./game");
-    game.setPosition(at);
-    const session = { id: "fight", health: 3, maxHealth: 3, expiresAt: Date.parse(capsule.expires_at), attemptsLeft: 3 };
-    const network = { status: 0, data: null, error: { message: "TypeError: Failed to fetch" } };
-    mocks.rpc.mockResolvedValueOnce(network).mockResolvedValueOnce(network);
-    await expect(dodgeFights.hit({ capsule }, session, "gold")).rejects.toMatchObject({ code: "network" });
-    expect(mocks.rpc.mock.calls).toEqual(Array(2).fill(["corrupted_fight_throw", { p_fight: "fight", p_ball: "gold", ...gps }]));
-    mocks.rpc.mockClear().mockResolvedValueOnce({ status: 400, data: null, error: { message: "expired" } });
-    await expect(dodgeFights.hit({ capsule }, session, "gold")).rejects.toMatchObject({ code: "expired" });
-    expect(mocks.rpc).toHaveBeenCalledTimes(1);
-  });
-
-  it("uses the Landmark attempt, omits the legacy ring, and ends the attempt on loss", async () => {
+  it("reports a Landmark loss and its spend using the original attempt id", async () => {
     const { dodgeFights, game } = await import("./game");
     mocks.getSession.mockResolvedValue({ data: { session: { user: { id: "test" } } } });
     mocks.rpc
       .mockResolvedValueOnce({ error: null, data: [{ attempt_id: "attempt", cracks: 20, expires_at: capsule.expires_at }] })
-      .mockResolvedValueOnce({ error: null, data: [{ result: "hit", cracks: 18 }] })
-      .mockResolvedValueOnce({ error: null, data: [{ result: "lost" }] });
+      .mockResolvedValueOnce({ error: null, data: { result: "lost", attempts_left: 0 } });
     game.setPosition(at);
-    const landmark = { id: "waypost", kind: "landmark" as const, name_zh: "台北101", name_en: "Taipei 101", ...at, cooldown_until: null, place: "taipei101" };
+    const landmark = { id: "waypost", kind: "landmark" as const, name_zh: "台北101",
+      name_en: "Taipei 101", ...at, cooldown_until: null, place: "taipei101" };
     const target = { capsule, landmark };
-
     const session = await dodgeFights.start(target);
     expect(session).toMatchObject({ id: "attempt", health: 20, maxHealth: 20 });
     expect(mocks.rpc).toHaveBeenCalledWith("landmark_start", { p_waypost: "waypost", ...gps });
-    expect(await dodgeFights.hit(target, session, "gold")).toMatchObject({ health: 18 });
-    expect(mocks.rpc).toHaveBeenCalledWith("landmark_hit", { p_attempt: "attempt", p_ball: "gold", ...gps });
-    expect(await dodgeFights.loss(target, session)).toBe(0);
-    expect(mocks.rpc).toHaveBeenCalledWith("landmark_loss", { p_attempt: "attempt", ...gps });
+    expect(await dodgeFights.finish(target, session, "lost", { wax: 2, gold: 3 })).toMatchObject({ attempts_left: 0 });
+    expect(mocks.rpc).toHaveBeenCalledWith("landmark_finish", {
+      p_fight: "attempt", p_result: "lost", p_wax_used: 2, p_gold_used: 3, ...gps,
+    });
   });
 });
