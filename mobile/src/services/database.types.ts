@@ -773,6 +773,7 @@ export type Database = {
           cracks_left: number
           expires_at: string
           id: string
+          last_throw_at: string | null
           started_at: string
           user_id: string
           waypost_id: string
@@ -782,6 +783,7 @@ export type Database = {
           cracks_left: number
           expires_at: string
           id?: string
+          last_throw_at?: string | null
           started_at?: string
           user_id: string
           waypost_id: string
@@ -791,6 +793,7 @@ export type Database = {
           cracks_left?: number
           expires_at?: string
           id?: string
+          last_throw_at?: string | null
           started_at?: string
           user_id?: string
           waypost_id?: string
@@ -1623,6 +1626,54 @@ export type Database = {
           xp_gained: number
         }[]
       }
+      corrupted_fight_loss: {
+        Args: {
+          p_accuracy: number
+          p_fight: string
+          p_lat: number
+          p_lng: number
+        }
+        Returns: {
+          attempts_left: number
+          result: string
+        }[]
+      }
+      corrupted_fight_start: {
+        Args: {
+          p_accuracy: number
+          p_lat: number
+          p_lng: number
+          p_spawn: string
+        }
+        Returns: {
+          attempts_left: number
+          expires_at: string
+          fight_id: string
+          health: number
+          max_health: number
+        }[]
+      }
+      corrupted_fight_throw: {
+        Args: {
+          p_accuracy: number
+          p_ball: string
+          p_fight: string
+          p_lat: number
+          p_lng: number
+        }
+        Returns: {
+          attempts_left: number
+          copies: number
+          gold_balls: number
+          health: number
+          is_new: boolean
+          result: string
+          stars: number
+          vessel: string
+          wax_balls: number
+          xp_gained: number
+        }[]
+      }
       corrupted_nearby: {
         Args: { p_accuracy: number; p_lat: number; p_lng: number }
         Returns: Json
@@ -1732,7 +1783,7 @@ export type Database = {
           p_ball: string
           p_lat: number
           p_lng: number
-          p_ring: number
+          p_ring?: number
         }
         Returns: {
           copies: number
@@ -1745,6 +1796,19 @@ export type Database = {
           vessel: string
           wax_balls: number
           xp_gained: number
+        }[]
+      }
+      landmark_loss: {
+        Args: {
+          p_accuracy: number
+          p_attempt: string
+          p_lat: number
+          p_lng: number
+        }
+        Returns: {
+          cracks: number
+          expires_at: string
+          result: string
         }[]
       }
       landmark_start: {

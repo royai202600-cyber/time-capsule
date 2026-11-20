@@ -1,6 +1,6 @@
 {
-  "count": 59,
-  "passed": 59,
+  "count": 61,
+  "passed": 61,
   "failed": [],
   "assets": [
     {
@@ -1087,6 +1087,25 @@
       "pass": true
     },
     {
+      "path": "game/ball-gold.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
       "path": "game/ball-ink.png",
       "size": [
         1024,
@@ -1107,6 +1126,25 @@
     },
     {
       "path": "game/ball-plum.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "transparent": true,
+      "corners_alpha": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "checks": {
+        "size": true,
+        "alpha": true
+      },
+      "pass": true
+    },
+    {
+      "path": "game/ball-wax.png",
       "size": [
         1024,
         1024
