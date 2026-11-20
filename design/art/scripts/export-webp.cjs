@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Export web-ready copies without changing the app's dependency list.
 const fs = require('node:fs');
+const { execFileSync } = require('node:child_process');
 const path = require('node:path');
 const sharp = require(process.env.SHARP_MODULE_DIR || 'sharp');
 
@@ -29,10 +30,18 @@ async function main() {
     if (only && !only.has(relativePath)) continue;
     const output = path.join(repoRoot, entry.web_export);
     fs.mkdirSync(path.dirname(output), { recursive: true });
-    let pipeline = sharp(path.join(repoRoot, entry.path));
-    const limit = maxEdge(relativePath);
-    if (limit) pipeline = pipeline.resize({ width: limit, height: limit, fit: 'inside', withoutEnlargement: true });
-    await pipeline.webp({ quality: 85, effort: 5 }).toFile(output);
+    const input = path.join(repoRoot, entry.path);
+    if (/^characters\/fight-01-throw-[1-4]-(upper|lower)\.png$/.test(relativePath)) {
+      // Preserve the approved 1024 px RGBA values, including RGB under zero alpha.
+      execFileSync(process.env.ART_PYTHON || 'python3', ['-c',
+        'import sys; from PIL import Image; Image.open(sys.argv[1]).convert("RGBA").save(sys.argv[2], lossless=True, exact=True, method=5)',
+        input, output], { stdio: 'inherit' });
+    } else {
+      let pipeline = sharp(input);
+      const limit = maxEdge(relativePath);
+      if (limit) pipeline = pipeline.resize({ width: limit, height: limit, fit: 'inside', withoutEnlargement: true });
+      await pipeline.webp({ quality: 85, effort: 5 }).toFile(output);
+    }
     count++;
   }
   if (only) {
