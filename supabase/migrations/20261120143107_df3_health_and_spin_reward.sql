@@ -154,7 +154,7 @@ begin
   return state;
 end $$;
 
-create function public.admin_set_spin_reward(p_wax_min integer, p_wax_max integer)
+create function public.admin_set_spin_reward(p_wax_min integer, p_wax_max integer, p_note text default null)
 returns jsonb language plpgsql security definer set search_path = '' as $$
 declare
   prior jsonb;
@@ -168,7 +168,7 @@ begin
   prior := private.admin_spin_reward_state();
   update private.game_config set spin_wax_min = p_wax_min, spin_wax_max = p_wax_max where singleton;
   saved := jsonb_build_object('spin_wax_min', p_wax_min, 'spin_wax_max', p_wax_max);
-  perform private.admin_log('config.spin_reward', 'config', 'spin_reward', 'Waypost spin reward', prior, saved);
+  perform private.admin_log('config.spin', 'config', 'spin', 'Waypost spin reward', prior, saved, p_note);
   return saved;
 end $$;
 
@@ -182,31 +182,31 @@ declare
   current_reward jsonb;
 begin
   select * into event from private.admin_actions where id = p_action_id;
-  if event.target_type is distinct from 'config' or event.target_id is distinct from 'spin_reward' then
+  if event.target_type is distinct from 'config' or event.target_id is distinct from 'spin' then
     return private.admin_undo_before_spin_reward(p_action_id, p_note);
   end if;
 
   perform private.require_game_editor();
-  if event.action <> 'config.spin_reward' then raise exception 'not_undoable'; end if;
+  if event.action <> 'config.spin' then raise exception 'not_undoable'; end if;
   current_reward := private.admin_spin_reward_state();
   if current_reward is distinct from event.after
     or exists (select 1 from private.admin_actions a where a.target_type = 'config'
-       and a.target_id = 'spin_reward' and a.action = 'undo' and a.after->>'undo_of' = event.id::text)
+       and a.target_id = 'spin' and a.action = 'undo' and a.after->>'undo_of' = event.id::text)
   then raise exception 'stale'; end if;
 
   update private.game_config
     set spin_wax_min = (event.before->>'spin_wax_min')::integer,
         spin_wax_max = (event.before->>'spin_wax_max')::integer
     where singleton;
-  perform private.admin_log('undo', 'config', 'spin_reward', event.target_label,
+  perform private.admin_log('undo', 'config', 'spin', event.target_label,
     event.after, event.before || jsonb_build_object('undo_of', event.id), p_note);
   return event.before;
 end $$;
 
 revoke all on function private.admin_spin_reward_state(), private.admin_undo_before_spin_reward(bigint,text),
-  public.admin_set_spin_reward(integer,integer), public.admin_undo(bigint,text)
+  public.admin_set_spin_reward(integer,integer,text), public.admin_undo(bigint,text)
 from public, anon, authenticated, service_role;
-grant execute on function public.admin_set_spin_reward(integer,integer), public.admin_undo(bigint,text) to authenticated;
+grant execute on function public.admin_set_spin_reward(integer,integer,text), public.admin_undo(bigint,text) to authenticated;
 
 notify pgrst, 'reload schema';
 

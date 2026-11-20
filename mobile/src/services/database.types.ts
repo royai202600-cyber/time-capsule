@@ -1461,7 +1461,7 @@ export type Database = {
         Returns: Json
       }
       admin_set_spin_reward: {
-        Args: { p_wax_max: number; p_wax_min: number }
+        Args: { p_note?: string; p_wax_max: number; p_wax_min: number }
         Returns: Json
       }
       admin_spawn_place_add: {

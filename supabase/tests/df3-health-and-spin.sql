@@ -104,10 +104,11 @@ begin
       perform pg_temp.df3_expect_error('select public.admin_set_spin_reward(9,8)','bad_rule');
       perform pg_temp.df3_expect_error('select public.admin_set_spin_reward(-1,8)','bad_rule');
       perform pg_temp.df3_expect_error('select public.admin_set_spin_reward(0,51)','bad_rule');
-      reward := public.admin_set_spin_reward(8,8);
+      reward := public.admin_set_spin_reward(8,8,'DF3 spin test');
       assert reward = '{"spin_wax_min":8,"spin_wax_max":8}'::jsonb;
       assert public.admin_spawning()->'config' @> reward;
-      select * into strict audit from private.admin_actions where actor=editor and action='config.spin_reward';
+      select * into strict audit from private.admin_actions where actor=editor and action='config.spin';
+      assert audit.note = 'DF3 spin test';
       assert audit.before = '{"spin_wax_min":10,"spin_wax_max":10}'::jsonb and audit.after = reward;
       perform set_config('request.jwt.claim.sub',moderator::text,true);
       perform pg_temp.df3_expect_error(format('select public.admin_undo(%s)',audit.id),'forbidden');
@@ -123,8 +124,8 @@ begin
   end loop;
   assert (select spin_count=3 from public.city_hunt_quest_progress where user_id=player and hunt_id=hunt.id);
   assert (select wax_balls=92 from public.player_game where user_id=player);
-  assert not has_function_privilege('anon','public.admin_set_spin_reward(integer,integer)','execute');
-  assert has_function_privilege('authenticated','public.admin_set_spin_reward(integer,integer)','execute');
+  assert not has_function_privilege('anon','public.admin_set_spin_reward(integer,integer,text)','execute');
+  assert has_function_privilege('authenticated','public.admin_set_spin_reward(integer,integer,text)','execute');
 end $$;
 
 select 'PASS: DF3 starts, settlement, roles, audit/Undo, cooldown, and City Hunt spins' as result;
