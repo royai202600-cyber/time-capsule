@@ -8,7 +8,24 @@ PNG masters live in `design/art/`. WebP copies live at matching paths in `public
 
 The original SVG art remains in `src/art.js` and is recoverable from Git tag `art-svg-v1`. These bitmap assets are not wired into app screens yet.
 
+## Corrupted Capsule fight review
+
+| Figure | Motion at 120 and 64 px | Shoulder and hip close-ups |
+|---|---|---|
+| 01 | [Motion](_checks/fight-01-motion.png) | [Seams](_checks/fight-01-seams.png) |
+| 02 | [Motion](_checks/fight-02-motion.png) | [Seams](_checks/fight-02-seams.png) |
+| 03 | [Motion](_checks/fight-03-motion.png) | [Seams](_checks/fight-03-seams.png) |
+| 04 | [Motion](_checks/fight-04-motion.png) | [Seams](_checks/fight-04-seams.png) |
+| 05 | [Motion](_checks/fight-05-motion.png) | [Seams](_checks/fight-05-seams.png) |
+| 06 | [Motion](_checks/fight-06-motion.png) | [Seams](_checks/fight-06-seams.png) |
+| 07 | [Motion](_checks/fight-07-motion.png) | [Seams](_checks/fight-07-seams.png) |
+| 08 | [Motion](_checks/fight-08-motion.png) | [Seams](_checks/fight-08-seams.png) |
+
+The seam check follows the solid silhouette and tests the joint interiors in every pose. Deliberate air between limbs and between the raised arm and head remains clear. The approved five-skin comparison is unchanged. [Wax-ball comparison](_checks/fight-wax-skins.png) · [Full contact sheet](_checks/contact-sheet.png).
+
 ## Rules and checks
+
+- Corrupted Capsule fight art: figures 01–08 are matched to their map figures and portraits. Every rig uses the shared adult scale and feet anchor (512, 900). Draw the standing legs or bent jump legs first, then the chosen arm, then the body with the closed shoulder and hip seat. Each assembled master shows gathering. The manifest records the shoulder and hip pivots and the ball center for each raised hand. The jump uses an upright lift with the bent-leg pair swapped in. Five wax-ball skins were approved as shown. [Review sheets](#corrupted-capsule-fight-review).
 
 - T10f-fix: wishing-lamp is redrawn as a traditional antique brass oil lamp with low oval body, long tapering spout, soft smoke at the tip, curled handle and domed lid. Same four filenames and lamp → smoke → lid stack on a 1024 canvas. Measured mouth/pivot 542,685; sparkle 532,662; baseY 889. Lid lifts y −0.40 and fades; smoke drifts up. All other vessel master/export bytes are preserved. Roy approved PR #72; final main refresh and checks precede merge.
 
@@ -131,6 +148,9 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `game/catch-background.png` | Fight-screen park background | 1024×1536 | Roy-approved Option 3; exact source copy; opaque; full-resolution WebP |
 | `game/ball-wax.png` | Wax keyhole ball | 1024×1024 | requested redraw/edit |
 | `game/ball-gold.png` | Gold-veined keyhole ball | 1024×1024 | exact approved copy |
+| `game/ball-ink.png` | Ink-blue wax ball with light-blue marbling | 1024×1024 | test batch; see manifest |
+| `game/ball-plum.png` | Dusty plum-rose wax ball with cream speckles | 1024×1024 | test batch; see manifest |
+| `game/ball-brass.png` | Wax-red ball with a wide curved brass band | 1024×1024 | test batch; see manifest |
 | `game/waypost-gem.png` | Floating purple Waypost | 1024×1024 | exact approved copy |
 | `game/landmark-gem.png` | Floating Landmark Waypost | 1024×1024 | exact approved copy |
 | `game/crack-overlay.png` | Crack A overlay | 1024×1024 | exact approved copy; top-left alpha 238 retained |
@@ -447,6 +467,62 @@ Option variation: Calm bright overcast light, airy broad slightly irregular tree
 | `vessels/vessel-wishing-lamp.png` | wishing-lamp assembled vessel | 1024×1024 | processed; see manifest |
 | `characters/keeper.png` | Letter Keeper map figure; faithful A1 identity | 1024×1024 | test batch; see manifest |
 | `characters/figure-01.png` | Player 01 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
+| `characters/fight-01.png` | Player 01 from behind, assembled in the gathering pose | 1024×1024 | test batch; see manifest |
+| `characters/fight-01-body.png` | Head, torso, left arm, closed shoulder and full hip seat | 1024×1024 | test batch; see manifest |
+| `characters/fight-01-arm-down.png` | Relaxed hanging right arm | 1024×1024 | shared shoulder pivot |
+| `characters/fight-01-arm-up.png` | Overhead right arm with cupped hand | 1024×1024 | shoulder pivot and ball point in manifest |
+| `characters/fight-01-leg-left.png` | Left hip, trouser leg and shoe | 1024×1024 | test batch; see manifest |
+| `characters/fight-01-leg-right.png` | Right hip, trouser leg and shoe | 1024×1024 | test batch; see manifest |
+| `characters/fight-01-legs-jump.png` | Both legs bent with heels lifted | 1024×1024 | replaces both standing legs for the jump |
+| `characters/fight-02.png` | Player 02 Assembled gathering pose | 1024×1024 | see manifest |
+| `characters/fight-02-body.png` | Player 02 Body, left arm and solid joints | 1024×1024 | see manifest |
+| `characters/fight-02-arm-down.png` | Player 02 Relaxed right arm | 1024×1024 | see manifest |
+| `characters/fight-02-arm-up.png` | Player 02 Overhead right arm and ball point | 1024×1024 | see manifest |
+| `characters/fight-02-leg-left.png` | Player 02 Standing left leg | 1024×1024 | see manifest |
+| `characters/fight-02-leg-right.png` | Player 02 Standing right leg | 1024×1024 | see manifest |
+| `characters/fight-02-legs-jump.png` | Player 02 Bent jump legs | 1024×1024 | see manifest |
+| `characters/fight-03.png` | Player 03 Assembled gathering pose | 1024×1024 | see manifest |
+| `characters/fight-03-body.png` | Player 03 Body, left arm and solid joints | 1024×1024 | see manifest |
+| `characters/fight-03-arm-down.png` | Player 03 Relaxed right arm | 1024×1024 | see manifest |
+| `characters/fight-03-arm-up.png` | Player 03 Overhead right arm and ball point | 1024×1024 | see manifest |
+| `characters/fight-03-leg-left.png` | Player 03 Standing left leg | 1024×1024 | see manifest |
+| `characters/fight-03-leg-right.png` | Player 03 Standing right leg | 1024×1024 | see manifest |
+| `characters/fight-03-legs-jump.png` | Player 03 Bent jump legs | 1024×1024 | see manifest |
+| `characters/fight-04.png` | Player 04 Assembled gathering pose | 1024×1024 | see manifest |
+| `characters/fight-04-body.png` | Player 04 Body, left arm and solid joints | 1024×1024 | see manifest |
+| `characters/fight-04-arm-down.png` | Player 04 Relaxed right arm | 1024×1024 | see manifest |
+| `characters/fight-04-arm-up.png` | Player 04 Overhead right arm and ball point | 1024×1024 | see manifest |
+| `characters/fight-04-leg-left.png` | Player 04 Standing left leg | 1024×1024 | see manifest |
+| `characters/fight-04-leg-right.png` | Player 04 Standing right leg | 1024×1024 | see manifest |
+| `characters/fight-04-legs-jump.png` | Player 04 Bent jump legs | 1024×1024 | see manifest |
+| `characters/fight-05.png` | Player 05 Assembled gathering pose | 1024×1024 | see manifest |
+| `characters/fight-05-body.png` | Player 05 Body, left arm and solid joints | 1024×1024 | see manifest |
+| `characters/fight-05-arm-down.png` | Player 05 Relaxed right arm | 1024×1024 | see manifest |
+| `characters/fight-05-arm-up.png` | Player 05 Overhead right arm and ball point | 1024×1024 | see manifest |
+| `characters/fight-05-leg-left.png` | Player 05 Standing left leg | 1024×1024 | see manifest |
+| `characters/fight-05-leg-right.png` | Player 05 Standing right leg | 1024×1024 | see manifest |
+| `characters/fight-05-legs-jump.png` | Player 05 Bent jump legs | 1024×1024 | see manifest |
+| `characters/fight-06.png` | Player 06 Assembled gathering pose | 1024×1024 | see manifest |
+| `characters/fight-06-body.png` | Player 06 Body, left arm and solid joints | 1024×1024 | see manifest |
+| `characters/fight-06-arm-down.png` | Player 06 Relaxed right arm | 1024×1024 | see manifest |
+| `characters/fight-06-arm-up.png` | Player 06 Overhead right arm and ball point | 1024×1024 | see manifest |
+| `characters/fight-06-leg-left.png` | Player 06 Standing left leg | 1024×1024 | see manifest |
+| `characters/fight-06-leg-right.png` | Player 06 Standing right leg | 1024×1024 | see manifest |
+| `characters/fight-06-legs-jump.png` | Player 06 Bent jump legs | 1024×1024 | see manifest |
+| `characters/fight-07.png` | Player 07 Assembled gathering pose | 1024×1024 | see manifest |
+| `characters/fight-07-body.png` | Player 07 Body, left arm and solid joints | 1024×1024 | see manifest |
+| `characters/fight-07-arm-down.png` | Player 07 Relaxed right arm | 1024×1024 | see manifest |
+| `characters/fight-07-arm-up.png` | Player 07 Overhead right arm and ball point | 1024×1024 | see manifest |
+| `characters/fight-07-leg-left.png` | Player 07 Standing left leg | 1024×1024 | see manifest |
+| `characters/fight-07-leg-right.png` | Player 07 Standing right leg | 1024×1024 | see manifest |
+| `characters/fight-07-legs-jump.png` | Player 07 Bent jump legs | 1024×1024 | see manifest |
+| `characters/fight-08.png` | Player 08 Assembled gathering pose | 1024×1024 | see manifest |
+| `characters/fight-08-body.png` | Player 08 Body, left arm and solid joints | 1024×1024 | see manifest |
+| `characters/fight-08-arm-down.png` | Player 08 Relaxed right arm | 1024×1024 | see manifest |
+| `characters/fight-08-arm-up.png` | Player 08 Overhead right arm and ball point | 1024×1024 | see manifest |
+| `characters/fight-08-leg-left.png` | Player 08 Standing left leg | 1024×1024 | see manifest |
+| `characters/fight-08-leg-right.png` | Player 08 Standing right leg | 1024×1024 | see manifest |
+| `characters/fight-08-legs-jump.png` | Player 08 Bent jump legs | 1024×1024 | see manifest |
 | `characters/figure-04.png` | Player 04 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
 | `characters/figure-06.png` | Player 06 map figure matched to their portrait | 1024×1024 | test batch; see manifest |
 | `portraits/portrait-keeper.png` | Letter Keeper round dialog portrait with cap and pale brass-cream disc | 1024×1024 | test batch; see manifest |
