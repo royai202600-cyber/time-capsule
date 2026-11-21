@@ -11,21 +11,9 @@ create table private.waypost_xp (
   xp bigint not null default 0 check (xp >= 0)
 );
 
-create table private.waypost_xp_daily (
-  user_id uuid references auth.users(id) on delete cascade,
-  waypost_id uuid references private.waypost_xp(waypost_id) on delete cascade,
-  local_day date,
-  spins integer not null check (spins between 0 and 1),
-  capsules integer not null check (capsules between 0 and 1),
-  opened integer not null check (opened between 0 and 3),
-  primary key (user_id, waypost_id, local_day)
-);
-create index waypost_xp_daily_waypost_idx on private.waypost_xp_daily (waypost_id);
-
 alter table private.waypost_levels enable row level security;
 alter table private.waypost_xp enable row level security;
-alter table private.waypost_xp_daily enable row level security;
-revoke all on private.waypost_levels, private.waypost_xp, private.waypost_xp_daily
+revoke all on private.waypost_levels, private.waypost_xp
   from public, anon, authenticated, service_role;
 
 create function private.waypost_wax_item(p_min integer, p_max integer)
@@ -51,8 +39,7 @@ insert into private.waypost_levels (level, xp_from, items) values
     '[{"kind":"gold","vessel":null,"min":1,"max":1,"chance":20},
       {"kind":"vessel","vessel":null,"min":1,"max":1,"chance":5}]');
 
--- Lock in the same order for spin, leave and open. Concurrent spins pay at the
--- level reached before their own XP is counted.
+-- Serialize spins from different players at the same Waypost.
 create function private.waypost_lock_xp(p_waypost uuid)
 returns bigint language plpgsql set search_path = '' as $$
 declare points bigint;
@@ -60,31 +47,6 @@ begin
   insert into private.waypost_xp (waypost_id) values (p_waypost) on conflict do nothing;
   select xp into strict points from private.waypost_xp where waypost_id = p_waypost for update;
   return points;
-end $$;
-
-create function private.waypost_credit_xp(p_post public.public_capsule_spots, p_action text)
-returns void language plpgsql set search_path = '' as $$
-declare
-  zone text;
-  points integer;
-begin
-  if p_post.kind <> 'common' then return; end if;
-  select g.timezone into zone from private.game_regions g where g.city = p_post.city_en;
-  -- A coverage entry supplies the local clock for every active city.
-  if zone is null then raise exception 'missing_waypost_timezone'; end if;
-  points := case p_action when 'spin' then 5 when 'leave' then 15 when 'open' then 25 end;
-
-  perform private.waypost_lock_xp(p_post.id);
-  insert into private.waypost_xp_daily as d (user_id, waypost_id, local_day, spins, capsules, opened)
-  values (auth.uid(), p_post.id, (statement_timestamp() at time zone zone)::date,
-    (p_action = 'spin')::integer, (p_action = 'leave')::integer, (p_action = 'open')::integer)
-  on conflict (user_id, waypost_id, local_day) do update
-  set spins = d.spins + excluded.spins, capsules = d.capsules + excluded.capsules, opened = d.opened + excluded.opened
-  where d.spins + excluded.spins <= 1 and d.capsules + excluded.capsules <= 1 and d.opened + excluded.opened <= 3;
-
-  if found then
-    update private.waypost_xp set xp = xp + points where waypost_id = p_post.id;
-  end if;
 end $$;
 
 create function public.waypost_level(p_waypost uuid)
@@ -101,9 +63,8 @@ begin
   return (
     select jsonb_build_object('level', l.level, 'xp', points, 'level_xp', l.xp_from,
       'next_xp', n.xp_from, 'items', l.items, 'next_items', n.items,
-      'me', (select jsonb_build_object('spins', coalesce(sum(d.spins), 0),
-        'capsules', coalesce(sum(d.capsules), 0), 'opened', coalesce(sum(d.opened), 0))
-        from private.waypost_xp_daily d where d.user_id = auth.uid() and d.waypost_id = p_waypost))
+      'me', (select jsonb_build_object('spins', count(*))
+        from public.waypost_spins s where s.user_id = auth.uid() and s.waypost_id = p_waypost))
     from private.waypost_levels l
     left join private.waypost_levels n on n.level = l.level + 1
     where l.xp_from <= points order by l.level desc limit 1
@@ -372,9 +333,17 @@ begin
     where user_id=auth.uid() and waypost_id=p_id;
   if last_spin+make_interval(secs=>cfg.spin_cooldown_seconds)>now()
     then raise exception 'cooldown'; end if;
-  points := private.waypost_lock_xp(post.id);
+  -- Capture pre-spin XP under the lock. If the spin fails later, the XP
+  -- update rolls back with it. Bookkeeping errors must leave the spin payable.
+  begin
+    points := private.waypost_lock_xp(post.id);
+    update private.waypost_xp set xp = xp + 1 where waypost_id = post.id;
+  exception when others then
+    raise warning 'waypost XP bookkeeping failed: %', sqlerrm;
+  end;
   select items into strict rewards from private.waypost_levels
-    where xp_from <= points order by xp_from desc limit 1;
+    where xp_from <= coalesce(points, (select xp from private.waypost_xp where waypost_id = post.id), 0)
+    order by xp_from desc limit 1;
   wax_awarded := 0;
   gold_awarded := 0;
   vessel_awarded := null;
@@ -400,7 +369,6 @@ begin
   insert into public.waypost_spins(user_id,waypost_id,wax_awarded,gold_awarded)
     values(auth.uid(),p_id,wax_awarded,gold_awarded) returning id,spun_at
       into spin_id,cooldown_end;
-  perform private.waypost_credit_xp(post, 'spin');
   cooldown_end:=cooldown_end+make_interval(secs=>cfg.spin_cooldown_seconds);
   update public.player_game set wax_balls=public.player_game.wax_balls+wax_awarded,
     gold_balls=public.player_game.gold_balls+gold_awarded
@@ -415,88 +383,9 @@ begin
   return next;
 end $function$;
 
-CREATE OR REPLACE FUNCTION public.rack_leave(waypost_id uuid, lat double precision, lng double precision, accuracy double precision, body text, hint text, wait_days integer, lock_question text DEFAULT NULL::text, lock_answer text DEFAULT NULL::text)
- RETURNS jsonb
- LANGUAGE plpgsql
- SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-declare
-  actor uuid := auth.uid();
-  post public.public_capsule_spots;
-  distance double precision;
-  capsule uuid;
-  opens timestamptz;
-  letter text := btrim(coalesce(body, ''));
-  public_hint text := btrim(coalesce(hint, ''));
-  question text := nullif(btrim(lock_question), '');
-  secret text := private.rack_normalize_answer(lock_answer);
-begin
-  if actor is null then raise exception 'not signed in'; end if;
-  select w.* into post from public.public_capsule_spots w where w.id = waypost_id for share;
-  distance := private.rack_distance(post, lat, lng, accuracy);
-  if distance is null or distance > 100 then raise exception 'too_far'; end if;
-  if wait_days is null or wait_days not in (1, 7, 30, 365) then raise exception 'bad_wait'; end if;
-  if not (private.text_allowed(letter) and private.text_allowed(public_hint) and private.text_allowed(question)) then
-    raise exception 'blocked_words';
-  end if;
-  if question is not null and secret is null then raise exception 'no_answer'; end if;
-  if char_length(letter) not between 1 and 280 or char_length(public_hint) > 40
-    or char_length(question) > 280 or char_length(lock_answer) > 280
-    or (question is null and secret is not null)
-  then raise exception 'rejected'; end if;
-
-  opens := statement_timestamp() + wait_days * interval '24 hours';
-  insert into public.capsules (sender, vessel, hint, open_at, is_public, public_capsule_spot, lock_question)
-  values (actor, 'bottle', public_hint, opens, true, waypost_id, question)
-  returning id into capsule;
-  insert into public.capsule_contents (capsule_id, message, lock_answer) values (capsule, letter, secret);
-  perform private.waypost_credit_xp(post, 'leave');
-  return jsonb_build_object('capsule_id', capsule, 'opens_at', opens);
-end;
-$function$;
-
-CREATE OR REPLACE FUNCTION public.rack_open(capsule_id uuid, lat double precision, lng double precision, accuracy double precision, answer text DEFAULT NULL::text)
- RETURNS jsonb
- LANGUAGE plpgsql
- SECURITY DEFINER
- SET search_path TO ''
-AS $function$
-declare
-  actor uuid := auth.uid();
-  capsule public.capsules;
-  post public.public_capsule_spots;
-  distance double precision;
-  opened jsonb;
-begin
-  if actor is null then raise exception 'not signed in'; end if;
-  select c.* into capsule from public.capsules c where c.id = capsule_id and c.is_public for update;
-  if not found or capsule.recipient is not null or capsule.opened_at is not null or capsule.sender = actor
-    or capsule.rack_removed_at is not null or private.public_capsule_is_hidden(capsule.id)
-  then raise exception 'taken'; end if;
-  select w.* into post from public.public_capsule_spots w where w.id = capsule.public_capsule_spot for share;
-  distance := private.rack_distance(post, lat, lng, accuracy);
-  if distance is null or distance > 100 then raise exception 'too_far'; end if;
-  if capsule.open_at > now() then raise exception 'too_early'; end if;
-  if capsule.lock_question is not null and not exists (
-    select 1 from public.capsule_contents cc where cc.capsule_id = capsule.id
-      and cc.lock_answer = private.rack_normalize_answer(answer)
-  ) then raise exception 'wrong_answer'; end if;
-
-  update public.capsules set recipient = actor where id = capsule.id;
-  insert into public.public_capsule_pickups (capsule_id, finder) values (capsule.id, actor)
-    on conflict do nothing;
-  select to_jsonb(c) into strict opened from public.open_capsule(capsule.id, lat, lng, accuracy) c;
-  update public.capsules set opened_distance_m = round(distance) where id = capsule.id;
-  perform private.waypost_credit_xp(post, 'open');
-  return opened;
-end;
-$function$;
-
 revoke all on function
   private.waypost_wax_item(integer, integer),
   private.waypost_lock_xp(uuid),
-  private.waypost_credit_xp(public.public_capsule_spots, text),
   private.waypost_level_state(integer),
   private.waypost_level_save(integer, integer, jsonb),
   private.waypost_replace_base_wax(integer, integer),

@@ -8,6 +8,12 @@ exception when others then
   if sqlerrm <> expected then raise; end if;
 end $$;
 
+create function pg_temp.wl1_fail_xp_update() returns trigger
+language plpgsql as $$
+begin
+  raise exception 'WL1 test counter write failed';
+end $$;
+
 do $$
 declare
   player uuid := 'f0710000-0000-4000-8000-000000000001';
@@ -30,6 +36,7 @@ declare
   gold_seed double precision;
   no_gold_seed double precision;
   old_wax integer;
+  balance_before integer;
 begin
   insert into auth.users(id,email) values (player,'wl1-player@example.invalid'),
     (editor,'wl1-editor@example.invalid'), (viewer,'wl1-viewer@example.invalid');
@@ -44,7 +51,8 @@ begin
     where city_en = 'Taipei' and kind = 'common' and game_enabled and hidden_at is null and id <> post.id
     order by id limit 1;
   assert not has_function_privilege('anon','public.waypost_level(uuid)','execute');
-  assert not has_table_privilege('authenticated','private.waypost_xp_daily','select');
+  assert not has_table_privilege('authenticated','private.waypost_xp','select');
+  assert to_regclass('private.waypost_xp_daily') is null;
 
   select * into strict cfg from private.game_config where singleton;
   assert cfg.spin_wax_min = 10 and cfg.spin_wax_max = 10 and cfg.spin_gold_chance = 0.05 and cfg.spin_gold_award = 1;
@@ -83,22 +91,34 @@ begin
   perform pg_temp.wl1_expect_error(format('select * from public.waypost_spin(%L,0,0,10)', post.id), 'too_far');
 
   progress := public.waypost_level(post.id);
-  assert progress @> '{"level":1,"xp":0,"level_xp":0,"next_xp":100,"me":{"spins":0,"capsules":0,"opened":0}}';
+  assert progress @> '{"level":1,"xp":0,"level_xp":0,"next_xp":100}';
+  assert progress->'me' = '{"spins":0}';
   perform setseed(no_gold_seed);
   select * into strict spin from public.waypost_spin(post.id,post.lat,post.lng,10);
   assert spin.wax_awarded = 10 and spin.gold_awarded = 0 and spin.vessel_awarded is null;
   assert spin.cooldown_end > now() and spin.xp_gained > 0;
   perform pg_temp.wl1_expect_error(format('select * from public.waypost_spin(%L,%L,%L,10)',post.id,post.lat,post.lng), 'cooldown');
-  update public.waypost_spins set spun_at = now() - interval '1 day' where user_id = player;
+  assert public.waypost_level(post.id) @> '{"xp":1}';
+  assert public.waypost_level(post.id)->'me' = '{"spins":1}';
+
+  perform set_config('request.jwt.claim.sub',editor::text,true);
+  select * into strict spin from public.waypost_spin(post.id,post.lat,post.lng,10);
+  assert public.waypost_level(post.id) @> '{"xp":2}';
+  assert public.waypost_level(post.id)->'me' = '{"spins":1}';
+
+  perform set_config('request.jwt.claim.sub',player::text,true);
+  update public.waypost_spins set spun_at = now() - make_interval(secs => cfg.spin_cooldown_seconds + 1)
+    where user_id = player and waypost_id = post.id;
   perform setseed(gold_seed);
   select * into strict spin from public.waypost_spin(post.id,post.lat,post.lng,10);
   assert spin.wax_awarded = 10 and spin.gold_awarded = cfg.spin_gold_award and spin.vessel_awarded is null;
-  assert (public.waypost_level(post.id)->>'xp')::integer = 5;
+  assert public.waypost_level(post.id) @> '{"xp":3}';
+  assert public.waypost_level(post.id)->'me' = '{"spins":2}';
 
   for i in 1..2 loop
     perform public.rack_leave(post.id,post.lat,post.lng,10,'A test letter','WL1 test',1);
   end loop;
-  assert (public.waypost_level(post.id)->>'xp')::integer = 20;
+  assert public.waypost_level(post.id) @> '{"xp":3}';
   assert (public.waypost_rack(post.id,'mine',null)->>'count')::integer = 2;
 
   for i in 1..4 loop
@@ -110,23 +130,25 @@ begin
     assert public.rack_open(capsule,post.lat,post.lng,10,'Test answer')->>'message' = 'A test letter';
     perform pg_temp.wl1_expect_error(format('select public.rack_open(%L,%L,%L,10,%L)', capsule,post.lat,post.lng,'Test answer'), 'taken');
   end loop;
-  assert public.waypost_level(post.id) @> '{"level":2,"xp":110,"level_xp":100,"next_xp":300,"me":{"spins":1,"capsules":1,"opened":3}}';
-  assert exists (select 1 from private.waypost_xp_daily where user_id=player and waypost_id=post.id
-    and local_day=(statement_timestamp() at time zone 'Asia/Taipei')::date);
-  update private.waypost_xp_daily set local_day = local_day-1 where user_id=player and waypost_id=post.id;
-  update public.waypost_spins set spun_at = now()-interval '1 day' where user_id=player;
-  select * into strict spin from public.waypost_spin(post.id,post.lat,post.lng,10);
-  assert spin.wax_awarded = 12 and (public.waypost_level(post.id)->>'xp')::integer = 115;
-  perform public.rack_leave(other_post.id,other_post.lat,other_post.lng,10,'A second post','WL1 test',1);
-  assert public.waypost_level(other_post.id) @> '{"level":1,"xp":15,"me":{"spins":0,"capsules":1,"opened":0}}';
+  assert public.waypost_level(post.id) @> '{"level":1,"xp":3}';
+  assert public.waypost_level(post.id)->'me' = '{"spins":2}';
 
-  update private.waypost_xp set xp=95 where waypost_id=other_post.id;
+  perform public.rack_leave(other_post.id,other_post.lat,other_post.lng,10,'A second post','WL1 test',1);
+  assert public.waypost_level(other_post.id) @> '{"level":1,"xp":0}';
+  assert public.waypost_level(other_post.id)->'me' = '{"spins":0}';
+
+  insert into private.waypost_xp(waypost_id,xp) values (other_post.id,99);
   select * into strict spin from public.waypost_spin(other_post.id,other_post.lat,other_post.lng,10);
   assert spin.wax_awarded = 10;
   assert public.waypost_level(other_post.id) @> '{"level":2,"xp":100,"level_xp":100,"next_xp":300}';
+  update public.waypost_spins set spun_at = now() - make_interval(secs => cfg.spin_cooldown_seconds + 1)
+    where user_id = player and waypost_id = other_post.id;
+  select * into strict spin from public.waypost_spin(other_post.id,other_post.lat,other_post.lng,10);
+  assert spin.wax_awarded = 12;
+  assert public.waypost_level(other_post.id) @> '{"level":2,"xp":101}';
+  assert public.waypost_level(other_post.id)->'me' = '{"spins":2}';
 
-  -- Check the exact default boundaries and their spin rewards. The player
-  -- already reached today's spin cap at this Waypost.
+  -- Check the exact default boundaries and their spin rewards.
   for boundary in 3..5 loop
     update private.waypost_xp set xp=(select xp_from from private.waypost_levels where level=boundary)
       where waypost_id=other_post.id;
@@ -138,9 +160,19 @@ begin
 
   delete from public.owned_vessels where user_id=player;
 
+  -- A counter write failure must leave the payout and the spin record intact.
+  create trigger wl1_fail_xp_update before update on private.waypost_xp
+    for each row execute function pg_temp.wl1_fail_xp_update();
+  select wax_balls into strict balance_before from public.player_game where user_id=player;
+  select * into strict spin from public.waypost_spin(post.id,post.lat,post.lng,10);
+  assert spin.wax_awarded = 10 and spin.wax_balls = balance_before + 10;
+  assert public.waypost_level(post.id) @> '{"xp":3}';
+  assert public.waypost_level(post.id)->'me' = '{"spins":3}';
+  drop trigger wl1_fail_xp_update on private.waypost_xp;
+
   perform set_config('request.jwt.claim.sub',viewer::text,true);
   assert jsonb_array_length(public.admin_waypost_levels()) = 5;
-  assert public.waypost_level(post.id) @> '{"me":{"spins":0,"capsules":0,"opened":0}}';
+  assert public.waypost_level(post.id)->'me' = '{"spins":0}';
   perform pg_temp.wl1_expect_error(format('select public.admin_waypost_level_set(4,700,%L)',wax_range), 'forbidden');
 
   perform set_config('request.jwt.claim.sub',editor::text,true);
@@ -187,7 +219,7 @@ begin
   assert wax_counts @> array[14,15,16];
   assert (select sum(copies) = 60 from public.owned_vessels where user_id=player and vessel <> 'bottle');
   assert exists (select 1 from public.owned_vessels where user_id=player and vessel='bottle' and copies is null);
-  assert (public.waypost_level(post.id)->>'xp')::integer = 1500;
+  assert (public.waypost_level(post.id)->>'xp')::integer = 1530;
 end $$;
 
-select 'PASS: WL1 levels, spin/rack XP, local day, rewards, roles, Activity and Undo' as result;
+select 'PASS: WL1 levels, spin-only XP, payout on XP failure, rewards, roles, Activity and Undo' as result;
