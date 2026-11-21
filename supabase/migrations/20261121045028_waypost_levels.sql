@@ -34,10 +34,15 @@ returns jsonb language sql immutable set search_path = '' as $$
 $$;
 
 insert into private.waypost_levels (level, xp_from, items)
-select 1, 0, jsonb_build_array(private.waypost_wax_item(spin_wax_min, spin_wax_max))
+select 1, 0, jsonb_build_array(private.waypost_wax_item(spin_wax_min, spin_wax_max)) ||
+  case when spin_gold_chance > 0 and spin_gold_award > 0 then jsonb_build_array(
+    jsonb_build_object('kind', 'gold', 'vessel', null, 'min', spin_gold_award,
+      'max', spin_gold_award, 'chance', spin_gold_chance::numeric * 100))
+  else '[]'::jsonb end
 from private.game_config where singleton;
 insert into private.waypost_levels (level, xp_from, items) values
-  (2, 100, jsonb_build_array(private.waypost_wax_item(12, 12))),
+  (2, 100, jsonb_build_array(private.waypost_wax_item(12, 12)) ||
+    '[{"kind":"gold","vessel":null,"min":1,"max":1,"chance":5}]'),
   (3, 300, jsonb_build_array(private.waypost_wax_item(12, 12)) ||
     '[{"kind":"gold","vessel":null,"min":1,"max":1,"chance":10}]'),
   (4, 700, jsonb_build_array(private.waypost_wax_item(14, 14)) ||
@@ -375,7 +380,10 @@ begin
   vessel_awarded := null;
   -- Process named vessels in id order so concurrent spins lock numbered
   -- editions consistently, even if their levels list the drops differently.
-  for item in select value from jsonb_array_elements(rewards) order by value->>'vessel' nulls last loop
+  for item in
+    select value from jsonb_array_elements(rewards) with ordinality
+    order by value->>'vessel' nulls last, ordinality
+  loop
     if (item->'chance')::numeric < 100 and random() * 100 >= (item->'chance')::numeric then continue; end if;
     quantity := (item->'min')::integer +
       floor(random() * ((item->'max')::integer - (item->'min')::integer + 1))::integer;

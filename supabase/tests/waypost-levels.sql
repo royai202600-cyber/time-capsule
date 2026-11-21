@@ -17,6 +17,7 @@ declare
   other_post public.public_capsule_spots;
   capsule uuid;
   spin record;
+  cfg private.game_config;
   audit private.admin_actions;
   original jsonb;
   rewards jsonb;
@@ -25,6 +26,10 @@ declare
   wax_range jsonb := '[{"kind":"wax","min":14,"max":16,"chance":100}]';
   gold_drops integer := 0;
   wax_counts integer[] := '{}';
+  roll_seed double precision;
+  gold_seed double precision;
+  no_gold_seed double precision;
+  old_wax integer;
 begin
   insert into auth.users(id,email) values (player,'wl1-player@example.invalid'),
     (editor,'wl1-editor@example.invalid'), (viewer,'wl1-viewer@example.invalid');
@@ -41,6 +46,37 @@ begin
   assert not has_function_privilege('anon','public.waypost_level(uuid)','execute');
   assert not has_table_privilege('authenticated','private.waypost_xp_daily','select');
 
+  select * into strict cfg from private.game_config where singleton;
+  assert cfg.spin_wax_min = 10 and cfg.spin_wax_max = 10 and cfg.spin_gold_chance = 0.05 and cfg.spin_gold_award = 1;
+  assert not exists (
+    select 1
+    from (values (1,0,10,5,0),(2,100,12,5,0),(3,300,12,10,0),(4,700,14,20,0),(5,1500,15,20,5))
+      as expected(level, xp, wax, gold_chance, rare_chance)
+    left join private.waypost_levels l using (level)
+    where l.xp_from is distinct from expected.xp
+      or l.items is distinct from jsonb_build_array(
+        jsonb_build_object('kind','wax','vessel',null,'min',expected.wax,'max',expected.wax,'chance',100),
+        jsonb_build_object('kind','gold','vessel',null,'min',1,'max',1,'chance',expected.gold_chance)
+      ) || case when expected.rare_chance > 0 then
+        jsonb_build_array(jsonb_build_object('kind','vessel','vessel',null,'min',1,'max',1,'chance',expected.rare_chance))
+      else '[]'::jsonb end
+  ), 'The seeded wax counts and gold and vessel odds must match the nondecreasing default levels';
+
+  -- Match the pre-WL1 roll order: the first draw selects the wax count
+  -- and the second rolls gold. Find a seed for each outcome, then use
+  -- those same seeds on actual level-one spins.
+  for i in 1..128 loop
+    roll_seed := i / 128.0;
+    perform setseed(roll_seed);
+    old_wax := cfg.spin_wax_min + floor(random() * (cfg.spin_wax_max - cfg.spin_wax_min + 1))::integer;
+    assert old_wax = 10;
+    if random() < cfg.spin_gold_chance then gold_seed := roll_seed;
+    else no_gold_seed := roll_seed;
+    end if;
+    exit when gold_seed is not null and no_gold_seed is not null;
+  end loop;
+  assert gold_seed is not null and no_gold_seed is not null;
+
   perform set_config('request.jwt.claim.sub',player::text,true);
   perform pg_temp.wl1_expect_error('select public.admin_waypost_levels()', 'forbidden');
   perform pg_temp.wl1_expect_error(format('select public.admin_waypost_level_set(4,700,%L)',wax_range), 'forbidden');
@@ -48,13 +84,16 @@ begin
 
   progress := public.waypost_level(post.id);
   assert progress @> '{"level":1,"xp":0,"level_xp":0,"next_xp":100,"me":{"spins":0,"capsules":0,"opened":0}}';
+  perform setseed(no_gold_seed);
   select * into strict spin from public.waypost_spin(post.id,post.lat,post.lng,10);
   assert spin.wax_awarded = 10 and spin.gold_awarded = 0 and spin.vessel_awarded is null;
   assert spin.cooldown_end > now() and spin.xp_gained > 0;
   perform pg_temp.wl1_expect_error(format('select * from public.waypost_spin(%L,%L,%L,10)',post.id,post.lat,post.lng), 'cooldown');
   update public.waypost_spins set spun_at = now() - interval '1 day' where user_id = player;
+  perform setseed(gold_seed);
   select * into strict spin from public.waypost_spin(post.id,post.lat,post.lng,10);
-  assert spin.wax_awarded = 10 and (public.waypost_level(post.id)->>'xp')::integer = 5;
+  assert spin.wax_awarded = 10 and spin.gold_awarded = cfg.spin_gold_award and spin.vessel_awarded is null;
+  assert (public.waypost_level(post.id)->>'xp')::integer = 5;
 
   for i in 1..2 loop
     perform public.rack_leave(post.id,post.lat,post.lng,10,'A test letter','WL1 test',1);
