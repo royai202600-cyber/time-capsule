@@ -30,17 +30,10 @@ Roy approved this on 2026-11-21 after playing the demo (a scratch HTML demo that
 ## 3. Waypost levels
 
 - **Nothing changes on the map.** The gem looks the same at every level. A new look (skin) after a certain level may come later.
-- A common Waypost earns XP from everyone's activity:
-
-  | Action | XP | Daily cap per player, per Waypost |
-  |---|---|---|
-  | Spin | +5 | 1 |
-  | Leave a capsule on its rack | +15 | 1 |
-  | Open a capsule from its rack | +25 | 3 |
-
+- A common Waypost grows from **spins only**: every spin by anyone adds **1 XP**, with no daily cap. It's a community thing, so more spins should always help; the existing spin cooldown already paces each player. Leaving or opening capsules adds no XP, so nobody can farm it by dropping and opening capsules.
 - There are 5 levels. Each has an XP threshold and its own **drop list**: what one spin gives. Level 1 is today's spin reward exactly (10 wax balls plus the existing gold-ball chance, seeded from the live game config), so nothing changes for anyone until a Waypost grows, and no level gives less than the one below. These are the default levels:
 
-  | Level | From XP | Each spin |
+  | Level | From XP (= spins) | Each spin |
   |---|---|---|
   | 1 | 0 | 10 wax, today's gold chance (5%) |
   | 2 | 100 | 12 wax, 5% chance of 1 gold |
@@ -52,12 +45,12 @@ Roy approved this on 2026-11-21 after playing the demo (a scratch HTML demo that
   - Each item is wax, gold or a vessel, with a count range (min–max, 1–99) and a chance (1–100%).
   - Items at 100% always drop. Each other item is rolled once per spin.
   - A vessel item can name a vessel, or leave it empty to mean the city's rare Corrupted Capsule vessel. A vessel drop gives that many copies; it changes nothing for an unlimited vessel the player already owns.
-- On the Waypost screen, a slim level bar sits under the name. Tapping it opens a sheet with the level, progress, what each spin drops now and at the next level, how it grows, and what you've added there.
+- On the Waypost screen, a slim level bar sits under the name. Tapping it opens a sheet with the level, progress, what each spin drops now and at the next level, how it grows (every spin adds 1 XP), and how many times you've spun there.
 - When a Waypost reaches a new level while you're at it, a short celebration shows the same plain gem with a light burst and what each spin now gives.
 - **Admin:** a Waypost levels page (`/admin/levels`, under Capsules) shows every level's XP threshold and drop list. Owners and admins edit one level at a time (XP, items, note). Each change is logged in Activity with Undo. It replaces the separate spin-reward editor, because level 1 is the spin reward.
 
 ## Build split
 
 - **Claude (UI):** everything under `mobile/` in this PR: home modes, dock, `/capsules`, the Waypost screen, the rack, doors, level bar, sheet and celebration, the admin levels page, and the dev sample in `services/waypostLevels.ts`.
-- **Codex (WL1 backend):** levels tables, XP events, spin paying from the drop list, the `waypost_level` / `admin_waypost_levels` / `admin_waypost_level_set` RPCs with Activity Undo, types, and then switching on `WAYPOST_LEVELS_BACKEND`. Its done-when is task WL1 in `docs/TASKS.md`.
+- **Codex (WL1 backend):** levels table, a per-Waypost XP counter that each spin adds 1 to, spin paying from the drop list, the `waypost_level` / `admin_waypost_levels` / `admin_waypost_level_set` RPCs with Activity Undo, types, and then switching on `WAYPOST_LEVELS_BACKEND`. Its done-when is task WL1 in `docs/TASKS.md`.
 - **Release order:** the UI ships first on today's backend, with levels hidden in production because the flag is off. WL1 applies its migration, then flips the flag. The client already reads an optional `vessel_awarded` from `waypost_spin`.

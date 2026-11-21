@@ -9,7 +9,7 @@ import { useRackText } from "../racks/strings";
 import { VESSELS } from "../shop/strings";
 import { useLanguage } from "../../i18n";
 import { ADMIN_EDIT, can } from "../../services/admin";
-import { adminLevels, levelProblem, MAX_LEVEL, WAYPOST_LEVELS, XP_POINTS, type LevelItem, type LevelItemKind, type LevelRow } from "../../services/waypostLevels";
+import { adminLevels, levelProblem, MAX_LEVEL, SPIN_XP, WAYPOST_LEVELS, type LevelItem, type LevelItemKind, type LevelRow } from "../../services/waypostLevels";
 import { C, radii, sans, serif, spacing } from "../../theme";
 import { useAdmin } from "./AdminShell";
 import { useLevelText } from "./levelStrings";
@@ -30,10 +30,10 @@ export default function LevelsScreen() {
       {!!toast && <Notice text={toast} />}
       <Section title={l.points}>
         <Card style={{ gap: 8 }}>
-          {([["spin", l.spin], ["leave", l.leave], ["open", l.opened]] as const).map(([k, label]) => <View key={k} style={{ flexDirection: "row", justifyContent: "space-between" }}>
-            <Text style={{ fontFamily: sans, fontSize: 14, color: C.ink }}>{label}</Text>
-            <Text style={{ fontFamily: serif, fontSize: 15, color: C.blue }}>+{XP_POINTS[k]}</Text>
-          </View>)}
+          <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Text style={{ fontFamily: sans, fontSize: 14, color: C.ink }}>{l.spin}</Text>
+            <Text style={{ fontFamily: serif, fontSize: 15, color: C.blue }}>+{SPIN_XP}</Text>
+          </View>
           <Text style={{ fontFamily: sans, fontSize: 12.5, lineHeight: 18, color: C.muted }}>{l.pointsNote}</Text>
         </Card>
       </Section>

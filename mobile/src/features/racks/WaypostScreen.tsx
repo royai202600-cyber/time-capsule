@@ -13,7 +13,7 @@ import { Vessel } from "../../components/Vessel";
 import { game, GameError, type GameState, type Waypost } from "../../services/game";
 import { PUBLIC_CAPSULE_RECIPIENT } from "../../services/publicCapsule";
 import { RACK_FILTERS, RackError, racks, type RackAt, type RackFilter, type RackItem, type RackPage } from "../../services/racks";
-import { levelProgress, sampleAddXp, WAYPOST_LEVELS, waypostLevels, XP_POINTS, type WaypostLevel } from "../../services/waypostLevels";
+import { levelProgress, sampleSpinXp, WAYPOST_LEVELS, waypostLevels, type WaypostLevel } from "../../services/waypostLevels";
 import { C, radii, sans, serif, shadows, spacing } from "../../theme";
 import { useReducedMotion } from "../../useReducedMotion";
 import { errorKey, useGameText } from "../game/strings";
@@ -126,7 +126,7 @@ export function WaypostScreen({ waypost, meters, at, language, onState, onSpun, 
     try {
       const out = await game.spin(waypost.id);
       onState(out.state);
-      sampleAddXp(waypost.id, "spin");
+      sampleSpinXp(waypost.id);
       setTimeout(() => {
         if (!alive.current) return;
         void haptics.success();
@@ -169,7 +169,6 @@ export function WaypostScreen({ waypost, meters, at, language, onState, onSpun, 
     try {
       const out = await racks.open(item.id, at(), answer);
       void haptics.success();
-      sampleAddXp(waypost.id, "open");
       setSelected(null);
       setPage((prev) => prev && { ...prev, count: prev.count - 1, items: prev.items.filter((x) => x.capsule_id !== item.id) });
       if (onSampleLetter) onSampleLetter(item.publicCapsule, out.message ?? "");
@@ -306,10 +305,6 @@ function LevelBar({ level, onPress }: { level: WaypostLevel; onPress: () => void
 function LevelSheet({ level, onClose }: { level: WaypostLevel; onClose: () => void }) {
   const r = useRackText();
   const insets = useSafeAreaInsets();
-  const row = (label: string, points: number) => <View key={label} style={{ flexDirection: "row", justifyContent: "space-between", gap: spacing.sm }}>
-    <Text style={{ flex: 1, fontFamily: sans, fontSize: 13.5, color: C.ink }}>{label}</Text>
-    <Text style={{ fontFamily: serif, fontSize: 14, color: C.blue }}>+{points}</Text>
-  </View>;
   return <>
     <Pressable accessibilityRole="button" onPress={onClose} style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 9, backgroundColor: "rgba(22,38,63,.3)" }} />
     <View style={{ position: "absolute", left: 0, right: 0, bottom: 0, zIndex: 10, maxHeight: "86%", backgroundColor: C.paper, borderTopLeftRadius: 22, borderTopRightRadius: 22, ...shadows.card }}>
@@ -331,8 +326,8 @@ function LevelSheet({ level, onClose }: { level: WaypostLevel; onClose: () => vo
         </View>
         <View style={box}>
           <Text style={{ fontFamily: serif, fontSize: 16, color: C.ink }}>{r.howGrow}</Text>
-          {row(r.xpSpin, XP_POINTS.spin)}{row(r.xpLeave, XP_POINTS.leave)}{row(r.xpOpen, XP_POINTS.open)}
-          <Text style={{ fontFamily: sans, fontSize: 12.5, lineHeight: 19, color: C.muted }}>{r.youHelped(level.me.spins, level.me.capsules, level.me.opened)}</Text>
+          <Text style={{ fontFamily: sans, fontSize: 14, lineHeight: 21, color: C.ink }}>{r.growNote}</Text>
+          <Text style={{ fontFamily: sans, fontSize: 12.5, lineHeight: 19, color: C.muted }}>{r.youSpun(level.me.spins)}</Text>
         </View>
       </ScrollView>
     </View>
