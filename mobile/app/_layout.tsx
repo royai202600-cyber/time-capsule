@@ -32,6 +32,10 @@ export default function RootLayout() {
                 options={{ presentation: "modal" }}
               />
               <Stack.Screen
+                name="capsules"
+                options={{ presentation: "modal" }}
+              />
+              <Stack.Screen
                 name="wake/[id]"
                 options={{ presentation: "fullScreenModal", gestureEnabled: false, animation: "fade" }}
               />

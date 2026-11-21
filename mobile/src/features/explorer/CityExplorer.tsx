@@ -16,11 +16,13 @@ export type HuntDays = Record<string, { score: number; finished: boolean; streak
 const GAP = 12;
 
 /** Over the Journey map: swipe a city card and the map flies there; the button below starts that city's daily puzzle. */
-export function CityExplorer({ day, hunt, index, onIndex, balls, language, onClose, onPlay }: {
+export function CityExplorer({ day, hunt, index, onIndex, balls, language, onClose, onPlay, header, footer }: {
   day: PuzzleDay | null; index: number; onIndex: (i: number) => void; balls: number | null; language: "zh" | "en";
   /** Today's Hunt replaces the daily price card: the button plays the city's hunt instead. */
   hunt?: HuntDays | null;
   onClose: () => void; onPlay: (city: ExplorerCity) => void;
+  /** On the home screen the shared top bar and dock replace the back button and title. */
+  header?: React.ReactNode; footer?: React.ReactNode;
 }) {
   const s = useExplorerText();
   const t = useTodaysHuntText();
@@ -38,6 +40,7 @@ export function CityExplorer({ day, hunt, index, onIndex, balls, language, onClo
 
   return <View pointerEvents="box-none" style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, zIndex: 32 }}>
     <SafeAreaView edges={["top", "left", "right"]} pointerEvents="box-none">
+      {header ?? <>
       <View pointerEvents="box-none" style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm, paddingHorizontal: spacing.md, paddingTop: spacing.sm }}>
         <Chip onPress={onClose} label={s.back}><ArtIcon name="back" size={22} /></Chip>
         <View accessibilityRole="header" style={{ height: 44, paddingHorizontal: 16, borderRadius: 22, backgroundColor: "rgba(246,248,251,.94)", justifyContent: "center", ...shadows.card }}>
@@ -49,6 +52,7 @@ export function CityExplorer({ day, hunt, index, onIndex, balls, language, onClo
           <Text style={{ fontFamily: serif, fontSize: 15, color: C.ink }}>{balls}</Text>
         </View>}
       </View>
+      </>}
     </SafeAreaView>
 
     <View style={{ flex: 1 }} pointerEvents="none" />
@@ -82,6 +86,7 @@ export function CityExplorer({ day, hunt, index, onIndex, balls, language, onClo
               <Text style={{ fontFamily: serif, fontSize: 16, color: C.muted }}>{s.soon}</Text>
             </View>}
       </View>
+      {footer && <View pointerEvents="box-none" style={{ paddingHorizontal: spacing.md, paddingTop: spacing.xs }}>{footer}</View>}
     </SafeAreaView>
   </View>;
 }

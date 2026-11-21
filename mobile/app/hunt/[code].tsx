@@ -3,5 +3,5 @@
 import { Redirect, useLocalSearchParams } from "expo-router";
 export default function HuntLink() {
   const { code } = useLocalSearchParams<{ code?: string }>();
-  return <Redirect href={{ pathname: "/journey", params: { huntCode: code ?? "" } }} />;
+  return <Redirect href={{ pathname: "/", params: { huntCode: code ?? "" } }} />;
 }

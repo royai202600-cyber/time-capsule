@@ -8,7 +8,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { PagerDots } from "../../components/PagerControls";
 import { Avatar } from "../../components/Avatar";
 import { ArtIcon, type IconName } from "../../components/ArtIcon";
-import { CabinetIcon, JourneyIcon, SealPlusIcon } from "../../components/DockIcons";
+import { SealPlusIcon } from "../../components/DockIcons";
+import { goBack } from "../../navigation";
 import { scenes } from "../../art/manifest";
 import { Vessel } from "../../components/Vessel";
 import { haptics } from "../../components/haptics";
@@ -44,6 +45,7 @@ function CardVessel({ kind, state, reduced, active }: { kind: VesselKind; state:
   </Animated.View>;
 }
 
+/** Time capsules: the Inbox / Sent card stack, opened from the Capsules button on the Journey dock (docs/design/hunt-first-home.md). */
 export default function HomeScreen() {
   const { tab } = useLocalSearchParams<{ tab?: string }>();
   const { profile, session } = useAuth();
@@ -111,7 +113,7 @@ export default function HomeScreen() {
   const ready = rows.filter(c => status(c, side, fix, placeFor(c), now) === "ready").length;
   return <SafeAreaView style={{ flex: 1, backgroundColor: C.paper }}><View style={{ flex: 1, width: "100%", maxWidth: 640, alignSelf: "center" }}>
     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 14, paddingTop: 8 }}>
-      <Pressable onPress={() => router.push("/me")} accessibilityLabel={t("home.my")} style={{ alignItems: "center" }}><Avatar avatar={profile?.avatar} size={36} /><Text style={{ color: C.ink, fontFamily: sans, fontSize: 11 }}>{t("home.my")}</Text></Pressable>
+      <Pressable onPress={goBack} accessibilityRole="button" accessibilityLabel={t("back")} hitSlop={6} style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}><ArtIcon name="close" size={22} color={C.ink} /></Pressable>
       <View style={{ flexDirection: "row", backgroundColor: C.glass, borderRadius: 999, padding: 4 }}>{(["inbox", "sent"] as const).map(tab => <Pressable key={tab} onPress={() => { setSide(tab); void haptics.tick(); }} accessibilityRole="tab" accessibilityState={{ selected: side === tab }} style={{ paddingVertical: 8, paddingHorizontal: 14, borderRadius: 999, backgroundColor: side === tab ? C.white : "transparent" }}><Text style={{ color: C.ink, fontFamily: sans }}>{t(`home.${tab}`)}</Text></Pressable>)}</View>
       <View style={{ flexDirection: "row", alignItems: "center" }}><Pressable onPress={() => setLanguage(language === "zh" ? "en" : "zh")} accessibilityLabel={language === "zh" ? "English" : "繁體中文"}><Text style={{ color: C.plum, padding: 7, fontFamily: serif }}>{language === "zh" ? "EN" : "中"}</Text></Pressable><Pressable onPress={() => router.push("/shop")} accessibilityLabel={t("home.shop")} style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}><ArtIcon name="shop" color={C.plum} /></Pressable></View>
     </View>
@@ -129,10 +131,7 @@ export default function HomeScreen() {
       }} /></View>
       <View style={{ alignItems: "center", gap: 2, paddingBottom: 6 }}><PagerDots count={rows.length} index={index} position={dotPosition} onSelect={i => list.current?.scrollToIndex({ index: i, animated: !reduced })} label={n => t("capsule.page", n)} /><Text style={{ color: C.muted, fontFamily: sans, fontSize: 12 }}>{side === "inbox" ? t("home.summaryIn", rows.length, ready) : t("home.summaryOut", rows.length, rows.filter(c => !c.opened_at).length)}</Text></View>
     </> : <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 10 }}><Image source={side === 'inbox' ? scenes.emptyInbox : scenes.emptySent} style={{ width: '100%', height: 240 }} resizeMode="contain" /><Text style={{ fontFamily: serif, fontSize: 22, color: C.ink }}>{t(side === "inbox" ? "home.emptyIn" : "home.emptyOut")}</Text><Text style={{ color: C.muted }}>{t("home.emptyHint")}</Text></View>}
-    <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 32, paddingBottom: 14 }}><Dock label={t("home.journey")} icon={<JourneyIcon />} onPress={() => router.push("/journey")} /><Pressable onPress={() => router.push("/create")} accessibilityRole="button" accessibilityLabel={t("home.new")} style={({ pressed }) => ({ width: 68, height: 68, borderRadius: 34, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.95 : 1 }], ...shadows.card })}><SealPlusIcon /></Pressable><Dock label={t("home.cabinet")} icon={<CabinetIcon />} onPress={() => router.push("/cabinet")} /></View>
+    <View style={{ alignItems: "center", paddingBottom: 14 }}><Pressable onPress={() => router.push("/create")} accessibilityRole="button" accessibilityLabel={t("home.new")} style={({ pressed }) => ({ width: 68, height: 68, borderRadius: 34, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.95 : 1 }], ...shadows.card })}><SealPlusIcon /></Pressable></View>
   </View></SafeAreaView>;
 }
 
-function Dock({ label, icon, onPress }: { label: string; icon: React.ReactNode; onPress: () => void }) {
-  return <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={({ pressed }) => ({ alignItems: "center", gap: 2, transform: [{ scale: pressed ? 0.95 : 1 }] })}><View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: C.white, borderWidth: 1, borderColor: C.line, alignItems: "center", justifyContent: "center" }}>{icon}</View><Text style={{ color: C.muted, fontSize: 11 }}>{label}</Text></Pressable>;
-}

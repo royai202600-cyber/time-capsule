@@ -5,7 +5,6 @@ const strings = {
   zh: {
     title: "探索城市",
     explore: "探索城市",
-    exploreFirst: "先探索城市",
     back: "回到我的位置",
     known: (things: string) => `以這些聞名：${things}`,
     landmark: (name: string) => `地標：${name}`,
@@ -45,11 +44,17 @@ const strings = {
     error: "暫時沒有回應，請再試一次。",
     alreadyDone: "今天這一題已經玩過了。",
     badGuess: "請輸入一個金額，例如 1.5。",
+    // Home modes and dock (docs/design/hunt-first-home.md).
+    modeHunt: "今日尋寶",
+    modeExplore: "探索",
+    capsules: "時光膠囊",
+    capsulesReady: (n: number) => `時光膠囊，${n} 個可以打開`,
+    me: "我的",
+    backToHunt: "回到今日尋寶",
   },
   en: {
     title: "Explore cities",
     explore: "Explore",
-    exploreFirst: "Explore cities first",
     back: "Back to my location",
     known: (things: string) => `Known for: ${things}`,
     landmark: (name: string) => `Landmark: ${name}`,
@@ -89,6 +94,12 @@ const strings = {
     error: "No response just now. Please try again.",
     alreadyDone: "You've already played this one today.",
     badGuess: "Enter an amount, for example 1.5.",
+    modeHunt: "Today's Hunt",
+    modeExplore: "Explore",
+    capsules: "Capsules",
+    capsulesReady: (n: number) => `Capsules, ${n} ready to open`,
+    me: "Me",
+    backToHunt: "Back to Today's Hunt",
   },
 };
 

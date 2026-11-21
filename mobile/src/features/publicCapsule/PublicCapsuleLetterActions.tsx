@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import { router } from "expo-router";
+import { goHome } from "../../navigation";
 import { haptics } from "../../components/haptics";
 import { C, sans, serif, spacing } from "../../theme";
 import { publicCapsule } from "../../services/publicCapsule";
@@ -13,7 +13,7 @@ export function PublicCapsuleLetterActions({ capsuleId }: { capsuleId: string })
   const [busy, setBusy] = useState(false);
   const [reporting, setReporting] = useState(false);
   const [note, setNote] = useState("");
-  const leave = (message: string) => { setNote(message); setTimeout(() => router.replace({ pathname: "/journey" }), 1400); };
+  const leave = (message: string) => { setNote(message); setTimeout(() => goHome(), 1400); };
   const giveBack = async () => {
     setBusy(true);
     try { await publicCapsule.returnPublicCapsule(capsuleId); void haptics.page(); leave(s("returned")); }
@@ -25,7 +25,7 @@ export function PublicCapsuleLetterActions({ capsuleId }: { capsuleId: string })
     catch { setNote(s("errUnknown")); void haptics.warn(); setBusy(false); }
   };
   return <View style={{ gap: spacing.sm }}>
-    <Btn title={s("keep")} disabled={busy} onPress={() => { void haptics.tap(); router.replace("/"); }} />
+    <Btn title={s("keep")} disabled={busy} onPress={() => { void haptics.tap(); goHome(); }} />
     <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textAlign: "center" }}>{s("keepNote")}</Text>
     <Btn quiet title={s("giveBack")} disabled={busy} onPress={() => void giveBack()} />
     <Text style={{ fontFamily: sans, fontSize: 12, color: C.muted, textAlign: "center" }}>{s("giveBackNote")}</Text>

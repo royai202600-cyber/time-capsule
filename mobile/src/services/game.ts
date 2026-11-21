@@ -11,6 +11,8 @@ export type BallKind = "wax" | "gold";
 export type Coords = { lat: number; lng: number; accuracy?: number };
 export type GameState = { xp: number; level: number; xp_to_next: number; wax_balls: number; gold_balls: number };
 export type CorruptedCapsule = { id: string; vessel: string; rarity: Rarity; lat: number; lng: number; expires_at: string; attempts_left: number };
+/** What one spin dropped. `vessel` is a vessel id when the Waypost's level drop list gave a copy (WL1). */
+export type SpinResult = { wax: number; gold: number; vessel?: string | null; state: GameState };
 export type Waypost = { id: string; kind: "common" | "landmark"; name_zh: string; name_en: string; lat: number; lng: number; cooldown_until: string | null; place?: string | null; scene?: string | null };
 export type Nearby = { corrupted: CorruptedCapsule[]; wayposts: Waypost[] };
 /** What a won fight gives. Copies are null for an unlimited vessel (a starter or an earned Landmark vessel). */
@@ -199,19 +201,20 @@ export const game = {
       privateHunts: rows.filter((row) => row.how_earned === "private_hunt").map((row) => ({ id: row.place, name: row.name_zh, at: row.first_at })),
     };
   },
-  async spin(id: string): Promise<{ wax: number; gold: number; state: GameState }> {
+  async spin(id: string): Promise<SpinResult> {
     const out = await game.spinOnce(id);
     const at = posts.get(id);
     if (at) emit({ kind: "spin", waypost: id, ...at });
     return out;
   },
-  async spinOnce(id: string): Promise<{ wax: number; gold: number; state: GameState }> {
+  async spinOnce(id: string): Promise<SpinResult> {
     if (await live()) {
       const { data, error } = await supabase.rpc("waypost_spin", { p_id: id, ...coords() });
       fail(error);
       const row = data?.[0];
       if (!row) throw new GameError("unknown");
-      return { wax: row.wax_awarded, gold: row.gold_awarded, state: await liveState() };
+      // WL1: a levelled Waypost can also drop one copy of a vessel.
+      return { wax: row.wax_awarded, gold: row.gold_awarded, vessel: (row as { vessel_awarded?: string | null }).vessel_awarded ?? null, state: await liveState() };
     }
     const waypost = dev.wayposts.find((w) => w.id === id);
     if (!waypost) throw new GameError("unknown");

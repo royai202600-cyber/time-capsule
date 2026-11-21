@@ -13,6 +13,8 @@ import { AButton, Card, Failed, Loading, Page, Pill, Section, Segmented, Stat, V
 import { PlaceEditor, RuleSheet, WaveEditButtons } from "./SpawnEditor";
 import { ADMIN_HUNT_LOOP } from "../../services/adminHuntLoop";
 import { SpinButton, spinOf } from "./SpinControls";
+import { LevelsLink } from "./LevelsScreen";
+import { WAYPOST_LEVELS } from "../../services/waypostLevels";
 import { CopiesButton, VesselCopies, perCatchOf } from "./CopiesControls";
 import { useHuntLoopText } from "./huntLoopStrings";
 
@@ -36,7 +38,8 @@ export default function CapsulesScreen() {
       {mayEdit && <AButton small tone={editing ? "blue" : "ghost"} title={editing ? a.ed.done : a.ed.edit} onPress={() => setEditing((x) => !x)} />}
     </View>}>
     {data.error ? <Failed onRetry={data.reload} /> : !data.data ? <Loading /> : <>
-      <WaveSettings config={data.data.config}>{on && <WaveEditButtons data={data.data} cities={cities} onSaved={saved} />}{on && ADMIN_HUNT_LOOP && <CopiesButton config={data.data.config} onSaved={saved} />}{on && <SpinButton config={data.data.config} onSaved={saved} />}</WaveSettings>
+      <WaveSettings config={data.data.config}>{on && <WaveEditButtons data={data.data} cities={cities} onSaved={saved} />}{on && ADMIN_HUNT_LOOP && <CopiesButton config={data.data.config} onSaved={saved} />}{/* With Waypost levels, the spin reward is level 1's drop list, edited on the levels page. */}{on && !WAYPOST_LEVELS && <SpinButton config={data.data.config} onSaved={saved} />}</WaveSettings>
+      <LevelsLink />
       {view === "vessel" ? <ByVessel data={data.data} cities={cities} onSaved={on ? saved : undefined} />
         : on ? <PlaceEditor data={data.data} cities={cities} onSaved={saved} />
         : <ByPlace data={data.data} cities={cities} focus={place} />}

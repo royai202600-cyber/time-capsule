@@ -38,7 +38,9 @@ function useNavLabel() {
   const h = useHuntLoopText();
   return (key: Tab["key"]) => key === "hunts" ? h.nav : a.nav[key];
 }
-const isOn = (path: string, href: string) => href === "/admin" ? path === "/admin" || path.startsWith("/admin/city") : path.startsWith(href);
+// Waypost levels sit under Capsules, where the spin reward used to be.
+const isOn = (path: string, href: string) => href === "/admin" ? path === "/admin" || path.startsWith("/admin/city")
+  : href === "/admin/capsules" ? path.startsWith(href) || path.startsWith("/admin/levels") : path.startsWith(href);
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const a = useAdminText();

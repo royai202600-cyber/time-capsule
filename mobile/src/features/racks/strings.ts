@@ -1,9 +1,49 @@
 import { useLanguage } from "../../i18n";
 import type { RackErrorCode, RackFilter } from "../../services/racks";
+import type { LevelItem } from "../../services/waypostLevels";
+import { vesselName } from "../alarm/strings";
 
-// Only what racks add to existing screens: the Waypost card, the public capsule card and Create.
+const pct = (i: LevelItem) => i.chance < 100 ? i.chance : null;
+const count = (i: LevelItem) => i.min === i.max ? `${i.min}` : `${i.min}–${i.max}`;
+
+// Racks on the Waypost screen (spin, then the rack, with Leave on the same screen), the public capsule card and Create.
 const strings = {
   zh: {
+    // The Waypost screen
+    waypost: "驛站",
+    leaveHere: "在這裡放一個膠囊",
+    rackCount: (n: string) => `架上有 ${n} 個膠囊 · 先打開的人拿走`,
+    rackEmpty: "架上還沒有膠囊，放第一個吧。",
+    farRack: (n: string) => `它的膠囊架上有 ${n} 個膠囊`,
+    nextSpin: (t: string) => `下次可以轉 ${t}`,
+    readyTag: "可以打開",
+    daysTag: (n: number) => `${n} 天`,
+    hoursTag: (n: number) => `${n} 小時`,
+    mineTag: "我的",
+    questionTag: "有問題鎖",
+    gotVessel: (name: string) => `${name} +1`,
+    // Waypost levels
+    level: (n: number) => `Lv ${n}`,
+    toNext: (p: number, n: number) => `${p}% → Lv ${n}`,
+    topLevel: "最高等級",
+    levelTitle: "驛站等級",
+    toGo: (xp: number, n: number) => `再 ${xp} 點升到 Lv ${n}`,
+    atTop: "已經是最高等級。",
+    howGrow: "大家怎麼讓它長大",
+    xpSpin: "轉一次（每人每天算一次）",
+    xpLeave: "放一個膠囊上架",
+    xpOpen: "打開架上的膠囊",
+    youHelped: (s: number, c: number, o: number) => `你在這裡轉了 ${s} 次、放了 ${c} 個膠囊、打開 ${o} 個。等級不會下降。`,
+    eachSpin: "每次轉",
+    nowTag: "現在",
+    levelUp: (n: number) => `升到 Lv ${n}！`,
+    levelUpLine: (name: string) => `${name}因為大家的轉盤和膠囊長大了。`,
+    nowDrops: "現在每次轉",
+    nice: "太好了",
+    item: (i: LevelItem) => {
+      const what = i.kind === "wax" ? `${count(i)} 顆蠟球` : i.kind === "gold" ? `${count(i)} 顆金蠟球` : `${i.vessel ? vesselName(i.vessel, "zh") : "這座城市的稀有容器"} ${count(i)} 份`;
+      return pct(i) ? `${pct(i)}% 機會：${what}` : what;
+    },
     spin: "轉一下",
     rack: (n: string) => `膠囊架 · ${n}`,
     leave: "放一個膠囊",
@@ -39,6 +79,39 @@ const strings = {
     } as Record<RackErrorCode, string>,
   },
   en: {
+    waypost: "Waypost",
+    leaveHere: "Leave a capsule here",
+    rackCount: (n: string) => `${n} on the rack · the first to open one takes it`,
+    rackEmpty: "Nothing on the rack yet. Leave the first one.",
+    farRack: (n: string) => `${n} capsules on its rack`,
+    nextSpin: (t: string) => `Next spin in ${t}`,
+    readyTag: "Ready",
+    daysTag: (n: number) => `${n}d`,
+    hoursTag: (n: number) => `${n}h`,
+    mineTag: "Mine",
+    questionTag: "Question lock",
+    gotVessel: (name: string) => `${name} +1`,
+    level: (n: number) => `Lv ${n}`,
+    toNext: (p: number, n: number) => `${p}% → Lv ${n}`,
+    topLevel: "Top level",
+    levelTitle: "Waypost level",
+    toGo: (xp: number, n: number) => `${xp} more to Lv ${n}`,
+    atTop: "Already at the top level.",
+    howGrow: "How everyone grows it",
+    xpSpin: "A spin (once per player per day)",
+    xpLeave: "Leave a capsule on the rack",
+    xpOpen: "Open a capsule from the rack",
+    youHelped: (s: number, c: number, o: number) => `Here you've spun ${s} time${s === 1 ? "" : "s"}, left ${c} capsule${c === 1 ? "" : "s"} and opened ${o}. Levels never go down.`,
+    eachSpin: "Each spin",
+    nowTag: "Now",
+    levelUp: (n: number) => `Level ${n}!`,
+    levelUpLine: (name: string) => `${name} grew from everyone's spins and capsules.`,
+    nowDrops: "Each spin now",
+    nice: "Nice",
+    item: (i: LevelItem) => {
+      const what = i.kind === "wax" ? `${count(i)} wax ball${i.max === 1 ? "" : "s"}` : i.kind === "gold" ? `${count(i)} gold ball${i.max === 1 ? "" : "s"}` : `${count(i)} cop${i.max === 1 ? "y" : "ies"} of ${i.vessel ? vesselName(i.vessel, "en") : "the city's rare vessel"}`;
+      return pct(i) ? `${pct(i)}% chance: ${what}` : what;
+    },
     spin: "Spin",
     rack: (n: string) => `Capsule rack · ${n}`,
     leave: "Leave a capsule",

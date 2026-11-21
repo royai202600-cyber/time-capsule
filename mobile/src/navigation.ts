@@ -5,3 +5,8 @@ export function goBack() {
   if (router.canGoBack()) router.back();
   else router.replace("/");
 }
+
+/** Back to Journey, the home screen, with what it should show (a route to walk). Pops back to it when it is already underneath. */
+export function goHome(params?: { route?: string; huntCode?: string }) {
+  router.dismissTo({ pathname: "/", params });
+}
