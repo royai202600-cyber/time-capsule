@@ -81,6 +81,24 @@ begin
   perform public.rack_leave(other_post.id,other_post.lat,other_post.lng,10,'A second post','WL1 test',1);
   assert public.waypost_level(other_post.id) @> '{"level":1,"xp":15,"me":{"spins":0,"capsules":1,"opened":0}}';
 
+  update private.waypost_xp set xp=95 where waypost_id=other_post.id;
+  select * into strict spin from public.waypost_spin(other_post.id,other_post.lat,other_post.lng,10);
+  assert spin.wax_awarded = 10;
+  assert public.waypost_level(other_post.id) @> '{"level":2,"xp":100,"level_xp":100,"next_xp":300}';
+
+  -- Check the exact default boundaries and their spin rewards. The player
+  -- already reached today's spin cap at this Waypost.
+  for boundary in 3..5 loop
+    update private.waypost_xp set xp=(select xp_from from private.waypost_levels where level=boundary)
+      where waypost_id=other_post.id;
+    update public.waypost_spins set spun_at=now()-interval '1 day' where user_id=player;
+    assert (public.waypost_level(other_post.id)->>'level')::integer = boundary;
+    select * into strict spin from public.waypost_spin(other_post.id,other_post.lat,other_post.lng,10);
+    assert spin.wax_awarded = (array[12,14,15])[boundary-2] and spin.gold_awarded in (0,1);
+  end loop;
+
+  delete from public.owned_vessels where user_id=player;
+
   perform set_config('request.jwt.claim.sub',viewer::text,true);
   assert jsonb_array_length(public.admin_waypost_levels()) = 5;
   assert public.waypost_level(post.id) @> '{"me":{"spins":0,"capsules":0,"opened":0}}';
