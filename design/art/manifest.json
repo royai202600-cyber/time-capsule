@@ -16846,5 +16846,43 @@
     "ground_y_px": 632,
     "normalization": "Removed residual alpha up to 12/255 and resampled the visible strip to 1488×163 at x=24, y=470, with the flat base ending at row 632.",
     "web_export": "public/art/game/jump-spikes.webp"
+  },
+  {
+    "path": "design/art/game/wheel/scene-landmark-default.png",
+    "what": "Default Landmark spin scene",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": false,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: illustration-story. Draw the default Landmark spin scene for Time Capsule, matching the supplied existing square wheel scenes. Image 1 is the approved ink and palette style sheet. Images 2–4 (Taipei, Macau and Singapore) show the wheel family’s centered focal monument, flat soft paper colors, restrained linework and readable silhouettes. Image 5 (ordinary square with a streetlamp) is a comparison for mood and camera only. Use these as style references, with entirely original architecture and sculpture.\n\nWheel-scene format exception: square full opaque cool paper background #F6F8FB with very light paper grain like Taipei and Singapore. Let outer edges of the drawn scene dissolve into the paper ground. No stamps, circle outline or canvas frame. It will be circularly cropped at 120 px, so keep main details within the central safe area.\n\nDraw an imaginary civic landmark plaza at eye level with a gentle three-quarter view: at the center, a tall blue stone monument made from two clean uprights spanning a single broad arch, with a small inset brass four-point star at the keystone. One shallow tiered plinth and broad cream fan paving lead the eye to it. Frame it with two low swept stone terraces and a few restrained dusty-blue shrubs, kept low enough for the landmark to read in silhouette. Soft cool blue sky fading into paper, cream paving, blue stone, small brass accents. The landmark is compact and monumental, like somewhere you would come to see, and the paving and terraces read as a plaza even when small. No other large object. No real or recognizable landmarks, religious motifs, flags, names, text, people or decorative border.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/game/wheel/scene-landmark-taipei.png",
+      "design/art/game/wheel/scene-landmark-macau.png",
+      "design/art/game/wheel/scene-landmark-singapore.png",
+      "design/art/game/wheel/scene-square.png"
+    ],
+    "processing": "Downsampled opaque square from 1254 px to 1024 px; circular crop and rim belong to the wheel.",
+    "web_export": "public/art/game/wheel/scene-landmark-default.webp"
+  },
+  {
+    "path": "design/art/stamps/stamp-landmark-default.png",
+    "what": "Default Landmark Passport stamp",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: illustration-story. Draw a new Passport ink stamp with one exact ink color #2F5D8A. Image 1 is the approved style sheet. Image 2 is the existing blue double-ring HKUST event stamp, for ring weight, generous negative space and impressed paper ink texture only. Image 3 shows the precise four-point star silhouette from the Landmark map seal: four axis-aligned tips and smoothly concave valleys. Keep its symmetry, matching cardinal points and curved edges. The finished design is a flat face-on stamp, overriding the three-quarter perspective in the general style block above.\n\nOne solid central four-point Landmark star with restrained ink-grain dropout, inside two concentric continuous ink blue circular rings. Center all three precisely in the square. Outer ring a little heavier than the inner, with visibly clear transparent gap between the rings at 40 px. Stamp about 82% of the canvas, star about 39% of the canvas. Both rings feel round and slightly imperfect at the edge, with open negative space between the rings and the star. True transparency for the entire background and spaces. The only marks are the star and those two rings. No lettering, text, numbers, outlines around the star, extra stars, dots, badges, landmark illustrations, fill behind the star or shadows.",
+    "model": "gpt-image-2",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/stamps/stamp-hunt-hkust-2026-11.png",
+      "mobile/src/features/journey/live/mapHtml.ts (existing Landmark badge SVG path, rasterized as reference)"
+    ],
+    "processing": "Normalized with normalize-stamps.py to ink blue #2F5D8A on 1024 px RGBA; removed residual alpha below 12.",
+    "web_export": "public/art/stamps/stamp-landmark-default.webp"
   }
 ]

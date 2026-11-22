@@ -8,6 +8,25 @@ PNG masters live in `design/art/`. WebP copies live at matching paths in `public
 
 The original SVG art remains in `src/art.js` and is recoverable from Git tag `art-svg-v1`. These bitmap assets are not wired into app screens yet.
 
+## Default Landmark art drafts (MB-A1)
+
+| PNG master | WebP | Design |
+|---|---|---|
+| `game/wheel/scene-landmark-default.png` | `public/art/game/wheel/scene-landmark-default.webp` | Imaginary civic plaza with a blue stone arch and brass star keystone |
+| `stamps/stamp-landmark-default.png` | `public/art/stamps/stamp-landmark-default.webp` | Four-point Landmark seal star in ink blue, with two rings and transparent negative space |
+
+The 1024 px masters use the built-in `gpt-image-2` tool. The wheel scene follows the opaque square framing of the existing Landmark scenes. The stamp uses the in-app Landmark badge as its star reference and the HKUST event stamp as its double-ring reference. The manifest records both prompts and their references. The [browser review sheet](_checks/landmark-defaults-review.png) compares the 512 px exports in circular wheel crops and at 40, 64 and 120 px on Passport paper.
+
+### Vessel ideas for Roy's choice
+
+| Idea | Closed shape | Opening and idle |
+|---|---|---|
+| **A. Monument under glass** | A tiny blue arch with a brass star on a round stone base, under a glass dome. | The glass lifts (B) to reveal the miniature and a folded letter at its foot. One glass glint. |
+| **B. Landmark medal** | A thick, round hinged brass medal with a blue enamel four-point star. A small hinge and rim give the medal depth. | The medal face swings open (A) to reveal the letter in a recessed navy seat. Gentle sway and a rim glint. |
+| **C. Victory cup** | A short blue ceramic trophy with a wide foot, two small brass handles and a star finial. | The cover lifts (B) to expose the letter inside the cup. A small bob and finial glint. |
+
+The selected design will have its own layered masters, opening and idle specification, crack overlay, and 40/120 px checks.
+
 ## Corrupted Capsule fight review
 
 Draft PR #189 has four waist-split throw poses for each of the eight approved back-view figures. Figure 01’s approved layers are from `e06042a`. The existing rest pose is the set. The drawn poses are cock (140 ms), release (80 ms), follow-through (150 ms), and recover (130 ms). Each 1024 px master upper stacks over its matching lower or the original jump legs. Figure 01’s WebPs are lossless 1024 px copies of the approved masters. Figures 02–08 have 512 px WebPs on the same proportional canvas. Claude registers the sprites in `fightRigs.ts`. The ball point is measured at the right hand on the 1024 px canvas. The game shows the held ball during cock and starts the flying ball at the release point.
