@@ -11,7 +11,7 @@ import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { Session } from "@supabase/supabase-js";
+import { isAuthSessionMissingError, type Session } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
 import { invites, profiles, Profile } from "./data";
 import { setTestLocationForUser } from "../features/journey/location";
@@ -101,15 +101,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const version = ++refreshVersion.current;
     try {
       const {
-        data: { session: s },
+        data: { session: cachedSession },
         error: sessionError,
       } = await supabase.auth.getSession();
       if (sessionError) throw sessionError;
+
+      let s = cachedSession;
+      if (s) {
+        // A cached token can outlive the Auth user it belongs to.
+        const { error: userError } = await supabase.auth.getUser(s.access_token);
+        if (userError) {
+          const invalid = isAuthSessionMissingError(userError) ||
+            userError.code === "user_not_found" || userError.code === "session_expired" ||
+            userError.code === "bad_jwt";
+          if (!invalid) throw userError;
+          const { data: { session: current } } = await supabase.auth.getSession();
+          if (version !== refreshVersion.current || current?.access_token !== s.access_token) return;
+          await supabase.auth.signOut({ scope: "local" });
+          s = null;
+        }
+      }
+
       const result = s ? await profiles.get(s.user.id) : null;
       if (result?.error) throw result.error;
       if (version !== refreshVersion.current) return;
       setSession(s);
       setProfile((result?.data as Profile | null) ?? null);
+      if (!s) setRecovery(false);
       setError(null);
       if (s && result?.data) {
         const code = await AsyncStorage.getItem("tc-invite");

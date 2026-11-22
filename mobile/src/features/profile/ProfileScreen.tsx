@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, TextInput, Pressable, Text } from "react-native";
-import { router } from "expo-router";
+import { Redirect } from "expo-router";
 import { goBack } from "../../navigation";
 import { Screen, Heading, Body, Button, BackButton, Bar } from "../../components/Screen";
 import { Avatar, PORTRAITS } from "../../components/Avatar";
@@ -14,7 +14,7 @@ import { C } from "../../theme";
 const ids = ["01", "02", "03", "04", "05", "06", "07", "08"];
 export default function ProfileScreen() {
   const { t } = useLanguage();
-  const { session, profile, refresh } = useAuth();
+  const { session, profile, loading, refresh } = useAuth();
   const illustrated = ids.every(id => !!portraits[id]) && !!portraits.future;
   const options: Record<string, unknown>[] = illustrated ? ids.map(id => ({ set: "illus", id })) : PORTRAITS.map(config => ({ set: "svg", config }));
   const [name, setName] = useState("");
@@ -37,10 +37,15 @@ export default function ProfileScreen() {
     const result = profile
       ? await supabase.from("profiles").update(changes).eq("id", session.user.id)
       : await supabase.from("profiles").insert({ id: session.user.id, ...changes });
-    if (result.error) { setErr(result.error.message); haptics.warn(); }
+    if (result.error?.code === "23503" && result.error.message.includes('"profiles_id_fkey"')) {
+      await refresh();
+      setErr(t("errGeneric"));
+      haptics.warn();
+    } else if (result.error) { setErr(result.error.message); haptics.warn(); }
     else { await refresh(); haptics.success(); if (profile) goBack(); }
     setSaving(false);
   };
+  if (!loading && !session) return <Redirect href="/" />;
   return <Screen>
     <Bar>{!!profile && <BackButton label={t("back")} onPress={goBack} />}<Heading>{t(profile ? "profile.editTitle" : "profile.title")}</Heading></Bar>
     <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "flex-end", gap: 18, marginVertical: 12 }}><Avatar avatar={selected} size={110} /><Figure source={figureFor(selected)} height={128} /></View>
