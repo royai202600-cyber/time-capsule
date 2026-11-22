@@ -464,15 +464,13 @@ AS $function$
   where s.expires_at > now();
 $function$;
 
-create or replace function private.quest_start_spawns(p_context text,p_id uuid,r private.quest_rules,p_run timestamptz,
-  p_remaining int,p_end timestamptz)
-returns void language plpgsql set search_path='' as $$
+create or replace function private.quest_pin_pool(r private.quest_rules) returns private.game_spawn_pool
+language plpgsql stable set search_path='' as $$
 declare region private.game_regions;
 declare habitat text;
 declare wave record;
 declare revision private.game_spawn_revisions;
 declare pool private.game_spawn_pool;
-declare seed_ids uuid[];
 begin
   select g.* into region from private.game_regions g
   join private.game_map_coverage b on b.id=g.coverage_id
@@ -498,6 +496,20 @@ begin
   pool:=private.game_spawn_pool(private.game_spawn_city_rules(revision,region.city),
     habitat,wave.starts_at at time zone region.timezone);
   if num_nonnulls(pool.common,pool.uncommon,pool.rare)=0 then raise exception 'bad_rule'; end if;
+  return pool;
+end $$;
+
+create or replace function private.quest_start_spawns(p_context text,p_id uuid,r private.quest_rules,p_run timestamptz,
+  p_remaining int,p_end timestamptz)
+returns void language plpgsql set search_path='' as $$
+declare wave record;
+declare revision private.game_spawn_revisions;
+declare pool private.game_spawn_pool;
+declare seed_ids uuid[];
+begin
+  select * into wave from private.game_wave_at(now());
+  revision:=private.game_spawn_at(wave.starts_at);
+  pool:=private.quest_pin_pool(r);
   -- Quests guarantee their requested releases. The resolver still uses the
   -- wave's rarity weights, city assignments, windows and vessel selection.
   revision.config.spawn_chance:=1;

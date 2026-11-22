@@ -279,4 +279,39 @@ begin
 end;
 $$;
 
+-- Give both route validation and spawn creation a pool that needs a water spot.
+-- The only such spot is staged for the next wave.
+do $$
+declare
+  spot_id constant uuid := 'fb100000-0000-4000-8000-000000000021';
+  wave record;
+  rule private.quest_rules;
+begin
+  select * into wave from private.game_wave_at(now());
+  rule.location_lat := 25.033667;
+  rule.location_lng := 121.564810;
+
+  update public.corrupted_spots set hidden_at = now()
+  where city = 'Taipei' and public.distance_m(lat,lng,rule.location_lat,rule.location_lng) <=
+    (select action_radius_m from private.game_config where singleton);
+  update private.game_spawn_revisions
+  set rules = array[row('tin','common','water',null,null,null,null)::private.vessel_spawn_rules],
+      places = array[row('taipei','tin')::private.vessel_spawn_places]
+  where starts_at = (private.game_spawn_at(wave.starts_at)).starts_at;
+  insert into public.corrupted_spots (id,city,timezone,lat,lng,habitat,source_ref,first_spawn_wave)
+  values (spot_id,'Taipei','Asia/Taipei',rule.location_lat,rule.location_lng,'water','admin:'||spot_id,wave.wave+1);
+
+  perform pg_temp.r1_expect(format('select private.quest_pin_pool(%L::private.quest_rules)',rule),'bad_rule');
+  perform pg_temp.r1_expect(format(
+    'select private.quest_start_spawns(%L,%L,%L::private.quest_rules,now(),1,now()+interval ''5 minutes'')',
+    'route',spot_id,rule),'bad_rule');
+
+  update public.corrupted_spots set first_spawn_wave=wave.wave where id=spot_id;
+  assert (private.quest_pin_pool(rule)).common = array['tin'];
+  perform pg_temp.r1_user(5);
+  perform private.quest_start_spawns('route',spot_id,rule,now(),1,now()+interval '5 minutes');
+  assert exists (select 1 from private.quest_spawns where quest_id=spot_id and vessel='tin');
+end;
+$$;
+
 select 'Map builder R1 rollback checks passed, including 32 browser S2 tokens' as result;
