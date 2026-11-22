@@ -15,7 +15,7 @@ export const MAP_BUILDER_R1_BACKEND = true;
 /** Whether the R1 tools show: with the live functions, or on the development sample. */
 export const MAP_BUILDER_R1 = MAP_BUILDER_R1_BACKEND || ADMIN_SAMPLE;
 /** Turn on once Codex's R1.5 migration is applied: drafts, publish, delete, one Waypost per cell, Fill an area. */
-export const MAP_BUILDER_R15_BACKEND = false;
+export const MAP_BUILDER_R15_BACKEND = true;
 export const MAP_BUILDER_R15 = MAP_BUILDER_R15_BACKEND || ADMIN_SAMPLE;
 
 export type CellNeighbour = { id: string; name_zh: string; name_en: string; meters: number };
