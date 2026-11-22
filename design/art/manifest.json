@@ -16884,5 +16884,196 @@
     ],
     "processing": "Normalized with normalize-stamps.py to ink blue #2F5D8A on 1024 px RGBA; removed residual alpha below 12.",
     "web_export": "public/art/stamps/stamp-landmark-default.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-landmark-keepsake.png",
+    "what": "Default Landmark keepsake: assembled",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: illustration-story. Draw the CLOSED Landmark keepsake for Time Capsule: a small, thick, original round award medal that opens on a rear hinge. Image 1 is the approved style reference. Image 2 is the approved Landmark stamp, a shape reference for its single four-point star only. Ignore the stamp's rings. Use the same four cardinal tips and curved in-between edges for the big blue enamel star inlaid into the brass medal face.\n\nDeliberate game-sprite construction. View from the front and from slightly above at a moderate 38-degree elevation, looking straight along the centered symmetry axis. Wide elliptical face, circular in real space, with clearly separate closed lid and lower brass cup divided by a neat dark horizontal seam on the broad front wall. The rear hinge is centered at the far (top) edge of the ellipse, a small obvious horizontal brass barrel that sticks up slightly behind the face. Keep lid fully opaque and closed. Use warm patinated brass, engraved inset circular line and a thick chamfered rim; the single broad ink-blue enamel star dominates the face with a few light blue enamel highlights. The lower cup is shallow, with an uncomplicated ink contour, real body depth and just a tiny clasp at the center front. No neck ribbon, chain, handles, stand, gem, laurels, background shadow, place, text or real symbols. The one medal fills around 69% of the square width and sits low enough to leave room for the lid to swing up later. True transparent canvas. Keep silhouette visually clean and chunky for a 40 px map pin.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/stamps/stamp-landmark-default.png"
+    ],
+    "processing": "Exact closed stack at opening progress 0: fixed brass tray with navy seat and rolled letter, decorated lid face in front. Shared 1024 px registration.",
+    "web_export": "public/art/vessels/vessel-landmark-keepsake.webp",
+    "vessel": {
+      "id": "landmark-keepsake",
+      "opening": "A",
+      "idleMs": 4000,
+      "idle": [
+        {
+          "type": "sway",
+          "deg": 3,
+          "pivot": {
+            "x": 512,
+            "y": 900
+          }
+        }
+      ],
+      "layers": [
+        {
+          "name": "lid-reverse",
+          "file": "vessel-landmark-keepsake-lid-reverse.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 519,
+            "y": 326
+          },
+          "open": [
+            {
+              "at": 0,
+              "y": 0.034,
+              "scaleX": 0.2,
+              "scaleY": 0.025,
+              "opacity": 0
+            },
+            {
+              "at": 0.42,
+              "y": 0,
+              "scaleX": 1,
+              "scaleY": 0.025,
+              "opacity": 0
+            },
+            {
+              "at": 0.45,
+              "y": 0,
+              "scaleX": 1,
+              "scaleY": 0.15,
+              "opacity": 1
+            },
+            {
+              "at": 0.5,
+              "y": 0,
+              "scaleX": 1,
+              "scaleY": 0.43,
+              "opacity": 1
+            },
+            {
+              "at": 0.78,
+              "y": 0,
+              "scaleX": 1,
+              "scaleY": 0.94,
+              "opacity": 1
+            },
+            {
+              "at": 1,
+              "y": 0,
+              "scaleX": 1,
+              "scaleY": 1,
+              "opacity": 1
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "file": "vessel-landmark-keepsake-body.png",
+          "role": "static"
+        },
+        {
+          "name": "lid",
+          "file": "vessel-landmark-keepsake-lid.png",
+          "role": "hinge",
+          "pivot": {
+            "x": 519,
+            "y": 326
+          },
+          "open": [
+            {
+              "at": 0,
+              "scaleY": 1,
+              "opacity": 1
+            },
+            {
+              "at": 0.32,
+              "scaleY": 0.24,
+              "opacity": 1
+            },
+            {
+              "at": 0.4,
+              "scaleY": 0.03,
+              "opacity": 1
+            },
+            {
+              "at": 0.43,
+              "scaleY": 0.02,
+              "opacity": 0
+            },
+            {
+              "at": 1,
+              "scaleY": 0.02,
+              "opacity": 0
+            }
+          ]
+        }
+      ],
+      "mouth": {
+        "x": 511,
+        "y": 553
+      },
+      "baseY": 899,
+      "sparkle": {
+        "x": 242,
+        "y": 423
+      },
+      "glint": null,
+      "openGlow": null,
+      "readyPulse": null
+    }
+  },
+  {
+    "path": "design/art/vessels/vessel-landmark-keepsake-lid.png",
+    "what": "Default Landmark keepsake: lid",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: illustration-story. Draw the CLOSED Landmark keepsake for Time Capsule: a small, thick, original round award medal that opens on a rear hinge. Image 1 is the approved style reference. Image 2 is the approved Landmark stamp, a shape reference for its single four-point star only. Ignore the stamp's rings. Use the same four cardinal tips and curved in-between edges for the big blue enamel star inlaid into the brass medal face.\n\nDeliberate game-sprite construction. View from the front and from slightly above at a moderate 38-degree elevation, looking straight along the centered symmetry axis. Wide elliptical face, circular in real space, with clearly separate closed lid and lower brass cup divided by a neat dark horizontal seam on the broad front wall. The rear hinge is centered at the far (top) edge of the ellipse, a small obvious horizontal brass barrel that sticks up slightly behind the face. Keep lid fully opaque and closed. Use warm patinated brass, engraved inset circular line and a thick chamfered rim; the single broad ink-blue enamel star dominates the face with a few light blue enamel highlights. The lower cup is shallow, with an uncomplicated ink contour, real body depth and just a tiny clasp at the center front. No neck ribbon, chain, handles, stand, gem, laurels, background shadow, place, text or real symbols. The one medal fills around 69% of the square width and sits low enough to leave room for the lid to swing up later. True transparent canvas. Keep silhouette visually clean and chunky for a 40 px map pin.",
+    "references": [
+      "design/art/style-sheet.png",
+      "design/art/stamps/stamp-landmark-default.png"
+    ],
+    "processing": "Isolated the enamel face from the closed generation along the stationary rear barrel and the front rim seam. Applied the shared canvas transform.",
+    "web_export": "public/art/vessels/vessel-landmark-keepsake-lid.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-landmark-keepsake-body.png",
+    "what": "Default Landmark keepsake: body",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: precise-object-edit. Image 1 is the approved style sheet; image 2 is the CLOSED hinged brass Landmark medal that you are editing. Make ONLY the lower cup and its contents, as a standalone true-alpha game animation layer. Same square canvas, same pose, camera, center, width, bottom coordinate and lighting as the closed medal. Keep the lower body's external front and sides exactly where they are, including its shaded outer wall, and keep the little horizontal hinge barrel centered at the back as a fixed anchor. Completely remove only the decorated upper lid and its blue star to expose the full oval mouth below. There must be NO raised lid and no star in this layer. At the removed lid position, draw the full recessed matte navy velvet seat, with a narrow continuous brass lip. Visible light cream rolled letter lying horizontally in the recess, completely contained well inside the inner lip. Letter about 52 percent as wide as the medal, ends curled, held by a narrow plum tie. Use no visible writing. Draw the entire recess with no transparent holes, and leave the outside truly transparent. Restore the matching tiny latch catch on the lower cup only if needed. Keep the original lower shell dimensions and framing, no shadow outside silhouette. This is the only object in this image.",
+    "references": [
+      "design/art/style-sheet.png",
+      "Closed generated vessel-landmark-keepsake, SHA-256 9ea2d00fc97e43ec1c96b736be82f0822b478e3f751ef60c4599cd261294e2fa"
+    ],
+    "processing": "Aligned the tray edit to the closed silhouette; used the generated open velvet seat and rolled letter beneath the lid on the same registered canvas.",
+    "web_export": "public/art/vessels/vessel-landmark-keepsake-body.webp"
+  },
+  {
+    "path": "design/art/vessels/vessel-landmark-keepsake-lid-reverse.png",
+    "what": "Default Landmark keepsake: lid-reverse",
+    "size_px": [
+      1024,
+      1024
+    ],
+    "transparent": true,
+    "model": "gpt-image-2",
+    "prompt": "App: 時光膠囊 / Time Capsule. People send a sealed letter that can only be opened at a set time and place. Mood: tender, human, nostalgic, \"precious in the AI age\". Hand-inked storybook, not glossy 3D.\n- Clean ink line art with a slightly hand-drawn line, flat colour fills plus one soft shading tone, a little paper grain, light hatching only (it must still read at about 120 px). Lines in plum #6E2B3F or navy #16263F.\n- Palette only: ink blue #2F5D8A, light blue #5A8FD0, glass blue #DCE8F2, plum #6E2B3F, brass #C9A15A, wax red #A3364F, navy #16263F, paper #F6F8FB, cream #F3E2BB. Warm brown wood is allowed for wooden objects.\n- Front three-quarter view, soft top-left light. No text, letters, numbers, logos or real brands.\n- Transparent background, object centred, generous padding (object fills about 70% of the canvas), square.\nMatch the attached style sheet exactly.\n\nUse case: precise-object-edit. Image 1 is the approved style sheet; image 2 is the hinged brass medal. Draw an isolated face-on view of the plain UNDERSIDE of its lid, one round metal disc with the same softly chamfered warm brass rim and a light inked hairline inset along the circumference. Reuse the rim profile and grain of image 2. There is no enamel and no blue star on this reverse face, no text, no embellishment or extra object. The inner field is muted flat brass with subtle patina, no solid shadow. Draw the entire interior surface fully opaque with no holes so it can be used as the lid's reverse face while the hinge opens. No lower cup, clasp, or hinge barrel in this part. Center a geometrically round disc, face-on and symmetrically framed, generous true transparent padding, no cast shadow. This is a texture and shape reference layer that will be aligned to the lid pivot separately.",
+    "references": [
+      "design/art/style-sheet.png",
+      "Closed generated vessel-landmark-keepsake, SHA-256 9ea2d00fc97e43ec1c96b736be82f0822b478e3f751ef60c4599cd261294e2fa"
+    ],
+    "processing": "Aligned a face-on brass reverse to the same rear barrel pivot; keyed front and reverse through an edge-on transition.",
+    "web_export": "public/art/vessels/vessel-landmark-keepsake-lid-reverse.webp"
   }
 ]

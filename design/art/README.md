@@ -8,24 +8,26 @@ PNG masters live in `design/art/`. WebP copies live at matching paths in `public
 
 The original SVG art remains in `src/art.js` and is recoverable from Git tag `art-svg-v1`. These bitmap assets are not wired into app screens yet.
 
-## Default Landmark art drafts (MB-A1)
+## Default Landmark art (MB-A1)
 
 | PNG master | WebP | Design |
 |---|---|---|
 | `game/wheel/scene-landmark-default.png` | `public/art/game/wheel/scene-landmark-default.webp` | Imaginary civic plaza with a blue stone arch and brass star keystone |
 | `stamps/stamp-landmark-default.png` | `public/art/stamps/stamp-landmark-default.webp` | Four-point Landmark seal star in ink blue, with two rings and transparent negative space |
+| `vessels/vessel-landmark-keepsake.png` | `public/art/vessels/vessel-landmark-keepsake.webp` | Closed brass medal with a blue enamel Landmark star |
+| `vessels/vessel-landmark-keepsake-body.png` | `public/art/vessels/vessel-landmark-keepsake-body.webp` | Stationary brass tray, navy velvet and rolled letter |
+| `vessels/vessel-landmark-keepsake-lid.png` | `public/art/vessels/vessel-landmark-keepsake-lid.webp` | Enamel face of the hinged lid |
+| `vessels/vessel-landmark-keepsake-lid-reverse.png` | `public/art/vessels/vessel-landmark-keepsake-lid-reverse.webp` | Brass underside of the same lid |
 
-The 1024 px masters use the built-in `gpt-image-2` tool. The wheel scene follows the opaque square framing of the existing Landmark scenes. The stamp uses the in-app Landmark badge as its star reference and the HKUST event stamp as its double-ring reference. The manifest records both prompts and their references. The [browser review sheet](_checks/landmark-defaults-review.png) compares the 512 px exports in circular wheel crops and at 40, 64 and 120 px on Passport paper.
+Roy approved the picture and stamp at `d35295c`. The wheel scene follows the opaque square framing of the existing Landmark scenes. The stamp uses the in-app Landmark badge as its star reference and the HKUST event stamp as its double-ring reference. The [browser review sheet](_checks/landmark-defaults-review.png) compares the 512 px exports in circular wheel crops and at 40, 64 and 120 px on Passport paper.
 
-### Vessel ideas for Roy's choice
+### Landmark keepsake
 
-| Idea | Closed shape | Opening and idle |
-|---|---|---|
-| **A. Monument under glass** | A tiny blue arch with a brass star on a round stone base, under a glass dome. | The glass lifts (B) to reveal the miniature and a folded letter at its foot. One glass glint. |
-| **B. Landmark medal** | A thick, round hinged brass medal with a blue enamel four-point star. A small hinge and rim give the medal depth. | The medal face swings open (A) to reveal the letter in a recessed navy seat. Gentle sway and a rim glint. |
-| **C. Victory cup** | A short blue ceramic trophy with a wide foot, two small brass handles and a star finial. | The cover lifts (B) to expose the letter inside the cup. A small bob and finial glint. |
+Roy chose the hinged brass medal. It is an original design with the approved Landmark stamp as the enamel star shape reference. The 1024 px masters use the built-in `gpt-image-2` tool and the approved style sheet. The art manifest records the exact prompts, reference order, layer transforms and registration.
 
-The selected design will have its own layered masters, opening and idle specification, crack overlay, and 40/120 px checks.
+Type A opening uses the fixed rear hinge at (519, 326). The enamel face foreshortens, then the brass reverse swings up around the same pivot. The rolled letter rests inside the navy seat at (511, 553), which gives a letter drop of about 210 px. The medal base is at y = 899. Idle is a 3° sway over 4 seconds with one sparkle at (242, 423) on the brass rim. The closed stack matches the assembled image for Reduce Motion.
+
+The standard Crack A generator produced `public/art/game/cracks/landmark-keepsake.webp` from the approved crack master and the assembled medal silhouette. [Motion review](_checks/landmark-keepsake-motion.png) · [40/120 px and Crack A](_checks/landmark-keepsake-sizes.png) · [Closed stack](_checks/landmark-keepsake-stack.png).
 
 ## Corrupted Capsule fight review
 
