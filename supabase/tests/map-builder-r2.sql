@@ -205,8 +205,8 @@ begin
   end loop;
   assert won->>'vessel'=reward and won->>'stars'='2' and won->>'is_new'='false';
   assert (select landmark_copies=2 and copies is null from public.owned_vessels where user_id=player_id and vessel=reward);
-  assert (select count(*) from public.my_passport() where waypost_id=custom_id)=1;
-  assert exists (select from public.my_passport() where waypost_id=custom_id and stamp='r2-custom'
+  assert (select count(*) from public.my_passport() where landmark=custom_id)=1;
+  assert exists (select from public.my_passport() where landmark=custom_id and stamp='r2-custom'
     and name_en='R2 shape 2' and name_zh='測試地標' and how_earned='landmark');
 
   foreach pid in array array[default_id,other_id] loop
@@ -216,7 +216,7 @@ begin
     won := public.landmark_finish(current_attempt.attempt_id,'won',10,0,lat_now,lng_now,8);
     assert won->>'vessel'='landmark-keepsake';
   end loop;
-  assert (select count(distinct waypost_id) from public.my_passport() where stamp='landmark-default')=2;
+  assert (select count(distinct landmark) from public.my_passport() where stamp='landmark-default')=2;
   assert exists (select from public.my_collection() where vessel='landmark-keepsake' and copies is null and stars=2);
   perform public.send_capsule(auth.uid(),'landmark-keepsake','R2 earned test','',now()+interval '1 hour');
 

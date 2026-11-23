@@ -852,7 +852,7 @@ $$;
 drop function public.my_passport();
 create function public.my_passport()
 returns table(place text, name_zh text, name_en text, city_zh text, city_en text,
-  first_at timestamptz, how_earned text, stamp text, waypost_id uuid)
+  first_at timestamptz, how_earned text, stamp text, landmark uuid)
 language plpgsql stable security definer set search_path = '' as $$
 begin
   if auth.uid() is null then raise exception 'not signed in'; end if;

@@ -161,7 +161,7 @@ try {
     assert.equal(won.is_new, copies === 1);
     const stamps = await rpc(player, 'my_passport', {});
     assert.equal(stamps.length, 1);
-    assert.equal(stamps[0].waypost_id, defaults.id);
+    assert.equal(stamps[0].landmark, defaults.id);
     assert.equal(stamps[0].stamp, 'r2-jwt');
     assert.equal(stamps[0].name_en, defaults.name_en);
     assert.equal(stamps[0].name_zh, defaults.name_zh);
