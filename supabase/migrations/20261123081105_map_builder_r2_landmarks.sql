@@ -860,7 +860,7 @@ begin
     select q.place, q.name_zh, q.name_en, q.city_zh, q.city_en, q.first_at, q.how_earned, q.stamp, q.waypost_id
     from (
       select coalesce(w.place,w.id::text) as place, w.name_zh, w.name_en, w.city_zh, w.city_en,
-        s.first_at, 'landmark'::text as how_earned, s.stamp, s.waypost_id, coalesce(p.sort,2147483647) as place_sort
+        s.first_at, 'landmark'::text as how_earned, w.landmark_stamp as stamp, s.waypost_id, coalesce(p.sort,2147483647) as place_sort
       from private.landmark_passport_stamps s join public.public_capsule_spots w on w.id=s.waypost_id
       left join public.places p on p.id=w.place
       where s.user_id=auth.uid()

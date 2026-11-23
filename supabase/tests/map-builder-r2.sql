@@ -50,6 +50,7 @@ declare
   result jsonb;
   reward text;
   role_id uuid;
+  stamp_first_at timestamptz;
 begin
   assert not exists (
     select from public.public_capsule_spots p
@@ -208,6 +209,19 @@ begin
   assert (select count(*) from public.my_passport() where landmark=custom_id)=1;
   assert exists (select from public.my_passport() where landmark=custom_id and stamp='r2-custom'
     and name_en='R2 shape 2' and name_zh='測試地標' and how_earned='landmark');
+  select first_at into strict stamp_first_at from public.my_passport() where landmark=custom_id;
+  perform set_config('request.jwt.claim.sub',owner_id::text,true);
+  action_id := public.admin_landmark_set(custom_id,jsonb_build_object('monument',shapes->2,
+    'vessel',reward,'stamp','r2-updated','fight_health',14,'fight_seconds',120));
+  perform set_config('request.jwt.claim.sub',player_id::text,true);
+  assert (select stamp='r2-updated' and first_at=stamp_first_at
+    from public.my_passport() where landmark=custom_id), 'Passport must use the current stamp and original earn time';
+  perform set_config('request.jwt.claim.sub',owner_id::text,true);
+  perform public.admin_undo(action_id);
+  perform set_config('request.jwt.claim.sub',player_id::text,true);
+  assert (select stamp='r2-custom' and first_at=stamp_first_at
+    from public.my_passport() where landmark=custom_id), 'Undo must restore the prior stamp art';
+
 
   foreach pid in array array[default_id,other_id] loop
     select lat,lng into lat_now,lng_now from public.public_capsule_spots where id=pid;

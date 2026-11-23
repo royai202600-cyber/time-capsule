@@ -145,6 +145,7 @@ try {
   sql(`update public.player_game set wax_balls=50 where user_id=${quote(player.id)};`);
 
   const target = { ...points[1], p_accuracy: 8 };
+  let firstAt;
   for (let copies = 1; copies <= 2; copies++) {
     const [attempt] = await rpc(player, 'landmark_start', { p_waypost: defaults.id, ...target });
     assert.equal(attempt.max_health, 10);
@@ -165,7 +166,17 @@ try {
     assert.equal(stamps[0].stamp, 'r2-jwt');
     assert.equal(stamps[0].name_en, defaults.name_en);
     assert.equal(stamps[0].name_zh, defaults.name_zh);
+    firstAt ??= stamps[0].first_at;
+    assert.equal(stamps[0].first_at, firstAt);
   }
+  const stampAction = await landmark(admin, defaults.id, { ...settings, stamp: 'r2-jwt-updated' });
+  const [updatedStamp] = await rpc(player, 'my_passport', {});
+  assert.equal(updatedStamp.stamp, 'r2-jwt-updated');
+  assert.equal(updatedStamp.first_at, firstAt);
+  await rpc(admin, 'admin_undo', { p_action_id: stampAction });
+  const [restoredStamp] = await rpc(player, 'my_passport', {});
+  assert.equal(restoredStamp.stamp, 'r2-jwt');
+  assert.equal(restoredStamp.first_at, firstAt);
   assert(await send());
   console.log('PASS: R2 local signed-in API, MONUMENT_SEED bytes, defaults and shapes, roles, Undo and rack, nearby compatibility, custom fight, repeat rewards and Passport');
 } finally {
