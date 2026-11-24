@@ -228,11 +228,13 @@ export function WaypostBuilderForm({ flat, region, wayposts, waypost, at, moving
       else {
         // null keeps what's there; "" clears it.
         const nextCredit = photo ? credit.trim() : "";
-        onSaved(await builder.updateWaypost(waypost.id, { ...base,
+        const updated = await builder.updateWaypost(waypost.id, { ...base,
           photo: photo === (waypost.photo ?? null) ? null : photo ?? "",
-          photo_credit: nextCredit === (waypost.photo_credit ?? "") ? null : nextCredit }, note.trim() || null));
-        // A Landmark's look, reward or fight is a second write (its own Activity row).
-        if (look && (making || lookChanged)) await builder.setLandmark(waypost.id, look, null);
+          photo_credit: nextCredit === (waypost.photo_credit ?? "") ? null : nextCredit }, note.trim() || null);
+        // A Landmark's look, reward or fight is a second write (its own Activity row). It must finish before onSaved
+        // closes the popup and reloads the map, or the reload shows the old look and a failure here is never seen.
+        if (look && (making || lookChanged)) { await builder.setLandmark(waypost.id, look, null); onSaved({ ...updated, kind: "landmark", landmark: look }); }
+        else onSaved(updated);
       }
       return true;
     } catch (e) { setError(errorCode(e)); return false; } finally { setBusy(false); }
