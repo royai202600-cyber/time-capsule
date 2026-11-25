@@ -1,0 +1,1157 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>我的城市 · 時光膠囊</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-tc@5.3.1/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-tc@5.3.1/700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/lxgw-wenkai-tc@5.3.1/400.css">
+<style>
+:root {
+  --paper: #f6f8fb; --ink: #16263f; --blue: #2f5d8a; --plum: #6e2b3f;
+  --brass: #c9a15a; --wax: #a3364f; --line: #d7e0eb; --muted: #4e6077;
+  --sans: "Noto Sans TC", "PingFang TC", system-ui, sans-serif;
+  --serif: "Noto Serif TC", "Songti TC", Georgia, serif;
+  --hand: "LXGW WenKai TC", "Kaiti TC", Georgia, serif;
+  scrollbar-color: #8597ab var(--paper);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 14px/1.5 var(--sans); }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:disabled { cursor: default; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button img { pointer-events: none; }
+img { -webkit-user-drag: none; object-fit: contain; }
+[hidden] { display: none !important; }
+h1, h2, h3, p, figure { margin: 0; }
+h1, h2, h3, .numeric { font-family: var(--serif); }
+small { font-size: 12px; }
+.shell { width: min(1200px, calc(100% - 56px)); margin: auto; }
+.top { background: var(--ink); color: white; }
+.top .shell { display: flex; align-items: center; justify-content: space-between; min-height: 61px; gap: 10px; }
+.brand, .top-actions { display: flex; gap: 12px; align-items: center; }
+.brand { font: 700 16px var(--serif); letter-spacing: .04em; white-space: nowrap; }
+.brand svg { width: 26px; height: 26px; color: #efca86; }
+.top a, .language { color: white; }
+.top a { text-underline-offset: 4px; }
+.language { background: transparent; min-height: 44px; border: 1px solid #63738a; border-radius: 7px; padding: 0 12px; }
+.language:hover, .language:focus-visible { background: #34475d; outline-color: white; }
+.intro { display: flex; justify-content: space-between; align-items: end; gap: 16px; margin: 30px 0 18px; }
+h1 { font-size: clamp(29px, 4.3vw, 47px); letter-spacing: -.035em; line-height: 1.17; }
+.intro p, .heading p { color: var(--muted); margin-top: 7px; }
+.sample { display: inline-block; color: var(--plum); font-size: 11px; font-weight: bold; letter-spacing: .08em; background: #f2e9ed; border: 1px solid #e6d5de; border-radius: 5px; padding: 4px 8px; flex: none; }
+.cities { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+.city { text-align: left; min-height: 58px; padding: 5px 12px 5px 7px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 8px; background: #fcfdff; }
+.city img { width: 46px; height: 43px; }
+.city strong, .city small { display: block; }
+.city small { color: var(--muted); }
+.city:hover, .city[aria-pressed="true"] { border-color: var(--blue); background: #eaf1f9; }
+.city[aria-pressed="true"] { box-shadow: inset 0 -3px var(--blue); }
+.city[aria-pressed="true"] small { color: var(--blue); }
+.city-layout { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 14px; align-items: start; }
+.board, .control, .book, .studio { background: white; border: 1px solid var(--line); border-radius: 13px; min-width: 0; }
+.board { overflow: hidden; }
+.board-head, .board-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 17px; }
+.board-head h2 { font-size: 22px; line-height: 1.2; }
+.board-head span { font-size: 12px; color: var(--blue); text-align: right; }
+.scene { position: relative; isolation: isolate; background: #e5eaf1; aspect-ratio: 900/540; }
+.scene canvas { width: 100%; height: 100%; display: block; }
+#previous { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+.scene.washing #previous { animation: wash 920ms cubic-bezier(.25,.65,.28,1) both; }
+.scene.washing::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(107deg, transparent 42%, #ffedb890 50%, transparent 58%) 145% center / 300% 100%; mix-blend-mode: screen; animation: sheen 920ms ease-out both; }
+@keyframes wash { from { opacity: 1; clip-path: polygon(0 0,100% 0,100% 100%,0 100%); } to { opacity: 1; clip-path: polygon(100% 0,100% 0,100% 100%,100% 100%); } }
+@keyframes sheen { from { background-position: 145% center; } to { background-position: -45% center; } }
+.board-foot { padding-top: 8px; padding-bottom: 9px; min-height: 56px; }
+.landmark { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+.landmark img { width: 26px; height: 26px; }
+.preview { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.preview span { font-size: 12px; color: var(--muted); margin-right: 4px; }
+.level-button { padding: 0; width: 44px; height: 44px; background: var(--paper); border: 1px solid var(--line); border-radius: 6px; font: 700 14px var(--serif); }
+.level-button:hover, .level-button[aria-pressed="true"] { border-color: var(--blue); }
+.level-button[aria-pressed="true"] { background: var(--blue); color: white; }
+.control { padding: 15px 16px 16px; }
+.capsule-title { color: var(--plum); font-weight: bold; font-size: 12px; letter-spacing: .08em; }
+.capsule-heading { display: grid; grid-template-columns: minmax(0,1fr) 82px; gap: 4px; align-items: center; min-height: 79px; }
+.capsule-heading h2 { font-size: 22px; line-height: 1.2; }
+.capsule-heading img { width: 82px; height: 82px; filter: drop-shadow(0 6px 7px #66364736); }
+.capsule-heading img.leveling { animation: capsule-rise 890ms ease-out both; }
+@keyframes capsule-rise { 30% { transform: translateY(-8px) scale(1.16) rotate(-5deg); filter: drop-shadow(0 0 12px #d9a64d); } 75% { transform: translateY(1px) scale(1.04); } }
+.xp-row { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; margin-top: 7px; color: var(--blue); }
+.xp-row strong { font-size: 17px; }
+.xp-row small { text-align: right; }
+progress { width: 100%; height: 8px; display: block; appearance: none; border: 0; border-radius: 8px; overflow: hidden; margin: 7px 0 0; background: #e6edf5; }
+progress::-webkit-progress-bar { background: #e6edf5; }
+progress::-webkit-progress-value { background: var(--blue); }
+progress::-moz-progress-bar { background: var(--blue); }
+.actions { display: grid; gap: 4px; }
+.actions h3 { font-size: 15px; margin-bottom: 3px; }
+.action { display: grid; grid-template-columns: 27px minmax(0,1fr) auto; gap: 6px; align-items: center; min-height: 44px; text-align: left; padding: 3px 8px 3px 5px; background: #f6f8fb; border: 1px solid var(--line); border-radius: 7px; }
+.action:first-of-type { background: #eaf2fb; border-color: #b1c7e0; }
+.action img { width: 26px; height: 26px; }
+.action small { color: var(--blue); font-weight: bold; white-space: nowrap; }
+.action:hover:enabled, .claim:hover:enabled, .tool:hover:enabled { background: #e5edf8; border-color: var(--blue); }
+.action:disabled, .claim:disabled, .tool:disabled { opacity: .63; }
+.action-note { color: var(--plum); font-size: 12px; margin: 5px 0 8px; min-height: 36px; padding-top: 4px; }
+.heading { margin: 36px 0 13px; }
+.heading h2 { font-size: clamp(24px, 3.5vw, 33px); }
+.stickers-layout { display: grid; grid-template-columns: 310px minmax(0,1fr); gap: 14px; align-items: start; margin-bottom: 35px; }
+.book, .studio { padding: 15px; }
+.book-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.book-head h3, .studio h3 { font-size: 17px; }
+.book-head small { color: var(--blue); }
+.sticker-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.sticker-tile { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 84px; padding: 5px 1px; background: #f6f8fb; border: 1px dashed #b9c9da; border-radius: 8px; font-size: 10px; line-height: 1.25; text-align: center; touch-action: none; }
+.sticker-tile:enabled { cursor: grab; }
+.sticker-tile:enabled:hover, .sticker-tile[aria-pressed="true"] { border: 1px solid var(--blue); background: #eaf2fb; }
+.sticker-tile:disabled { color: var(--muted); }
+.sticker-tile:disabled .sticker-art { opacity: .42; filter: grayscale(1); }
+.sticker-art { --sticker-color: #ecd3a6; display: inline-grid; place-items: center; position: relative; width: 48px; aspect-ratio: 1; border: 3px solid #fffdf8; border-radius: 34% 46% 40% 42%; background: var(--sticker-color); box-shadow: 0 2px 4px #25385439; color: var(--ink); pointer-events: none; font: 700 11px var(--serif); }
+.sticker-art img { width: 92%; height: 92%; grid-area: 1/1; }
+.sticker-art b { grid-area: 1/1; justify-self: end; align-self: end; display: grid; place-items: center; padding: 0 3px; min-width: 13px; background: #fffbeb; border-radius: 5px; }
+.claims { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.claim, .tool, .target-tab { min-height: 44px; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); padding: 3px 8px; font-size: 12px; }
+.claim { flex: 1; }
+.studio-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.studio-top p { color: var(--muted); font-size: 12px; }
+.targets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.target { overflow: hidden; position: relative; min-height: 210px; border-radius: 9px; border: 1px solid var(--line); isolation: isolate; }
+.target::before { content: ""; position: absolute; inset: 7px; z-index: -1; border: 1px solid #7d68893b; border-radius: 6px; pointer-events: none; }
+.target.hot { box-shadow: inset 0 0 0 3px var(--blue); }
+.target-name { display: block; padding: 13px 15px 0; font: 700 17px var(--serif); }
+.target.capsule { background: radial-gradient(ellipse at 70% 55%, #fffdfa, #f0e4e9 80%); }
+.target.passport { background: repeating-linear-gradient(0deg, transparent 0 22px, #748fad18 22px 23px), linear-gradient(90deg, #c6d7e999, transparent 13px), #f0f5fc; }
+.target-caption { padding: 0 15px; font-size: 11px; color: var(--muted); position: absolute; bottom: 13px; }
+.card-art { position: absolute; width: 118px; height: 118px; top: 24%; left: 12%; }
+.wax-seal { position: absolute; width: 37px; height: 37px; right: 10px; top: 11px; }
+.passport-owner { display: flex; align-items: center; gap: 5px; margin: 5px 15px; color: var(--blue); font: 400 16px var(--hand); }
+.passport-owner img { width: 30px; height: 30px; }
+.placed { position: absolute; z-index: 1; display: grid; place-items: center; background: transparent; border: 0; padding: 0; width: 48px; height: 48px; transform: translate(-50%, -50%) rotate(var(--angle)); touch-action: none; cursor: grab; }
+.placed .sticker-art { width: var(--size); }
+.placed:hover, .placed.selected { z-index: 2; outline: 1px dashed var(--blue); outline-offset: 2px; border-radius: 6px; }
+.drag-ghost { position: fixed; z-index: 10; pointer-events: none; opacity: .9; transform: translate(-50%, -50%) rotate(-8deg); }
+.tools { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+.tool { min-width: 44px; }
+.tool.primary { background: var(--blue); color: white; }
+.tool.primary:hover:enabled { background: var(--ink); }
+.target-tabs { display: none; }
+.sticker-note { color: var(--muted); font-size: 12px; margin-top: 9px; }
+@media (max-width: 900px) {
+  .shell { width: calc(100% - 36px); }
+  .city-layout { grid-template-columns: minmax(0, 1fr) 270px; }
+  .stickers-layout { grid-template-columns: 245px minmax(0, 1fr); }
+  .board-foot { flex-wrap: wrap; }
+}
+@media (max-width: 690px) {
+  .shell { width: calc(100% - 24px); }
+  .top .shell { min-height: 53px; }
+  .top-actions { gap: 9px; font-size: 12px; }
+  .top a { display: grid; place-items: center; min-height: 44px; }
+  .brand { gap: 6px; font-size: 14px; }
+  .brand svg { width: 21px; }
+  .intro { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 2px 8px; margin: 16px 0 12px; }
+  .intro > div { display: contents; }
+  .intro .sample { grid-area: 1/2; align-self: center; }
+  .intro p { grid-column: 1/-1; font-size: 12px; margin-top: 2px; }
+  .cities { gap: 4px; margin-bottom: 8px; }
+  .city { padding: 5px 1px; text-align: center; flex-direction: column; gap: 0; font-size: 12px; }
+  .city img { width: 32px; height: 30px; }
+  .city small { font-size: 10px; }
+  .city-layout, .stickers-layout { grid-template-columns: 1fr; gap: 8px; }
+  .board-head { padding: 9px 10px; }
+  .board-head h2 { font-size: 19px; }
+  .board-foot { padding: 4px 8px 7px; justify-content: space-between; }
+  .preview { flex-wrap: nowrap; }
+  .control { padding: 10px 14px 12px; }
+  .capsule-heading { grid-template-columns: minmax(0,1fr) 61px; min-height: 57px; }
+  .capsule-heading img { width: 61px; height: 61px; }
+  .action-note { min-height: 28px; margin-bottom: 5px; }
+  .heading { margin-top: 25px; }
+  .heading p { font-size: 12px; }
+  .book, .studio { padding: 10px; }
+  .sticker-tile { min-height: 72px; }
+  .target-tabs { display: flex; gap: 5px; margin-bottom: 6px; }
+  .target-tab { flex: 1; }
+  .target-tab[aria-pressed="true"] { background: var(--blue); color: white; }
+  .targets { grid-template-columns: 1fr; }
+  .target:not(.mobile-active) { display: none; }
+  .target { min-height: 190px; }
+  .studio-top { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene.washing #previous, .scene.washing::after, .capsule-heading img.leveling { animation: none; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="shell">
+    <div class="brand"><svg viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 15 15 8l12 7-12 7zM3 15v5l12 7 12-7v-5M15 22v5M15 2v8M11 6h8"/></svg><span data-t="brand"></span></div>
+    <div class="top-actions"><a href="#stickers" data-t="book"></a><button class="language" id="language" type="button"></button></div>
+  </div>
+</header>
+<main class="shell">
+  <div class="intro">
+    <div><h1 data-t="title"></h1><p data-t="subtitle"></p></div>
+    <span class="sample" data-t="sample"></span>
+  </div>
+  <nav class="cities" id="cities" data-label="chooseCity"></nav>
+  <div class="city-layout">
+    <figure class="board">
+      <div class="board-head"><h2 id="city-name"></h2><span class="numeric" id="scene-level"></span></div>
+      <div class="scene" id="scene">
+        <canvas id="city-board" width="900" height="540" role="img"></canvas>
+        <canvas id="previous" width="900" height="540" aria-hidden="true"></canvas>
+      </div>
+      <figcaption class="board-foot">
+        <span class="landmark"><img src="../../../public/art/game/landmark-gem-blue.webp" alt=""><span id="landmark"></span></span>
+        <div class="preview" id="preview" role="group" data-label="preview"><span data-t="preview"></span></div>
+      </figcaption>
+    </figure>
+    <section class="control" aria-labelledby="capsule-name">
+      <p class="capsule-title" data-t="cityCapsule"></p>
+      <div class="capsule-heading"><h2 id="capsule-name"></h2><img id="city-vessel" alt="" width="82" height="82"></div>
+      <div class="xp-row numeric"><strong id="capsule-level"></strong><small id="xp-text"></small></div>
+      <progress id="xp" data-label="xp" max="100" value="0"></progress>
+      <p class="action-note" id="action-note" role="status"></p>
+      <div class="actions" id="actions"><h3 data-t="earn"></h3></div>
+    </section>
+  </div>
+  <section id="stickers" aria-labelledby="sticker-title">
+    <div class="heading"><h2 id="sticker-title" data-t="stickers"></h2><p data-t="stickerIntro"></p></div>
+    <div class="stickers-layout">
+      <section class="book" aria-labelledby="book-title">
+        <div class="book-head"><h3 id="book-title" data-t="book"></h3><small id="book-count"></small></div>
+        <div class="sticker-list" id="sticker-list"></div>
+        <div class="claims">
+          <button class="claim" id="claim-landmark" type="button"></button>
+          <button class="claim" id="claim-hunt" type="button"></button>
+        </div>
+      </section>
+      <section class="studio" aria-labelledby="studio-title">
+        <div class="studio-top"><h3 id="studio-title" data-t="decorate"></h3><p data-t="dragHelp"></p></div>
+        <div class="target-tabs" role="group" data-label="decorate">
+          <button class="target-tab" data-target-tab="capsule" data-t="sealed" type="button"></button>
+          <button class="target-tab" data-target-tab="passport" data-t="passport" type="button"></button>
+        </div>
+        <div class="targets">
+          <div class="target capsule mobile-active" data-surface="capsule" role="group" data-label="sealed">
+            <span class="target-name" data-t="sealed"></span>
+            <img class="card-art" src="../../../public/art/vessels/vessel-envelope.webp" alt="">
+            <img class="wax-seal" src="../../../public/art/seal-wax.webp" alt="">
+            <span class="target-caption" data-t="recipient"></span>
+          </div>
+          <div class="target passport" data-surface="passport" role="group" data-label="passport">
+            <span class="target-name" data-t="passport"></span>
+            <span class="passport-owner"><img src="../../../public/art/portraits/portrait-03.webp" alt=""><span data-t="owner"></span></span>
+            <span class="target-caption" data-t="passportCaption"></span>
+          </div>
+        </div>
+        <div class="tools" id="tools">
+          <button class="tool primary" data-place="capsule" data-t="placeCapsule" type="button"></button>
+          <button class="tool primary" data-place="passport" data-t="placePassport" type="button"></button>
+          <button class="tool" id="rotate" data-t="rotate" type="button"></button>
+          <button class="tool" id="smaller" data-t="smaller" type="button"></button>
+          <button class="tool" id="larger" data-t="larger" type="button"></button>
+          <button class="tool" id="remove" data-t="remove" type="button"></button>
+        </div>
+        <p class="sticker-note" data-t="later"></p>
+        <p class="sticker-note" id="sticker-status" role="status"></p>
+      </section>
+    </div>
+  </section>
+</main>
+<script>
+"use strict";
+
+const art = "../../../public/art/";
+const words = {
+  zh: {
+    brand: "時光膠囊", title: "我的城市", subtitle: "把遊戲裡的每一步，留在自己的小城市。", sample: "概念示範 · 資料為範例",
+    chooseCity: "切換城市", cityCapsule: "城市膠囊", preview: "預覽等級", level: "等級", xp: "城市經驗值",
+    earn: "體驗日常行動", max: "已達最高等級", starts: "試試轉動驛站，看看城市如何升級。", keepGoing: "完成下方的行動，累積城市經驗值。", previewing: "正在預覽。日常行動會累積實際城市的經驗值。",
+    spin: "轉動驛站", restore: "修復腐化膠囊", quest: "完成任務", send: "寄送膠囊", open: "打開膠囊",
+    grew: (city, level) => `${city}升到等級 ${level}！新貼紙已收入貼紙簿。`,
+    gained: xp => `城市經驗值 +${xp}`,
+    stickers: "城市貼紙", stickerIntro: "城市升級、地標與尋寶成就都能解鎖貼紙。", book: "貼紙簿", decorate: "佈置貼紙",
+    dragHelp: "把貼紙拖到卡片，或選取貼紙後按下方的貼上按鈕。", sealed: "已封存膠囊", passport: "護照",
+    recipient: "給未來的小晴 · 範例", owner: "旅人小晴 · 範例", passportCaption: "城市回憶",
+    placeCapsule: "貼到膠囊", placePassport: "貼到護照", rotate: "旋轉", smaller: "縮小", larger: "放大", remove: "移除",
+    later: "未來也可以在更多地方使用貼紙。", locked: "未解鎖", claimLandmark: "模擬地標勝利", claimHunt: "模擬完成尋寶",
+    landmarkEarned: "已獲得地標貼紙", huntEarned: "已獲得尋寶貼紙", earned: "已收入貼紙簿。", placed: "貼紙已貼上。可移動、旋轉或調整大小。",
+    removed: "已移除貼紙。", huntSticker: "尋寶紀念", keyboardMove: "用方向鍵移動已貼上的貼紙。",
+    stages: ["鉛筆初稿", "漸染色彩", "街角新綠", "街道日常", "入夜點燈"],
+    scenes: ["灰色建築和安靜的街道", "局部染色，更多房子", "粉彩建築、樹和散步的人", "繁忙的街道、行人和車輛", "夜色、節慶燈串和發光的地標"]
+  },
+  en: {
+    brand: "Time Capsule", title: "My cities", subtitle: "Leave a little piece of every adventure in a city of your own.", sample: "Concept demo · Sample data",
+    chooseCity: "Switch city", cityCapsule: "City capsule", preview: "Preview level", level: "Level", xp: "City XP",
+    earn: "Try everyday actions", max: "Maximum level", starts: "Try a Waypost spin to see the city level up.", keepGoing: "Try the actions below to earn city XP.", previewing: "Level preview. Actions add XP to your city’s earned progress.",
+    spin: "Spin a Waypost", restore: "Restore a Corrupted Capsule", quest: "Finish a quest", send: "Send a capsule", open: "Open a capsule",
+    grew: (city, level) => `${city} reached Level ${level}! A new sticker is in your book.`,
+    gained: xp => `+${xp} city XP`,
+    stickers: "City stickers", stickerIntro: "Earn stickers from city levels, Landmarks and hunts.", book: "Sticker book", decorate: "Decorate",
+    dragHelp: "Drag a sticker onto a card, or select one and use the buttons below.", sealed: "Sealed capsule", passport: "Passport",
+    recipient: "To future Mina · Sample", owner: "Mina · Sample traveler", passportCaption: "City memories",
+    placeCapsule: "Stick on capsule", placePassport: "Stick on Passport", rotate: "Rotate", smaller: "Shrink", larger: "Enlarge", remove: "Remove",
+    later: "Stickers could go more places later.", locked: "Locked", claimLandmark: "Simulate Landmark win", claimHunt: "Simulate hunt finish",
+    landmarkEarned: "Landmark sticker earned", huntEarned: "Hunt sticker earned", earned: "Added to your sticker book.", placed: "Sticker placed. Move, rotate or resize it.",
+    removed: "Sticker removed.", huntSticker: "Hunt keepsake", keyboardMove: "Use the arrow keys to move the sticker.",
+    stages: ["Pencil streets", "First colours", "Leafy corners", "Street life", "Festival lights"],
+    scenes: ["Grey pencil buildings and quiet roads", "Partly coloured streets with more buildings", "Pastel streets, trees and a few walkers", "Busy streets with people and traffic", "Dusk, festival lights and a glowing Landmark"]
+  }
+};
+const cities = [
+  { zh: ["台北", "鳳梨酥", "台北 101"], en: ["Taipei", "Pineapple cake", "Taipei 101"],
+    vessel: "pineapple-cake", stamp: "taipei101", xp: 36, style: "taipei", hues: [161, 207, 27, 341, 42, 222], salt: 21 },
+  { zh: ["香港", "菠蘿包", "尖沙咀鐘樓"], en: ["Hong Kong", "Pineapple bun", "Tsim Sha Tsui Clock Tower"],
+    vessel: "bolo-bun", stamp: "tst-clock", xp: 84, style: "hongkong", hues: [3, 192, 38, 149, 25, 216], salt: 71 },
+  { zh: ["澳門", "葡式蛋撻", "議事亭前地"], en: ["Macau", "Egg tart", "Senado Square"],
+    vessel: "egg-tart", stamp: "senado", xp: 12, style: "macau", hues: [41, 8, 163, 322, 205, 33], salt: 93 },
+  { zh: ["新加坡", "娘惹蓋罐", "濱海藝術中心"], en: ["Singapore", "Kamcheng", "Esplanade"],
+    vessel: "kamcheng", stamp: "esplanade", xp: 54, style: "singapore", hues: [155, 177, 34, 26, 202, 340], salt: 37 }
+];
+const thresholds = [0, 20, 40, 70, 110];
+const actions = [
+  ["spin", 8, "game/waypost-gem-blue.webp"], ["restore", 15, "vessels/vessel-dome.webp"],
+  ["quest", 12, "quest-pins/quest-pin-blue.webp"], ["send", 10, "vessels/vessel-envelope.webp"],
+  ["open", 10, "vessels/vessel-envelope-seal.webp"]
+];
+const $ = selector => document.querySelector(selector);
+const $$ = selector => [...document.querySelectorAll(selector)];
+const vesselPath = city => `vessels/vessel-${city.vessel}.webp`;
+const earnedLevel = city => thresholds.filter(xp => city.xp >= xp).length;
+const activeCity = () => cities[cityIndex];
+const shownLevel = () => previewLevel ?? earnedLevel(activeCity());
+const getLocale = () => /(?:^#|&)en(?:&|$)/.test(location.hash) ? "en" : "zh";
+let locale = getLocale();
+const t = key => words[locale][key];
+let cityIndex = 0;
+let previewLevel = null;
+let actionFeedback = null;
+let stickerFeedback = null;
+let stickerChoice = null;
+let placedChoice = null;
+let mobileTarget = "capsule";
+let nextStickerId = 1;
+const placements = [];
+const surfaces = new Map($$("[data-surface]").map(node => [node.dataset.surface, node]));
+let gesture = null;
+let scrollFrame = 0;
+const canvas = $("#city-board");
+const ctx = canvas.getContext("2d", { alpha: false });
+const oldFrame = $("#previous").getContext("2d");
+const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+
+function button(className) {
+  const element = document.createElement("button");
+  element.type = "button";
+  element.className = className;
+  return element;
+}
+
+const cityButtons = cities.map((city, index) => {
+  const element = button("city");
+  element.innerHTML = `<img src="${art + vesselPath(city)}" alt=""><span><strong></strong><small class="numeric"></small></span>`;
+  element.addEventListener("click", () => {
+    if (cityIndex === index) return;
+    cityIndex = index;
+    previewLevel = null;
+    actionFeedback = null;
+    stickerChoice = null;
+    stickerFeedback = null;
+    paint(false);
+    refresh();
+  });
+  $("#cities").append(element);
+  return element;
+});
+const levelButtons = thresholds.map((_, index) => {
+  const element = button("level-button");
+  const level = index + 1;
+  element.textContent = level;
+  element.addEventListener("click", () => {
+    const oldLevel = shownLevel();
+    previewLevel = level === earnedLevel(activeCity()) ? null : level;
+    actionFeedback = null;
+    paint(level > oldLevel);
+    refresh();
+  });
+  $("#preview").append(element);
+  return element;
+});
+const actionButtons = actions.map(([key, xp, icon]) => {
+  const element = button("action");
+  element.innerHTML = `<img src="${art + icon}" alt=""><span></span><small class="numeric">+${xp} XP</small>`;
+  element.addEventListener("click", () => {
+    const city = activeCity();
+    const before = earnedLevel(city);
+    if (previewLevel !== null) {
+      previewLevel = null;
+      paint(false);
+    }
+    city.xp = Math.min(thresholds.at(-1), city.xp + xp);
+    const after = earnedLevel(city);
+    actionFeedback = before === after ? ["gained", xp] : ["grew", after];
+    paint(after > before);
+    refresh();
+    if (element.disabled) levelButtons[after - 1].focus();
+    if (after > before && !reduced.matches) {
+      const image = $("#city-vessel");
+      image.classList.remove("leveling");
+      void image.offsetWidth;
+      image.classList.add("leveling");
+    }
+  });
+  $("#actions").append(element);
+  return element;
+});
+
+function refresh() {
+  const city = activeCity();
+  const level = earnedLevel(city);
+  const shown = shownLevel();
+  const [name, capsule, landmark] = city[locale];
+  $("#city-name").textContent = name;
+  $("#scene-level").textContent = `${t("level")} ${shown} · ${t("stages")[shown - 1]}`;
+  $("#landmark").textContent = landmark;
+  canvas.setAttribute("aria-label", `${name} · ${landmark} · ${t("scenes")[shown - 1]}`);
+  $("#capsule-name").textContent = capsule;
+  const image = $("#city-vessel");
+  const source = art + vesselPath(city);
+  if (image.getAttribute("src") !== source) {
+    image.classList.remove("leveling");
+    image.setAttribute("src", source);
+  }
+  $("#capsule-level").textContent = `${t("level")} ${level}`;
+  $("#xp-text").textContent = level === 5 ? `${city.xp} XP · ${t("max")}` : `${city.xp} / ${thresholds[level]} XP`;
+  $("#xp").max = thresholds[Math.min(level, thresholds.length-1)];
+  $("#xp").value = city.xp;
+  const [feedback, detail] = actionFeedback ?? [];
+  $("#action-note").textContent = previewLevel !== null ? t("previewing")
+    : feedback === "grew" ? t(feedback)(name, detail)
+    : feedback === "gained" ? t(feedback)(detail)
+    : level === 5 ? t("max") : t(city.xp + actions[0][1] >= thresholds[level] ? "starts" : "keepGoing");
+  cityButtons.forEach((element, index) => {
+    element.querySelector("strong").textContent = cities[index][locale][0];
+    element.querySelector("small").textContent = `${t("level")} ${earnedLevel(cities[index])}`;
+    element.setAttribute("aria-pressed", index === cityIndex);
+  });
+  levelButtons.forEach((element, index) => {
+    element.setAttribute("aria-label", `${t("preview")} ${index + 1} · ${t("stages")[index]}`);
+    element.setAttribute("aria-pressed", index + 1 === shown);
+  });
+  actionButtons.forEach((element, index) => {
+    element.querySelector("span").textContent = t(actions[index][0]);
+    element.disabled = level === 5;
+  });
+  refreshBook();
+  refreshStudio();
+}
+
+function toggleLanguage() {
+  const english = locale !== "en";
+  location.hash = english ? "en" : "";
+  localize();
+}
+function localize() {
+  locale = getLocale();
+  document.documentElement.lang = locale === "en" ? "en" : "zh-Hant";
+  document.title = `${t("title")} · ${t("brand")}`;
+  $("#language").textContent = locale === "en" ? "繁體中文" : "English";
+  $("#language").lang = locale === "en" ? "zh-Hant" : "en";
+  $(".top a").href = locale === "en" ? "#stickers&en" : "#stickers";
+  $$("[data-t]").forEach(element => element.textContent = t(element.dataset.t));
+  $$("[data-label]").forEach(element => element.setAttribute("aria-label", t(element.dataset.label)));
+  if (location.hash.startsWith("#stickers")) $("#stickers").scrollIntoView();
+  refresh();
+}
+$("#language").addEventListener("click", toggleLanguage);
+window.addEventListener("hashchange", localize);
+
+// Fictional street plans. The silhouettes borrow from these architectural references:
+// Taipei 101: https://www.taipei-101.com.tw/en/concept
+// Clock Tower: https://www.gohk.gov.hk/en/spots/spot_detail.php?spot=Former+Kowloon-Canton+Railway+Terminus+Clock+Tower
+// Senado Square: https://www.macaotourism.gov.mo/en/sightseeing/macao-world-heritage/senado-square
+// Esplanade: https://www.dpa.com.sg/projects/esplanade-theatres-on-the-bay/
+const lots = [
+  [1.52, .85, 1.16, 1, 63, 1], [4.38, .73, 1.2, 1.0, 75, 1],
+  [6.52, 1.15, 1.18, 1.1, 84, 1], [1.65, 5.86, 1.1, 1.02, 50, 1],
+  [5.92, 6.46, 1.08, 1.12, 53, 1], [7.28, 3.09, 1.05, .94, 46, 1],
+  [1.38, 2.27, .91, 1.08, 49, 2], [5.83, 2.03, .93, .93, 88, 2],
+  [7.72, .51, .77, .91, 60, 2], [4.39, 6.07, .93, .99, 36, 2],
+  [7.5, 7.02, .94, .92, 47, 2], [2.19, 7.55, 1.09, .93, 36, 2],
+  [1.46, 4.11, 1, .75, 33, 3], [7.1, 4.32, .94, .73, 38, 3],
+  [6.06, 7.96, .94, .72, 26, 3], [4.46, 7.96, .86, .67, 29, 3],
+  [5.88, .56, .58, .77, 60, 4], [7.33, 5.95, .58, .65, 26, 4],
+  [8.15, 1.78, .49, .52, 39, 4], [1.53, 7.26, .49, .57, 25, 4]
+];
+const parkTrees = [
+  [2.75, 1.03], [2.75, 1.45], [2.75, 1.83], [4.15, 2.35], [4.5, 2.2],
+  [6.42, 3.45], [6.56, 4.02], [6.7, 4.57], [8.41, 4.09], [8.39, 4.67],
+  [1.35, 6.92], [2.16, 7.15], [2.53, 7.07], [2.75, 8.44], [2.31, 8.61],
+  [4.12, 6.84], [4.14, 7.25], [4.39, 7.34], [5.25, 7.52], [6.66, 8.51],
+  [7.65, 8.44], [8.25, 8.44], [5.24, 4.47], [5.59, 4.51]
+];
+const day = {
+  sky: ["#e2edf7", "#f6f3ed"], deck: "#dde6d4", lip: "#b4c5be", edge: "#8ba9a9",
+  road: "#b7cad0", walk: "#e8e2cf", park: "#c8dabe", water: "#a5c9d9", line: "#667f91", ink: "#284554"
+};
+const pencil = {
+  sky: ["#e6e8eb", "#f6f5f1"], deck: "#efeeeb", lip: "#d6d7d8", edge: "#c0c4c7",
+  road: "#dfe0e1", walk: "#efeeed", park: "#e7e7e6", water: "#e1e4e7", line: "#929aa1", ink: "#646e77"
+};
+const night = {
+  sky: ["#263750", "#79677d"], deck: "#697c80", lip: "#525f78", edge: "#454e68",
+  road: "#546777", walk: "#829195", park: "#506965", water: "#476a88", line: "#3a4c65", ink: "#2d3d54"
+};
+const midpoint = ([x, y], [a, b], amount) => [x + (a - x) * amount, y + (b - y) * amount];
+const project = (u, v, z = 0) => [450 + (u - v) * 45, 145 + (u + v) * 19 - z];
+const plane = (u, v, w, d, z = 0) => [
+  project(u, v, z), project(u + w, v, z), project(u + w, v + d, z), project(u, v + d, z)
+];
+function trace(points) {
+  ctx.beginPath();
+  points.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+}
+function polygon(points, fill, stroke, width = 1) {
+  trace(points);
+  ctx.closePath();
+  ctx.fillStyle = fill;
+  ctx.fill();
+  if (stroke) {
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = width;
+    ctx.stroke();
+  }
+}
+function line(points, color, width = 1) {
+  trace(points);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+}
+function ellipse([x, y], rx, ry, color, stroke) {
+  ctx.beginPath();
+  ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+  if (stroke) {
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = stroke;
+    ctx.stroke();
+  }
+}
+
+function walls(base, top, colors, outline) {
+  const right = [top[1], top[2], base[2], base[1]];
+  const left = [top[2], top[3], base[3], base[2]];
+  polygon(right, colors[2], outline);
+  polygon(left, colors[1], outline);
+  polygon(top, colors[0], outline);
+  return [left, right];
+}
+function box(u, v, w, d, h, colors, outline, raised = 0) {
+  return walls(plane(u, v, w, d, raised), plane(u, v, w, d, raised + h), colors, outline);
+}
+function glow(x, y, radius, color) {
+  const halo = ctx.createRadialGradient(x, y, 1, x, y, radius);
+  halo.addColorStop(0, color);
+  halo.addColorStop(1, "transparent");
+  ellipse([x, y], radius, radius, halo);
+}
+function hatch(face) {
+  for (let i = .14; i < .9; i += .12) {
+    line([midpoint(face[1], face[0], i), midpoint(face[2], face[3], Math.min(1, i + .21))], "#68717c27", .72);
+  }
+}
+
+function cityBase(city, level, scheme) {
+  const sky = ctx.createLinearGradient(0, 0, 0, 540);
+  sky.addColorStop(0, scheme.sky[0]);
+  sky.addColorStop(1, scheme.sky[1]);
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, 900, 540);
+  for (let y = 16; y < 540; y += 16) {
+    for (let x = 8; x < 900; x += 16) {
+      ellipse([x + (y % 32) / 3, y], .72, .72, level === 5 ? "#f7dfb124" : "#405d7b23");
+    }
+  }
+
+  if (level === 5) {
+    glow(706, 99, 57, "#ffe4a950");
+    ellipse([706, 99], 18, 18, "#f6deb2");
+    [[155, 135], [212, 85], [294, 105], [622, 104], [790, 137], [752, 55], [572, 70]].forEach(([x, y]) => {
+      line([[x - 4, y], [x + 4, y]], "#f8dfaa", 1.1);
+      line([[x, y - 4], [x, y + 4]], "#f8dfaa", 1.1);
+    });
+  } else {
+    const cloud = level === 1 ? "#fbfaf55c" : "#fffffb88";
+    [[196, 135, 50], [693, 157, 70], [740, 111, 35]].forEach(([x, y, w]) => {
+      ellipse([x, y], w, 9, cloud);
+      ellipse([x - 10, y - 5], w * .55, 10, cloud);
+    });
+  }
+  polygon(plane(.3, -.1, 9.0, 9.2, -21), "#18274025");
+  polygon(plane(.2, -.03, 9.0, 9.2, -25), "#18274015");
+  box(0, 0, 9, 9, 18, [scheme.deck, scheme.lip, scheme.edge], scheme.line, -18);
+  line([project(9, 0, -8), project(9, 9, -8), project(0, 9, -8)], "#f5f5f564", 1);
+  line([project(9, 0, -13), project(9, 9, -13), project(0, 9, -13)], "#35476828", 1);
+
+  for (const [u, v, w, d] of [[.24,.24,2.6,4.57], [3.9,.24,4.83,4.57], [.24,5.85,2.6,2.9], [3.9,5.85,4.83,2.9]]) {
+    polygon(plane(u, v, w, d, .4), scheme.walk, "#536f812b", .9);
+  }
+  for (const [u, v, w, d] of [[2.46,.4,.43,1.7], [6.23,3.15,.65,1.64], [3.95,6.79,1.09,.77], [1.34,6.91,1.51,1.72]]) {
+    polygon(plane(u, v, w, d, 1), scheme.park, "#506d582e", 1.1);
+  }
+  polygon(plane(2.9, 0, 1, 9, 1), scheme.road);
+  polygon(plane(0, 4.82, 9, 1.04, 1), scheme.road);
+  const laneMark = level === 1 ? "#a2a8ae" : "#fcf5e4";
+  for (let i = .25; i < 8.8; i += .48) {
+    if (i < 4.68 || i > 5.9) line([project(3.39, i, 1.3), project(3.39, i + .19, 1.3)], laneMark, 1);
+    if (i < 2.7 || i > 4) line([project(i, 5.35, 1.3), project(i + .19, 5.35, 1.3)], laneMark, 1);
+  }
+  for (let i = 0; i < 5; i++) {
+    const offset = .11 * i;
+    polygon(plane(2.94 + offset * 1.55, 5.87, .09, .28, 1.5), laneMark);
+    polygon(plane(3.97, 4.99 + offset * 1.55, .28, .09, 1.5), laneMark);
+  }
+
+  if (city.style === "hongkong" || city.style === "singapore") {
+    polygon(plane(.02, .03, 1.04, 8.94, 2), scheme.water, scheme.line);
+    line([project(1.1, 0, 2), project(1.1, 9, 2)], laneMark, 3);
+    for (let i = 0; i < 22; i++) {
+      const u = .19 + ((i * 7) % 9) * .065;
+      const v = .16 + i * .391;
+      line([project(u, v, 2.1), project(u + .2, v, 2.1)], "#f9f5e779");
+    }
+    if (level >= 3) box(.37, 2.1, .29, .48, 5, ["#e5b674","#c47875","#8e6779"], scheme.line, 1);
+  }
+  if (city.style === "hongkong" && level >= 4) {
+    [5.2, 5.48].forEach(v => line([project(1.13, v, 2), project(8.95, v, 2)], "#445a7369", 1.2));
+  }
+  const plaza = city.style === "macau" ? [3.97, 2.55, 2.23, 2.18] : [4.05, 2.58, 2.05, 2.12];
+  polygon(plane(...plaza, 1.2), level === 5 ? "#9c9397" : level === 1 ? "#f5f4ef" : "#f4ecd9", "#7d7f8b56");
+  for (let i = 0; i <= 10; i++) {
+    const u = plaza[0] + .11 + i * .18;
+    const points = Array.from({ length: 26 }, (_, j) => project(u + (city.style === "macau" ? Math.sin(j / 3) * .07 : 0), 2.64 + j * .078, 1.4));
+    line(points, "#776c7f49", city.style === "macau" ? 1.4 : .65);
+  }
+  if (level === 1) {
+    const bounds = plane(.1, .1, 8.8, 8.8, 1.7);
+    line([...bounds, bounds[0]], "#646e774f", .8);
+    for (let i = .14; i < 9; i += .23) {
+      line([project(i, 9, -2), project(i - .12, 9, -15)], "#646e774f", .8);
+    }
+  }
+}
+
+function drawBuilding(city, lot, index, level, scheme) {
+  const [u, v, w, d, height] = lot;
+  const h = height * (city.style === "macau" ? .72 : city.style === "hongkong" ? 1.21 : 1)
+    + ((index * 7 + city.salt) % 17) - 9;
+  const hue = city.hues[index % city.hues.length];
+  const hasColour = level > 2 || level === 2 && index % 3 !== 2;
+  const tint = level === 2 ? 25 : 49;
+  const colors = !hasColour ? ["#f5f4f1", "#dfe0de", "#caced1"]
+    : level === 5 ? [`hsl(${hue} 23% 59%)`, `hsl(${hue} 26% 47%)`, `hsl(${hue} 21% 38%)`]
+    : [`hsl(${hue} ${tint}% 89%)`, `hsl(${hue} ${tint}% 78%)`, `hsl(${hue} ${tint - 5}% 68%)`];
+  polygon(plane(u + .12, v + .16, w + .14, d + .08, 2), "#19333f23");
+  const [left, right] = box(u, v, w, d, h, colors, scheme.ink, 3);
+  if (level === 1) { hatch(left); hatch(right); }
+  const floors = Math.max(2, Math.round(h / 12));
+  for (let row = 0; row < floors; row++) {
+    const z = 11 + row * (h - 15) / floors;
+    for (let col = 0; col < 3; col++) {
+      const lit = (row + col + index) % 3 !== 1;
+      const color = level === 5 && lit ? "#ffdc91" : hasColour ? "#536e8b68" : "#a8adb083";
+      const a = (col + .45) * w / 3;
+      const b = (col + .45) * d / 3;
+      polygon([project(u+a,v+d,z), project(u+a+w*.12,v+d,z), project(u+a+w*.12,v+d,z+5), project(u+a,v+d,z+5)], color);
+      polygon([project(u+w,v+b,z), project(u+w,v+b+d*.12,z), project(u+w,v+b+d*.12,z+5), project(u+w,v+b,z+5)], color);
+    }
+  }
+  if (city.style === "macau" || index % 4 === 3) {
+    const p = plane(u - .07, v - .07, w + .14, d + .14, h + 4);
+    const a = project(u + w / 2, v - .07, h + 20);
+    const b = project(u + w / 2, v + d + .07, h + 20);
+    const roof = hasColour ? (level === 5 ? "#805f75" : "#c88680") : "#dadadc";
+    polygon([p[0], a, b, p[3]], roof, scheme.ink);
+    polygon([a, p[1], p[2], b], hasColour ? "#a66f79" : "#c7cace", scheme.ink);
+    polygon([p[3], p[2], b], colors[0], scheme.ink);
+    for (let i = 1; i < 5; i++) {
+      line([midpoint(p[0], p[3], i/5), midpoint(a, b, i/5), midpoint(p[1], p[2], i/5)], "#35425527", .8);
+    }
+  } else {
+    const roof = plane(u+.1, v+.1, w-.2, d-.2, h+3.2);
+    polygon(roof, colors[1], "#354e664c");
+    if (index % 3 === 0) box(u+w*.4, v+d*.28, w*.29, d*.32, 8, colors, scheme.ink, h+3);
+    if (index % 3 === 1) {
+      const [x, y] = project(u+w*.54, v+d*.52, h+3);
+      line([[x,y],[x,y-12],[x+5,y-14]], scheme.ink, 1.4);
+    }
+  }
+  if (level >= 3 && h < 65) {
+    const width = w * .64;
+    const x = u + w * .18;
+    for (let i = 0; i < 6; i++) {
+      const leftEdge = x + i * width / 6;
+      polygon([project(leftEdge,v+d,17),project(leftEdge+width/6,v+d,17),
+        project(leftEdge+width/6,v+d+.22,11),project(leftEdge,v+d+.22,11)],
+        i % 2 ? "#f5e2ba" : colors[2], "#3c53683a", .55);
+    }
+  }
+}
+
+function drawLandmark(city, level, scheme) {
+  const u = 5.0, v = 3.65;
+  const night = level === 5;
+  const lit = night ? "#ffe1a0" : level === 1 ? "#faf9f2" : "#edeee4";
+  const neutral = ["#e4e5e5","#c8ccd1","#aeb7bc"];
+  const [cx, cy] = project(u, v, city.style === "taipei" ? 105 : city.style === "hongkong" ? 60 : 28);
+  if (night) glow(cx, cy, 100, "#ffc67458");
+  if (city.style === "taipei") {
+    const colors = level === 1 ? neutral : night ? ["#7ea3ae", "#567e8d", "#39576c"] : ["#abd3c9","#83b6b0","#5b919c"];
+    box(u-.58, v-.56, 1.16, 1.12, 12, colors, scheme.ink, 3);
+    box(u-.44, v-.43, .88, .86, 30, colors, scheme.ink, 15);
+    for (let i = 0; i < 8; i++) {
+      const z = 45 + i * 14;
+      const w = .82 - i * .045;
+      const faces = walls(plane(u-w*.4,v-w*.4,w*.8,w*.8,z), plane(u-w/2,v-w/2,w,w,z+13), colors, scheme.ink);
+      for (const face of faces) {
+        line([midpoint(face[0],face[3],.25),midpoint(face[1],face[2],.25)], night ? lit : "#4168748c", 1.3);
+        line([midpoint(face[0],face[3],.52),midpoint(face[1],face[2],.52)], night ? lit : "#f1f7ed96", 1.05);
+        if (level === 1) hatch(face);
+      }
+    }
+    box(u-.18,v-.18,.36,.36,10,colors,scheme.ink,157);
+    box(u-.09,v-.09,.18,.18,8,colors,scheme.ink,167);
+    line([project(u,v,175),project(u,v,201)], night ? lit : scheme.ink, 2.1);
+    if (night) glow(...project(u,v,201), 23, "#ffd17fbb");
+  } else if (city.style === "hongkong") {
+    const brick = level === 1 ? neutral : night ? ["#af8d89","#8d6470","#655463"] : ["#e7b8a1","#bd826f","#a16762"];
+    const stone = level === 1 ? neutral : ["#f1e0bb","#d6b297","#bb9780"];
+    box(u-.45,v-.44,.9,.88,8,stone,scheme.ink,3);
+    box(u-.32,v-.32,.64,.64,86,brick,scheme.ink,11);
+    for (const z of [22, 45, 69, 96]) box(u-.36,v-.36,.72,.72,2.5,stone,scheme.ink,z);
+    box(u-.24,v-.24,.48,.48,13,stone,scheme.ink,99);
+    const face = project(u, v+.325, 82);
+    ellipse(face, 8, 9, lit, scheme.ink);
+    line([[face[0],face[1]-5],face,[face[0]+3,face[1]+2]], scheme.ink, 1.3);
+    const crown = plane(u-.27,v-.27,.54,.54,112);
+    const finial = project(u,v,129);
+    polygon([crown[3],crown[2],finial], brick[0], scheme.ink);
+    polygon([crown[2],crown[1],finial], brick[2], scheme.ink);
+    line([finial,project(u,v,144)], night ? lit : scheme.ink, 1.65);
+  } else if (city.style === "macau") {
+    const rim = level === 1 ? "#cdd0d2" : "#dac6a4";
+    ellipse(project(u,v,4), 42, 21, scheme.line);
+    ellipse(project(u,v,9), 40, 20, rim, scheme.ink);
+    ellipse(project(u,v,9), 34, 15, level === 1 ? "#e2e5e5" : "#8fc0ca", scheme.line);
+    ellipse(project(u,v,14), 10, 5, rim, scheme.line);
+    line([project(u,v,14),project(u,v,41)], night ? lit : scheme.line, 2);
+    ellipse(project(u,v,31), 13, 5, rim, scheme.ink);
+    for (let i = 0; i < 7; i++) {
+      const [x,y] = project(u,v,39);
+      ctx.beginPath();
+      ctx.moveTo(x,y);
+      ctx.quadraticCurveTo(x + (i-3)*5,y-13,x+(i-3)*7,y+26);
+      ctx.strokeStyle = night ? "#ffe4a7b0" : "#f6f9f5de";
+      ctx.lineWidth = 1.25;
+      ctx.stroke();
+    }
+    if (night) glow(...project(u,v,22), 48, "#ffda81a0");
+  } else {
+    const walls = level === 1 ? neutral : ["#dbe4e2","#acc5c8","#81a4b4"];
+    box(u-.87,v-.59,1.74,1.18,13,walls,scheme.ink,3);
+    [[u-.45,v-.24,34,41],[u+.41,v+.22,39,44]].forEach(([du,dv,rx,h]) => {
+      const [x,y] = project(du,dv,17);
+      const tiles = level === 1 ? neutral : night ? ["#f9d38c","#a58e82","#715f75"] : ["#dbe0ca","#b5bdab","#819996"];
+      const arch = [[x-rx,y], ...Array.from({length: 17}, (_, i) => {
+        const a = Math.PI + i*Math.PI/16;
+        return [x+Math.cos(a)*rx,y+Math.sin(a)*h];
+      }), [x+rx,y],[x,y+9]];
+      polygon(arch, tiles[1], scheme.ink);
+      for (let row = 0; row < 5; row++) {
+        const z = row * h / 5;
+        const span = rx * Math.sqrt(1-(z/h)**2) * .9;
+        for (let col = -4; col <= 4; col++) {
+          const px = x + col*span/4.2;
+          const py = y - z + (4-Math.abs(col))*1.2;
+          polygon([[px-3,py],[px,py-5],[px+3,py]], (row+col)%3 ? tiles[0] : tiles[2]);
+        }
+      }
+      if (night) glow(x,y-15,32,"#ffe5a25d");
+    });
+  }
+}
+
+function tree(u, v, index, dusk, outline) {
+  const root = project(u,v,2);
+  const [x,y] = root;
+  const height = 15 + index % 4 * 3;
+  ellipse([x+4,y], 10, 3.3, "#182b3c35");
+  line([root,[x,y-height]], dusk ? "#474f53" : "#8a7865", 2.7);
+  const shade = dusk ? ["#64817d","#52746e","#809388"] : ["#9abfa1","#80a888","#b9cf9c"];
+  ellipse([x,y-height], 10, 11, shade[index%3], outline);
+  ellipse([x-2,y-height-4], 6, 5, dusk ? "#a5a897" : "#d6ddaa");
+}
+function pedestrian(u, v, index, clock) {
+  const [x,y] = project(u,v,2);
+  const step = Math.sin(clock/68 + index)*1.15;
+  ellipse([x+.9,y], 3, 1.2, "#23324644");
+  line([[x-.2,y-3],[x-1+step,y]], "#343950", 1.1);
+  line([[x+.5,y-3],[x+1-step,y]], "#343950", 1.1);
+  line([[x,y-3],[x,y-6.8]], ["#b9657d","#547891","#af8950","#82709e"][index%4], 2.8);
+  ellipse([x,y-8], 1.25, 1.35, "#9d7664");
+}
+function traffic(city, u, v, index, scheme, dusk) {
+  const kind = index === 0 && city.style === "hongkong" ? "tram"
+    : index === 2 && city.style === "taipei" ? "scooter" : index % 2 ? "bus" : "car";
+  const dyes = [["#f3e2ac","#d2ad68","#ad7c66"],["#e4afae","#bc7f90","#935f77"],["#c1dfd5","#82b2a6","#5b9294"]];
+  const length = kind === "tram" ? .56 : kind === "bus" ? .42 : kind === "scooter" ? .18 : .29;
+  const height = kind === "tram" ? 13 : kind === "bus" ? 10 : 5;
+  const eastbound = index % 3 !== 2;
+  const wheels = [[u+(eastbound? .05:.14),v+(eastbound? .14:.04)], [u+(eastbound?length-.05:.14),v+(eastbound?.14:length-.04)]];
+  for (const wheel of wheels) ellipse(project(...wheel, 2), 2.2, 2, scheme.ink);
+  box(u,v,eastbound?length:.15,eastbound?.15:length,height,dyes[index%3],scheme.ink,3);
+  if (kind === "tram" || kind === "bus") {
+    for (let n = 0; n < 3; n++) {
+      const start = u+.05+n*length/3.5;
+      line([project(start,v+.15,height),project(start+.055,v+.15,height)], "#3f617b", 2);
+    }
+  }
+  if (dusk) glow(...project(u+length,v+.08,4),12,"#ffdc8690");
+}
+function festival() {
+  const a = project(4.14,4.46,29);
+  const b = project(5.94,4.46,29);
+  [a,b].forEach(([x,y]) => line([[x,y],[x,y+27]],"#3c465a",2));
+  const cord = Array.from({length: 19}, (_, i) => {
+    const r = i / 18;
+    return [a[0]+(b[0]-a[0])*r, a[1]+(b[1]-a[1])*r + Math.sin(r*Math.PI)*12];
+  });
+  line(cord,"#384760");
+  cord.filter((_, i) => i%3 === 1).forEach(([x,y], i) => {
+    glow(x,y+4,17,"#ffce8570");
+    ellipse([x,y+4],3,4,i%2 ? "#ffd58a" : "#f5a9a2");
+  });
+}
+
+function renderCity(clock) {
+  const city = activeCity();
+  const level = shownLevel();
+  const dusk = level === 5;
+  const scheme = level === 1 ? pencil : dusk ? night : day;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  cityBase(city, level, scheme);
+  const draw = [];
+  lots.forEach((lot, index) => {
+    if (lot[5] <= level) draw.push([lot[0]+lot[1]+.58, () => drawBuilding(city,lot,index,level,scheme)]);
+  });
+  draw.push([8.75, () => drawLandmark(city,level,scheme)]);
+  const quay = city.style === "hongkong" || city.style === "singapore" ? 1.16 : .18;
+  if (level >= 3) {
+    parkTrees.slice(0,level === 3 ? 18 : 24).forEach(([u,v], i) =>
+      draw.push([u+v, () => tree(u,v,i,dusk,scheme.line)]));
+    for (let i = 0; i < (level === 3 ? 7 : 17); i++) {
+      const shift = (clock/(3200+i%3*235) + i*.237) % 1;
+      const u = i % 2 ? 3.04 + (i%3)*.31 : quay+.2 + shift*(8.35-quay);
+      const v = i % 2 ? .3 + shift*8.4 : i%4 ? 5.76 : 4.9;
+      draw.push([u+v, () => pedestrian(u,v,i,clock)]);
+    }
+  }
+  if (level >= 4) {
+    for (let i = 0; i < 8; i++) {
+      const shift = (clock/(4500+i%3*250) + i*.214) % 1;
+      const u = i%3 === 2 ? 3.48 : quay + (i%2 ? shift : 1-shift)*(8.39-quay);
+      const v = i%3 === 2 ? .2 + shift*8.18 : i%2 ? 5.52 : 5.15;
+      draw.push([u+v, () => traffic(city,u,v,i,scheme,dusk)]);
+    }
+  }
+  if (dusk) draw.push([10.41, festival]);
+  draw.sort(([a],[b]) => a-b).forEach(([,fn]) => fn());
+}
+
+let cityClock = 0;
+let lastFrame = 0;
+let boardInView = true;
+const scene = $("#scene");
+new IntersectionObserver(([entry]) => boardInView = entry.isIntersecting).observe(scene);
+
+function paint(wash) {
+  scene.classList.remove("washing");
+  if (wash && !reduced.matches) {
+    oldFrame.drawImage(canvas,0,0);
+    void scene.offsetWidth;
+    scene.classList.add("washing");
+  }
+  renderCity(cityClock);
+}
+$("#previous").addEventListener("animationend", () => scene.classList.remove("washing"));
+function animate(now) {
+  if (!reduced.matches && boardInView && shownLevel() >= 3 && now-lastFrame > 32) {
+    cityClock += Math.min(50, now-lastFrame);
+    renderCity(cityClock);
+    lastFrame = now;
+  }
+  requestAnimationFrame(animate);
+}
+
+const accents = ["#d7e5ee","#f1d8a2","#b9d5bd","#c4d4ed","#dec6df"];
+cities.forEach((city, index) => {
+  city.landmarkDone = index === 1 || index === 3;
+  city.huntDone = index === 1;
+});
+function stickerOptions(city) {
+  return [
+    ...thresholds.slice(1).map((_, index) => {
+      const level = index+2;
+      return { key: "level-"+level, name: `${t("level")} ${level} · ${city[locale][1]}`,
+        label: `${t("level")} ${level}`, icon: vesselPath(city), badge: level, color: accents[index+1],
+        earned: earnedLevel(city) >= level };
+    }),
+    { key: "landmark", name: city[locale][2], label: city[locale][2], icon: `stamps/stamp-${city.stamp}.webp`, color: "#ebc4cb", earned: city.landmarkDone },
+    { key: "hunt", name: t("huntSticker"), label: t("huntSticker"), icon: "characters/figure-01.webp", color: "#c2d6ed", earned: city.huntDone }
+  ];
+}
+function stickerArt(sticker) {
+  return `<span class="sticker-art" style="--sticker-color:${sticker.color}"><img src="${art + sticker.icon}" alt="">${sticker.badge ? `<b>${sticker.badge}</b>` : ""}</span>`;
+}
+function refreshBook(focusKey) {
+  const selected = activeCity();
+  const stickers = stickerOptions(selected);
+  $("#book-count").textContent = `${selected[locale][0]} · ${stickers.filter(sticker => sticker.earned).length} / ${stickers.length}`;
+  const list = $("#sticker-list");
+  list.replaceChildren();
+  for (const sticker of stickers) {
+    const tile = button("sticker-tile");
+    tile.dataset.sticker = sticker.key;
+    tile.innerHTML = stickerArt(sticker) + `<span>${sticker.label}</span>`;
+    tile.disabled = !sticker.earned;
+    tile.setAttribute("aria-label", sticker.earned ? sticker.name : `${sticker.name} · ${t("locked")}`);
+    tile.setAttribute("aria-pressed", sticker.key === stickerChoice);
+    tile.addEventListener("click", () => chooseSticker(sticker.key));
+    tile.addEventListener("pointerdown", event => startGesture(event, sticker));
+    list.append(tile);
+    if (sticker.key === focusKey) tile.focus({ preventScroll: true });
+  }
+  for (const key of ["landmark", "hunt"]) {
+    const claim = $("#claim-"+key);
+    const done = selected[key+"Done"];
+    claim.disabled = done;
+    claim.textContent = t(done ? key+"Earned" : key === "landmark" ? "claimLandmark" : "claimHunt");
+  }
+}
+function chooseSticker(key) {
+  stickerChoice = key;
+  placedChoice = null;
+  stickerFeedback = null;
+  refreshBook(key);
+  refreshStudio();
+}
+for (const key of ["landmark", "hunt"]) {
+  $("#claim-"+key).addEventListener("click", () => {
+    activeCity()[key+"Done"] = true;
+    chooseSticker(key);
+    stickerFeedback = "earned";
+    refreshStudio();
+  });
+}
+
+const compact = matchMedia("(max-width: 690px)");
+function refreshStudio(focusPlaced = false) {
+  const selected = placements.find(item => item.id === placedChoice);
+  $$("[data-target-tab]").forEach(tab => tab.setAttribute("aria-pressed", tab.dataset.targetTab === mobileTarget));
+  surfaces.forEach((surface, target) => {
+    surface.classList.toggle("mobile-active", target === mobileTarget);
+    surface.querySelectorAll(".placed").forEach(node => node.remove());
+    for (const item of placements.filter(entry => entry.target === target)) {
+      const sticker = stickerOptions(cities[item.city]).find(entry => entry.key === item.key);
+      const node = button("placed");
+      node.dataset.placed = item.id;
+      node.style.setProperty("--size", item.size+"px");
+      node.style.width = node.style.height = Math.max(44,item.size)+"px";
+      node.style.setProperty("--angle", item.angle+"deg");
+      node.style.left = item.x+"%";
+      node.style.top = item.y+"%";
+      node.setAttribute("aria-label", `${sticker.name} · ${t("keyboardMove")}`);
+      node.setAttribute("aria-pressed", item.id === placedChoice);
+      node.innerHTML = stickerArt(sticker);
+      node.classList.toggle("selected", item.id === placedChoice);
+      node.addEventListener("click", () => {
+        placedChoice = item.id;
+        mobileTarget = target;
+        refreshStudio(true);
+      });
+      node.addEventListener("pointerdown", event => startGesture(event, sticker, item));
+      node.addEventListener("keydown", event => keyMove(event,item));
+      surface.append(node);
+      if (focusPlaced && item.id === placedChoice) node.focus({ preventScroll: true });
+    }
+  });
+  $$("[data-place]").forEach(element => element.disabled = !stickerChoice);
+  $("#rotate").disabled = !selected;
+  $("#smaller").disabled = !selected || selected.size <= 32;
+  $("#larger").disabled = !selected || selected.size >= 80;
+  $("#remove").disabled = !selected;
+  $("#sticker-status").textContent = stickerFeedback ? t(stickerFeedback) : "";
+}
+
+function changeTarget(target) {
+  mobileTarget = target;
+  if (compact.matches && placements.find(item => item.id === placedChoice)?.target !== target) placedChoice = null;
+  refreshStudio();
+}
+$$("[data-target-tab]").forEach(element => element.addEventListener("click", () => changeTarget(element.dataset.targetTab)));
+compact.addEventListener("change", () => changeTarget(mobileTarget));
+
+function bound(item, surface) {
+  const maxRadius = item.size * .68;
+  const marginX = 100 * maxRadius/surface.clientWidth;
+  const marginY = 100 * maxRadius/surface.clientHeight;
+  item.x = Math.max(marginX,Math.min(100-marginX,item.x));
+  item.y = Math.max(marginY,Math.min(100-marginY,item.y));
+}
+function placeSticker(key, target, x, y) {
+  const count = placements.filter(item => item.target === target).length;
+  const item = { id: nextStickerId++, key, city: cityIndex, target,
+    x: x ?? 66 + count%3*8, y: y ?? 51 + count%3*9, size: 48, angle: -8 };
+  changeTarget(target);
+  bound(item,surfaces.get(target));
+  placements.push(item);
+  placedChoice = item.id;
+  stickerFeedback = "placed";
+  refreshStudio(true);
+}
+$$("[data-place]").forEach(element => element.addEventListener("click", () => placeSticker(stickerChoice,element.dataset.place)));
+for (const [id, change] of [
+  ["rotate", item => item.angle = (item.angle+15)%360],
+  ["smaller", item => item.size -= 8],
+  ["larger", item => item.size += 8]
+]) {
+  $("#"+id).addEventListener("click", () => {
+    const item = placements.find(entry => entry.id === placedChoice);
+    change(item);
+    bound(item,surfaces.get(item.target));
+    refreshStudio();
+    if ($("#"+id).disabled) $(`[data-placed="${item.id}"]`).focus({preventScroll:true});
+  });
+}
+$("#remove").addEventListener("click", () => {
+  placements.splice(placements.findIndex(item => item.id === placedChoice),1);
+  placedChoice = null;
+  stickerFeedback = "removed";
+  refreshStudio();
+  if (stickerChoice) $(`[data-place="${mobileTarget}"]`).focus({preventScroll:true});
+  else if (!$("#claim-landmark").disabled) $("#claim-landmark").focus({preventScroll:true});
+  else $(".sticker-tile:enabled")?.focus({preventScroll:true});
+});
+
+function keyMove(event,item) {
+  const step = event.shiftKey ? 7 : 2;
+  const direction = { ArrowUp: [0,-step], ArrowDown: [0,step], ArrowLeft: [-step,0], ArrowRight: [step,0] }[event.key];
+  if (!direction) return;
+  event.preventDefault();
+  item.x += direction[0];
+  item.y += direction[1];
+  placedChoice = item.id;
+  bound(item,surfaces.get(item.target));
+  refreshStudio(true);
+}
+
+function startGesture(event, sticker, item = null) {
+  if (!event.isPrimary || event.button !== 0 || gesture) return;
+  const source = event.currentTarget;
+  const rect = source.getBoundingClientRect();
+  gesture = {
+    sticker, item, source, pointer: event.pointerId, x: event.clientX, y: event.clientY,
+    startX: event.clientX, startY: event.clientY, ghost: null,
+    dx: item ? event.clientX - rect.left - rect.width/2 : 0,
+    dy: item ? event.clientY - rect.top - rect.height/2 : 0
+  };
+  source.setPointerCapture(event.pointerId);
+}
+function targetUnder(x,y) {
+  return document.elementFromPoint(x,y)?.closest("[data-surface]");
+}
+function paintDrag() {
+  const { ghost, x, y, dx, dy } = gesture;
+  ghost.style.left = x-dx+"px";
+  ghost.style.top = y-dy+"px";
+  const target = targetUnder(x,y);
+  surfaces.forEach(surface => surface.classList.toggle("hot", surface === target));
+}
+function dragEdge() {
+  const y = gesture.y;
+  const step = y < 48 ? -Math.ceil((48-y)/6) : y > innerHeight-48 ? Math.ceil((y-innerHeight+48)/6) : 0;
+  if (step) {
+    window.scrollBy(0,step);
+    paintDrag();
+  }
+  scrollFrame = requestAnimationFrame(dragEdge);
+}
+document.addEventListener("pointermove", event => {
+  if (gesture?.pointer !== event.pointerId) return;
+  gesture.x = event.clientX;
+  gesture.y = event.clientY;
+  if (!gesture.ghost && Math.hypot(gesture.x-gesture.startX,gesture.y-gesture.startY) >= 6) {
+    const ghost = document.createElement("div");
+    ghost.className = "drag-ghost";
+    ghost.setAttribute("aria-hidden","true");
+    ghost.innerHTML = stickerArt(gesture.sticker);
+    if (gesture.item) {
+      ghost.firstElementChild.style.width = gesture.item.size+"px";
+      ghost.style.transform = `translate(-50%, -50%) rotate(${gesture.item.angle}deg)`;
+    }
+    document.body.append(ghost);
+    gesture.ghost = ghost;
+    scrollFrame = requestAnimationFrame(dragEdge);
+  }
+  if (gesture.ghost) paintDrag();
+});
+function endGesture(event) {
+  if (gesture?.pointer !== event.pointerId) return;
+  const { ghost, sticker, item, source, dx, dy } = gesture;
+  gesture = null;
+  if (!ghost) return;
+  ghost.remove();
+  cancelAnimationFrame(scrollFrame);
+  surfaces.forEach(surface => surface.classList.remove("hot"));
+  if (event.type !== "pointerup") return;
+
+  const clientX = event.clientX, clientY = event.clientY;
+  const surface = targetUnder(clientX,clientY);
+  const suppressClick = new AbortController();
+  source.addEventListener("click", click => click.stopImmediatePropagation(),
+    {capture:true, once:true, signal:suppressClick.signal});
+  setTimeout(() => suppressClick.abort(),0);
+  if (!surface) return;
+  const box = surface.getBoundingClientRect();
+  const x = 100*(clientX-dx-box.left)/box.width;
+  const y = 100*(clientY-dy-box.top)/box.height;
+  const target = surface.dataset.surface;
+  if (item) {
+    Object.assign(item,{ target,x,y });
+    placedChoice = item.id;
+    mobileTarget = target;
+    bound(item,surface);
+    refreshStudio(true);
+  } else {
+    stickerChoice = sticker.key;
+    refreshBook();
+    placeSticker(sticker.key,target,x,y);
+  }
+}
+document.addEventListener("pointerup", endGesture);
+document.addEventListener("pointercancel", endGesture);
+
+$(".top a").addEventListener("click", () => $("#stickers").scrollIntoView());
+localize();
+paint(false);
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
